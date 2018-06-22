@@ -5,8 +5,20 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FAST2"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="FAST" Height="450" Width="800"
+
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="13"
+        TextOptions.TextFormattingMode="Ideal" 
+        TextOptions.TextRenderingMode="Auto"        
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{DynamicResource MaterialDesignFont}">
+
     <Grid>
-        
+        <materialDesign:Card Padding="32" Margin="5">
+            <TextBlock Style="{DynamicResource MaterialDesignTitleTextBlock}">Flax's Arma Server Tool</TextBlock>
+        </materialDesign:Card>
     </Grid>
 </Window>
