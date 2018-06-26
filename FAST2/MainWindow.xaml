@@ -4,8 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FAST2"
-        mc:Ignorable="d"
-        Title="FAST" Height="450" Width="800"
+        mc:Ignorable="d" Height="525"
 
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
@@ -14,11 +13,39 @@
         TextOptions.TextFormattingMode="Ideal" 
         TextOptions.TextRenderingMode="Auto"        
         Background="{DynamicResource MaterialDesignPaper}"
-        FontFamily="{DynamicResource MaterialDesignFont}">
+        FontFamily="{DynamicResource MaterialDesignFont}" Width="700" ResizeMode="CanMinimize" Icon="FAST-main-icon.ico" Title="FAST">
 
     <Grid>
-        <materialDesign:Card Padding="32" Margin="5">
-            <TextBlock Style="{DynamicResource MaterialDesignTitleTextBlock}">Flax's Arma Server Tool</TextBlock>
-        </materialDesign:Card>
+
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="4*"/>
+        </Grid.ColumnDefinitions>
+        <ListBox HorizontalAlignment="Left" Height="66" Margin="0,40,0,0" VerticalAlignment="Top" Width="139" Grid.ColumnSpan="2">
+            <ListBoxItem Content="Steam Updater"/>
+            <ListBoxItem Content="Server Mods"/>
+        </ListBox>
+        <Label Content="Main" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" FontWeight="Bold" FontStyle="Italic"/>
+        <Label Content="Server Profiles" HorizontalAlignment="Left" Margin="10,121,0,0" VerticalAlignment="Top" FontWeight="Bold" FontStyle="Italic"/>
+        <ListBox HorizontalAlignment="Left" Height="188" Margin="0,151,0,0" VerticalAlignment="Top" Width="139" Grid.ColumnSpan="2">
+            <ListBoxItem Content="Default"/>
+            <ListBoxItem Content="Server 2"/>
+            <ListBoxItem Content="Public Server"/>
+            <ListBoxItem Content="LongNameTestServer"/>
+        </ListBox>
+        <Label Content="Other" HorizontalAlignment="Left" Margin="10,350,0,0" VerticalAlignment="Top" FontWeight="Bold" FontStyle="Italic"/>
+        <ListBox HorizontalAlignment="Left" Height="105" Margin="0,380,0,0" VerticalAlignment="Top" Width="139" Grid.ColumnSpan="2">
+            <ListBoxItem Content="Settings"/>
+            <ListBoxItem Content="Tools"/>
+            <ListBoxItem Content="About"/>
+        </ListBox>
+        <Rectangle HorizontalAlignment="Left" Height="1" Margin="0,111,0,0" VerticalAlignment="Top" Width="139" Fill="#FF8A8A8A" Grid.ColumnSpan="2"/>
+        <Rectangle Grid.Column="1" Fill="#FF8A8A8A" HorizontalAlignment="Left" Height="497" Stroke="Black" VerticalAlignment="Top" Width="556" Margin="0.333,0,-0.333,0"/>
+        <Rectangle HorizontalAlignment="Left" Height="1" VerticalAlignment="Top" Width="139" Fill="#FF8A8A8A" Margin="0,344,0,0" Grid.ColumnSpan="2"/>
+        
+        
     </Grid>
 </Window>
