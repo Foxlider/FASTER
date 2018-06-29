@@ -1,10 +1,6 @@
 ﻿Imports System.Text.RegularExpressions
 
 Class MainWindow
-    Private Sub ServerProfLabel_MouseDoubleClick(sender As Object, e As MouseButtonEventArgs) Handles serverProfilesLabel.MouseDoubleClick
-        CreateNewServerProfile(InputBox("Enter profile name:", "New Server Profile"))
-    End Sub
-
     Public Sub CreateNewServerProfile(profileName As String)
         Dim safeProfileName As String = SafeName(profileName)
 
@@ -47,11 +43,35 @@ Class MainWindow
         Next
     End Sub
 
-    Public Function SafeName(ByVal strIn As String) As String
-        Try
-            Return Regex.Replace(strIn, "[^\w\.@-]", "", RegexOptions.None, TimeSpan.FromSeconds(1.5))
-        Catch __unusedRegexMatchTimeoutException1__ As RegexMatchTimeoutException
-            Return String.Empty
-        End Try
+    ''' <summary>
+    ''' Function to cleanup strings to remove all characters except (aA-zZ 0-9) (-) and (_).
+    ''' Optional parmas to allow ignoring of whitespace and definition of replacement char.
+    ''' </summary>
+    ''' <param name="input">The string being cleaned up.</param>
+    ''' <param name="ignoreWhiteSpace">If true white space is left in the string.</param>
+    ''' <param name="replacement">Char to replace illegal characters with.</param>
+    ''' <returns>Clean string</returns>
+    Public Function SafeName(input As String, Optional ignoreWhiteSpace As Boolean = False, Optional replacement As Char = "") As String
+        If ignoreWhiteSpace Then
+            Return Regex.Replace(input, "[^a-zA-Z0-9\-_\s]", replacement)
+        Else
+            Return Regex.Replace(input, "[^a-zA-Z0-9\-_]", replacement)
+        End If
+
     End Function
+
+    Private Sub MainWindow_LayoutUpdated(sender As Object, e As EventArgs) Handles Me.LayoutUpdated
+        'Sets max height of server profile containers to ensure no overflow to other menus
+        serverProfilesRow.MaxHeight = Me.Height - 149
+        serverProfilesList.MaxHeight = serverProfilesRow.ActualHeight - 50
+
+        'Moves button to add new server profile as the menu expands
+        Dim newMargin As Thickness = newServerProfileButton.Margin
+        newMargin.Left = menuGrid.ActualWidth - 130
+        newServerProfileButton.Margin = newMargin
+    End Sub
+
+    Private Sub NewServerProfileButton_Click(sender As Object, e As RoutedEventArgs) Handles newServerProfileButton.Click
+        CreateNewServerProfile(InputBox("Enter profile name:", "New Server Profile"))
+    End Sub
 End Class
