@@ -141,9 +141,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="qk7hJEl.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="FAST-main-icon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
