@@ -13,7 +13,14 @@
         TextOptions.TextFormattingMode="Ideal" 
         TextOptions.TextRenderingMode="Auto"        
         Background="{DynamicResource MaterialDesignPaper}"
-        FontFamily="{DynamicResource MaterialDesignFont}" Title="FAST" Icon="FAST-main-icon.ico" WindowStartupLocation="CenterScreen" Height="400" Width="700" MinWidth="700" MinHeight="400">
+        FontFamily="{DynamicResource MaterialDesignFont}" 
+        Title="FAST" 
+        Icon="FAST-main-icon.ico" 
+        WindowStartupLocation="CenterScreen" 
+        Height="400" 
+        Width="700" 
+        MinWidth="700" 
+        MinHeight="400">
 
     <Grid x:Name="mainGrid">
         <Grid.ColumnDefinitions>
@@ -24,16 +31,16 @@
         <Grid x:Name="menuGrid" Grid.Column="0" >
             <StackPanel VerticalAlignment="Top">
                 <Label  Content="Main" Margin="10,10,0,0" FontWeight="Bold" FontStyle="Italic"/>
-                <ListBox HorizontalAlignment="Stretch" Margin="0,0,0,10">
+                <ListBox x:Name="mainMenuItems" HorizontalAlignment="Stretch" Margin="0,0,0,10">
                     <ListBoxItem x:Name="steamUpdaterTabSelect" Content="Steam Updater"/>
                     <ListBoxItem x:Name="serverModsTabSelect" Content="Server Mods"/>
                 </ListBox>
                 
-                <StackPanel>
+                <StackPanel x:Name="serverProfilesPanel">
                     <Rectangle Fill="Black" Height="2"></Rectangle>
-                    <Label Content="Server Profiles" Margin="10,10,0,0" FontWeight="Bold" FontStyle="Italic">
+                    <Label x:Name="serverProfilesLabel" Content="Server Profiles" Margin="10,10,0,0" FontWeight="Bold" FontStyle="Italic">
                     </Label>
-                    <ListBox HorizontalAlignment="Stretch" Margin="0,0,0,10">
+                    <ListBox x:Name="serverProfilesList" HorizontalAlignment="Stretch" Margin="0,0,0,10">
                         <ListBoxItem Content="Default"/>
                     </ListBox>
                 </StackPanel>
@@ -43,7 +50,7 @@
             <StackPanel VerticalAlignment="Bottom">
                 <Rectangle Fill="Black" Height="2"></Rectangle>
                 <Label Content="Other" Margin="10,10,0,0" FontWeight="Bold" FontStyle="Italic" />
-                <ListBox HorizontalAlignment="Stretch" Margin="0,0,0,10">
+                <ListBox x:Name="otherMenuItems" HorizontalAlignment="Stretch" Margin="0,0,0,10">
                     <ListBoxItem x:Name="settingsTabSelect" Content="Settings"/>
                     <ListBoxItem x:Name="toolsTabSelect" Content="Tools"/>
                     <ListBoxItem x:Name="aboutTabSelect" Content="About"/>
