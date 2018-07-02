@@ -1,7 +1,7 @@
 ﻿Imports System.Text.RegularExpressions
 
 Class MainWindow
-    Public Sub CreateNewServerProfile(profileName As String)
+    Private Sub CreateNewServerProfile(profileName As String)
         Dim safeProfileName As String = SafeName(profileName)
 
         Dim newServer As New ListBoxItem With {
@@ -9,7 +9,7 @@ Class MainWindow
             .Name = safeProfileName & "Select"
         }
 
-        serverProfilesList.Items.Add(newServer)
+        ServerProfilesList.Items.Add(newServer)
 
         AddHandler newServer.Selected, AddressOf ServerProfile_Selected
 
@@ -18,14 +18,14 @@ Class MainWindow
             .Content = profileName
             }
 
-        mainContent.Items.Add(newTab)
+        MainContent.Items.Add(newTab)
     End Sub
 
-    Public Sub ServerProfile_Selected(sender As ListBoxItem, e As RoutedEventArgs) Handles steamUpdaterTabSelect.Selected, serverModsTabSelect.Selected, settingsTabSelect.Selected, toolsTabSelect.Selected, aboutTabSelect.Selected
+    Private Sub ServerProfile_Selected(sender As ListBoxItem, e As RoutedEventArgs) Handles SteamUpdaterTabSelect.Selected, ServerModsTabSelect.Selected, SettingsTabSelect.Selected, ToolsTabSelect.Selected, AboutTabSelect.Selected
         Dim menus As New List(Of ListBox) From {
-            mainMenuItems,
-            serverProfilesList,
-            otherMenuItems
+            MainMenuItems,
+            ServerProfilesList,
+            OtherMenuItems
         }
 
         For Each list In menus
@@ -36,9 +36,9 @@ Class MainWindow
             Next
         Next
 
-        For Each item As TabItem In mainContent.Items
+        For Each item As TabItem In MainContent.Items
             If item.Name = sender.Name.Replace("Select", "") Then
-                mainContent.SelectedItem = item
+                MainContent.SelectedItem = item
             End If
         Next
     End Sub
@@ -49,9 +49,9 @@ Class MainWindow
     ''' </summary>
     ''' <param name="input">The string being cleaned up.</param>
     ''' <param name="ignoreWhiteSpace">If true white space is left in the string.</param>
-    ''' <param name="replacement">Char to replace illegal characters with.</param>
+    ''' <param name="replacement"><see langword="Char"/> to replace illegal characters with.</param>
     ''' <returns>Clean string</returns>
-    Public Function SafeName(input As String, Optional ignoreWhiteSpace As Boolean = False, Optional replacement As Char = "") As String
+    Private Shared Function SafeName(input As String, Optional ignoreWhiteSpace As Boolean = False, Optional replacement As Char = "") As String
         If ignoreWhiteSpace Then
             Return Regex.Replace(input, "[^a-zA-Z0-9\-_\s]", replacement)
         Else
@@ -62,8 +62,8 @@ Class MainWindow
 
     Private Sub MainWindow_LayoutUpdated(sender As Object, e As EventArgs) Handles Me.LayoutUpdated
         'Sets max height of server profile containers to ensure no overflow to other menus
-        serverProfilesRow.MaxHeight = Me.Height - 149
-        serverProfilesList.MaxHeight = serverProfilesRow.ActualHeight - 50
+        ServerProfilesRow.MaxHeight = Height - 149
+        ServerProfilesList.MaxHeight = serverProfilesRow.ActualHeight - 50
 
         'Moves button to add new server profile as the menu expands
         Dim newMargin As Thickness = newServerProfileButton.Margin
@@ -93,7 +93,7 @@ Class MainWindow
     End Sub
 
 
-    Public Function SelectFolder()
+    Private Shared Function SelectFolder()
         Dim folderDialog As New Forms.FolderBrowserDialog
 
         If folderDialog.ShowDialog = vbOK Then
