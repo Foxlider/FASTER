@@ -8,7 +8,7 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         TextElement.FontWeight="Regular"
-        TextElement.FontSize="13"
+        TextElement.FontSize="11"
         TextOptions.TextFormattingMode="Ideal" 
         TextOptions.TextRenderingMode="Auto"        
         Background="{DynamicResource MaterialDesignPaper}"
@@ -16,10 +16,10 @@
         Title="FAST" 
         Icon="FAST-main-icon.ico" 
         WindowStartupLocation="CenterScreen" 
-        Height="432" 
-        Width="710" 
-        MinWidth="710" 
-        MinHeight="432">
+        Height="400" 
+        Width="800" 
+        MinWidth="800" 
+        MinHeight="400">
 
     <Grid x:Name="mainGrid">
         <Grid.ColumnDefinitions>
@@ -32,7 +32,7 @@
             <RowDefinition Height="141"/>
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0">
+        <StackPanel Grid.Row="0" TextElement.FontSize="13">
             <Label  Content="Main" Margin="10,10,0,0" FontWeight="Bold" FontStyle="Italic"/>
             <ListBox x:Name="mainMenuItems" HorizontalAlignment="Stretch" Margin="0,0,0,10">
                 <ListBoxItem x:Name="steamUpdaterTabSelect" Content="Steam Updater"/>
@@ -40,11 +40,11 @@
             </ListBox>
         </StackPanel>
 
-        <StackPanel Grid.Row="1">
+        <StackPanel Grid.Row="1" TextElement.FontSize="13">
             <Rectangle Fill="Black" Height="2"></Rectangle>
             <StackPanel Orientation="Horizontal">
                 <Label x:Name="serverProfilesLabel" Content="Server Profiles" Margin="10,10,0,0" FontWeight="Bold" FontStyle="Italic"/>
-                <Button x:Name="newServerProfileButton" Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}" ToolTip="MaterialDesignFloatingActionMiniAccentButton" Height="15" Width="15" Margin="20,0,0,-10">
+                <Button x:Name="newServerProfileButton" Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}" Height="15" Width="15" Margin="20,0,0,-10">
                     <materialDesign:PackIcon Kind="Plus" Height="10" Width="10" />
                 </Button>
             </StackPanel>
@@ -54,7 +54,7 @@
             </ListBox>
         </StackPanel>
 
-        <StackPanel Grid.Row="2">
+        <StackPanel Grid.Row="2" TextElement.FontSize="13">
             <Rectangle Fill="Black" Height="2"></Rectangle>
             <Label Content="Other" Margin="10,10,0,0" FontWeight="Bold" FontStyle="Italic" />
             <ListBox x:Name="otherMenuItems" HorizontalAlignment="Stretch" Margin="0,0,0,10">
@@ -64,7 +64,7 @@
             </ListBox>
         </StackPanel>
 
-        <TabControl Grid.Column="1" Grid.RowSpan="3" x:Name="mainContent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,-2,0,0" Background="{x:Null}" BorderBrush="{x:Null}">
+        <TabControl Grid.Column="1" Grid.RowSpan="3" x:Name="mainContent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="-3,-5,-3,-3" Background="White" BorderBrush="{x:Null}" Foreground="{x:Null}">
             <TabControl.ItemContainerStyle>
                 <Style TargetType="{x:Type TabItem}">
                     <Setter Property="Visibility" Value="Collapsed"/>
@@ -72,7 +72,57 @@
             </TabControl.ItemContainerStyle>
 
             <TabItem x:Name="steamUpdaterTab" Header="TabItem">
-                
+                <Grid VerticalAlignment="Stretch" >
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="5*"/>
+                        <ColumnDefinition Width="8*"/>
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition x:Name="a" Height="*"/>
+                        <RowDefinition x:Name="b" Height="52"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel x:Name="steamGroup" Grid.Column="0">
+                        <GroupBox Header="SteamCMD Settings" FontWeight="Bold" Style="{DynamicResource MaterialDesignGroupBox}" Margin="10,10,10,0" materialDesign:ShadowAssist.ShadowDepth="Depth2" BorderThickness="0" >
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBox x:Name="steamDirBox"  materialDesign:HintAssist.Hint="Directory" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Margin="0,0,0,5" />
+                                    <Button x:Name="steamDirButton" Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}" Height="20" Width="20" Margin="10,0,0,0">
+                                        <materialDesign:PackIcon Kind="FolderOpen" Height="10" Width="10" />
+                                    </Button>
+                                </StackPanel>
+
+                                <TextBox materialDesign:HintAssist.Hint="User Name" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Margin="0,0,0,5"/>
+                                <PasswordBox x:Name="steamPassBox" materialDesign:HintAssist.Hint="Password" Style="{StaticResource MaterialDesignFloatingHintPasswordBox}" Margin="0,0,0,5"/>
+                            </StackPanel>
+                        </GroupBox>
+                        <GroupBox Header="Arma Server Settings" FontWeight="Bold" Style="{DynamicResource MaterialDesignGroupBox}" Margin="10,10,10,0" materialDesign:ShadowAssist.ShadowDepth="Depth2" BorderThickness="0" >
+                            <StackPanel>
+
+                                <ComboBox materialDesign:HintAssist.Hint="Version" Style="{StaticResource MaterialDesignFloatingHintComboBox}">
+                                    <ComboBoxItem>Stable</ComboBoxItem>
+                                    <ComboBoxItem>Development</ComboBoxItem>
+                                </ComboBox>
+
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBox x:Name="serverDirBox" materialDesign:HintAssist.Hint="Directory" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Margin="0,0,0,5" />
+                                    <Button x:Name="serverDirButton" Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}" ToolTip="MaterialDesignFloatingActionMiniAccentButton" Height="20" Width="20" Margin="10,0,0,0">
+                                        <materialDesign:PackIcon Kind="FolderOpen" Height="10" Width="10" />
+                                    </Button>
+                                </StackPanel>
+
+                            </StackPanel>
+                        </GroupBox>
+                    </StackPanel>
+
+                    <Button x:Name="steamUpdateButton" Style="{StaticResource MaterialDesignRaisedAccentButton}" Grid.Column="0" Grid.Row="1" Content="Update" Margin="10,10,10,10"/>
+
+                    <RichTextBox x:Name="steamOutputBox" Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="2" IsReadOnly="True" Background="LightGray" Margin="10,10,10,0"/>
+                    <ProgressBar x:Name="steamProgressBar" Grid.Column="1" Grid.Row="1" Margin="10,10,10,10"/>
+                    <Button x:Name="steamCancelButton" Style="{StaticResource MaterialDesignRaisedAccentButton}" Grid.Column="2" Grid.Row="1" Content="Cancel" Margin="0,10,10,10"/>
+
+                </Grid>
             </TabItem>
 
             <TabItem x:Name="serverModsTab" Header="TabItem">
@@ -80,15 +130,15 @@
             </TabItem>
 
             <TabItem x:Name="settingsTab" Header="TabItem">
-                
+
             </TabItem>
 
             <TabItem x:Name="toolsTab" Header="TabItem">
-                
+
             </TabItem>
 
             <TabItem x:Name="aboutTab" Header="TabItem">
-                
+
             </TabItem>
         </TabControl>
 

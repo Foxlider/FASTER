@@ -69,9 +69,38 @@ Class MainWindow
         Dim newMargin As Thickness = newServerProfileButton.Margin
         newMargin.Left = menuColumn.ActualWidth - 130
         newServerProfileButton.Margin = newMargin
+
+        steamProgressBar.Height = steamCancelButton.ActualHeight
+
+        steamDirBox.Width = steamGroup.ActualWidth - 70
+        serverDirBox.Width = steamGroup.ActualWidth - 70
     End Sub
 
     Private Sub NewServerProfileButton_Click(sender As Object, e As RoutedEventArgs) Handles newServerProfileButton.Click
         CreateNewServerProfile(InputBox("Enter profile name:", "New Server Profile"))
     End Sub
+
+    Private Sub DirButton_Click(sender As Object, e As RoutedEventArgs) Handles steamDirButton.Click, serverDirButton.Click
+        Dim path As String = SelectFolder()
+
+        If path IsNot Nothing Then
+            If sender Is steamDirButton Then
+                steamDirBox.Text = path
+            ElseIf sender Is serverDirButton Then
+                serverDirBox.Text = path
+            End If
+        End If
+    End Sub
+
+
+    Public Function SelectFolder()
+        Dim folderDialog As New Forms.FolderBrowserDialog
+
+        If folderDialog.ShowDialog = vbOK Then
+            Return folderDialog.SelectedPath
+        Else
+            Return Nothing
+        End If
+    End Function
+
 End Class
