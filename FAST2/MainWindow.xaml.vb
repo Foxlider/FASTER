@@ -45,7 +45,7 @@ Class MainWindow
 
     ''' <summary>
     ''' Function to cleanup strings to remove all characters except (aA-zZ 0-9) (-) and (_).
-    ''' Optional parmas to allow ignoring of whitespace and definition of replacement char.
+    ''' Optional parameters to allow ignoring of whitespace and definition of replacement char.
     ''' </summary>
     ''' <param name="input">The string being cleaned up.</param>
     ''' <param name="ignoreWhiteSpace">If true white space is left in the string.</param>
@@ -67,7 +67,7 @@ Class MainWindow
 
         'Moves button to add new server profile as the menu expands
         Dim newMargin As Thickness = newServerProfileButton.Margin
-        newMargin.Left = menuGrid.ActualWidth - 130
+        newMargin.Left = menuColumn.ActualWidth - 130
         newServerProfileButton.Margin = newMargin
     End Sub
 

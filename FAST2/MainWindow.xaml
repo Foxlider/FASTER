@@ -17,96 +17,80 @@
         Icon="FAST-main-icon.ico" 
         WindowStartupLocation="CenterScreen" 
         Height="432" 
-        Width="700" 
-        MinWidth="700" 
+        Width="710" 
+        MinWidth="710" 
         MinHeight="432">
 
     <Grid x:Name="mainGrid">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*" MinWidth="150" MaxWidth="200"/>
-            <ColumnDefinition Width="4*" MinWidth="550"/>
+            <ColumnDefinition x:Name="menuColumn" Width="1*" MinWidth="150" MaxWidth="200"/>
+            <ColumnDefinition Width="4*" MinWidth="540"/>
         </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="108"/>
+            <RowDefinition x:Name="serverProfilesRow"/>
+            <RowDefinition Height="141"/>
+        </Grid.RowDefinitions>
 
-        <Grid x:Name="menuGrid" Grid.Column="0" >
-            <Grid.RowDefinitions>
-                <RowDefinition Height="108"/>
-                <RowDefinition x:Name="serverProfilesRow"/>
-                <RowDefinition Height="141"/>
-            </Grid.RowDefinitions>
-            
-            <StackPanel Grid.Row="0">
-                <Label  Content="Main" Margin="10,10,0,0" FontWeight="Bold" FontStyle="Italic"/>
-                <ListBox x:Name="mainMenuItems" HorizontalAlignment="Stretch" Margin="0,0,0,10">
-                    <ListBoxItem x:Name="steamUpdaterTabSelect" Content="Steam Updater"/>
-                    <ListBoxItem x:Name="serverModsTabSelect" Content="Server Mods"/>
-                </ListBox>
-            </StackPanel>
-            
-            
-            <StackPanel Grid.Row="1">
-                <Rectangle Fill="Black" Height="2"></Rectangle>
-                <StackPanel Orientation="Horizontal">
-                    <Label x:Name="serverProfilesLabel" Content="Server Profiles" Margin="10,10,0,0" FontWeight="Bold" FontStyle="Italic"/>
-                    <Button x:Name="newServerProfileButton" Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}" ToolTip="MaterialDesignFloatingActionMiniAccentButton" Height="15" Width="15" Margin="20,0,0,-10">
-                        <materialDesign:PackIcon Kind="Plus" Height="10" Width="10" />
-                    </Button>
-                </StackPanel>
+        <StackPanel Grid.Row="0">
+            <Label  Content="Main" Margin="10,10,0,0" FontWeight="Bold" FontStyle="Italic"/>
+            <ListBox x:Name="mainMenuItems" HorizontalAlignment="Stretch" Margin="0,0,0,10">
+                <ListBoxItem x:Name="steamUpdaterTabSelect" Content="Steam Updater"/>
+                <ListBoxItem x:Name="serverModsTabSelect" Content="Server Mods"/>
+            </ListBox>
+        </StackPanel>
 
-                <ListBox x:Name="serverProfilesList" HorizontalAlignment="Stretch" Margin="0,0,0,10">
-                    <ListBoxItem Content="Default"/>
-                </ListBox>
+        <StackPanel Grid.Row="1">
+            <Rectangle Fill="Black" Height="2"></Rectangle>
+            <StackPanel Orientation="Horizontal">
+                <Label x:Name="serverProfilesLabel" Content="Server Profiles" Margin="10,10,0,0" FontWeight="Bold" FontStyle="Italic"/>
+                <Button x:Name="newServerProfileButton" Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}" ToolTip="MaterialDesignFloatingActionMiniAccentButton" Height="15" Width="15" Margin="20,0,0,-10">
+                    <materialDesign:PackIcon Kind="Plus" Height="10" Width="10" />
+                </Button>
             </StackPanel>
 
-            <StackPanel Grid.Row="2">
-                <Rectangle Fill="Black" Height="2"></Rectangle>
-                <Label Content="Other" Margin="10,10,0,0" FontWeight="Bold" FontStyle="Italic" />
-                <ListBox x:Name="otherMenuItems" HorizontalAlignment="Stretch" Margin="0,0,0,10">
-                    <ListBoxItem x:Name="settingsTabSelect" Content="Settings"/>
-                    <ListBoxItem x:Name="toolsTabSelect" Content="Tools"/>
-                    <ListBoxItem x:Name="aboutTabSelect" Content="About"/>
-                </ListBox>
-            </StackPanel>
-        </Grid>
+            <ListBox x:Name="serverProfilesList" HorizontalAlignment="Stretch" Margin="0,0,0,10">
+                <ListBoxItem Content="Default"/>
+            </ListBox>
+        </StackPanel>
 
-        <Grid x:Name="contentGrid" Grid.Column="1">
-            <TabControl x:Name="mainContent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="{x:Null}" BorderBrush="{x:Null}" Margin="-3,-5,-3,-3">
-                <TabControl.ItemContainerStyle>
-                    <Style TargetType="{x:Type TabItem}">
-                        <Setter Property="Visibility" Value="Collapsed"/>
-                    </Style>
-                </TabControl.ItemContainerStyle>
+        <StackPanel Grid.Row="2">
+            <Rectangle Fill="Black" Height="2"></Rectangle>
+            <Label Content="Other" Margin="10,10,0,0" FontWeight="Bold" FontStyle="Italic" />
+            <ListBox x:Name="otherMenuItems" HorizontalAlignment="Stretch" Margin="0,0,0,10">
+                <ListBoxItem x:Name="settingsTabSelect" Content="Settings"/>
+                <ListBoxItem x:Name="toolsTabSelect" Content="Tools"/>
+                <ListBoxItem x:Name="aboutTabSelect" Content="About"/>
+            </ListBox>
+        </StackPanel>
+
+        <TabControl Grid.Column="1" Grid.RowSpan="3" x:Name="mainContent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,-2,0,0" Background="{x:Null}" BorderBrush="{x:Null}">
+            <TabControl.ItemContainerStyle>
+                <Style TargetType="{x:Type TabItem}">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                </Style>
+            </TabControl.ItemContainerStyle>
+
+            <TabItem x:Name="steamUpdaterTab" Header="TabItem">
                 
-                <TabItem x:Name="steamUpdaterTab" Header="TabItem">
-                    <Grid Background="LightGray">
-                        <Label Content="steam"/>
-                    </Grid>                    
-                </TabItem>
+            </TabItem>
+
+            <TabItem x:Name="serverModsTab" Header="TabItem">
                 
-                <TabItem x:Name="serverModsTab" Header="TabItem">
-                    <Grid Background="LightGray">
-                        <Label Content="mods"/>
-                    </Grid>
-                </TabItem>
+            </TabItem>
+
+            <TabItem x:Name="settingsTab" Header="TabItem">
                 
-                <TabItem x:Name="settingsTab" Header="TabItem">
-                    <Grid Background="LightGray">
-                        <Label Content="settings"/>
-                    </Grid>
-                </TabItem>
+            </TabItem>
 
-                <TabItem x:Name="toolsTab" Header="TabItem">
-                    <Grid Background="LightGray">
-                        <Label Content="tools"/>
-                    </Grid>
-                </TabItem>
+            <TabItem x:Name="toolsTab" Header="TabItem">
+                
+            </TabItem>
 
-                <TabItem x:Name="aboutTab" Header="TabItem">
-                    <Grid Background="LightGray">
-                        <Label Content="about"/>
-                    </Grid>
-                </TabItem>
-            </TabControl>
+            <TabItem x:Name="aboutTab" Header="TabItem">
+                
+            </TabItem>
+        </TabControl>
 
-        </Grid>
     </Grid>
 </Window>
