@@ -1,6 +1,8 @@
 ﻿Imports System.Text.RegularExpressions
 
 Class MainWindow
+
+
     Private Sub CreateNewServerProfile(profileName As String)
         Dim safeProfileName As String = SafeName(profileName)
 
@@ -20,6 +22,7 @@ Class MainWindow
 
         MainContent.Items.Add(newTab)
     End Sub
+
 
     Private Sub ServerProfile_Selected(sender As ListBoxItem, e As RoutedEventArgs) Handles SteamUpdaterTabSelect.Selected, ServerModsTabSelect.Selected, SettingsTabSelect.Selected, ToolsTabSelect.Selected, AboutTabSelect.Selected
         Dim menus As New List(Of ListBox) From {
@@ -43,15 +46,8 @@ Class MainWindow
         Next
     End Sub
 
-    ''' <summary>
-    ''' Function to cleanup strings to remove all characters except (aA-zZ 0-9) (-) and (_).
-    ''' Optional parameters to allow ignoring of whitespace and definition of replacement char.
-    ''' </summary>
-    ''' <param name="input">The string being cleaned up.</param>
-    ''' <param name="ignoreWhiteSpace">If true white space is left in the string.</param>
-    ''' <param name="replacement"><see langword="Char"/> to replace illegal characters with.</param>
-    ''' <returns>Clean string</returns>
-    Private Shared Function SafeName(input As String, Optional ignoreWhiteSpace As Boolean = False, Optional replacement As Char = "") As String
+
+    Private Shared Function SafeName(input As String, Optional ignoreWhiteSpace As Boolean = False, Optional replacement As Char = "_") As String
         If ignoreWhiteSpace Then
             Return Regex.Replace(input, "[^a-zA-Z0-9\-_\s]", replacement)
         Else
@@ -60,34 +56,37 @@ Class MainWindow
 
     End Function
 
+
     Private Sub MainWindow_LayoutUpdated(sender As Object, e As EventArgs) Handles Me.LayoutUpdated
-        'Sets max height of server profile containers to ensure no overflow to other menus
-        ServerProfilesRow.MaxHeight = Height - 149
-        ServerProfilesList.MaxHeight = serverProfilesRow.ActualHeight - 50
+        If Not WindowState = WindowState.Minimized Then
+            'Sets max height of server profile containers to ensure no overflow to other menus
+            ServerProfilesRow.MaxHeight = Height - 149
+            ServerProfilesList.MaxHeight = ServerProfilesRow.ActualHeight - 50
 
-        'Moves button to add new server profile as the menu expands
-        Dim newMargin As Thickness = newServerProfileButton.Margin
-        newMargin.Left = menuColumn.ActualWidth - 130
-        newServerProfileButton.Margin = newMargin
+            'Moves button to add new server profile as the menu expands
+            Dim newMargin As Thickness = NewServerProfileButton.Margin
+            newMargin.Left = MenuColumn.ActualWidth - 130
+            NewServerProfileButton.Margin = newMargin
 
-        steamProgressBar.Height = steamCancelButton.ActualHeight
-
-        steamDirBox.Width = steamGroup.ActualWidth - 70
-        serverDirBox.Width = steamGroup.ActualWidth - 70
+            'Moves folder select buttons as the menu expands
+            SteamDirBox.Width = SteamGroup.ActualWidth - 70
+            ServerDirBox.Width = SteamGroup.ActualWidth - 70
+        End If
     End Sub
 
-    Private Sub NewServerProfileButton_Click(sender As Object, e As RoutedEventArgs) Handles newServerProfileButton.Click
+
+    Private Sub NewServerProfileButton_Click(sender As Object, e As RoutedEventArgs) Handles NewServerProfileButton.Click
         CreateNewServerProfile(InputBox("Enter profile name:", "New Server Profile"))
     End Sub
 
-    Private Sub DirButton_Click(sender As Object, e As RoutedEventArgs) Handles steamDirButton.Click, serverDirButton.Click
+    Private Sub DirButton_Click(sender As Object, e As RoutedEventArgs) Handles SteamDirButton.Click, ServerDirButton.Click
         Dim path As String = SelectFolder()
 
         If path IsNot Nothing Then
-            If sender Is steamDirButton Then
-                steamDirBox.Text = path
-            ElseIf sender Is serverDirButton Then
-                serverDirBox.Text = path
+            If sender Is SteamDirButton Then
+                SteamDirBox.Text = path
+            ElseIf sender Is ServerDirButton Then
+                ServerDirBox.Text = path
             End If
         End If
     End Sub
@@ -103,4 +102,30 @@ Class MainWindow
         End If
     End Function
 
+    Private Sub WindowCloseButton_MouseEnter(sender As Object, e As MouseEventArgs) Handles WindowCloseButton.MouseEnter
+        Dim converter = New System.Windows.Media.BrushConverter()
+        Dim brush = CType(converter.ConvertFromString("#D72C2C"), Brush)
+
+        WindowCloseButton.Background = brush
+    End Sub
+
+    Private Sub WindowCloseButton_MouseLeave(sender As Object, e As MouseEventArgs) Handles WindowCloseButton.MouseLeave
+        Dim converter = New System.Windows.Media.BrushConverter()
+        Dim brush = CType(converter.ConvertFromString("#FF303030"), Brush)
+
+        WindowCloseButton.Background = brush
+    End Sub
+
+    Private Sub WindowCloseButton_Selected(sender As Object, e As RoutedEventArgs) Handles WindowCloseButton.Selected
+        Close()
+    End Sub
+
+    Private Sub WindowMinimizeButton_Selected(sender As Object, e As RoutedEventArgs) Handles WindowMinimizeButton.Selected
+        WindowMinimizeButton.IsSelected = False
+        WindowState = WindowState.Minimized
+    End Sub
+
+    Private Sub WindowDragBar_MouseDown(sender As Object, e As MouseButtonEventArgs) Handles WindowDragBar.MouseDown
+        DragMove()
+    End Sub
 End Class
