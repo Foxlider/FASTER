@@ -6,30 +6,33 @@
     mc:Ignorable="d"
 
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-    TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+    TextElement.Foreground="{DynamicResource MaterialDesignBody}"    
+    Background="{DynamicResource MaterialDesignPaper}"
+    FontFamily="{DynamicResource MaterialDesignFont}" 
+
     TextElement.FontWeight="Regular"
     TextElement.FontSize="11"
     TextOptions.TextFormattingMode="Ideal" 
-    TextOptions.TextRenderingMode="Auto"        
-    Background="{DynamicResource MaterialDesignPaper}"
-    FontFamily="{DynamicResource MaterialDesignFont}" 
+    TextOptions.TextRenderingMode="Auto" 
+
     Title="FAST" 
     Icon="FAST-main-icon.ico" 
-    WindowStartupLocation="CenterScreen" 
+    
     Height="430" 
     Width="800" 
     MinWidth="800" 
     MinHeight="430"
+
+    WindowStartupLocation="CenterScreen" 
     ResizeMode="CanResizeWithGrip" 
     WindowStyle="None">
 
     <WindowChrome.WindowChrome>
-        <WindowChrome 
-            CaptionHeight="0"
-            ResizeBorderThickness="5" />
+        <WindowChrome CaptionHeight="0"/>
     </WindowChrome.WindowChrome>
 
     <Grid x:Name="MainGrid">
+        <!--Grid Definitions-->
         <Grid.ColumnDefinitions>
             <ColumnDefinition x:Name="MenuColumn" Width="1*" MinWidth="150" MaxWidth="200"/>
             <ColumnDefinition x:Name="ContentColumn" Width="4*" MinWidth="540"/>
@@ -37,11 +40,24 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
             <RowDefinition Height="108"/>
-            <RowDefinition x:Name="ServerProfilesRow"/>
+            <RowDefinition Height="*"  x:Name="ServerProfilesRow"/>
             <RowDefinition Height="141"/>
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="1" TextElement.FontSize="13">
+        <!--Custom Window Bar Elements-->
+        <Rectangle x:Name="WindowDragBar" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,80,3" Fill="#FF303030"/>
+        <Image Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" Margin="5,0,0,0" Height="20" Width="20" Source="FAST-main-icon.ico"/>
+        <ListBox Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right" SelectionMode="Extended" Style="{StaticResource MaterialDesignToolToggleFlatListBox}" Margin="0,0,-1,0" Width="84">
+            <ListBoxItem x:Name="WindowMinimizeButton" Background="#FF303030">
+                <materialDesign:PackIcon Kind="WindowMinimize" Width="15" Height="16"/>
+            </ListBoxItem>
+            <ListBoxItem x:Name="WindowCloseButton" Background="#FF303030">
+                <materialDesign:PackIcon Kind="WindowClose" Width="15" Height="16"/>
+            </ListBoxItem>
+        </ListBox>
+
+        <!--Menu Column - Main Items-->
+        <StackPanel Grid.Column="0" Grid.Row="1" TextElement.FontSize="13">
             <Label  Content="Main" Margin="10,10,0,0" FontWeight="Bold" FontStyle="Italic"/>
             <ListBox x:Name="MainMenuItems" HorizontalAlignment="Stretch" Margin="0,0,0,10">
                 <ListBoxItem x:Name="SteamUpdaterTabSelect" Content="Steam Updater"/>
@@ -49,6 +65,7 @@
             </ListBox>
         </StackPanel>
 
+        <!--Menu Column - Server Profiles-->
         <StackPanel Grid.Column="0" Grid.Row="2" TextElement.FontSize="13">
             <Rectangle Fill="Black" Height="2"></Rectangle>
             <StackPanel Orientation="Horizontal">
@@ -63,6 +80,7 @@
             </ListBox>
         </StackPanel>
 
+        <!--Menu Column - Other Items-->
         <StackPanel Grid.Column="0" Grid.Row="3" TextElement.FontSize="13">
             <Rectangle Fill="Black" Height="2"></Rectangle>
             <Label Content="Other" Margin="10,10,0,0" FontWeight="Bold" FontStyle="Italic" />
@@ -73,13 +91,16 @@
             </ListBox>
         </StackPanel>
 
+        <!--Content Column - Main Content-->
         <TabControl Grid.Row="1" Grid.RowSpan="3" x:Name="MainContent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,-5,-2,-2" Background="White" BorderBrush="{x:Null}" Foreground="{x:Null}" Grid.Column="1">
+            <!--Removes Visible Tab Controls-->
             <TabControl.ItemContainerStyle>
                 <Style TargetType="{x:Type TabItem}">
                     <Setter Property="Visibility" Value="Collapsed"/>
                 </Style>
             </TabControl.ItemContainerStyle>
 
+            <!--Main Content - Steam Updater Tab-->
             <TabItem x:Name="SteamUpdaterTab" Header="TabItem">
                 <Grid VerticalAlignment="Stretch" >
                     <Grid.ColumnDefinitions>
@@ -134,34 +155,25 @@
                 </Grid>
             </TabItem>
 
+            <!--Main Content - Server Mods Tab-->
             <TabItem x:Name="ServerModsTab" Header="TabItem">
 
             </TabItem>
 
+            <!--Main Content - Settings Tab-->
             <TabItem x:Name="SettingsTab" Header="TabItem">
 
             </TabItem>
 
+            <!--Main Content - Tools Tab-->
             <TabItem x:Name="ToolsTab" Header="TabItem">
 
             </TabItem>
 
+            <!--Main Content - About Tab-->
             <TabItem x:Name="AboutTab" Header="TabItem">
 
             </TabItem>
         </TabControl>
-
-        <ListBox Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right" SelectionMode="Extended" Style="{StaticResource MaterialDesignToolToggleFlatListBox}" Margin="0,0,-1,0" Width="84">
-            <ListBoxItem x:Name="WindowMinimizeButton" Background="#FF303030">
-                <materialDesign:PackIcon Kind="WindowMinimize" Width="15" Height="16"/>
-            </ListBoxItem>
-            <ListBoxItem x:Name="WindowCloseButton" Background="#FF303030">
-                <materialDesign:PackIcon Kind="WindowClose" Width="15" Height="16"/>
-            </ListBoxItem>
-        </ListBox>
-
-        <Rectangle x:Name="WindowDragBar" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,80,3" Fill="#FF303030"/>
-        <Image Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" Margin="5,0,0,0" Height="20" Width="20" Source="FAST-main-icon.ico"/>
-      
     </Grid>
 </Window>
