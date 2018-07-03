@@ -21,8 +21,13 @@
     MinWidth="800" 
     MinHeight="430"
     ResizeMode="CanResizeWithGrip" 
-    WindowStyle="None"
-    AllowsTransparency="True">
+    WindowStyle="None">
+
+    <WindowChrome.WindowChrome>
+        <WindowChrome 
+            CaptionHeight="0"
+            ResizeBorderThickness="5" />
+    </WindowChrome.WindowChrome>
 
     <Grid x:Name="MainGrid">
         <Grid.ColumnDefinitions>
