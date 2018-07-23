@@ -20,7 +20,7 @@ Class MainWindow
             .Name = safeProfileName & "Select"
         }
 
-        ServerProfilesList.Items.Add(newServer)
+        IServerProfilesList.Items.Add(newServer)
 
         AddHandler newServer.Selected, AddressOf MenuItemm_Selected
 
@@ -29,7 +29,7 @@ Class MainWindow
             .Content = profileName
         }
 
-        MainContent.Items.Add(newTab)
+        IMainContent.Items.Add(newTab)
     End Sub
 
     'Opens Folder select dialog and returns selected path
@@ -44,11 +44,11 @@ Class MainWindow
     End Function
 
     'Handles when any menu item is selected
-    Private Sub MenuItemm_Selected(sender As ListBoxItem, e As RoutedEventArgs) Handles SteamUpdaterTabSelect.Selected, ServerModsTabSelect.Selected, SettingsTabSelect.Selected, ToolsTabSelect.Selected, AboutTabSelect.Selected
+    Private Sub MenuItemm_Selected(sender As ListBoxItem, e As RoutedEventArgs) Handles ISteamUpdaterTabSelect.Selected, ISteamModsTabSelect.Selected, ISettingsTabSelect.Selected, IToolsTabSelect.Selected, IAboutTabSelect.Selected
         Dim menus As New List(Of ListBox) From {
-            MainMenuItems,
-            ServerProfilesList,
-            OtherMenuItems
+            IMainMenuItems,
+            IServerProfilesList,
+            IOtherMenuItems
         }
 
         For Each list In menus
@@ -59,9 +59,9 @@ Class MainWindow
             Next
         Next
 
-        For Each item As TabItem In MainContent.Items
+        For Each item As TabItem In IMainContent.Items
             If item.Name = sender.Name.Replace("Select", "") Then
-                MainContent.SelectedItem = item
+                IMainContent.SelectedItem = item
             End If
         Next
     End Sub
@@ -70,59 +70,66 @@ Class MainWindow
     Private Sub MainWindow_LayoutUpdated(sender As Object, e As EventArgs) Handles Me.LayoutUpdated
         If Not WindowState = WindowState.Minimized Then
             'Sets max height of server profile containers to ensure no overflow to other menus
-            ServerProfilesRow.MaxHeight = Height - 149
-            ServerProfilesList.MaxHeight = ServerProfilesRow.ActualHeight - 50
+            IServerProfilesRow.MaxHeight = Height - 149
+            IServerProfilesList.MaxHeight = IServerProfilesRow.ActualHeight - 50
 
             'Moves button to add new server profile as the menu expands
-            Dim newMargin As Thickness = NewServerProfileButton.Margin
-            newMargin.Left = MenuColumn.ActualWidth - 130
-            NewServerProfileButton.Margin = newMargin
+            Dim newMargin As Thickness = INewServerProfileButton.Margin
+            newMargin.Left = IMenuColumn.ActualWidth - 130
+            INewServerProfileButton.Margin = newMargin
 
             'Moves folder select buttons as the menu expands
-            SteamDirBox.Width = SteamGroup.ActualWidth - 70
-            ServerDirBox.Width = SteamGroup.ActualWidth - 70
+            ISteamDirBox.Width = ISteamGroup.ActualWidth - 70
+            IServerDirBox.Width = ISteamGroup.ActualWidth - 70
         End If
     End Sub
 
-    Private Sub NewServerProfileButton_Click(sender As Object, e As RoutedEventArgs) Handles NewServerProfileButton.Click
-        CreateNewServerProfile(InputBox("Enter profile name:", "New Server Profile"))
+    Private Sub NewServerProfileButton_Click(sender As Object, e As RoutedEventArgs) Handles INewServerProfileButton.Click
+        Dim profileName As String = InputBox("Enter profile name:", "New Server Profile")
+
+        If profileName = Nothing Then
+            MsgBox("Please Enter A Value")
+        Else
+            CreateNewServerProfile(profileName)
+        End If
+
     End Sub
 
-    Private Sub WindowCloseButton_MouseEnter(sender As Object, e As MouseEventArgs) Handles WindowCloseButton.MouseEnter
+    Private Sub WindowCloseButton_MouseEnter(sender As Object, e As MouseEventArgs) Handles IWindowCloseButton.MouseEnter
         Dim converter = New BrushConverter()
         Dim brush = CType(converter.ConvertFromString("#D72C2C"), Brush)
 
-        WindowCloseButton.Background = brush
+        IWindowCloseButton.Background = brush
     End Sub
 
-    Private Sub WindowCloseButton_MouseLeave(sender As Object, e As MouseEventArgs) Handles WindowCloseButton.MouseLeave
+    Private Sub WindowCloseButton_MouseLeave(sender As Object, e As MouseEventArgs) Handles IWindowCloseButton.MouseLeave
         Dim converter = New BrushConverter()
         Dim brush = CType(converter.ConvertFromString("#FF303030"), Brush)
 
-        WindowCloseButton.Background = brush
+        IWindowCloseButton.Background = brush
     End Sub
 
-    Private Sub WindowCloseButton_Selected(sender As Object, e As RoutedEventArgs) Handles WindowCloseButton.Selected
+    Private Sub WindowCloseButton_Selected(sender As Object, e As RoutedEventArgs) Handles IWindowCloseButton.Selected
         Close()
     End Sub
 
-    Private Sub WindowMinimizeButton_Selected(sender As Object, e As RoutedEventArgs) Handles WindowMinimizeButton.Selected
-        WindowMinimizeButton.IsSelected = False
+    Private Sub WindowMinimizeButton_Selected(sender As Object, e As RoutedEventArgs) Handles IWindowMinimizeButton.Selected
+        IWindowMinimizeButton.IsSelected = False
         WindowState = WindowState.Minimized
     End Sub
 
-    Private Sub WindowDragBar_MouseDown(sender As Object, e As MouseButtonEventArgs) Handles WindowDragBar.MouseDown
+    Private Sub WindowDragBar_MouseDown(sender As Object, e As MouseButtonEventArgs) Handles IWindowDragBar.MouseLeftButtonDown
         DragMove()
     End Sub
 
-    Private Sub DirButton_Click(sender As Object, e As RoutedEventArgs) Handles SteamDirButton.Click, ServerDirButton.Click
+    Private Sub DirButton_Click(sender As Object, e As RoutedEventArgs) Handles ISteamDirButton.Click, IServerDirButton.Click
         Dim path As String = SelectFolder()
 
         If path IsNot Nothing Then
-            If sender Is SteamDirButton Then
-                SteamDirBox.Text = path
-            ElseIf sender Is ServerDirButton Then
-                ServerDirBox.Text = path
+            If sender Is ISteamDirButton Then
+                ISteamDirBox.Text = path
+            ElseIf sender Is IServerDirButton Then
+                IServerDirBox.Text = path
             End If
         End If
     End Sub

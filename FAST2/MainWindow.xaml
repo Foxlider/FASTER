@@ -23,35 +23,34 @@
     MinWidth="800" 
     MinHeight="430"
 
-    WindowStartupLocation="CenterScreen" 
-    ResizeMode="CanResizeWithGrip" 
+    WindowStartupLocation="CenterScreen"
     WindowStyle="None">
 
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="0"/>
     </WindowChrome.WindowChrome>
 
-    <Grid x:Name="MainGrid">
+    <Grid Name="IMainGrid">
         <!--Grid Definitions-->
         <Grid.ColumnDefinitions>
-            <ColumnDefinition x:Name="MenuColumn" Width="1*" MinWidth="150" MaxWidth="200"/>
-            <ColumnDefinition x:Name="ContentColumn" Width="4*" MinWidth="540"/>
+            <ColumnDefinition Name="IMenuColumn" Width="1*" MinWidth="150" MaxWidth="200"/>
+            <ColumnDefinition Name="IContentColumn" Width="4*" MinWidth="540"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
             <RowDefinition Height="108"/>
-            <RowDefinition Height="*"  x:Name="ServerProfilesRow"/>
+            <RowDefinition Height="*"  Name="IServerProfilesRow"/>
             <RowDefinition Height="141"/>
         </Grid.RowDefinitions>
 
         <!--Custom Window Bar Elements-->
-        <Rectangle x:Name="WindowDragBar" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,80,3" Fill="#FF303030"/>
+        <Rectangle Name="IWindowDragBar" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,80,3" Fill="{DynamicResource MaterialDesignPaper}"/>
         <Image Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" Margin="5,0,0,0" Height="20" Width="20" Source="FAST-main-icon.ico"/>
         <ListBox Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right" SelectionMode="Extended" Style="{StaticResource MaterialDesignToolToggleFlatListBox}" Margin="0,0,-1,0" Width="84">
-            <ListBoxItem x:Name="WindowMinimizeButton" Background="#FF303030">
+            <ListBoxItem Name="IWindowMinimizeButton" Background="{DynamicResource MaterialDesignPaper}">
                 <materialDesign:PackIcon Kind="WindowMinimize" Width="15" Height="16"/>
             </ListBoxItem>
-            <ListBoxItem x:Name="WindowCloseButton" Background="#FF303030">
+            <ListBoxItem Name="IWindowCloseButton" Background="{DynamicResource MaterialDesignPaper}">
                 <materialDesign:PackIcon Kind="WindowClose" Width="15" Height="16"/>
             </ListBoxItem>
         </ListBox>
@@ -59,9 +58,9 @@
         <!--Menu Column - Main Items-->
         <StackPanel Grid.Column="0" Grid.Row="1" TextElement.FontSize="13">
             <Label  Content="Main" Margin="10,10,0,0" FontWeight="Bold" FontStyle="Italic"/>
-            <ListBox x:Name="MainMenuItems" HorizontalAlignment="Stretch" Margin="0,0,0,10">
-                <ListBoxItem x:Name="SteamUpdaterTabSelect" Content="Steam Updater"/>
-                <ListBoxItem x:Name="ServerModsTabSelect" Content="Server Mods"/>
+            <ListBox Name="IMainMenuItems" HorizontalAlignment="Stretch" Margin="0,0,0,10">
+                <ListBoxItem Name="ISteamUpdaterTabSelect" Content="Steam Updater"/>
+                <ListBoxItem Name="ISteamModsTabSelect" Content="Steam Mods"/>
             </ListBox>
         </StackPanel>
 
@@ -69,13 +68,13 @@
         <StackPanel Grid.Column="0" Grid.Row="2" TextElement.FontSize="13">
             <Rectangle Fill="Black" Height="2"></Rectangle>
             <StackPanel Orientation="Horizontal">
-                <Label x:Name="ServerProfilesLabel" Content="Server Profiles" Margin="10,10,0,0" FontWeight="Bold" FontStyle="Italic"/>
-                <Button x:Name="NewServerProfileButton" Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}" Height="15" Width="15" Margin="20,0,0,-10">
+                <Label Name="IServerProfilesLabel" Content="Server Profiles" Margin="10,10,0,0" FontWeight="Bold" FontStyle="Italic"/>
+                <Button Name="INewServerProfileButton" Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}" Height="15" Width="15" Margin="20,0,0,-10">
                     <materialDesign:PackIcon Kind="Plus" Height="10" Width="10" />
                 </Button>
             </StackPanel>
 
-            <ListBox x:Name="ServerProfilesList" HorizontalAlignment="Stretch" Margin="0,0,0,10">
+            <ListBox Name="IServerProfilesList" HorizontalAlignment="Stretch" Margin="0,0,0,10">
                 <ListBoxItem Content="Default"/>
             </ListBox>
         </StackPanel>
@@ -84,15 +83,15 @@
         <StackPanel Grid.Column="0" Grid.Row="3" TextElement.FontSize="13">
             <Rectangle Fill="Black" Height="2"></Rectangle>
             <Label Content="Other" Margin="10,10,0,0" FontWeight="Bold" FontStyle="Italic" />
-            <ListBox x:Name="OtherMenuItems" HorizontalAlignment="Stretch" Margin="0,0,0,10">
-                <ListBoxItem x:Name="SettingsTabSelect" Content="Settings"/>
-                <ListBoxItem x:Name="ToolsTabSelect" Content="Tools"/>
-                <ListBoxItem x:Name="AboutTabSelect" Content="About"/>
+            <ListBox Name="IOtherMenuItems" HorizontalAlignment="Stretch" Margin="0,0,0,10">
+                <ListBoxItem Name="ISettingsTabSelect" Content="Settings"/>
+                <ListBoxItem Name="IToolsTabSelect" Content="Tools"/>
+                <ListBoxItem Name="IAboutTabSelect" Content="About"/>
             </ListBox>
         </StackPanel>
 
         <!--Content Column - Main Content-->
-        <TabControl Grid.Row="1" Grid.RowSpan="3" x:Name="MainContent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,-5,-2,-2" Background="White" BorderBrush="{x:Null}" Foreground="{x:Null}" Grid.Column="1">
+        <TabControl Grid.Row="1" Grid.RowSpan="3" Name="IMainContent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,-5,-2,-2" Background="White" BorderBrush="{x:Null}" Foreground="{x:Null}" Grid.Column="1">
             <!--Removes Visible Tab Controls-->
             <TabControl.ItemContainerStyle>
                 <Style TargetType="{x:Type TabItem}">
@@ -101,7 +100,7 @@
             </TabControl.ItemContainerStyle>
 
             <!--Main Content - Steam Updater Tab-->
-            <TabItem x:Name="SteamUpdaterTab" Header="TabItem">
+            <TabItem Name="ISteamUpdaterTab" Header="TabItem">
                 <Grid VerticalAlignment="Stretch" >
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="5*"/>
@@ -113,65 +112,63 @@
                         <RowDefinition Height="52"/>
                     </Grid.RowDefinitions>
 
-                    <StackPanel x:Name="SteamGroup" Grid.Column="0">
+                    <StackPanel Name="ISteamGroup" Grid.Column="0">
                         <GroupBox Header="SteamCMD Settings" FontWeight="Bold" Style="{DynamicResource MaterialDesignGroupBox}" Margin="10,10,10,0" materialDesign:ShadowAssist.ShadowDepth="Depth2" BorderThickness="0" >
                             <StackPanel>
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBox x:Name="SteamDirBox"  materialDesign:HintAssist.Hint="Directory" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Margin="0,0,0,5" />
-                                    <Button x:Name="SteamDirButton" Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}" Height="20" Width="20" Margin="10,0,0,0">
+                                    <TextBox Name="ISteamDirBox"  materialDesign:HintAssist.Hint="Directory" Style="{StaticResource MaterialDesignFloatingHintTextBox}" BorderBrush="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,0,5" />
+                                    <Button Name="ISteamDirButton" Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}" Height="20" Width="20" Margin="10,0,0,0">
                                         <materialDesign:PackIcon Kind="FolderOpen" Height="10" Width="10" />
                                     </Button>
                                 </StackPanel>
 
-                                <TextBox materialDesign:HintAssist.Hint="User Name" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Margin="0,0,0,5"/>
-                                <PasswordBox x:Name="SteamPassBox" materialDesign:HintAssist.Hint="Password" Style="{StaticResource MaterialDesignFloatingHintPasswordBox}" Margin="0,0,0,5"/>
+                                <TextBox materialDesign:HintAssist.Hint="User Name" Style="{StaticResource MaterialDesignFloatingHintTextBox}" BorderBrush="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,0,5"/>
+                                <PasswordBox Name="ISteamPassBox" materialDesign:HintAssist.Hint="Password" Style="{StaticResource MaterialDesignFloatingHintPasswordBox}" BorderBrush="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,0,5"/>
                             </StackPanel>
                         </GroupBox>
                         <GroupBox Header="Arma Server Settings" FontWeight="Bold" Style="{DynamicResource MaterialDesignGroupBox}" Margin="10,10,10,0" materialDesign:ShadowAssist.ShadowDepth="Depth2" BorderThickness="0" >
                             <StackPanel>
-
-                                <ComboBox materialDesign:HintAssist.Hint="Version" Style="{StaticResource MaterialDesignFloatingHintComboBox}">
-                                    <ComboBoxItem>Stable</ComboBoxItem>
-                                    <ComboBoxItem>Development</ComboBoxItem>
-                                </ComboBox>
-
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBox x:Name="ServerDirBox" materialDesign:HintAssist.Hint="Directory" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Margin="0,0,0,5" />
-                                    <Button x:Name="ServerDirButton" Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}" ToolTip="MaterialDesignFloatingActionMiniAccentButton" Height="20" Width="20" Margin="10,0,0,0">
+                                    <TextBox Name="IServerDirBox" materialDesign:HintAssist.Hint="Directory" Style="{StaticResource MaterialDesignFloatingHintTextBox}" BorderBrush="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,0,5" />
+                                    <Button Name="IServerDirButton" Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}" ToolTip="MaterialDesignFloatingActionMiniAccentButton" Height="20" Width="20" Margin="10,0,0,0">
                                         <materialDesign:PackIcon Kind="FolderOpen" Height="10" Width="10" />
                                     </Button>
                                 </StackPanel>
 
+                                <ComboBox materialDesign:HintAssist.Hint="Version" Style="{StaticResource MaterialDesignFloatingHintComboBox}" BorderBrush="{DynamicResource PrimaryHueDarkBrush}">
+                                    <ComboBoxItem>Stable</ComboBoxItem>
+                                    <ComboBoxItem>Development</ComboBoxItem>
+                                </ComboBox>
                             </StackPanel>
                         </GroupBox>
                     </StackPanel>
 
-                    <Button x:Name="SteamUpdateButton" Style="{StaticResource MaterialDesignRaisedAccentButton}" Grid.Column="0" Grid.Row="1" Content="Update" Margin="10,10,10,10"/>
+                    <Button Name="ISteamUpdateButton" Style="{StaticResource MaterialDesignRaisedAccentButton}" Grid.Column="0" Grid.Row="1" Content="Update" Margin="10,10,10,10"/>
 
-                    <RichTextBox x:Name="SteamOutputBox" Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="2" IsReadOnly="True" Background="LightGray" Margin="10,10,10,0"/>
-                    <ProgressBar x:Name="SteamProgressBar" Grid.Column="1" Grid.Row="1" Margin="10,10,10,10" Height="32"/>
-                    <Button x:Name="SteamCancelButton" Style="{StaticResource MaterialDesignRaisedAccentButton}" Grid.Column="2" Grid.Row="1" Content="Cancel" Margin="0,10,10,10"/>
+                    <RichTextBox Name="ISteamOutputBox" Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="2" IsReadOnly="True" Background="LightGray" Margin="10,10,10,0"/>
+                    <ProgressBar Name="ISteamProgressBar" Grid.Column="1" Grid.Row="1" Margin="10,10,10,10" Height="32"/>
+                    <Button Name="ISteamCancelButton" Style="{StaticResource MaterialDesignRaisedAccentButton}" Grid.Column="2" Grid.Row="1" Content="Cancel" Margin="0,10,10,10"/>
 
                 </Grid>
             </TabItem>
 
             <!--Main Content - Server Mods Tab-->
-            <TabItem x:Name="ServerModsTab" Header="TabItem">
+            <TabItem Name="ISteamModsTab" Header="TabItem">
 
             </TabItem>
 
             <!--Main Content - Settings Tab-->
-            <TabItem x:Name="SettingsTab" Header="TabItem">
+            <TabItem Name="ISettingsTab" Header="TabItem">
 
             </TabItem>
 
             <!--Main Content - Tools Tab-->
-            <TabItem x:Name="ToolsTab" Header="TabItem">
+            <TabItem Name="IToolsTab" Header="TabItem">
 
             </TabItem>
 
             <!--Main Content - About Tab-->
-            <TabItem x:Name="AboutTab" Header="TabItem">
+            <TabItem Name="IAboutTab" Header="TabItem">
 
             </TabItem>
         </TabControl>
