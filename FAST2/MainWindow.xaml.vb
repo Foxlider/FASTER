@@ -1,6 +1,14 @@
 ﻿Imports System.Text.RegularExpressions
 
 Class MainWindow
+    Private Sub MainWindow_Loaded(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
+        ISteamDirBox.Text = My.Settings.steamCMDPath
+        ISteamUserBox.Text = My.Settings.steamUserName
+        ISteamPassBox.Text = My.Settings.steamPassword
+        IServerDirBox.Text = My.Settings.serverPath
+    End Sub
+
+
     'Takes any string and removes illegal characters
     Private Shared Function SafeName(input As String, Optional ignoreWhiteSpace As Boolean = False, Optional replacement As Char = "_") As String
         If ignoreWhiteSpace Then
@@ -24,16 +32,18 @@ Class MainWindow
 
         AddHandler newServer.Selected, AddressOf MenuItemm_Selected
 
+        Dim tabControls = New ServerProfileTab
+
         Dim newTab As New TabItem With {
             .Name = safeProfileName,
-            .Content = profileName
+            .Content = tabControls
         }
 
         IMainContent.Items.Add(newTab)
     End Sub
 
     'Opens Folder select dialog and returns selected path
-    Private Shared Function SelectFolder()
+    Public Shared Function SelectFolder()
         Dim folderDialog As New Forms.FolderBrowserDialog
 
         If folderDialog.ShowDialog = vbOK Then
@@ -84,6 +94,7 @@ Class MainWindow
         End If
     End Sub
 
+    'Creates a new Server Profile and adds it to the UI menu
     Private Sub NewServerProfileButton_Click(sender As Object, e As RoutedEventArgs) Handles INewServerProfileButton.Click
         Dim profileName As String = InputBox("Enter profile name:", "New Server Profile")
 
@@ -95,6 +106,7 @@ Class MainWindow
 
     End Sub
 
+    'Makes close button red when mouse is over button
     Private Sub WindowCloseButton_MouseEnter(sender As Object, e As MouseEventArgs) Handles IWindowCloseButton.MouseEnter
         Dim converter = New BrushConverter()
         Dim brush = CType(converter.ConvertFromString("#D72C2C"), Brush)
@@ -102,26 +114,30 @@ Class MainWindow
         IWindowCloseButton.Background = brush
     End Sub
 
+    'Changes colour of close button back to UI base when mouse leaves button
     Private Sub WindowCloseButton_MouseLeave(sender As Object, e As MouseEventArgs) Handles IWindowCloseButton.MouseLeave
-        Dim converter = New BrushConverter()
-        Dim brush = CType(converter.ConvertFromString("#FF303030"), Brush)
+        Dim brush = FindResource("MaterialDesignPaper")
 
         IWindowCloseButton.Background = brush
     End Sub
 
+    'Closes app when using custom close button
     Private Sub WindowCloseButton_Selected(sender As Object, e As RoutedEventArgs) Handles IWindowCloseButton.Selected
         Close()
     End Sub
 
+    'Minimises app when using custom minimise button
     Private Sub WindowMinimizeButton_Selected(sender As Object, e As RoutedEventArgs) Handles IWindowMinimizeButton.Selected
         IWindowMinimizeButton.IsSelected = False
         WindowState = WindowState.Minimized
     End Sub
 
-    Private Sub WindowDragBar_MouseDown(sender As Object, e As MouseButtonEventArgs) Handles IWindowDragBar.MouseLeftButtonDown
+    'Allows user to move the window around using the custom nav bar
+    Private Sub WindowDragBar_MouseDown(sender As Object, e As MouseButtonEventArgs) Handles IWindowDragBar.MouseLeftButtonDown, ILogoImage.MouseLeftButtonDown, IWindowTitle.MouseLeftButtonDown
         DragMove()
     End Sub
 
+    'Opens folder select dialog when clicking certain buttons
     Private Sub DirButton_Click(sender As Object, e As RoutedEventArgs) Handles ISteamDirButton.Click, IServerDirButton.Click
         Dim path As String = SelectFolder()
 
@@ -133,4 +149,13 @@ Class MainWindow
             End If
         End If
     End Sub
+
+    'Switches base theme between light and dark when control is switched 
+    Private Sub IBaseThemeButton_Click(sender As Object, e As RoutedEventArgs) Handles IBaseThemeToggle.Click
+        Theme.SwitchBaseTheme(IBaseThemeToggle.IsChecked)
+        IWindowCloseButton.Background = FindResource("MaterialDesignPaper")
+    End Sub
+
+
 End Class
+

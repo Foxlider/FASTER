@@ -6,25 +6,27 @@
     mc:Ignorable="d"
 
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-    TextElement.Foreground="{DynamicResource MaterialDesignBody}"    
+    xmlns:dragablz="clr-namespace:Dragablz;assembly=Dragablz"
+    TextElement.Foreground="{DynamicResource MaterialDesignBody}"
     Background="{DynamicResource MaterialDesignPaper}"
-    FontFamily="{DynamicResource MaterialDesignFont}" 
+    FontFamily="{DynamicResource MaterialDesignFont}"
 
     TextElement.FontWeight="Regular"
     TextElement.FontSize="11"
-    TextOptions.TextFormattingMode="Ideal" 
-    TextOptions.TextRenderingMode="Auto" 
+    TextOptions.TextFormattingMode="Ideal"
+    TextOptions.TextRenderingMode="Auto"
 
-    Title="FAST" 
-    Icon="FAST-main-icon.ico" 
+    Title="FAST"
+    Icon="FAST-main-icon.ico"
     
-    Height="430" 
-    Width="800" 
-    MinWidth="800" 
+    Height="430"
+    Width="800"
+    MinWidth="800"
     MinHeight="430"
 
     WindowStartupLocation="CenterScreen"
-    WindowStyle="None">
+    WindowStyle="None"
+>
 
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="0"/>
@@ -45,7 +47,10 @@
 
         <!--Custom Window Bar Elements-->
         <Rectangle Name="IWindowDragBar" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,80,3" Fill="{DynamicResource MaterialDesignPaper}"/>
-        <Image Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" Margin="5,0,0,0" Height="20" Width="20" Source="FAST-main-icon.ico"/>
+        <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
+            <Image Name="ILogoImage" HorizontalAlignment="Left" Margin="5,0" Height="20" Width="20" Source="FAST-main-icon.ico"/>
+            <Label Name="IWindowTitle" Content="Flax's Arma Server Tool" VerticalAlignment="Center"/>
+        </StackPanel>
         <ListBox Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right" SelectionMode="Extended" Style="{StaticResource MaterialDesignToolToggleFlatListBox}" Margin="0,0,-1,0" Width="84">
             <ListBoxItem Name="IWindowMinimizeButton" Background="{DynamicResource MaterialDesignPaper}">
                 <materialDesign:PackIcon Kind="WindowMinimize" Width="15" Height="16"/>
@@ -75,7 +80,6 @@
             </StackPanel>
 
             <ListBox Name="IServerProfilesList" HorizontalAlignment="Stretch" Margin="0,0,0,10">
-                <ListBoxItem Content="Default"/>
             </ListBox>
         </StackPanel>
 
@@ -113,25 +117,25 @@
                     </Grid.RowDefinitions>
 
                     <StackPanel Name="ISteamGroup" Grid.Column="0">
-                        <GroupBox Header="SteamCMD Settings" FontWeight="Bold" Style="{DynamicResource MaterialDesignGroupBox}" Margin="10,10,10,0" materialDesign:ShadowAssist.ShadowDepth="Depth2" BorderThickness="0" >
+                        <GroupBox Header="SteamCMD Settings" FontWeight="Bold" Style="{DynamicResource MaterialDesignGroupBox}" Margin="10,10,10,0" materialDesign:ShadowAssist.ShadowDepth="Depth2" BorderThickness="0">
                             <StackPanel>
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBox Name="ISteamDirBox"  materialDesign:HintAssist.Hint="Directory" Style="{StaticResource MaterialDesignFloatingHintTextBox}" BorderBrush="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,0,5" />
+                                    <TextBox Name="ISteamDirBox"  materialDesign:HintAssist.Hint="Directory" Style="{StaticResource MaterialDesignFloatingHintTextBox}" BorderBrush="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,0,5"/>
                                     <Button Name="ISteamDirButton" Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}" Height="20" Width="20" Margin="10,0,0,0">
-                                        <materialDesign:PackIcon Kind="FolderOpen" Height="10" Width="10" />
+                                        <materialDesign:PackIcon Kind="FolderOpen" Height="10" Width="10"/>
                                     </Button>
                                 </StackPanel>
 
-                                <TextBox materialDesign:HintAssist.Hint="User Name" Style="{StaticResource MaterialDesignFloatingHintTextBox}" BorderBrush="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,0,5"/>
-                                <PasswordBox Name="ISteamPassBox" materialDesign:HintAssist.Hint="Password" Style="{StaticResource MaterialDesignFloatingHintPasswordBox}" BorderBrush="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,0,5"/>
+                                <TextBox Name="ISteamUserBox" materialDesign:HintAssist.Hint="User Name" Style="{StaticResource MaterialDesignFloatingHintTextBox}" BorderBrush="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,0,5"/>
+                                <TextBox Name="ISteamPassBox" materialDesign:HintAssist.Hint="Password" Style="{StaticResource MaterialDesignFloatingHintTextBox}" BorderBrush="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,0,5"/>
                             </StackPanel>
                         </GroupBox>
-                        <GroupBox Header="Arma Server Settings" FontWeight="Bold" Style="{DynamicResource MaterialDesignGroupBox}" Margin="10,10,10,0" materialDesign:ShadowAssist.ShadowDepth="Depth2" BorderThickness="0" >
+                        <GroupBox Header="Arma Server Settings" FontWeight="Bold" Style="{DynamicResource MaterialDesignGroupBox}" Margin="10,10,10,0" materialDesign:ShadowAssist.ShadowDepth="Depth2" BorderThickness="0">
                             <StackPanel>
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBox Name="IServerDirBox" materialDesign:HintAssist.Hint="Directory" Style="{StaticResource MaterialDesignFloatingHintTextBox}" BorderBrush="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,0,5" />
+                                    <TextBox Name="IServerDirBox" materialDesign:HintAssist.Hint="Directory" Style="{StaticResource MaterialDesignFloatingHintTextBox}" BorderBrush="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,0,5"/>
                                     <Button Name="IServerDirButton" Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}" ToolTip="MaterialDesignFloatingActionMiniAccentButton" Height="20" Width="20" Margin="10,0,0,0">
-                                        <materialDesign:PackIcon Kind="FolderOpen" Height="10" Width="10" />
+                                        <materialDesign:PackIcon Kind="FolderOpen" Height="10" Width="10"/>
                                     </Button>
                                 </StackPanel>
 
@@ -148,18 +152,68 @@
                     <RichTextBox Name="ISteamOutputBox" Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="2" IsReadOnly="True" Background="LightGray" Margin="10,10,10,0"/>
                     <ProgressBar Name="ISteamProgressBar" Grid.Column="1" Grid.Row="1" Margin="10,10,10,10" Height="32"/>
                     <Button Name="ISteamCancelButton" Style="{StaticResource MaterialDesignRaisedAccentButton}" Grid.Column="2" Grid.Row="1" Content="Cancel" Margin="0,10,10,10"/>
-
                 </Grid>
             </TabItem>
 
             <!--Main Content - Server Mods Tab-->
             <TabItem Name="ISteamModsTab" Header="TabItem">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <ListBox SelectionMode="Extended" Style="{StaticResource MaterialDesignToolToggleFlatListBox}" HorizontalAlignment="Left" Margin="10,10,0,0">
+                        <ListBoxItem>
+                            <ListBoxItem.ToolTip>
+                                <TextBlock>Add Mod from Steam URL</TextBlock>
+                            </ListBoxItem.ToolTip>
+                            <materialDesign:PackIcon Kind="Plus"/>
+                        </ListBoxItem>
+                        <ListBoxItem>
+                            <ListBoxItem.ToolTip>
+                                <TextBlock>Import from Arma 3 Launcher File</TextBlock>
+                            </ListBoxItem.ToolTip>
+                            <materialDesign:PackIcon Kind="FileDocument"/>
+                        </ListBoxItem>
+                        <ListBoxItem>
+                            <ListBoxItem.ToolTip>
+                                <TextBlock>Add Private Steam Mod by ID</TextBlock>
+                            </ListBoxItem.ToolTip>
+                            <materialDesign:PackIcon Kind="Lock"/>
+                        </ListBoxItem>
+                        <ListBoxItem>
+                            <ListBoxItem.ToolTip>
+                                <TextBlock>Check For Updates</TextBlock>
+                            </ListBoxItem.ToolTip>
+                            <materialDesign:PackIcon Kind="Clock"/>
+                        </ListBoxItem>
+                        <ListBoxItem>
+                            <ListBoxItem.ToolTip>
+                                <TextBlock>Update All</TextBlock>
+                            </ListBoxItem.ToolTip>
+                            <materialDesign:PackIcon Kind="Update"/>
+                        </ListBoxItem>
+                    </ListBox>
+                    <ProgressBar Grid.Row="0" Grid.Column="1" Height="Auto" Width="Auto" Margin="10,10,10,0"></ProgressBar>
+                    <DataGrid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="10">
 
+                    </DataGrid>
+                </Grid>
             </TabItem>
 
             <!--Main Content - Settings Tab-->
             <TabItem Name="ISettingsTab" Header="TabItem">
-
+                <Grid>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock VerticalAlignment="Center">Light</TextBlock>
+                        <ToggleButton Name="IBaseThemeToggle" Style="{StaticResource MaterialDesignSwitchToggleButton}" IsChecked="True"/>
+                        <TextBlock VerticalAlignment="Center">Dark</TextBlock>
+                    </StackPanel>
+                </Grid>
             </TabItem>
 
             <!--Main Content - Tools Tab-->
