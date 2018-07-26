@@ -3,14 +3,13 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-    xmlns:dragablz="clr-namespace:Dragablz;assembly=Dragablz"
+
     TextElement.Foreground="{DynamicResource MaterialDesignBody}"
     Background="{DynamicResource MaterialDesignPaper}"
     FontFamily="{DynamicResource MaterialDesignFont}"
 
+    mc:Ignorable="d"
     TextElement.FontWeight="Regular"
     TextElement.FontSize="11"
     TextOptions.TextFormattingMode="Ideal"
@@ -166,7 +165,7 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition />
                     </Grid.RowDefinitions>
-                    <ListBox SelectionMode="Extended" Style="{StaticResource MaterialDesignToolToggleFlatListBox}" HorizontalAlignment="Left" Margin="10,10,0,0">
+                    <ListBox Name="IActionButtons" SelectionMode="Extended" Style="{StaticResource MaterialDesignToolToggleListBox}" HorizontalAlignment="Left" Margin="10,10,0,0">
                         <ListBoxItem>
                             <ListBoxItem.ToolTip>
                                 <TextBlock>Add Mod from Steam URL</TextBlock>

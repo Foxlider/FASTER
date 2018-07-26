@@ -1,84 +1,82 @@
 ﻿<UserControl x:Class="ServerProfileTab"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:dragablz="clr-namespace:Dragablz;assembly=Dragablz"
-             xmlns:local="clr-namespace:FAST2"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
 
-             TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-             Background="White"
+             Background="{DynamicResource MaterialDesignBody}"
              FontFamily="{DynamicResource MaterialDesignFont}"
-             
+
              TextElement.FontWeight="Regular"
              TextElement.FontSize="11"
              TextOptions.TextFormattingMode="Ideal"
              TextOptions.TextRenderingMode="Auto"
-             
-             mc:Ignorable="d" 
-             d:DesignHeight="392.8" 
+
+             mc:Ignorable="d"
+             d:DesignHeight="392.8"
              d:DesignWidth="631.2">
-    
+
     <Grid>
-        <StackPanel>
-            <dragablz:TabablzControl Margin="5">
-                <dragablz:TabablzControl.InterTabController>
-                    <dragablz:InterTabController />
-                </dragablz:TabablzControl.InterTabController>
-                <TabItem Header="Settings">
-                    Settings
-                </TabItem>
-                <TabItem Header="Misc">
-                    Misc
-                </TabItem>
-                <TabItem Header="Mods">
-                    Mods
-                </TabItem>
-                <TabItem Header="Missions">
-                    Missions
-                </TabItem>
-                <TabItem Header="Performance">
-                    Performance
-                </TabItem>
-                <TabItem Header="Server Scripting">
-                    Server Scripting
-                </TabItem>
-            </dragablz:TabablzControl>
-            <StackPanel Orientation="Horizontal" Margin="">
-                <TextBox materialDesign:HintAssist.Hint="Profile Name" Style="{StaticResource MaterialDesignFloatingHintTextBox}"/>
-                <ListBox SelectionMode="Extended" Style="{StaticResource MaterialDesignToolToggleFlatListBox}" HorizontalAlignment="Left" Margin="10,10,0,0">
-                    <ListBoxItem>
-                        <ListBoxItem.ToolTip>
-                            <TextBlock>Save</TextBlock>
-                        </ListBoxItem.ToolTip>
-                        <materialDesign:PackIcon Kind="ContentSave"/>
-                    </ListBoxItem>
-                    <ListBoxItem>
-                        <ListBoxItem.ToolTip>
-                            <TextBlock>Delete</TextBlock>
-                        </ListBoxItem.ToolTip>
-                        <materialDesign:PackIcon Kind="Delete"/>
-                    </ListBoxItem>
-                </ListBox>
-                <CheckBox Style="{StaticResource MaterialDesignCheckBox}">
-                    BattlEye
-                </CheckBox>
-                <ListBox SelectionMode="Extended" Style="{StaticResource MaterialDesignToolToggleFlatListBox}" HorizontalAlignment="Left" Margin="10,10,0,0">
-                    <ListBoxItem>
-                        <ListBoxItem.ToolTip>
-                            <TextBlock>Save</TextBlock>
-                        </ListBoxItem.ToolTip>
-                        <materialDesign:PackIcon Kind="Export"/>
-                    </ListBoxItem>
-                    <ListBoxItem>
-                        <ListBoxItem.ToolTip>
-                            <TextBlock>Delete</TextBlock>
-                        </ListBoxItem.ToolTip>
-                        <materialDesign:PackIcon Kind="Play"/>
-                    </ListBoxItem>
-                </ListBox>
-            </StackPanel>
-        </StackPanel>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="55" />
+        </Grid.RowDefinitions>
+        <dragablz:TabablzControl Margin="5,5,5,0" Grid.Row="0" FixedHeaderCount="6">
+            <dragablz:TabablzControl.InterTabController>
+                <dragablz:InterTabController />
+            </dragablz:TabablzControl.InterTabController>
+            <TabItem Header="Settings">
+                Settings
+            </TabItem>
+            <TabItem Header="Misc">
+                Misc
+            </TabItem>
+            <TabItem Header="Mods">
+                Mods
+            </TabItem>
+            <TabItem Header="Missions">
+                Missions
+            </TabItem>
+            <TabItem Header="Performance">
+                Performance
+            </TabItem>
+            <TabItem Header="Server Scripting">
+                Server Scripting
+            </TabItem>
+        </dragablz:TabablzControl>
+        <ListBox Name="IActionButtons" Grid.Row="1" SelectionMode="Extended" Style="{StaticResource MaterialDesignToolToggleListBox}" HorizontalAlignment="Right" Margin="5,10">
+            <ListBoxItem>
+                <ListBoxItem.ToolTip>
+                    <TextBlock>Save</TextBlock>
+                </ListBoxItem.ToolTip>
+                <materialDesign:PackIcon Kind="ContentSave" />
+            </ListBoxItem>
+            <ListBoxItem>
+                <ListBoxItem.ToolTip>
+                    <TextBlock>Rename</TextBlock>
+                </ListBoxItem.ToolTip>
+                <materialDesign:PackIcon Kind="Pencil" />
+            </ListBoxItem>
+            <ListBoxItem>
+                <ListBoxItem.ToolTip>
+                    <TextBlock>Delete</TextBlock>
+                </ListBoxItem.ToolTip>
+                <materialDesign:PackIcon Kind="Delete" />
+            </ListBoxItem>
+            <ListBoxItem>
+                <ListBoxItem.ToolTip>
+                    <TextBlock>Export</TextBlock>
+                </ListBoxItem.ToolTip>
+                <materialDesign:PackIcon Kind="Export" />
+            </ListBoxItem>
+            <ListBoxItem>
+                <ListBoxItem.ToolTip>
+                    <TextBlock>Launch</TextBlock>
+                </ListBoxItem.ToolTip>
+                <materialDesign:PackIcon Kind="Play" />
+            </ListBoxItem>
+        </ListBox>
     </Grid>
 </UserControl>

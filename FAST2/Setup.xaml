@@ -26,14 +26,13 @@
         MinWidth="300"
 
         WindowStartupLocation="CenterScreen"
-        WindowStyle="None"
->
+        WindowStyle="None">
 
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="0"/>
     </WindowChrome.WindowChrome>
 
-    <Grid Name="IMainGrid">
+    <Grid>
         <!--Grid Definitions-->
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
@@ -44,7 +43,7 @@
         <Rectangle Name="IWindowDragBar" Grid.Row="0" Grid.Column="0" Margin="0,0,80,3"/>
         <StackPanel Grid.Row="0" Orientation="Horizontal">
             <Image Name="ILogoImage" HorizontalAlignment="Left" Margin="5,0" Height="20" Width="20" Source="FAST-main-icon.ico"/>
-            <Label Name="IWindowTitle"  Content="FAST - Initial Seup" VerticalAlignment="Center"/>
+            <Label Name="IWindowTitle"  Content="FAST - Initial Setup                          " VerticalAlignment="Center"/>
         </StackPanel>
         
         <ListBox Grid.Row="0" HorizontalAlignment="Right" SelectionMode="Extended" Style="{StaticResource MaterialDesignToolToggleFlatListBox}" Margin="0,0,-1,0" Width="84">
@@ -57,7 +56,7 @@
         </ListBox>
 
         <StackPanel Grid.Row="1" Margin="20,10">
-            <TextBlock Grid.Row="1" TextWrapping="Wrap" TextAlignment="Center" Margin="0,0,0,5">
+            <TextBlock TextWrapping="Wrap" TextAlignment="Center" Margin="0,0,0,5">
                Welcome to FAST2 - an unoffical Arma 3 server updater. Use the form below to setup a few options.
             </TextBlock>
             <TextBox Name="ISteamUserBox" materialDesign:HintAssist.Hint="Steam Username" Style="{StaticResource MaterialDesignFloatingHintTextBox}" BorderBrush="{DynamicResource PrimaryHueDarkBrush}" Margin="0,10"/>

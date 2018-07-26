@@ -1,4 +1,5 @@
 ﻿Imports System.Text.RegularExpressions
+Imports System.Threading
 
 Class MainWindow
     Private Sub MainWindow_Loaded(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
@@ -12,14 +13,18 @@ Class MainWindow
     'Takes any string and removes illegal characters
     Private Shared Function SafeName(input As String, Optional ignoreWhiteSpace As Boolean = False, Optional replacement As Char = "_") As String
         If ignoreWhiteSpace Then
-            Return Regex.Replace(input, "[^a-zA-Z0-9\-_\s]", replacement)
+            input = Regex.Replace(input, "[^a-zA-Z0-9\-_\s]", replacement)
+            input = Replace(input, replacement & replacement, replacement)
+            Return input
         Else
-            Return Regex.Replace(input, "[^a-zA-Z0-9\-_]", replacement)
+            input = Regex.Replace(input, "[^a-zA-Z0-9\-_]", replacement)
+            input = Replace(input, replacement & replacement, replacement)
+            Return input
         End If
 
     End Function
 
-    'TEMPORARY Creates new server profile in menu and tab control
+    'Creates new server profile in menu and tab control
     Private Sub CreateNewServerProfile(profileName As String)
         Dim safeProfileName As String = SafeName(profileName)
 
@@ -40,6 +45,7 @@ Class MainWindow
         }
 
         IMainContent.Items.Add(newTab)
+        IMainContent.SelectedItem = newTab
     End Sub
 
     'Opens Folder select dialog and returns selected path
@@ -156,6 +162,21 @@ Class MainWindow
         IWindowCloseButton.Background = FindResource("MaterialDesignPaper")
     End Sub
 
-
+    'Turns toggle button groups into normal buttons
+    Private Sub IActionButtons_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles IActionButtons.SelectionChanged
+        Dim thread As New Thread(
+            Sub()
+                Thread.Sleep(600)
+                Dispatcher.Invoke(
+                    Sub()
+                        sender.SelectedItem = Nothing
+                    End Sub
+                    )
+            End Sub
+            )
+        thread.Start()
+    End Sub
 End Class
+
+
 
