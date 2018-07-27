@@ -1,14 +1,30 @@
-﻿Imports System.Text.RegularExpressions
+﻿Imports System.ComponentModel
+Imports System.Net
+Imports System.Text.RegularExpressions
 Imports System.Threading
+Imports MaterialDesignColors
+Imports MaterialDesignThemes.Wpf
+Imports System.IO
+Imports System.IO.Compression
+Imports System.IO.Packaging
+Imports System.Windows.Forms
 
 Class MainWindow
+
+    Public InstallSteamCmd As Boolean = False
+    Private _oProcess As New Process()
+    Private _cancelled As Boolean
+    Private _updating As Boolean = False
+
     Private Sub MainWindow_Loaded(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
         ISteamDirBox.Text = My.Settings.steamCMDPath
         ISteamUserBox.Text = My.Settings.steamUserName
-        ISteamPassBox.Text = My.Settings.steamPassword
+        ISteamPassBox.Password = Encryption.DecryptData(My.Settings.steamPassword)
         IServerDirBox.Text = My.Settings.serverPath
+        If InstallSteamCmd Then
+            InstallSteam()
+        End If
     End Sub
-
 
     'Takes any string and removes illegal characters
     Private Shared Function SafeName(input As String, Optional ignoreWhiteSpace As Boolean = False, Optional replacement As Char = "_") As String
@@ -61,7 +77,7 @@ Class MainWindow
 
     'Handles when any menu item is selected
     Private Sub MenuItemm_Selected(sender As ListBoxItem, e As RoutedEventArgs) Handles ISteamUpdaterTabSelect.Selected, ISteamModsTabSelect.Selected, ISettingsTabSelect.Selected, IToolsTabSelect.Selected, IAboutTabSelect.Selected
-        Dim menus As New List(Of ListBox) From {
+        Dim menus As New List(Of Controls.ListBox) From {
             IMainMenuItems,
             IServerProfilesList,
             IOtherMenuItems
@@ -113,7 +129,7 @@ Class MainWindow
     End Sub
 
     'Makes close button red when mouse is over button
-    Private Sub WindowCloseButton_MouseEnter(sender As Object, e As MouseEventArgs) Handles IWindowCloseButton.MouseEnter
+    Private Sub WindowCloseButton_MouseEnter(sender As Object, e As Input.MouseEventArgs) Handles IWindowCloseButton.MouseEnter
         Dim converter = New BrushConverter()
         Dim brush = CType(converter.ConvertFromString("#D72C2C"), Brush)
 
@@ -121,7 +137,7 @@ Class MainWindow
     End Sub
 
     'Changes colour of close button back to UI base when mouse leaves button
-    Private Sub WindowCloseButton_MouseLeave(sender As Object, e As MouseEventArgs) Handles IWindowCloseButton.MouseLeave
+    Private Sub WindowCloseButton_MouseLeave(sender As Object, e As Input.MouseEventArgs) Handles IWindowCloseButton.MouseLeave
         Dim brush = FindResource("MaterialDesignPaper")
 
         IWindowCloseButton.Background = brush
@@ -158,7 +174,7 @@ Class MainWindow
 
     'Switches base theme between light and dark when control is switched 
     Private Sub IBaseThemeButton_Click(sender As Object, e As RoutedEventArgs) Handles IBaseThemeToggle.Click
-        Theme.SwitchBaseTheme(IBaseThemeToggle.IsChecked)
+        SwitchBaseTheme(IBaseThemeToggle.IsChecked)
         IWindowCloseButton.Background = FindResource("MaterialDesignPaper")
     End Sub
 
@@ -176,7 +192,218 @@ Class MainWindow
             )
         thread.Start()
     End Sub
+
+    'Switches base theme between light and dark
+    Private Shared Sub SwitchBaseTheme(isDark)
+        Call New PaletteHelper().SetLightDark(isDark)
+        My.Settings.isDark = isDark
+    End Sub
+
+    'Changes palette primary colour
+    Private Shared Sub ApplyPrimary(swatch As Swatch)
+        Call New PaletteHelper().ReplacePrimaryColor(swatch)
+    End Sub
+
+    'Changes palette accent colour
+    Private Shared Sub ApplyAccent(swatch As Swatch)
+        Call New PaletteHelper().ReplaceAccentColor(swatch)
+    End Sub
+
+    Private Sub InstallSteam()
+        Windows.MessageBox.Show("Steam CMD will now download and start the install process. If prompted please enter your Steam Guard Code." & Environment.NewLine & "You will recieve this by email from steam. When this is all complete type 'quit' to finish.", "Information")
+
+        Const url = "https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip"
+        Dim fileName As String = My.Settings.steamCMDPath & "\steamcmd.zip"
+
+        Dim client As New WebClient()
+
+        AddHandler client.DownloadFileCompleted, New AsyncCompletedEventHandler(AddressOf SteamDownloadCompleted)
+        client.DownloadFileAsync(New Uri(url), fileName)
+
+        ISteamOutputBox.AppendText("Installing SteamCMD")
+        ISteamOutputBox.AppendText(Environment.NewLine & "File Downloading...")
+    End Sub
+
+    Private Sub SteamDownloadCompleted(sender As Object, e As AsyncCompletedEventArgs)
+        ISteamOutputBox.AppendText(Environment.NewLine & "Download Finished")
+
+        Dim steamPath = My.Settings.steamCMDPath
+        Dim zip As String = steamPath & "\steamcmd.zip"
+
+        ISteamOutputBox.AppendText(Environment.NewLine & "Unzipping...")
+        ZipFile.ExtractToDirectory(zip, steamPath)
+
+
+        ISteamOutputBox.AppendText(Environment.NewLine & "Installing...")
+        File.Delete(zip)
+
+        RunSteamCommand(steamPath & "\steamcmd.exe", "+login anonymous +quit", "install")
+
+    End Sub
+
+    Private Async Sub RunSteamCommand(steamCmd As String, steamCommand As String, type As String, Optional modIDs As IReadOnlyCollection(Of String) = Nothing)
+
+        If ReadyToUpdate() Then
+            _updating = True
+            ISteamProgressBar.Value = 0
+            ISteamCancelButton.IsEnabled = True
+            IMainContent.SelectedItem = ISteamUpdaterTab
+            Dim tasks As New List(Of Task)
+            'updateServerButton.Enabled = False
+            'modsTab.Enabled = False
+
+            ISteamProgressBar.IsIndeterminate = True
+
+            If type Is "addon" Then
+                ISteamOutputBox.AppendText("Starting SteamCMD to update Addon" & Environment.NewLine & Environment.NewLine)
+            ElseIf type Is "server" Then
+                ISteamOutputBox.AppendText("Starting SteamCMD to update Server" & Environment.NewLine)
+            End If
+
+            tasks.Add(Task.Run(
+                    Sub()
+                        Dim oStartInfo As New ProcessStartInfo(steamCmd, steamCommand) With {
+                            .CreateNoWindow = True,
+                            .WindowStyle = ProcessWindowStyle.Hidden,
+                            .UseShellExecute = False,
+                            .RedirectStandardOutput = True,
+                            .RedirectStandardInput = True,
+                            .RedirectStandardError = True
+                        }
+                        _oProcess.StartInfo = oStartInfo
+                        _oProcess.Start()
+
+                        Dim sOutput As String
+
+                        Dim oStreamReader As System.IO.StreamReader = _oProcess.StandardOutput
+                        Dim oStreamWriter As System.IO.StreamWriter = _oProcess.StandardInput
+                        Do
+                            sOutput = oStreamReader.ReadLine
+
+                            Dispatcher.Invoke(
+                                    Sub()
+                                        ISteamOutputBox.AppendText(Environment.NewLine & sOutput)
+                                    End Sub
+                                )
+
+                            If sOutput Like "*at the console." Then
+                                Dim steamCode As String
+
+                                steamCode = InputBox("Enter Steam Guard code from email or mobile app.", "Steam Guard Code", "")
+                                oStreamWriter.Write(steamCode & Environment.NewLine)
+                            ElseIf sOutput Like "*Mobile Authenticator*" Then
+                                Dim steamCode As String
+
+                                steamCode = InputBox("Enter Steam Guard code from email or mobile app.", "Steam Guard Code", "")
+                                oStreamWriter.Write(steamCode & Environment.NewLine)
+                            End If
+
+                            If sOutput Like "*Update state*" Then
+                                Dim counter As Integer = sOutput.IndexOf(":", StringComparison.Ordinal)
+                                Dim progress As String = sOutput.Substring(counter + 2, 2)
+                                Dim progressValue As Integer
+
+                                If progress.Contains(".") Then
+                                    progressValue = progress.Substring(0, 1)
+                                Else
+                                    progressValue = progress
+                                End If
+                                Dispatcher.Invoke(
+                                            Sub()
+                                                ISteamProgressBar.IsIndeterminate = False
+                                                ISteamProgressBar.Value = progressValue
+                                            End Sub
+                                    )
+                            End If
+
+                            If sOutput Like "*Success*" Then
+                                Dispatcher.Invoke(
+                                            Sub()
+                                                ISteamProgressBar.Value = 100
+                                            End Sub
+                                    )
+                            End If
+
+                            If sOutput Like "*Timeout*" Then
+                                MsgBox("Steam download timed out, please update mod again.")
+                            End If
+
+                            Dispatcher.Invoke(
+                                Sub()
+                                    If sOutput = Nothing Then
+
+                                    Else
+                                        ISteamOutputBox.AppendText(sOutput & Environment.NewLine)
+                                    End If
+
+                                    'IsteamOutputBox.SelectionStart = steamOutputBox.Text.Length
+                                    ISteamOutputBox.ScrollToEnd()
+                                End Sub
+                                )
+
+                        Loop While _oProcess.HasExited = False
+
+
+                    End Sub
+                ))
+
+            Await Task.WhenAll(tasks)
+
+            If (_cancelled = True) Then
+                _cancelled = Nothing
+
+                ISteamProgressBar.IsIndeterminate = False
+                ISteamProgressBar.Value = 0
+
+                ISteamOutputBox.Document.Blocks.Clear()
+                ISteamOutputBox.AppendText("Process Cancelled")
+            Else
+                ISteamOutputBox.AppendText(Environment.NewLine & "Task Completed" & Environment.NewLine)
+                ISteamOutputBox.ScrollToEnd()
+                ISteamProgressBar.IsIndeterminate = False
+                ISteamProgressBar.Value = 100
+
+                If type Is "addon" Then
+                    'UpdateModGrid()
+
+                    'For Each item In modIDs
+                    '    CopyKeys(item)
+                    'Next
+
+                ElseIf type Is "server" Then
+                    MsgBox("Server Installed/ Updated.")
+                ElseIf type Is "install" Then
+                    MsgBox("SteamCMD Installed.")
+                End If
+            End If
+
+            ISteamCancelButton.IsEnabled = False
+            'modsTab.Enabled = True
+            'updateServerButton.Enabled = True
+            _updating = False
+            'modsDataGrid.PerformLayout()
+
+        Else
+            Windows.MessageBox.Show("Please check that SteamCMD is installed and that all fields are correct:" & Environment.NewLine & Environment.NewLine & "   -  Steam Dir" & Environment.NewLine & "   -  User Name & Pass" & Environment.NewLine & "   -  Server Dir", "Error")
+        End If
+
+    End Sub
+
+    Private Function ReadyToUpdate() As Boolean
+
+        If ISteamDirBox.Text = String.Empty Then
+            Return False
+        ElseIf ISteamUserBox.Text = String.Empty Then
+            Return False
+        ElseIf ISteamPassBox.Password = String.Empty Then
+            Return False
+        ElseIf IServerDirBox.Text = String.Empty Then
+            Return False
+        ElseIf (Not System.IO.File.Exists(My.Settings.steamCMDPath & "\steamcmd.exe")) Then
+            Return False
+        Else
+            Return True
+        End If
+
+    End Function
 End Class
-
-
-

@@ -124,6 +124,18 @@ Partial Friend NotInheritable Class MySettings
             Me("steamPassword") = value
         End Set
     End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("True")>  _
+    Public Property firstRun() As Boolean
+        Get
+            Return CType(Me("firstRun"),Boolean)
+        End Get
+        Set
+            Me("firstRun") = value
+        End Set
+    End Property
 End Class
 
 Namespace My

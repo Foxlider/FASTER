@@ -61,6 +61,8 @@
       <HintPath>..\packages\MaterialDesignThemes.2.4.0.1044\lib\net45\MaterialDesignThemes.Wpf.dll</HintPath>
     </Reference>
     <Reference Include="System.Core" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -80,13 +82,16 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Models\LocalMod.vb" />
+    <Compile Include="Models\ServerProfile.vb" />
     <Compile Include="ServerProfileTab.xaml.vb">
       <DependentUpon>ServerProfileTab.xaml</DependentUpon>
     </Compile>
     <Compile Include="Setup.xaml.vb">
       <DependentUpon>Setup.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Theme.vb" />
+    <Compile Include="Models\Encryption.vb" />
+    <Compile Include="Models\SteamMod.vb" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
