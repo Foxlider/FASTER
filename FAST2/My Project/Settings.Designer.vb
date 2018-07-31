@@ -136,6 +136,17 @@ Partial Friend NotInheritable Class MySettings
             Me("firstRun") = value
         End Set
     End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute()>  _
+    Public Property mods() As Global.FAST2.Models.ModCollection
+        Get
+            Return CType(Me("mods"),Global.FAST2.Models.ModCollection)
+        End Get
+        Set
+            Me("mods") = value
+        End Set
+    End Property
 End Class
 
 Namespace My

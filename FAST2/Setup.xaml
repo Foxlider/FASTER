@@ -73,7 +73,7 @@
                     <materialDesign:PackIcon Kind="FolderOpen" Height="10" Width="10"/>
                 </Button>
             </StackPanel>
-            <CheckBox Style="{StaticResource MaterialDesignCheckBox}" Margin="0,10">
+            <CheckBox Name="IInstallSteamCheck"  Style="{StaticResource MaterialDesignCheckBox}" Margin="0,10">
                 Install SteamCMD
             </CheckBox>
             <Button Name="IContinueButton" Content="Continue" Width="90" HorizontalAlignment="Right" Margin="0,10,0,0"/>

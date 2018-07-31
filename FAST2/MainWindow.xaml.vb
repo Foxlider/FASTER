@@ -6,15 +6,16 @@ Imports MaterialDesignColors
 Imports MaterialDesignThemes.Wpf
 Imports System.IO
 Imports System.IO.Compression
-Imports System.IO.Packaging
+Imports System.Text
 Imports System.Windows.Forms
+Imports System.Xml
+Imports System.Xml.Serialization
+Imports FAST2.Models
 
 Class MainWindow
-
     Public InstallSteamCmd As Boolean = False
-    Private _oProcess As New Process()
+    Private ReadOnly _oProcess As New Process()
     Private _cancelled As Boolean
-    Private _updating As Boolean = False
 
     Private Sub MainWindow_Loaded(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
         ISteamDirBox.Text = My.Settings.steamCMDPath
@@ -27,7 +28,7 @@ Class MainWindow
     End Sub
 
     'Takes any string and removes illegal characters
-    Private Shared Function SafeName(input As String, Optional ignoreWhiteSpace As Boolean = False, Optional replacement As Char = "_") As String
+    Public Shared Function SafeName(input As String, Optional ignoreWhiteSpace As Boolean = False, Optional replacement As Char = "_") As String
         If ignoreWhiteSpace Then
             input = Regex.Replace(input, "[^a-zA-Z0-9\-_\s]", replacement)
             input = Replace(input, replacement & replacement, replacement)
@@ -37,7 +38,6 @@ Class MainWindow
             input = Replace(input, replacement & replacement, replacement)
             Return input
         End If
-
     End Function
 
     'Creates new server profile in menu and tab control
@@ -66,7 +66,7 @@ Class MainWindow
 
     'Opens Folder select dialog and returns selected path
     Public Shared Function SelectFolder()
-        Dim folderDialog As New Forms.FolderBrowserDialog
+        Dim folderDialog As New FolderBrowserDialog
 
         If folderDialog.ShowDialog = vbOK Then
             Return folderDialog.SelectedPath
@@ -125,7 +125,6 @@ Class MainWindow
         Else
             CreateNewServerProfile(profileName)
         End If
-
     End Sub
 
     'Makes close button red when mouse is over button
@@ -179,7 +178,15 @@ Class MainWindow
     End Sub
 
     'Turns toggle button groups into normal buttons
-    Private Sub IActionButtons_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles IActionButtons.SelectionChanged
+    Private Sub IActionButtons_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles IModActionButtons.SelectionChanged
+        
+        If IAddSteamMod.IsSelected
+            Dim importDialog As New ImportSteamMod
+            importDialog.Show()
+        ElseIf IAddLocalMod.IsSelected
+            AddLocalMod()
+        End If
+        
         Dim thread As New Thread(
             Sub()
                 Thread.Sleep(600)
@@ -193,6 +200,102 @@ Class MainWindow
         thread.Start()
     End Sub
 
+    Private Shared Sub AddLocalMod()
+        Dim path As String = SelectFolder()
+        Dim duplicate = False
+        Dim currentMods As New ModCollection
+        Dim modName = path.Substring(path.LastIndexOf("@", StringComparison.Ordinal) + 1)
+
+
+        If My.Settings.mods IsNot Nothing
+            currentMods = My.Settings.mods
+        End If
+
+        If currentMods.LocalMods.Count > 0 Then
+            For Each localMod In currentMods.LocalMods
+                If localMod.Name = modName
+                    duplicate = true
+                End If
+            Next
+        End If
+       
+        If Not duplicate Then
+            currentMods.LocalMods.Add(New LocalMod(modName, path))
+
+            My.Settings.mods = currentMods
+        Else
+            MsgBox("Mod already imported.")
+        End If
+    End Sub
+
+    Public Shared Sub AddSteamMod(modUrl As String)
+
+        If modUrl  Like "http*://steamcommunity.com/*/filedetails/?id=*" Then
+            Dim duplicate = False
+            Dim currentMods As New ModCollection
+
+            If My.Settings.mods IsNot Nothing
+                 currentMods = My.Settings.mods
+            End If
+
+            Dim modId = modUrl.Substring(modUrl.IndexOf("?id=", StringComparison.Ordinal))
+            modId = Integer.Parse(Regex.Replace(modId, "[^\d]", ""))
+
+            If currentMods.SteamMods.Count > 0 Then
+                For Each steamMod In currentMods.SteamMods
+                    If steamMod.WorkshopId = modId
+                        duplicate = true
+                    End If
+                Next
+            End If
+
+            If Not duplicate Then
+                Try
+                    Dim modName As String
+                    Dim appName As String
+                    Dim sourceString As String
+
+                    sourceString = New Net.WebClient().DownloadString(modUrl)
+
+                    appName = sourceString.Substring(sourceString.IndexOf("content=" & ControlChars.Quote & "Steam Workshop:", StringComparison.Ordinal) + 25, 6)
+                    
+                    If appName Like "Arma 3" Then
+                        
+                        modName = sourceString.Substring(sourceString.IndexOf("<title>Steam Workshop :: ", StringComparison.Ordinal) + 25)
+                        modName = StrReverse(modName)
+                        modName = modName.Substring(modName.IndexOf(">eltit/<", StringComparison.Ordinal) + 8)
+                        modName = StrReverse(modName)
+                        modName = MainWindow.SafeName(modName)
+
+                        Dim modInfo = MainWindow.GetModInfo(modId)
+
+                        Dim steamUpdateTime = modInfo.Substring(modInfo.IndexOf("""time_updated"":") + 15, 10)
+
+                        currentMods.SteamMods.Add(New SteamMod(modId, modName, "Unknown", steamUpdateTime, 0))
+
+                        My.Settings.mods = currentMods
+                    Else
+                        Windows.MessageBox.Show("This is a workshop Item for a different game.")
+                    End If
+                Catch ex As Exception
+                    MsgBox("An exception occurred:" & vbCrLf & ex.Message)
+                End Try
+            Else
+                MsgBox("Mod already imported.")
+            End If
+
+        Else 
+            Windows.MessageBox.Show("Please use format: https://steamcommunity.com/sharedfiles/filedetails/?id=*********")
+        End If
+        
+
+    End Sub
+
+    Public Shared Function GetModsFromXml(filename As String) As ModCollection
+        Dim xml = File.ReadAllText(filename)
+        Return Deserialize (Of ModCollection)(xml)
+    End Function
+    
     'Switches base theme between light and dark
     Private Shared Sub SwitchBaseTheme(isDark)
         Call New PaletteHelper().SetLightDark(isDark)
@@ -238,13 +341,10 @@ Class MainWindow
         File.Delete(zip)
 
         RunSteamCommand(steamPath & "\steamcmd.exe", "+login anonymous +quit", "install")
-
     End Sub
 
     Private Async Sub RunSteamCommand(steamCmd As String, steamCommand As String, type As String, Optional modIDs As IReadOnlyCollection(Of String) = Nothing)
-
         If ReadyToUpdate() Then
-            _updating = True
             ISteamProgressBar.Value = 0
             ISteamCancelButton.IsEnabled = True
             IMainContent.SelectedItem = ISteamUpdaterTab
@@ -275,8 +375,8 @@ Class MainWindow
 
                         Dim sOutput As String
 
-                        Dim oStreamReader As System.IO.StreamReader = _oProcess.StandardOutput
-                        Dim oStreamWriter As System.IO.StreamWriter = _oProcess.StandardInput
+                        Dim oStreamReader As StreamReader = _oProcess.StandardOutput
+                        Dim oStreamWriter As StreamWriter = _oProcess.StandardInput
                         Do
                             sOutput = oStreamReader.ReadLine
 
@@ -380,17 +480,14 @@ Class MainWindow
             ISteamCancelButton.IsEnabled = False
             'modsTab.Enabled = True
             'updateServerButton.Enabled = True
-            _updating = False
             'modsDataGrid.PerformLayout()
 
         Else
             Windows.MessageBox.Show("Please check that SteamCMD is installed and that all fields are correct:" & Environment.NewLine & Environment.NewLine & "   -  Steam Dir" & Environment.NewLine & "   -  User Name & Pass" & Environment.NewLine & "   -  Server Dir", "Error")
         End If
-
     End Sub
 
     Private Function ReadyToUpdate() As Boolean
-
         If ISteamDirBox.Text = String.Empty Then
             Return False
         ElseIf ISteamUserBox.Text = String.Empty Then
@@ -399,11 +496,103 @@ Class MainWindow
             Return False
         ElseIf IServerDirBox.Text = String.Empty Then
             Return False
-        ElseIf (Not System.IO.File.Exists(My.Settings.steamCMDPath & "\steamcmd.exe")) Then
+        ElseIf (Not File.Exists(My.Settings.steamCMDPath & "\steamcmd.exe")) Then
             Return False
         Else
             Return True
         End If
-
     End Function
+
+    Private Shared Sub ISteamCancelButton_Click(sender As Object, e As RoutedEventArgs) Handles ISteamUpdateButton.Click
+        
+    End Sub
+
+    Private Shared Function Serialize(Of T)(value As T) As String
+        If value Is Nothing Then
+            Return Nothing
+        End If
+
+        Dim serializer = New XmlSerializer(GetType(T))
+        Dim settings = New XmlWriterSettings() With {
+                .Encoding = New UnicodeEncoding(False, False),
+                .Indent = True,
+                .OmitXmlDeclaration = False
+                }
+
+        Using textWriter As StringWriter = New StringWriter()
+
+            Using xmlWriter As XmlWriter = XmlWriter.Create(textWriter, settings)
+                serializer.Serialize(xmlWriter, value)
+            End Using
+
+            Return textWriter.ToString()
+        End Using
+    End Function
+
+    Private Shared Function Deserialize(Of T)(xml As String) As T
+        If String.IsNullOrEmpty(xml) Then
+            Return Nothing
+        End If
+
+        Dim serializer = New XmlSerializer(GetType(T))
+        Dim settings = New XmlReaderSettings()
+
+        Using textReader = New StringReader(xml)
+
+            Using xmlReader As XmlReader = XmlReader.Create(textReader, settings)
+                Return serializer.Deserialize(xmlReader)
+            End Using
+        End Using
+    End Function
+
+    Public Shared Function GetModInfo(modId As String)
+        Try
+            ' Create a request using a URL that can receive a post.   
+            Dim request As WebRequest = WebRequest.Create("https://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1/")
+            ' Set the Method property of the request to POST.  
+            request.Method = "POST"
+            ' Create POST data and convert it to a byte array.  
+            Dim postData As String = "itemcount=1&publishedfileids[0]=" & modId
+            Dim byteArray As Byte() = Encoding.UTF8.GetBytes(postData)
+            ' Set the ContentType property of the WebRequest.  
+            request.ContentType = "application/x-www-form-urlencoded"
+            ' Set the ContentLength property of the WebRequest.  
+            request.ContentLength = byteArray.Length
+            ' Get the request stream.  
+            Dim dataStream As Stream = request.GetRequestStream()
+            ' Write the data to the request stream.  
+            dataStream.Write(byteArray, 0, byteArray.Length)
+            ' Close the Stream object.  
+            dataStream.Close()
+            ' Get the response.
+            Dim response As WebResponse = Nothing
+            Try
+                response = request.GetResponse()
+            Catch ex As Exception
+                MsgBox("There may be an issue with Steam please try again shortly.")
+            End Try
+            ' Display the status. 
+            Dim staus As String = CType(response, HttpWebResponse).StatusDescription
+            ' Get the stream containing content returned by the server.  
+            dataStream = response.GetResponseStream()
+            ' Open the stream using a StreamReader for easy access.  
+            Dim reader As New StreamReader(dataStream)
+            ' Read the content.  
+            Dim responseFromServer As String = reader.ReadToEnd()
+            ' Clean up the streams.  
+            reader.Close()
+            dataStream.Close()
+            response.Close()
+            ' Return the content.  
+            Return responseFromServer
+            
+        Catch ex As Exception
+            MsgBox("GetModInfo - An exception occurred:" & vbCrLf & ex.Message)
+            Return Nothing
+        End Try
+    End Function
+
+    Private Sub MainWindow_Closing(sender As Object, e As CancelEventArgs) Handles Me.Closing
+        My.Settings.Save()
+    End Sub
 End Class

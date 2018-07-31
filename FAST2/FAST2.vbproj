@@ -72,26 +72,28 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
-    <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System.Net.Http" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="Application.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Models\LocalMod.vb" />
     <Compile Include="Models\ServerProfile.vb" />
     <Compile Include="ServerProfileTab.xaml.vb">
       <DependentUpon>ServerProfileTab.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ImportSteamMod.xaml.vb">
+      <DependentUpon>ImportSteamMod.xaml</DependentUpon>
     </Compile>
     <Compile Include="Setup.xaml.vb">
       <DependentUpon>Setup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Models\Encryption.vb" />
-    <Compile Include="Models\SteamMod.vb" />
+    <Compile Include="Models\Mods.vb" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -107,6 +109,10 @@
     <Page Include="ServerProfileTab.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ImportSteamMod.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Setup.xaml">
       <SubType>Designer</SubType>
@@ -166,6 +172,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="FAST-main-icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="My Project\DataSources\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
 </Project>

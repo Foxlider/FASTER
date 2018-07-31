@@ -1,0 +1,71 @@
+﻿<Window x:Class="ImportSteamMod"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{DynamicResource MaterialDesignFont}"
+
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="11"
+        TextOptions.TextFormattingMode="Ideal"
+        TextOptions.TextRenderingMode="Auto"
+
+        Title="FAST"
+        Icon="FAST-main-icon.ico"
+    
+        Height="150"
+        Width="500"
+        MaxHeight="150"
+        MaxWidth="500"
+        MinHeight="150"
+        MinWidth="500"
+
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None">
+
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="0"/>
+    </WindowChrome.WindowChrome>
+
+    <Grid>
+        <!--Grid Definitions-->
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!--Custom Window Bar Elements-->
+        <Rectangle Name="IWindowDragBar" Grid.Row="0" Grid.Column="0" Margin="0,0,80,3"/>
+        <StackPanel Grid.Row="0" Orientation="Horizontal">
+            <Image Name="ILogoImage" HorizontalAlignment="Left" Margin="5,0" Height="20" Width="20" Source="FAST-main-icon.ico"/>
+            <Label Name="IWindowTitle"  Content="FAST - Import Steam Mod                                                                                 " VerticalAlignment="Center"/>
+        </StackPanel>
+        
+        <ListBox Grid.Row="0" HorizontalAlignment="Right" SelectionMode="Extended" Style="{StaticResource MaterialDesignToolToggleFlatListBox}" Margin="0,0,-1,0" Width="84">
+            <ListBoxItem Name="IWindowMinimizeButton" Background="{DynamicResource MaterialDesignPaper}">
+                <materialDesign:PackIcon Kind="WindowMinimize" Width="15" Height="16"/>
+            </ListBoxItem>
+            <ListBoxItem Name="IWindowCloseButton" Background="{DynamicResource MaterialDesignPaper}">
+                <materialDesign:PackIcon Kind="WindowClose" Width="15" Height="16"/>
+            </ListBoxItem>
+        </ListBox>
+
+        <StackPanel Grid.Row="1" Margin="20,10">
+            <TextBlock TextWrapping="Wrap" TextAlignment="Left" Margin="0,0,0,5">
+               Please enter the steam workshop url or enter the workshop item id below.
+            </TextBlock>
+            <TextBox Name="ISteamItemBox" materialDesign:HintAssist.Hint="Steam URL/ ID" Style="{StaticResource MaterialDesignFloatingHintTextBox}" BorderBrush="{DynamicResource PrimaryHueDarkBrush}"/>
+            <DockPanel Margin="0,10">
+                <CheckBox Name="IPrivateModCheck"  Style="{StaticResource MaterialDesignCheckBox}">
+                    Private Mod
+                </CheckBox>
+                <Button Name="IContinueButton" Content="Import" Width="90" HorizontalAlignment="Right"/>
+            </DockPanel>
+        </StackPanel>
+    </Grid>
+</Window>
