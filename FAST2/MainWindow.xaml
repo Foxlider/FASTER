@@ -5,7 +5,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
 
-    xmlns:models="clr-namespace:FAST2.Models" x:Class="MainWindow"
+    x:Class="MainWindow"
 
     TextElement.Foreground="{DynamicResource MaterialDesignBody}"
     Background="{DynamicResource MaterialDesignPaper}"
@@ -28,16 +28,11 @@
     WindowStartupLocation="CenterScreen"
     WindowStyle="None"
 >
-
-    <Window.Resources>
-        <CollectionViewSource x:Key="ModCollectionViewSource" d:DesignSource="{d:DesignInstance {x:Type models:ModCollection}, CreateList=True}"/>
-    </Window.Resources>
-
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="0"/>
     </WindowChrome.WindowChrome>
 
-    <Grid DataContext="{StaticResource ModCollectionViewSource}">
+    <Grid>
         <!--Grid Definitions-->
         <Grid.ColumnDefinitions>
             <ColumnDefinition x:Name="IMenuColumn" Width="1*" MinWidth="150" MaxWidth="200"/>

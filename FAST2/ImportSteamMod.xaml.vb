@@ -1,15 +1,13 @@
-﻿Imports System.Text.RegularExpressions
-Imports System
+﻿Imports System.Windows.Forms
 Imports FAST2.Models
-Imports System.Windows.Forms
 
 Public Class ImportSteamMod
 
     Private Sub IContinueButton_Click(sender As Object, e As RoutedEventArgs) Handles IContinueButton.Click
         Forms.Cursor.Show()
         Forms.Cursor.Current = Cursors.WaitCursor
-        Me.Close()
-        MainWindow.AddSteamMod(ISteamItemBox.Text)
+        Close()
+        ModCollection.AddSteamMod(ISteamItemBox.Text)
     End Sub
 
     
