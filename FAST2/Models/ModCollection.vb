@@ -41,6 +41,8 @@ Namespace Models
             Else
                 MsgBox("Mod already imported.")
             End If
+
+            My.Settings.Save()
         End Sub
 
         Public Shared Sub AddSteamMod(modUrl As String)
@@ -89,7 +91,7 @@ Namespace Models
 
                             My.Settings.mods = currentMods
                         Else
-                            Windows.MessageBox.Show("This is a workshop Item for a different game.")
+                            MessageBox.Show("This is a workshop Item for a different game.")
                         End If
                     Catch ex As Exception
                         MsgBox("An exception occurred:" & vbCrLf & ex.Message)
@@ -98,9 +100,11 @@ Namespace Models
                     MsgBox("Mod already imported.")
                 End If
 
-            Else 
-                Windows.MessageBox.Show("Please use format: https://steamcommunity.com/sharedfiles/filedetails/?id=*********")
+            Else
+                MessageBox.Show("Please use format: https://steamcommunity.com/sharedfiles/filedetails/?id=*********")
             End If
+
+            My.Settings.Save()
         End Sub
     End Class
     

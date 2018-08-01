@@ -203,12 +203,17 @@
 
             <!--Main Content - Settings Tab-->
             <TabItem Name="ISettingsTab" Header="TabItem">
-                <Grid>
+                <Grid Background="{StaticResource MaterialDesignPaper}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock VerticalAlignment="Center"><Run Text="Light"/></TextBlock>
-                        <ToggleButton x:Name="IBaseThemeToggle" Style="{StaticResource MaterialDesignSwitchToggleButton}" IsChecked="True"/>
+                        <ToggleButton Name="IBaseThemeToggle" Style="{StaticResource MaterialDesignSwitchToggleButton}" IsChecked="True"/>
                         <TextBlock VerticalAlignment="Center"><Run Text="Dark"/></TextBlock>
                     </StackPanel>
+                    <CheckBox Grid.Column="1"  Name="IClearSettings" Style="{StaticResource MaterialDesignCheckBox}">Clear Settings</CheckBox>
                 </Grid>
             </TabItem>
 

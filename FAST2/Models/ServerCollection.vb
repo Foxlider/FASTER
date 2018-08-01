@@ -9,6 +9,46 @@ Namespace Models
 
         <XmlElement(Order:=2, ElementName:="ServerProfile")>
         Public ServerProfiles As List(Of ServerProfile) = New List(Of ServerProfile)()
+        
+        Public Shared Sub AddServerProfile(name As String, safeName As String)
+            Dim duplicate = False
+            Dim currentProfiles As New ServerCollection
+
+
+            If My.Settings.serverProfiles IsNot Nothing
+                currentProfiles = My.Settings.serverProfiles
+            End If
+
+            If currentProfiles.ServerProfiles.Count > 0 Then
+                For Each profile In currentProfiles.ServerProfiles
+                    If profile.ProfileNameBox = name
+                        duplicate = true
+                    End If
+                Next
+            End If
+           
+            If Not duplicate Then
+                currentProfiles.ServerProfiles.Add(New ServerProfile(name, safeName))
+
+                My.Settings.serverProfiles = currentProfiles
+            Else
+                MsgBox("Profile already exists.")
+            End If
+
+            My.Settings.Save()
+        End Sub
+
+        Public Shared Sub RenameServerProfile(safeName As String)
+
+        End Sub
+
+        Public Shared Sub DeleteServerProfile(safeName As String)
+
+        End Sub
+
+        Public Shared Sub ExportServerProfile(safeName As String)
+
+        End Sub
     End Class
 
     <Serializable()>
@@ -16,102 +56,202 @@ Namespace Models
         Private Sub New()
         End Sub
 
-      '<localClientBox>127.0.0.1</localClientBox>
-      '<headlessIPBox>127.0.0.1</headlessIPBox>
-      '<pidBox>pid.log</pidBox>
-      '<rankingBox>ranking.log</rankingBox>
-      '<consoleLogBox>server_console.log</consoleLogBox>
-      '<serverFileBox>C:\Temp\a3\arma3server.exe</serverFileBox>
-      '<serverNameBox></serverNameBox>
-      '<portBox>2302</portBox>
-      '<passwordBox></passwordBox>
-      '<maxPlayersBox>32</maxPlayersBox>
-      '<adminPassBox></adminPassBox>
-      '<requiredBuildBox>0</requiredBuildBox>
-      '<extraParamsBox></extraParamsBox>
-      '<maxSendBox>128</maxSendBox>
-      '<minErrorBox>0.001</minErrorBox>
-      '<minErrorNearBox>0.01</minErrorNearBox>
-      '<maxBandwidthBox>2000</maxBandwidthBox>
-      '<minBandwidthBox>128</minBandwidthBox>
-      '<maxNonGuaranteedBox>256</maxNonGuaranteedBox>
-      '<maxGuaranteedBox>512</maxGuaranteedBox>
-      '<maxPacketBox>1400</maxPacketBox>
-      '<maxCustFileBox>160</maxCustFileBox>
-      '<profileNameBox>Test</profileNameBox>
-      '<modBox />
-      '<onUnsignedDataBox />
-      '<regularCheckBox />
-      '<onDifferentDataBox />
-      '<onHackedDataBox />
-      '<onUserConnectedBox />
-      '<onUserDisconnectedBox />
-      '<doubleIdDetectedBox />
-      '<serverCommandBox />
-      '<netlogCheck>0</netlogCheck>
-      '<upnpCheck>0</upnpCheck>
-      '<loopbackCheck>0</loopbackCheck>
-      '<enableHCCheck>0</enableHCCheck>
-      '<rankingCheck>0</rankingCheck>
-      '<pidCheck>0</pidCheck>
-      '<consoleLogCheck>0</consoleLogCheck>
-      '<requiredBuildCheck>0</requiredBuildCheck>
-      '<kickDupeCheck>0</kickDupeCheck>
-      '<voteCheck>1</voteCheck>
-      '<vonCheck>0</vonCheck>
-      '<autoInitCheck>0</autoInitCheck>
-      '<persistCheck>0</persistCheck>
-      '<tacticalPingCheck>1</tacticalPingCheck>
-      '<multipleSavesCheck>1</multipleSavesCheck>
-      '<autoReportingCheck>1</autoReportingCheck>
-      '<mapContentCheck>1</mapContentCheck>
-      '<vonIDCheck>1</vonIDCheck>
-      '<killedByCheck>1</killedByCheck>
-      '<scoreTableCheck>1</scoreTableCheck>
-      '<cameraShakeCheck>1</cameraShakeCheck>
-      '<thirdPersonCheck>1</thirdPersonCheck>
-      '<visualAidCheck>1</visualAidCheck>
-      '<crosshairCheck>1</crosshairCheck>
-      '<staminaBarCheck>1</staminaBarCheck>
-      '<stanceIndicatorCheck>1</stanceIndicatorCheck>
-      '<weaponInfoCheck>1</weaponInfoCheck>
-      '<waypointsCheck>1</waypointsCheck>
-      '<commandsCheck>1</commandsCheck>
-      '<detectedMinesCheck>1</detectedMinesCheck>
-      '<enemyNameCheck>1</enemyNameCheck>
-      '<friendlyNameCheck>1</friendlyNameCheck>
-      '<groupIndicatorCheck>1</groupIndicatorCheck>
-      '<reducedDamageCheck>0</reducedDamageCheck>
-      '<filePatchingCheck>0</filePatchingCheck>
-      '<htCheck>0</htCheck>
-      '<maxPingCheck>0</maxPingCheck>
-      '<maxDesyncCheck>0</maxDesyncCheck>
-      '<packetLossCheck>0</packetLossCheck>
-      '<disconTimeCheck>0</disconTimeCheck>
-      '<kickSlowCheck>0</kickSlowCheck>
-      '<battleyeCheck>0</battleyeCheck>
-      '<rptTimeCombo>none</rptTimeCombo>
-      '<filePatchCombo>2</filePatchCombo>
-      '<verifySigCombo>0</verifySigCombo>
-      '<difficultyCombo>Regular</difficultyCombo>
-      '<kickSlowCombo>Log</kickSlowCombo>
-      '<noOfHCNumeric>1</noOfHCNumeric>
-      '<modTimeNumeric>5</modTimeNumeric>
-      '<voteThresholdNumeric>33</voteThresholdNumeric>
-      '<voteMinPlayersNumeric>3</voteMinPlayersNumeric>
-      '<codecNumeric>3</codecNumeric>
-      '<aiAccuracyNumeric>0.55</aiAccuracyNumeric>
-      '<aiSkillNumeric>0.75</aiSkillNumeric>
-      '<aiPresetNumeric>3</aiPresetNumeric>
-      '<distanceNumeric>2500</distanceNumeric>
-      '<terrainNumeric>10</terrainNumeric>
-      '<disconTimeNumeric>90</disconTimeNumeric>
-      '<packetLossNumeric>0</packetLossNumeric>
-      '<maxDesyncNumeric>0</maxDesyncNumeric>
-      '<maxPingNumeric>60</maxPingNumeric>
-      '<hcModsList />
-      '<serverModsList />
-      '<missionsList />
+        Public Sub New(name As String, safeName As String)
+            Me.ProfileNameBox =  name
+            Me.SafeName = safeName
+        End Sub
 
+        Public Property SafeName As String = String.Empty
+
+        Public Property LocalClientBox As String = "127.0.0.1"
+
+        Public Property HeadlessIpBox As String = "127.0.0.1"
+
+        Public Property PidBox As String = "pid.log" 
+
+        Public Property RankingBox As String = "ranking.log" 
+
+        Public Property ConsoleLogBox As String = "server_console.log" 
+
+        Public Property ServerFileBox As String = String.Empty 
+
+        Public Property ServerNameBox As String = String.Empty 
+
+        Public Property PortBox As Integer = 2302 
+
+        Public Property PasswordBox As String = String.Empty 
+
+        Public Property MaxPlayersBox As Integer = 32 
+
+        Public Property AdminPassBox As String = String.Empty 
+
+        Public Property RequiredBuildBox As Integer = 0 
+
+        Public Property ExtraParamsBox As String = String.Empty 
+
+        Public Property MaxSendBox As Integer = 128 
+
+        Public Property MinErrorBox As Double = 0.001 
+
+        Public Property MinErrorNearBox As Double = 0.01 
+
+        Public Property MaxBandwidthBox As Integer = 2000 
+
+        Public Property MinBandwidthBox As Integer = 128 
+
+        Public Property MaxNonGuaranteedBox As Integer = 256 
+
+        Public Property MaxGuaranteedBox As Integer = 512 
+
+        Public Property MaxPacketBox As Integer = 1400 
+
+        Public Property MaxCustFileBox As Integer = 160 
+
+        Public Property ProfileNameBox As String = "New Profile" 
+
+        Public Property OnUnsignedDataBox As String = String.Empty 
+
+        Public Property RegularCheckBox As String = String.Empty 
+
+        Public Property OnDifferentDataBox As String = String.Empty 
+
+        Public Property OnHackedDataBox As String = String.Empty 
+
+        Public Property OnUserConnectedBox As String = String.Empty 
+
+        Public Property OnUserDisconnectedBox As String = String.Empty 
+
+        Public Property DoubleIdDetectedBox As String = String.Empty 
+
+        Public Property ServerCommandBox As String = String.Empty 
+
+        Public Property NetlogCheck As Boolean = False
+
+        Public Property UpnpCheckWorkshopId As Boolean = False 
+
+        Public Property LoopbackCheck As Boolean = False 
+
+        Public Property WorenableHcCheckkshopId As Boolean = False 
+
+        Public Property RankingCheck As Boolean = False 
+
+        Public Property PidCheck As Boolean = False 
+
+        Public Property ConsoleLogCheck As Boolean = False 
+
+        Public Property RequiredBuildCheck As Boolean = False 
+
+        Public Property KickDupeCheck As Boolean = False 
+
+        Public Property VoteCheck As Boolean = True 
+
+        Public Property VonCheck As Boolean = False 
+
+        Public Property AutoInitCheck As Boolean = False 
+
+        Public Property PersistCheck As Boolean = False 
+
+        Public Property TacticalPingCheck As Boolean = True 
+
+        Public Property MultipleSavesCheck As Boolean = True 
+
+        Public Property AutoReportingCheck As Boolean = True 
+
+        Public Property MapContentCheck As Boolean = True 
+
+        Public Property VonIdCheck As Boolean = True 
+
+        Public Property KilledByCheck As Boolean = True 
+
+        Public Property ScoreTableCheck As Boolean = True 
+
+        Public Property CameraShakeCheck As Boolean = True 
+
+        Public Property ThirdPersonCheck As Boolean = True 
+
+        Public Property VisualAidCheck As Boolean = True 
+
+        Public Property CrosshairCheck As Boolean = True 
+
+        Public Property StaminaBarCheck As Boolean = True 
+
+        Public Property StanceIndicatorCheck As Boolean = True 
+
+        Public Property WeaponInfoCheck As Boolean = True 
+
+        Public Property WaypointsCheck As Boolean = True 
+
+        Public Property CommandsCheck As Boolean = True 
+
+        Public Property DetectedMinesCheck As Boolean = True 
+
+        Public Property EnemyNameCheck As Boolean = True 
+
+        Public Property FriendlyNameCheck As Boolean = True 
+
+        Public Property GroupIndicatorCheck As Boolean = True 
+
+        Public Property ReducedDamageCheck As Boolean = False 
+
+        Public Property FilePatchingCheck As Boolean = False 
+
+        Public Property HtCheck As Boolean = False 
+
+        Public Property MaxPingCheck As Boolean = False 
+
+        Public Property MaxDesyncCheck As Boolean = False 
+
+        Public Property WorkshoppacketLossCheckId As Boolean = False 
+
+        Public Property DisconTimeCheck As Boolean = False 
+
+        Public Property KickSlowCheck As Boolean = False 
+
+        Public Property BattleyeCheck As Boolean = False 
+
+        Public Property RptTimeCombo As String = String.Empty 
+
+        Public Property FilePatchCombo As Integer = 2 
+
+        Public Property VerifySigCombo As Integer = 0 
+
+        Public Property DifficultyCombo As String = "Regular" 
+
+        Public Property KickSlowCombo As String = "Log" 
+
+        Public Property NoOfHcNumeric As Integer = 1 
+
+        Public Property ModTimeNumeric As Integer = 5 
+
+        Public Property VoteThresholdNumeric As Integer = 33 
+
+        Public Property WorvoteMinPlayersNumerickshopId As Integer = 3 
+
+        Public Property CodecNumeric As Integer = 3 
+
+        Public Property AiAccuracyNumeric As Double = 0.55 
+
+        Public Property AiSkillNumeric As Double = 0.75 
+
+        Public Property AiPresetNumeric As Integer = 3 
+
+        Public Property DistanceNumeric As Integer = 2500 
+
+        Public Property TerrainNumeric As Integer = 10 
+
+        Public Property DisconTimeNumeric As Integer = 90 
+
+        Public Property PacketLossNumeric As Integer = 0 
+
+        Public Property MaxDesyncNumeric As Integer = 0 
+
+        Public Property MaxPingNumeric As Integer = 60
+
+        '<hcModsList />
+        '<serverModsList />
+        '<missionsList />
+        '<modBox />
+
+        
     End Class
 End NameSpace

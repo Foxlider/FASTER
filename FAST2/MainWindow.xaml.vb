@@ -17,11 +17,14 @@ Class MainWindow
     Private ReadOnly _oProcess As New Process()
     Private _cancelled As Boolean
 
+    'Executes some events when the window is loaded
     Private Sub MainWindow_Loaded(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
+        
         ISteamDirBox.Text = My.Settings.steamCMDPath
         ISteamUserBox.Text = My.Settings.steamUserName
         ISteamPassBox.Password = Encryption.DecryptData(My.Settings.steamPassword)
         IServerDirBox.Text = My.Settings.serverPath
+        LoadServerProfiles()
         If InstallSteamCmd Then
             InstallSteam()
         End If
@@ -40,28 +43,43 @@ Class MainWindow
         End If
     End Function
 
-    'Creates new server profile in menu and tab control
-    Private Sub CreateNewServerProfile(profileName As String)
-        Dim safeProfileName As String = SafeName(profileName)
+    'Loads all server profiles and displays them in UI
+    Private Sub LoadServerProfiles()
+        If My.Settings.serverProfiles IsNot Nothing
+            Dim currentProfiles = My.Settings.serverProfiles
+         
+            IServerProfilesList.Items.Clear()
+            
+            For Each profile in currentProfiles.ServerProfiles
+                Dim newItem As New ListBoxItem With {
+                    .Name = profile.SafeName,
+                    .Content = profile.ProfileNameBox
+                }
 
-        Dim newServer As New ListBoxItem With {
-            .Content = profileName,
-            .Name = safeProfileName & "Select"
-        }
+                IServerProfilesList.Items.Add(newItem)
 
-        IServerProfilesList.Items.Add(newServer)
+                AddHandler newItem.Selected, AddressOf MenuItemm_Selected
 
-        AddHandler newServer.Selected, AddressOf MenuItemm_Selected
+                Dim duplicate = False
 
-        Dim tabControls = New ServerProfileTab
+                For Each tab As TabItem In IMainContent.items
+                    If profile.SafeName = tab.Name
+                        duplicate = true
+                    End If
+                Next
 
-        Dim newTab As New TabItem With {
-            .Name = safeProfileName,
-            .Content = tabControls
-        }
+                If Not duplicate
+                    Dim tabControls = New ServerProfileTab
 
-        IMainContent.Items.Add(newTab)
-        IMainContent.SelectedItem = newTab
+                    Dim newTab As New TabItem With {
+                            .Name = profile.SafeName,
+                            .Content = tabControls
+                            }
+
+                    IMainContent.Items.Add(newTab)
+                End If
+            Next
+        End If
     End Sub
 
     'Opens Folder select dialog and returns selected path
@@ -123,7 +141,8 @@ Class MainWindow
         If profileName = Nothing Then
             MsgBox("Please Enter A Value")
         Else
-            CreateNewServerProfile(profileName)
+            ServerCollection.AddServerProfile(profileName, SafeName(profileName))
+            LoadServerProfiles()
         End If
     End Sub
 
@@ -177,7 +196,7 @@ Class MainWindow
         IWindowCloseButton.Background = FindResource("MaterialDesignPaper")
     End Sub
 
-    'Turns toggle button groups into normal buttons
+    'Manages actions for steam mods tab buttons
     Private Sub IActionButtons_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles IModActionButtons.SelectionChanged
         
         If IAddSteamMod.IsSelected
@@ -199,9 +218,8 @@ Class MainWindow
             )
         thread.Start()
     End Sub
-
     
-
+    'Retrieves mods from an XML file
     Public Shared Function GetModsFromXml(filename As String) As ModCollection
         Dim xml = File.ReadAllText(filename)
         Return Deserialize (Of ModCollection)(xml)
@@ -214,17 +232,16 @@ Class MainWindow
     End Sub
 
     'Changes palette primary colour
-' ReSharper disable once UnusedMember.Local
     Private Shared Sub ApplyPrimary(swatch As Swatch)
         Call New PaletteHelper().ReplacePrimaryColor(swatch)
     End Sub
 
     'Changes palette accent colour
-' ReSharper disable once UnusedMember.Local
     Private Shared Sub ApplyAccent(swatch As Swatch)
         Call New PaletteHelper().ReplaceAccentColor(swatch)
     End Sub
 
+    'Installs the SteamCMD tool
     Private Sub InstallSteam()
         Windows.MessageBox.Show("Steam CMD will now download and start the install process. If prompted please enter your Steam Guard Code." & Environment.NewLine & "You will recieve this by email from steam. When this is all complete type 'quit' to finish.", "Information")
 
@@ -240,6 +257,7 @@ Class MainWindow
         ISteamOutputBox.AppendText(Environment.NewLine & "File Downloading...")
     End Sub
 
+    'Continues SteamCMD install when file download is complete
     Private Sub SteamDownloadCompleted(sender As Object, e As AsyncCompletedEventArgs)
         ISteamOutputBox.AppendText(Environment.NewLine & "Download Finished")
 
@@ -256,7 +274,7 @@ Class MainWindow
         RunSteamCommand(steamPath & "\steamcmd.exe", "+login anonymous +quit", "install")
     End Sub
 
-' ReSharper disable once UnusedParameter.Local
+    'Runs Steam command via SteamCMD and redirects input and output to FAST
     Private Async Sub RunSteamCommand(steamCmd As String, steamCommand As String, type As String, Optional modIDs As IReadOnlyCollection(Of String) = Nothing)
         If ReadyToUpdate() Then
             ISteamProgressBar.Value = 0
@@ -402,6 +420,7 @@ Class MainWindow
         End If
     End Sub
 
+    'Checks if the program is ready to run a command
     Private Function ReadyToUpdate() As Boolean
         If ISteamDirBox.Text = String.Empty Then
             Return False
@@ -418,11 +437,12 @@ Class MainWindow
         End If
     End Function
 
+    'Handles when a user presses the cancel button
     Private Shared Sub ISteamCancelButton_Click(sender As Object, e As RoutedEventArgs) Handles ISteamUpdateButton.Click
         
     End Sub
 
-' ReSharper disable once UnusedMember.Local
+    'Serial a class
     Private Shared Function Serialize(Of T)(value As T) As String
         If value Is Nothing Then
             Return Nothing
@@ -445,6 +465,7 @@ Class MainWindow
         End Using
     End Function
 
+    'Deserialse a class
     Private Shared Function Deserialize(Of T)(xml As String) As T
         If String.IsNullOrEmpty(xml) Then
             Return Nothing
@@ -461,6 +482,7 @@ Class MainWindow
         End Using
     End Function
 
+    'Gets mod info from Steam using Steam Web API
     Public Shared Function GetModInfo(modId As String)
         Try
             ' Create a request using a URL that can receive a post.   
@@ -506,7 +528,12 @@ Class MainWindow
         End Try
     End Function
 
+    'Executes some code when the window is closing
     Private Sub MainWindow_Closing(sender As Object, e As CancelEventArgs) Handles Me.Closing
         My.Settings.Save()
+
+        If IClearSettings.IsChecked
+            My.Settings.Reset()
+        End If
     End Sub
 End Class

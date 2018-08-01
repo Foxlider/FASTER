@@ -46,32 +46,32 @@
                 Server Scripting
             </TabItem>
         </dragablz:TabablzControl>
-        <ListBox Name="IActionButtons" Grid.Row="1" SelectionMode="Extended" Style="{StaticResource MaterialDesignToolToggleListBox}" HorizontalAlignment="Right" Margin="5,10">
-            <ListBoxItem>
+        <ListBox Name="IServerActionButtons" Grid.Row="1" SelectionMode="Extended" Style="{StaticResource MaterialDesignToolToggleListBox}" HorizontalAlignment="Right" Margin="5,10">
+            <ListBoxItem Name="ISaveProfile">
                 <ListBoxItem.ToolTip>
                     <TextBlock>Save</TextBlock>
                 </ListBoxItem.ToolTip>
                 <materialDesign:PackIcon Kind="ContentSave" />
             </ListBoxItem>
-            <ListBoxItem>
+            <ListBoxItem Name="IRenameProfile">
                 <ListBoxItem.ToolTip>
                     <TextBlock>Rename</TextBlock>
                 </ListBoxItem.ToolTip>
                 <materialDesign:PackIcon Kind="Pencil" />
             </ListBoxItem>
-            <ListBoxItem>
+            <ListBoxItem Name="IDeleteProfile">
                 <ListBoxItem.ToolTip>
                     <TextBlock>Delete</TextBlock>
                 </ListBoxItem.ToolTip>
                 <materialDesign:PackIcon Kind="Delete" />
             </ListBoxItem>
-            <ListBoxItem>
+            <ListBoxItem Name="IExportProfile">
                 <ListBoxItem.ToolTip>
                     <TextBlock>Export</TextBlock>
                 </ListBoxItem.ToolTip>
                 <materialDesign:PackIcon Kind="Export" />
             </ListBoxItem>
-            <ListBoxItem>
+            <ListBoxItem Name="ILaunchServer">
                 <ListBoxItem.ToolTip>
                     <TextBlock>Launch</TextBlock>
                 </ListBoxItem.ToolTip>
