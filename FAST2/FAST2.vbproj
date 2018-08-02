@@ -86,6 +86,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Models\ServerCollection.vb" />
+    <Compile Include="Models\Theme.vb" />
     <Compile Include="SettingsTab.xaml.vb">
       <DependentUpon>SettingsTab.xaml</DependentUpon>
     </Compile>
@@ -100,6 +101,9 @@
     </Compile>
     <Compile Include="Models\Encryption.vb" />
     <Compile Include="Models\ModCollection.vb" />
+    <Compile Include="SteamModsTab.xaml.vb">
+      <DependentUpon>SteamModsTab.xaml</DependentUpon>
+    </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -125,6 +129,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Setup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SteamModsTab.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

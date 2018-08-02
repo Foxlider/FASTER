@@ -16,7 +16,7 @@ Namespace Models
         Public LocalMods As List(Of LocalMod) = New List(Of LocalMod)()
         
         Public Shared Sub AddLocalMod()
-            Dim path As String = MainWindow.SelectFolder()
+            Dim path As String = MainWindow.Instance.SelectFolder()
             Dim duplicate = False
             Dim currentMods As New ModCollection
             Dim modName = path.Substring(path.LastIndexOf("@", StringComparison.Ordinal) + 1)
@@ -83,7 +83,7 @@ Namespace Models
                             modName = StrReverse(modName)
                             modName = MainWindow.SafeName(modName)
 
-                            Dim modInfo = MainWindow.Instance.GetModInfo(modId)
+                            Dim modInfo = MainWindow.GetModInfo(modId)
 
                             Dim steamUpdateTime = modInfo.Substring(modInfo.IndexOf("""time_updated"":") + 15, 10)
 

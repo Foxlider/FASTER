@@ -3,11 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:dragablz="clr-namespace:Dragablz;assembly=Dragablz"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
 
-             TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-             Background="{DynamicResource MaterialDesignBody}"
              FontFamily="{DynamicResource MaterialDesignFont}"
              
 
@@ -91,7 +88,7 @@
             <StackPanel>
                 <Label Margin="8" Content="Other Settings" FontSize="12"/>
                 <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="-10"/>
-                <CheckBox Name="IClearSettings" Style="{StaticResource MaterialDesignCheckBox}" Margin="10">Clear Settings</CheckBox>
+                <CheckBox Name="IClearSettings" Style="{StaticResource MaterialDesignAccentCheckBox}" Margin="10">Clear Settings</CheckBox>
             </StackPanel>
         </materialDesign:Card>
     </Grid>

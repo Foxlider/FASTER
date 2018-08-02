@@ -40,10 +40,10 @@
         </Grid.RowDefinitions>
 
         <!--Custom Window Bar Elements-->
-        <Rectangle Name="IWindowDragBar" Grid.Row="0" Grid.Column="0" Margin="0,0,80,3"/>
+        <Rectangle Name="IWindowDragBar" Grid.Row="0" Grid.Column="0" Margin="0,0,80,3" Fill="{DynamicResource MaterialDesignPaper}"/>
         <StackPanel Grid.Row="0" Orientation="Horizontal">
             <Image Name="ILogoImage" HorizontalAlignment="Left" Margin="5,0" Height="20" Width="20" Source="FAST-main-icon.ico"/>
-            <Label Name="IWindowTitle"  Content="FAST - Initial Setup                          " VerticalAlignment="Center"/>
+            <Label Name="IWindowTitle"  Content="FAST - Initial Setup" VerticalAlignment="Center"/>
         </StackPanel>
         
         <ListBox Grid.Row="0" HorizontalAlignment="Right" SelectionMode="Extended" Style="{StaticResource MaterialDesignToolToggleFlatListBox}" Margin="0,0,-1,0" Width="84">

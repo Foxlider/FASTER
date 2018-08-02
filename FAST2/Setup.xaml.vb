@@ -5,9 +5,9 @@ Public Class Setup
     
     'Checks to see if setup has been run before - continues to main window if true
     Private Sub Setup_Initialized(sender As Object, e As EventArgs) Handles MyBase.Initialized
-        SettingsTab.ApplyPrimary(My.Settings.primaryColour)
-        SettingsTab.ApplyAccent(My.Settings.accentColour)
-        SettingsTab.SwitchBaseTheme(My.Settings.isDark)
+        Theme.ApplyPrimary(My.Settings.primaryColour)
+        Theme.ApplyAccent(My.Settings.accentColour)
+        Theme.SwitchBase(My.Settings.isDark)
 
         If My.Settings.firstRun = False Then
             MainWindow.Instance.Show()
@@ -49,7 +49,7 @@ Public Class Setup
 
     'Opens folder select dialog when clicking certain buttons
     Private Sub DirButton_Click(sender As Object, e As RoutedEventArgs) Handles ISteamDirButton.Click, IServerDirButton.Click
-        Dim path As String = MainWindow.SelectFolder()
+        Dim path As String = MainWindow.Instance.SelectFolder()
 
         If path IsNot Nothing Then
             If sender Is ISteamDirButton Then

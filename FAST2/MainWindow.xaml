@@ -40,7 +40,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
             <RowDefinition Height="108"/>
-            <RowDefinition Height="*"  x:Name="IServerProfilesRow"/>
+            <RowDefinition Height="*" x:Name="IServerProfilesRow"/>
             <RowDefinition Height="141"/>
         </Grid.RowDefinitions>
 
@@ -93,7 +93,7 @@
         </StackPanel>
 
         <!--Content Column - Main Content-->
-        <TabControl Grid.Row="1" Grid.RowSpan="3" x:Name="IMainContent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,-5,-2,-2" Background="White" BorderBrush="{x:Null}" Grid.Column="1">
+        <TabControl Grid.Row="1" Grid.RowSpan="3" x:Name="IMainContent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,-5,-2,-2"  BorderBrush="{x:Null}" Grid.Column="1">
             <!--Removes Visible Tab Controls-->
             <TabControl.ItemContainerStyle>
                 <Style TargetType="{x:Type TabItem}">
@@ -103,101 +103,60 @@
 
             <!--Main Content - Steam Updater Tab-->
             <TabItem x:Name="ISteamUpdaterTab" Header="TabItem">
-                <Grid VerticalAlignment="Stretch" >
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="5*"/>
-                        <ColumnDefinition Width="8*"/>
-                        <ColumnDefinition Width="2*"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="52"/>
-                    </Grid.RowDefinitions>
+                <Grid>
+                    <Grid VerticalAlignment="Stretch" >
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="5*"/>
+                            <ColumnDefinition Width="8*"/>
+                            <ColumnDefinition Width="2*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="52"/>
+                        </Grid.RowDefinitions>
 
-                    <StackPanel x:Name="ISteamGroup" Grid.Column="0">
-                        <GroupBox Header="SteamCMD Settings" FontWeight="Bold" Style="{DynamicResource MaterialDesignGroupBox}" Margin="10,10,10,0" materialDesign:ShadowAssist.ShadowDepth="Depth2" BorderThickness="0">
-                            <StackPanel>
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBox x:Name="ISteamDirBox"  materialDesign:HintAssist.Hint="Directory" Style="{StaticResource MaterialDesignFloatingHintTextBox}" BorderBrush="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,0,5"/>
-                                    <Button x:Name="ISteamDirButton" Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}" Height="20" Width="20" Margin="10,0,0,0">
-                                        <materialDesign:PackIcon Kind="FolderOpen" Height="10" Width="10"/>
-                                    </Button>
+                        <StackPanel x:Name="ISteamGroup" Grid.Column="0">
+                            <GroupBox Header="SteamCMD Settings" FontWeight="Bold" Style="{DynamicResource MaterialDesignGroupBox}" Margin="10,10,10,0" materialDesign:ShadowAssist.ShadowDepth="Depth2" BorderThickness="0">
+                                <StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBox x:Name="ISteamDirBox"  materialDesign:HintAssist.Hint="Directory" Style="{StaticResource MaterialDesignFloatingHintTextBox}" BorderBrush="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,0,5"/>
+                                        <Button x:Name="ISteamDirButton" Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}" Height="20" Width="20" Margin="10,0,0,0">
+                                            <materialDesign:PackIcon Kind="FolderOpen" Height="10" Width="10"/>
+                                        </Button>
+                                    </StackPanel>
+
+                                    <TextBox x:Name="ISteamUserBox" materialDesign:HintAssist.Hint="User Name" Style="{StaticResource MaterialDesignFloatingHintTextBox}" BorderBrush="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,0,5"/>
+                                    <PasswordBox x:Name="ISteamPassBox" materialDesign:HintAssist.Hint="Password" Style="{StaticResource MaterialDesignFloatingHintPasswordBox}" BorderBrush="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,0,5"/>
                                 </StackPanel>
+                            </GroupBox>
+                            <GroupBox Header="Arma Server Settings" FontWeight="Bold" Style="{DynamicResource MaterialDesignGroupBox}" Margin="10,10,10,0" materialDesign:ShadowAssist.ShadowDepth="Depth2" BorderThickness="0">
+                                <StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBox x:Name="IServerDirBox" materialDesign:HintAssist.Hint="Directory" Style="{StaticResource MaterialDesignFloatingHintTextBox}" BorderBrush="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,0,5"/>
+                                        <Button x:Name="IServerDirButton" Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}" ToolTip="MaterialDesignFloatingActionMiniAccentButton" Height="20" Width="20" Margin="10,0,0,0">
+                                            <materialDesign:PackIcon Kind="FolderOpen" Height="10" Width="10"/>
+                                        </Button>
+                                    </StackPanel>
 
-                                <TextBox x:Name="ISteamUserBox" materialDesign:HintAssist.Hint="User Name" Style="{StaticResource MaterialDesignFloatingHintTextBox}" BorderBrush="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,0,5"/>
-                                <PasswordBox x:Name="ISteamPassBox" materialDesign:HintAssist.Hint="Password" Style="{StaticResource MaterialDesignFloatingHintPasswordBox}" BorderBrush="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,0,5"/>
-                            </StackPanel>
-                        </GroupBox>
-                        <GroupBox Header="Arma Server Settings" FontWeight="Bold" Style="{DynamicResource MaterialDesignGroupBox}" Margin="10,10,10,0" materialDesign:ShadowAssist.ShadowDepth="Depth2" BorderThickness="0">
-                            <StackPanel>
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBox x:Name="IServerDirBox" materialDesign:HintAssist.Hint="Directory" Style="{StaticResource MaterialDesignFloatingHintTextBox}" BorderBrush="{DynamicResource PrimaryHueDarkBrush}" Margin="0,0,0,5"/>
-                                    <Button x:Name="IServerDirButton" Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}" ToolTip="MaterialDesignFloatingActionMiniAccentButton" Height="20" Width="20" Margin="10,0,0,0">
-                                        <materialDesign:PackIcon Kind="FolderOpen" Height="10" Width="10"/>
-                                    </Button>
+                                    <ComboBox materialDesign:HintAssist.Hint="Version" Style="{StaticResource MaterialDesignFloatingHintComboBox}" BorderBrush="{DynamicResource PrimaryHueDarkBrush}">
+                                        <ComboBoxItem Content="Stable"/>
+                                        <ComboBoxItem Content="Development"/>
+                                    </ComboBox>
                                 </StackPanel>
+                            </GroupBox>
+                        </StackPanel>
 
-                                <ComboBox materialDesign:HintAssist.Hint="Version" Style="{StaticResource MaterialDesignFloatingHintComboBox}" BorderBrush="{DynamicResource PrimaryHueDarkBrush}">
-                                    <ComboBoxItem Content="Stable"/>
-                                    <ComboBoxItem Content="Development"/>
-                                </ComboBox>
-                            </StackPanel>
-                        </GroupBox>
-                    </StackPanel>
-
-                    <Button x:Name="ISteamUpdateButton" Style="{StaticResource MaterialDesignRaisedAccentButton}" Grid.Column="0" Grid.Row="1" Content="Update" Margin="10,10,10,10"/>
-                    <RichTextBox x:Name="ISteamOutputBox" Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="2" IsReadOnly="True" Background="LightGray" Margin="10,10,10,0" VerticalScrollBarVisibility="Auto"/>
-                    <ProgressBar x:Name="ISteamProgressBar" Grid.Column="1" Grid.Row="1" Margin="10,10,10,10" Height="32"/>
-                    <Button x:Name="ISteamCancelButton" Style="{StaticResource MaterialDesignRaisedAccentButton}" Grid.Column="2" Grid.Row="1" Content="Cancel" Margin="0,10,10,10" IsEnabled="False"/>
+                        <Button x:Name="ISteamUpdateButton" Style="{StaticResource MaterialDesignRaisedAccentButton}" Grid.Column="0" Grid.Row="1" Content="Update" Margin="10,10,10,10"/>
+                        <RichTextBox x:Name="ISteamOutputBox" Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="2" IsReadOnly="True" Background="LightGray" Margin="10,10,10,0" VerticalScrollBarVisibility="Auto"/>
+                        <ProgressBar x:Name="ISteamProgressBar" Grid.Column="1" Grid.Row="1" Margin="10,10,10,10" Height="32"/>
+                        <Button x:Name="ISteamCancelButton" Style="{StaticResource MaterialDesignRaisedAccentButton}" Grid.Column="2" Grid.Row="1" Content="Cancel" Margin="0,10,10,10" IsEnabled="False"/>
+                    </Grid>
                 </Grid>
             </TabItem>
 
             <!--Main Content - Server Mods Tab-->
             <TabItem Name="ISteamModsTab" Header="TabItem">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition />
-                    </Grid.RowDefinitions>
-                    <ListBox x:Name="IModActionButtons" SelectionMode="Extended" Style="{StaticResource MaterialDesignToolToggleListBox}" HorizontalAlignment="Left" Margin="10,10,0,0">
-                        <ListBoxItem x:Name="IAddSteamMod">
-                            <ListBoxItem.ToolTip>
-                                <TextBlock><Run Text="Add Mod from Steam URL"/></TextBlock>
-                            </ListBoxItem.ToolTip>
-                            <materialDesign:PackIcon Kind="Plus"/>
-                        </ListBoxItem>
-                        <ListBoxItem x:Name="IAddLocalMod">
-                            <ListBoxItem.ToolTip>
-                                <TextBlock><Run Text="Add Local Mod"/></TextBlock>
-                            </ListBoxItem.ToolTip>
-                            <materialDesign:PackIcon Kind="FolderOpen"/>
-                        </ListBoxItem>
-                        <ListBoxItem>
-                            <ListBoxItem.ToolTip>
-                                <TextBlock><Run Text="Import from Arma 3 Launcher File"/></TextBlock>
-                            </ListBoxItem.ToolTip>
-                            <materialDesign:PackIcon Kind="FileDocument"/>
-                        </ListBoxItem>
-                        <ListBoxItem>
-                            <ListBoxItem.ToolTip>
-                                <TextBlock><Run Text="Check For Updates"/></TextBlock>
-                            </ListBoxItem.ToolTip>
-                            <materialDesign:PackIcon Kind="Clock"/>
-                        </ListBoxItem>
-                        <ListBoxItem>
-                            <ListBoxItem.ToolTip>
-                                <TextBlock><Run Text="Update All"/></TextBlock>
-                            </ListBoxItem.ToolTip>
-                            <materialDesign:PackIcon Kind="Update"/>
-                        </ListBoxItem>
-                    </ListBox>
-                    <ProgressBar Grid.Row="0" Grid.Column="1" Height="Auto" Width="Auto" Margin="10,10,10,0"/>
-                    <DataGrid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="10"/>
-                </Grid>
+                
             </TabItem>
 
             <!--Main Content - Settings Tab-->
