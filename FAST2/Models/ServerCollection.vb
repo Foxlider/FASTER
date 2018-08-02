@@ -9,16 +9,21 @@ Namespace Models
 
         <XmlElement(Order:=2, ElementName:="ServerProfile")>
         Public ServerProfiles As List(Of ServerProfile) = New List(Of ServerProfile)()
-        
-        Public Shared Sub AddServerProfile(name As String, safeName As String)
-            Dim duplicate = False
+
+        Private Shared Function GetServerProfiles() As ServerCollection
             Dim currentProfiles As New ServerCollection
-
-
+            
             If My.Settings.serverProfiles IsNot Nothing
                 currentProfiles = My.Settings.serverProfiles
             End If
 
+            Return currentProfiles
+        End Function
+        
+        Public Shared Sub AddServerProfile(name As String, safeName As String)
+            Dim duplicate = False
+            Dim currentProfiles = GetServerProfiles()
+            
             If currentProfiles.ServerProfiles.Count > 0 Then
                 For Each profile In currentProfiles.ServerProfiles
                     If profile.ProfileNameBox = name
@@ -36,6 +41,7 @@ Namespace Models
             End If
 
             My.Settings.Save()
+            MainWindow.Instance.LoadServerProfiles
         End Sub
 
         Public Shared Sub RenameServerProfile(safeName As String)
@@ -43,7 +49,12 @@ Namespace Models
         End Sub
 
         Public Shared Sub DeleteServerProfile(safeName As String)
+            Dim currentProfiles = GetServerProfiles()
 
+            currentProfiles.ServerProfiles.RemoveAll(Function(x) x.SafeName = safeName)
+
+            My.Settings.Save()
+            MainWindow.Instance.LoadServerProfiles
         End Sub
 
         Public Shared Sub ExportServerProfile(safeName As String)
@@ -57,7 +68,7 @@ Namespace Models
         End Sub
 
         Public Sub New(name As String, safeName As String)
-            Me.ProfileNameBox =  name
+            ProfileNameBox =  name
             Me.SafeName = safeName
         End Sub
 

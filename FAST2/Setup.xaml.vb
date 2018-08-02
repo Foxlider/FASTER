@@ -2,11 +2,12 @@
 Imports FAST2.Models
 
 Public Class Setup
+    
     'Checks to see if setup has been run before - continues to main window if true
     Private Sub Setup_Initialized(sender As Object, e As EventArgs) Handles MyBase.Initialized
         If My.Settings.firstRun = False Then
-            Dim main = New MainWindow
-            main.Show()
+            MainWindow.Instance.Show()
+            MainWindow.Instance.Activate()
             Close()
         End If
     End Sub
@@ -66,14 +67,13 @@ Public Class Setup
         Dim wrapper As New Encryption(encryptionString)
         Dim cypher As String = wrapper.EncryptData(ISteamPassBox.Password)
         My.Settings.steamPassword = cypher
-
-        Dim main = New MainWindow
-
+        
         If IInstallSteamCheck.IsChecked
-            main.InstallSteamCmd = true
+            MainWindow.Instance.InstallSteamCmd = true
         End If
          
-        main.Show()
+        MainWindow.Instance.Show()
+        MainWindow.Instance.Activate()
         Close()
     End Sub
 End Class

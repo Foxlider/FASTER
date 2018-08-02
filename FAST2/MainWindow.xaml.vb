@@ -12,7 +12,37 @@ Imports FAST2.Models
 Imports MaterialDesignColors
 Imports MaterialDesignThemes.Wpf
 
-Class MainWindow
+Public Class MainWindow
+
+    Private Shared _instance As MainWindow
+
+    ''' <summary>
+    ''' Gets the one and only instance.
+    ''' </summary>
+    Public Shared ReadOnly Property Instance As MainWindow
+        Get
+            'If there is no instance or it has been destroyed...
+            If _instance Is Nothing Then
+                '...create a new one.
+                _instance = New MainWindow
+            End If
+
+            Return _instance
+        End Get
+    End Property
+
+    'The only constructor is private so an instance cannot be created externally.
+    Public Sub New()
+        ' This call is required by the designer.
+        InitializeComponent()
+
+        ' Add any initialization after the InitializeComponent() call.
+
+    End Sub
+
+   
+
+
     Public InstallSteamCmd As Boolean = False
     Private ReadOnly _oProcess As New Process()
     Private _cancelled As Boolean
@@ -44,19 +74,28 @@ Class MainWindow
     End Function
 
     'Loads all server profiles and displays them in UI
-    Private Sub LoadServerProfiles()
+    Public Sub LoadServerProfiles()
         If My.Settings.serverProfiles IsNot Nothing
             Dim currentProfiles = My.Settings.serverProfiles
          
-            IServerProfilesList.Items.Clear()
-            
+            IServerProfilesMenu.Items.Clear()
+
+
+            For i As Integer = IMainContent.Items.Count - 1 To 0
+                Dim ti As TabItem = CType(IMainContent.Items(i), TabItem)
+                Dim safeTabs As String() = {"ISteamUpdaterTab","ISteamModsTab","ISettingsTab","IToolsTab","IAboutTab"}
+                If Not safeTabs.Contains(ti.name) Then
+                    IMainContent.Items.Remove(ti)
+                End If
+            Next
+           
             For Each profile in currentProfiles.ServerProfiles
                 Dim newItem As New ListBoxItem With {
                     .Name = profile.SafeName,
                     .Content = profile.ProfileNameBox
                 }
 
-                IServerProfilesList.Items.Add(newItem)
+                IServerProfilesMenu.Items.Add(newItem)
 
                 AddHandler newItem.Selected, AddressOf MenuItemm_Selected
 
@@ -69,7 +108,7 @@ Class MainWindow
                 Next
 
                 If Not duplicate
-                    Dim tabControls = New ServerProfileTab
+                    Dim tabControls = New ServerProfileTab(profile.SafeName, profile.ProfileNameBox)
 
                     Dim newTab As New TabItem With {
                             .Name = profile.SafeName,
@@ -97,7 +136,7 @@ Class MainWindow
     Private Sub MenuItemm_Selected(sender As ListBoxItem, e As RoutedEventArgs) Handles ISteamUpdaterTabSelect.Selected, ISteamModsTabSelect.Selected, ISettingsTabSelect.Selected, IToolsTabSelect.Selected, IAboutTabSelect.Selected
         Dim menus As New List(Of Controls.ListBox) From {
             IMainMenuItems,
-            IServerProfilesList,
+            IServerProfilesMenu,
             IOtherMenuItems
         }
 
@@ -119,30 +158,31 @@ Class MainWindow
     'Updates UI elements when window is resized/ re-rendered
     Private Sub MainWindow_LayoutUpdated(sender As Object, e As EventArgs) Handles Me.LayoutUpdated
         If Not WindowState = WindowState.Minimized Then
-            'Sets max height of server profile containers to ensure no overflow to other menus
-            IServerProfilesRow.MaxHeight = Height - 149
-            IServerProfilesList.MaxHeight = IServerProfilesRow.ActualHeight - 50
+            If IServerProfilesMenu.Height > 50
+                'Sets max height of server profile containers to ensure no overflow to other menus
+                IServerProfilesRow.MaxHeight = Height - 149
+                IServerProfilesMenu.MaxHeight = IServerProfilesRow.ActualHeight - 50
 
-            'Moves button to add new server profile as the menu expands
-            Dim newMargin As Thickness = INewServerProfileButton.Margin
-            newMargin.Left = IMenuColumn.ActualWidth - 130
-            INewServerProfileButton.Margin = newMargin
+                'Moves button to add new server profile as the menu expands
+                Dim newMargin As Thickness = INewServerProfileButton.Margin
+                newMargin.Left = IMenuColumn.ActualWidth - 130
+                INewServerProfileButton.Margin = newMargin
 
-            'Moves folder select buttons as the menu expands
-            ISteamDirBox.Width = ISteamGroup.ActualWidth - 70
-            IServerDirBox.Width = ISteamGroup.ActualWidth - 70
+                'Moves folder select buttons as the menu expands
+                ISteamDirBox.Width = ISteamGroup.ActualWidth - 70
+                IServerDirBox.Width = ISteamGroup.ActualWidth - 70
+            End If
         End If
     End Sub
 
     'Creates a new Server Profile and adds it to the UI menu
-    Private Sub NewServerProfileButton_Click(sender As Object, e As RoutedEventArgs) Handles INewServerProfileButton.Click
+    Private Shared Sub NewServerProfileButton_Click(sender As Object, e As RoutedEventArgs) Handles INewServerProfileButton.Click
         Dim profileName As String = InputBox("Enter profile name:", "New Server Profile")
 
         If profileName = Nothing Then
             MsgBox("Please Enter A Value")
         Else
             ServerCollection.AddServerProfile(profileName, SafeName(profileName))
-            LoadServerProfiles()
         End If
     End Sub
 
@@ -483,7 +523,7 @@ Class MainWindow
     End Function
 
     'Gets mod info from Steam using Steam Web API
-    Public Shared Function GetModInfo(modId As String)
+    Public Function GetModInfo(modId As String)
         Try
             ' Create a request using a URL that can receive a post.   
             Dim request As WebRequest = WebRequest.Create("https://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1/")

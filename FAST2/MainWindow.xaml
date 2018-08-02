@@ -79,7 +79,7 @@
                 </Button>
             </StackPanel>
 
-            <ListBox x:Name="IServerProfilesList" HorizontalAlignment="Stretch" Margin="0,0,0,10"/>
+            <ListBox x:Name="IServerProfilesMenu" HorizontalAlignment="Stretch" Margin="0,0,0,10"/>
         </StackPanel>
 
         <!--Menu Column - Other Items-->
@@ -219,12 +219,12 @@
 
             <!--Main Content - Tools Tab-->
             <TabItem Name="IToolsTab" Header="TabItem">
-
+                <TextBlock>Tools</TextBlock>
             </TabItem>
 
             <!--Main Content - About Tab-->
             <TabItem Name="IAboutTab" Header="TabItem">
-
+                <TextBlock>About</TextBlock>
             </TabItem>
         </TabControl>
         

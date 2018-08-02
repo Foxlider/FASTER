@@ -6,8 +6,10 @@
              xmlns:dragablz="clr-namespace:Dragablz;assembly=Dragablz"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
 
+             TextElement.Foreground="{DynamicResource MaterialDesignBody}"
              Background="{DynamicResource MaterialDesignBody}"
              FontFamily="{DynamicResource MaterialDesignFont}"
+             
 
              TextElement.FontWeight="Regular"
              TextElement.FontSize="11"
@@ -46,6 +48,7 @@
                 Server Scripting
             </TabItem>
         </dragablz:TabablzControl>
+        <Label Name="IProfileDisplayName" Grid.Row="1" VerticalAlignment="Center" Content="AGGGGGGG" Foreground="{StaticResource MaterialDesignBackground}"/>
         <ListBox Name="IServerActionButtons" Grid.Row="1" SelectionMode="Extended" Style="{StaticResource MaterialDesignToolToggleListBox}" HorizontalAlignment="Right" Margin="5,10">
             <ListBoxItem Name="ISaveProfile">
                 <ListBoxItem.ToolTip>

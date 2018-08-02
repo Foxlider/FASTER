@@ -83,7 +83,7 @@ Namespace Models
                             modName = StrReverse(modName)
                             modName = MainWindow.SafeName(modName)
 
-                            Dim modInfo = MainWindow.GetModInfo(modId)
+                            Dim modInfo = MainWindow.Instance.GetModInfo(modId)
 
                             Dim steamUpdateTime = modInfo.Substring(modInfo.IndexOf("""time_updated"":") + 15, 10)
 
