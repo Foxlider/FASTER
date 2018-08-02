@@ -15,7 +15,7 @@ Imports MaterialDesignThemes.Wpf
 Public Class MainWindow
 
     Private Shared _instance As MainWindow
-
+    
     ''' <summary>
     ''' Gets the one and only instance.
     ''' </summary>
@@ -49,7 +49,9 @@ Public Class MainWindow
 
     'Executes some events when the window is loaded
     Private Sub MainWindow_Loaded(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
-        
+        Dim settingsTab As TabItem = IMainContent.Items.Item(2)
+        settingsTab.Content = New SettingsTab
+
         ISteamDirBox.Text = My.Settings.steamCMDPath
         ISteamUserBox.Text = My.Settings.steamUserName
         ISteamPassBox.Password = Encryption.DecryptData(My.Settings.steamPassword)
@@ -230,11 +232,7 @@ Public Class MainWindow
         End If
     End Sub
 
-    'Switches base theme between light and dark when control is switched 
-    Private Sub IBaseThemeButton_Click(sender As Object, e As RoutedEventArgs) Handles IBaseThemeToggle.Click
-        SwitchBaseTheme(IBaseThemeToggle.IsChecked)
-        IWindowCloseButton.Background = FindResource("MaterialDesignPaper")
-    End Sub
+    
 
     'Manages actions for steam mods tab buttons
     Private Sub IActionButtons_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles IModActionButtons.SelectionChanged
@@ -265,22 +263,6 @@ Public Class MainWindow
         Return Deserialize (Of ModCollection)(xml)
     End Function
     
-    'Switches base theme between light and dark
-    Private Shared Sub SwitchBaseTheme(isDark)
-        Call New PaletteHelper().SetLightDark(isDark)
-        My.Settings.isDark = isDark
-    End Sub
-
-    'Changes palette primary colour
-    Private Shared Sub ApplyPrimary(swatch As Swatch)
-        Call New PaletteHelper().ReplacePrimaryColor(swatch)
-    End Sub
-
-    'Changes palette accent colour
-    Private Shared Sub ApplyAccent(swatch As Swatch)
-        Call New PaletteHelper().ReplaceAccentColor(swatch)
-    End Sub
-
     'Installs the SteamCMD tool
     Private Sub InstallSteam()
         Windows.MessageBox.Show("Steam CMD will now download and start the install process. If prompted please enter your Steam Guard Code." & Environment.NewLine & "You will recieve this by email from steam. When this is all complete type 'quit' to finish.", "Information")
@@ -572,7 +554,7 @@ Public Class MainWindow
     Private Sub MainWindow_Closing(sender As Object, e As CancelEventArgs) Handles Me.Closing
         My.Settings.Save()
 
-        If IClearSettings.IsChecked
+        If My.Settings.clearSettings
             My.Settings.Reset()
         End If
     End Sub

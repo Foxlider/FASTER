@@ -158,6 +158,42 @@ Partial Friend NotInheritable Class MySettings
             Me("serverProfiles") = value
         End Set
     End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("False")>  _
+    Public Property clearSettings() As Boolean
+        Get
+            Return CType(Me("clearSettings"),Boolean)
+        End Get
+        Set
+            Me("clearSettings") = value
+        End Set
+    End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("LightBlue")>  _
+    Public Property primaryColour() As String
+        Get
+            Return CType(Me("primaryColour"),String)
+        End Get
+        Set
+            Me("primaryColour") = value
+        End Set
+    End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("LightBlue")>  _
+    Public Property accentColour() As String
+        Get
+            Return CType(Me("accentColour"),String)
+        End Get
+        Set
+            Me("accentColour") = value
+        End Set
+    End Property
 End Class
 
 Namespace My

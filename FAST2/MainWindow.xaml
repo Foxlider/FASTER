@@ -7,7 +7,6 @@
 
     x:Class="MainWindow"
 
-    TextElement.Foreground="{DynamicResource MaterialDesignBody}"
     Background="{DynamicResource MaterialDesignPaper}"
     FontFamily="{DynamicResource MaterialDesignFont}"
 
@@ -94,7 +93,7 @@
         </StackPanel>
 
         <!--Content Column - Main Content-->
-        <TabControl Grid.Row="1" Grid.RowSpan="3" x:Name="IMainContent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,-5,-2,-2" Background="White" BorderBrush="{x:Null}" Foreground="{x:Null}" Grid.Column="1">
+        <TabControl Grid.Row="1" Grid.RowSpan="3" x:Name="IMainContent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,-5,-2,-2" Background="White" BorderBrush="{x:Null}" Grid.Column="1">
             <!--Removes Visible Tab Controls-->
             <TabControl.ItemContainerStyle>
                 <Style TargetType="{x:Type TabItem}">
@@ -203,18 +202,7 @@
 
             <!--Main Content - Settings Tab-->
             <TabItem Name="ISettingsTab" Header="TabItem">
-                <Grid Background="{StaticResource MaterialDesignPaper}">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock VerticalAlignment="Center"><Run Text="Light"/></TextBlock>
-                        <ToggleButton Name="IBaseThemeToggle" Style="{StaticResource MaterialDesignSwitchToggleButton}" IsChecked="True"/>
-                        <TextBlock VerticalAlignment="Center"><Run Text="Dark"/></TextBlock>
-                    </StackPanel>
-                    <CheckBox Grid.Column="1"  Name="IClearSettings" Style="{StaticResource MaterialDesignCheckBox}">Clear Settings</CheckBox>
-                </Grid>
+                
             </TabItem>
 
             <!--Main Content - Tools Tab-->
