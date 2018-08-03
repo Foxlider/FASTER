@@ -1,7 +1,7 @@
 ﻿Imports System.Threading
 Imports FAST2.Models
 
-Class ServerProfileTab
+Class ServerProfile
     Dim ReadOnly _safeName As String
     Dim ReadOnly _displayname As String
 

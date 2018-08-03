@@ -49,7 +49,7 @@ Public Class Setup
 
     'Opens folder select dialog when clicking certain buttons
     Private Sub DirButton_Click(sender As Object, e As RoutedEventArgs) Handles ISteamDirButton.Click, IServerDirButton.Click
-        Dim path As String = MainWindow.Instance.SelectFolder()
+        Dim path As String = MainWindow.SelectFolder()
 
         If path IsNot Nothing Then
             If sender Is ISteamDirButton Then

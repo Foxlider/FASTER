@@ -11,6 +11,8 @@
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <MyType>Custom</MyType>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -85,13 +87,16 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="About.xaml.vb">
+      <DependentUpon>About.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Models\ServerCollection.vb" />
     <Compile Include="Models\Theme.vb" />
-    <Compile Include="SettingsTab.xaml.vb">
-      <DependentUpon>SettingsTab.xaml</DependentUpon>
+    <Compile Include="Settings.xaml.vb">
+      <DependentUpon>Settings.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ServerProfileTab.xaml.vb">
-      <DependentUpon>ServerProfileTab.xaml</DependentUpon>
+    <Compile Include="ServerProfile.xaml.vb">
+      <DependentUpon>ServerProfile.xaml</DependentUpon>
     </Compile>
     <Compile Include="ImportSteamMod.xaml.vb">
       <DependentUpon>ImportSteamMod.xaml</DependentUpon>
@@ -101,9 +106,19 @@
     </Compile>
     <Compile Include="Models\Encryption.vb" />
     <Compile Include="Models\ModCollection.vb" />
-    <Compile Include="SteamModsTab.xaml.vb">
-      <DependentUpon>SteamModsTab.xaml</DependentUpon>
+    <Compile Include="SteamMods.xaml.vb">
+      <DependentUpon>SteamMods.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Temp.xaml.vb">
+      <DependentUpon>Temp.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Tools.xaml.vb">
+      <DependentUpon>Tools.xaml</DependentUpon>
+    </Compile>
+    <Page Include="About.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -116,11 +131,11 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="SettingsTab.xaml">
+    <Page Include="Settings.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="ServerProfileTab.xaml">
+    <Page Include="ServerProfile.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -132,7 +147,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="SteamModsTab.xaml">
+    <Page Include="SteamMods.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Temp.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Tools.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -194,6 +217,9 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="My Project\DataSources\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
 </Project>

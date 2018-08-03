@@ -16,33 +16,37 @@ Namespace Models
         Public LocalMods As List(Of LocalMod) = New List(Of LocalMod)()
         
         Public Shared Sub AddLocalMod()
-            Dim path As String = MainWindow.Instance.SelectFolder()
+            Dim path As String = MainWindow.SelectFolder()
             Dim duplicate = False
             Dim currentMods As New ModCollection
-            Dim modName = path.Substring(path.LastIndexOf("@", StringComparison.Ordinal) + 1)
+
+            If path IsNot Nothing
+                Dim modName = path.Substring(path.LastIndexOf("@", StringComparison.Ordinal) + 1)
 
 
-            If My.Settings.mods IsNot Nothing
-                currentMods = My.Settings.mods
-            End If
+                If My.Settings.mods IsNot Nothing
+                    currentMods = My.Settings.mods
+                End If
 
-            If currentMods.LocalMods.Count > 0 Then
-                For Each localMod In currentMods.LocalMods
-                    If localMod.Name = modName
-                        duplicate = true
-                    End If
-                Next
-            End If
+                If currentMods.LocalMods.Count > 0 Then
+                    For Each localMod In currentMods.LocalMods
+                        If localMod.Name = modName
+                            duplicate = true
+                        End If
+                    Next
+                End If
            
-            If Not duplicate Then
-                currentMods.LocalMods.Add(New LocalMod(modName, path))
+                If Not duplicate Then
+                    currentMods.LocalMods.Add(New LocalMod(modName, path))
 
-                My.Settings.mods = currentMods
-            Else
-                MsgBox("Mod already imported.")
+                    My.Settings.mods = currentMods
+                Else
+                    MsgBox("Mod already imported.")
+                End If
+
+                My.Settings.Save()
             End If
-
-            My.Settings.Save()
+            
         End Sub
 
         Public Shared Sub AddSteamMod(modUrl As String)

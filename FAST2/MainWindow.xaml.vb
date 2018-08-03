@@ -86,7 +86,7 @@ Public Class MainWindow
     End Sub
 
     'Installs the SteamCMD tool
-    Public Sub InstallSteam()
+    Private Sub InstallSteam()
         Windows.MessageBox.Show("Steam CMD will now download and start the install process. If prompted please enter your Steam Guard Code." & Environment.NewLine & "You will recieve this by email from steam. When this is all complete type 'quit' to finish.", "Information")
 
         Const url = "https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip"
@@ -274,10 +274,12 @@ Public Class MainWindow
     Private Sub MainWindow_Loaded(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
         Dim newSteamModsTab As TabItem = IMainContent.Items.Item(1)
         Dim newSettingsTab As TabItem = IMainContent.Items.Item(2)
+        Dim newAboutTab As TabItem = IMainContent.Items.Item(4)
 
-        newSteamModsTab.Content = New SteamModsTab
-        newSettingsTab.Content = New SettingsTab
-        
+        newSteamModsTab.Content = New SteamMods
+        newSettingsTab.Content = New Settings
+        newAboutTab.Content = New About
+
         LoadServerProfiles()
 
         If InstallSteamCmd Then
@@ -333,7 +335,7 @@ Public Class MainWindow
                 Next
 
                 If Not duplicate
-                    Dim tabControls = New ServerProfileTab(profile.SafeName, profile.ProfileNameBox)
+                    Dim tabControls = New ServerProfile(profile.SafeName, profile.ProfileNameBox)
 
                     Dim newTab As New TabItem With {
                             .Name = profile.SafeName,
@@ -347,7 +349,7 @@ Public Class MainWindow
     End Sub
 
     'Opens Folder select dialog and returns selected path
-    Public Function SelectFolder()
+    Public Shared Function SelectFolder()
         Dim folderDialog As New FolderBrowserDialog
 
         If folderDialog.ShowDialog = vbOK Then
@@ -380,25 +382,7 @@ Public Class MainWindow
         Next
     End Sub
 
-    'Updates UI elements when window is resized/ re-rendered
-    Private Sub MainWindow_LayoutUpdated(sender As Object, e As EventArgs) Handles Me.LayoutUpdated
-        If Not WindowState = WindowState.Minimized Then
-            If IServerProfilesMenu.Height > 50
-                'Sets max height of server profile containers to ensure no overflow to other menus
-                IServerProfilesRow.MaxHeight = Height - 149
-                IServerProfilesMenu.MaxHeight = IServerProfilesRow.ActualHeight - 50
-
-                'Moves button to add new server profile as the menu expands
-                Dim newMargin As Thickness = INewServerProfileButton.Margin
-                newMargin.Left = IMenuColumn.ActualWidth - 130
-                INewServerProfileButton.Margin = newMargin
-
-                'Moves folder select buttons as the menu expands
-                'ISteamDirBox.Width = ISteamGroup.ActualWidth - 70
-                'IServerDirBox.Width = ISteamGroup.ActualWidth - 70
-            End If
-        End If
-    End Sub
+ 
 
     'Creates a new Server Profile and adds it to the UI menu
     Private Shared Sub NewServerProfileButton_Click(sender As Object, e As RoutedEventArgs) Handles INewServerProfileButton.Click
