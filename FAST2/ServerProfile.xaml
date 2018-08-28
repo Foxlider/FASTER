@@ -15,8 +15,8 @@
              TextOptions.TextRenderingMode="Auto"
 
              mc:Ignorable="d"
-             d:DesignHeight="392.8"
-             d:DesignWidth="631.2">
+             d:DesignHeight="570.4"
+             d:DesignWidth="796.8">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -53,25 +53,25 @@
                                 <RowDefinition />
                             </Grid.RowDefinitions>
                             <StackPanel Grid.ColumnSpan="2">
-                                <Label Margin="2" Content="Main" FontSize="8"/>
+                                <Label Margin="2" Content="Main"/>
                                 <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="-8"/>
                             </StackPanel>
 
-                            <TextBox x:Name="IServerName"  Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" FontSize="10" Margin="10,5"/>
+                            <TextBox x:Name="IServerName"  Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="10,5"/>
                             <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition />
                                     <ColumnDefinition Width="40"/>
                                 </Grid.ColumnDefinitions>
-                                <TextBox x:Name="IServerFile" FontSize="10" Margin="10,5"/>
+                                <TextBox x:Name="IServerFile" Margin="10,5"/>
                                 <Button x:Name="ISteamDirButton" Grid.Column="1" Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}" Height="20" Width="20" Margin="10,0">
                                     <materialDesign:PackIcon Kind="FolderOpen" Height="10" Width="10"/>
                                 </Button>
                             </Grid>
-                            <TextBox x:Name="IServerPassword" Grid.Row="3" Grid.Column="0" FontSize="10" Margin="10,5"/>
-                            <TextBox x:Name="IAdminPassword" Grid.Row="4" Grid.Column="0" FontSize="10" Margin="10,5"/>
-                            <TextBox x:Name="IMaxPlayers" Grid.Row="3" Grid.Column="1" FontSize="10" Margin="10,5"/>
-                            <TextBox x:Name="IPort" Grid.Row="4" Grid.Column="1" FontSize="10" Margin="10,5"/>
+                            <TextBox x:Name="IServerPassword" Grid.Row="3" Grid.Column="0" Margin="10,5"/>
+                            <TextBox x:Name="IAdminPassword" Grid.Row="4" Grid.Column="0" Margin="10,5"/>
+                            <TextBox x:Name="IMaxPlayers" Grid.Row="3" Grid.Column="1" Margin="10,5"/>
+                            <TextBox x:Name="IPort" Grid.Row="4" Grid.Column="1" Margin="10,5"/>
                         </Grid>
                     </materialDesign:Card>
                    
@@ -97,6 +97,17 @@
                         <StackPanel>
                             <Label Margin="2" Content="Logging" FontSize="8"/>
                             <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="-8"/>
+                            
+                            <StackPanel Orientation="Horizontal">
+                                <CheckBox>Console Log</CheckBox>
+                                <CheckBox>Ranking File</CheckBox>
+                                <CheckBox>PID File</CheckBox>
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="Console Log File:"/>
+                                <TextBox x:Name="IConsoleLogFile" Text="server_console.log"/>
+                            </StackPanel>
                         </StackPanel>
                     </materialDesign:Card>
 

@@ -14,13 +14,13 @@
              TextOptions.TextRenderingMode="Auto"
 
              mc:Ignorable="d"
-             d:DesignHeight="392.8"
-             d:DesignWidth="631.2">
+             d:DesignHeight="570.4"
+             d:DesignWidth="796.8">
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="315.1"/>
-            <ColumnDefinition Width="315.1"/>
+            <ColumnDefinition />
+            <ColumnDefinition />
         </Grid.ColumnDefinitions>
         <materialDesign:Card Margin="10" Grid.Column="0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
             <StackPanel>
@@ -45,7 +45,7 @@
                 </DockPanel>
                 <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="-10"/>
                 <Label Margin="8,8,8,0" Content="Primary Colour" FontSize="12"/>
-                <StackPanel Orientation="Horizontal" Margin="5,0" HorizontalAlignment="Center">
+                <StackPanel Orientation="Horizontal" Margin="5,0" >
                     <Button Name="IYellowP" Width="32" Margin="4" Background="#FFEB3B"/>
                     <Button Name="IAmberP" Width="32" Margin="4" Background="#FFC107"/>
                     <Button Name="IDeepOrangeP" Width="32" Margin="4" Background="#FF5722"/>
@@ -54,7 +54,7 @@
                     <Button Name="ICyanP" Width="32" Margin="4" Background="#00BCD4"/>
                     <Button Name="IPinkP" Width="32" Margin="4" Background="#E91E63"/>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="5,0" HorizontalAlignment="Center">
+                <StackPanel Orientation="Horizontal" Margin="5,0">
                     <Button Name="IGreenP" Width="32" Margin="4" Background="#4CAF50"/>
                     <Button Name="IDeepPurpleP" Width="32" Margin="4" Background="#673AB7"/>
                     <Button Name="IIndigoP" Width="32" Margin="4" Background="#3F51B5"/>
@@ -63,7 +63,7 @@
                     <Button Name="ILimeP" Width="32" Margin="4" Background="#CDDC39"/>
                     <Button Name="IRedP" Width="32" Margin="4" Background="#F44336"/>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="13,0">
+                <StackPanel Orientation="Horizontal" Margin="5,0">
                     <Button Name="IOrangeP" Width="32" Margin="4" Background="#FF9800"/>
                     <Button Name="IPurpleP" Width="32" Margin="4" Background="#9C27B0"/>
                     <Button Name="IBlueGreyP" Width="32" Margin="4" Background="#607D8B"/>
@@ -71,7 +71,7 @@
                 </StackPanel>
 
                 <Label Margin="8,8,8,0" Content="Accent Colour" FontSize="12"/>
-                <StackPanel Orientation="Horizontal" Margin="5,0" HorizontalAlignment="Center">
+                <StackPanel Orientation="Horizontal" Margin="5,0">
                     <Button Name="IYellowA" Width="32" Margin="4" Background="#FFEA00"/>
                     <Button Name="IAmberA" Width="32" Margin="4" Background="#FFC400"/>
                     <Button Name="IDeepOrangeA" Width="32" Margin="4" Background="#FF3D00"/>
@@ -80,7 +80,7 @@
                     <Button Name="ICyanA" Width="32" Margin="4" Background="#00E5FF"/>
                     <Button Name="IPinkA" Width="32" Margin="4" Background="#F50057"/>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="5,0" HorizontalAlignment="Center">
+                <StackPanel Orientation="Horizontal" Margin="5,0">
                     <Button Name="IGreenA" Width="32" Margin="4" Background="#00E676"/>
                     <Button Name="IDeepPurpleA" Width="32" Margin="4" Background="#651FFF"/>
                     <Button Name="IIndigoA" Width="32" Margin="4" Background="#3D5AFE"/>
@@ -89,7 +89,7 @@
                     <Button Name="ILimeA" Width="32" Margin="4" Background="#C6FF00"/>
                     <Button Name="IRedA" Width="32" Margin="4" Background="#FF1744"/>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="13,0">
+                <StackPanel Orientation="Horizontal" Margin="5,0">
                     <Button Name="IOrangeA" Width="32" Margin="4" Background="#FF9100"/>
                     <Button Name="IPurpleA" Width="32" Margin="4" Background="#D500F9"/>
                 </StackPanel>
