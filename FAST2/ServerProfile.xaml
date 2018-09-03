@@ -37,81 +37,139 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="1*" />
                         <RowDefinition Height="1*" />
+                        <RowDefinition Height="1*" />
+                        <RowDefinition Height="1*" />
                     </Grid.RowDefinitions>
 
-                    <materialDesign:Card Grid.ColumnSpan="2" Margin="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                    <materialDesign:Card Grid.ColumnSpan="2" Grid.RowSpan="2" Margin="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
                         <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition />
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition />
-                                <RowDefinition />
-                                <RowDefinition />
-                                <RowDefinition />
-                                <RowDefinition />
-                            </Grid.RowDefinitions>
-                            <StackPanel Grid.ColumnSpan="2">
+                            <StackPanel>
                                 <Label Margin="2" Content="Main"/>
                                 <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="-8"/>
                             </StackPanel>
-
-                            <TextBox x:Name="IServerName"  Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="10,5"/>
-                            <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition />
-                                    <ColumnDefinition Width="40"/>
-                                </Grid.ColumnDefinitions>
-                                <TextBox x:Name="IServerFile" Margin="10,5"/>
-                                <Button x:Name="ISteamDirButton" Grid.Column="1" Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}" Height="20" Width="20" Margin="10,0">
-                                    <materialDesign:PackIcon Kind="FolderOpen" Height="10" Width="10"/>
-                                </Button>
-                            </Grid>
-                            <TextBox x:Name="IServerPassword" Grid.Row="3" Grid.Column="0" Margin="10,5"/>
-                            <TextBox x:Name="IAdminPassword" Grid.Row="4" Grid.Column="0" Margin="10,5"/>
-                            <TextBox x:Name="IMaxPlayers" Grid.Row="3" Grid.Column="1" Margin="10,5"/>
-                            <TextBox x:Name="IPort" Grid.Row="4" Grid.Column="1" Margin="10,5"/>
                         </Grid>
                     </materialDesign:Card>
-                   
-                    <materialDesign:Card Grid.Row="1" Grid.Column="0" Margin="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-                        <StackPanel>
-                            <Label Margin="2" Content="Headless Client" FontSize="8"/>
-                            <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="-8"/>
-                        </StackPanel>
+
+                    <materialDesign:Card Grid.Row="2" Grid.RowSpan="2" Grid.Column="0" Margin="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                        <Grid>
+                            <StackPanel>
+                                <Label Margin="2" Content="Headless Client"/>
+                                <CheckBox  Margin="2,-25,2,0" Content="Enable" HorizontalAlignment="Right" FlowDirection="RightToLeft"/>
+                                <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="-8"/>
+                            </StackPanel>
+                        </Grid>
                     </materialDesign:Card>
 
-                    <materialDesign:Card Grid.Row="1" Grid.Column="1" Margin="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-                        <StackPanel>
-                            <Label Margin="2" Content="Network" FontSize="8"/>
-                            <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="-8"/>
+                    <materialDesign:Card Grid.Row="2" Grid.Column="1" Margin="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
 
-                            <CheckBox Style="{StaticResource MaterialDesignCheckBox}" Content="Loopback" Margin="10"/>
-                            <CheckBox Style="{StaticResource MaterialDesignCheckBox}" Content="UPNP" Margin="10"/>
-                            <CheckBox Style="{StaticResource MaterialDesignCheckBox}" Content="Netlog" Margin="10"/>
-                        </StackPanel>
+                            <StackPanel>
+                                <Label Margin="2" Content="Network"/>
+                                <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="-8"/>
+                            </StackPanel>
+
+                            <CheckBox Grid.Row="1" Style="{StaticResource MaterialDesignCheckBox}" Content="Loopback" Margin="5"/>
+                            <CheckBox Grid.Row="2" Style="{StaticResource MaterialDesignCheckBox}" Content="UPNP" Margin="5"/>
+                            <CheckBox Grid.Row="3" Style="{StaticResource MaterialDesignCheckBox}" Content="Netlog" Margin="5"/>
+                        </Grid>
                     </materialDesign:Card>
 
                     <materialDesign:Card Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" Margin="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-                        <StackPanel>
-                            <Label Margin="2" Content="Logging" FontSize="8"/>
-                            <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="-8"/>
-                            
-                            <StackPanel Orientation="Horizontal">
-                                <CheckBox>Console Log</CheckBox>
-                                <CheckBox>Ranking File</CheckBox>
-                                <CheckBox>PID File</CheckBox>
-                            </StackPanel>
+                        <DockPanel>
+                            <Grid DockPanel.Dock="Top">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>  
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
 
-                            <StackPanel Orientation="Horizontal">
-                                <Label Content="Console Log File:"/>
-                                <TextBox x:Name="IConsoleLogFile" Text="server_console.log"/>
-                            </StackPanel>
-                        </StackPanel>
+                                <StackPanel Grid.ColumnSpan="4">
+                                    <Label Margin="2" Content="Logging"/>
+                                    <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="-8"/>
+                                </StackPanel>
+
+                                <CheckBox Grid.Row="1" Grid.Column="0" Margin="5" Style="{StaticResource MaterialDesignCheckBox}"/>
+                                <TextBox Grid.Row="1" Grid.Column="1" x:Name="IConsoleLogFile" Text="server_console.log" Margin="5"/>
+                                <Button Grid.Row="1" Grid.Column="2" Content="Open" Height="20" Width="60" FontSize="11" Margin="5"/>
+
+                                <CheckBox Grid.Row="2" Grid.Column="0" Margin="5" Style="{StaticResource MaterialDesignCheckBox}"/>
+                                <TextBox Grid.Row="2" Grid.Column="1" x:Name="IPidFile" Text="pid.log" Margin="5"/>
+                                <Button Grid.Row="2" Grid.Column="2" Content="Open" Height="20" Width="60" FontSize="11" Margin="5"/>
+
+                                <CheckBox Grid.Row="3" Grid.Column="0" Margin="5" Style="{StaticResource MaterialDesignCheckBox}"/>
+                                <TextBox Grid.Row="3" Grid.Column="1" x:Name="IRakingFile" Text="ranking.log" Margin="5"/>
+                                <Button Grid.Row="3" Grid.Column="2" Content="Open" Height="20" Width="60" FontSize="11" Margin="5"/>
+                            </Grid>
+                        
+                            <Grid DockPanel.Dock="Bottom">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <StackPanel Grid.ColumnSpan="7" Grid.Column="0" Margin="0,10,0,0">
+                                    <Label Margin="2" Content="RPT"/>
+                                    <Label Margin="2,-25" Content="NETLOG" HorizontalAlignment="Right"/>
+                                    <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="-8"/>
+                                </StackPanel>
+
+
+                                <ComboBox Grid.Row="1" Grid.Column="0" materialDesign:HintAssist.Hint="TimeStamp" IsEditable="False" Width="60" Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="5">
+                                    <ComboBoxItem IsSelected="True">none</ComboBoxItem>
+                                    <ComboBoxItem>short</ComboBoxItem>
+                                    <ComboBoxItem>full</ComboBoxItem>
+                                </ComboBox>
+                                <Button Grid.Row="1" Grid.Column="1" Height="30" Width="30" Margin="5" VerticalAlignment="Bottom" FontSize="10">
+                                    <materialDesign:PackIcon Kind="FolderOpen" Width="22" Height="22" Margin="-12,0,-15,0"/>
+                                </Button>
+                                <Button Grid.Row="1" Grid.Column="2" Height="30" Width="30" Margin="5" VerticalAlignment="Bottom" FontSize="10">
+                                    <materialDesign:PackIcon Kind="Delete" Width="22" Height="22" Margin="-12,0,-15,0"/>
+                                </Button>
+
+                                <Button Grid.Row="1" Grid.Column="4" Height="30" Width="30" Margin="5" VerticalAlignment="Bottom" FontSize="10">
+                                    <materialDesign:PackIcon Kind="RotateLeft" Width="22" Height="22" Margin="-12,0,-15,0"/>
+                                </Button>
+                                <Button Grid.Row="1" Grid.Column="5" Height="30" Width="30" Margin="5" VerticalAlignment="Bottom" FontSize="10">
+                                    <materialDesign:PackIcon Kind="FolderOpen" Width="22" Height="22" Margin="-12,0,-15,0"/>
+                                </Button>
+                                <Button Grid.Row="1" Grid.Column="6" Height="30" Width="30" Margin="5" VerticalAlignment="Bottom" FontSize="10">
+                                    <materialDesign:PackIcon Kind="Delete" Width="22" Height="22" Margin="-12,0,-15,0"/>
+                                </Button>
+
+                            </Grid>
+                        </DockPanel>
                     </materialDesign:Card>
 
-
+                    <materialDesign:Card Grid.Row="2" Grid.Column="2" Margin="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                        <Grid>
+                            <StackPanel>
+                                <Label Margin="2" Content="Auto Restart"/>
+                                <CheckBox  Margin="2,-25,2,0" Content="Enable" HorizontalAlignment="Right" FlowDirection="RightToLeft"/>
+                                <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="-8"/>
+                            </StackPanel>
+                        </Grid>
+                    </materialDesign:Card>
                 </Grid>
             </TabItem>
             <TabItem Header="Misc">
@@ -186,7 +244,12 @@
                 Server Scripting
             </TabItem>
         </dragablz:TabablzControl>
-        <Label Name="IProfileDisplayName" Grid.Row="1" VerticalAlignment="Center" Content="Profile Display Name" FontWeight="Bold" FontSize="16" Margin="5"/>
+        <Label Grid.Row="1" Name="IProfileDisplayName" VerticalAlignment="Center" Content="Profile Display Name" FontWeight="Bold" FontSize="16" Margin="5"/>
+        <StackPanel Name="IProfileNameEdit" Grid.Row="1" Orientation="Horizontal" Margin="10,13" Width="310" HorizontalAlignment="Left" Visibility="Collapsed">
+            <TextBox Name="IProfileDisplayNameEdit" FontWeight="Bold" FontSize="16" Width="278"/>
+            <Button Name="IProfileNameEditSave" Height="25" Width="25" Margin="5,2" VerticalAlignment="Bottom" FontSize="10"><materialDesign:PackIcon Kind="Check" Width="14" Margin="-11,1,-6,0"/></Button>
+        </StackPanel>
+        
         <ListBox Name="IServerActionButtons" Grid.Row="1" SelectionMode="Extended" Style="{StaticResource MaterialDesignToolToggleListBox}" HorizontalAlignment="Right" Margin="5,10">
             <ListBoxItem Name="ISaveProfile">
                 <ListBoxItem.ToolTip>

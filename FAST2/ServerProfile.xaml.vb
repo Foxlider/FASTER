@@ -33,12 +33,27 @@ Class ServerProfile
         thread.Start()
     End Sub
 
+    Private Sub IProfileNameEditSave_Click(sender As Object, e As RoutedEventArgs) Handles IProfileNameEditSave.Click
+        Dim currentProfiles = My.Settings.serverProfiles.ServerProfiles
+        
+
+        Dim currentProfile = currentProfiles.Find(Function(profile) profile.SafeName = IProfileDisplayName.Content)
+
+
+    End Sub
+
     'Manages actions for steam mods tab buttons
     Private Sub IServerActionButtons_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles IServerActionButtons.SelectionChanged
         
         If ISaveProfile.IsSelected
             My.Settings.Save
+
         ElseIf IRenameProfile.IsSelected
+            IProfileDisplayNameEdit.Text = IProfileDisplayName.Content
+            IProfileDisplayName.Visibility = Visibility.Collapsed
+            IProfileNameEdit.Visibility = Visibility.Visible
+            IProfileDisplayNameEdit.Focus()
+            IProfileDisplayNameEdit.SelectAll()
 
         ElseIf IDeleteProfile.IsSelected
             Dim noOfTabs = MainWindow.Instance.IServerProfilesMenu.Items.Count
@@ -49,8 +64,8 @@ Class ServerProfile
                 MainWindow.Instance.IMainContent.SelectedIndex = 0
                 MainWindow.Instance.IMainMenuItems.SelectedIndex = 0
             End If
-           
             ServerCollection.DeleteServerProfile(_safeName)
+
         ElseIf IExportProfile.IsSelected
 
         ElseIf ILaunchServer.IsSelected
@@ -73,4 +88,6 @@ Class ServerProfile
     Private Sub ServerProfileTab_Loaded(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
         IProfileDisplayName.Content = _displayName
     End Sub
+
+    
 End Class
