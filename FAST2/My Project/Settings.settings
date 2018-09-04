@@ -23,10 +23,10 @@
     <Setting Name="firstRun" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="mods" Type="FAST2.Models.ModCollection" Scope="User">
+    <Setting Name="Mods" Type="FAST2.Models.ModCollection" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="serverProfiles" Type="FAST2.Models.ServerCollection" Scope="User">
+    <Setting Name="Servers" Type="FAST2.Models.ServerCollection" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="clearSettings" Type="System.Boolean" Scope="User">

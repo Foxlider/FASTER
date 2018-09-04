@@ -13,8 +13,8 @@ Namespace Models
         Private Shared Function GetServerProfiles() As ServerCollection
             Dim currentProfiles As New ServerCollection
             
-            If My.Settings.serverProfiles IsNot Nothing
-                currentProfiles = My.Settings.serverProfiles
+            If My.Settings.Servers IsNot Nothing
+                currentProfiles = My.Settings.Servers
             End If
 
             Return currentProfiles
@@ -35,7 +35,7 @@ Namespace Models
             If Not duplicate Then
                 currentProfiles.ServerProfiles.Add(New ServerProfile(name, safeName))
 
-                My.Settings.serverProfiles = currentProfiles
+                My.Settings.Servers = currentProfiles
             Else
                 MsgBox("Profile already exists.")
             End If
@@ -44,9 +44,20 @@ Namespace Models
             MainWindow.Instance.LoadServerProfiles
         End Sub
 
-        Public Shared Sub RenameServerProfile(safeName As String)
+        Public Shared Function RenameServerProfile(oldName As String, newName As String) As Boolean
+            Try
+                Dim currentProfiles = My.Settings.Servers.ServerProfiles
+        
+                Dim currentProfile As Models.ServerProfile = currentProfiles.Find(Function(profile) profile.ProfileNameBox = oldName)
 
-        End Sub
+                currentProfile.ProfileNameBox = newName
+                currentProfile.SafeName = MainWindow.SafeName(newName)
+                Return True
+            Catch ex As Exception
+                MsgBox(ex.Message)
+                Return False
+            End Try
+        End Function
 
         Public Shared Sub DeleteServerProfile(safeName As String)
             Dim currentProfiles = GetServerProfiles()

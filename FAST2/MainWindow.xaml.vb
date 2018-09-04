@@ -302,18 +302,13 @@ Public Class MainWindow
 
     'Loads all server profiles and displays them in UI
     Public Sub LoadServerProfiles()
-        If My.Settings.serverProfiles IsNot Nothing
-            Dim currentProfiles = My.Settings.serverProfiles
+        If My.Settings.Servers IsNot Nothing
+            Dim currentProfiles = My.Settings.Servers
          
             IServerProfilesMenu.Items.Clear()
-
-
-            For i As Integer = IMainContent.Items.Count - 1 To 0
-                Dim ti As TabItem = CType(IMainContent.Items(i), TabItem)
-                Dim safeTabs As String() = {"ISteamUpdaterTab","ISteamModsTab","ISettingsTab","IToolsTab","IAboutTab"}
-                If Not safeTabs.Contains(ti.name) Then
-                    IMainContent.Items.Remove(ti)
-                End If
+            
+            For i As Integer = IMainContent.Items.Count - 4 To 0
+                IMainContent.Items.RemoveAt(i)
             Next
            
             For Each profile in currentProfiles.ServerProfiles
@@ -339,7 +334,8 @@ Public Class MainWindow
 
                     Dim newTab As New TabItem With {
                             .Name = profile.SafeName,
-                            .Content = tabControls
+                            .Content = tabControls,
+                            .Header = profile.SafeName
                             }
 
                     IMainContent.Items.Add(newTab)
@@ -523,7 +519,7 @@ Public Class MainWindow
     End Function
 
     'Executes some code when the window is closing
-    Private Sub MainWindow_Closing(sender As Object, e As CancelEventArgs) Handles Me.Closing
+    Private Shared Sub MainWindow_Closing(sender As Object, e As CancelEventArgs) Handles Me.Closing
         My.Settings.Save()
 
         If My.Settings.clearSettings

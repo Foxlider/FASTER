@@ -34,12 +34,33 @@ Class ServerProfile
     End Sub
 
     Private Sub IProfileNameEditSave_Click(sender As Object, e As RoutedEventArgs) Handles IProfileNameEditSave.Click
-        Dim currentProfiles = My.Settings.serverProfiles.ServerProfiles
+        Dim oldName = IProfileDisplayName.Content
+        Dim newName = IProfileDisplayNameEdit.Text
+        Dim index = My.Settings.Servers.ServerProfiles.IndexOf(My.Settings.Servers.ServerProfiles.Find(Function(profile) profile.ProfileNameBox = oldName))
+
+        If ServerCollection.RenameServerProfile(oldName,newName)
+            MainWindow.Instance.IMainContent.Items.RemoveAt(MainWindow.Instance.IMainContent.SelectedIndex)
+            MainWindow.Instance.LoadServerProfiles()
+            MainWindow.Instance.IMainContent.SelectedIndex = MainWindow.Instance.IMainContent.Items.Count -1
+        Else 
+            MsgBox("Error Try Again")
+        End If
         
 
-        Dim currentProfile = currentProfiles.Find(Function(profile) profile.SafeName = IProfileDisplayName.Content)
+    End Sub
 
-
+    Private Sub ShowRenameInterface(show As Boolean)
+        If show
+            IProfileDisplayNameEdit.Text = IProfileDisplayName.Content
+            IProfileDisplayName.Visibility = Visibility.Collapsed
+            IProfileNameEdit.Visibility = Visibility.Visible
+            IProfileDisplayNameEdit.Focus()
+            IProfileDisplayNameEdit.SelectAll()
+        Else 
+            IProfileDisplayNameEdit.Text = String.Empty
+            IProfileDisplayName.Visibility = Visibility.Visible
+            IProfileNameEdit.Visibility = Visibility.Collapsed
+        End If
     End Sub
 
     'Manages actions for steam mods tab buttons
@@ -49,22 +70,16 @@ Class ServerProfile
             My.Settings.Save
 
         ElseIf IRenameProfile.IsSelected
-            IProfileDisplayNameEdit.Text = IProfileDisplayName.Content
-            IProfileDisplayName.Visibility = Visibility.Collapsed
-            IProfileNameEdit.Visibility = Visibility.Visible
-            IProfileDisplayNameEdit.Focus()
-            IProfileDisplayNameEdit.SelectAll()
+            ShowRenameInterface(True)
 
         ElseIf IDeleteProfile.IsSelected
-            Dim noOfTabs = MainWindow.Instance.IServerProfilesMenu.Items.Count
-            If noOfTabs > 1
-                MainWindow.Instance.IMainContent.SelectedIndex = noOfTabs + 5
-                MainWindow.Instance.IServerProfilesMenu.SelectedIndex = 0
-            Else 
-                MainWindow.Instance.IMainContent.SelectedIndex = 0
-                MainWindow.Instance.IMainMenuItems.SelectedIndex = 0
-            End If
+            MainWindow.Instance.IMainContent.Items.RemoveAt(MainWindow.Instance.IMainContent.SelectedIndex)
             ServerCollection.DeleteServerProfile(_safeName)
+            If MainWindow.Instance.IMainContent.Items.Count > 5
+                MainWindow.Instance.IMainContent.SelectedIndex = 6
+            Else
+                MainWindow.Instance.IMainContent.SelectedIndex = 0
+            End If
 
         ElseIf IExportProfile.IsSelected
 

@@ -14,7 +14,7 @@ Option Explicit On
 
 
 <Global.System.Runtime.CompilerServices.CompilerGeneratedAttribute(),  _
- Global.System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.7.0.0"),  _
+ Global.System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.8.0.0"),  _
  Global.System.ComponentModel.EditorBrowsableAttribute(Global.System.ComponentModel.EditorBrowsableState.Advanced)>  _
 Partial Friend NotInheritable Class MySettings
     Inherits Global.System.Configuration.ApplicationSettingsBase
@@ -139,23 +139,23 @@ Partial Friend NotInheritable Class MySettings
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute()>  _
-    Public Property mods() As Global.FAST2.Models.ModCollection
+    Public Property Mods() As Global.FAST2.Models.ModCollection
         Get
-            Return CType(Me("mods"),Global.FAST2.Models.ModCollection)
+            Return CType(Me("Mods"),Global.FAST2.Models.ModCollection)
         End Get
         Set
-            Me("mods") = value
+            Me("Mods") = value
         End Set
     End Property
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute()>  _
-    Public Property serverProfiles() As Global.FAST2.Models.ServerCollection
+    Public Property Servers() As Global.FAST2.Models.ServerCollection
         Get
-            Return CType(Me("serverProfiles"),Global.FAST2.Models.ServerCollection)
+            Return CType(Me("Servers"),Global.FAST2.Models.ServerCollection)
         End Get
         Set
-            Me("serverProfiles") = value
+            Me("Servers") = value
         End Set
     End Property
     

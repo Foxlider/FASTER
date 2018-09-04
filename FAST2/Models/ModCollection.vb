@@ -24,8 +24,8 @@ Namespace Models
                 Dim modName = path.Substring(path.LastIndexOf("@", StringComparison.Ordinal) + 1)
 
 
-                If My.Settings.mods IsNot Nothing
-                    currentMods = My.Settings.mods
+                If My.Settings.Mods IsNot Nothing
+                    currentMods = My.Settings.Mods
                 End If
 
                 If currentMods.LocalMods.Count > 0 Then
@@ -39,7 +39,7 @@ Namespace Models
                 If Not duplicate Then
                     currentMods.LocalMods.Add(New LocalMod(modName, path))
 
-                    My.Settings.mods = currentMods
+                    My.Settings.Mods = currentMods
                 Else
                     MsgBox("Mod already imported.")
                 End If
@@ -54,8 +54,8 @@ Namespace Models
                 Dim duplicate = False
                 Dim currentMods As New ModCollection
 
-                If My.Settings.mods IsNot Nothing
-                     currentMods = My.Settings.mods
+                If My.Settings.Mods IsNot Nothing
+                     currentMods = My.Settings.Mods
                 End If
 
                 Dim modId = modUrl.Substring(modUrl.IndexOf("?id=", StringComparison.Ordinal))
@@ -93,7 +93,7 @@ Namespace Models
 
                             currentMods.SteamMods.Add(New SteamMod(modId, modName, "Unknown", steamUpdateTime, 0))
 
-                            My.Settings.mods = currentMods
+                            My.Settings.Mods = currentMods
                         Else
                             MessageBox.Show("This is a workshop Item for a different game.")
                         End If
