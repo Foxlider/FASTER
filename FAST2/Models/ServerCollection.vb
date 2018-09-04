@@ -48,7 +48,7 @@ Namespace Models
             Try
                 Dim currentProfiles = My.Settings.Servers.ServerProfiles
         
-                Dim currentProfile As Models.ServerProfile = currentProfiles.Find(Function(profile) profile.ProfileNameBox = oldName)
+                Dim currentProfile As ServerProfile = currentProfiles.Find(Function(profile) profile.ProfileNameBox = oldName)
 
                 currentProfile.ProfileNameBox = newName
                 currentProfile.SafeName = MainWindow.SafeName(newName)

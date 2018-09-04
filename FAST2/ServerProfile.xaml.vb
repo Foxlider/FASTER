@@ -1,4 +1,5 @@
 ﻿Imports System.Threading
+Imports System.Windows.Controls.Primitives
 Imports FAST2.Models
 
 Class ServerProfile
@@ -36,7 +37,6 @@ Class ServerProfile
     Private Sub IProfileNameEditSave_Click(sender As Object, e As RoutedEventArgs) Handles IProfileNameEditSave.Click
         Dim oldName = IProfileDisplayName.Content
         Dim newName = IProfileDisplayNameEdit.Text
-        Dim index = My.Settings.Servers.ServerProfiles.IndexOf(My.Settings.Servers.ServerProfiles.Find(Function(profile) profile.ProfileNameBox = oldName))
 
         If ServerCollection.RenameServerProfile(oldName,newName)
             MainWindow.Instance.IMainContent.Items.RemoveAt(MainWindow.Instance.IMainContent.SelectedIndex)
@@ -104,5 +104,72 @@ Class ServerProfile
         IProfileDisplayName.Content = _displayName
     End Sub
 
-    
+    Private Sub UiCheckBoxes(sender As CheckBox, e As RoutedEventArgs) Handles IConsoleLogCheck.Click, IPidCheck.Click, IRankingCheck.Click, IRequiredBuildCheck.Click
+        Select Case sender.Name
+            Case "IConsoleLogCheck"
+                If IConsoleLogCheck.IsChecked
+                    IConsoleLogFile.IsEnabled = True
+                    IConsoleLogButton.IsEnabled = True
+                Else 
+                    IConsoleLogFile.IsEnabled = False
+                    IConsoleLogButton.IsEnabled = False
+                End If
+            Case "IPidCheck"
+                If IPidCheck.IsChecked
+                    IPidFile.IsEnabled = True
+                    IPidButton.IsEnabled = True
+                Else 
+                    IPidFile.IsEnabled = False
+                    IPidButton.IsEnabled = False
+                End If
+            Case "IRankingCheck"
+                If IRankingCheck.IsChecked
+                    IRakingFile.IsEnabled = True
+                    IRankingButton.IsEnabled = True
+                Else 
+                    IRakingFile.IsEnabled = False
+                    IRankingButton.IsEnabled = False
+                End If
+            Case "IRequiredBuildCheck"
+                If IRequiredBuildCheck.IsChecked
+                    IRequiredBuild.IsEnabled = True
+                Else 
+                    IRequiredBuild.IsEnabled = False
+                End If
+        End Select
+    End Sub
+
+    Private Sub UiToggles(sender As ToggleButton, e As RoutedEventArgs) Handles  IHcCheck.Click, IAutoRestartCheck.Click, IVonCheck.Click, IVotingCheck.Click
+        Select Case sender.Name
+            Case "IHcCheck"
+                If IHcCheck.IsChecked
+                    IHcIpGroup.IsEnabled = True
+                    IHcSliderGroup.IsEnabled = True
+                    IHcCheck.ToolTip = "Disable HC"
+                Else 
+                    IHcIpGroup.IsEnabled = False
+                    IHcSliderGroup.IsEnabled = False
+                    IHcCheck.ToolTip = "Enable HC"
+                End If
+            Case "IVonCheck"
+                If IVonCheck.IsChecked
+                    IVonGroup.IsEnabled = True
+                    IVonCheck.ToolTip = "Disable VON"
+                Else
+                    IVonGroup.IsEnabled = False
+                    IVonCheck.ToolTip = "Enable VON"
+                End If
+            Case "IVotingCheck"
+                If IVotingCheck.IsChecked
+                    IMinVotePlayers.IsEnabled = True
+                    IMinVoteThreshold.IsEnabled = True
+                    IVotingCheck.ToolTip = "Disable Voting"
+                Else
+                    IMinVotePlayers.IsEnabled = False
+                    IMinVoteThreshold.IsEnabled = False
+                    IVotingCheck.ToolTip = "Enable Voting"
+                End If
+        End Select
+
+    End Sub
 End Class
