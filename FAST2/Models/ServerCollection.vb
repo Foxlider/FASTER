@@ -115,7 +115,11 @@ Namespace Models
 
         Public Property AutoRestartEnabled As Boolean = False
 
+        Public Property DailyRestartAEnabled As Boolean = False
+
         Public Property DailyRestartA As TimeSpan
+
+        Public Property DailyRestartBEnabled As Boolean = False
 
         Public Property DailyRestartB As TimeSpan
 
@@ -127,7 +131,7 @@ Namespace Models
 
         Public Property AllowFilePatching As Integer = 0
 
-        Public Property VerfiySignatures As Integer = 0
+        Public Property VerifySignatures As Integer = 0
 
         Public Property RequiredBuildEnabled As Boolean = False
 
@@ -155,7 +159,7 @@ Namespace Models
 
         'MOTD
 
-        Public Property MotdDelay = 5
+        Public Property MotdDelay As Integer = 5
 
         'ServerMods
 
@@ -165,7 +169,7 @@ Namespace Models
 
         'Missions
 
-        Public Property PersistantBattlefield As Boolean = False
+        Public Property PersistentBattlefield As Boolean = False
 
         Public Property AutoInit As Boolean = False
 
@@ -252,8 +256,8 @@ Namespace Models
         Public Property MaxSizeNonguaranteed As Integer = 256
 
         Public Property MaxSizeGuaranteed As Integer = 512
-    
-        Public Property MinErrorToSendAs As Decimal = 0.001
+
+        Public Property MinErrorToSend As Decimal = 0.001
 
         Public Property MinErrorToSendNear As Decimal = 0.01
 

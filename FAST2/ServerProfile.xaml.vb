@@ -1,24 +1,117 @@
 ﻿Imports System.Threading
-Imports System.Windows.Controls.Primitives
 Imports FAST2.Models
 
 Class ServerProfile
-    Dim ReadOnly _safeName As String
-    Dim ReadOnly _displayname As String
+    Shared _safeName As String
 
-    Public Sub New (profile As Models.ServerProfile)
+    Public Sub New(profile As Models.ServerProfile)
         ' This call is required by the designer.
         InitializeComponent()
 
-        ' Add any initialization after the InitializeComponent() call.
-        _displayname = profile.DisplayName
+        ' Add any initialization after the InitializeComponent() call
         _safeName = profile.SafeName
 
-        'IServerName = profile.ServerName
-        
+        IDisplayName.Content = profile.DisplayName
+        IServerName.Text = profile.ServerName
+        IExecutable.Text = profile.Executable
+        IPassword.Text = profile.Password
+        IAdminPassword.Text = profile.AdminPassword
+        IMaxPlayers.Text = profile.MaxPlayers
+        IPort.Text = profile.Port
+        IHeadlessClientEnabled.IsChecked = profile.HeadlessClientEnabled
+        IHeadlessIps.Text = profile.HeadlessIps
+        ILocalClients.Text = profile.LocalClients
+        INoOfHeadlessClients.Value = profile.NoOfHeadlessClients
+        ILoopback.IsChecked = profile.Loopback
+        IUpnp.IsChecked = profile.Upnp
+        INetlog.IsChecked = profile.Netlog
+        IAutoRestartEnabled.IsChecked = profile.AutoRestartEnabled
+        IDailyRestartAEnabled.IsChecked = profile.DailyRestartAEnabled
+        IDailyRestartA.Text = profile.DailyRestartA.ToString()
+        IDailyRestartBEnabled.IsChecked = profile.DailyRestartBEnabled
+        IDailyRestartB.Text = profile.DailyRestartB.ToString()
+        IVotingEnabled.IsChecked = profile.VotingEnabled
+        IVotingMinPlayers.Text = profile.VotingMinPlayers
+        IVotingThreshold.Text = profile.VotingThreshold
+        IAllowFilePatching.Text = profile.AllowFilePatching
+        IVerifySignatures.Text = profile.VerifySignatures
+        IRequiredBuildEnabled.IsChecked = profile.RequiredBuildEnabled
+        IRequiredBuild.Text = profile.RequiredBuild
+        IKickDuplicates.IsChecked = profile.KickDuplicates
+        IVonEnabled.IsChecked = profile.VonEnabled
+        ICodecQuality.Value = profile.CodecQuality
+        IServerConsoleLogEnabled.IsChecked = profile.ServerConsoleLogEnabled
+        IServerConsoleLog.Text = profile.ServerConsoleLog
+        IPidEnabled.IsChecked = profile.PidEnabled
+        IPidLog.Text = profile.PidLog
+        IRankingEnabled.IsChecked = profile.RankingEnabled
+        IRankingLog.Text = profile.RankingLog
+        IRptTimestamp.Text = profile.RptTimestamp
+        IMotdDelay.Text = profile.MotdDelay
+        IPersistentBattlefield.IsChecked = profile.PersistentBattlefield
+        IAutoInit.IsChecked = profile.AutoInit
+        IDifficultyPreset.Text = profile.DifficultyPreset
+        IReducedDamage.IsChecked = profile.ReducedDamage
+        IGroupIndicators.IsChecked = profile.GroupIndicators
+        IFriendlyNameTags.IsChecked = profile.FriendlyNameTags
+        IEnemyNameTags.IsChecked = profile.EnemyNameTags
+        IDetectedMines.IsChecked = profile.DetectedMines
+        IMultipleSaves.IsChecked = profile.MultipleSaves
+        IThirdPerson.IsChecked = profile.ThirdPerson
+        IWeaponInfo.IsChecked = profile.WeaponInfo
+        IStanceIndicator.IsChecked = profile.StanceIndicator
+        IStaminaBar.IsChecked = profile.StaminaBar
+        ICameraShake.IsChecked = profile.CameraShake
+        IVisualAids.IsChecked = profile.VisualAids
+        IExtendedMapContent.IsChecked = profile.ExtendedMapContent
+        ICommands.IsChecked = profile.Commands
+        IVonId.IsChecked = profile.VonId
+        IKilledBy.IsChecked = profile.KilledBy
+        IWaypoints.IsChecked = profile.Waypoints
+        ICrosshair.IsChecked = profile.Crosshair
+        IAutoReporting.IsChecked = profile.AutoReporting
+        IScoreTable.IsChecked = profile.ScoreTable
+        ITacticalPing.IsChecked = profile.TacticalPing
+        IAiAccuracy.Text = profile.AiAccuracy
+        IAiSkill.Text = profile.AiSkill
+        IAiPreset.Text = profile.AiPreset
+        IMaxPacketLossEnabled.IsChecked = profile.MaxPacketLossEnabled
+        IMaxPacketLoss.Text = profile.MaxPacketLoss
+        IDisconnectTimeOutEnabled.IsChecked = profile.DisconnectTimeoutEnabled
+        IDisconnectTimeOut.Text = profile.DisconnectTimeout
+        IKickOnSlowNetworkEnabled.IsChecked = profile.KickOnSlowNetworkEnabled
+        IKickOnSlowNetwork.Text = profile.KickOnSlowNetwork
+        IMaxPingEnabled.IsChecked = profile.MaxPingEnabled
+        IMaxPing.Text = profile.MaxPing
+        IMaxDesyncEnabled.IsChecked = profile.MaxDesyncEnabled
+        IMaxDesync.Text = profile.MaxDesync
+        IMaxCustomFileSize.Text = profile.MaxCustomFileSize
+        IMaxPacketSize.Text = profile.MaxPacketSize
+        IMinBandwidth.Text = profile.MinBandwidth
+        IMaxBandwidth.Text = profile.MaxBandwidth
+        IMaxMessagesSend.Text = profile.MaxMessagesSend
+        IMaxSizeNonguaranteed.Text = profile.MaxSizeNonguaranteed
+        IMaxSizeGuaranteed.Text = profile.MaxSizeGuaranteed
+        IMinErrorToSend.Text = profile.MinErrorToSend
+        IMinErrorToSendNear.Text = profile.MinErrorToSendNear
+        IExtraParams.Text = profile.ExtraParams
+        IEnableHyperThreading.IsChecked = profile.EnableHyperThreading
+        IFilePatching.IsChecked = profile.FilePatching
+        IServerCommandPassword.Text = profile.ServerCommandPassword
+        IDoubleIdDetected.Text = profile.DoubleIdDetected
+        IOnUserConnected.Text = profile.OnUserConnected
+        IOnUserDisconnected.Text = profile.OnUserDisconnected
+        IOnHackedData.Text = profile.OnHackedData
+        IOnDifferentData.Text = profile.OnDifferentData
+        IOnUnsignedData.Text = profile.OnUnsignedData
+        IRegularCheck.Text = profile.RegularCheck
+
+        ToggleUi(IHeadlessClientEnabled)
+        ToggleUi(IAutoRestartEnabled)
+        ToggleUi(IVonEnabled)
+        ToggleUi(IVotingEnabled)
+
     End Sub
-
-
 
     'Turns toggle button groups into normal buttons
     Private Sub IActionButtons_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles IServerActionButtons.SelectionChanged
@@ -36,56 +129,56 @@ Class ServerProfile
     End Sub
 
     Private Sub IProfileNameEditSave_Click(sender As Object, e As RoutedEventArgs) Handles IProfileNameEditSave.Click
-        Dim oldName = IProfileDisplayName.Content
+        Dim oldName = IDisplayName.Content
         Dim newName = IProfileDisplayNameEdit.Text
 
-        If ServerCollection.RenameServerProfile(oldName,newName)
+        If ServerCollection.RenameServerProfile(oldName, newName) Then
             MainWindow.Instance.IMainContent.Items.RemoveAt(MainWindow.Instance.IMainContent.SelectedIndex)
             MainWindow.Instance.LoadServerProfiles()
-            MainWindow.Instance.IMainContent.SelectedIndex = MainWindow.Instance.IMainContent.Items.Count -1
-        Else 
+            MainWindow.Instance.IMainContent.SelectedIndex = MainWindow.Instance.IMainContent.Items.Count - 1
+        Else
             MsgBox("Error Try Again")
         End If
     End Sub
 
     Private Sub ShowRenameInterface(show As Boolean)
-        If show
-            IProfileDisplayNameEdit.Text = IProfileDisplayName.Content
-            IProfileDisplayName.Visibility = Visibility.Collapsed
+        If show Then
+            IProfileDisplayNameEdit.Text = IDisplayName.Content
+            IDisplayName.Visibility = Visibility.Collapsed
             IProfileNameEdit.Visibility = Visibility.Visible
             IProfileDisplayNameEdit.Focus()
             IProfileDisplayNameEdit.SelectAll()
-        Else 
+        Else
             IProfileDisplayNameEdit.Text = String.Empty
-            IProfileDisplayName.Visibility = Visibility.Visible
+            IDisplayName.Visibility = Visibility.Visible
             IProfileNameEdit.Visibility = Visibility.Collapsed
         End If
     End Sub
 
     'Manages actions for steam mods tab buttons
     Private Sub IServerActionButtons_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles IServerActionButtons.SelectionChanged
-        
-        If ISaveProfile.IsSelected
-            My.Settings.Save
 
-        ElseIf IRenameProfile.IsSelected
+        If ISaveProfile.IsSelected Then
+            UpdateProfile()
+
+        ElseIf IRenameProfile.IsSelected Then
             ShowRenameInterface(True)
 
-        ElseIf IDeleteProfile.IsSelected
+        ElseIf IDeleteProfile.IsSelected Then
             MainWindow.Instance.IMainContent.Items.RemoveAt(MainWindow.Instance.IMainContent.SelectedIndex)
             ServerCollection.DeleteServerProfile(_safeName)
-            If MainWindow.Instance.IMainContent.Items.Count > 5
+            If MainWindow.Instance.IMainContent.Items.Count > 5 Then
                 MainWindow.Instance.IMainContent.SelectedIndex = 6
             Else
                 MainWindow.Instance.IMainContent.SelectedIndex = 0
             End If
 
-        ElseIf IExportProfile.IsSelected
+        ElseIf IExportProfile.IsSelected Then
 
-        ElseIf ILaunchServer.IsSelected
-            
+        ElseIf ILaunchServer.IsSelected Then
+
         End If
-        
+
         Dim thread As New Thread(
             Sub()
                 Thread.Sleep(600)
@@ -98,90 +191,194 @@ Class ServerProfile
             )
         thread.Start()
     End Sub
-    
-    Private Sub UiCheckBoxes(sender As CheckBox, e As RoutedEventArgs) Handles IConsoleLogCheck.Click, IPidCheck.Click, IRankingCheck.Click, IRequiredBuildCheck.Click
-        Select Case sender.Name
-            Case "IConsoleLogCheck"
-                If IConsoleLogCheck.IsChecked
-                    IConsoleLogFile.IsEnabled = True
-                    IConsoleLogButton.IsEnabled = True
-                Else 
-                    IConsoleLogFile.IsEnabled = False
-                    IConsoleLogButton.IsEnabled = False
-                End If
-            Case "IPidCheck"
-                If IPidCheck.IsChecked
-                    IPidFile.IsEnabled = True
-                    IPidButton.IsEnabled = True
-                Else 
-                    IPidFile.IsEnabled = False
-                    IPidButton.IsEnabled = False
-                End If
-            Case "IRankingCheck"
-                If IRankingCheck.IsChecked
-                    IRakingFile.IsEnabled = True
-                    IRankingButton.IsEnabled = True
-                Else 
-                    IRakingFile.IsEnabled = False
-                    IRankingButton.IsEnabled = False
-                End If
-            Case "IRequiredBuildCheck"
-                If IRequiredBuildCheck.IsChecked
-                    IRequiredBuild.IsEnabled = True
-                Else 
-                    IRequiredBuild.IsEnabled = False
-                End If
-        End Select
+
+    Private Sub UpdateProfile()
+        Dim profile = My.Settings.Servers.ServerProfiles.Find(Function(p) p.SafeName = _safeName)
+
+        profile.DisplayName = IDisplayName.Content
+        profile.ServerName = IServerName.Text
+        profile.Executable = IExecutable.Text
+        profile.Password = IPassword.Text
+        profile.AdminPassword = IAdminPassword.Text
+        profile.MaxPlayers = IMaxPlayers.Text
+        profile.Port = IPort.Text
+        profile.HeadlessClientEnabled = IHeadlessClientEnabled.IsChecked
+        profile.HeadlessIps = IHeadlessIps.Text
+        profile.LocalClients = ILocalClients.Text
+        profile.NoOfHeadlessClients = INoOfHeadlessClients.Value
+        profile.Loopback = ILoopback.IsChecked
+        profile.Upnp = IUpnp.IsChecked
+        profile.Netlog = INetlog.IsChecked
+        profile.AutoRestartEnabled = IAutoRestartEnabled.IsChecked
+        profile.DailyRestartAEnabled = IDailyRestartAEnabled.IsChecked
+        'profile.DailyRestartA = IDailyRestartA.Text
+        profile.DailyRestartBEnabled = IDailyRestartBEnabled.IsChecked
+        'profile.DailyRestartB = IDailyRestartB.Text
+        profile.VotingEnabled = IVotingEnabled.IsChecked
+        profile.VotingMinPlayers = IVotingMinPlayers.Text
+        profile.VotingThreshold = IVotingThreshold.Text
+        profile.AllowFilePatching = IAllowFilePatching.Text
+        profile.VerifySignatures = IVerifySignatures.Text
+        profile.RequiredBuildEnabled = IRequiredBuildEnabled.IsChecked
+        profile.RequiredBuild = IRequiredBuild.Text
+        profile.KickDuplicates = IKickDuplicates.IsChecked
+        profile.VonEnabled = IVonEnabled.IsChecked
+        profile.CodecQuality = ICodecQuality.Value
+        profile.ServerConsoleLogEnabled = IServerConsoleLogEnabled.IsChecked
+        profile.ServerConsoleLog = IServerConsoleLog.Text
+        profile.PidEnabled = IPidEnabled.IsChecked
+        profile.PidLog = IPidLog.Text
+        profile.RankingEnabled = IRankingEnabled.IsChecked
+        profile.RankingLog = IRankingLog.Text
+        profile.RptTimestamp = IRptTimestamp.Text
+        profile.MotdDelay = IMotdDelay.Text
+        profile.PersistentBattlefield = IPersistentBattlefield.IsChecked
+        profile.AutoInit = IAutoInit.IsChecked
+        profile.DifficultyPreset = IDifficultyPreset.Text
+        profile.ReducedDamage = IReducedDamage.IsChecked
+        profile.GroupIndicators = IGroupIndicators.IsChecked
+        profile.FriendlyNameTags = IFriendlyNameTags.IsChecked
+        profile.EnemyNameTags = IEnemyNameTags.IsChecked
+        profile.DetectedMines = IDetectedMines.IsChecked
+        profile.MultipleSaves = IMultipleSaves.IsChecked
+        profile.ThirdPerson = IThirdPerson.IsChecked
+        profile.WeaponInfo = IWeaponInfo.IsChecked
+        profile.StanceIndicator = IStanceIndicator.IsChecked
+        profile.StaminaBar = IStaminaBar.IsChecked
+        profile.CameraShake = ICameraShake.IsChecked
+        profile.VisualAids = IVisualAids.IsChecked
+        profile.ExtendedMapContent = IExtendedMapContent.IsChecked
+        profile.Commands = ICommands.IsChecked
+        profile.VonId = IVonId.IsChecked
+        profile.KilledBy = IKilledBy.IsChecked
+        profile.Waypoints = IWaypoints.IsChecked
+        profile.Crosshair = ICrosshair.IsChecked
+        profile.AutoReporting = IAutoReporting.IsChecked
+        profile.ScoreTable = IScoreTable.IsChecked
+        profile.TacticalPing = ITacticalPing.IsChecked
+        profile.AiAccuracy = IAiAccuracy.Text
+        profile.AiSkill = IAiSkill.Text
+        profile.AiPreset = IAiPreset.Text
+        profile.MaxPacketLossEnabled = IMaxPacketLossEnabled.IsChecked
+        profile.MaxPacketLoss = IMaxPacketLoss.Text
+        profile.DisconnectTimeoutEnabled = IDisconnectTimeOutEnabled.IsChecked
+        profile.DisconnectTimeout = IDisconnectTimeOut.Text
+        profile.KickOnSlowNetworkEnabled = IKickOnSlowNetworkEnabled.IsChecked
+        profile.KickOnSlowNetwork = IKickOnSlowNetwork.Text
+        profile.MaxPingEnabled = IMaxPingEnabled.IsChecked
+        profile.MaxPing = IMaxPing.Text
+        profile.MaxDesyncEnabled = IMaxDesyncEnabled.IsChecked
+        profile.MaxDesync = IMaxDesync.Text
+        profile.MaxCustomFileSize = IMaxCustomFileSize.Text
+        profile.MaxPacketSize = IMaxPacketSize.Text
+        profile.MinBandwidth = IMinBandwidth.Text
+        profile.MaxBandwidth = IMaxBandwidth.Text
+        profile.MaxMessagesSend = IMaxMessagesSend.Text
+        profile.MaxSizeNonguaranteed = IMaxSizeNonguaranteed.Text
+        profile.MaxSizeGuaranteed = IMaxSizeGuaranteed.Text
+        profile.MinErrorToSend = IMinErrorToSend.Text
+        profile.MinErrorToSendNear = IMinErrorToSendNear.Text
+        profile.ExtraParams = IExtraParams.Text
+        profile.EnableHyperThreading = IEnableHyperThreading.IsChecked
+        profile.FilePatching = IFilePatching.IsChecked
+        profile.ServerCommandPassword = IServerCommandPassword.Text
+        profile.DoubleIdDetected = IDoubleIdDetected.Text
+        profile.OnUserConnected = IOnUserConnected.Text
+        profile.OnUserDisconnected = IOnUserDisconnected.Text
+        profile.OnHackedData = IOnHackedData.Text
+        profile.OnDifferentData = IOnDifferentData.Text
+        profile.OnUnsignedData = IOnUnsignedData.Text
+        profile.RegularCheck = IRegularCheck.Text
+
+        My.Settings.Save()
     End Sub
 
-    Private Sub UiToggles(sender As ToggleButton, e As RoutedEventArgs) Handles  IHcCheck.Click, IAutoRestartCheck.Click, IVonCheck.Click, IVotingCheck.Click
-        Select Case sender.Name
-            Case "IHcCheck"
-                If IHcCheck.IsChecked
+
+    Private Sub ToggleUi(uiElement As Object, Optional e As RoutedEventArgs = Nothing) Handles IHeadlessClientEnabled.Click, IAutoRestartEnabled.Click, IVonEnabled.Click, IVotingEnabled.Click, IServerConsoleLogEnabled.Click,
+                                                                                               IPidEnabled.Click, IRankingEnabled.Click, IRequiredBuildEnabled.Click, IDailyRestartAEnabled.Click, IDailyRestartBEnabled.Click
+        Select Case uiElement.Name
+            Case "IHeadlessClientEnabled"
+                If IHeadlessClientEnabled.IsChecked Then
                     IHcIpGroup.IsEnabled = True
                     IHcSliderGroup.IsEnabled = True
-                    IHcCheck.ToolTip = "Disable HC"
-                Else 
+                    IHeadlessClientEnabled.ToolTip = "Disable HC"
+                Else
                     IHcIpGroup.IsEnabled = False
                     IHcSliderGroup.IsEnabled = False
-                    IHcCheck.ToolTip = "Enable HC"
+                    IHeadlessClientEnabled.ToolTip = "Enable HC"
                 End If
-            Case "IVonCheck"
-                If IVonCheck.IsChecked
+            Case "IVonEnabled"
+                If IVonEnabled.IsChecked Then
                     IVonGroup.IsEnabled = True
-                    IVonCheck.ToolTip = "Disable VON"
+                    IVonEnabled.ToolTip = "Disable VON"
                 Else
                     IVonGroup.IsEnabled = False
-                    IVonCheck.ToolTip = "Enable VON"
+                    IVonEnabled.ToolTip = "Enable VON"
                 End If
-            Case "IVotingCheck"
-                If IVotingCheck.IsChecked
-                    IMinVotePlayers.IsEnabled = True
-                    IMinVoteThreshold.IsEnabled = True
-                    IVotingCheck.ToolTip = "Disable Voting"
+            Case "IVotingEnabled"
+                If IVotingEnabled.IsChecked Then
+                    IVotingMinPlayers.IsEnabled = True
+                    IVotingThreshold.IsEnabled = True
+                    IVotingEnabled.ToolTip = "Disable Voting"
                 Else
-                    IMinVotePlayers.IsEnabled = False
-                    IMinVoteThreshold.IsEnabled = False
-                    IVotingCheck.ToolTip = "Enable Voting"
+                    IVotingMinPlayers.IsEnabled = False
+                    IVotingThreshold.IsEnabled = False
+                    IVotingEnabled.ToolTip = "Enable Voting"
                 End If
-            Case "IAutoRestartCheck"
-                If IAutoRestartCheck.IsChecked
-                    IDailyRestartPickerA.IsEnabled = True
-                    IDailyRestartPickerB.IsEnabled = True
-                    IDailyRestartCheckA.IsEnabled = True
-                    IDailyRestartCheckB.IsEnabled = True
-                    IAutoRestartCheck.ToolTip = "Disable Auto Restart"
+            Case "IAutoRestartEnabled"
+                If IAutoRestartEnabled.IsChecked Then
+                    IDailyRestartAEnabled.IsEnabled = True
+                    IDailyRestartBEnabled.IsEnabled = True
+                    IAutoRestartEnabled.ToolTip = "Disable Auto Restart"
                 Else
-                    
-                    IDailyRestartPickerA.IsEnabled = False
-                    IDailyRestartPickerB.IsEnabled = False
-                    IDailyRestartCheckA.IsEnabled = False
-                    IDailyRestartCheckB.IsEnabled = False
-                    IVotingCheck.ToolTip = "Enable Auto Restart"
-                End If
-                
-        End Select
 
+                    IDailyRestartAEnabled.IsEnabled = False
+                    IDailyRestartBEnabled.IsEnabled = False
+                    IAutoRestartEnabled.ToolTip = "Enable Auto Restart"
+                End If
+            Case "IServerConsoleLogEnabled"
+                If IServerConsoleLogEnabled.IsChecked Then
+                    IServerConsoleLog.IsEnabled = True
+                    IConsoleLogButton.IsEnabled = True
+                Else
+                    IServerConsoleLog.IsEnabled = False
+                    IConsoleLogButton.IsEnabled = False
+                End If
+            Case "IPidEnabled"
+                If IPidEnabled.IsChecked Then
+                    IPidLog.IsEnabled = True
+                    IPidButton.IsEnabled = True
+                Else
+                    IPidLog.IsEnabled = False
+                    IPidButton.IsEnabled = False
+                End If
+            Case "IRankingEnabled"
+                If IRankingEnabled.IsChecked Then
+                    IRankingLog.IsEnabled = True
+                    IRankingButton.IsEnabled = True
+                Else
+                    IRankingLog.IsEnabled = False
+                    IRankingButton.IsEnabled = False
+                End If
+            Case "IRequiredBuildEnabled"
+                If IRequiredBuildEnabled.IsChecked Then
+                    IRequiredBuild.IsEnabled = True
+                Else
+                    IRequiredBuild.IsEnabled = False
+                End If
+            Case "IDailyRestartAEnabled"
+                If IDailyRestartAEnabled.IsChecked Then
+                    IDailyRestartA.IsEnabled = True
+                Else
+                    IDailyRestartA.IsEnabled = False
+                End If
+            Case "IDailyRestartBEnabled"
+                If IDailyRestartBEnabled.IsChecked Then
+                    IDailyRestartB.IsEnabled = True
+                Else
+                    IDailyRestartB.IsEnabled = False
+                End If
+        End Select
     End Sub
 
 End Class

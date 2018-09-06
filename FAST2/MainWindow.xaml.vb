@@ -330,7 +330,7 @@ Public Class MainWindow
                 Next
 
                 If Not duplicate
-                    Dim tabControls = New ServerProfile(profile.SafeName, profile.DisplayName)
+                    Dim tabControls = New ServerProfile(profile)
 
                     Dim newTab As New TabItem With {
                             .Name = profile.SafeName,

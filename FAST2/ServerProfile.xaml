@@ -79,16 +79,16 @@
                                 <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="-8"/>
                             </StackPanel>
 
-                            <TextBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="10" materialDesign:HintAssist.Hint="Server Name" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
-                            <TextBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="9" materialDesign:HintAssist.Hint="Server File" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
-                            <Button Grid.Row="2" Grid.Column="9" x:Name="IServerFileButton" Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}" Height="20" Width="20" DockPanel.Dock="Right">
+                            <TextBox Name="IServerName" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="10" materialDesign:HintAssist.Hint="Server Name" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
+                            <TextBox Name="IExecutable" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="9" materialDesign:HintAssist.Hint="Server File" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
+                            <Button Grid.Row="2" Grid.Column="9" Name="IServerFileButton" Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}" Height="20" Width="20" DockPanel.Dock="Right">
                                 <materialDesign:PackIcon Kind="FolderOpen" Height="10" Width="10"/>
                             </Button>
-                            <TextBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="5" materialDesign:HintAssist.Hint="Password" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
-                            <TextBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="5" materialDesign:HintAssist.Hint="Admin Password" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
+                            <TextBox Name="IPassword" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="5" materialDesign:HintAssist.Hint="Password" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
+                            <TextBox Name="IAdminPassword" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="5" materialDesign:HintAssist.Hint="Admin Password" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
 
-                            <TextBox Grid.Row="3" Grid.Column="7" Grid.ColumnSpan="3" materialDesign:HintAssist.Hint="Max Players" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
-                            <TextBox Grid.Row="4" Grid.Column="7" Grid.ColumnSpan="3" materialDesign:HintAssist.Hint="Port" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
+                            <TextBox Name="IMaxPlayers" Grid.Row="3" Grid.Column="7" Grid.ColumnSpan="3" materialDesign:HintAssist.Hint="Max Players" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
+                            <TextBox Name="IPort" Grid.Row="4" Grid.Column="7" Grid.ColumnSpan="3" materialDesign:HintAssist.Hint="Port" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
                         </Grid>
                     </materialDesign:Card>
 
@@ -104,17 +104,17 @@
                             </Grid.RowDefinitions>
                             <StackPanel Grid.ColumnSpan="2">
                                 <Label Margin="2" Content="Headless Client"/>
-                                <ToggleButton Name="IHcCheck" Style="{StaticResource MaterialDesignSwitchToggleButton}" IsChecked="False" HorizontalAlignment="Right" Margin="2,-25,5,0" ToolTip="Enable HC"/>
+                                <ToggleButton Name="IHeadlessClientEnabled" Style="{StaticResource MaterialDesignSwitchToggleButton}" IsChecked="False" HorizontalAlignment="Right" Margin="2,-25,5,0" ToolTip="Enable HC"/>
                                 <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="-8"/>
                             </StackPanel>
 
                             <StackPanel Name="IHcIpGroup" Grid.Row="1" Grid.Column="0" IsEnabled="False">
-                                <TextBox materialDesign:HintAssist.Hint="Headless IPs" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
-                                <TextBox materialDesign:HintAssist.Hint="Local Clients" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5,-2,5,5"/>
+                                <TextBox Name="IHeadlessIps" materialDesign:HintAssist.Hint="Headless IPs" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
+                                <TextBox Name="ILocalClients" materialDesign:HintAssist.Hint="Local Clients" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5,-2,5,5"/>
                             </StackPanel>
 
                             <StackPanel Name="IHcSliderGroup" Grid.Row="1" Grid.Column="1" IsEnabled="False">
-                                <Slider Minimum="0" Maximum="5" Style="{StaticResource MaterialDesignDiscreteSlider}" Width="100" ToolTip="MaterialDesignDiscreteSlider" Margin="5,-7"/>
+                                <Slider Name="INoOfHeadlessClients" Minimum="0" Maximum="5" Style="{StaticResource MaterialDesignDiscreteSlider}" Width="100" ToolTip="MaterialDesignDiscreteSlider" Margin="5,-7"/>
                                 <Label Content="No of HCs" HorizontalAlignment="Center" Margin="5"/>
                             </StackPanel>
                         </Grid>
@@ -134,9 +134,9 @@
                                 <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="-8"/>
                             </StackPanel>
 
-                            <CheckBox Grid.Row="1" Style="{StaticResource MaterialDesignCheckBox}" Content="Loopback" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
-                            <CheckBox Grid.Row="2" Style="{StaticResource MaterialDesignCheckBox}" Content="UPNP" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
-                            <CheckBox Grid.Row="3" Style="{StaticResource MaterialDesignCheckBox}" Content="Netlog" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
+                            <CheckBox Name="ILoopback" Grid.Row="1" Style="{StaticResource MaterialDesignCheckBox}" Content="Loopback" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
+                            <CheckBox Name="IUpnp" Grid.Row="2" Style="{StaticResource MaterialDesignCheckBox}" Content="UPNP" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
+                            <CheckBox Name="INetlog" Grid.Row="3" Style="{StaticResource MaterialDesignCheckBox}" Content="Netlog" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
                         </Grid>
                     </materialDesign:Card>
 
@@ -160,16 +160,16 @@
                                     <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="-8"/>
                                 </StackPanel>
 
-                                <CheckBox Grid.Row="1" Grid.Column="0" Name="IConsoleLogCheck" Margin="5" Style="{StaticResource MaterialDesignCheckBox}"/>
-                                <TextBox Grid.Row="1" Grid.Column="1" Name="IConsoleLogFile" Text="server_console.log" Margin="5" Foreground="{DynamicResource MaterialDesignBody}" IsEnabled="False"/>
+                                <CheckBox Grid.Row="1" Grid.Column="0" Name="IServerConsoleLogEnabled" Margin="5" Style="{StaticResource MaterialDesignCheckBox}"/>
+                                <TextBox Grid.Row="1" Grid.Column="1" Name="IServerConsoleLog" Text="server_console.log" Margin="5" Foreground="{DynamicResource MaterialDesignBody}" IsEnabled="False"/>
                                 <Button Grid.Row="1" Grid.Column="2" Name="IConsoleLogButton" Content="Open" Height="20" Width="60" FontSize="11" Margin="5" IsEnabled="False"/>
 
-                                <CheckBox Grid.Row="2" Grid.Column="0" Name="IPidCheck" Margin="5" Style="{StaticResource MaterialDesignCheckBox}"/>
-                                <TextBox Grid.Row="2" Grid.Column="1" Name="IPidFile" Text="pid.log" Margin="5" Foreground="{DynamicResource MaterialDesignBody}" IsEnabled="False"/>
+                                <CheckBox Grid.Row="2" Grid.Column="0" Name="IPidEnabled" Margin="5" Style="{StaticResource MaterialDesignCheckBox}"/>
+                                <TextBox Grid.Row="2" Grid.Column="1" Name="IPidLog" Text="pid.log" Margin="5" Foreground="{DynamicResource MaterialDesignBody}" IsEnabled="False"/>
                                 <Button Grid.Row="2" Grid.Column="2" Name="IPidButton" Content="Open" Height="20" Width="60" FontSize="11" Margin="5" IsEnabled="False"/>
 
-                                <CheckBox Grid.Row="3" Grid.Column="0" Name="IRankingCheck" Margin="5" Style="{StaticResource MaterialDesignCheckBox}"/>
-                                <TextBox Grid.Row="3" Grid.Column="1" Name="IRakingFile" Text="ranking.log" Margin="5" Foreground="{DynamicResource MaterialDesignBody}" IsEnabled="False"/>
+                                <CheckBox Grid.Row="3" Grid.Column="0" Name="IRankingEnabled" Margin="5" Style="{StaticResource MaterialDesignCheckBox}"/>
+                                <TextBox Grid.Row="3" Grid.Column="1" Name="IRankingLog" Text="ranking.log" Margin="5" Foreground="{DynamicResource MaterialDesignBody}" IsEnabled="False"/>
                                 <Button Grid.Row="3" Grid.Column="2" Name="IRankingButton" Content="Open" Height="20" Width="60" FontSize="11" Margin="5" IsEnabled="False"/>
                             </Grid>
 
@@ -195,7 +195,7 @@
                                 </StackPanel>
 
 
-                                <ComboBox Grid.Row="1" Grid.Column="0" materialDesign:HintAssist.Hint="TimeStamp" IsEditable="False" Foreground="{DynamicResource MaterialDesignBody}" Width="60" Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="5">
+                                <ComboBox Grid.Row="1" Grid.Column="0" Name="IRptTimestamp" materialDesign:HintAssist.Hint="TimeStamp" IsEditable="False" Foreground="{DynamicResource MaterialDesignBody}" Width="60" Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="5">
                                     <ComboBoxItem IsSelected="True">none</ComboBoxItem>
                                     <ComboBoxItem>short</ComboBoxItem>
                                     <ComboBoxItem>full</ComboBoxItem>
@@ -234,13 +234,13 @@
                             </Grid.RowDefinitions>
                             <StackPanel Grid.ColumnSpan="2">
                                 <Label Margin="2" Content="Auto Restart"/>
-                                <ToggleButton Name="IAutoRestartCheck" Style="{StaticResource MaterialDesignSwitchToggleButton}" IsChecked="False" HorizontalAlignment="Right" Margin="2,-25,5,0" ToolTip="Enable Auto Restart"/>
+                                <ToggleButton Name="IAutoRestartEnabled" Style="{StaticResource MaterialDesignSwitchToggleButton}" IsChecked="False" HorizontalAlignment="Right" Margin="2,-25,5,0" ToolTip="Enable Auto Restart"/>
                                 <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="-8"/>
                             </StackPanel>
-                            <CheckBox Grid.Row="1" Grid.Column="0" Name="IDailyRestartCheckA" IsEnabled="False" Margin="5"/>
-                            <materialDesign:TimePicker Grid.Row="1" Grid.Column="1" Name="IDailyRestartPickerA" Is24Hours="True" materialDesign:HintAssist.Hint="Daily At" Foreground="{DynamicResource MaterialDesignBody}" IsEnabled="False" Margin="5,5,10,5"/>
-                            <CheckBox Grid.Row="2" Grid.Column="0" Name="IDailyRestartCheckB" IsEnabled="False" Margin="5"/>
-                            <materialDesign:TimePicker Grid.Row="2" Grid.Column="1" Name="IDailyRestartPickerB" Is24Hours="True" materialDesign:HintAssist.Hint="Daily At" Foreground="{DynamicResource MaterialDesignBody}" IsEnabled="False" Margin="5,5,10,5"/>
+                            <CheckBox Grid.Row="1" Grid.Column="0" Name="IDailyRestartAEnabled" IsEnabled="False" Margin="5"/>
+                            <materialDesign:TimePicker Grid.Row="1" Grid.Column="1" Name="IDailyRestartA" Is24Hours="True" materialDesign:HintAssist.Hint="Daily At" Foreground="{DynamicResource MaterialDesignBody}" IsEnabled="False" Margin="5,5,10,5"/>
+                            <CheckBox Grid.Row="2" Grid.Column="0" Name="IDailyRestartBEnabled" IsEnabled="False" Margin="5"/>
+                            <materialDesign:TimePicker Grid.Row="2" Grid.Column="1" Name="IDailyRestartB" Is24Hours="True" materialDesign:HintAssist.Hint="Daily At" Foreground="{DynamicResource MaterialDesignBody}" IsEnabled="False" Margin="5,5,10,5"/>
                         </Grid>
                     </materialDesign:Card>
 
@@ -262,18 +262,18 @@
                                 <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="-8"/>
                             </StackPanel>
 
-                            <ComboBox Grid.Row="1" Grid.ColumnSpan="2" Grid.Column="0" materialDesign:HintAssist.Hint="Allow File Patching" Foreground="{DynamicResource MaterialDesignBody}" IsEditable="False" Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="5">
+                            <ComboBox Name="IAllowFilePatching" Grid.Row="1" Grid.ColumnSpan="2" Grid.Column="0" materialDesign:HintAssist.Hint="Allow File Patching" Foreground="{DynamicResource MaterialDesignBody}" IsEditable="False" Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="5">
                                 <ComboBoxItem IsSelected="True">0</ComboBoxItem>
                                 <ComboBoxItem>1</ComboBoxItem>
                                 <ComboBoxItem>2</ComboBoxItem>
                             </ComboBox>
-                            <ComboBox Grid.Row="2" Grid.ColumnSpan="2" Grid.Column="0" materialDesign:HintAssist.Hint="Verify Signatures" Foreground="{DynamicResource MaterialDesignBody}" IsEditable="False" Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="5">
+                            <ComboBox Name="IVerifySignatures" Grid.Row="2" Grid.ColumnSpan="2" Grid.Column="0" materialDesign:HintAssist.Hint="Verify Signatures" Foreground="{DynamicResource MaterialDesignBody}" IsEditable="False" Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="5">
                                 <ComboBoxItem IsSelected="True">0</ComboBoxItem>
                                 <ComboBoxItem>1</ComboBoxItem>
                                 <ComboBoxItem>2</ComboBoxItem>
                             </ComboBox>
-                            <CheckBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Name="IKickDupeCheck" Content="Kick Duplicates" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
-                            <CheckBox Grid.Row="3" Grid.Column="1" Name="IRequiredBuildCheck" Margin="5" Style="{StaticResource MaterialDesignCheckBox}"/>
+                            <CheckBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Name="IKickDuplicates" Content="Kick Duplicates" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
+                            <CheckBox Grid.Row="3" Grid.Column="1" Name="IRequiredBuildEnabled" Margin="5" Style="{StaticResource MaterialDesignCheckBox}"/>
                             <TextBox Grid.Row="3" Grid.Column="0" Name="IRequiredBuild" materialDesign:HintAssist.Hint="Required Build" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5" VerticalAlignment="Center" IsEnabled="False"/>
                         </Grid>
                     </materialDesign:Card>
@@ -289,7 +289,7 @@
                                 <Label Margin="2" Content="Message Of The Day"/>
                                 <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="-8"/>
                             </StackPanel>
-                            <TextBox Grid.Row="1" Margin="10" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" Foreground="{DynamicResource MaterialDesignBody}" Background="{DynamicResource MaterialDesignTextAreaInactiveBorder}"/>
+                            <TextBox Name="IMotd" Grid.Row="1" Margin="10" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" Foreground="{DynamicResource MaterialDesignBody}" Background="{DynamicResource MaterialDesignTextAreaInactiveBorder}"/>
                             <TextBox Grid.Row="2" Grid.Column="0" Name="IMotdDelay" materialDesign:HintAssist.Hint="Delay Between Messages" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="10,0,10,5" HorizontalAlignment="Left" Width="100"/>
                         </Grid>
                     </materialDesign:Card>
@@ -306,12 +306,12 @@
                             </Grid.RowDefinitions>
                             <StackPanel Grid.ColumnSpan="2">
                                 <Label Margin="2" Content="Voting"/>
-                                <ToggleButton Name="IVotingCheck" Style="{StaticResource MaterialDesignSwitchToggleButton}" IsChecked="True" HorizontalAlignment="Right" Margin="2,-25,5,0" ToolTip="Disable Voting"/>
+                                <ToggleButton Name="IVotingEnabled" Style="{StaticResource MaterialDesignSwitchToggleButton}" IsChecked="True" HorizontalAlignment="Right" Margin="2,-25,5,0" ToolTip="Disable Voting"/>
                                 <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="-8"/>
                             </StackPanel>
 
-                            <TextBox Name="IMinVotePlayers" Grid.Row="1" Grid.Column="0" materialDesign:HintAssist.Hint="Min Players" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5" VerticalAlignment="Center"/>
-                            <TextBox Name="IMinVoteThreshold" Grid.Row="1" Grid.Column="1" materialDesign:HintAssist.Hint="Threshold (%)" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5" VerticalAlignment="Center"/>
+                            <TextBox Name="IVotingMinPlayers" Grid.Row="1" Grid.Column="0" materialDesign:HintAssist.Hint="Min Players" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5" VerticalAlignment="Center"/>
+                            <TextBox  Name="IVotingThreshold" Grid.Row="1" Grid.Column="1" materialDesign:HintAssist.Hint="Threshold (%)" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5" VerticalAlignment="Center"/>
                         </Grid>
                     </materialDesign:Card>
 
@@ -323,11 +323,11 @@
                             </Grid.RowDefinitions>
                             <StackPanel>
                                 <Label Margin="2" Content="VON Settings"/>
-                                <ToggleButton Name="IVonCheck" Style="{StaticResource MaterialDesignSwitchToggleButton}" IsChecked="True" HorizontalAlignment="Right" Margin="2,-25,5,0" ToolTip="Disable VON"/>
+                                <ToggleButton Name="IVonEnabled" Style="{StaticResource MaterialDesignSwitchToggleButton}" IsChecked="True" HorizontalAlignment="Right" Margin="2,-25,5,0" ToolTip="Disable VON"/>
                                 <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="-8"/>
                             </StackPanel>
                             <StackPanel Name="IVonGroup" Grid.Row="1">
-                                <Slider Minimum="1" Maximum="30" Style="{StaticResource MaterialDesignDiscreteSlider}" Width="120" ToolTip="MaterialDesignDiscreteSlider" Margin="5,-7"/>
+                                <Slider Name="ICodecQuality" Minimum="1" Maximum="30" Style="{StaticResource MaterialDesignDiscreteSlider}" Width="120" ToolTip="MaterialDesignDiscreteSlider" Margin="5,-7"/>
                                 <Label Content="Codec Quality" HorizontalAlignment="Center" Margin="5"/>
                             </StackPanel>
                         </Grid>
@@ -447,15 +447,15 @@
                             </StackPanel>
                             <xctk:CheckListBox Grid.Row="1" Grid.Column="0" Name="IMissionCheckList" Margin="10" Grid.ColumnSpan="4" Background="{DynamicResource MaterialDesignTextAreaInactiveBorder}" Foreground="{DynamicResource MaterialDesignBody}"/>
                             <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" Orientation="Horizontal" Margin="5,0">
-                                <CheckBox Style="{StaticResource MaterialDesignCheckBox}" Content="Persistant Battlefield" Margin="5,0" Foreground="{DynamicResource MaterialDesignBody}"/>
-                                <CheckBox Style="{StaticResource MaterialDesignCheckBox}" Content="Auto Init" Margin="5,0" IsEnabled="False" Foreground="{DynamicResource MaterialDesignBody}"/>
+                                <CheckBox Name="IPersistentBattlefield" Style="{StaticResource MaterialDesignCheckBox}" Content="Persistent Battlefield" Margin="5,0" Foreground="{DynamicResource MaterialDesignBody}"/>
+                                <CheckBox Name="IAutoInit" Style="{StaticResource MaterialDesignCheckBox}" Content="Auto Init" Margin="5,0" IsEnabled="False" Foreground="{DynamicResource MaterialDesignBody}"/>
                             </StackPanel>
                             <Button Grid.Row="3" Grid.Column="0" Name="IAllMissionsButton" Margin="10,10,5,10" Content="All" FontSize="10" Height="20" />
                             <Button Grid.Row="3" Grid.Column="1" Name="INoMissionsButton" Margin="5,10" Content="None" FontSize="10" Height="20"/>
-                            <Button Grid.Row="3" Grid.Column="2" Name="IRefreshMissonsButton" Margin="5,10" Content="{materialDesign:PackIcon Kind=Refresh}" FontSize="10" Height="20" Width="20" Padding="0"/>
-                            <ComboBox Grid.Row="3" Grid.Column="3" materialDesign:HintAssist.Hint="Diffiulty Preset" Name="IMissionDifficulty" IsEditable="False" Foreground="{DynamicResource MaterialDesignBody}" Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="10,0,10,10" Width="75" HorizontalAlignment="Right">
+                            <Button Grid.Row="3" Grid.Column="2" Name="IRefreshMissionsButton" Margin="5,10" Content="{materialDesign:PackIcon Kind=Refresh}" FontSize="10" Height="20" Width="20" Padding="0"/>
+                            <ComboBox Grid.Row="3" Grid.Column="3" materialDesign:HintAssist.Hint="Difficulty Preset" Name="IDifficultyPreset" IsEditable="False" Foreground="{DynamicResource MaterialDesignBody}" Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="10,0,10,10" Width="75" HorizontalAlignment="Right">
                                 <ComboBoxItem IsSelected="True">Recruit</ComboBoxItem>
-                                <ComboBoxItem>Regular</ComboBoxItem>
+                                <ComboBoxItem>Regular</ComboBoxItem>r
                                 <ComboBoxItem>Veteran</ComboBoxItem>
                                 <ComboBoxItem>Custom</ComboBoxItem>
                             </ComboBox>
@@ -484,29 +484,29 @@
                                 <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="-8"/>
                             </StackPanel>
 
-                            <CheckBox Grid.Row="1" Grid.Column="0" Style="{StaticResource MaterialDesignCheckBox}" Content="Reduced Damage" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
-                            <CheckBox Grid.Row="2" Grid.Column="0" Style="{StaticResource MaterialDesignCheckBox}" Content="Group Indicators" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
-                            <CheckBox Grid.Row="3" Grid.Column="0" Style="{StaticResource MaterialDesignCheckBox}" Content="Friendly Name Tags" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
-                            <CheckBox Grid.Row="4" Grid.Column="0" Style="{StaticResource MaterialDesignCheckBox}" Content="Enemy Name Tags" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
-                            <CheckBox Grid.Row="5" Grid.Column="0" Style="{StaticResource MaterialDesignCheckBox}" Content="Detected Mines" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
-                            <CheckBox Grid.Row="6" Grid.Column="0" Style="{StaticResource MaterialDesignCheckBox}" Content="Multiple Saves" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
-                            <CheckBox Grid.Row="7" Grid.Column="0" Style="{StaticResource MaterialDesignCheckBox}" Content="3rd Person Camera" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <CheckBox Name="IReducedDamage" Grid.Row="1" Grid.Column="0" Style="{StaticResource MaterialDesignCheckBox}" Content="Reduced Damage" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <CheckBox Name="IGroupIndicators" Grid.Row="2" Grid.Column="0" Style="{StaticResource MaterialDesignCheckBox}" Content="Group Indicators" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <CheckBox Name="IFriendlyNameTags" Grid.Row="3" Grid.Column="0" Style="{StaticResource MaterialDesignCheckBox}" Content="Friendly Name Tags" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <CheckBox Name="IEnemyNameTags" Grid.Row="4" Grid.Column="0" Style="{StaticResource MaterialDesignCheckBox}" Content="Enemy Name Tags" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <CheckBox Name="IDetectedMines" Grid.Row="5" Grid.Column="0" Style="{StaticResource MaterialDesignCheckBox}" Content="Detected Mines" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <CheckBox Name="IMultipleSaves" Grid.Row="6" Grid.Column="0" Style="{StaticResource MaterialDesignCheckBox}" Content="Multiple Saves" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <CheckBox Name="IThirdPerson" Grid.Row="7" Grid.Column="0" Style="{StaticResource MaterialDesignCheckBox}" Content="3rd Person Camera" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
 
-                            <CheckBox Grid.Row="1" Grid.Column="1" Style="{StaticResource MaterialDesignCheckBox}" Content="Weapon Info" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
-                            <CheckBox Grid.Row="2" Grid.Column="1" Style="{StaticResource MaterialDesignCheckBox}" Content="Stance Indicator" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
-                            <CheckBox Grid.Row="3" Grid.Column="1" Style="{StaticResource MaterialDesignCheckBox}" Content="Stamina Bar" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
-                            <CheckBox Grid.Row="4" Grid.Column="1" Style="{StaticResource MaterialDesignCheckBox}" Content="Camera Shake" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
-                            <CheckBox Grid.Row="5" Grid.Column="1" Style="{StaticResource MaterialDesignCheckBox}" Content="Visual Aids" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
-                            <CheckBox Grid.Row="6" Grid.Column="1" Style="{StaticResource MaterialDesignCheckBox}" Content="Extended Map Content" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
-                            <CheckBox Grid.Row="7" Grid.Column="1" Style="{StaticResource MaterialDesignCheckBox}" Content="Commands" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <CheckBox Name="IWeaponInfo" Grid.Row="1" Grid.Column="1" Style="{StaticResource MaterialDesignCheckBox}" Content="Weapon Info" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <CheckBox Name="IStanceIndicator" Grid.Row="2" Grid.Column="1" Style="{StaticResource MaterialDesignCheckBox}" Content="Stance Indicator" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <CheckBox Name="IStaminaBar" Grid.Row="3" Grid.Column="1" Style="{StaticResource MaterialDesignCheckBox}" Content="Stamina Bar" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <CheckBox Name="ICameraShake" Grid.Row="4" Grid.Column="1" Style="{StaticResource MaterialDesignCheckBox}" Content="Camera Shake" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <CheckBox Name="IVisualAids" Grid.Row="5" Grid.Column="1" Style="{StaticResource MaterialDesignCheckBox}" Content="Visual Aids" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <CheckBox Name="IExtendedMapContent" Grid.Row="6" Grid.Column="1" Style="{StaticResource MaterialDesignCheckBox}" Content="Extended Map Content" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <CheckBox Name="ICommands" Grid.Row="7" Grid.Column="1" Style="{StaticResource MaterialDesignCheckBox}" Content="Commands" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
 
-                            <CheckBox Grid.Row="1" Grid.Column="2" Style="{StaticResource MaterialDesignCheckBox}" Content="VON ID" Margin="5,5,10,5"  Foreground="{DynamicResource MaterialDesignBody}"/>
-                            <CheckBox Grid.Row="2" Grid.Column="2" Style="{StaticResource MaterialDesignCheckBox}" Content="Killed By" Margin="5,5,10,5"  Foreground="{DynamicResource MaterialDesignBody}"/>
-                            <CheckBox Grid.Row="3" Grid.Column="2" Style="{StaticResource MaterialDesignCheckBox}" Content="Waypoints" Margin="5,5,10,5"  Foreground="{DynamicResource MaterialDesignBody}"/>
-                            <CheckBox Grid.Row="4" Grid.Column="2" Style="{StaticResource MaterialDesignCheckBox}" Content="Crosshair" Margin="5,5,10,5"  Foreground="{DynamicResource MaterialDesignBody}"/>
-                            <CheckBox Grid.Row="5" Grid.Column="2" Style="{StaticResource MaterialDesignCheckBox}" Content="Auto Reporting" Margin="5,5,10,5"  Foreground="{DynamicResource MaterialDesignBody}"/>
-                            <CheckBox Grid.Row="6" Grid.Column="2" Style="{StaticResource MaterialDesignCheckBox}" Content="Score Table" Margin="5,5,10,5"  Foreground="{DynamicResource MaterialDesignBody}"/>
-                            <CheckBox Grid.Row="7" Grid.Column="2" Style="{StaticResource MaterialDesignCheckBox}" Content="Tactical Ping" Margin="5,5,10,5"  Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <CheckBox Name="IVonId" Grid.Row="1" Grid.Column="2" Style="{StaticResource MaterialDesignCheckBox}" Content="VON ID" Margin="5,5,10,5"  Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <CheckBox Name="IKilledBy" Grid.Row="2" Grid.Column="2" Style="{StaticResource MaterialDesignCheckBox}" Content="Killed By" Margin="5,5,10,5"  Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <CheckBox Name="IWaypoints" Grid.Row="3" Grid.Column="2" Style="{StaticResource MaterialDesignCheckBox}" Content="Waypoints" Margin="5,5,10,5"  Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <CheckBox Name="ICrosshair" Grid.Row="4" Grid.Column="2" Style="{StaticResource MaterialDesignCheckBox}" Content="Crosshair" Margin="5,5,10,5"  Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <CheckBox Name="IAutoReporting" Grid.Row="5" Grid.Column="2" Style="{StaticResource MaterialDesignCheckBox}" Content="Auto Reporting" Margin="5,5,10,5"  Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <CheckBox Name="IScoreTable" Grid.Row="6" Grid.Column="2" Style="{StaticResource MaterialDesignCheckBox}" Content="Score Table" Margin="5,5,10,5"  Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <CheckBox Name="ITacticalPing" Grid.Row="7" Grid.Column="2" Style="{StaticResource MaterialDesignCheckBox}" Content="Tactical Ping" Margin="5,5,10,5"  Foreground="{DynamicResource MaterialDesignBody}"/>
 
                             <StackPanel Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="3" Orientation="Horizontal" HorizontalAlignment="Center">
                                 <TextBox Name="IAiAccuracy" materialDesign:HintAssist.Hint="AI Accuracy (0-1)" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5" Width="75" HorizontalAlignment="Center"/>
@@ -537,20 +537,20 @@
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             <StackPanel Grid.ColumnSpan="4">
-                                <Label Margin="2" Content="Client Perfomance"/>
+                                <Label Margin="2" Content="Client Performance"/>
                                 <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="-8"/>
                             </StackPanel>
-                            <CheckBox Grid.Row="1" Grid.Column="2" Margin="5" Style="{StaticResource MaterialDesignCheckBox}" Content="Max Ping (ms)" Foreground="{DynamicResource MaterialDesignBody}"/>
-                            <TextBox Grid.Row="1" Grid.Column="3" Margin="5" Foreground="{DynamicResource MaterialDesignBody}" IsEnabled="False" Width="50"/>
-                            <CheckBox Grid.Row="2" Grid.Column="2" Margin="5" Style="{StaticResource MaterialDesignCheckBox}" Content="Max Desync" Foreground="{DynamicResource MaterialDesignBody}"/>
-                            <TextBox Grid.Row="2" Grid.Column="3" Margin="5" Foreground="{DynamicResource MaterialDesignBody}" IsEnabled="False" Width="50"/>
-                            <CheckBox Grid.Row="1" Grid.Column="0" Margin="5" Style="{StaticResource MaterialDesignCheckBox}" Content="Max Packet Loss (%)" Foreground="{DynamicResource MaterialDesignBody}"/>
-                            <TextBox Grid.Row="1" Grid.Column="1"  Margin="5" Foreground="{DynamicResource MaterialDesignBody}" IsEnabled="False" Width="50"/>
+                            <CheckBox Name="IMaxPingEnabled" Grid.Row="1" Grid.Column="2" Margin="5" Style="{StaticResource MaterialDesignCheckBox}" Content="Max Ping (ms)" Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <TextBox Name="IMaxPing" Grid.Row="1" Grid.Column="3" Margin="5" Foreground="{DynamicResource MaterialDesignBody}" IsEnabled="False" Width="50"/>
+                            <CheckBox Name="IMaxDesyncEnabled" Grid.Row="2" Grid.Column="2" Margin="5" Style="{StaticResource MaterialDesignCheckBox}" Content="Max Desync" Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <TextBox Name="IMaxDesync" Grid.Row="2" Grid.Column="3" Margin="5" Foreground="{DynamicResource MaterialDesignBody}" IsEnabled="False" Width="50"/>
+                            <CheckBox Name="IMaxPacketLossEnabled" Grid.Row="1" Grid.Column="0" Margin="5" Style="{StaticResource MaterialDesignCheckBox}" Content="Max Packet Loss (%)" Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <TextBox Name="IMaxPacketLoss" Grid.Row="1" Grid.Column="1"  Margin="5" Foreground="{DynamicResource MaterialDesignBody}" IsEnabled="False" Width="50"/>
 
-                            <CheckBox Grid.Row="2" Grid.Column="0" Margin="5" Style="{StaticResource MaterialDesignCheckBox}" Content="Disconnect Timeout (s)" Foreground="{DynamicResource MaterialDesignBody}"/>
-                            <TextBox Grid.Row="2" Grid.Column="1" Margin="5" Foreground="{DynamicResource MaterialDesignBody}" IsEnabled="False" Width="50"/>
-                            <CheckBox Grid.Row="3" Grid.Column="0" Margin="5" Style="{StaticResource MaterialDesignCheckBox}" Content="Kick On Slow Network" Foreground="{DynamicResource MaterialDesignBody}"/>
-                            <ComboBox Grid.Row="3" Grid.Column="1" Name="IOnSlowNetwork" IsEditable="False" Foreground="{DynamicResource MaterialDesignBody}" Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="5,-10,5,5" Width="50" IsEnabled="False">
+                            <CheckBox Name="IDisconnectTimeOutEnabled" Grid.Row="2" Grid.Column="0" Margin="5" Style="{StaticResource MaterialDesignCheckBox}" Content="Disconnect Timeout (s)" Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <TextBox Name="IDisconnectTimeOut" Grid.Row="2" Grid.Column="1" Margin="5" Foreground="{DynamicResource MaterialDesignBody}" IsEnabled="False" Width="50"/>
+                            <CheckBox Name="IKickOnSlowNetworkEnabled" Grid.Row="3" Grid.Column="0" Margin="5" Style="{StaticResource MaterialDesignCheckBox}" Content="Kick On Slow Network" Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <ComboBox Grid.Row="3" Grid.Column="1" Name="IKickOnSlowNetwork" IsEditable="False" Foreground="{DynamicResource MaterialDesignBody}" Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="5,-10,5,5" Width="50" IsEnabled="False">
                                 <ComboBoxItem IsSelected="True">Log</ComboBoxItem>
                                 <ComboBoxItem>Log and Kick</ComboBoxItem>
                             </ComboBox>
@@ -558,7 +558,7 @@
                     </materialDesign:Card>
                 </Grid>
             </TabItem>
-            <TabItem Header="Perfomance + Scripting">
+            <TabItem Header="Performance + Scripting">
                 <Grid Margin="5">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1*"/>
@@ -582,25 +582,25 @@
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             <StackPanel Grid.ColumnSpan="2">
-                                <Label Margin="2" Content="Server Perfomance"/>
+                                <Label Margin="2" Content="Server Performance"/>
                                 <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="-8"/>
                             </StackPanel>
                             <Button Grid.Row="1" Grid.Column="0" Content="Reset All Values" FontSize="11" Width="100" Height="25" Margin="5" Padding="0"/>
-                            <TextBox Grid.Row="2" Grid.Column="0" materialDesign:HintAssist.Hint="Max Custom File Size (kB)" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
-                            <TextBox Grid.Row="3" Grid.Column="0" materialDesign:HintAssist.Hint="Max Packet Size" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
-                            <TextBox Grid.Row="4" Grid.Column="0" materialDesign:HintAssist.Hint="Min Bandwidth (kbit/s)" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
-                            <TextBox Grid.Row="5" Grid.Column="0" materialDesign:HintAssist.Hint="Max Bandwidth (mbit/s)" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
-                            <TextBox Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" materialDesign:HintAssist.Hint="Extra Params" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
+                            <TextBox Name="IMaxCustomFileSize" Grid.Row="2" Grid.Column="0" materialDesign:HintAssist.Hint="Max Custom File Size (kB)" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
+                            <TextBox Name="IMaxPacketSize" Grid.Row="3" Grid.Column="0" materialDesign:HintAssist.Hint="Max Packet Size" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
+                            <TextBox Name="IMinBandwidth" Grid.Row="4" Grid.Column="0" materialDesign:HintAssist.Hint="Min Bandwidth (kbit/s)" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
+                            <TextBox Name="IMaxBandwidth" Grid.Row="5" Grid.Column="0" materialDesign:HintAssist.Hint="Max Bandwidth (mbit/s)" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
+                            <TextBox Name="IExtraParams" Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" materialDesign:HintAssist.Hint="Extra Params" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
 
-                            <TextBox Grid.Row="1" Grid.Column="1" materialDesign:HintAssist.Hint="Max Messages Send" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
-                            <TextBox Grid.Row="2" Grid.Column="1" materialDesign:HintAssist.Hint="Max Size Nonguaranteed (Bytes)" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
-                            <TextBox Grid.Row="3" Grid.Column="1" materialDesign:HintAssist.Hint="Max Size Guaranteed (Bytes)" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
-                            <TextBox Grid.Row="4" Grid.Column="1" materialDesign:HintAssist.Hint="Min Error To Send" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
-                            <TextBox Grid.Row="5" Grid.Column="1" materialDesign:HintAssist.Hint="Min Error TO Send Near" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
+                            <TextBox Name="IMaxMessagesSend" Grid.Row="1" Grid.Column="1" materialDesign:HintAssist.Hint="Max Messages Send" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
+                            <TextBox Name="IMaxSizeNonguaranteed" Grid.Row="2" Grid.Column="1" materialDesign:HintAssist.Hint="Max Size Nonguaranteed (Bytes)" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
+                            <TextBox Name="IMaxSizeGuaranteed" Grid.Row="3" Grid.Column="1" materialDesign:HintAssist.Hint="Max Size Guaranteed (Bytes)" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
+                            <TextBox Name="IMinErrorToSend" Grid.Row="4" Grid.Column="1" materialDesign:HintAssist.Hint="Min Error To Send" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
+                            <TextBox Name="IMinErrorToSendNear" Grid.Row="5" Grid.Column="1" materialDesign:HintAssist.Hint="Min Error To Send Near" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
 
                             <StackPanel Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal">
-                                <CheckBox Name="IHyperthreadCheck" Content="Enable Hyper Threading" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
-                                <CheckBox Name="IFilePatchingCheck" Content="File Patching" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
+                                <CheckBox  Name="IEnableHyperThreading" Content="Enable Hyper Threading" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
+                                <CheckBox Name="IFilePatching" Content="File Patching" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
                             </StackPanel>
                         </Grid>
                     </materialDesign:Card>
@@ -621,20 +621,20 @@
                                 <Label Margin="2" Content="Server Scripting"/>
                                 <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="-8"/>
                             </StackPanel>
-                            <TextBox Grid.Row="1" Grid.Column="0" Style="{StaticResource MaterialDesignTextFieldBoxTextBox}" AcceptsReturn="True" TextWrapping="Wrap" materialDesign:HintAssist.Hint="Server Command Password" Margin="10" Foreground="{DynamicResource MaterialDesignBody}"/>
-                            <TextBox Grid.Row="2" Grid.Column="0" Style="{StaticResource MaterialDesignTextFieldBoxTextBox}" AcceptsReturn="True" TextWrapping="Wrap" materialDesign:HintAssist.Hint="doubleIdDetected" Margin="10" Foreground="{DynamicResource MaterialDesignBody}"/>
-                            <TextBox Grid.Row="3" Grid.Column="0" Style="{StaticResource MaterialDesignTextFieldBoxTextBox}" AcceptsReturn="True" TextWrapping="Wrap" materialDesign:HintAssist.Hint="onUserConnected" Margin="10" Foreground="{DynamicResource MaterialDesignBody}"/>
-                            <TextBox Grid.Row="4" Grid.Column="0" Style="{StaticResource MaterialDesignTextFieldBoxTextBox}" AcceptsReturn="True" TextWrapping="Wrap" materialDesign:HintAssist.Hint="onUserDisconnected" Margin="10" Foreground="{DynamicResource MaterialDesignBody}"/>
-                            <TextBox Grid.Row="1" Grid.Column="1" Style="{StaticResource MaterialDesignTextFieldBoxTextBox}" AcceptsReturn="True" TextWrapping="Wrap" materialDesign:HintAssist.Hint="onHackedData" Margin="10" Foreground="{DynamicResource MaterialDesignBody}"/>
-                            <TextBox Grid.Row="2" Grid.Column="1" Style="{StaticResource MaterialDesignTextFieldBoxTextBox}" AcceptsReturn="True" TextWrapping="Wrap" materialDesign:HintAssist.Hint="onDifferentData" Margin="10" Foreground="{DynamicResource MaterialDesignBody}"/>
-                            <TextBox Grid.Row="3" Grid.Column="1" Style="{StaticResource MaterialDesignTextFieldBoxTextBox}" AcceptsReturn="True" TextWrapping="Wrap" materialDesign:HintAssist.Hint="onUnsignedData" Margin="10" Foreground="{DynamicResource MaterialDesignBody}"/>
-                            <TextBox Grid.Row="4" Grid.Column="1" Style="{StaticResource MaterialDesignTextFieldBoxTextBox}" AcceptsReturn="True" TextWrapping="Wrap" materialDesign:HintAssist.Hint="regularCheck" Margin="10" Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <TextBox Name="IServerCommandPassword" Grid.Row="1" Grid.Column="0" Style="{StaticResource MaterialDesignTextFieldBoxTextBox}" AcceptsReturn="True" TextWrapping="Wrap" materialDesign:HintAssist.Hint="Server Command Password" Margin="10" Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <TextBox Name="IDoubleIdDetected" Grid.Row="2" Grid.Column="0" Style="{StaticResource MaterialDesignTextFieldBoxTextBox}" AcceptsReturn="True" TextWrapping="Wrap" materialDesign:HintAssist.Hint="doubleIdDetected" Margin="10" Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <TextBox Name="IOnUserConnected" Grid.Row="3" Grid.Column="0" Style="{StaticResource MaterialDesignTextFieldBoxTextBox}" AcceptsReturn="True" TextWrapping="Wrap" materialDesign:HintAssist.Hint="onUserConnected" Margin="10" Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <TextBox Name="IOnUserDisconnected" Grid.Row="4" Grid.Column="0" Style="{StaticResource MaterialDesignTextFieldBoxTextBox}" AcceptsReturn="True" TextWrapping="Wrap" materialDesign:HintAssist.Hint="onUserDisconnected" Margin="10" Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <TextBox Name="IOnHackedData" Grid.Row="1" Grid.Column="1" Style="{StaticResource MaterialDesignTextFieldBoxTextBox}" AcceptsReturn="True" TextWrapping="Wrap" materialDesign:HintAssist.Hint="onHackedData" Margin="10" Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <TextBox Name="IOnDifferentData" Grid.Row="2" Grid.Column="1" Style="{StaticResource MaterialDesignTextFieldBoxTextBox}" AcceptsReturn="True" TextWrapping="Wrap" materialDesign:HintAssist.Hint="onDifferentData" Margin="10" Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <TextBox Name="IOnUnsignedData" Grid.Row="3" Grid.Column="1" Style="{StaticResource MaterialDesignTextFieldBoxTextBox}" AcceptsReturn="True" TextWrapping="Wrap" materialDesign:HintAssist.Hint="onUnsignedData" Margin="10" Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <TextBox Name="IRegularCheck" Grid.Row="4" Grid.Column="1" Style="{StaticResource MaterialDesignTextFieldBoxTextBox}" AcceptsReturn="True" TextWrapping="Wrap" materialDesign:HintAssist.Hint="regularCheck" Margin="10" Foreground="{DynamicResource MaterialDesignBody}"/>
                         </Grid>
                     </materialDesign:Card>
                 </Grid>
             </TabItem>
         </dragablz:TabablzControl>
-        <Label Grid.Row="1" Name="IProfileDisplayName" VerticalAlignment="Center" Content="Profile Display Name" Foreground="{DynamicResource MaterialDesignLightForeground}" FontWeight="Bold" FontSize="16" Margin="5"/>
+        <Label Grid.Row="1" Name="IDisplayName" VerticalAlignment="Center" Content="Profile Display Name" Foreground="{DynamicResource MaterialDesignLightForeground}" FontWeight="Bold" FontSize="16" Margin="5"/>
         <StackPanel Name="IProfileNameEdit" Grid.Row="1" Orientation="Horizontal" Margin="10,13" Width="310" HorizontalAlignment="Left" Visibility="Collapsed">
             <TextBox Name="IProfileDisplayNameEdit" FontWeight="Bold" FontSize="16" Width="278" Foreground="{DynamicResource MaterialDesignLightForeground}"/>
             <Button Name="IProfileNameEditSave" Height="25" Width="25" Margin="5,2" VerticalAlignment="Bottom" FontSize="10">
