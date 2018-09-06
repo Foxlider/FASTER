@@ -6,20 +6,15 @@ Class ServerProfile
     Dim ReadOnly _safeName As String
     Dim ReadOnly _displayname As String
 
-    Public Sub New (newSafeName As String, newDisplayName As String)
-        _displayname = newDisplayName
-        _safeName = newSafeName
-        
+    Public Sub New (profile As Models.ServerProfile)
         ' This call is required by the designer.
         InitializeComponent()
 
         ' Add any initialization after the InitializeComponent() call.
+        _displayname = profile.DisplayName
+        _safeName = profile.SafeName
 
-        Dim servers = My.Settings.Servers.ServerProfiles
-
-        For Each server in servers
-            IServerModsList.Items.Add(server.SafeName)
-        Next
+        'IServerName = profile.ServerName
         
     End Sub
 
@@ -51,8 +46,6 @@ Class ServerProfile
         Else 
             MsgBox("Error Try Again")
         End If
-        
-
     End Sub
 
     Private Sub ShowRenameInterface(show As Boolean)
@@ -105,11 +98,7 @@ Class ServerProfile
             )
         thread.Start()
     End Sub
-
-    Private Sub ServerProfileTab_Loaded(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
-        IProfileDisplayName.Content = _displayName
-    End Sub
-
+    
     Private Sub UiCheckBoxes(sender As CheckBox, e As RoutedEventArgs) Handles IConsoleLogCheck.Click, IPidCheck.Click, IRankingCheck.Click, IRequiredBuildCheck.Click
         Select Case sender.Name
             Case "IConsoleLogCheck"
@@ -194,4 +183,5 @@ Class ServerProfile
         End Select
 
     End Sub
+
 End Class

@@ -314,7 +314,7 @@ Public Class MainWindow
             For Each profile in currentProfiles.ServerProfiles
                 Dim newItem As New ListBoxItem With {
                     .Name = profile.SafeName,
-                    .Content = profile.ProfileNameBox
+                    .Content = profile.DisplayName
                 }
 
                 IServerProfilesMenu.Items.Add(newItem)
@@ -330,7 +330,7 @@ Public Class MainWindow
                 Next
 
                 If Not duplicate
-                    Dim tabControls = New ServerProfile(profile.SafeName, profile.ProfileNameBox)
+                    Dim tabControls = New ServerProfile(profile.SafeName, profile.DisplayName)
 
                     Dim newTab As New TabItem With {
                             .Name = profile.SafeName,

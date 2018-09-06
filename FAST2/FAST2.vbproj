@@ -110,9 +110,6 @@
     </Compile>
     <Compile Include="Models\ServerCollection.vb" />
     <Compile Include="Models\Theme.vb" />
-    <Compile Include="ServerControls\test.xaml.vb">
-      <DependentUpon>test.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Settings.xaml.vb">
       <DependentUpon>Settings.xaml</DependentUpon>
     </Compile>
@@ -149,10 +146,6 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="ServerControls\test.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Settings.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

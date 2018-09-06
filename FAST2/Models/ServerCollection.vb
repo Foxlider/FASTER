@@ -26,7 +26,7 @@ Namespace Models
             
             If currentProfiles.ServerProfiles.Count > 0 Then
                 For Each profile In currentProfiles.ServerProfiles
-                    If profile.ProfileNameBox = name
+                    If profile.DisplayName = name
                         duplicate = true
                     End If
                 Next
@@ -48,9 +48,9 @@ Namespace Models
             Try
                 Dim currentProfiles = My.Settings.Servers.ServerProfiles
         
-                Dim currentProfile As ServerProfile = currentProfiles.Find(Function(profile) profile.ProfileNameBox = oldName)
+                Dim currentProfile As ServerProfile = currentProfiles.Find(Function(profile) profile.DisplayName = oldName)
 
-                currentProfile.ProfileNameBox = newName
+                currentProfile.DisplayName = newName
                 currentProfile.SafeName = MainWindow.SafeName(newName)
                 Return True
             Catch ex As Exception
@@ -79,201 +79,204 @@ Namespace Models
         End Sub
 
         Public Sub New(name As String, safeName As String)
-            ProfileNameBox =  name
+            DisplayName =  name
             Me.SafeName = safeName
         End Sub
 
         Public Property SafeName As String = String.Empty
 
-        Public Property LocalClientBox As String = "127.0.0.1"
+        Public Property DisplayName As String = String.Empty
 
-        Public Property HeadlessIpBox As String = "127.0.0.1"
+        Public Property ServerName As String = String.Empty
 
-        Public Property PidBox As String = "pid.log" 
+        Public Property Executable As String = String.Empty
 
-        Public Property RankingBox As String = "ranking.log" 
+        Public Property Password As String = String.Empty
 
-        Public Property ConsoleLogBox As String = "server_console.log" 
+        Public Property AdminPassword As String = String.Empty
 
-        Public Property ServerFileBox As String = String.Empty 
+        Public Property MaxPlayers As Integer = 32
 
-        Public Property ServerNameBox As String = String.Empty 
+        Public Property Port As Integer = 2302
 
-        Public Property PortBox As Integer = 2302 
+        Public Property HeadlessClientEnabled As Boolean = False
 
-        Public Property PasswordBox As String = String.Empty 
+        Public Property HeadlessIps As String = String.Empty
 
-        Public Property MaxPlayersBox As Integer = 32 
+        Public Property LocalClients As String = String.Empty
 
-        Public Property AdminPassBox As String = String.Empty 
+        Public Property NoOfHeadlessClients As Integer = 0
 
-        Public Property RequiredBuildBox As Integer = 0 
+        Public Property Loopback As Boolean = False
 
-        Public Property ExtraParamsBox As String = String.Empty 
+        Public Property Upnp As Boolean = False
 
-        Public Property MaxSendBox As Integer = 128 
+        Public Property Netlog As Boolean = False
 
-        Public Property MinErrorBox As Double = 0.001 
+        Public Property AutoRestartEnabled As Boolean = False
 
-        Public Property MinErrorNearBox As Double = 0.01 
+        Public Property DailyRestartA As TimeSpan
 
-        Public Property MaxBandwidthBox As Integer = 2000 
+        Public Property DailyRestartB As TimeSpan
 
-        Public Property MinBandwidthBox As Integer = 128 
+        Public Property VotingEnabled As Boolean = True
 
-        Public Property MaxNonGuaranteedBox As Integer = 256 
+        Public Property VotingMinPlayers As Integer = 3
 
-        Public Property MaxGuaranteedBox As Integer = 512 
+        Public Property VotingThreshold As Decimal = 0.33
 
-        Public Property MaxPacketBox As Integer = 1400 
+        Public Property AllowFilePatching As Integer = 0
 
-        Public Property MaxCustFileBox As Integer = 160 
+        Public Property VerfiySignatures As Integer = 0
 
-        Public Property ProfileNameBox As String = "New Profile" 
+        Public Property RequiredBuildEnabled As Boolean = False
 
-        Public Property OnUnsignedDataBox As String = String.Empty 
+        Public Property RequiredBuild As Boolean = False
 
-        Public Property RegularCheckBox As String = String.Empty 
+        Public Property KickDuplicates As Boolean = False
 
-        Public Property OnDifferentDataBox As String = String.Empty 
+        Public Property VonEnabled As Boolean = True
 
-        Public Property OnHackedDataBox As String = String.Empty 
+        Public Property CodecQuality As Integer = 3
 
-        Public Property OnUserConnectedBox As String = String.Empty 
+        Public Property ServerConsoleLogEnabled As Boolean = False
 
-        Public Property OnUserDisconnectedBox As String = String.Empty 
+        Public Property ServerConsoleLog As String = String.Empty
 
-        Public Property DoubleIdDetectedBox As String = String.Empty 
+        Public Property PidEnabled As Boolean = False
 
-        Public Property ServerCommandBox As String = String.Empty 
+        Public Property PidLog As String = String.Empty
 
-        Public Property NetlogCheck As Boolean = False
+        Public Property RankingEnabled As Boolean = False
 
-        Public Property UpnpCheckWorkshopId As Boolean = False 
+        Public Property RankingLog As String = String.Empty
 
-        Public Property LoopbackCheck As Boolean = False 
+        Public Property RptTimestamp As String = String.Empty
 
-        Public Property WorenableHcCheckkshopId As Boolean = False 
+        'MOTD
 
-        Public Property RankingCheck As Boolean = False 
+        Public Property MotdDelay = 5
 
-        Public Property PidCheck As Boolean = False 
+        'ServerMods
 
-        Public Property ConsoleLogCheck As Boolean = False 
+        'ClientMods
 
-        Public Property RequiredBuildCheck As Boolean = False 
+        'HeadlessMods
 
-        Public Property KickDupeCheck As Boolean = False 
+        'Missions
 
-        Public Property VoteCheck As Boolean = True 
+        Public Property PersistantBattlefield As Boolean = False
 
-        Public Property VonCheck As Boolean = False 
+        Public Property AutoInit As Boolean = False
 
-        Public Property AutoInitCheck As Boolean = False 
+        Public Property DifficultyPreset As String = String.Empty
 
-        Public Property PersistCheck As Boolean = False 
+        Public Property ReducedDamage As Boolean = False
 
-        Public Property TacticalPingCheck As Boolean = True 
+        Public Property GroupIndicators As Boolean = False
 
-        Public Property MultipleSavesCheck As Boolean = True 
+        Public Property FriendlyNameTags As Boolean = False
 
-        Public Property AutoReportingCheck As Boolean = True 
+        Public Property EnemyNameTags As Boolean = False
 
-        Public Property MapContentCheck As Boolean = True 
+        Public Property DetectedMines As Boolean = False
 
-        Public Property VonIdCheck As Boolean = True 
+        Public Property MultipleSaves As Boolean = False
 
-        Public Property KilledByCheck As Boolean = True 
+        Public Property ThirdPerson As Boolean = False
 
-        Public Property ScoreTableCheck As Boolean = True 
+        Public Property WeaponInfo As Boolean = False
 
-        Public Property CameraShakeCheck As Boolean = True 
+        Public Property StanceIndicator As Boolean = False
 
-        Public Property ThirdPersonCheck As Boolean = True 
+        Public Property StaminaBar As Boolean = False
 
-        Public Property VisualAidCheck As Boolean = True 
+        Public Property CameraShake As Boolean = False
 
-        Public Property CrosshairCheck As Boolean = True 
+        Public Property VisualAids As Boolean = False
 
-        Public Property StaminaBarCheck As Boolean = True 
+        Public Property ExtendedMapContent As Boolean = False
 
-        Public Property StanceIndicatorCheck As Boolean = True 
+        Public Property Commands As Boolean = False
 
-        Public Property WeaponInfoCheck As Boolean = True 
+        Public Property VonId As Boolean = False
 
-        Public Property WaypointsCheck As Boolean = True 
+        Public Property KilledBy As Boolean = False
 
-        Public Property CommandsCheck As Boolean = True 
+        Public Property Waypoints As Boolean = False
 
-        Public Property DetectedMinesCheck As Boolean = True 
+        Public Property Crosshair As Boolean = False
 
-        Public Property EnemyNameCheck As Boolean = True 
+        Public Property AutoReporting As Boolean = False
 
-        Public Property FriendlyNameCheck As Boolean = True 
+        Public Property ScoreTable As Boolean = False
 
-        Public Property GroupIndicatorCheck As Boolean = True 
+        Public Property TacticalPing As Boolean = False
 
-        Public Property ReducedDamageCheck As Boolean = False 
+        Public Property AiAccuracy As Decimal = 0.95
 
-        Public Property FilePatchingCheck As Boolean = False 
+        Public Property AiSkill As Decimal = 0.55
 
-        Public Property HtCheck As Boolean = False 
+        Public Property AiPreset As Integer = 3
 
-        Public Property MaxPingCheck As Boolean = False 
+        Public Property MaxPacketLossEnabled As Boolean = False
 
-        Public Property MaxDesyncCheck As Boolean = False 
+        Public Property MaxPacketLoss As Integer = 0
 
-        Public Property WorkshoppacketLossCheckId As Boolean = False 
+        Public Property DisconnectTimeoutEnabled As Boolean = False
 
-        Public Property DisconTimeCheck As Boolean = False 
+        Public Property DisconnectTimeout As Integer = 90
 
-        Public Property KickSlowCheck As Boolean = False 
+        Public Property KickOnSlowNetworkEnabled As Boolean = False
 
-        Public Property BattleyeCheck As Boolean = False 
+        Public Property KickOnSlowNetwork As String = String.Empty
 
-        Public Property RptTimeCombo As String = String.Empty 
+        Public Property MaxPingEnabled As Boolean = False
 
-        Public Property FilePatchCombo As Integer = 2 
+        Public Property MaxPing As Integer = 60
 
-        Public Property VerifySigCombo As Integer = 0 
+        Public Property MaxDesyncEnabled As Boolean = False
 
-        Public Property DifficultyCombo As String = "Regular" 
+        Public Property MaxDesync As Integer = 0
 
-        Public Property KickSlowCombo As String = "Log" 
+        Public Property MaxCustomFileSize As Integer = 160
 
-        Public Property NoOfHcNumeric As Integer = 1 
+        Public Property MaxPacketSize As Integer = 1400
 
-        Public Property ModTimeNumeric As Integer = 5 
+        Public Property MinBandwidth As Integer = 128
 
-        Public Property VoteThresholdNumeric As Integer = 33 
+        Public Property MaxBandwidth As Integer = 2000
 
-        Public Property WorvoteMinPlayersNumerickshopId As Integer = 3 
+        Public Property MaxMessagesSend As Integer = 128
 
-        Public Property CodecNumeric As Integer = 3 
+        Public Property MaxSizeNonguaranteed As Integer = 256
 
-        Public Property AiAccuracyNumeric As Double = 0.55 
+        Public Property MaxSizeGuaranteed As Integer = 512
+    
+        Public Property MinErrorToSendAs As Decimal = 0.001
 
-        Public Property AiSkillNumeric As Double = 0.75 
+        Public Property MinErrorToSendNear As Decimal = 0.01
 
-        Public Property AiPresetNumeric As Integer = 3 
+        Public Property ExtraParams As String = String.Empty
 
-        Public Property DistanceNumeric As Integer = 2500 
+        Public Property EnableHyperThreading As Boolean = False
 
-        Public Property TerrainNumeric As Integer = 10 
+        Public Property FilePatching As Boolean = False
 
-        Public Property DisconTimeNumeric As Integer = 90 
+        Public Property ServerCommandPassword As String = String.Empty
 
-        Public Property PacketLossNumeric As Integer = 0 
+        Public Property DoubleIdDetected As String = String.Empty
 
-        Public Property MaxDesyncNumeric As Integer = 0 
+        Public Property OnUserConnected As String = String.Empty
 
-        Public Property MaxPingNumeric As Integer = 60
+        Public Property OnUserDisconnected As String = String.Empty
 
-        '<hcModsList />
-        '<serverModsList />
-        '<missionsList />
-        '<modBox />
+        Public Property OnHackedData As String = String.Empty
 
-        
+        Public Property OnDifferentData As String = String.Empty
+
+        Public Property OnUnsignedData As String = String.Empty
+
+        Public Property RegularCheck As String = String.Empty
     End Class
 End NameSpace
