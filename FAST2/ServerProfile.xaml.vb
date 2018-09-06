@@ -14,6 +14,12 @@ Class ServerProfile
         InitializeComponent()
 
         ' Add any initialization after the InitializeComponent() call.
+
+        Dim servers = My.Settings.Servers.ServerProfiles
+
+        For Each server in servers
+            IServerModsList.Items.Add(server.SafeName)
+        Next
         
     End Sub
 
@@ -169,6 +175,22 @@ Class ServerProfile
                     IMinVoteThreshold.IsEnabled = False
                     IVotingCheck.ToolTip = "Enable Voting"
                 End If
+            Case "IAutoRestartCheck"
+                If IAutoRestartCheck.IsChecked
+                    IDailyRestartPickerA.IsEnabled = True
+                    IDailyRestartPickerB.IsEnabled = True
+                    IDailyRestartCheckA.IsEnabled = True
+                    IDailyRestartCheckB.IsEnabled = True
+                    IAutoRestartCheck.ToolTip = "Disable Auto Restart"
+                Else
+                    
+                    IDailyRestartPickerA.IsEnabled = False
+                    IDailyRestartPickerB.IsEnabled = False
+                    IDailyRestartCheckA.IsEnabled = False
+                    IDailyRestartCheckB.IsEnabled = False
+                    IVotingCheck.ToolTip = "Enable Auto Restart"
+                End If
+                
         End Select
 
     End Sub
