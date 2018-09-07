@@ -9,6 +9,7 @@
 
              TextElement.FontWeight="Regular"
              TextElement.FontSize="11"
+             TextElement.Foreground="{DynamicResource MaterialDesignBody}"
              TextOptions.TextFormattingMode="Ideal"
              TextOptions.TextRenderingMode="Auto"
 
@@ -16,6 +17,6 @@
              d:DesignHeight="570.4"
              d:DesignWidth="796.8">
     <Grid>
-            
+
     </Grid>
 </UserControl>

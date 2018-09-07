@@ -14,8 +14,9 @@
              TextOptions.TextRenderingMode="Auto"
 
              mc:Ignorable="d"
-             d:DesignHeight="392.8"
-             d:DesignWidth="631.2">
+             d:DesignHeight="570.4"
+             d:DesignWidth="796.8">
     <Grid>
+
     </Grid>
 </UserControl>

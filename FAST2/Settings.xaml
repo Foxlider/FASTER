@@ -23,14 +23,14 @@
             <ColumnDefinition />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
-        <materialDesign:Card Margin="10" Grid.Column="0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+        <materialDesign:Card Margin="5" Grid.Column="0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
             <StackPanel>
                 <Label Margin="8" Content="Program Settings" FontSize="12"/>
                 <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="-10"/>
                 <Button Name="IClearSettings" Content="Reset FAST" Margin="10" Width="120"/>
             </StackPanel>
         </materialDesign:Card>
-        <materialDesign:Card Grid.Column="1" Margin="0,10,10,10" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+        <materialDesign:Card Grid.Column="1" Margin="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
             <StackPanel>
                 <DockPanel>
                     <Label Margin="8" Content="Theme Settings" FontSize="12"/>
