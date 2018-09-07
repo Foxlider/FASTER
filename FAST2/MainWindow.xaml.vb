@@ -378,17 +378,10 @@ Public Class MainWindow
         Next
     End Sub
 
- 
-
     'Creates a new Server Profile and adds it to the UI menu
     Private Shared Sub NewServerProfileButton_Click(sender As Object, e As RoutedEventArgs) Handles INewServerProfileButton.Click
-        Dim profileName As String = InputBox("Enter profile name:", "New Server Profile")
-
-        If profileName = Nothing Then
-            MsgBox("Please Enter A Value")
-        Else
-            ServerCollection.AddServerProfile(profileName, SafeName(profileName))
-        End If
+        Dim newProfileDialog As New NewServerProfile
+        newProfileDialog.Show()
     End Sub
 
     'Makes close button red when mouse is over button

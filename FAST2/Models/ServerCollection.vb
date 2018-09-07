@@ -117,11 +117,11 @@ Namespace Models
 
         Public Property DailyRestartAEnabled As Boolean = False
 
-        Public Property DailyRestartA As TimeSpan
+        Public Property DailyRestartA As Date
 
         Public Property DailyRestartBEnabled As Boolean = False
 
-        Public Property DailyRestartB As TimeSpan
+        Public Property DailyRestartB As Date
 
         Public Property VotingEnabled As Boolean = True
 

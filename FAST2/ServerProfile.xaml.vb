@@ -27,9 +27,9 @@ Class ServerProfile
         INetlog.IsChecked = profile.Netlog
         IAutoRestartEnabled.IsChecked = profile.AutoRestartEnabled
         IDailyRestartAEnabled.IsChecked = profile.DailyRestartAEnabled
-        IDailyRestartA.Text = profile.DailyRestartA.ToString()
+        IDailyRestartA.SelectedTime = profile.DailyRestartA
         IDailyRestartBEnabled.IsChecked = profile.DailyRestartBEnabled
-        IDailyRestartB.Text = profile.DailyRestartB.ToString()
+        IDailyRestartB.Text = profile.DailyRestartB
         IVotingEnabled.IsChecked = profile.VotingEnabled
         IVotingMinPlayers.Text = profile.VotingMinPlayers
         IVotingThreshold.Text = profile.VotingThreshold
@@ -211,9 +211,9 @@ Class ServerProfile
         profile.Netlog = INetlog.IsChecked
         profile.AutoRestartEnabled = IAutoRestartEnabled.IsChecked
         profile.DailyRestartAEnabled = IDailyRestartAEnabled.IsChecked
-        'profile.DailyRestartA = IDailyRestartA.Text
+        profile.DailyRestartA = IDailyRestartA.SelectedTime
         profile.DailyRestartBEnabled = IDailyRestartBEnabled.IsChecked
-        'profile.DailyRestartB = IDailyRestartB.Text
+        profile.DailyRestartB = IDailyRestartB.SelectedTime
         profile.VotingEnabled = IVotingEnabled.IsChecked
         profile.VotingMinPlayers = IVotingMinPlayers.Text
         profile.VotingThreshold = IVotingThreshold.Text
