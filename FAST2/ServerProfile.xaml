@@ -455,7 +455,7 @@
                             <Button Grid.Row="3" Grid.Column="2" Name="IRefreshMissionsButton" Margin="5,10" Content="{materialDesign:PackIcon Kind=Refresh}" FontSize="10" Height="20" Width="20" Padding="0"/>
                             <ComboBox Grid.Row="3" Grid.Column="3" materialDesign:HintAssist.Hint="Difficulty Preset" Name="IDifficultyPreset" IsEditable="False" Foreground="{DynamicResource MaterialDesignBody}" Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="10,0,10,10" Width="75" HorizontalAlignment="Right">
                                 <ComboBoxItem IsSelected="True">Recruit</ComboBoxItem>
-                                <ComboBoxItem>Regular</ComboBoxItem>r
+                                <ComboBoxItem>Regular</ComboBoxItem>
                                 <ComboBoxItem>Veteran</ComboBoxItem>
                                 <ComboBoxItem>Custom</ComboBoxItem>
                             </ComboBox>
@@ -585,7 +585,7 @@
                                 <Label Margin="2" Content="Server Performance"/>
                                 <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="-8"/>
                             </StackPanel>
-                            <Button Grid.Row="1" Grid.Column="0" Content="Reset All Values" FontSize="11" Width="100" Height="25" Margin="5" Padding="0"/>
+                            <Button Name="IResetPerf" Grid.Row="1" Grid.Column="0" Content="Reset All Values" FontSize="11" Width="100" Height="25" Margin="5" Padding="0"/>
                             <TextBox Name="IMaxCustomFileSize" Grid.Row="2" Grid.Column="0" materialDesign:HintAssist.Hint="Max Custom File Size (kB)" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
                             <TextBox Name="IMaxPacketSize" Grid.Row="3" Grid.Column="0" materialDesign:HintAssist.Hint="Max Packet Size" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
                             <TextBox Name="IMinBandwidth" Grid.Row="4" Grid.Column="0" materialDesign:HintAssist.Hint="Min Bandwidth (kbit/s)" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>

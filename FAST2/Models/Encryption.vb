@@ -1,11 +1,26 @@
 ﻿Imports System.Security.Cryptography
+Imports Enumerable = System.Linq.Enumerable
 
 Namespace Models
 
-    Public NotInheritable Class Encryption
+    Public Class Encryption
         Private Shared ReadOnly TripleDes As New TripleDESCryptoServiceProvider
+        Private Shared _instance As Encryption
 
-        Private Function TruncateHash(key As String, length As Integer) As Byte()
+
+        Public Shared ReadOnly Property Instance As Encryption
+            Get
+                'If there is no instance or it has been destroyed...
+                If _instance Is Nothing Then
+                    '...create a new one.
+                    _instance = New Encryption
+                End If
+
+                Return _instance
+            End Get
+        End Property
+
+        Private Shared Function TruncateHash(key As String, length As Integer) As Byte()
 
             Dim sha1 As New SHA1CryptoServiceProvider
 
@@ -18,8 +33,9 @@ Namespace Models
             Return hash
         End Function
 
-        Sub New(key As String)
+        Private Sub New()
             ' Initialize the crypto provider.
+            Dim key As String = Environment.UserName & SystemSerialNumber()
             TripleDes.Key = TruncateHash(key, TripleDes.KeySize \ 8)
             TripleDes.IV = TruncateHash("", TripleDes.BlockSize \ 8)
         End Sub
@@ -32,8 +48,7 @@ Namespace Models
                 ' Create the stream.
                 Dim ms As New IO.MemoryStream
                 ' Create the encoder to write to the stream.
-                Dim encStream As New CryptoStream(ms,
-                                                  TripleDes.CreateEncryptor(), CryptoStreamMode.Write)
+                Dim encStream As New CryptoStream(ms, TripleDes.CreateEncryptor(), CryptoStreamMode.Write)
 
                 ' Use the crypto stream to write the byte array to the stream.
                 encStream.Write(plaintextBytes, 0, plaintextBytes.Length)
@@ -47,7 +62,7 @@ Namespace Models
 
         End Function
 
-        Public Shared Function DecryptData(encryptedtext As String) As String
+        Public Function DecryptData(encryptedtext As String) As String
             Try
                 ' Convert the encrypted text string to a byte array.
                 Dim encryptedBytes() As Byte = Convert.FromBase64String(encryptedtext)
@@ -55,8 +70,7 @@ Namespace Models
                 ' Create the stream.
                 Dim ms As New IO.MemoryStream
                 ' Create the decoder to write to the stream.
-                Dim decStream As New CryptoStream(ms,
-                                                  TripleDes.CreateDecryptor(), CryptoStreamMode.Write)
+                Dim decStream As New CryptoStream(ms, TripleDes.CreateDecryptor(), CryptoStreamMode.Write)
 
                 ' Use the crypto stream to write the byte array to the stream.
                 decStream.Write(encryptedBytes, 0, encryptedBytes.Length)
@@ -70,20 +84,14 @@ Namespace Models
 
         End Function
 
-        Public Shared Function SystemSerialNumber() As String
+        Private Shared Function SystemSerialNumber() As String
             ' Get the Windows Management Instrumentation object.
             Dim wmi As Object = GetObject("WinMgmts:")
 
             ' Get the base boards.
-            Dim serialNumbers = ""
-            Dim motherBoards As Object =
-                    wmi.InstancesOf("Win32_BaseBoard")
-            For Each board As Object In motherBoards
-                serialNumbers &= ", " & board.SerialNumber
-            Next board
-            If serialNumbers.Length > 0 Then serialNumbers =
-                serialNumbers.Substring(2)
-
+            Dim motherBoards As Object = wmi.InstancesOf("Win32_BaseBoard")
+            Dim serialNumbers = Enumerable.Cast(Of Object)(motherBoards).Aggregate("", Function(current, board) current & (", " & board.SerialNumber))
+            If serialNumbers.Length > 0 Then serialNumbers = serialNumbers.Substring(2)
             Return serialNumbers
         End Function
 

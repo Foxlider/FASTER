@@ -65,17 +65,13 @@ Public Class Setup
         My.Settings.serverPath = IServerDirBox.Text
         My.Settings.steamCMDPath = ISteamDirBox.Text
         My.Settings.steamUserName = ISteamUserBox.Text
+        My.Settings.steamPassword = Encryption.Instance.EncryptData(ISteamPassBox.Password)
         My.Settings.firstRun = False
 
-        Dim encryptionString As String = Environment.UserName & Encryption.SystemSerialNumber()
-        Dim wrapper As New Encryption(encryptionString)
-        Dim cypher As String = wrapper.EncryptData(ISteamPassBox.Password)
-        My.Settings.steamPassword = cypher
-        
-        If IInstallSteamCheck.IsChecked
-            MainWindow.Instance.InstallSteamCmd = true
+        If IInstallSteamCheck.IsChecked Then
+            MainWindow.Instance.InstallSteamCmd = True
         End If
-         
+
         MainWindow.Instance.Show()
         MainWindow.Instance.Activate()
         Close()

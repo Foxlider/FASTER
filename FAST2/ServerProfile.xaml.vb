@@ -1,4 +1,6 @@
-﻿Imports System.Threading
+﻿Imports System.IO
+Imports System.Threading
+Imports System.Windows.Forms
 Imports FAST2.Models
 
 Class ServerProfile
@@ -47,6 +49,7 @@ Class ServerProfile
         IRankingEnabled.IsChecked = profile.RankingEnabled
         IRankingLog.Text = profile.RankingLog
         IRptTimestamp.Text = profile.RptTimestamp
+        IMotd.Text = profile.Motd      
         IMotdDelay.Text = profile.MotdDelay
         IPersistentBattlefield.IsChecked = profile.PersistentBattlefield
         IAutoInit.IsChecked = profile.AutoInit
@@ -211,9 +214,13 @@ Class ServerProfile
         profile.Netlog = INetlog.IsChecked
         profile.AutoRestartEnabled = IAutoRestartEnabled.IsChecked
         profile.DailyRestartAEnabled = IDailyRestartAEnabled.IsChecked
-        profile.DailyRestartA = IDailyRestartA.SelectedTime
+        If IDailyRestartA.SelectedTime IsNot Nothing
+            profile.DailyRestartA = IDailyRestartA.SelectedTime
+        End If
         profile.DailyRestartBEnabled = IDailyRestartBEnabled.IsChecked
-        profile.DailyRestartB = IDailyRestartB.SelectedTime
+        If IDailyRestartB.SelectedTime IsNot Nothing
+            profile.DailyRestartB = IDailyRestartB.SelectedTime
+        End If
         profile.VotingEnabled = IVotingEnabled.IsChecked
         profile.VotingMinPlayers = IVotingMinPlayers.Text
         profile.VotingThreshold = IVotingThreshold.Text
@@ -231,6 +238,7 @@ Class ServerProfile
         profile.RankingEnabled = IRankingEnabled.IsChecked
         profile.RankingLog = IRankingLog.Text
         profile.RptTimestamp = IRptTimestamp.Text
+        profile.Motd = IMotd.Text
         profile.MotdDelay = IMotdDelay.Text
         profile.PersistentBattlefield = IPersistentBattlefield.IsChecked
         profile.AutoInit = IAutoInit.IsChecked
@@ -295,8 +303,46 @@ Class ServerProfile
 
 
     Private Sub ToggleUi(uiElement As Object, Optional e As RoutedEventArgs = Nothing) Handles IHeadlessClientEnabled.Click, IAutoRestartEnabled.Click, IVonEnabled.Click, IVotingEnabled.Click, IServerConsoleLogEnabled.Click,
-                                                                                               IPidEnabled.Click, IRankingEnabled.Click, IRequiredBuildEnabled.Click, IDailyRestartAEnabled.Click, IDailyRestartBEnabled.Click
+                                                                                               IPidEnabled.Click, IRankingEnabled.Click, IRequiredBuildEnabled.Click, IDailyRestartAEnabled.Click, IDailyRestartBEnabled.Click, 
+                                                                                               IPersistentBattlefield.Click, IMaxPacketLossEnabled.Click, IDisconnectTimeOutEnabled.Click, IKickOnSlowNetworkEnabled.Click, IMaxPingEnabled.Click, 
+                                                                                               IMaxDesyncEnabled.Click
         Select Case uiElement.Name
+            Case "IMaxDesyncEnabled"
+                If IMaxDesyncEnabled.IsChecked Then
+                    IMaxDesync.IsEnabled = True
+                Else
+                    IMaxDesync.IsEnabled = False
+                End If
+            Case "IMaxPingEnabled"
+                If IMaxPingEnabled.IsChecked Then
+                    IMaxPing.IsEnabled = True
+                Else
+                    IMaxPing.IsEnabled = False
+                End If
+            Case "IKickOnSlowNetworkEnabled"
+                If IKickOnSlowNetworkEnabled.IsChecked Then
+                    IKickOnSlowNetwork.IsEnabled = True
+                Else
+                    IKickOnSlowNetwork.IsEnabled = False
+                End If
+            Case "IDisconnectTimeOutEnabled"
+                If IDisconnectTimeOutEnabled.IsChecked Then
+                    IDisconnectTimeOut.IsEnabled = True
+                Else
+                    IDisconnectTimeOut.IsEnabled = False
+                End If
+            Case "IMaxPacketLossEnabled"
+                If IMaxPacketLossEnabled.IsChecked Then
+                    IMaxPacketLoss.IsEnabled = True
+                Else
+                    IMaxPacketLoss.IsEnabled = False
+                End If
+            Case "IPersistentBattlefield"
+                If IPersistentBattlefield.IsChecked Then
+                    IAutoInit.IsEnabled = True
+                Else
+                    IAutoInit.IsEnabled = False
+                End If
             Case "IHeadlessClientEnabled"
                 If IHeadlessClientEnabled.IsChecked Then
                     IHcIpGroup.IsEnabled = True
@@ -381,4 +427,25 @@ Class ServerProfile
         End Select
     End Sub
 
+    Private Sub IServerFileButton_Click(sender As Object, e As RoutedEventArgs) Handles IServerFileButton.Click
+        Dim dialog As New Microsoft.Win32.OpenFileDialog
+        dialog.Filter = "Arma 3 Server Files|arma*.exe"
+
+        If dialog.ShowDialog() <> DialogResult.OK Then
+            IExecutable.Text = dialog.FileName
+        End If
+        
+    End Sub
+
+    Private Sub IResetPerf_Click(sender As Object, e As RoutedEventArgs) Handles IResetPerf.Click
+        IMaxCustomFileSize.Text = "160"
+        IMaxPacketSize.Text = "1400"
+        IMinBandwidth.Text = "128"
+        IMaxBandwidth.Text = "2000"
+        IMaxMessagesSend.Text = "128"
+        IMaxSizeGuaranteed.Text = "256"
+        IMaxSizeNonguaranteed.Text = "512"
+        IMinErrorToSend.Text = "0.001"
+        IMinErrorToSendNear.Text = "0.01"
+    End Sub
 End Class

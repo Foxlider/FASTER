@@ -42,14 +42,6 @@ Public Class MainWindow
     Private _cancelled As Boolean
     Private ReadOnly _oProcess As New Process()
 
-    Private Sub SteamUpdaterTab_Loaded(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
-        ISteamDirBox.Text = My.Settings.steamCMDPath
-        ISteamUserBox.Text = My.Settings.steamUserName
-        ISteamPassBox.Password = Encryption.DecryptData(My.Settings.steamPassword)
-        IServerDirBox.Text = My.Settings.serverPath
-    End Sub
-
-
     'Opens folder select dialog when clicking certain buttons
     Private Sub DirButton_Click(sender As Object, e As RoutedEventArgs) Handles ISteamDirButton.Click, IServerDirButton.Click
         Dim path As String = SelectFolder()
@@ -81,8 +73,19 @@ Public Class MainWindow
     End Function
 
     'Handles when a user presses the cancel button
-    Private Shared Sub ISteamCancelButton_Click(sender As Object, e As RoutedEventArgs) Handles ISteamUpdateButton.Click
-        
+    Private Sub ISteamUpdateButton_Click(sender As Object, e As RoutedEventArgs) Handles ISteamUpdateButton.Click
+        Dim branch, steamCommand As String
+        Dim steamCmd As String = ISteamDirBox.Text + "\steamcmd.exe"
+
+        If IServerBranch.Text = "Stable" Then
+            branch = "233780"
+        Else
+            branch = "107410 -beta development"
+        End If
+
+        steamCommand = "+login " & ISteamUserBox.Text & " " & ISteamPassBox.Password & " +force_install_dir " & IServerDirBox.Text & " +app_update " & branch & " validate +quit"
+
+        RunSteamCommand(steamCMD, steamCommand, "server")
     End Sub
 
     'Installs the SteamCMD tool
@@ -269,7 +272,6 @@ Public Class MainWindow
         Throw New NotImplementedException
     End Sub
 
-
     'Executes some events when the window is loaded
     Private Sub MainWindow_Loaded(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
         Dim newSteamModsTab As TabItem = IMainContent.Items.Item(1)
@@ -281,6 +283,7 @@ Public Class MainWindow
         newAboutTab.Content = New About
 
         LoadServerProfiles()
+        LoadSteamUpdaterSettings()
 
         If InstallSteamCmd Then
             InstallSteam()
@@ -302,16 +305,16 @@ Public Class MainWindow
 
     'Loads all server profiles and displays them in UI
     Public Sub LoadServerProfiles()
-        If My.Settings.Servers IsNot Nothing
+        If My.Settings.Servers IsNot Nothing Then
             Dim currentProfiles = My.Settings.Servers
-         
+
             IServerProfilesMenu.Items.Clear()
-            
+
             For i As Integer = IMainContent.Items.Count - 4 To 0
                 IMainContent.Items.RemoveAt(i)
             Next
-           
-            For Each profile in currentProfiles.ServerProfiles
+
+            For Each profile In currentProfiles.ServerProfiles
                 Dim newItem As New ListBoxItem With {
                     .Name = profile.SafeName,
                     .Content = profile.DisplayName
@@ -323,13 +326,13 @@ Public Class MainWindow
 
                 Dim duplicate = False
 
-                For Each tab As TabItem In IMainContent.items
-                    If profile.SafeName = tab.Name
-                        duplicate = true
+                For Each tab As TabItem In IMainContent.Items
+                    If profile.SafeName = tab.Name Then
+                        duplicate = True
                     End If
                 Next
 
-                If Not duplicate
+                If Not duplicate Then
                     Dim tabControls = New ServerProfile(profile)
 
                     Dim newTab As New TabItem With {
@@ -414,15 +417,15 @@ Public Class MainWindow
     Private Sub WindowDragBar_MouseDown(sender As Object, e As MouseButtonEventArgs) Handles IWindowDragBar.MouseLeftButtonDown, ILogoImage.MouseLeftButtonDown, IWindowTitle.MouseLeftButtonDown
         DragMove()
     End Sub
-    
+
     'Retrieves mods from an XML file
     Public Shared Function GetModsFromXml(filename As String) As ModCollection
         Dim xml = File.ReadAllText(filename)
-        Return Deserialize (Of ModCollection)(xml)
+        Return Deserialize(Of ModCollection)(xml)
     End Function
 
     Public Shared Sub ExportModsToXml(filename As String, mods As ModCollection)
-        File.WriteAllText(filename,Serialize(mods))
+        File.WriteAllText(filename, Serialize(mods))
     End Sub
 
     'Serialise a class
@@ -504,7 +507,7 @@ Public Class MainWindow
             response.Close()
             ' Return the content.  
             Return responseFromServer
-            
+
         Catch ex As Exception
             MsgBox("GetModInfo - An exception occurred:" & vbCrLf & ex.Message)
             Return Nothing
@@ -512,11 +515,37 @@ Public Class MainWindow
     End Function
 
     'Executes some code when the window is closing
-    Private Shared Sub MainWindow_Closing(sender As Object, e As CancelEventArgs) Handles Me.Closing
+    Private Sub MainWindow_Closing(sender As Object, e As CancelEventArgs) Handles Me.Closing
+        UpdateSteamUpdaterSettings()
         My.Settings.Save()
 
-        If My.Settings.clearSettings
+        If My.Settings.clearSettings Then
             My.Settings.Reset()
         End If
+    End Sub
+
+    Private Sub UpdateSteamUpdaterSettings()
+        My.Settings.steamCMDPath = ISteamDirBox.Text
+        My.Settings.steamUserName = ISteamUserBox.Text
+        My.Settings.steamPassword = Encryption.Instance.EncryptData(ISteamPassBox.Password)
+        My.Settings.serverPath = IServerDirBox.Text
+        My.Settings.serverBranch = IServerBranch.Text
+    End Sub
+
+    Private Sub LoadSteamUpdaterSettings()
+        ISteamDirBox.Text = My.Settings.steamCMDPath
+        ISteamUserBox.Text = My.Settings.steamUserName
+        ISteamPassBox.Password = Encryption.Instance.DecryptData(My.Settings.steamPassword)
+        IServerDirBox.Text = My.Settings.serverPath
+        IServerBranch.Text = My.Settings.serverBranch
+    End Sub
+
+    Private Sub ISteamCancelButton_Click(sender As Object, e As RoutedEventArgs) Handles ISteamCancelButton.Click
+        Try
+            _oProcess.Kill()
+            _cancelled = True
+        Catch ex As Exception
+            MsgBox("CancelUpdateButton - An exception occurred:" & vbCrLf & ex.Message)
+        End Try
     End Sub
 End Class

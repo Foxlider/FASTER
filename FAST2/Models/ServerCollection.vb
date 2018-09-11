@@ -34,7 +34,6 @@ Namespace Models
            
             If Not duplicate Then
                 currentProfiles.ServerProfiles.Add(New ServerProfile(name, safeName))
-
                 My.Settings.Servers = currentProfiles
             Else
                 MsgBox("Profile already exists.")
@@ -145,19 +144,19 @@ Namespace Models
 
         Public Property ServerConsoleLogEnabled As Boolean = False
 
-        Public Property ServerConsoleLog As String = String.Empty
+        Public Property ServerConsoleLog As String = "server_console.log"
 
         Public Property PidEnabled As Boolean = False
 
-        Public Property PidLog As String = String.Empty
+        Public Property PidLog As String = "pid.log"
 
         Public Property RankingEnabled As Boolean = False
 
-        Public Property RankingLog As String = String.Empty
+        Public Property RankingLog As String = "ranking.log"
 
-        Public Property RptTimestamp As String = String.Empty
+        Public Property RptTimestamp As String = "none"
 
-        'MOTD
+        Public Property Motd As String = String.Empty
 
         Public Property MotdDelay As Integer = 5
 

@@ -194,6 +194,18 @@ Partial Friend NotInheritable Class MySettings
             Me("accentColour") = value
         End Set
     End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("Stable")>  _
+    Public Property serverBranch() As String
+        Get
+            Return CType(Me("serverBranch"),String)
+        End Get
+        Set
+            Me("serverBranch") = value
+        End Set
+    End Property
 End Class
 
 Namespace My

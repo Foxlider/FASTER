@@ -134,12 +134,12 @@
                                 <Label Margin="2" Content="Steam CMD Settings"/>
                                 <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="-8"/>
                             </StackPanel>
-                            <TextBox Grid.Row="1" Grid.Column="0" Name="ISteamDirBox"  materialDesign:HintAssist.Hint="Directory" Style="{StaticResource MaterialDesignFloatingHintTextBox}" BorderBrush="{DynamicResource PrimaryHueDarkBrush}" Margin="10"/>
+                            <TextBox Grid.Row="1" Grid.Column="0" Name="ISteamDirBox"  materialDesign:HintAssist.Hint="Directory" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" BorderBrush="{DynamicResource PrimaryHueDarkBrush}" Margin="10"/>
                             <Button Grid.Row="1" Grid.Column="1" Name="ISteamDirButton" Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}" Height="20" Width="20" Margin="5,5,10,0">
                                 <materialDesign:PackIcon Kind="FolderOpen" Height="10" Width="10"/>
                             </Button>
-                            <TextBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Name="ISteamUserBox" materialDesign:HintAssist.Hint="User Name" Style="{StaticResource MaterialDesignFloatingHintTextBox}" BorderBrush="{DynamicResource PrimaryHueDarkBrush}" Margin="10"/>
-                            <PasswordBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Name="ISteamPassBox" materialDesign:HintAssist.Hint="Password" Style="{StaticResource MaterialDesignFloatingHintPasswordBox}" BorderBrush="{DynamicResource PrimaryHueDarkBrush}" Margin="10,10,10,15"/>
+                            <TextBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Name="ISteamUserBox" materialDesign:HintAssist.Hint="User Name" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" BorderBrush="{DynamicResource PrimaryHueDarkBrush}" Margin="10"/>
+                            <PasswordBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Name="ISteamPassBox" materialDesign:HintAssist.Hint="Password" Style="{StaticResource MaterialDesignFloatingHintPasswordBox}" Foreground="{DynamicResource MaterialDesignBody}" BorderBrush="{DynamicResource PrimaryHueDarkBrush}" Margin="10,10,10,15"/>
                         </Grid>
                     </materialDesign:Card>
 
@@ -159,12 +159,12 @@
                             <Label Margin="2" Content="Arma 3 Settings"/>
                             <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="-8"/>
                         </StackPanel>
-                        <TextBox Grid.Row="1" Grid.Column="0" Name="IServerDirBox" materialDesign:HintAssist.Hint="Directory" Style="{StaticResource MaterialDesignFloatingHintTextBox}" BorderBrush="{DynamicResource PrimaryHueDarkBrush}" Margin="10"/>
+                            <TextBox Grid.Row="1" Grid.Column="0" Name="IServerDirBox" materialDesign:HintAssist.Hint="Directory" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" BorderBrush="{DynamicResource PrimaryHueDarkBrush}" Margin="10"/>
                         <Button Grid.Row="1" Grid.Column="1" Name="IServerDirButton" Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}" ToolTip="MaterialDesignFloatingActionMiniAccentButton" Height="20" Width="20" Margin="5,5,10,0">
                             <materialDesign:PackIcon Kind="FolderOpen" Height="10" Width="10"/>
                         </Button>
 
-                        <ComboBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" materialDesign:HintAssist.Hint="Version" Style="{StaticResource MaterialDesignFloatingHintComboBox}" BorderBrush="{DynamicResource PrimaryHueDarkBrush}" Margin="10,10,10,15">
+                        <ComboBox Name="IServerBranch" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" materialDesign:HintAssist.Hint="Version" Style="{StaticResource MaterialDesignFloatingHintComboBox}" Foreground="{DynamicResource MaterialDesignBody}" BorderBrush="{DynamicResource PrimaryHueDarkBrush}" Margin="10,10,10,15">
                             <ComboBoxItem Content="Stable"/>
                             <ComboBoxItem Content="Development"/>
                         </ComboBox>
@@ -187,7 +187,13 @@
                             <Label Margin="2" Content="Steam CMD Output"/>
                             <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="-8"/>
                         </StackPanel>
-                        <RichTextBox Name="ISteamOutputBox" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" IsReadOnly="True" Background="LightGray" Margin="10,10,10,0" VerticalScrollBarVisibility="Auto"/>
+                        <RichTextBox Name="ISteamOutputBox" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" IsReadOnly="True" Background="LightGray" Margin="10,10,10,0" VerticalScrollBarVisibility="Auto">
+                            <RichTextBox.Resources>
+                                <Style TargetType="{x:Type Paragraph}">
+                                    <Setter Property="Margin" Value="0"/>
+                                </Style>
+                            </RichTextBox.Resources>
+                            </RichTextBox>
                         <ProgressBar Name="ISteamProgressBar" Grid.Row="2" Grid.Column="0" Margin="10,10,10,10" Height="32"/>
                         <Button Name="ISteamCancelButton" Style="{StaticResource MaterialDesignRaisedAccentButton}" Grid.Row="2" Grid.Column="1" Content="Cancel" Margin="0,10,10,10" IsEnabled="False"/>
                         </Grid>
