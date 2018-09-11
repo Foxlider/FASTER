@@ -30,7 +30,7 @@
         <ListBox x:Name="IModActionButtons" SelectionMode="Extended" Style="{StaticResource MaterialDesignToolToggleListBox}" HorizontalAlignment="Left" Margin="5">
             <ListBoxItem x:Name="IAddSteamMod">
                 <ListBoxItem.ToolTip>
-                    <TextBlock><Run Text="Add Mod from Steam URL"/></TextBlock>
+                    <TextBlock><Run Text="Add Steam Mod"/></TextBlock>
                 </ListBoxItem.ToolTip>
                 <materialDesign:PackIcon Kind="Plus"/>
             </ListBoxItem>
@@ -60,6 +60,13 @@
             </ListBoxItem>
         </ListBox>
         <ProgressBar Grid.Row="0" Grid.Column="1" Height="Auto" Width="Auto" Margin="5"/>
-        <DataGrid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="5"/>
+        <DataGrid Name="IModView" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="5">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ID" IsReadOnly="True" Binding="{Binding Path=WorkshopId}" Width="Auto"/>
+                <DataGridTextColumn Header="Name" IsReadOnly="True"  Binding="{Binding Path=Name}" Width="Auto"/>
+                <DataGridTextColumn Header="Author" IsReadOnly="True"  Binding="{Binding Path=Author}" Width="Auto"/>
+                <DataGridTextColumn Header="Last Updated" IsReadOnly="True"  Binding="{Binding Path=LocalLastUpdated}" Width="Auto"/>
+            </DataGrid.Columns>
+        </DataGrid>
     </Grid>
 </UserControl>

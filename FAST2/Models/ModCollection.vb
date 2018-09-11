@@ -74,6 +74,8 @@ Namespace Models
                         Dim modName As String
                         Dim appName As String
                         Dim sourceString As String
+                        Dim author As String
+                        Dim authorStart, authorEnd, authorLength As Integer
 
                         sourceString = New WebClient().DownloadString(modUrl)
 
@@ -87,11 +89,16 @@ Namespace Models
                             modName = StrReverse(modName)
                             modName = MainWindow.SafeName(modName)
 
+                            authorStart = sourceString.IndexOf("myworkshopfiles/?appid=107410"">", StringComparison.Ordinal) +31
+                            authorEnd = sourceString.IndexOf("'s Workshop</a>", StringComparison.Ordinal)
+                            authorLength = authorEnd - authorStart
+                            author = sourceString.Substring(authorStart, authorLength)
+
                             Dim modInfo = MainWindow.GetModInfo(modId)
 
                             Dim steamUpdateTime = modInfo.Substring(modInfo.IndexOf("""time_updated"":") + 15, 10)
 
-                            currentMods.SteamMods.Add(New SteamMod(modId, modName, "Unknown", steamUpdateTime, 0))
+                            currentMods.SteamMods.Add(New SteamMod(modId, modName, author, steamUpdateTime, 0))
 
                             My.Settings.Mods = currentMods
                         Else

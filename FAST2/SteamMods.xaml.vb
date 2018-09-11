@@ -24,4 +24,18 @@ Public Class SteamMods
             )
         thread.Start()
     End Sub
+
+    Private Sub SteamMods_Loaded(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
+        UpdateModsView()
+    End Sub
+
+    Private Sub UpdateModsView
+        IModView.Items.Clear()
+
+        If My.Settings.Mods IsNot Nothing
+            For Each steamMod In My.Settings.Mods.SteamMods
+                IModView.Items.Add(steamMod)
+            Next
+        End If
+    End Sub
 End Class
