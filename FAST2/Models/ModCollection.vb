@@ -1,4 +1,5 @@
-﻿Imports System.Net
+﻿Imports System.Collections.ObjectModel
+Imports System.Net
 Imports System.Text.RegularExpressions
 Imports System.Xml.Serialization
 
@@ -10,10 +11,10 @@ Namespace Models
         Public Property CollectionName As String
 
         <XmlElement(Order:=2, ElementName:="SteamMod")>
-        Public SteamMods As List(Of SteamMod) = New List(Of SteamMod)()
+        Public SteamMods As Collection(Of SteamMod) = New Collection(Of SteamMod)()
 
         <XmlElement(Order:=3, ElementName:="LocalMod")>
-        Public LocalMods As List(Of LocalMod) = New List(Of LocalMod)()
+        Public LocalMods As Collection(Of LocalMod) = New Collection(Of LocalMod)()
         
         Public Shared Sub AddLocalMod()
             Dim path As String = MainWindow.SelectFolder()
@@ -49,7 +50,7 @@ Namespace Models
             
         End Sub
 
-        Public Shared Sub AddSteamMod(modUrl As String)
+        Public Shared Sub AddSteamMod(modUrl As String, Optional updateUI As Boolean = False)
             If modUrl  Like "http*://steamcommunity.com/*/filedetails/?id=*" Then
                 Dim duplicate = False
                 Dim currentMods As New ModCollection
@@ -115,6 +116,10 @@ Namespace Models
                 MessageBox.Show("Please use format: https://steamcommunity.com/sharedfiles/filedetails/?id=*********")
             End If
 
+            If updateUI
+                FAST2.SteamMods.Instance.UpdateModsView()
+            End If
+
             My.Settings.Save()
         End Sub
     End Class
@@ -124,12 +129,11 @@ Namespace Models
         Private Sub New()
         End Sub
 
-        Public Sub New(workshopId As Int32, name As String, author As String, steamLastUpdated As Int32, localLastUpdated As Int32, Optional privateMod As Boolean = False)
+        Public Sub New(workshopId As Int32, name As String, author As String, steamLastUpdated As Int32, Optional privateMod As Boolean = False)
             Me.WorkshopId = workshopId
             Me.Name = name
             Me.Author = author
             Me.SteamLastUpdated = steamLastUpdated
-            Me.LocalLastUpdated = localLastUpdated
             Me.PrivateMod = privateMod
         End Sub
 
@@ -146,10 +150,13 @@ Namespace Models
         Public Property SteamLastUpdated As Integer = Nothing
 
         <XmlElement(Order:=5)>
-        Public Property LocalLastUpdated As Integer = Nothing
+        Public Property LocalLastUpdated As Integer = 0
 
         <XmlElement(Order:=6)>
         Public Property PrivateMod As Boolean = False
+
+        <XmlElement(Order:=6)>
+        Public Property Status As String = "Not Installed"
     End Class
 
     <Serializable()>

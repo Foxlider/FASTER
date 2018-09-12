@@ -5,7 +5,7 @@
     StartupUri="Setup.xaml"
 ShutdownMode="OnLastWindowClose">
     <Application.Resources>
-        
+
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Dark.xaml" />
@@ -20,3 +20,4 @@ ShutdownMode="OnLastWindowClose">
         </ResourceDictionary>
     </Application.Resources>
 </Application>
+

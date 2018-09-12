@@ -2,6 +2,21 @@
 Imports FAST2.Models
 
 Public Class SteamMods
+    Private Shared _instance As SteamMods
+
+    Public Shared ReadOnly Property Instance As SteamMods
+        Get
+            'If there is no instance or it has been destroyed...
+            If _instance Is Nothing Then
+                '...create a new one.
+                _instance = New SteamMods
+            End If
+
+            Return _instance
+        End Get
+    End Property
+
+
     'Manages actions for steam mods tab buttons
     Private Sub IActionButtons_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles IModActionButtons.SelectionChanged
         
@@ -27,15 +42,23 @@ Public Class SteamMods
 
     Private Sub SteamMods_Loaded(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
         UpdateModsView()
+       
+        
     End Sub
 
-    Private Sub UpdateModsView
-        IModView.Items.Clear()
+    Public Sub UpdateModsView
+
+        'IModView.Items.Clear()
 
         If My.Settings.Mods IsNot Nothing
-            For Each steamMod In My.Settings.Mods.SteamMods
-                IModView.Items.Add(steamMod)
-            Next
+            IModView.DataContext = My.Settings.Mods.SteamMods
+            
         End If
+
+        'If My.Settings.Mods IsNot Nothing
+        '    For Each steamMod In My.Settings.Mods.SteamMods
+        '        IModView.Items.Add(steamMod)
+        '    Next
+        'End If
     End Sub
 End Class

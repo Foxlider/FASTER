@@ -7,7 +7,7 @@ Public Class ImportSteamMod
         Forms.Cursor.Show()
         Forms.Cursor.Current = Cursors.WaitCursor
         Close()
-        ModCollection.AddSteamMod(ISteamItemBox.Text)
+        ModCollection.AddSteamMod(ISteamItemBox.Text, true)
     End Sub
 
     
