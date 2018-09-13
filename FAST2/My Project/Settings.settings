@@ -23,9 +23,6 @@
     <Setting Name="firstRun" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="Mods" Type="FAST2.Models.ModCollection" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
     <Setting Name="Servers" Type="FAST2.Models.ServerCollection" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
@@ -40,6 +37,12 @@
     </Setting>
     <Setting Name="serverBranch" Type="System.String" Scope="User">
       <Value Profile="(Default)">Stable</Value>
+    </Setting>
+    <Setting Name="steamMods" Type="System.Collections.Generic.List(Of FAST2.Models.steamMod)" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="localMods" Type="System.Collections.Generic.List(Of FAST2.Models.localMod)" Scope="User">
+      <Value Profile="(Default)" />
     </Setting>
   </Settings>
 </SettingsFile>

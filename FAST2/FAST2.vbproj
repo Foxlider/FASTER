@@ -91,6 +91,10 @@
   <PropertyGroup>
     <SignManifests>false</SignManifests>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>
+    </StartupObject>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Dragablz, Version=0.0.3.203, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Dragablz.0.0.3.203\lib\net45\Dragablz.dll</HintPath>
@@ -149,6 +153,7 @@
     </Compile>
     <Compile Include="Models\ServerCollection.vb" />
     <Compile Include="Models\Theme.vb" />
+    <Compile Include="Settings.vb" />
     <Compile Include="Settings.xaml.vb">
       <DependentUpon>Settings.xaml</DependentUpon>
     </Compile>
@@ -286,6 +291,9 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="SettingsBackup.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
 </Project>

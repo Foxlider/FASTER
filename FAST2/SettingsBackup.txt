@@ -195,28 +195,22 @@ Partial Friend NotInheritable Class MySettings
             Me("serverBranch") = value
         End Set
     End Property
-    
-    <Global.System.Configuration.UserScopedSettingAttribute(),  _
-     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-     Global.System.Configuration.DefaultSettingValueAttribute("")>  _
-    Public Property steamMods() As System.Collections.Generic.List(Of FAST2.Models.steamMod)
+
+    Public Property SteamMods() As List(Of Models.SteamMod)
         Get
-            Return CType(Me("steamMods"),System.Collections.Generic.List(Of FAST2.Models.steamMod))
+            Return CType(Me("SteamMods"),List(Of Models.SteamMod))
         End Get
         Set
-            Me("steamMods") = value
+            Me("SteamMods") = value
         End Set
     End Property
-    
-    <Global.System.Configuration.UserScopedSettingAttribute(),  _
-     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-     Global.System.Configuration.DefaultSettingValueAttribute("")>  _
-    Public Property localMods() As System.Collections.Generic.List(Of FAST2.Models.localMod)
+
+    Public Property LocalMods() As List(Of Models.LocalMod)
         Get
-            Return CType(Me("localMods"),System.Collections.Generic.List(Of FAST2.Models.localMod))
+            Return CType(Me("LocalMods"),List(Of Models.LocalMod))
         End Get
         Set
-            Me("localMods") = value
+            Me("LocalMods") = value
         End Set
     End Property
 End Class

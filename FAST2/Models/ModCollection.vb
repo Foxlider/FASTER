@@ -1,5 +1,4 @@
-﻿Imports System.Collections.ObjectModel
-Imports System.Net
+﻿Imports System.Net
 Imports System.Text.RegularExpressions
 Imports System.Xml.Serialization
 
@@ -8,29 +7,26 @@ Namespace Models
     <Serializable()>
     Public Class ModCollection
         <XmlElement(Order:=1)>
-        Public Property CollectionName As String
+        Public Property CollectionName As String = "Main"
 
         <XmlElement(Order:=2, ElementName:="SteamMod")>
-        Public SteamMods As Collection(Of SteamMod) = New Collection(Of SteamMod)()
+        Public SteamMods As List(Of SteamMod) = New List(Of SteamMod)()
 
         <XmlElement(Order:=3, ElementName:="LocalMod")>
-        Public LocalMods As Collection(Of LocalMod) = New Collection(Of LocalMod)()
+        Public LocalMods As List(Of LocalMod) = New List(Of LocalMod)()
         
         Public Shared Sub AddLocalMod()
             Dim path As String = MainWindow.SelectFolder()
             Dim duplicate = False
-            Dim currentMods As New ModCollection
+            Dim currentMods = GetLocalMods()
 
             If path IsNot Nothing
                 Dim modName = path.Substring(path.LastIndexOf("@", StringComparison.Ordinal) + 1)
 
+                
 
-                If My.Settings.Mods IsNot Nothing
-                    currentMods = My.Settings.Mods
-                End If
-
-                If currentMods.LocalMods.Count > 0 Then
-                    For Each localMod In currentMods.LocalMods
+                If currentMods.Count > 0 Then
+                    For Each localMod In currentMods
                         If localMod.Name = modName
                             duplicate = true
                         End If
@@ -38,9 +34,9 @@ Namespace Models
                 End If
            
                 If Not duplicate Then
-                    currentMods.LocalMods.Add(New LocalMod(modName, path))
+                    currentMods.Add(New LocalMod(modName, path))
 
-                    My.Settings.Mods = currentMods
+                    My.Settings.LocalMods = currentMods
                 Else
                     MsgBox("Mod already imported.")
                 End If
@@ -49,21 +45,35 @@ Namespace Models
             End If
             
         End Sub
+        Private Shared Function GetSteamMods() As List(Of SteamMod)
+            Dim currentSteamMods As New List(Of SteamMod)
 
-        Public Shared Sub AddSteamMod(modUrl As String, Optional updateUI As Boolean = False)
+            If My.Settings.steamMods IsNot Nothing
+                currentSteamMods = My.Settings.steamMods
+            End If
+
+            Return currentSteamMods
+        End Function
+        Private Shared Function GetLocalMods() As List(Of LocalMod)
+            Dim currentLocalMods As New List(Of LocalMod)
+
+            If My.Settings.localMods IsNot Nothing
+                currentLocalMods = My.Settings.localMods
+            End If
+
+            Return currentLocalMods
+        End Function
+
+        Public Shared Sub AddSteamMod(modUrl As String)
             If modUrl  Like "http*://steamcommunity.com/*/filedetails/?id=*" Then
                 Dim duplicate = False
-                Dim currentMods As New ModCollection
-
-                If My.Settings.Mods IsNot Nothing
-                     currentMods = My.Settings.Mods
-                End If
-
+                Dim currentMods = GetSteamMods()
+                
                 Dim modId = modUrl.Substring(modUrl.IndexOf("?id=", StringComparison.Ordinal))
                 modId = Integer.Parse(Regex.Replace(modId, "[^\d]", ""))
 
-                If currentMods.SteamMods.Count > 0 Then
-                    For Each steamMod In currentMods.SteamMods
+                If currentMods.Count > 0 Then
+                    For Each steamMod In currentMods
                         If steamMod.WorkshopId = modId
                             duplicate = true
                         End If
@@ -99,9 +109,10 @@ Namespace Models
 
                             Dim steamUpdateTime = modInfo.Substring(modInfo.IndexOf("""time_updated"":") + 15, 10)
 
-                            currentMods.SteamMods.Add(New SteamMod(modId, modName, author, steamUpdateTime, 0))
+                            currentMods.Add(New SteamMod(modId, modName, author, steamUpdateTime, 0))
 
-                            My.Settings.Mods = currentMods
+                            My.Settings.SteamMods = currentMods
+                            My.Settings.Save()
                         Else
                             MessageBox.Show("This is a workshop Item for a different game.")
                         End If
@@ -111,16 +122,10 @@ Namespace Models
                 Else
                     MsgBox("Mod already imported.")
                 End If
-
             Else
                 MessageBox.Show("Please use format: https://steamcommunity.com/sharedfiles/filedetails/?id=*********")
             End If
-
-            If updateUI
-                FAST2.SteamMods.Instance.UpdateModsView()
-            End If
-
-            My.Settings.Save()
+            FAST2.SteamMods.Instance.UpdateModsView()
         End Sub
     End Class
     
