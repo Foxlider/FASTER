@@ -4,10 +4,11 @@ Imports System.Text.RegularExpressions
 Imports System.IO
 Imports System.IO.Compression
 Imports System.Text
-Imports System.Windows.Forms
+'Imports System.Windows.Forms
 Imports System.Xml
 Imports System.Xml.Serialization
 Imports FAST2.Models
+Imports WPFFolderBrowser
 
 
 Public Class MainWindow
@@ -205,8 +206,8 @@ Public Class MainWindow
                             End If
 
                             If sOutput Like "*Timeout*" Then
-                                MainWindow.Instance.IMessageDialog.IsOpen = True
-                                MainWindow.Instance.IMessageDialogText.Text = "Steam download timed out, please update mod again."
+                                Instance.IMessageDialog.IsOpen = True
+                                Instance.IMessageDialogText.Text = "Steam download timed out, please update mod again."
                             End If
 
                             Dispatcher.Invoke(
@@ -254,11 +255,11 @@ Public Class MainWindow
                     Next
 
                 ElseIf type Is "server" Then
-                    MainWindow.Instance.IMessageDialog.IsOpen = True
-                    MainWindow.Instance.IMessageDialogText.Text = "Server Installed/ Updated."
+                    Instance.IMessageDialog.IsOpen = True
+                    Instance.IMessageDialogText.Text = "Server Installed/ Updated."
                 ElseIf type Is "install" Then
-                    MainWindow.Instance.IMessageDialog.IsOpen = True
-                    MainWindow.Instance.IMessageDialogText.Text = "SteamCMD Installed."
+                    Instance.IMessageDialog.IsOpen = True
+                    Instance.IMessageDialogText.Text = "SteamCMD Installed."
                 End If
             End If
 
@@ -354,10 +355,10 @@ Public Class MainWindow
 
     'Opens Folder select dialog and returns selected path
     Public Shared Function SelectFolder()
-        Dim folderDialog As New FolderBrowserDialog
-
-        If folderDialog.ShowDialog = vbOK Then
-            Return folderDialog.SelectedPath
+        Dim folderDialog As New WPFFolderBrowserDialog
+        
+        If folderDialog.ShowDialog = True Then
+            Return folderDialog.FileName
         Else
             Return Nothing
         End If
@@ -385,13 +386,7 @@ Public Class MainWindow
             End If
         Next
     End Sub
-
-    'Creates a new Server Profile and adds it to the UI menu
-    Private Shared Sub NewServerProfileButton_Click(sender As Object, e As RoutedEventArgs) Handles INewServerProfileButton.Click
-        Dim newProfileDialog As New NewServerProfile
-        newProfileDialog.Show()
-    End Sub
-
+    
     'Makes close button red when mouse is over button
     Private Sub WindowCloseButton_MouseEnter(sender As Object, e As Input.MouseEventArgs) Handles IWindowCloseButton.MouseEnter
         Dim converter = New BrushConverter()
@@ -498,8 +493,8 @@ Public Class MainWindow
             Try
                 response = request.GetResponse()
             Catch ex As Exception
-                MainWindow.Instance.IMessageDialog.IsOpen = True
-                MainWindow.Instance.IMessageDialogText.Text = "There may be an issue with Steam please try again shortly."
+                Instance.IMessageDialog.IsOpen = True
+                Instance.IMessageDialogText.Text = "There may be an issue with Steam please try again shortly."
             End Try
             ' Get the stream containing content returned by the server.  
             dataStream = response.GetResponseStream()
@@ -553,5 +548,35 @@ Public Class MainWindow
         Catch ex As Exception
             MsgBox("CancelUpdateButton - An exception occurred:" & vbCrLf & ex.Message)
         End Try
+    End Sub
+    
+    'Creates a new Server Profile and adds it to the UI menu
+    Private Sub NewServerProfileButton_Click(sender As Object, e As RoutedEventArgs) Handles INewServerProfileButton.Click
+        'Dim newProfileDialog As New NewServerProfile
+        'newProfileDialog.Show()
+        INewServerProfileDialog.isOpen = True
+    End Sub
+
+    Private Sub INewServerProfileDialog_KeyUp(sender As Object, e As Input.KeyEventArgs) Handles INewServerProfileDialog.KeyUp
+        If e.Key = Key.Escape
+            INewServerProfileDialog.IsOpen = False
+            INewProfileName.Text = String.Empty
+        End If
+    End Sub
+
+    Private Sub ICreateProfileButon_Click(sender As Object, e As RoutedEventArgs) Handles ICreateProfileButon.Click
+        INewProfileName.Text = INewProfileName.Text.Trim()
+        
+        If INewProfileName.Text = String.Empty 
+            IMessageDialog.IsOpen = True
+            IMessageDialogText.Text = "Please use a suitable profile name."
+        Else
+            Mouse.OverrideCursor = Cursors.Wait
+            Dim profileName = INewProfileName.Text
+            INewServerProfileDialog.IsOpen = False
+            ServerCollection.AddServerProfile(profileName, SafeName(profileName))
+            INewProfileName.Text = String.Empty
+            Mouse.OverrideCursor = Cursors.Arrow
+        End If
     End Sub
 End Class

@@ -61,6 +61,8 @@ Public Class SteamMods
     Private Sub IImportSteamModDialog_KeyUp(sender As Object, e As KeyEventArgs) Handles IImportSteamModDialog.KeyUp
         If e.Key = Key.Escape
             IImportSteamModDialog.IsOpen = False
+            IPrivateModCheck.IsChecked = False
+            ISteamItemBox.Text = String.Empty
         End If
     End Sub
 

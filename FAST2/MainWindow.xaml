@@ -227,5 +227,27 @@
             </materialDesign:DialogHost.DialogContent>
         </materialDesign:DialogHost>
 
+        <materialDesign:DialogHost Grid.ColumnSpan="2" Grid.RowSpan="3" Grid.Row="1" Grid.Column="0" IsOpen="False" Name="INewServerProfileDialog" Margin="-2">
+            <materialDesign:DialogHost.DialogContent>
+                <Grid>
+                    <!--Grid Definitions-->
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Row="1" Margin="20,10">
+                        <TextBlock TextWrapping="Wrap" TextAlignment="Left" Margin="0,0,0,5">
+                            Enter a name for the Server Profile.
+                        </TextBlock>
+                        <TextBox Name="INewProfileName" materialDesign:HintAssist.Hint="Profile Name" Style="{StaticResource MaterialDesignFloatingHintTextBox}" BorderBrush="{DynamicResource PrimaryHueDarkBrush}"/>
+                        <DockPanel Margin="0,10">
+                            <Button Name="ICreateProfileButon" Content="Create" Width="90" HorizontalAlignment="Right"/>
+                        </DockPanel>
+                    </StackPanel>
+                </Grid>
+            </materialDesign:DialogHost.DialogContent>
+        </materialDesign:DialogHost>
+
     </Grid>
 </Window>

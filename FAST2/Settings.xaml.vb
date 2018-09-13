@@ -1,5 +1,4 @@
-﻿Imports System.Windows.Forms
-Imports FAST2.Models
+﻿Imports FAST2.Models
 
 Class Settings
     'Switches base theme between light and dark when control is switched 
