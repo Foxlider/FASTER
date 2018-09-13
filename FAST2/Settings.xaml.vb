@@ -26,16 +26,17 @@ Class Settings
         My.Settings.Save()
     End Sub
 
-    Private Shared Sub IClearSettings_Checked(sender As Object, e As RoutedEventArgs) Handles IClearSettings.Click
-        Dim result As Integer = Windows.MessageBox.Show("This will reset FAST and remove all server profiles and imported mods.", "Are you sure?", MessageBoxButtons.YesNo)
-        If result = DialogResult.Yes Then
-            My.Settings.clearSettings = true
-            Forms.Application.Restart()
-            Windows.Application.Current.Shutdown()
-        End If
+    Private Sub IClearSettings_Click(sender As Object, e As RoutedEventArgs) Handles IClearSettings.Click
+        IResetDialog.IsOpen = True
     End Sub
 
     Private Sub SettingsTab_Loaded(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
         IBaseThemeToggle.IsChecked = My.Settings.isDark
+    End Sub
+
+    Private Sub IResetButton_Click(sender As Object, e As RoutedEventArgs) Handles IResetButton.Click
+        My.Settings.clearSettings = true
+        Forms.Application.Restart()
+        Windows.Application.Current.Shutdown()
     End Sub
 End Class

@@ -90,7 +90,8 @@ Public Class MainWindow
 
     'Installs the SteamCMD tool
     Private Sub InstallSteam()
-        Windows.MessageBox.Show("Steam CMD will now download and start the install process. If prompted please enter your Steam Guard Code." & Environment.NewLine & "You will recieve this by email from steam. When this is all complete type 'quit' to finish.", "Information")
+        IMessageDialog.IsOpen = True
+        IMessageDialogText.Text = "Steam CMD will now download and start the install process. If prompted please enter your Steam Guard Code." & Environment.NewLine & Environment.NewLine & "You will recieve this by email from steam. When this is all complete type 'quit' to finish."
 
         Const url = "https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip"
         Dim fileName As String = My.Settings.steamCMDPath & "\steamcmd.zip"
@@ -204,7 +205,8 @@ Public Class MainWindow
                             End If
 
                             If sOutput Like "*Timeout*" Then
-                                MsgBox("Steam download timed out, please update mod again.")
+                                MainWindow.Instance.IMessageDialog.IsOpen = True
+                                MainWindow.Instance.IMessageDialogText.Text = "Steam download timed out, please update mod again."
                             End If
 
                             Dispatcher.Invoke(
@@ -252,9 +254,11 @@ Public Class MainWindow
                     Next
 
                 ElseIf type Is "server" Then
-                    MsgBox("Server Installed/ Updated.")
+                    MainWindow.Instance.IMessageDialog.IsOpen = True
+                    MainWindow.Instance.IMessageDialogText.Text = "Server Installed/ Updated."
                 ElseIf type Is "install" Then
-                    MsgBox("SteamCMD Installed.")
+                    MainWindow.Instance.IMessageDialog.IsOpen = True
+                    MainWindow.Instance.IMessageDialogText.Text = "SteamCMD Installed."
                 End If
             End If
 
@@ -264,7 +268,8 @@ Public Class MainWindow
             'modsDataGrid.PerformLayout()
 
         Else
-            Windows.MessageBox.Show("Please check that SteamCMD is installed and that all fields are correct:" & Environment.NewLine & Environment.NewLine & "   -  Steam Dir" & Environment.NewLine & "   -  User Name & Pass" & Environment.NewLine & "   -  Server Dir", "Error")
+            IMessageDialog.IsOpen = True
+            IMessageDialogText.Text = "Please check that SteamCMD is installed and that all fields are correct:" & Environment.NewLine & Environment.NewLine & Environment.NewLine & "   -  Steam Dir" & Environment.NewLine & Environment.NewLine & "   -  User Name & Pass" & Environment.NewLine & Environment.NewLine & "   -  Server Dir"
         End If
     End Sub
 
@@ -277,7 +282,7 @@ Public Class MainWindow
         Dim newSteamModsTab As TabItem = IMainContent.Items.Item(1)
         Dim newSettingsTab As TabItem = IMainContent.Items.Item(2)
         Dim newAboutTab As TabItem = IMainContent.Items.Item(4)
-
+        
         newSteamModsTab.Content = New SteamMods
         newSettingsTab.Content = New Settings
         newAboutTab.Content = New About
@@ -493,7 +498,8 @@ Public Class MainWindow
             Try
                 response = request.GetResponse()
             Catch ex As Exception
-                MsgBox("There may be an issue with Steam please try again shortly.")
+                MainWindow.Instance.IMessageDialog.IsOpen = True
+                MainWindow.Instance.IMessageDialogText.Text = "There may be an issue with Steam please try again shortly."
             End Try
             ' Get the stream containing content returned by the server.  
             dataStream = response.GetResponseStream()

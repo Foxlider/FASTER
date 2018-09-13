@@ -215,6 +215,17 @@
             <!--Main Content - About Tab-->
             <TabItem Name="IAboutTab" Header="TabItem"/>
         </TabControl>
-        
+
+        <materialDesign:DialogHost Grid.ColumnSpan="2" Grid.RowSpan="3" Grid.Row="1" Grid.Column="0" IsOpen="False" Name="IMessageDialog" Margin="-2">
+            <materialDesign:DialogHost.DialogContent>
+                <StackPanel Grid.Row="1" Margin="15">
+                    <TextBlock Name="IMessageDialogText" TextWrapping="Wrap" TextAlignment="Center" Margin="10">
+                       MESSAGE GOES HERE
+                    </TextBlock>
+                    <Button Name="IMessageDialogClose" Content="OK" HorizontalAlignment="Center" Margin="5" Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}" CommandTarget="{Binding ElementName=IMessageDialog}"/>
+                </StackPanel>
+            </materialDesign:DialogHost.DialogContent>
+        </materialDesign:DialogHost>
+
     </Grid>
 </Window>

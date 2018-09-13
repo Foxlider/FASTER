@@ -38,7 +38,8 @@ Namespace Models
 
                     My.Settings.LocalMods = currentMods
                 Else
-                    MsgBox("Mod already imported.")
+                    MainWindow.Instance.IMessageDialog.IsOpen = True
+                    MainWindow.Instance.IMessageDialogText.Text = "Mod already imported."
                 End If
 
                 My.Settings.Save()
@@ -114,16 +115,19 @@ Namespace Models
                             My.Settings.SteamMods = currentMods
                             My.Settings.Save()
                         Else
-                            MessageBox.Show("This is a workshop Item for a different game.")
+                            MainWindow.Instance.IMessageDialog.IsOpen = True
+                            MainWindow.Instance.IMessageDialogText.Text = "This is a workshop Item for a different game."
                         End If
                     Catch ex As Exception
                         MsgBox("An exception occurred:" & vbCrLf & ex.Message)
                     End Try
                 Else
-                    MsgBox("Mod already imported.")
+                    MainWindow.Instance.IMessageDialog.IsOpen = True
+                    MainWindow.Instance.IMessageDialogText.Text = "Mod already imported."
                 End If
             Else
-                MessageBox.Show("Please use format: https://steamcommunity.com/sharedfiles/filedetails/?id=*********")
+                MainWindow.Instance.IMessageDialog.IsOpen = True
+                MainWindow.Instance.IMessageDialogText.Text = "Please use format: https://steamcommunity.com/sharedfiles/filedetails/?id=*********"
             End If
             FAST2.SteamMods.Instance.UpdateModsView()
         End Sub

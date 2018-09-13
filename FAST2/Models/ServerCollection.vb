@@ -36,7 +36,8 @@ Namespace Models
                 currentProfiles.ServerProfiles.Add(New ServerProfile(name, safeName))
                 My.Settings.Servers = currentProfiles
             Else
-                MsgBox("Profile already exists.")
+                MainWindow.Instance.IMessageDialog.IsOpen = True
+                MainWindow.Instance.IMessageDialogText.Text = "Profile Already Exists"
             End If
 
             My.Settings.Save()

@@ -96,5 +96,17 @@
                 </StackPanel>
             </StackPanel>
         </materialDesign:Card>
+
+        <materialDesign:DialogHost Grid.ColumnSpan="2" Grid.Row="0" Grid.Column="0" IsOpen="False" Name="IResetDialog" Margin="-2">
+            <materialDesign:DialogHost.DialogContent>
+                <StackPanel Grid.Row="1" Margin="15">
+                    <TextBlock TextWrapping="Wrap" TextAlignment="Left" Margin="5" Text="This will reset FAST and remove all server profiles and imported mods."/>
+                    <StackPanel Margin="10" Orientation="Horizontal" HorizontalAlignment="Center">
+                        <Button Name="IResetButton" Content="Reset" Width="90" Margin="5"/>
+                        <Button Name="ICancelButton" Content="Cancel" Width="90" Margin="5" Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}" CommandTarget="{Binding ElementName=IResetDialog}"/>
+                    </StackPanel>
+                </StackPanel>
+            </materialDesign:DialogHost.DialogContent>
+        </materialDesign:DialogHost>
     </Grid>
 </UserControl>
