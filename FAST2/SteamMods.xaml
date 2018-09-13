@@ -7,7 +7,6 @@
 
              FontFamily="{DynamicResource MaterialDesignFont}"
              
-
              TextElement.FontWeight="Regular"
              TextElement.Foreground="{DynamicResource MaterialDesignBody}"
              TextElement.FontSize="11"
@@ -27,6 +26,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition />
         </Grid.RowDefinitions>
+
         <ListBox x:Name="IModActionButtons" SelectionMode="Extended" Style="{StaticResource MaterialDesignToolToggleListBox}" HorizontalAlignment="Left" Margin="5">
             <ListBoxItem x:Name="IAddSteamMod">
                 <ListBoxItem.ToolTip>
@@ -60,7 +60,7 @@
             </ListBoxItem>
         </ListBox>
         <ProgressBar Grid.Row="0" Grid.Column="1" Height="Auto" Width="Auto" Margin="5"/>
-        <DataGrid Name="IModView" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="5" GridLinesVisibility="All" IsReadOnly="True" CanUserAddRows="False" AutoGenerateColumns="False" ItemsSource="{Binding}" materialDesign:DataGridAssist.CellPadding="2 2 2 2" materialDesign:DataGridAssist.ColumnHeaderPadding="3 3 3 3">
+        <DataGrid Name="IModView" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="5" CanUserReorderColumns="False" CanUserResizeRows="False" GridLinesVisibility="All" IsReadOnly="True" CanUserAddRows="False" AutoGenerateColumns="False" ItemsSource="{Binding NotifyOnSourceUpdated=True}" materialDesign:DataGridAssist.CellPadding="2 2 2 2" materialDesign:DataGridAssist.ColumnHeaderPadding="3 3 3 3">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="ID" Binding="{Binding Path=WorkshopId}"/>
                 <DataGridTextColumn Header="Name" Binding="{Binding Path=Name}"/>
@@ -86,5 +86,23 @@
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
+        
+        <materialDesign:DialogHost Grid.ColumnSpan="2" Grid.RowSpan="2" Grid.Row="0" Grid.Column="0" IsOpen="False" Name="IImportSteamModDialog" Margin="-2">
+            <materialDesign:DialogHost.DialogContent>
+                <StackPanel Grid.Row="1" Margin="15">
+                <TextBlock TextWrapping="Wrap" TextAlignment="Left" Margin="0,0,0,5">
+                    Please enter the steam workshop url or enter the workshop item id below.
+                </TextBlock>
+                <TextBox Name="ISteamItemBox" materialDesign:HintAssist.Hint="Steam URL/ ID" Style="{StaticResource MaterialDesignFloatingHintTextBox}" BorderBrush="{DynamicResource PrimaryHueDarkBrush}"/>
+                <DockPanel Margin="0,10">
+                    <CheckBox Name="IPrivateModCheck"  Style="{StaticResource MaterialDesignCheckBox}">
+                        Private Mod
+                    </CheckBox>
+                    <Button Name="IImportModButton" Content="Import" Width="90" HorizontalAlignment="Right"/>
+                </DockPanel>
+                </StackPanel>
+            </materialDesign:DialogHost.DialogContent>
+        </materialDesign:DialogHost>
+
     </Grid>
 </UserControl>

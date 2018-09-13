@@ -160,9 +160,6 @@
     <Compile Include="ServerProfile.xaml.vb">
       <DependentUpon>ServerProfile.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ImportSteamMod.xaml.vb">
-      <DependentUpon>ImportSteamMod.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Setup.xaml.vb">
       <DependentUpon>Setup.xaml</DependentUpon>
     </Compile>
@@ -201,10 +198,6 @@
     <Page Include="ServerProfile.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="ImportSteamMod.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="Setup.xaml">
       <SubType>Designer</SubType>

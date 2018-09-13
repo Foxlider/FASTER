@@ -1,4 +1,5 @@
 ﻿Imports System.Threading
+
 Imports FAST2.Models
 
 Public Class SteamMods
@@ -21,8 +22,9 @@ Public Class SteamMods
     Private Sub IActionButtons_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles IModActionButtons.SelectionChanged
         
         If IAddSteamMod.IsSelected
-            Dim importDialog As New ImportSteamMod
-            importDialog.Show()
+            'Dim importDialog As New ImportSteamMod
+            'importDialog.Show()
+            IImportSteamModDialog.IsOpen = True
         ElseIf IAddLocalMod.IsSelected
             ModCollection.AddLocalMod()
         End If
@@ -40,25 +42,35 @@ Public Class SteamMods
         thread.Start()
     End Sub
 
+    
+
     Private Sub SteamMods_Loaded(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
-        UpdateModsView()
-       
-        
+      UpdateModsView()
     End Sub
 
-    Public Sub UpdateModsView
+    Public Sub UpdateModsView()
+        IModView.Items.Clear()
 
-        'IModView.Items.Clear()
-
-        If My.Settings.Mods IsNot Nothing
-            IModView.DataContext = My.Settings.Mods.SteamMods
-            
+        If My.Settings.SteamMods IsNot Nothing
+            For Each steamMod In My.Settings.SteamMods
+                IModView.Items.Add(steamMod)
+            Next
         End If
+    End Sub
 
-        'If My.Settings.Mods IsNot Nothing
-        '    For Each steamMod In My.Settings.Mods.SteamMods
-        '        IModView.Items.Add(steamMod)
-        '    Next
-        'End If
+    Private Sub IImportSteamModDialog_KeyUp(sender As Object, e As KeyEventArgs) Handles IImportSteamModDialog.KeyUp
+        If e.Key = Key.Escape
+            IImportSteamModDialog.IsOpen = False
+        End If
+    End Sub
+
+    Private Sub IContinueButton_Click(sender As Object, e As RoutedEventArgs) Handles IImportModButton.Click
+        Mouse.OverrideCursor = Cursors.Wait
+        IImportSteamModDialog.IsOpen = False
+        ModCollection.AddSteamMod(ISteamItemBox.Text)
+        IPrivateModCheck.IsChecked = False
+        ISteamItemBox.Text = String.Empty
+        Mouse.OverrideCursor = Cursors.Arrow
+        UpdateModsView()
     End Sub
 End Class
