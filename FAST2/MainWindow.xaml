@@ -40,9 +40,9 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
-            <RowDefinition Height="108"/>
-            <RowDefinition Height="*" Name="IServerProfilesRow"/>
-            <RowDefinition Height="141"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <!--Custom Window Bar Elements-->
@@ -66,6 +66,7 @@
             <ListBox Name="IMainMenuItems" HorizontalAlignment="Stretch" Margin="0,0,0,10">
                 <ListBoxItem Name="ISteamUpdaterTabSelect" Content="Steam Updater"/>
                 <ListBoxItem Name="ISteamModsTabSelect" Content="Steam Mods"/>
+                <ListBoxItem Name="ILocalModsTabSelect" Content="Local Mods"/>
             </ListBox>
         </StackPanel>
 
@@ -206,6 +207,9 @@
             <!--Main Content - Steam Mods Tab-->
             <TabItem Name="ISteamModsTab" Header="TabItem"/>
 
+            <!--Main Content - Steam Mods Tab-->
+            <TabItem Name="ILocalModsTab" Header="TabItem"/>
+
             <!--Main Content - Settings Tab-->
             <TabItem Name="ISettingsTab" Header="TabItem"/>
 
@@ -270,8 +274,5 @@
                 </Grid>
             </materialDesign:DialogHost.DialogContent>
         </materialDesign:DialogHost>
-
-        
-
     </Grid>
 </Window>

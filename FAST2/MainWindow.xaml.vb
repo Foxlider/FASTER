@@ -282,10 +282,12 @@ Public Class MainWindow
     'Executes some events when the window is loaded
     Private Sub MainWindow_Loaded(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
         Dim newSteamModsTab As TabItem = IMainContent.Items.Item(1)
-        Dim newSettingsTab As TabItem = IMainContent.Items.Item(2)
-        Dim newAboutTab As TabItem = IMainContent.Items.Item(4)
+        Dim newLocalModsTab As TabItem = IMainContent.Items(2)
+        Dim newSettingsTab As TabItem = IMainContent.Items.Item(3)
+        Dim newAboutTab As TabItem = IMainContent.Items.Item(5)
         
         newSteamModsTab.Content = New SteamMods
+        newLocalModsTab.Content = New LocalMods
         newSettingsTab.Content = New Settings
         newAboutTab.Content = New About
 
@@ -366,7 +368,7 @@ Public Class MainWindow
     End Function
 
     'Handles when any menu item is selected
-    Private Sub MenuItemm_Selected(sender As ListBoxItem, e As RoutedEventArgs) Handles ISteamUpdaterTabSelect.Selected, ISteamModsTabSelect.Selected, ISettingsTabSelect.Selected, IToolsTabSelect.Selected, IAboutTabSelect.Selected
+    Private Sub MenuItemm_Selected(sender As ListBoxItem, e As RoutedEventArgs) Handles ISteamUpdaterTabSelect.Selected, ISteamModsTabSelect.Selected, ISettingsTabSelect.Selected, IToolsTabSelect.Selected, IAboutTabSelect.Selected, ILocalModsTabSelect.Selected
         Dim menus As New List(Of ListBox) From {
             IMainMenuItems,
             IServerProfilesMenu,

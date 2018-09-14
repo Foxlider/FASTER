@@ -219,6 +219,18 @@ Partial Friend NotInheritable Class MySettings
             Me("localMods") = value
         End Set
     End Property
+
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+        Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+        Global.System.Configuration.DefaultSettingValueAttribute("")>  _
+    Public Property localModFolders() As System.Collections.Generic.List(Of String)
+        Get
+            Return CType(Me("localModFolders"),System.Collections.Generic.List(Of String))
+        End Get
+        Set
+            Me("localModFolders") = value
+        End Set
+    End Property
 End Class
 
 Namespace My

@@ -34,12 +34,6 @@
                 </ListBoxItem.ToolTip>
                 <materialDesign:PackIcon Kind="Plus"/>
             </ListBoxItem>
-            <ListBoxItem x:Name="IAddLocalMod">
-                <ListBoxItem.ToolTip>
-                    <TextBlock><Run Text="Add Local Mod"/></TextBlock>
-                </ListBoxItem.ToolTip>
-                <materialDesign:PackIcon Kind="FolderOpen"/>
-            </ListBoxItem>
             <ListBoxItem>
                 <ListBoxItem.ToolTip>
                     <TextBlock><Run Text="Import from Arma 3 Launcher File"/></TextBlock>

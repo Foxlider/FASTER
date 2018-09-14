@@ -1,0 +1,72 @@
+﻿<UserControl x:Class="LocalMods"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+
+             FontFamily="{DynamicResource MaterialDesignFont}"
+             
+             TextElement.FontWeight="Regular"
+             TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+             TextElement.FontSize="11"
+             TextOptions.TextFormattingMode="Ideal"
+             TextOptions.TextRenderingMode="Auto"
+
+             mc:Ignorable="d"
+             d:DesignHeight="570.4"
+             d:DesignWidth="796.8">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <ListBox x:Name="IModActionButtons" SelectionMode="Extended" Style="{StaticResource MaterialDesignToolToggleListBox}" Margin="5">
+            <ListBoxItem x:Name="IRefreshList">
+                <ListBoxItem.ToolTip>
+                    <TextBlock><Run Text="Refresh List"/></TextBlock>
+                </ListBoxItem.ToolTip>
+                <materialDesign:PackIcon Kind="Refresh"/>
+            </ListBoxItem>
+            <ListBoxItem x:Name="IAddLocalMod">
+                <ListBoxItem.ToolTip>
+                    <TextBlock><Run Text="Add Local Mod"/></TextBlock>
+                </ListBoxItem.ToolTip>
+                <materialDesign:PackIcon Kind="FolderOpen"/>
+            </ListBoxItem>
+            <ListBoxItem x:Name="IEditFolders">
+                <ListBoxItem.ToolTip>
+                    <TextBlock><Run Text="Edit Folders To Search"/></TextBlock>
+                </ListBoxItem.ToolTip>
+                <materialDesign:PackIcon Kind="Pencil"/>
+            </ListBoxItem>
+        </ListBox>
+        <DataGrid Name="IModView" Grid.Row="1" Grid.Column="0" Margin="5" CanUserReorderColumns="False" CanUserResizeRows="False" GridLinesVisibility="All" IsReadOnly="True" CanUserAddRows="False" AutoGenerateColumns="False" ItemsSource="{Binding NotifyOnSourceUpdated=True}" materialDesign:DataGridAssist.CellPadding="2 2 2 2" materialDesign:DataGridAssist.ColumnHeaderPadding="3 3 3 3">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Name" Binding="{Binding Path=Name}"/>
+                <DataGridTextColumn Header="Author" Binding="{Binding Path=Author}"/>
+                <DataGridTextColumn Header="Location" Binding="{Binding Path=Path}"/>
+                <DataGridTemplateColumn Header="Website">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Height="25" Width="25" Padding="0">
+                                <materialDesign:PackIcon Kind="Earth" Width="20" Height="20"/>
+                            </Button>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Delete">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Height="25" Width="25" Padding="0">
+                                <materialDesign:PackIcon Kind="Delete" Width="20" Height="20"/>
+                            </Button>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</UserControl>

@@ -151,6 +151,10 @@
     <Compile Include="About.xaml.vb">
       <DependentUpon>About.xaml</DependentUpon>
     </Compile>
+    <Compile Include="LocalMods.xaml.vb">
+      <DependentUpon>LocalMods.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Models\LocalMod.vb" />
     <Compile Include="Models\ServerCollection.vb" />
     <Compile Include="Models\Theme.vb" />
     <Compile Include="Settings.vb" />
@@ -174,6 +178,10 @@
     <Page Include="About.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="LocalMods.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -280,9 +288,6 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="SettingsBackup.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
 </Project>

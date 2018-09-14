@@ -44,5 +44,8 @@
     <Setting Name="localMods" Type="System.Collections.Generic.List(Of FAST2.Models.localMod)" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+	<Setting Name="localModFolders" Type="System.Collections.Generic.List(Of String)" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>
