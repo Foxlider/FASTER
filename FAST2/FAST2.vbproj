@@ -151,9 +151,6 @@
     <Compile Include="About.xaml.vb">
       <DependentUpon>About.xaml</DependentUpon>
     </Compile>
-    <Compile Include="NewServerProfile.xaml.vb">
-      <DependentUpon>NewServerProfile.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Models\ServerCollection.vb" />
     <Compile Include="Models\Theme.vb" />
     <Compile Include="Settings.vb" />
@@ -177,10 +174,6 @@
     <Page Include="About.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="NewServerProfile.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

@@ -129,7 +129,6 @@ Namespace Models
                 MainWindow.Instance.IMessageDialog.IsOpen = True
                 MainWindow.Instance.IMessageDialogText.Text = "Please use format: https://steamcommunity.com/sharedfiles/filedetails/?id=*********"
             End If
-            FAST2.SteamMods.Instance.UpdateModsView()
         End Sub
     End Class
     
@@ -146,25 +145,18 @@ Namespace Models
             Me.PrivateMod = privateMod
         End Sub
 
-        <XmlElement(Order:=1)>
         Public Property WorkshopId As Integer = Nothing
 
-        <XmlElement(Order:=2)>
         Public Property Name As String = String.Empty
 
-        <XmlElement(Order:=3)>
         Public Property Author As String = String.Empty
 
-        <XmlElement(Order:=4)>
         Public Property SteamLastUpdated As Integer = Nothing
 
-        <XmlElement(Order:=5)>
         Public Property LocalLastUpdated As Integer = 0
 
-        <XmlElement(Order:=6)>
         Public Property PrivateMod As Boolean = False
 
-        <XmlElement(Order:=6)>
         Public Property Status As String = "Not Installed"
     End Class
 
@@ -180,16 +172,12 @@ Namespace Models
             Me.Website = website
         End Sub
         
-        <XmlElement(Order:=1)>
         Public Property Name As String = String.Empty
 
-        <XmlElement(Order:=2)>
         Public Property Path As String = String.Empty
 
-        <XmlElement(Order:=3)>
         Public Property Author As String = String.Empty
 
-        <XmlElement(Order:=4)>
         Public Property Website As String = String.Empty
     End Class
 End Namespace

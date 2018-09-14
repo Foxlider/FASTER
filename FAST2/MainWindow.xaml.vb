@@ -171,6 +171,7 @@ Public Class MainWindow
                                 Dim steamCode As String
 
                                 steamCode = InputBox("Enter Steam Guard code from email or mobile app.", "Steam Guard Code", "")
+                                'steamCode = ISteamGuardCode.Text
                                 oStreamWriter.Write(steamCode & Environment.NewLine)
                             ElseIf sOutput Like "*Mobile Authenticator*" Then
                                 Dim steamCode As String
@@ -366,7 +367,7 @@ Public Class MainWindow
 
     'Handles when any menu item is selected
     Private Sub MenuItemm_Selected(sender As ListBoxItem, e As RoutedEventArgs) Handles ISteamUpdaterTabSelect.Selected, ISteamModsTabSelect.Selected, ISettingsTabSelect.Selected, IToolsTabSelect.Selected, IAboutTabSelect.Selected
-        Dim menus As New List(Of Controls.ListBox) From {
+        Dim menus As New List(Of ListBox) From {
             IMainMenuItems,
             IServerProfilesMenu,
             IOtherMenuItems
@@ -388,7 +389,7 @@ Public Class MainWindow
     End Sub
     
     'Makes close button red when mouse is over button
-    Private Sub WindowCloseButton_MouseEnter(sender As Object, e As Input.MouseEventArgs) Handles IWindowCloseButton.MouseEnter
+    Private Sub WindowCloseButton_MouseEnter(sender As Object, e As MouseEventArgs) Handles IWindowCloseButton.MouseEnter
         Dim converter = New BrushConverter()
         Dim brush = CType(converter.ConvertFromString("#D72C2C"), Brush)
 
@@ -396,7 +397,7 @@ Public Class MainWindow
     End Sub
 
     'Changes colour of close button back to UI base when mouse leaves button
-    Private Sub WindowCloseButton_MouseLeave(sender As Object, e As Input.MouseEventArgs) Handles IWindowCloseButton.MouseLeave
+    Private Sub WindowCloseButton_MouseLeave(sender As Object, e As MouseEventArgs) Handles IWindowCloseButton.MouseLeave
         Dim brush = FindResource("MaterialDesignPaper")
 
         IWindowCloseButton.Background = brush
@@ -550,14 +551,11 @@ Public Class MainWindow
         End Try
     End Sub
     
-    'Creates a new Server Profile and adds it to the UI menu
     Private Sub NewServerProfileButton_Click(sender As Object, e As RoutedEventArgs) Handles INewServerProfileButton.Click
-        'Dim newProfileDialog As New NewServerProfile
-        'newProfileDialog.Show()
         INewServerProfileDialog.isOpen = True
     End Sub
 
-    Private Sub INewServerProfileDialog_KeyUp(sender As Object, e As Input.KeyEventArgs) Handles INewServerProfileDialog.KeyUp
+    Private Sub INewServerProfileDialog_KeyUp(sender As Object, e As KeyEventArgs) Handles INewServerProfileDialog.KeyUp
         If e.Key = Key.Escape
             INewServerProfileDialog.IsOpen = False
             INewProfileName.Text = String.Empty
