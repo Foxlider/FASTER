@@ -83,33 +83,13 @@ Namespace Models
 
                 If Not duplicate Then
                     Try
-                        Dim modName As String
-                        Dim appName As String
-                        Dim sourceString As String
-                        Dim author As String
-                        Dim authorStart, authorEnd, authorLength As Integer
-
-                        sourceString = New WebClient().DownloadString(modUrl)
-
-                        appName = sourceString.Substring(sourceString.IndexOf("content=" & ControlChars.Quote & "Steam Workshop:", StringComparison.Ordinal) + 25, 6)
+                       Dim modInfo = GetModInfo(modId)
                         
-                        If appName Like "Arma 3" Then
+                        If modInfo IsNot Nothing
+                            Dim modName = modInfo.Item1
+                            Dim steamUpdateTime = modInfo.Item3
+                            Dim author = modInfo.Item2
                             
-                            modName = sourceString.Substring(sourceString.IndexOf("<title>Steam Workshop :: ", StringComparison.Ordinal) + 25)
-                            modName = StrReverse(modName)
-                            modName = modName.Substring(modName.IndexOf(">eltit/<", StringComparison.Ordinal) + 8)
-                            modName = StrReverse(modName)
-                            modName = MainWindow.SafeName(modName)
-
-                            authorStart = sourceString.IndexOf("myworkshopfiles/?appid=107410"">", StringComparison.Ordinal) +31
-                            authorEnd = sourceString.IndexOf("'s Workshop</a>", StringComparison.Ordinal)
-                            authorLength = authorEnd - authorStart
-                            author = sourceString.Substring(authorStart, authorLength)
-
-                            Dim modInfo = MainWindow.GetModInfo(modId)
-
-                            Dim steamUpdateTime = modInfo.Substring(modInfo.IndexOf("""time_updated"":") + 15, 10)
-
                             currentMods.Add(New SteamMod(modId, modName, author, steamUpdateTime, 0))
 
                             My.Settings.SteamMods = currentMods
@@ -128,6 +108,62 @@ Namespace Models
             Else
                 MainWindow.Instance.IMessageDialog.IsOpen = True
                 MainWindow.Instance.IMessageDialogText.Text = "Please use format: https://steamcommunity.com/sharedfiles/filedetails/?id=*********"
+            End If
+        End Sub
+
+        Private Shared Function GetModInfo(modId) As Tuple(Of String, String, String)
+            Dim sourceString, appName, author, modName, steamUpdateTime As String
+            Dim authorStart, authorEnd, authorLength As Integer
+            Dim url = "https://steamcommunity.com/sharedfiles/filedetails/?id=" & modId
+
+            sourceString = New WebClient().DownloadString(url)
+
+            appName = sourceString.Substring(sourceString.IndexOf("content=" & ControlChars.Quote & "Steam Workshop:", StringComparison.Ordinal) + 25, 6)
+                        
+            If appName Like "Arma 3" Then
+                            
+                modName = sourceString.Substring(sourceString.IndexOf("<title>Steam Workshop :: ", StringComparison.Ordinal) + 25)
+                modName = StrReverse(modName)
+                modName = modName.Substring(modName.IndexOf(">eltit/<", StringComparison.Ordinal) + 8)
+                modName = StrReverse(modName)
+                modName = MainWindow.SafeName(modName)
+
+                authorStart = sourceString.IndexOf("myworkshopfiles/?appid=107410"">", StringComparison.Ordinal) +31
+                authorEnd = sourceString.IndexOf("'s Workshop</a>", StringComparison.Ordinal)
+                authorLength = authorEnd - authorStart
+                author = sourceString.Substring(authorStart, authorLength)
+
+                Dim modInfo = MainWindow.GetModInfo(modId)
+
+                steamUpdateTime = modInfo.Substring(modInfo.IndexOf("""time_updated"":") + 15, 10)
+                
+                Return New Tuple(Of String,String,String)(modName, author, steamUpdateTime)
+
+            Else
+                Return Nothing
+            End If
+        End Function
+
+        Public Shared Sub UpdateInfoFromSteam()
+            If My.Settings.steamMods.Count > 0
+                Dim currentMods = My.Settings.steamMods
+
+                For Each steamMod In My.Settings.steamMods
+                    If Not steamMod.PrivateMod
+                        Dim modInfo = GetModInfo(steamMod.WorkshopId)
+
+                        If modInfo IsNot Nothing
+                            Dim updateMod = currentMods.Find(function(c) c.WorkshopId = steamMod.WorkshopId)
+
+                            updateMod.Name = modInfo.Item1
+                            updateMod.Author = modInfo.Item2
+                            updateMod.SteamLastUpdated = modInfo.Item3
+                        End If
+                    End If
+                Next
+
+                My.Settings.SteamMods = currentMods
+                My.Settings.Save()
             End If
         End Sub
     End Class
