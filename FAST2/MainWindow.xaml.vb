@@ -90,7 +90,7 @@ Public Class MainWindow
     End Sub
 
     'Installs the SteamCMD tool
-    Private Sub InstallSteam()
+    Public Sub InstallSteam()
         IMessageDialog.IsOpen = True
         IMessageDialogText.Text = "Steam CMD will now download and start the install process. If prompted please enter your Steam Guard Code." & Environment.NewLine & Environment.NewLine & "You will recieve this by email from steam. When this is all complete type 'quit' to finish."
 
@@ -284,7 +284,7 @@ Public Class MainWindow
         Dim newSteamModsTab As TabItem = IMainContent.Items.Item(1)
         Dim newLocalModsTab As TabItem = IMainContent.Items(2)
         Dim newSettingsTab As TabItem = IMainContent.Items.Item(3)
-        Dim newAboutTab As TabItem = IMainContent.Items.Item(5)
+        Dim newAboutTab As TabItem = IMainContent.Items.Item(4)
         
         newSteamModsTab.Content = New SteamMods
         newLocalModsTab.Content = New LocalMods
@@ -368,7 +368,7 @@ Public Class MainWindow
     End Function
 
     'Handles when any menu item is selected
-    Private Sub MenuItemm_Selected(sender As ListBoxItem, e As RoutedEventArgs) Handles ISteamUpdaterTabSelect.Selected, ISteamModsTabSelect.Selected, ISettingsTabSelect.Selected, IToolsTabSelect.Selected, IAboutTabSelect.Selected, ILocalModsTabSelect.Selected
+    Private Sub MenuItemm_Selected(sender As ListBoxItem, e As RoutedEventArgs) Handles ISteamUpdaterTabSelect.Selected, ISteamModsTabSelect.Selected, ISettingsTabSelect.Selected, IAboutTabSelect.Selected, ILocalModsTabSelect.Selected
         Dim menus As New List(Of ListBox) From {
             IMainMenuItems,
             IServerProfilesMenu,
@@ -414,6 +414,12 @@ Public Class MainWindow
     Private Sub WindowMinimizeButton_Selected(sender As Object, e As RoutedEventArgs) Handles IWindowMinimizeButton.Selected
         IWindowMinimizeButton.IsSelected = False
         WindowState = WindowState.Minimized
+    End Sub
+    
+    'Opens Tools Dialogs
+    Private Sub ToolsButton_Selected(sender As Object, e As RoutedEventArgs) Handles IToolsButton.Selected
+        IToolsButton.IsSelected = False
+        IToolsDialog.IsOpen = True
     End Sub
 
     'Allows user to move the window around using the custom nav bar
@@ -578,5 +584,24 @@ Public Class MainWindow
             INewProfileName.Text = String.Empty
             Mouse.OverrideCursor = Cursors.Arrow
         End If
+    End Sub
+
+    Private Sub InstallSteamCmd_Click(sender As Object, e As RoutedEventArgs) Handles InstallSteamCmdButton.Click
+        IToolsDialog.IsOpen = False
+        InstallSteam()
+    End Sub
+
+    Private Sub OpenArmaServerLocation_Click(sender As Object, e As RoutedEventArgs) Handles OpenArmaServerLocation.Click
+        IToolsDialog.IsOpen = False
+        Process.Start(IServerDirBox.Text)
+    End Sub
+
+    Private Sub OpenSteamCmdLocation_Click(sender As Object, e As RoutedEventArgs) Handles OpenSteamCmdLocation.Click
+        IToolsDialog.IsOpen = False
+        Process.Start(ISteamDirBox.Text)
+    End Sub
+
+    Private Sub IToolsDialog_MouseLeftButtonUp(sender As Object, e As MouseButtonEventArgs) Handles IToolsDialog.MouseLeftButtonUp
+        IToolsDialog.IsOpen = False
     End Sub
 End Class

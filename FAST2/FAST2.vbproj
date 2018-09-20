@@ -172,9 +172,6 @@
     <Compile Include="SteamMods.xaml.vb">
       <DependentUpon>SteamMods.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Tools.xaml.vb">
-      <DependentUpon>Tools.xaml</DependentUpon>
-    </Compile>
     <Page Include="About.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -208,10 +205,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="SteamMods.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Tools.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -51,7 +51,10 @@
             <Image Name="ILogoImage" HorizontalAlignment="Left" Margin="5,0" Height="20" Width="20" Source="FAST-main-icon.ico"/>
             <Label Name="IWindowTitle" Content="Flax's Arma Server Tool" VerticalAlignment="Center"/>
         </StackPanel>
-        <ListBox Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right" SelectionMode="Extended" Style="{StaticResource MaterialDesignToolToggleFlatListBox}" Margin="0,0,-1,0" Width="84">
+        <ListBox Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right" SelectionMode="Extended" Style="{StaticResource MaterialDesignToolToggleFlatListBox}" Margin="0,0,-1,0" Width="126">
+            <ListBoxItem Name="IToolsButton" Background="{DynamicResource MaterialDesignPaper}">
+                <materialDesign:PackIcon Kind="Wrench" Width="15" Height="16"/>
+            </ListBoxItem>
             <ListBoxItem Name="IWindowMinimizeButton" Background="{DynamicResource MaterialDesignPaper}">
                 <materialDesign:PackIcon Kind="WindowMinimize" Width="15" Height="16"/>
             </ListBoxItem>
@@ -93,7 +96,6 @@
             <Label Content="Other" Margin="10,10,0,0" FontWeight="Bold" FontStyle="Italic" />
             <ListBox Name="IOtherMenuItems" HorizontalAlignment="Stretch" Margin="0,0,0,10">
                 <ListBoxItem Name="ISettingsTabSelect" Content="Settings"/>
-                <ListBoxItem Name="IToolsTabSelect" Content="Tools"/>
                 <ListBoxItem Name="IAboutTabSelect" Content="About"/>
             </ListBox>
         </StackPanel>
@@ -213,9 +215,6 @@
             <!--Main Content - Settings Tab-->
             <TabItem Name="ISettingsTab" Header="TabItem"/>
 
-            <!--Main Content - Tools Tab-->
-            <TabItem Name="IToolsTab" Header="TabItem"/>
-
             <!--Main Content - About Tab-->
             <TabItem Name="IAboutTab" Header="TabItem"/>
         </TabControl>
@@ -271,6 +270,24 @@
                             <Button Name="ISubmitCode" Content="Submit" HorizontalAlignment="Right" Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}" CommandTarget="{Binding ElementName=ISteamGuardDialog}"/>
                         </DockPanel>
                     </StackPanel>
+                </Grid>
+            </materialDesign:DialogHost.DialogContent>
+        </materialDesign:DialogHost>
+
+        <materialDesign:DialogHost Grid.ColumnSpan="2" Grid.RowSpan="3" Grid.Row="1" Grid.Column="0" IsOpen="False" Name="IToolsDialog" Margin="-2">
+            <materialDesign:DialogHost.DialogContent>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Button Grid.Row="0" Name="InstallSteamCmdButton" Content="Install SteamCMD" Margin="10"/>
+                    <Button Grid.Row="1" Name="OpenSteamCmdLocation" Content="Open SteamCMD Folder" Margin="10"/>
+                    <Button Grid.Row="2" Name="OpenArmaServerLocation" Content="Open Arma 3 Server Folder" Margin="10"/>
                 </Grid>
             </materialDesign:DialogHost.DialogContent>
         </materialDesign:DialogHost>
