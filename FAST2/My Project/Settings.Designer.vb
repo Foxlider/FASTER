@@ -136,6 +136,18 @@ Partial Friend NotInheritable Class MySettings
             Me("firstRun") = value
         End Set
     End Property
+
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+        Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+        Global.System.Configuration.DefaultSettingValueAttribute("False")>  _
+    Public Property excludeServerFolder() As Boolean
+        Get
+            Return CType(Me("excludeServerFolder"),Boolean)
+        End Get
+        Set
+            Me("excludeServerFolder") = value
+        End Set
+    End Property
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute()>  _

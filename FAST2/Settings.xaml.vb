@@ -36,10 +36,11 @@ Class Settings
     End Sub
 
     Private Sub Settings_Initialized(sender As Object, e As EventArgs) Handles Me.Initialized
+        IExcludeServerFolder.IsChecked = My.Settings.excludeServerFolder
         IBaseThemeToggle.IsChecked = My.Settings.isDark
         UpdateLocalModFolders()
     End Sub
-
+    
     Private Sub UpdateLocalModFolders()
         ILocalModFolders.Items.Clear()
 
@@ -61,5 +62,14 @@ Class Settings
            My.Settings.localModFolders.Remove(folder)
         Next
         UpdateLocalModFolders()
+    End Sub
+    
+    Private Sub IExcludeServerFolder_Click(sender As Object, e As RoutedEventArgs) Handles IExcludeServerFolder.Click
+        If IExcludeServerFolder.IsChecked
+            My.Settings.excludeServerFolder = True
+        Else
+            My.Settings.excludeServerFolder = False
+        End If
+        My.Settings.Save()
     End Sub
 End Class

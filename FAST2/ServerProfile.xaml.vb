@@ -427,13 +427,13 @@ Class ServerProfile
     End Sub
 
     Private Sub IServerFileButton_Click(sender As Object, e As RoutedEventArgs) Handles IServerFileButton.Click
-        Dim dialog As New Microsoft.Win32.OpenFileDialog
-        dialog.Filter = "Arma 3 Server Files|arma*.exe"
+        Dim dialog As New Microsoft.Win32.OpenFileDialog With {
+            .Filter = "Arma 3 Server Files|arma*.exe"
+        }
 
         If dialog.ShowDialog() <> DialogResult.OK Then
             IExecutable.Text = dialog.FileName
         End If
-        
     End Sub
 
     Private Sub IResetPerf_Click(sender As Object, e As RoutedEventArgs) Handles IResetPerf.Click

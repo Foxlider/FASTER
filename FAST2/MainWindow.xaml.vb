@@ -8,6 +8,7 @@ Imports System.Text
 Imports System.Xml
 Imports System.Xml.Serialization
 Imports FAST2.Models
+Imports Microsoft.Win32
 Imports WPFFolderBrowser
 
 

@@ -157,7 +157,6 @@
     <Compile Include="Models\LocalMod.vb" />
     <Compile Include="Models\ServerCollection.vb" />
     <Compile Include="Models\Theme.vb" />
-    <Compile Include="Settings.vb" />
     <Compile Include="Settings.xaml.vb">
       <DependentUpon>Settings.xaml</DependentUpon>
     </Compile>

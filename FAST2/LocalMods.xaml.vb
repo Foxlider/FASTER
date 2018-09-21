@@ -10,8 +10,12 @@ Public Class LocalMods
         
         If IRefreshList.IsSelected
             UpdateModsView()
-        ElseIf IAddLocalMod.IsSelected
-            ModCollection.AddLocalMod()
+        'ElseIf IAddLocalMod.IsSelected
+        '    ModCollection.AddLocalMod()
+        ElseIf IEditFolders.IsSelected
+            MainWindow.Instance.IMainContent.SelectedIndex = 3
+            MainWindow.Instance.ILocalModsTabSelect.IsSelected = False
+            MainWindow.Instance.ISettingsTabSelect.IsSelected = True
         End If
         
         Dim thread As New Thread(
@@ -48,11 +52,13 @@ Public Class LocalMods
 
         Dim foldersToSearch As New List(Of String)
 
+        If Not My.Settings.excludeServerFolder
+            foldersToSearch.Add(My.Settings.serverPath)
+        End If
+
         For Each folder In My.Settings.localModFolders
             foldersToSearch.Add(folder)
         Next
-
-        foldersToSearch.Add(My.Settings.serverPath)
         
         If foldersToSearch.Count > 0
             For Each localModFolder In foldersToSearch

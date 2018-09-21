@@ -30,12 +30,12 @@
                 </ListBoxItem.ToolTip>
                 <materialDesign:PackIcon Kind="Refresh"/>
             </ListBoxItem>
-            <ListBoxItem x:Name="IAddLocalMod">
+            <!--<ListBoxItem x:Name="IAddLocalMod">
                 <ListBoxItem.ToolTip>
                     <TextBlock><Run Text="Add Local Mod"/></TextBlock>
                 </ListBoxItem.ToolTip>
                 <materialDesign:PackIcon Kind="FolderOpen"/>
-            </ListBoxItem>
+            </ListBoxItem>-->
             <ListBoxItem x:Name="IEditFolders">
                 <ListBoxItem.ToolTip>
                     <TextBlock><Run Text="Edit Folders To Search"/></TextBlock>
@@ -45,10 +45,10 @@
         </ListBox>
         <DataGrid Name="ILocalModsView" Grid.Row="1" Grid.Column="0" Margin="5" CanUserReorderColumns="False" CanUserResizeRows="False" GridLinesVisibility="All" IsReadOnly="True" CanUserAddRows="False" AutoGenerateColumns="False" ItemsSource="{Binding NotifyOnSourceUpdated=True}" materialDesign:DataGridAssist.CellPadding="2 2 2 2" materialDesign:DataGridAssist.ColumnHeaderPadding="3 3 3 3">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Name" Binding="{Binding Path=Name}"/>
-                <DataGridTextColumn Header="Author" Binding="{Binding Path=Author}"/>
-                <DataGridTextColumn Header="Location" Binding="{Binding Path=Path}"/>
-                <DataGridTemplateColumn Header="Website">
+                <DataGridTextColumn Header="Name" Binding="{Binding Path=Name}" Width="Auto"/>
+                <DataGridTextColumn Header="Author" Binding="{Binding Path=Author}" Width="Auto"/>
+                <DataGridTextColumn Header="Location" Binding="{Binding Path=Path}" Width="*"/>
+                <!--<DataGridTemplateColumn Header="Website">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Button Height="25" Width="25" Padding="0">
@@ -65,7 +65,16 @@
                             </Button>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
+                </DataGridTemplateColumn>-->
+                <!--<DataGridTemplateColumn Header="Open">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Height="25" Width="25" Padding="0">
+                                <materialDesign:PackIcon Kind="FolderOpen" Width="20" Height="20"/>
+                            </Button>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>-->
             </DataGrid.Columns>
         </DataGrid>
     </Grid>
