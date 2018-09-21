@@ -22,21 +22,36 @@ Public Class SteamMods
 
     Private Sub ICheckForUpdates_Selected(sender As Object, e As RoutedEventArgs) Handles ICheckForUpdates.Selected
         ICheckForUpdates.IsSelected = False
-        IUpdateProgress.IsIndeterminate = True
+        CheckForUpdates()
+    End Sub
+
+    Private Async Sub CheckForUpdates()
         If My.Settings.steamMods.Count > 0
-            Dim thread As New Thread(
-                Sub()
-                    ModCollection.UpdateInfoFromSteam()
-                End Sub
-                )
-            thread.Start()
+            IUpdateProgress.IsIndeterminate = True
+            IModView.IsEnabled = False
+            IProgressInfo.Visibility = Visibility.Visible
+            IProgressInfo.Content = "Checking for updates..."
+
+            Dim tasks As New List(Of Task) From {
+                    Task.Run(
+                        Sub()
+                            ModCollection.UpdateInfoFromSteam()
+                        End Sub
+                        )
+                    }
+
+            Await Task.WhenAll(tasks)
+
+            IModView.IsEnabled = True
+            IProgressInfo.Visibility = Visibility.Collapsed
+            IUpdateProgress.IsIndeterminate = False   
+            UpdateModsView()
         Else 
             MainWindow.Instance.IMessageDialog.IsOpen = True
             MainWindow.Instance.IMessageDialogText.Text = "No Mods To Check"
         End If
-        IUpdateProgress.IsIndeterminate = True
     End Sub
-
+    
     Private Sub IAddSteamMod_Selected(sender As Object, e As RoutedEventArgs) Handles IAddSteamMod.Selected
         IImportSteamModDialog.IsOpen = True
         IAddSteamMod.IsSelected = False
@@ -56,7 +71,7 @@ Public Class SteamMods
         End If
     End Sub
 
-    Private Sub IImportSteamModDialog_KeyUp(sender As Object, e As Input.KeyEventArgs) Handles IImportSteamModDialog.KeyUp
+    Private Sub IImportSteamModDialog_KeyUp(sender As Object, e As KeyEventArgs) Handles IImportSteamModDialog.KeyUp
         If e.Key = Key.Escape
             IImportSteamModDialog.IsOpen = False
             IPrivateModCheck.IsChecked = False
@@ -64,16 +79,17 @@ Public Class SteamMods
         End If
     End Sub
 
-    Private Sub IContinueButton_Click(sender As Object, e As RoutedEventArgs) Handles IImportModButton.Click
-        Mouse.OverrideCursor = Input.Cursors.Wait
+    Private Sub IImportModButton_Click(sender As Object, e As RoutedEventArgs) Handles IImportModButton.Click
+        Mouse.OverrideCursor = Cursors.Wait
         IImportSteamModDialog.IsOpen = False
         ModCollection.AddSteamMod(ISteamItemBox.Text)
         IPrivateModCheck.IsChecked = False
         ISteamItemBox.Text = String.Empty
-        Mouse.OverrideCursor = Input.Cursors.Arrow
+        Mouse.OverrideCursor = Cursors.Arrow
         UpdateModsView()
     End Sub
 
-
-
+    Private Sub SteamMods_Initialized(sender As Object, e As EventArgs) Handles Me.Initialized
+        CheckForUpdates()
+    End Sub
 End Class

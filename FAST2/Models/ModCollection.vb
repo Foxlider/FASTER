@@ -126,7 +126,6 @@ Namespace Models
                 modName = StrReverse(modName)
                 modName = modName.Substring(modName.IndexOf(">eltit/<", StringComparison.Ordinal) + 8)
                 modName = StrReverse(modName)
-                modName = MainWindow.SafeName(modName)
 
                 authorStart = sourceString.IndexOf("myworkshopfiles/?appid=107410"">", StringComparison.Ordinal) +31
                 authorEnd = sourceString.IndexOf("'s Workshop</a>", StringComparison.Ordinal)
@@ -164,6 +163,7 @@ Namespace Models
 
                 My.Settings.SteamMods = currentMods
                 My.Settings.Save()
+
             End If
         End Sub
     End Class
