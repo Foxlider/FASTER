@@ -9,7 +9,7 @@ Public Class LocalMods
     Private Sub IActionButtons_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles IModActionButtons.SelectionChanged
         
         If IRefreshList.IsSelected
-
+            UpdateModsView()
         ElseIf IAddLocalMod.IsSelected
             ModCollection.AddLocalMod()
         End If
@@ -27,39 +27,46 @@ Public Class LocalMods
         thread.Start()
     End Sub
 
-    
-
     Private Sub SteamMods_Loaded(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
       UpdateModsView()
     End Sub
 
     Private Sub UpdateModsView()
-        IModView.Items.Clear()
+        ILocalModsView.Items.Clear()
 
-        Dim localMods = GetLocalMods()
+        Dim localMods = GetLocalMods
        
         If localMods IsNot Nothing
             For Each localMod In localMods
-                IModView.Items.Add(localMod)
+                ILocalModsView.Items.Add(localMod)
             Next
         End If
     End Sub
 
     Private Shared Function GetLocalMods() As List(Of LocalMod)
-        Dim serverDir = Trim(MainWindow.Instance.IServerDirBox.Text)
         Dim localMods = New List(Of LocalMod)
 
-        If serverDir IsNot String.Empty
-            Dim modFolders = Directory.GetDirectories(serverDir, "@*")
+        Dim foldersToSearch As New List(Of String)
 
-            For Each modFolder In modFolders
-                Dim name As String = modFolder.Substring(modFolder.LastIndexOf("@", StringComparison.Ordinal) + 1)
-                Dim author = "Unknown"
-                Dim website = "Unknown"
+        For Each folder In My.Settings.localModFolders
+            foldersToSearch.Add(folder)
+        Next
 
-                Dim localMod = New LocalMod(name,modFolder,author,website)
+        foldersToSearch.Add(My.Settings.serverPath)
+        
+        If foldersToSearch.Count > 0
+            For Each localModFolder In foldersToSearch
+                Dim modFolders = Directory.GetDirectories(localModFolder, "@*")
 
-                localMods.Add(localMod)
+                For Each modFolder In modFolders
+                    Dim name As String = modFolder.Substring(modFolder.LastIndexOf("@", StringComparison.Ordinal) + 1)
+                    Dim author = "Unknown"
+                    Dim website = "Unknown"
+
+                    Dim localMod = New LocalMod(name,modFolder,author,website)
+
+                    localMods.Add(localMod)
+                Next
             Next
         End If
 

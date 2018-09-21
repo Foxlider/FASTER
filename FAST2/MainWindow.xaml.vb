@@ -604,4 +604,8 @@ Public Class MainWindow
     Private Sub IToolsDialog_MouseLeftButtonUp(sender As Object, e As MouseButtonEventArgs) Handles IToolsDialog.MouseLeftButtonUp
         IToolsDialog.IsOpen = False
     End Sub
+
+    Private Sub IServerDirBox_TextChanged(sender As Object, e As TextChangedEventArgs) Handles IServerDirBox.TextChanged
+        My.Settings.serverPath = IServerDirBox.Text
+    End Sub
 End Class

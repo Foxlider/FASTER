@@ -44,8 +44,11 @@
     <Setting Name="localMods" Type="System.Collections.Generic.List(Of FAST2.Models.localMod)" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-	<Setting Name="localModFolders" Type="System.Collections.Generic.List(Of String)" Scope="User">
+    <Setting Name="localModFolders" Type="System.Collections.Generic.List(Of String)" Scope="User">
       <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="excludeServerFolder" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
     </Setting>
   </Settings>
 </SettingsFile>

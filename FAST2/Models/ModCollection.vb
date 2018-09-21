@@ -22,9 +22,7 @@ Namespace Models
 
             If path IsNot Nothing
                 Dim modName = path.Substring(path.LastIndexOf("@", StringComparison.Ordinal) + 1)
-
                 
-
                 If currentMods.Count > 0 Then
                     For Each localMod In currentMods
                         If localMod.Name = modName

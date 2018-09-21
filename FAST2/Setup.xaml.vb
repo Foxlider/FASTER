@@ -9,7 +9,9 @@ Public Class Setup
         Theme.ApplyAccent(My.Settings.accentColour)
         Theme.SwitchBase(My.Settings.isDark)
 
-        If My.Settings.firstRun = False Then
+        If My.Settings.firstRun Then
+
+        Else
             MainWindow.Instance.Show()
             MainWindow.Instance.Activate()
             Close()

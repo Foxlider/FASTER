@@ -28,14 +28,38 @@ Class Settings
     Private Sub IClearSettings_Click(sender As Object, e As RoutedEventArgs) Handles IClearSettings.Click
         IResetDialog.IsOpen = True
     End Sub
-
-    Private Sub SettingsTab_Loaded(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
-        IBaseThemeToggle.IsChecked = My.Settings.isDark
-    End Sub
-
+    
     Private Sub IResetButton_Click(sender As Object, e As RoutedEventArgs) Handles IResetButton.Click
         My.Settings.clearSettings = true
         Forms.Application.Restart()
         Windows.Application.Current.Shutdown()
+    End Sub
+
+    Private Sub Settings_Initialized(sender As Object, e As EventArgs) Handles Me.Initialized
+        IBaseThemeToggle.IsChecked = My.Settings.isDark
+        UpdateLocalModFolders()
+    End Sub
+
+    Private Sub UpdateLocalModFolders()
+        ILocalModFolders.Items.Clear()
+
+        If My.Settings.localModFolders.Count > 0
+            For Each folder in My.Settings.localModFolders
+                ILocalModFolders.Items.Add(folder)
+            Next
+        End If
+    End Sub
+
+    Private Sub INewLocalFolder_Click(sender As Object, e As RoutedEventArgs) Handles INewLocalFolder.Click
+        My.Settings.localModFolders.Add(MainWindow.SelectFolder())
+        UpdateLocalModFolders()
+    End Sub
+
+
+    Private Sub IRemoveLocalFolders_Click(sender As Object, e As RoutedEventArgs) Handles IRemoveLocalFolders.Click
+        For Each folder In ILocalModFolders.SelectedItems
+           My.Settings.localModFolders.Remove(folder)
+        Next
+        UpdateLocalModFolders()
     End Sub
 End Class

@@ -58,7 +58,9 @@ Public Class SteamMods
     End Sub
 
     Private Sub SteamMods_Loaded(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
-      UpdateModsView()
+        If My.Settings.steamMods.Count > 0
+            UpdateModsView()
+        End If
     End Sub
 
     Private Sub UpdateModsView()
@@ -90,6 +92,8 @@ Public Class SteamMods
     End Sub
 
     Private Sub SteamMods_Initialized(sender As Object, e As EventArgs) Handles Me.Initialized
-        CheckForUpdates()
+        If My.Settings.steamMods.Count > 0
+            UpdateModsView()
+        End If
     End Sub
 End Class
