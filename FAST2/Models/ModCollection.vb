@@ -155,6 +155,12 @@ Namespace Models
                             updateMod.Name = modInfo.Item1
                             updateMod.Author = modInfo.Item2
                             updateMod.SteamLastUpdated = modInfo.Item3
+
+                            If updateMod.SteamLastUpdated > updateMod.LocalLastUpdated
+                                updateMod.Status = "Update Required"
+                            Else
+                                updateMod.Status = "Up to Date"
+                            End If
                         End If
                     End If
                 Next

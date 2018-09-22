@@ -46,7 +46,7 @@
                 </ListBoxItem.ToolTip>
                 <materialDesign:PackIcon Kind="Clock"/>
             </ListBoxItem>
-            <ListBoxItem>
+            <ListBoxItem  Name="IUpdateAll">
                 <ListBoxItem.ToolTip>
                     <TextBlock><Run Text="Update All"/></TextBlock>
                 </ListBoxItem.ToolTip>

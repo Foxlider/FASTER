@@ -8,7 +8,7 @@ Imports System.Text
 Imports System.Xml
 Imports System.Xml.Serialization
 Imports FAST2.Models
-Imports Microsoft.Win32
+Imports MaterialDesignThemes.Wpf
 Imports WPFFolderBrowser
 
 
@@ -44,6 +44,30 @@ Public Class MainWindow
     Private _cancelled As Boolean
     Private ReadOnly _oProcess As New Process()
 
+    
+    Private Sub MainWindow_Initialized(sender As Object, e As EventArgs) Handles Me.Initialized
+    End Sub
+
+    'Executes some events when the window is loaded
+    Private Sub MainWindow_Loaded(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
+        Dim newSteamModsTab As TabItem = IMainContent.Items.Item(1)
+        Dim newLocalModsTab As TabItem = IMainContent.Items(2)
+        Dim newSettingsTab As TabItem = IMainContent.Items.Item(3)
+        Dim newAboutTab As TabItem = IMainContent.Items.Item(4)
+
+        newSteamModsTab.Content = New SteamMods
+        newLocalModsTab.Content = New LocalMods
+        newSettingsTab.Content = New Settings
+        newAboutTab.Content = New About
+
+        LoadServerProfiles()
+        LoadSteamUpdaterSettings()
+
+        If InstallSteamCmd Then
+            InstallSteam()
+        End If
+    End Sub
+
     'Opens folder select dialog when clicking certain buttons
     Private Sub DirButton_Click(sender As Object, e As RoutedEventArgs) Handles ISteamDirButton.Click, IServerDirButton.Click
         Dim path As String = SelectFolder()
@@ -58,7 +82,7 @@ Public Class MainWindow
     End Sub
 
     'Checks if the program is ready to run a command
-    Private Function ReadyToUpdate() As Boolean
+    Public Function ReadyToUpdate() As Boolean
         If ISteamDirBox.Text = String.Empty Then
             Return False
         ElseIf ISteamUserBox.Text = String.Empty Then
@@ -91,9 +115,9 @@ Public Class MainWindow
     End Sub
 
     'Installs the SteamCMD tool
-    Public Sub InstallSteam()
+    Private Sub InstallSteam()
         IMessageDialog.IsOpen = True
-        IMessageDialogText.Text = "Steam CMD will now download and start the install process. If prompted please enter your Steam Guard Code." & Environment.NewLine & Environment.NewLine & "You will recieve this by email from steam. When this is all complete type 'quit' to finish."
+        IMessageDialogText.Text = "Steam CMD will now download and start the install process. If prompted please enter your Steam Guard Code." & Environment.NewLine & Environment.NewLine & "You willrecieve this by email from steam. When this is all complete type 'quit' to finish."
 
         Const url = "https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip"
         Dim fileName As String = My.Settings.steamCMDPath & "\steamcmd.zip"
@@ -125,9 +149,9 @@ Public Class MainWindow
     End Sub
 
     'Runs Steam command via SteamCMD and redirects input and output to FAST
-    Private Async Sub RunSteamCommand(steamCmd As String, steamCommand As String, type As String, Optional modIDs As IReadOnlyCollection(Of String) = Nothing)
+    Public Async Sub RunSteamCommand(steamCmd As String, steamCommand As String, type As String)
         If ReadyToUpdate() Then
-            
+            ISteamOutputBox.Document.Blocks.Clear()
             ISteamProgressBar.Value = 0
             ISteamCancelButton.IsEnabled = True
             IMainContent.SelectedItem = ISteamUpdaterTab
@@ -252,9 +276,7 @@ Public Class MainWindow
                 If type Is "addon" Then
                     'UpdateModGrid()
 
-                    For Each item In modIDs
-                        CopyKeys()
-                    Next
+                    
 
                 ElseIf type Is "server" Then
                     Instance.IMessageDialog.IsOpen = True
@@ -275,31 +297,7 @@ Public Class MainWindow
             IMessageDialogText.Text = "Please check that SteamCMD is installed and that all fields are correct:" & Environment.NewLine & Environment.NewLine & Environment.NewLine & "   -  Steam Dir" & Environment.NewLine & Environment.NewLine & "   -  User Name & Pass" & Environment.NewLine & Environment.NewLine & "   -  Server Dir"
         End If
     End Sub
-
-    Private Shared Sub CopyKeys()
-        Throw New NotImplementedException
-    End Sub
-
-    'Executes some events when the window is loaded
-    Private Sub MainWindow_Loaded(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
-        Dim newSteamModsTab As TabItem = IMainContent.Items.Item(1)
-        Dim newLocalModsTab As TabItem = IMainContent.Items(2)
-        Dim newSettingsTab As TabItem = IMainContent.Items.Item(3)
-        Dim newAboutTab As TabItem = IMainContent.Items.Item(4)
-        
-        newSteamModsTab.Content = New SteamMods
-        newLocalModsTab.Content = New LocalMods
-        newSettingsTab.Content = New Settings
-        newAboutTab.Content = New About
-
-        LoadServerProfiles()
-        LoadSteamUpdaterSettings()
-
-        If InstallSteamCmd Then
-            InstallSteam()
-        End If
-    End Sub
-
+    
     'Takes any string and removes illegal characters
     Public Shared Function SafeName(input As String, Optional ignoreWhiteSpace As Boolean = False, Optional replacement As Char = "_") As String
         If ignoreWhiteSpace Then
@@ -609,4 +607,5 @@ Public Class MainWindow
     Private Sub IServerDirBox_TextChanged(sender As Object, e As TextChangedEventArgs) Handles IServerDirBox.TextChanged
         My.Settings.serverPath = IServerDirBox.Text
     End Sub
+
 End Class

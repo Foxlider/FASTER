@@ -52,7 +52,7 @@ Public Class LocalMods
 
         Dim foldersToSearch As New List(Of String)
 
-        If Not My.Settings.excludeServerFolder
+        If Not My.Settings.excludeServerFolder And My.Settings.serverPath IsNot String.Empty
             foldersToSearch.Add(My.Settings.serverPath)
         End If
 

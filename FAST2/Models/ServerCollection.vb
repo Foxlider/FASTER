@@ -67,10 +67,6 @@ Namespace Models
             My.Settings.Save()
             MainWindow.Instance.LoadServerProfiles
         End Sub
-
-        Public Shared Sub ExportServerProfile(safeName As String)
-            
-        End Sub
     End Class
 
     <Serializable()>
