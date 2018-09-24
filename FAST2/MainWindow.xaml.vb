@@ -8,14 +8,13 @@ Imports System.Text
 Imports System.Xml
 Imports System.Xml.Serialization
 Imports FAST2.Models
-Imports MaterialDesignThemes.Wpf
 Imports WPFFolderBrowser
 
 
 Public Class MainWindow
 
     Private Shared _instance As MainWindow
-    
+
     ''' <summary>
     ''' Gets the one and only instance.
     ''' </summary>
@@ -37,32 +36,19 @@ Public Class MainWindow
         InitializeComponent()
 
         ' Add any initialization after the InitializeComponent() call.
-
     End Sub
-    
+
     Public InstallSteamCmd As Boolean = False
     Private _cancelled As Boolean
-    Private ReadOnly _oProcess As New Process()
+    Private _oProcess As New Process()
 
-    
+
     Private Sub MainWindow_Initialized(sender As Object, e As EventArgs) Handles Me.Initialized
-    End Sub
-
-    'Executes some events when the window is loaded
-    Private Sub MainWindow_Loaded(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
-        Dim newSteamModsTab As TabItem = IMainContent.Items.Item(1)
-        Dim newLocalModsTab As TabItem = IMainContent.Items(2)
-        Dim newSettingsTab As TabItem = IMainContent.Items.Item(3)
-        Dim newAboutTab As TabItem = IMainContent.Items.Item(4)
-
-        newSteamModsTab.Content = New SteamMods
-        newLocalModsTab.Content = New LocalMods
-        newSettingsTab.Content = New Settings
-        newAboutTab.Content = New About
-
         LoadServerProfiles()
         LoadSteamUpdaterSettings()
+    End Sub
 
+    Private Sub MainWindow_Loaded(sender As Object, e As EventArgs) Handles Me.Loaded
         If InstallSteamCmd Then
             InstallSteam()
         End If
@@ -111,13 +97,16 @@ Public Class MainWindow
 
         steamCommand = "+login " & ISteamUserBox.Text & " " & ISteamPassBox.Password & " +force_install_dir " & IServerDirBox.Text & " +app_update " & branch & " validate +quit"
 
-        RunSteamCommand(steamCMD, steamCommand, "server")
+        RunSteamCommand(steamCmd, steamCommand, "server")
     End Sub
 
     'Installs the SteamCMD tool
     Private Sub InstallSteam()
         IMessageDialog.IsOpen = True
-        IMessageDialogText.Text = "Steam CMD will now download and start the install process. If prompted please enter your Steam Guard Code." & Environment.NewLine & Environment.NewLine & "You willrecieve this by email from steam. When this is all complete type 'quit' to finish."
+        IMessageDialogText.Text = "Steam CMD will now download and start the install process. If prompted please enter your Steam Guard Code." & Environment.NewLine & Environment.NewLine & "You will receive this by email from steam. When this is all complete type 'quit' to finish."
+        
+        ISteamOutputBox.AppendText("Installing SteamCMD")
+        ISteamOutputBox.AppendText(Environment.NewLine & "File Downloading...")
 
         Const url = "https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip"
         Dim fileName As String = My.Settings.steamCMDPath & "\steamcmd.zip"
@@ -126,9 +115,6 @@ Public Class MainWindow
 
         AddHandler client.DownloadFileCompleted, New AsyncCompletedEventHandler(AddressOf SteamDownloadCompleted)
         client.DownloadFileAsync(New Uri(url), fileName)
-
-        ISteamOutputBox.AppendText("Installing SteamCMD")
-        ISteamOutputBox.AppendText(Environment.NewLine & "File Downloading...")
     End Sub
 
     'Continues SteamCMD install when file download is complete
@@ -148,10 +134,75 @@ Public Class MainWindow
         RunSteamCommand(steamPath & "\steamcmd.exe", "+login anonymous +quit", "install")
     End Sub
 
+    Private Sub UpdateTextBox(text As String)
+        If _oProcess IsNot Nothing
+            Dim oStreamWriter = _oProcess.StandardInput
+
+            Dispatcher.Invoke(
+                Sub()
+                    ISteamOutputBox.AppendText(text & Environment.NewLine)
+                    ISteamOutputBox.ScrollToEnd()
+                End Sub
+                )
+
+            If text Like "*at the console." Then
+                Dim steamCode As String
+
+                steamCode = InputBox("Enter Steam Guard code from email or mobile app.", "Steam Guard Code", "")
+                oStreamWriter.Write(steamCode & Environment.NewLine)
+            ElseIf text Like "*Mobile Authenticator*" Then
+                Dim steamCode As String
+
+                steamCode = InputBox("Enter Steam Guard code from email or mobile app.", "Steam Guard Code", "")
+                oStreamWriter.Write(steamCode & Environment.NewLine)
+            End If
+
+            If text Like "*Update state*" Then
+                Dim counter As Integer = text.IndexOf(":", StringComparison.Ordinal)
+                Dim progress As String = text.Substring(counter + 2, 2)
+                Dim progressValue As Integer
+
+                If progress.Contains(".") Then
+                    progressValue = progress.Substring(0, 1)
+                Else
+                    progressValue = progress
+                End If
+                Dispatcher.Invoke(
+                    Sub()
+                        ISteamProgressBar.IsIndeterminate = False
+                        ISteamProgressBar.Value = progressValue
+                    End Sub
+                    )
+            End If
+
+            If text Like "*Success*" Then
+                Dispatcher.Invoke(
+                    Sub()
+                        ISteamProgressBar.Value = 100
+                    End Sub
+                    )
+            End If
+
+            If text Like "*Timeout*" Then
+                Dispatcher.Invoke(
+                    Sub()
+                        Instance.IMessageDialog.IsOpen = True
+                        Instance.IMessageDialogText.Text = "A Steam Download timed out. You may have to download again when task is complete."
+                    End Sub
+                    )
+            End If
+        End If
+    End Sub
+
+    Private Sub Proc_OutputDataReceived(sender As Object, e As DataReceivedEventArgs)
+        UpdateTextBox(e.Data)
+    End Sub
+
     'Runs Steam command via SteamCMD and redirects input and output to FAST
     Public Async Sub RunSteamCommand(steamCmd As String, steamCommand As String, type As String)
         If ReadyToUpdate() Then
-            ISteamOutputBox.Document.Blocks.Clear()
+            Dim clear = True
+            _oProcess = New Process()
             ISteamProgressBar.Value = 0
             ISteamCancelButton.IsEnabled = True
             IMainContent.SelectedItem = ISteamUpdaterTab
@@ -163,120 +214,59 @@ Public Class MainWindow
                 ISteamOutputBox.AppendText("Starting SteamCMD to update Addon" & Environment.NewLine & Environment.NewLine)
             ElseIf type Is "server" Then
                 ISteamOutputBox.AppendText("Starting SteamCMD to update Server" & Environment.NewLine)
+            ElseIf type Is "install" Then 
+                clear = False
+            End If
+
+            If clear 
+                ISteamOutputBox.Document.Blocks.Clear()
             End If
 
             tasks.Add(Task.Run(
-                    Sub()
-                        Dim oStartInfo As New ProcessStartInfo(steamCmd, steamCommand) With {
-                            .CreateNoWindow = True,
-                            .WindowStyle = ProcessWindowStyle.Hidden,
-                            .UseShellExecute = False,
-                            .RedirectStandardOutput = True,
-                            .RedirectStandardInput = True,
-                            .RedirectStandardError = True
-                        }
-                        _oProcess.StartInfo = oStartInfo
-                        _oProcess.Start()
+                Sub()
+                    _oProcess.StartInfo.FileName = steamCmd
+                    _oProcess.StartInfo.Arguments = steamCommand
+                    _oProcess.StartInfo.UseShellExecute = False
+                    _oProcess.StartInfo.WindowStyle = ProcessWindowStyle.Hidden
+                    _oProcess.StartInfo.CreateNoWindow = True
+                    _oProcess.StartInfo.RedirectStandardOutput = True
+                    _oProcess.StartInfo.RedirectStandardError = True
+                    _oProcess.StartInfo.RedirectStandardInput = True
+                    _oProcess.EnableRaisingEvents = True
 
-                        Dim sOutput As String
+                    AddHandler _oProcess.ErrorDataReceived, AddressOf Proc_OutputDataReceived
+                    AddHandler _oProcess.OutputDataReceived, AddressOf Proc_OutputDataReceived
+                    _oProcess.start()
 
-                        Dim oStreamReader As StreamReader = _oProcess.StandardOutput
-                        Dim oStreamWriter As StreamWriter = _oProcess.StandardInput
-                        Do
-                            sOutput = oStreamReader.ReadLine
-
-                            Dispatcher.Invoke(
-                                    Sub()
-' ReSharper disable once AccessToModifiedClosure
-                                        ISteamOutputBox.AppendText(Environment.NewLine & sOutput)
-                                    End Sub
-                                )
-
-                            If sOutput Like "*at the console." Then
-                                Dim steamCode As String
-
-                                steamCode = InputBox("Enter Steam Guard code from email or mobile app.", "Steam Guard Code", "")
-                                'steamCode = ISteamGuardCode.Text
-                                oStreamWriter.Write(steamCode & Environment.NewLine)
-                            ElseIf sOutput Like "*Mobile Authenticator*" Then
-                                Dim steamCode As String
-
-                                steamCode = InputBox("Enter Steam Guard code from email or mobile app.", "Steam Guard Code", "")
-                                oStreamWriter.Write(steamCode & Environment.NewLine)
-                            End If
-
-                            If sOutput Like "*Update state*" Then
-                                Dim counter As Integer = sOutput.IndexOf(":", StringComparison.Ordinal)
-                                Dim progress As String = sOutput.Substring(counter + 2, 2)
-                                Dim progressValue As Integer
-
-                                If progress.Contains(".") Then
-                                    progressValue = progress.Substring(0, 1)
-                                Else
-                                    progressValue = progress
-                                End If
-                                Dispatcher.Invoke(
-                                            Sub()
-                                                ISteamProgressBar.IsIndeterminate = False
-                                                ISteamProgressBar.Value = progressValue
-                                            End Sub
-                                    )
-                            End If
-
-                            If sOutput Like "*Success*" Then
-                                Dispatcher.Invoke(
-                                            Sub()
-                                                ISteamProgressBar.Value = 100
-                                            End Sub
-                                    )
-                            End If
-
-                            If sOutput Like "*Timeout*" Then
-                                Instance.IMessageDialog.IsOpen = True
-                                Instance.IMessageDialogText.Text = "Steam download timed out, please update mod again."
-                            End If
-
-                            Dispatcher.Invoke(
-                                Sub()
-' ReSharper disable once AccessToModifiedClosure
-                                    If sOutput = Nothing Then
-
-                                    Else
-' ReSharper disable once AccessToModifiedClosure
-                                        ISteamOutputBox.AppendText(sOutput & Environment.NewLine)
-                                    End If
-
-                                    'IsteamOutputBox.SelectionStart = steamOutputBox.Text.Length
-                                    ISteamOutputBox.ScrollToEnd()
-                                End Sub
-                                )
-
-                        Loop While _oProcess.HasExited = False
-
-
-                    End Sub
-                ))
+                    _oProcess.BeginErrorReadLine()
+                    _oProcess.BeginOutputReadLine()
+                    Do
+                        
+                    Loop Until _oProcess.HasExited = True
+                    
+                End Sub
+            ))
 
             Await Task.WhenAll(tasks)
 
             If (_cancelled = True) Then
-                _cancelled = Nothing
+                _cancelled = False
 
                 ISteamProgressBar.IsIndeterminate = False
                 ISteamProgressBar.Value = 0
 
                 ISteamOutputBox.Document.Blocks.Clear()
                 ISteamOutputBox.AppendText("Process Canceled")
+
+                _oProcess.Close()
+                _oProcess = Nothing
             Else
-                ISteamOutputBox.AppendText(Environment.NewLine & "Task Completed" & Environment.NewLine)
+                ISteamOutputBox.AppendText("Task Completed" & Environment.NewLine)
                 ISteamOutputBox.ScrollToEnd()
                 ISteamProgressBar.IsIndeterminate = False
                 ISteamProgressBar.Value = 100
 
                 If type Is "addon" Then
-                    'UpdateModGrid()
-
-                    
 
                 ElseIf type Is "server" Then
                     Instance.IMessageDialog.IsOpen = True
@@ -288,16 +278,12 @@ Public Class MainWindow
             End If
 
             ISteamCancelButton.IsEnabled = False
-            'modsTab.Enabled = True
-            'updateServerButton.Enabled = True
-            'modsDataGrid.PerformLayout()
-
         Else
             IMessageDialog.IsOpen = True
             IMessageDialogText.Text = "Please check that SteamCMD is installed and that all fields are correct:" & Environment.NewLine & Environment.NewLine & Environment.NewLine & "   -  Steam Dir" & Environment.NewLine & Environment.NewLine & "   -  User Name & Pass" & Environment.NewLine & Environment.NewLine & "   -  Server Dir"
         End If
     End Sub
-    
+
     'Takes any string and removes illegal characters
     Public Shared Function SafeName(input As String, Optional ignoreWhiteSpace As Boolean = False, Optional replacement As Char = "_") As String
         If ignoreWhiteSpace Then
@@ -358,7 +344,7 @@ Public Class MainWindow
     'Opens Folder select dialog and returns selected path
     Public Shared Function SelectFolder()
         Dim folderDialog As New WPFFolderBrowserDialog
-        
+
         If folderDialog.ShowDialog = True Then
             Return folderDialog.FileName
         Else
@@ -388,7 +374,7 @@ Public Class MainWindow
             End If
         Next
     End Sub
-    
+
     'Makes close button red when mouse is over button
     Private Sub WindowCloseButton_MouseEnter(sender As Object, e As MouseEventArgs) Handles IWindowCloseButton.MouseEnter
         Dim converter = New BrushConverter()
@@ -414,7 +400,7 @@ Public Class MainWindow
         IWindowMinimizeButton.IsSelected = False
         WindowState = WindowState.Minimized
     End Sub
-    
+
     'Opens Tools Dialogs
     Private Sub ToolsButton_Selected(sender As Object, e As RoutedEventArgs) Handles IToolsButton.Selected
         IToolsButton.IsSelected = False
@@ -557,22 +543,22 @@ Public Class MainWindow
             MsgBox("CancelUpdateButton - An exception occurred:" & vbCrLf & ex.Message)
         End Try
     End Sub
-    
+
     Private Sub NewServerProfileButton_Click(sender As Object, e As RoutedEventArgs) Handles INewServerProfileButton.Click
-        INewServerProfileDialog.isOpen = True
+        INewServerProfileDialog.IsOpen = True
     End Sub
 
     Private Sub INewServerProfileDialog_KeyUp(sender As Object, e As KeyEventArgs) Handles INewServerProfileDialog.KeyUp
-        If e.Key = Key.Escape
+        If e.Key = Key.Escape Then
             INewServerProfileDialog.IsOpen = False
             INewProfileName.Text = String.Empty
         End If
     End Sub
 
-    Private Sub ICreateProfileButon_Click(sender As Object, e As RoutedEventArgs) Handles ICreateProfileButon.Click
+    Private Sub ICreateProfileButton_Click(sender As Object, e As RoutedEventArgs) Handles ICreateProfileButton.Click
         INewProfileName.Text = INewProfileName.Text.Trim()
-        
-        If INewProfileName.Text = String.Empty 
+
+        If INewProfileName.Text = String.Empty Then
             IMessageDialog.IsOpen = True
             IMessageDialogText.Text = "Please use a suitable profile name."
         Else

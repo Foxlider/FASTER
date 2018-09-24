@@ -37,6 +37,7 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <StackPanel Grid.ColumnSpan="10">
                     <Label Margin="8" Content="Program Settings" FontSize="12"/>
@@ -51,8 +52,9 @@
                     <materialDesign:PackIcon Kind="Delete" Height="10" Width="10"/>
                 </Button>
                 <xctk:CheckListBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" Name="ILocalModFolders" Margin="10" Padding="5" MinHeight="200" MaxHeight="200" Foreground="{DynamicResource MaterialDesignBody}" Background="{DynamicResource MaterialDesignTextAreaInactiveBorder}"/>
-                <CheckBox Name="IExcludeServerFolder" Grid.Row="3" Grid.Column="0" Content="Exclude Server Folder" Margin="10,0,10,10"/>
-                <Button Grid.Row="4" Grid.Column="0" Name="IClearSettings" Content="Reset FAST" Margin="10" Width="120" HorizontalAlignment="Left"/>
+                <CheckBox Name="IExcludeServerFolder" Grid.Row="3" Grid.Column="0" Content="Exclude Local Mods in Server Folder" Margin="10,0,10,10"/>
+                <CheckBox Name="IUpdatesOnLaunch" Grid.Row="4" Grid.Column="0" Content="Check for Steam Mod Updates on Launch" IsChecked="True" Margin="10,0,10,10"/>
+                <Button Grid.Row="5" Grid.Column="0" Name="IClearSettings" Content="Reset FAST" Margin="10" Width="120" HorizontalAlignment="Left"/>
             </Grid>
         </materialDesign:Card>
         

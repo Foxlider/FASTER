@@ -27,7 +27,9 @@
 
     WindowStartupLocation="CenterScreen"
     WindowStyle="None"
+    xmlns:fast2="clr-namespace:FAST2"
 >
+
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="0"/>
     </WindowChrome.WindowChrome>
@@ -205,16 +207,24 @@
             </TabItem>
 
             <!--Main Content - Steam Mods Tab-->
-            <TabItem Name="ISteamModsTab" Header="TabItem"/>
+            <TabItem Name="ISteamModsTab" Header="TabItem">
+                <fast2:SteamMods/>
+            </TabItem>
 
-            <!--Main Content - Steam Mods Tab-->
-            <TabItem Name="ILocalModsTab" Header="TabItem"/>
+            <!--Main Content - Local Mods Tab-->
+            <TabItem Name="ILocalModsTab" Header="TabItem">
+                <fast2:LocalMods/>
+            </TabItem>
 
             <!--Main Content - Settings Tab-->
-            <TabItem Name="ISettingsTab" Header="TabItem"/>
+            <TabItem Name="ISettingsTab" Header="TabItem">
+                <fast2:Settings/>
+            </TabItem>
 
             <!--Main Content - About Tab-->
-            <TabItem Name="IAboutTab" Header="TabItem"/>
+            <TabItem Name="IAboutTab" Header="TabItem">
+                <fast2:About/>
+            </TabItem>
         </TabControl>
 
         <materialDesign:DialogHost Grid.ColumnSpan="2" Grid.RowSpan="3" Grid.Row="1" Grid.Column="0" IsOpen="False" Name="IMessageDialog" Margin="-2">
@@ -243,7 +253,7 @@
                         </TextBlock>
                         <TextBox Name="INewProfileName" materialDesign:HintAssist.Hint="Profile Name" Style="{StaticResource MaterialDesignFloatingHintTextBox}" BorderBrush="{DynamicResource PrimaryHueDarkBrush}"/>
                         <DockPanel Margin="0,10">
-                            <Button Name="ICreateProfileButon" Content="Create" Width="90" HorizontalAlignment="Right"/>
+                            <Button Name="ICreateProfileButton" Content="Create" Width="90" HorizontalAlignment="Right"/>
                         </DockPanel>
                     </StackPanel>
                 </Grid>

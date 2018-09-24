@@ -171,6 +171,18 @@ Partial Friend NotInheritable Class MySettings
             Me("clearSettings") = value
         End Set
     End Property
+
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+    Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+    Global.System.Configuration.DefaultSettingValueAttribute("True")>  _
+    Public Property checkForModUpdates() As Boolean
+        Get
+            Return CType(Me("checkForModUpdates"),Boolean)
+        End Get
+        Set
+            Me("checkForModUpdates") = value
+        End Set
+    End Property
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _

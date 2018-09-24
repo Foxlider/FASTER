@@ -63,7 +63,7 @@ Namespace Models
             Return currentLocalMods
         End Function
 
-        Public Shared Sub AddSteamMod(modUrl As String)
+        Public Shared Sub AddSteamMod(modUrl As String, Optional multiple As Boolean = False)
             If modUrl  Like "http*://steamcommunity.com/*/filedetails/?id=*" Then
                 Dim duplicate = False
                 Dim currentMods = GetSteamMods()
@@ -93,15 +93,18 @@ Namespace Models
                             My.Settings.SteamMods = currentMods
                             My.Settings.Save()
                         Else
-                            MainWindow.Instance.IMessageDialog.IsOpen = True
-                            MainWindow.Instance.IMessageDialogText.Text = "This is a workshop Item for a different game."
+                           
+                                MainWindow.Instance.IMessageDialog.IsOpen = True
+                                MainWindow.Instance.IMessageDialogText.Text = "This is a workshop Item for a different game."
                         End If
                     Catch ex As Exception
                         MsgBox("An exception occurred:" & vbCrLf & ex.Message)
                     End Try
                 Else
-                    MainWindow.Instance.IMessageDialog.IsOpen = True
-                    MainWindow.Instance.IMessageDialogText.Text = "Mod already imported."
+                    If Not multiple
+                        MainWindow.Instance.IMessageDialog.IsOpen = True
+                        MainWindow.Instance.IMessageDialogText.Text = "Mod already imported."
+                    End If
                 End If
             Else
                 MainWindow.Instance.IMessageDialog.IsOpen = True

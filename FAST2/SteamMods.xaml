@@ -34,12 +34,12 @@
                 </ListBoxItem.ToolTip>
                 <materialDesign:PackIcon Kind="Plus"/>
             </ListBoxItem>
-            <!--<ListBoxItem Name="IImportLauncherFile">
+            <ListBoxItem Name="IImportLauncherFile">
                 <ListBoxItem.ToolTip>
                     <TextBlock><Run Text="Import from Arma 3 Launcher File"/></TextBlock>
                 </ListBoxItem.ToolTip>
                 <materialDesign:PackIcon Kind="FileDocument"/>
-            </ListBoxItem>-->
+            </ListBoxItem>
             <ListBoxItem Name="ICheckForUpdates">
                 <ListBoxItem.ToolTip>
                     <TextBlock><Run Text="Check For Updates"/></TextBlock>
