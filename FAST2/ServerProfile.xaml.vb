@@ -1,4 +1,5 @@
-﻿Imports System.Threading
+﻿Imports System.IO
+Imports System.Threading
 Imports System.Windows.Forms
 Imports FAST2.Models
 
@@ -107,6 +108,11 @@ Class ServerProfile
         IOnDifferentData.Text = profile.OnDifferentData
         IOnUnsignedData.Text = profile.OnUnsignedData
         IRegularCheck.Text = profile.RegularCheck
+        IServerModsList.SelectedValue = profile.ServerMods
+        IClientModsList.SelectedValue = profile.ClientMods
+        IHeadlessModsList.SelectedValue = profile.HeadlessMods
+        IMissionCheckList.SelectedValue = profile.Missions
+
 
         ToggleUi(IHeadlessClientEnabled)
         ToggleUi(IAutoRestartEnabled)
@@ -296,6 +302,10 @@ Class ServerProfile
         profile.OnDifferentData = IOnDifferentData.Text
         profile.OnUnsignedData = IOnUnsignedData.Text
         profile.RegularCheck = IRegularCheck.Text
+        profile.ServerMods = IServerModsList.SelectedValue
+        profile.ClientMods = IClientModsList.SelectedValue
+        profile.HeadlessMods = IHeadlessModsList.SelectedValue
+        profile.Missions = IMissionCheckList.SelectedValue
 
         My.Settings.Save()
     End Sub
@@ -446,5 +456,106 @@ Class ServerProfile
         IMaxSizeNonguaranteed.Text = "512"
         IMinErrorToSend.Text = "0.001"
         IMinErrorToSendNear.Text = "0.01"
+    End Sub
+
+    Private Sub ServerProfile_Initialized(sender As Object, e As EventArgs) Handles Me.Initialized
+        UpdateModsList()
+    End Sub
+
+    Private Sub UpdateModsList()
+        Dim currentMods = IServerModsList.Items
+        Dim newMods As New List(Of String)
+        Dim checkedServerMods, checkedHcMods, checkedClientMods As String
+
+       checkedServerMods = IServerModsList.SelectedValue
+       checkedHcMods = IHeadlessModsList.SelectedValue
+       checkedClientMods = IClientModsList.SelectedValue
+
+        IServerModsList.Items.Clear()
+        IClientModsList.Items.Clear()
+        IHeadlessModsList.Items.Clear()
+
+        If Directory.Exists(My.Settings.serverPath) Then
+            For Each addon In Directory.GetDirectories(My.Settings.serverPath, "@*")
+                newMods.Add(Replace(addon, My.Settings.serverPath & "\", ""))
+            Next
+
+            For Each addon In newMods.ToList
+                For Each nAddon In currentMods
+                    If nAddon = addon Then
+                        newMods.Remove(nAddon)
+                    End If
+                Next
+            Next
+
+            For Each addon In newMods.ToList
+                IServerModsList.Items.Add(addon)
+                IClientModsList.Items.Add(addon)
+                IHeadlessModsList.Items.Add(addon)
+            Next
+
+            IServerModsList.SelectedValue = checkedServerMods
+            IClientModsList.SelectedValue = checkedClientMods
+            IHeadlessModsList.SelectedValue = checkedHcMods
+        Else
+            MsgBox("Please install game before continuing.")
+        End If
+
+    End Sub
+
+    Private Sub IModsRefresh_Click(sender As Object, e As RoutedEventArgs) Handles IClientModsRefresh.Click, IServerModsRefresh.Click, IHeadlessModsRefresh.Click
+        UpdateModsList()
+    End Sub
+
+    Private Property ModsToCopy As String
+
+    Private Sub ModsCopy_Click(sender As Controls.Button, e As RoutedEventArgs) Handles IClientModsCopy.Click, IServerModsCopy.Click, IHeadlessModsCopy.Click
+        Select Case sender.Name
+            Case "IClientModsCopy"
+                ModsToCopy = IClientModsList.SelectedValue
+            Case "IServerModsCopy"
+                ModsToCopy = IServerModsList.SelectedValue
+            Case "IHeadlessModsCopy"
+                ModsToCopy = IHeadlessModsList.SelectedValue
+        End Select
+    End Sub
+
+    Private Sub ModsPaste_Click(sender As Controls.Button, e As RoutedEventArgs) Handles IClientModsPaste.Click, IServerModsPaste.Click, IHeadlessModsPaste.Click
+        If ModsToCopy IsNot String.Empty
+            Select Case sender.Name
+                Case "IServerModsPaste"
+                    IServerModsList.SelectedValue = ModsToCopy
+                Case "IClientModsPaste"
+                    IClientModsList.SelectedValue = ModsToCopy
+                Case "IHeadlessModsPaste"
+                    IHeadlessModsList.SelectedValue = ModsToCopy
+            End Select
+        End If
+    End Sub
+
+    Private Sub ModsAll_Click(sender As Controls.Button, e As RoutedEventArgs) Handles IServerModsAll.Click, IClientModsAll.Click, IHeadlessModsAll.Click, IAllMissionsButton.Click
+        Select Case sender.Name
+            Case "IServerModsAll"
+                IServerModsList.SelectedItemsOverride = IServerModsList.Items
+            Case "IClientModsAll"
+                IClientModsList.SelectedItemsOverride = IClientModsList.Items
+            Case "IHeadlessModsAll"
+                IHeadlessModsList.SelectedItemsOverride = IHeadlessModsList.Items
+            Case "IAllMissionsButton"
+                IMissionCheckList.SelectedItemsOverride = IMissionCheckList.Items
+        End Select
+    End Sub
+
+    Private Sub ModsNone_Click(sender As Controls.Button, e As RoutedEventArgs) Handles IServerModsNone.Click, IClientModsNone.Click, IHeadlessModsNone.Click, INoMissionsButton.Click
+        Select Case sender.Name
+            Case "IServerModsNone"
+                IServerModsList.SelectedItemsOverride = Nothing
+            Case "IClientModsNone"
+                IClientModsList.SelectedItemsOverride = Nothing
+            Case "IHeadlessModsNone"
+                IHeadlessModsList.SelectedItemsOverride = Nothing
+            Case "INoMissionsButton"
+                IMissionCheckList.SelectedItemsOverride = Nothing
+        End Select
     End Sub
 End Class

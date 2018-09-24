@@ -41,6 +41,7 @@ Public Class MainWindow
     Public InstallSteamCmd As Boolean = False
     Private _cancelled As Boolean
     Private _oProcess As New Process()
+    Private _steamCodeValid As Boolean = False
 
 
     Private Sub MainWindow_Initialized(sender As Object, e As EventArgs) Handles Me.Initialized
@@ -61,8 +62,10 @@ Public Class MainWindow
         If path IsNot Nothing Then
             If sender Is ISteamDirButton Then
                 ISteamDirBox.Text = path
+                ISteamDirBox.Focus()
             ElseIf sender Is IServerDirButton Then
                 IServerDirBox.Text = path
+                IServerDirBox.Focus()
             End If
         End If
     End Sub
@@ -102,19 +105,30 @@ Public Class MainWindow
 
     'Installs the SteamCMD tool
     Private Sub InstallSteam()
-        IMessageDialog.IsOpen = True
-        IMessageDialogText.Text = "Steam CMD will now download and start the install process. If prompted please enter your Steam Guard Code." & Environment.NewLine & Environment.NewLine & "You will receive this by email from steam. When this is all complete type 'quit' to finish."
+        If ISteamDirBox.Text Is String.Empty
+            Instance.IMessageDialog.IsOpen = True
+            Instance.IMessageDialogText.Text = "Please make sure you have set a valid path for SteamCMD."
+        Else
+            If Not File.Exists(My.Settings.steamCMDPath & "\steamcmd.exe")
+                IMessageDialog.IsOpen = True
+                IMessageDialogText.Text = "Steam CMD will now download and start the install process. If prompted please enter your Steam Guard Code." & Environment.NewLine & Environment.NewLine & "You will receive this by email from steam. When this is all complete type 'quit' to finish."
         
-        ISteamOutputBox.AppendText("Installing SteamCMD")
-        ISteamOutputBox.AppendText(Environment.NewLine & "File Downloading...")
+                ISteamOutputBox.Document.Blocks.Clear()
+                ISteamOutputBox.AppendText("Installing SteamCMD")
+                ISteamOutputBox.AppendText(Environment.NewLine & "File Downloading...")
 
-        Const url = "https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip"
-        Dim fileName As String = My.Settings.steamCMDPath & "\steamcmd.zip"
+                Const url = "https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip"
+                Dim fileName As String = My.Settings.steamCMDPath & "\steamcmd.zip"
 
-        Dim client As New WebClient()
+                Dim client As New WebClient()
 
-        AddHandler client.DownloadFileCompleted, New AsyncCompletedEventHandler(AddressOf SteamDownloadCompleted)
-        client.DownloadFileAsync(New Uri(url), fileName)
+                AddHandler client.DownloadFileCompleted, New AsyncCompletedEventHandler(AddressOf SteamDownloadCompleted)
+                client.DownloadFileAsync(New Uri(url), fileName)
+            Else
+                Instance.IMessageDialog.IsOpen = True
+                Instance.IMessageDialogText.Text = "SteamCMD already appears to be installed." & Environment.NewLine & Environment.NewLine & "Please delete all files in the selected folder to reinstall."
+            End If
+        End If
     End Sub
 
     'Continues SteamCMD install when file download is complete
@@ -123,15 +137,13 @@ Public Class MainWindow
 
         Dim steamPath = My.Settings.steamCMDPath
         Dim zip As String = steamPath & "\steamcmd.zip"
-
+        
         ISteamOutputBox.AppendText(Environment.NewLine & "Unzipping...")
         ZipFile.ExtractToDirectory(zip, steamPath)
-
-
         ISteamOutputBox.AppendText(Environment.NewLine & "Installing...")
-        File.Delete(zip)
-
         RunSteamCommand(steamPath & "\steamcmd.exe", "+login anonymous +quit", "install")
+           
+        File.Delete(zip)
     End Sub
 
     Private Sub UpdateTextBox(text As String)
@@ -143,18 +155,41 @@ Public Class MainWindow
                     ISteamOutputBox.AppendText(text & Environment.NewLine)
                     ISteamOutputBox.ScrollToEnd()
                 End Sub
-                )
+            )
 
             If text Like "*at the console." Then
-                Dim steamCode As String
+                Dispatcher.Invoke(
+                    Sub()
+                        ISteamGuardDialog.IsOpen = True
+                    End Sub
+                )
+                Do 
 
-                steamCode = InputBox("Enter Steam Guard code from email or mobile app.", "Steam Guard Code", "")
-                oStreamWriter.Write(steamCode & Environment.NewLine)
+                Loop Until _steamCodeValid
+
+                _steamCodeValid = False
+                Dispatcher.Invoke(
+                    Sub()
+                        oStreamWriter.Write(ISteamGuardCode.Text & Environment.NewLine)
+                    End Sub
+                    )
             ElseIf text Like "*Mobile Authenticator*" Then
-                Dim steamCode As String
+                Dispatcher.Invoke(
+                    Sub()
+                        ISteamGuardDialog.IsOpen = True
+                    End Sub
+                    )
 
-                steamCode = InputBox("Enter Steam Guard code from email or mobile app.", "Steam Guard Code", "")
-                oStreamWriter.Write(steamCode & Environment.NewLine)
+                Do 
+
+                Loop Until _steamCodeValid
+
+                _steamCodeValid = False
+                Dispatcher.Invoke(
+                    Sub()
+                        oStreamWriter.Write(ISteamGuardCode.Text & Environment.NewLine)
+                    End Sub
+                    )
             End If
 
             If text Like "*Update state*" Then
@@ -205,6 +240,7 @@ Public Class MainWindow
             _oProcess = New Process()
             ISteamProgressBar.Value = 0
             ISteamCancelButton.IsEnabled = True
+            ISteamUpdateButton.IsEnabled = False
             IMainContent.SelectedItem = ISteamUpdaterTab
             Dim tasks As New List(Of Task)
 
@@ -215,7 +251,7 @@ Public Class MainWindow
             ElseIf type Is "server" Then
                 ISteamOutputBox.AppendText("Starting SteamCMD to update Server" & Environment.NewLine)
             ElseIf type Is "install" Then 
-                clear = False
+               clear = False
             End If
 
             If clear 
@@ -278,6 +314,7 @@ Public Class MainWindow
             End If
 
             ISteamCancelButton.IsEnabled = False
+            ISteamUpdateButton.IsEnabled = True
         Else
             IMessageDialog.IsOpen = True
             IMessageDialogText.Text = "Please check that SteamCMD is installed and that all fields are correct:" & Environment.NewLine & Environment.NewLine & Environment.NewLine & "   -  Steam Dir" & Environment.NewLine & Environment.NewLine & "   -  User Name & Pass" & Environment.NewLine & Environment.NewLine & "   -  Server Dir"
@@ -594,4 +631,13 @@ Public Class MainWindow
         My.Settings.serverPath = IServerDirBox.Text
     End Sub
 
+    Private Sub ISubmitCode_Click(sender As Object, e As RoutedEventArgs) Handles ISubmitCode.Click
+        _steamCodeValid = True
+        ISteamGuardDialog.IsOpen = False
+    End Sub
+
+    Private Sub ISteamSettings_Changed(sender As Object, e As RoutedEventArgs) Handles ISteamUserBox.LostFocus, ISteamPassBox.LostFocus, IServerDirBox.LostFocus, ISteamDirBox.LostFocus, IServerBranch.LostFocus
+        UpdateSteamUpdaterSettings()
+    End Sub
+    
 End Class

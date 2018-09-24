@@ -354,14 +354,20 @@
                                 <Button Name="IServerModsCopy" HorizontalAlignment="Right" Margin="2,-27,5,0" ToolTip="Copy Selected" Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}" Height="20" Width="20">
                                     <materialDesign:PackIcon Kind="ContentCopy" Height="10" Width="10"/>
                                 </Button>
+                                <Button Name="IServerModsPaste" HorizontalAlignment="Right" Margin="2,-27,35,0" ToolTip="Paste" Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}" Height="20" Width="20">
+                                    <materialDesign:PackIcon Kind="ContentPaste" Height="10" Width="10"/>
+                                </Button>
+                                <Button Name="IServerModsRefresh" HorizontalAlignment="Right" Margin="2,-27,65,0" ToolTip="Refresh Mods" Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}" Height="20" Width="20">
+                                    <materialDesign:PackIcon Kind="Refresh" Height="10" Width="10"/>
+                                </Button>
                             </StackPanel>
                             <xctk:CheckListBox Grid.Row="1" Grid.Column="0" Name="IServerModsList" Margin="10" Background="{DynamicResource MaterialDesignTextAreaInactiveBorder}" Foreground="{DynamicResource MaterialDesignBody}"/>
                             <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,10">
                                 <Button Name="IServerModsAll" Margin="5" Content="All" FontSize="10" Height="20" />
                                 <Button Name="IServerModsNone" Margin="5" Content="None" FontSize="10" Height="20"/>
-                                <Button Name="IServerModsUp" Margin="5" Content="▲" FontSize="10" Height="20" Width="20" Padding="0"/>
+                                <!--<Button Name="IServerModsUp" Margin="5" Content="▲" FontSize="10" Height="20" Width="20" Padding="0"/>
                                 <Button Name="IServerModsDown" Margin="5" Content="▼" FontSize="10" Height="20" Width="20" Padding="0"/>
-                                <Button Name="IServerModsAz" Margin="5" Content="A-Z" FontSize="10" Height="20"/>
+                                <Button Name="IServerModsAz" Margin="5" Content="A-Z" FontSize="10" Height="20"/>-->
                             </StackPanel>
                         </Grid>
                     </materialDesign:Card>
@@ -379,14 +385,20 @@
                                 <Button Name="IClientModsCopy" HorizontalAlignment="Right" Margin="2,-27,5,0" ToolTip="Copy Selected" Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}" Height="20" Width="20">
                                     <materialDesign:PackIcon Kind="ContentCopy" Height="10" Width="10"/>
                                 </Button>
+                                <Button Name="IClientModsPaste" HorizontalAlignment="Right" Margin="2,-27,35,0" ToolTip="Paste" Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}" Height="20" Width="20">
+                                    <materialDesign:PackIcon Kind="ContentPaste" Height="10" Width="10"/>
+                                </Button>
+                                <Button Name="IClientModsRefresh" HorizontalAlignment="Right" Margin="2,-27,65,0" ToolTip="Refresh Mods" Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}" Height="20" Width="20">
+                                    <materialDesign:PackIcon Kind="Refresh" Height="10" Width="10"/>
+                                </Button>
                             </StackPanel>
                             <xctk:CheckListBox Grid.Row="1" Grid.Column="0" Name="IClientModsList" Margin="10" Background="{DynamicResource MaterialDesignTextAreaInactiveBorder}" Foreground="{DynamicResource MaterialDesignBody}"/>
                             <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,10">
                                 <Button Name="IClientModsAll" Margin="5" Content="All" FontSize="10" Height="20" />
                                 <Button Name="IClientModsNone" Margin="5" Content="None" FontSize="10" Height="20"/>
-                                <Button Name="IClientModsUp" Margin="5" Content="▲" FontSize="10" Height="20" Width="20" Padding="0"/>
+                                <!--<Button Name="IClientModsUp" Margin="5" Content="▲" FontSize="10" Height="20" Width="20" Padding="0"/>
                                 <Button Name="IClientModsDown" Margin="5" Content="▼" FontSize="10" Height="20" Width="20" Padding="0"/>
-                                <Button Name="IClientModsAz" Margin="5" Content="A-Z" FontSize="10" Height="20"/>
+                                <Button Name="IClientModsAz" Margin="5" Content="A-Z" FontSize="10" Height="20"/>-->
                             </StackPanel>
                         </Grid>
                     </materialDesign:Card>
@@ -404,14 +416,20 @@
                                 <Button Name="IHeadlessModsCopy" HorizontalAlignment="Right" Margin="2,-27,5,0" ToolTip="Copy Selected" Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}" Height="20" Width="20">
                                     <materialDesign:PackIcon Kind="ContentCopy" Height="10" Width="10"/>
                                 </Button>
+                                <Button Name="IHeadlessModsPaste" HorizontalAlignment="Right" Margin="2,-27,35,0" ToolTip="Paste" Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}" Height="20" Width="20">
+                                    <materialDesign:PackIcon Kind="ContentPaste" Height="10" Width="10"/>
+                                </Button>
+                                <Button Name="IHeadlessModsRefresh" HorizontalAlignment="Right" Margin="2,-27,65,0" ToolTip="Refresh Mods" Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}" Height="20" Width="20">
+                                    <materialDesign:PackIcon Kind="Refresh" Height="10" Width="10"/>
+                                </Button>
                             </StackPanel>
                             <xctk:CheckListBox Grid.Row="1" Grid.Column="0" Name="IHeadlessModsList" Margin="10" Background="{DynamicResource MaterialDesignTextAreaInactiveBorder}" Foreground="{DynamicResource MaterialDesignBody}"/>
                             <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,10">
                                 <Button Name="IHeadlessModsAll" Margin="5" Content="All" FontSize="10" Height="20" />
                                 <Button Name="IHeadlessModsNone" Margin="5" Content="None" FontSize="10" Height="20"/>
-                                <Button Name="IHeadlessModsUp" Margin="5" Content="▲" FontSize="10" Height="20" Width="20" Padding="0"/>
+                                <!--<Button Name="IHeadlessModsUp" Margin="5" Content="▲" FontSize="10" Height="20" Width="20" Padding="0"/>
                                 <Button Name="IHeadlessModsDown" Margin="5" Content="▼" FontSize="10" Height="20" Width="20" Padding="0"/>
-                                <Button Name="IHeadlessModsAz" Margin="5" Content="A-Z" FontSize="10" Height="20"/>
+                                <Button Name="IHeadlessModsAz" Margin="5" Content="A-Z" FontSize="10" Height="20"/>-->
                             </StackPanel>
                         </Grid>
                     </materialDesign:Card>

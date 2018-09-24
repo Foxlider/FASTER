@@ -204,4 +204,20 @@ Public Class SteamMods
             UpdateModsView()
         End If
     End Sub
+
+    Private Sub DeleteMod(sender As Object, e As RoutedEventArgs)
+        Dim obj = CType((CType(e.Source, Controls.Button)).DataContext, SteamMod)
+
+        If Directory.Exists(My.Settings.steamCMDPath & "\steamapps\workshop\content\107410\" & obj.WorkshopId)
+            Directory.Delete(My.Settings.steamCMDPath & "\steamapps\workshop\content\107410\" & obj.WorkshopId)
+        End If
+
+        ModCollection.DeleteSteamMod(obj.WorkshopId)
+        UpdateModsView()
+    End Sub
+
+    Private Sub UpdateMod(sender As Object, e As RoutedEventArgs)
+        Dim obj = CType((CType(e.Source, Controls.Button)).DataContext, SteamMod)
+        MsgBox(obj.WorkshopId)
+    End Sub
 End Class

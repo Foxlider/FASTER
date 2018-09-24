@@ -118,10 +118,10 @@ Namespace Models
         Public Property RptTimestamp As String = "none"
         Public Property Motd As String = String.Empty
         Public Property MotdDelay As Integer = 5
-        'ServerMods
-        'ClientMods
-        'HeadlessMods
-        'Missions
+        Public Property ServerMods As String = String.Empty
+        Public Property ClientMods As String = String.Empty
+        Public Property HeadlessMods As String = String.Empty
+        Public Property Missions As String = String.Empty
         Public Property PersistentBattlefield As Boolean = False
         Public Property AutoInit As Boolean = False
         Public Property DifficultyPreset As String = String.Empty

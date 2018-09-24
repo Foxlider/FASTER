@@ -64,7 +64,7 @@
                 <DataGridTemplateColumn Header="Update">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Height="25" Width="25" Padding="0">
+                            <Button Height="25" Width="25" Padding="0" Click="UpdateMod">
                                 <materialDesign:PackIcon Kind="Update" Width="20" Height="20"/>
                             </Button>
                         </DataTemplate>
@@ -73,7 +73,7 @@
                 <DataGridTemplateColumn Header="Delete">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Height="25" Width="25" Padding="0">
+                            <Button Height="25" Width="25" Padding="0" Click="DeleteMod">
                                 <materialDesign:PackIcon Kind="Delete" Width="20" Height="20"/>
                             </Button>
                         </DataTemplate>

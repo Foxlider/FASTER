@@ -44,6 +44,15 @@ Namespace Models
             End If
             
         End Sub
+
+        Public Shared Sub DeleteSteamMod(workshopId As Int32)
+            Dim currentMods = GetSteamMods()
+
+            currentMods.RemoveAll(Function(x) x.WorkshopId = workshopId)
+
+            My.Settings.Save()
+        End Sub
+
         Private Shared Function GetSteamMods() As List(Of SteamMod)
             Dim currentSteamMods As New List(Of SteamMod)
 
@@ -53,6 +62,7 @@ Namespace Models
 
             Return currentSteamMods
         End Function
+
         Private Shared Function GetLocalMods() As List(Of LocalMod)
             Dim currentLocalMods As New List(Of LocalMod)
 
