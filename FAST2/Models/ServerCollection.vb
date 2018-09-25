@@ -155,6 +155,8 @@ Namespace Models
         Public Property DisconnectTimeout As Integer = 90
         Public Property KickOnSlowNetworkEnabled As Boolean = False
         Public Property KickOnSlowNetwork As String = String.Empty
+        Public Property TerrainGrid As Integer = 10
+        Public Property ViewDistance As Integer = 2500
         Public Property MaxPingEnabled As Boolean = False
         Public Property MaxPing As Integer = 60
         Public Property MaxDesyncEnabled As Boolean = False
@@ -179,5 +181,6 @@ Namespace Models
         Public Property OnDifferentData As String = String.Empty
         Public Property OnUnsignedData As String = String.Empty
         Public Property RegularCheck As String = String.Empty
+        Public Property BattleEye As Boolean = True
     End Class
 End NameSpace

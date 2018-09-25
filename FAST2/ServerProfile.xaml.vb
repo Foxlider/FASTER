@@ -1,4 +1,5 @@
-﻿Imports System.IO
+﻿Imports System.Collections.Specialized
+Imports System.IO
 Imports System.Threading
 Imports System.Windows.Forms
 Imports FAST2.Models
@@ -84,6 +85,8 @@ Class ServerProfile
         IDisconnectTimeOut.Text = profile.DisconnectTimeout
         IKickOnSlowNetworkEnabled.IsChecked = profile.KickOnSlowNetworkEnabled
         IKickOnSlowNetwork.Text = profile.KickOnSlowNetwork
+        ITerrainGrid.Text = profile.TerrainGrid
+        IViewDistance.Text = profile.ViewDistance
         IMaxPingEnabled.IsChecked = profile.MaxPingEnabled
         IMaxPing.Text = profile.MaxPing
         IMaxDesyncEnabled.IsChecked = profile.MaxDesyncEnabled
@@ -112,6 +115,7 @@ Class ServerProfile
         IClientModsList.SelectedValue = profile.ClientMods
         IHeadlessModsList.SelectedValue = profile.HeadlessMods
         IMissionCheckList.SelectedValue = profile.Missions
+        IBattleEye.IsChecked = profile.BattleEye
 
 
         ToggleUi(IHeadlessClientEnabled)
@@ -184,7 +188,13 @@ Class ServerProfile
         ElseIf IExportProfile.IsSelected Then
 
         ElseIf ILaunchServer.IsSelected Then
-
+            If ReadyToLaunch(IDisplayName.Content) Then
+                UpdateProfile()
+                LaunchServer()
+            Else
+                MainWindow.Instance.IMessageDialog.IsOpen = True
+                MainWindow.Instance.IMessageDialogText.Text = "Please make sure all fields are filled in and the profile is saved."
+            End If
         End If
 
         Dim thread As New Thread(
@@ -200,7 +210,355 @@ Class ServerProfile
         thread.Start()
     End Sub
 
+    Private Function ReadyToLaunch(profile As String)
+        profile = MainWindow.SafeName(profile)
+
+        If Not ProfileFilesExist(profile) Then
+            Return False
+        End If
+
+        If Not (IExecutable.Text Like "*arma3server*.exe") Then
+            Return False
+        End If
+
+        Return True
+    End Function
+
+    Private Function ProfileFilesExist(profile As String)
+        Dim path = My.Settings.serverPath
+
+        If Not Directory.Exists(path & "\Servers\" & profile) Then
+            Return False
+        End If
+
+        If Not File.Exists(path & "\Servers\" & profile & "\" & profile & "_config.cfg") Then
+            Return False
+        End If
+
+        If Not File.Exists(path & "\Servers\" & profile & "\" & profile & "_basic.cfg") Then
+            Return False
+        End If
+
+        Return True
+    End Function
+
+    Private Sub LaunchServer()
+        Dim profileName As String = MainWindow.SafeName(IDisplayName.Content)
+        Dim profilePath As String = AppDomain.CurrentDomain.BaseDirectory & "\Servers\" & profileName & "\"
+        Dim configs As String = profilePath & profileName
+        Dim start = True
+        Dim serverMods As String = Nothing
+
+        For Each addon In IServerModsList.SelectedItems
+            serverMods = serverMods & addon & ";"
+        Next
+
+        Try
+            WriteConfigFiles(profileName)
+        Catch ex As Exception
+            MsgBox(ex.Message)
+            MsgBox("Config files in use elsewhere - make sure server is not running.")
+            start = False
+        End Try
+
+        If start Then
+            Dim commandLine As String
+            commandLine = "-port=" & IPort.Text
+            commandLine = commandLine & " ""-config=" & configs & "_config.cfg"""
+            commandLine = commandLine & " ""-cfg=" & configs & "_basic.cfg"""
+            commandLine = commandLine & " ""-profiles=" & profilePath & """"
+            commandLine = commandLine & " -name=" & profileName
+            commandLine = commandLine & " ""-mod=" & serverMods & """"
+
+
+            If IHeadlessClientEnabled.IsChecked Then
+                commandLine = commandLine & " -enableHT"
+            End If
+
+            If IFilePatching.IsChecked Then
+                commandLine = commandLine & " -filePatching"
+            End If
+
+            If INetlog.IsChecked Then
+                commandLine = commandLine & " -netlog"
+            End If
+
+            If IRankingEnabled.IsChecked Then
+                commandLine = commandLine & " -ranking=" & IRankingLog.Text
+            End If
+
+            If IPidEnabled.IsChecked Then
+                commandLine = commandLine & " -pid=" & IPidLog.Text
+            End If
+
+            If IAutoInit.IsChecked Then
+                commandLine = commandLine & " -autoInit"
+            End If
+
+            If IExtraParams.Text IsNot Nothing Then
+                commandLine = commandLine & " " & IExtraParams.Text
+            End If
+
+            Clipboard.SetText(commandLine)
+
+
+
+            Dim sStartInfo As New ProcessStartInfo(IExecutable.Text, commandLine)
+            Dim sProcess As New Process With {
+                    .StartInfo = sStartInfo
+                }
+            sProcess.Start()
+
+            If IHeadlessClientEnabled.IsChecked Then
+                For hc = 1 To INoOfHeadlessClients.Value
+                    Dim hcCommandLine As String = "-client -connect=127.0.0.1 -password=" & IPassword.Text & " -profiles=" & profilePath & " -nosound"
+                    Dim hcMods As String = Nothing
+
+                    For Each addon In IHeadlessModsList.SelectedItems
+                        hcMods = hcMods & addon & ";"
+                    Next
+
+                    hcCommandLine = hcCommandLine & " ""-mod=" & hcMods & """"
+
+                    Clipboard.SetText(hcCommandLine)
+
+                    Dim hcStartInfo As New ProcessStartInfo(IExecutable.Text, hcCommandLine)
+                    Dim hcProcess As New Process With {
+                            .StartInfo = hcStartInfo
+                        }
+                    hcProcess.Start()
+                Next
+            End If
+        End If
+    End Sub
+
+    Private Function GetLinesCollectionFromTextBox(textBox As Controls.TextBox) As StringCollection
+        Dim lines = New StringCollection()
+        Dim lineCount As Integer = textBox.LineCount
+
+        For line = 0 To lineCount - 1
+            lines.Add(textBox.GetLineText(line))
+        Next
+
+        Return lines
+    End Function
+
+    Private Sub WriteConfigFiles(profile As String)
+        Dim profilePath = My.Settings.serverPath
+        profile = MainWindow.SafeName(profile)
+
+        Dim config As String = profilePath & "\Servers\" & profile & "\" & profile & "_config.cfg"
+        Dim basic As String = profilePath & "\Servers\" & profile & "\" & profile & "_basic.cfg"
+        Dim serverProfile As String = profilePath & "\Servers\" & profile & "\users\" & profile & "\" & profile & ".Arma3Profile"
+
+        Directory.CreateDirectory(profilePath & "\Servers\" & profile & "\users\" & profile)
+
+        Dim configLines As New List(Of String) From {
+            "passwordAdmin = """ & IAdminPassword.Text & """;",
+            "password = """ & IPassword.Text & """;",
+            "serverCommandPassword = """ & IServerCommandPassword.Text & """;",
+            "hostname = """ & IServerName.Text & """;",
+            "maxPlayers = " & IMaxPlayers.Text & ";",
+            "kickduplicate = " & IKickDuplicates.IsChecked & ";",
+            "upnp = " & IUpnp.IsChecked & ";",
+            "allowedFilePatching = " & IAllowFilePatching.Text & ";",
+            "verifySignatures = " & IVerifySignatures.Text & ";",
+            "disableVoN = " & IVonEnabled.IsChecked & ";",
+            "vonCodecQuality = " & ICodecQuality.Value & ";",
+            "vonCodec = 1;",
+            "BattlEye = " & IBattleEye.IsChecked & ";",
+            "persistent = " & IPersistentBattlefield.IsChecked & ";"
+        }
+
+        configLines.Add("motd[]= {")
+        Dim lines = GetLinesCollectionFromTextBox(IMotd)
+
+        For Each line In lines
+            If Not line = "" Then
+                If line.IndexOf(line, StringComparison.Ordinal) = lines.Count -1 Then
+                    configLines.Add("""" & line & """")
+                Else
+                    configLines.Add("""" & line & """,")
+                End If
+            End If
+        Next
+        configLines.Add("};")
+
+        configLines.Add("motdInterval = " & IMotdDelay.Text & ";")
+
+        If IHeadlessClientEnabled.IsChecked Then
+            configLines.Add("headlessClients[] = {""" & IHeadlessIps.Text & """};")
+            configLines.Add("localClient[] = {""" & ILocalClients.Text & """};")
+        End If
+
+        If IVotingEnabled.IsChecked Then
+            configLines.Add("allowedVoteCmds[] = {};")
+            configLines.Add("allowedVotedAdminCmds[] = {};")
+            configLines.Add("voteMissionPlayers = " & IVotingMinPlayers.Text & ";")
+            configLines.Add("voteThreshold = " & IVotingThreshold.Text / 100 & ";")
+        Else
+            configLines.Add("voteMissionPlayers = " & IVotingMinPlayers.Text & ";")
+            configLines.Add("voteThreshold = " & IVotingThreshold.Text / 100 & ";")
+        End If
+
+        If ILoopback.IsChecked Then
+            configLines.Add("loopback = True;")
+        End If
+
+        If IDisconnectTimeOutEnabled.IsChecked Then
+            configLines.Add("disconnectTimeout = " & IDisconnectTimeOut.Text & ";")
+        End If
+
+        If IMaxDesyncEnabled.IsChecked Then
+            configLines.Add("maxdesync = " & IMaxDesync.Text & ";")
+        End If
+
+        If IMaxPingEnabled.IsChecked Then
+            configLines.Add("maxping = " & IMaxPing.Text & ";")
+        End If
+
+        If IMaxPacketLossEnabled.IsChecked Then
+            configLines.Add("maxpacketloss = " & IMaxPacketLoss.Text & ";")
+        End If
+
+        If IKickOnSlowNetworkEnabled.IsChecked Then
+            If IKickOnSlowNetwork.Text = "Log" Then
+                configLines.Add("kickClientsOnSlowNetwork[] = { 0, 0, 0, 0 };")
+            ElseIf IKickOnSlowNetwork.Text = "Log & Kick" Then
+                configLines.Add("kickClientsOnSlowNetwork[] = { 1, 1, 1, 1 };")
+            End If
+        End If
+
+        If IServerConsoleLogEnabled.IsChecked Then
+            configLines.Add("logFile = """ & IServerConsoleLog.Text & """;")
+        End If
+
+        If IRequiredBuildEnabled.IsChecked Then
+            configLines.Add("requiredBuild = " & IRequiredBuild.Text & ";")
+        End If
+
+        configLines.Add("doubleIdDetected = """ & IDoubleIdDetected.Text & """;")
+        configLines.Add("onUserConnected = """ & IOnUserConnected.Text & """;")
+        configLines.Add("onUserDisconnected = """ & IOnUserDisconnected.Text & """;")
+        configLines.Add("onHackedData = """ & IOnHackedData.Text & """;")
+        configLines.Add("onDifferentData = """ & IOnDifferentData.Text & """;")
+        configLines.Add("onUnsignedData = """ & IOnUnsignedData.Text & """;")
+        configLines.Add("regularCheck = """ & IRegularCheck.Text & """;")
+
+        configLines.Add("timeStampFormat = """ & IRptTimestamp.Text & """;")
+
+        configLines.Add("class Missions {")
+        For Each mission In IMissionCheckList.SelectedItems
+            configLines.Add(vbTab & "class Mission_" & IMissionCheckList.SelectedItems.IndexOf(mission) + 1 & " {")
+            configLines.Add(vbTab & vbTab & "template = """ & mission & """;")
+            configLines.Add(vbTab & vbTab & "difficulty = """ & IDifficultyPreset.Text & """;")
+            configLines.Add(vbTab & "};")
+        Next
+        configLines.Add("};")
+
+
+        '"admins[] = {""<UID>""};"
+        '"drawingInMap = 0;"
+        '"forceRotorLibSimulation = 0;"
+        '"forcedDifficulty = ""regular"";"
+        '"missionWhitelist[] = {""intro.altis""};"
+
+        File.WriteAllLines(config, configLines)
+
+        Dim basicLines As New List(Of String) From {
+            "adapter = -1;",
+            "3D_Performance=1;",
+            "Resolution_W = 0;",
+            "Resolution_H = 0;",
+            "Resolution_Bpp = 32;",
+            "terrainGrid = " & ITerrainGrid.Text & ";",
+            "viewDistance = " & IViewDistance.Text & ";",
+            "Windowed = 0;",
+            "MaxMsgSend =" & IMaxMessagesSend.Text & ";",
+            "MaxSizeGuaranteed =" & IMaxSizeGuaranteed.Text & ";",
+            "MaxSizeNonguaranteed =" & IMaxSizeNonguaranteed.Text & ";",
+            "MinBandwidth =" & IMinBandwidth.Text & ";",
+            "MaxBandwidth =" & IMaxBandwidth.Text & ";",
+            "MinErrorToSend =" & IMinErrorToSend.Text & ";",
+            "MinErrorToSendNear =" & IMinErrorToSendNear.Text & ";",
+            "MaxCustomFileSize =" & IMaxCustomFileSize.Text & ";",
+            "class sockets{maxPacketSize = " & IMaxPacketSize.Text & ";};"
+        }
+
+        File.WriteAllLines(basic, basicLines)
+
+        Dim profileLines As New List(Of String) From {
+            "difficulty = """ & IDifficultyPreset.Text & """;",
+            "class DifficultyPresets {",
+            vbTab & "class CustomDifficulty {",
+            vbTab & vbTab & "class Options {",
+            vbTab & vbTab & vbTab & "reduceDamage = " & IReducedDamage.IsChecked & ";",
+            vbTab & vbTab & vbTab & "groupIndicators = " & IGroupIndicators.IsChecked & ";",
+            vbTab & vbTab & vbTab & "friendlyTags = " & IFriendlyNameTags.IsChecked & ";",
+            vbTab & vbTab & vbTab & "enemyTags = " & IEnemyNameTags.IsChecked & ";",
+            vbTab & vbTab & vbTab & "detectedMines = " & IDetectedMines.IsChecked & ";",
+            vbTab & vbTab & vbTab & "commands = " & ICommands.IsChecked & ";",
+            vbTab & vbTab & vbTab & "waypoints = " & IWaypoints.IsChecked & ";",
+            vbTab & vbTab & vbTab & "tacticalPing = " & ITacticalPing.IsChecked & ";",
+            vbTab & vbTab & vbTab & "weaponInfo = " & IWeaponInfo.IsChecked & ";",
+            vbTab & vbTab & vbTab & "stanceIndicator = " & IStanceIndicator.IsChecked & ";",
+            vbTab & vbTab & vbTab & "staminaBar = " & IStaminaBar.IsChecked & ";",
+            vbTab & vbTab & vbTab & "weaponCrosshair = " & ICrosshair.IsChecked & ";",
+            vbTab & vbTab & vbTab & "visionAid = " & IVisualAids.IsChecked & ";",
+            vbTab & vbTab & vbTab & "thirdPersonView = " & IThirdPerson.IsChecked & ";",
+            vbTab & vbTab & vbTab & "cameraShake = " & ICameraShake.IsChecked & ";",
+            vbTab & vbTab & vbTab & "scoreTable = " & IScoreTable.IsChecked & ";",
+            vbTab & vbTab & vbTab & "deathMessages = " & IKilledBy.IsChecked & ";",
+            vbTab & vbTab & vbTab & "vonID = " & IVonId.IsChecked & ";",
+            vbTab & vbTab & vbTab & "mapContent = " & IExtendedMapContent.IsChecked & ";",
+            vbTab & vbTab & vbTab & "autoReport = " & IAutoReporting.IsChecked & ";",
+            vbTab & vbTab & vbTab & "multipleSaves = " & IMultipleSaves.IsChecked & ";",
+            vbTab & vbTab & "};",
+            "",
+            vbTab & vbTab & "aiLevelPreset = " & IAiPreset.Text & ";",
+            "",
+            vbTab & vbTab & "class CustomAILevel {",
+            vbTab & vbTab & vbTab & "skillAI = " & IAiSkill.Text & ";",
+            vbTab & vbTab & vbTab & "precisionAI = " & IAiAccuracy.Text & ";",
+            vbTab & vbTab & "};",
+            vbTab & "};",
+            "};"
+        }
+
+        File.WriteAllLines(serverProfile, profileLines)
+
+    End Sub
+
     Private Sub UpdateProfile()
+
+        Try
+            Dim profileName = MainWindow.SafeName(IDisplayName.Content)
+            Dim path As String = My.Settings.serverPath & "\Servers\"
+            Dim profilePath As String = path & profileName & "\"
+
+            If Not Directory.Exists(path)
+                Directory.CreateDirectory(path)
+            End If
+
+            If Not Directory.Exists(profilePath)
+                Directory.CreateDirectory(profilePath)
+            End If
+
+            If Not File.Exists(profilePath & profileName & "_config.cfg") Then
+                Dim cfg = File.Create(profilePath & profileName & "_config.cfg")
+                cfg.Close()
+            End If
+
+            If Not File.Exists(profilePath & profileName & "_basic.cfg") Then
+                Dim cfg = File.Create(profilePath & profileName & "_basic.cfg")
+                cfg.Close()
+            End If
+        Catch ex As Exception
+            MsgBox(ex.Message)
+            MsgBox("Files in use please close and try again.")
+        End Try
+
+
         Dim profile = My.Settings.Servers.ServerProfiles.Find(Function(p) p.SafeName = _safeName)
 
         profile.DisplayName = IDisplayName.Content
@@ -278,6 +636,8 @@ Class ServerProfile
         profile.DisconnectTimeout = IDisconnectTimeOut.Text
         profile.KickOnSlowNetworkEnabled = IKickOnSlowNetworkEnabled.IsChecked
         profile.KickOnSlowNetwork = IKickOnSlowNetwork.Text
+        profile.TerrainGrid = ITerrainGrid.Text
+        profile.ViewDistance = IViewDistance.Text
         profile.MaxPingEnabled = IMaxPingEnabled.IsChecked
         profile.MaxPing = IMaxPing.Text
         profile.MaxDesyncEnabled = IMaxDesyncEnabled.IsChecked
@@ -306,6 +666,7 @@ Class ServerProfile
         profile.ClientMods = IClientModsList.SelectedValue
         profile.HeadlessMods = IHeadlessModsList.SelectedValue
         profile.Missions = IMissionCheckList.SelectedValue
+        profile.BattleEye = IBattleEye.IsChecked
 
         My.Settings.Save()
     End Sub
