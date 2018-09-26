@@ -336,16 +336,7 @@ Class ServerProfile
         End If
     End Sub
 
-    Private Shared Function GetLinesCollectionFromTextBox(textBox As Controls.TextBox) As StringCollection
-        Dim lines = New StringCollection()
-        Dim lineCount As Integer = textBox.LineCount
-
-        For line = 0 To lineCount - 1
-            lines.Add(textBox.GetLineText(line))
-        Next
-
-        Return lines
-    End Function
+    
 
     Private Sub WriteConfigFiles(profile As String)
         Dim profilePath = My.Settings.serverPath
@@ -375,7 +366,7 @@ Class ServerProfile
         }
 
         configLines.Add("motd[]= {")
-        Dim lines = GetLinesCollectionFromTextBox(IMotd)
+        Dim lines = Functions.GetLinesCollectionFromTextBox(IMotd)
 
         For Each line In lines
             If Not line = "" Then

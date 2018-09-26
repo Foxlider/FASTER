@@ -4,7 +4,6 @@ Imports System.Text.RegularExpressions
 Imports System.IO
 Imports System.IO.Compression
 Imports System.Text
-'Imports System.Windows.Forms
 Imports System.Xml
 Imports System.Xml.Serialization
 Imports FAST2.Models
@@ -52,7 +51,7 @@ Public Class MainWindow
     End Sub
 
     Private Shared Sub CheckSettings()
-        If Not Directory.Exists(My.Settings.serverPath)  Then
+        If Not Directory.Exists(My.Settings.serverPath) Then
             My.Settings.serverPath = String.Empty
         End If
 
@@ -124,7 +123,7 @@ Public Class MainWindow
             If Not File.Exists(My.Settings.steamCMDPath & "\steamcmd.exe")
                 IMessageDialog.IsOpen = True
                 IMessageDialogText.Text = "Steam CMD will now download and start the install process. If prompted please enter your Steam Guard Code." & Environment.NewLine & Environment.NewLine & "You will receive this by email from steam. When this is all complete type 'quit' to finish."
-        
+
                 ISteamOutputBox.Document.Blocks.Clear()
                 ISteamOutputBox.AppendText("Installing SteamCMD")
                 ISteamOutputBox.AppendText(Environment.NewLine & "File Downloading...")
@@ -149,12 +148,12 @@ Public Class MainWindow
 
         Dim steamPath = My.Settings.steamCMDPath
         Dim zip As String = steamPath & "\steamcmd.zip"
-        
+
         ISteamOutputBox.AppendText(Environment.NewLine & "Unzipping...")
         ZipFile.ExtractToDirectory(zip, steamPath)
         ISteamOutputBox.AppendText(Environment.NewLine & "Installing...")
         RunSteamCommand(steamPath & "\steamcmd.exe", "+login anonymous +quit", "install")
-           
+
         File.Delete(zip)
     End Sub
 
@@ -175,7 +174,7 @@ Public Class MainWindow
                         ISteamGuardDialog.IsOpen = True
                     End Sub
                 )
-                Do 
+                Do
 
                 Loop Until _steamCodeValid
 
@@ -192,7 +191,7 @@ Public Class MainWindow
                     End Sub
                     )
 
-                Do 
+                Do
 
                 Loop Until _steamCodeValid
 
@@ -202,9 +201,7 @@ Public Class MainWindow
                         oStreamWriter.Write(ISteamGuardCode.Text & Environment.NewLine)
                     End Sub
                     )
-            End If
-
-            If text Like "*Update state*" Then
+            ElseIf text Like "*Update state*" Then
                 Dim counter As Integer = text.IndexOf(":", StringComparison.Ordinal)
                 Dim progress As String = text.Substring(counter + 2, 2)
                 Dim progressValue As Integer
@@ -220,17 +217,13 @@ Public Class MainWindow
                         ISteamProgressBar.Value = progressValue
                     End Sub
                     )
-            End If
-
-            If text Like "*Success*" Then
+            ElseIf text Like "*Success*" Then
                 Dispatcher.Invoke(
                     Sub()
                         ISteamProgressBar.Value = 100
                     End Sub
                     )
-            End If
-
-            If text Like "*Timeout*" Then
+            ElseIf text Like "*Timeout*" Then
                 Dispatcher.Invoke(
                     Sub()
                         Instance.IMessageDialog.IsOpen = True
@@ -253,7 +246,7 @@ Public Class MainWindow
             ISteamProgressBar.Value = 0
             ISteamCancelButton.IsEnabled = True
             ISteamUpdateButton.IsEnabled = False
-            IMainMenuItems.SelectedItem =  Nothing
+            IMainMenuItems.SelectedItem = Nothing
             Dim controls = ISteamModsTab.FindLogicalChildren(Of Control)
             Dim enumerable As IEnumerable(Of Control) = If(TryCast(controls, Control()), controls.ToArray())
             For Each control In enumerable
@@ -268,11 +261,11 @@ Public Class MainWindow
                 ISteamOutputBox.AppendText("Starting SteamCMD to update Addon" & Environment.NewLine & Environment.NewLine)
             ElseIf type Is "server" Then
                 ISteamOutputBox.AppendText("Starting SteamCMD to update Server" & Environment.NewLine)
-            ElseIf type Is "install" Then 
-               clear = False
+            ElseIf type Is "install" Then
+                clear = False
             End If
 
-            If clear 
+            If clear
                 ISteamOutputBox.Document.Blocks.Clear()
             End If
 
@@ -290,14 +283,15 @@ Public Class MainWindow
 
                     AddHandler _oProcess.ErrorDataReceived, AddressOf Proc_OutputDataReceived
                     AddHandler _oProcess.OutputDataReceived, AddressOf Proc_OutputDataReceived
+
                     _oProcess.start()
 
                     _oProcess.BeginErrorReadLine()
                     _oProcess.BeginOutputReadLine()
                     Do
-                        
+
                     Loop Until _oProcess.HasExited = True
-                    
+
                 End Sub
             ))
 
@@ -343,23 +337,31 @@ Public Class MainWindow
         End If
     End Sub
 
-    Private Sub CheckModUpdatesComplete(modIds As List(Of String))
-        For Each modID in modIds
-            Dim modTempPath As String = My.Settings.steamCMDPath & "\steamapps\workshop\downloads\107410\" & modId
-            Dim modPath As String = My.Settings.steamCMDPath & "\steamapps\workshop\content\107410\" & modId
-            Dim modToUpdate = My.Settings.steamMods.Find(Function(m) m.WorkshopId = modID)
+    Private Shared Sub CheckModUpdatesComplete(modIds As List(Of String))
+        If modIds IsNot Nothing
+            For Each modID in modIds
+                Dim modToUpdate = My.Settings.steamMods.Find(Function(m) m.WorkshopId = modID)
+                Dim steamCmdOutputText = Functions.StringFromRichTextBox(Instance.ISteamOutputBox)
 
-            If Directory.Exists(modTempPath)
-                modToUpdate.Status = "Download Not Complete"
-            ElseIf Directory.EnumerateFiles(modPath) IsNot Nothing
-                modToUpdate.Status = "Up to Date"
+                If InStr(steamCmdOutputText, "ERROR! Timeout downloading") Then
+                    modToUpdate.Status = "Download Not Complete"
+                Else
+                    Dim modTempPath As String = My.Settings.steamCMDPath & "\steamapps\workshop\downloads\107410\" & modId
+                    Dim modPath As String = My.Settings.steamCMDPath & "\steamapps\workshop\content\107410\" & modId
+                
+                    If Directory.Exists(modTempPath)
+                        modToUpdate.Status = "Download Not Complete"
+                    ElseIf Directory.EnumerateFiles(modPath) IsNot Nothing
+                        modToUpdate.Status = "Up to Date"
 
-                Dim nx = New DateTime(1970,1,1)
-                Dim ts = DateTime.UtcNow - nx
+                        Dim nx = New DateTime(1970, 1, 1)
+                        Dim ts = Date.UtcNow - nx
 
-                modToUpdate.LocalLastUpdated = ts.TotalSeconds
-            End If
-        Next
+                        modToUpdate.LocalLastUpdated = ts.TotalSeconds
+                    End If
+                End If
+            Next
+        End If
     End Sub
 
     'Takes any string and removes illegal characters
@@ -680,5 +682,5 @@ Public Class MainWindow
     Private Sub ISteamSettings_Changed(sender As Object, e As RoutedEventArgs) Handles ISteamUserBox.LostFocus, ISteamPassBox.LostFocus, IServerDirBox.LostFocus, ISteamDirBox.LostFocus, IServerBranch.LostFocus
         UpdateSteamUpdaterSettings()
     End Sub
-    
+
 End Class

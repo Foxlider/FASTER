@@ -138,8 +138,8 @@ Partial Friend NotInheritable Class MySettings
     End Property
 
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
-        Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-        Global.System.Configuration.DefaultSettingValueAttribute("False")>  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("False")>  _
     Public Property excludeServerFolder() As Boolean
         Get
             Return CType(Me("excludeServerFolder"),Boolean)
@@ -173,8 +173,8 @@ Partial Friend NotInheritable Class MySettings
     End Property
 
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
-    Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-    Global.System.Configuration.DefaultSettingValueAttribute("True")>  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("True")>  _
     Public Property checkForModUpdates() As Boolean
         Get
             Return CType(Me("checkForModUpdates"),Boolean)
@@ -245,8 +245,8 @@ Partial Friend NotInheritable Class MySettings
     End Property
 
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
-        Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-        Global.System.Configuration.DefaultSettingValueAttribute("")>  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("")>  _
     Public Property localModFolders() As System.Collections.Generic.List(Of String)
         Get
             Return CType(Me("localModFolders"),System.Collections.Generic.List(Of String))

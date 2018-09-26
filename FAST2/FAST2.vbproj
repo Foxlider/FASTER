@@ -157,6 +157,7 @@
     <Compile Include="LocalMods.xaml.vb">
       <DependentUpon>LocalMods.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Models\Functions.vb" />
     <Compile Include="Models\LocalMod.vb" />
     <Compile Include="Models\ServerCollection.vb" />
     <Compile Include="Models\Theme.vb" />
