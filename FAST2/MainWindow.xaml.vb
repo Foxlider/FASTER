@@ -9,6 +9,7 @@ Imports System.Xml
 Imports System.Xml.Serialization
 Imports FAST2.Models
 Imports WPFFolderBrowser
+Imports Xceed.Wpf.AvalonDock.Controls
 
 
 Public Class MainWindow
@@ -45,8 +46,19 @@ Public Class MainWindow
 
 
     Private Sub MainWindow_Initialized(sender As Object, e As EventArgs) Handles Me.Initialized
+        CheckSettings()
         LoadServerProfiles()
         LoadSteamUpdaterSettings()
+    End Sub
+
+    Private Shared Sub CheckSettings()
+        If Not Directory.Exists(My.Settings.serverPath)  Then
+            My.Settings.serverPath = String.Empty
+        End If
+
+        If Not Directory.Exists(My.Settings.steamCMDPath) Then
+            My.Settings.steamCMDPath = String.Empty
+        End If
     End Sub
 
     Private Sub MainWindow_Loaded(sender As Object, e As EventArgs) Handles Me.Loaded
@@ -234,13 +246,19 @@ Public Class MainWindow
     End Sub
 
     'Runs Steam command via SteamCMD and redirects input and output to FAST
-    Public Async Sub RunSteamCommand(steamCmd As String, steamCommand As String, type As String)
+    Public Async Sub RunSteamCommand(steamCmd As String, steamCommand As String, type As String, Optional modIds As List(Of String) = Nothing)
         If ReadyToUpdate() Then
             Dim clear = True
             _oProcess = New Process()
             ISteamProgressBar.Value = 0
             ISteamCancelButton.IsEnabled = True
             ISteamUpdateButton.IsEnabled = False
+            IMainMenuItems.SelectedItem =  Nothing
+            Dim controls = ISteamModsTab.FindLogicalChildren(Of Control)
+            Dim enumerable As IEnumerable(Of Control) = If(TryCast(controls, Control()), controls.ToArray())
+            For Each control In enumerable
+                control.IsEnabled = False
+            Next
             IMainContent.SelectedItem = ISteamUpdaterTab
             Dim tasks As New List(Of Task)
 
@@ -296,6 +314,7 @@ Public Class MainWindow
 
                 _oProcess.Close()
                 _oProcess = Nothing
+                CheckModUpdatesComplete(modIds)
             Else
                 ISteamOutputBox.AppendText("Task Completed" & Environment.NewLine)
                 ISteamOutputBox.ScrollToEnd()
@@ -303,7 +322,7 @@ Public Class MainWindow
                 ISteamProgressBar.Value = 100
 
                 If type Is "addon" Then
-
+                    CheckModUpdatesComplete(modIds)
                 ElseIf type Is "server" Then
                     Instance.IMessageDialog.IsOpen = True
                     Instance.IMessageDialogText.Text = "Server Installed/ Updated."
@@ -315,10 +334,32 @@ Public Class MainWindow
 
             ISteamCancelButton.IsEnabled = False
             ISteamUpdateButton.IsEnabled = True
+            For Each control In enumerable
+                control.IsEnabled = True
+            Next
         Else
             IMessageDialog.IsOpen = True
             IMessageDialogText.Text = "Please check that SteamCMD is installed and that all fields are correct:" & Environment.NewLine & Environment.NewLine & Environment.NewLine & "   -  Steam Dir" & Environment.NewLine & Environment.NewLine & "   -  User Name & Pass" & Environment.NewLine & Environment.NewLine & "   -  Server Dir"
         End If
+    End Sub
+
+    Private Sub CheckModUpdatesComplete(modIds As List(Of String))
+        For Each modID in modIds
+            Dim modTempPath As String = My.Settings.steamCMDPath & "\steamapps\workshop\downloads\107410\" & modId
+            Dim modPath As String = My.Settings.steamCMDPath & "\steamapps\workshop\content\107410\" & modId
+            Dim modToUpdate = My.Settings.steamMods.Find(Function(m) m.WorkshopId = modID)
+
+            If Directory.Exists(modTempPath)
+                modToUpdate.Status = "Download Not Complete"
+            ElseIf Directory.EnumerateFiles(modPath) IsNot Nothing
+                modToUpdate.Status = "Up to Date"
+
+                Dim nx = New DateTime(1970,1,1)
+                Dim ts = DateTime.UtcNow - nx
+
+                modToUpdate.LocalLastUpdated = ts.TotalSeconds
+            End If
+        Next
     End Sub
 
     'Takes any string and removes illegal characters

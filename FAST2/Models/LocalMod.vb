@@ -12,11 +12,8 @@
         End Sub
         
         Public Property Name As String = String.Empty
-
         Private Property Path As String = String.Empty
-
         Private Property Author As String = String.Empty
-
         Private Property Website As String = String.Empty
     End Class
 End NameSpace

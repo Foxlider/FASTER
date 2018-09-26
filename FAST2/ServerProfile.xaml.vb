@@ -6,7 +6,7 @@ Imports FAST2.Models
 
 Class ServerProfile
     Shared _safeName As String
-
+    
     Public Sub New(profile As Models.ServerProfile)
         ' This call is required by the designer.
         InitializeComponent()
@@ -191,9 +191,6 @@ Class ServerProfile
             If ReadyToLaunch(IDisplayName.Content) Then
                 UpdateProfile()
                 LaunchServer()
-            Else
-                MainWindow.Instance.IMessageDialog.IsOpen = True
-                MainWindow.Instance.IMessageDialogText.Text = "Please make sure all fields are filled in and the profile is saved."
             End If
         End If
 
@@ -218,9 +215,16 @@ Class ServerProfile
         End If
 
         If Not (IExecutable.Text Like "*arma3server*.exe") Then
+            MainWindow.Instance.IMessageDialog.IsOpen = True
+            MainWindow.Instance.IMessageDialogText.Text = "Please select a valid Arma 3 Sever Executable."
             Return False
         End If
 
+        If Not File.Exists(IExecutable.Text)
+            MainWindow.Instance.IMessageDialog.IsOpen = True
+            MainWindow.Instance.IMessageDialogText.Text = "Arma 3 Server Executable does not exist. Please reselect correct file."
+            Return False
+        End If
         Return True
     End Function
 
@@ -332,7 +336,7 @@ Class ServerProfile
         End If
     End Sub
 
-    Private Function GetLinesCollectionFromTextBox(textBox As Controls.TextBox) As StringCollection
+    Private Shared Function GetLinesCollectionFromTextBox(textBox As Controls.TextBox) As StringCollection
         Dim lines = New StringCollection()
         Dim lineCount As Integer = textBox.LineCount
 
@@ -529,7 +533,7 @@ Class ServerProfile
 
     End Sub
 
-    Private Sub UpdateProfile()
+    Private Sub UpdateProfile() 
 
         Try
             Dim profileName = MainWindow.SafeName(IDisplayName.Content)
