@@ -1,5 +1,4 @@
-﻿Imports System.Collections.Specialized
-Imports System.IO
+﻿Imports System.IO
 Imports System.Threading
 Imports System.Windows.Forms
 Imports FAST2.Models
@@ -153,20 +152,6 @@ Class ServerProfile
         End If
     End Sub
 
-    Private Sub ShowRenameInterface(show As Boolean)
-        If show Then
-            IProfileDisplayNameEdit.Text = IDisplayName.Content
-            IDisplayName.Visibility = Visibility.Collapsed
-            IProfileNameEdit.Visibility = Visibility.Visible
-            IProfileDisplayNameEdit.Focus()
-            IProfileDisplayNameEdit.SelectAll()
-        Else
-            IProfileDisplayNameEdit.Text = String.Empty
-            IDisplayName.Visibility = Visibility.Visible
-            IProfileNameEdit.Visibility = Visibility.Collapsed
-        End If
-    End Sub
-
     'Manages actions for steam mods tab buttons
     Private Sub IServerActionButtons_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles IServerActionButtons.SelectionChanged
 
@@ -205,6 +190,229 @@ Class ServerProfile
             End Sub
             )
         thread.Start()
+    End Sub
+
+    Private Sub ToggleUi(uiElement As Object, Optional e As RoutedEventArgs = Nothing) Handles IHeadlessClientEnabled.Click, IAutoRestartEnabled.Click, IVonEnabled.Click, IVotingEnabled.Click, IServerConsoleLogEnabled.Click,
+                                                                                               IPidEnabled.Click, IRankingEnabled.Click, IRequiredBuildEnabled.Click, IDailyRestartAEnabled.Click, IDailyRestartBEnabled.Click, 
+                                                                                               IPersistentBattlefield.Click, IMaxPacketLossEnabled.Click, IDisconnectTimeOutEnabled.Click, IKickOnSlowNetworkEnabled.Click, IMaxPingEnabled.Click, 
+                                                                                               IMaxDesyncEnabled.Click
+        Select Case uiElement.Name
+            Case "IMaxDesyncEnabled"
+                If IMaxDesyncEnabled.IsChecked Then
+                    IMaxDesync.IsEnabled = True
+                Else
+                    IMaxDesync.IsEnabled = False
+                End If
+            Case "IMaxPingEnabled"
+                If IMaxPingEnabled.IsChecked Then
+                    IMaxPing.IsEnabled = True
+                Else
+                    IMaxPing.IsEnabled = False
+                End If
+            Case "IKickOnSlowNetworkEnabled"
+                If IKickOnSlowNetworkEnabled.IsChecked Then
+                    IKickOnSlowNetwork.IsEnabled = True
+                Else
+                    IKickOnSlowNetwork.IsEnabled = False
+                End If
+            Case "IDisconnectTimeOutEnabled"
+                If IDisconnectTimeOutEnabled.IsChecked Then
+                    IDisconnectTimeOut.IsEnabled = True
+                Else
+                    IDisconnectTimeOut.IsEnabled = False
+                End If
+            Case "IMaxPacketLossEnabled"
+                If IMaxPacketLossEnabled.IsChecked Then
+                    IMaxPacketLoss.IsEnabled = True
+                Else
+                    IMaxPacketLoss.IsEnabled = False
+                End If
+            Case "IPersistentBattlefield"
+                If IPersistentBattlefield.IsChecked Then
+                    IAutoInit.IsEnabled = True
+                Else
+                    IAutoInit.IsEnabled = False
+                End If
+            Case "IHeadlessClientEnabled"
+                If IHeadlessClientEnabled.IsChecked Then
+                    IHcIpGroup.IsEnabled = True
+                    IHcSliderGroup.IsEnabled = True
+                    IHeadlessClientEnabled.ToolTip = "Disable HC"
+                Else
+                    IHcIpGroup.IsEnabled = False
+                    IHcSliderGroup.IsEnabled = False
+                    IHeadlessClientEnabled.ToolTip = "Enable HC"
+                End If
+            Case "IVonEnabled"
+                If IVonEnabled.IsChecked Then
+                    IVonGroup.IsEnabled = True
+                    IVonEnabled.ToolTip = "Disable VON"
+                Else
+                    IVonGroup.IsEnabled = False
+                    IVonEnabled.ToolTip = "Enable VON"
+                End If
+            Case "IVotingEnabled"
+                If IVotingEnabled.IsChecked Then
+                    IVotingMinPlayers.IsEnabled = True
+                    IVotingThreshold.IsEnabled = True
+                    IVotingEnabled.ToolTip = "Disable Voting"
+                Else
+                    IVotingMinPlayers.IsEnabled = False
+                    IVotingThreshold.IsEnabled = False
+                    IVotingEnabled.ToolTip = "Enable Voting"
+                End If
+            Case "IAutoRestartEnabled"
+                If IAutoRestartEnabled.IsChecked Then
+                    IDailyRestartAEnabled.IsEnabled = True
+                    IDailyRestartBEnabled.IsEnabled = True
+                    IAutoRestartEnabled.ToolTip = "Disable Auto Restart"
+                Else
+
+                    IDailyRestartAEnabled.IsEnabled = False
+                    IDailyRestartBEnabled.IsEnabled = False
+                    IAutoRestartEnabled.ToolTip = "Enable Auto Restart"
+                End If
+            Case "IServerConsoleLogEnabled"
+                If IServerConsoleLogEnabled.IsChecked Then
+                    IServerConsoleLog.IsEnabled = True
+                    IConsoleLogButton.IsEnabled = True
+                Else
+                    IServerConsoleLog.IsEnabled = False
+                    IConsoleLogButton.IsEnabled = False
+                End If
+            Case "IPidEnabled"
+                If IPidEnabled.IsChecked Then
+                    IPidLog.IsEnabled = True
+                    IPidButton.IsEnabled = True
+                Else
+                    IPidLog.IsEnabled = False
+                    IPidButton.IsEnabled = False
+                End If
+            Case "IRankingEnabled"
+                If IRankingEnabled.IsChecked Then
+                    IRankingLog.IsEnabled = True
+                    IRankingButton.IsEnabled = True
+                Else
+                    IRankingLog.IsEnabled = False
+                    IRankingButton.IsEnabled = False
+                End If
+            Case "IRequiredBuildEnabled"
+                If IRequiredBuildEnabled.IsChecked Then
+                    IRequiredBuild.IsEnabled = True
+                Else
+                    IRequiredBuild.IsEnabled = False
+                End If
+            Case "IDailyRestartAEnabled"
+                If IDailyRestartAEnabled.IsChecked Then
+                    IDailyRestartA.IsEnabled = True
+                Else
+                    IDailyRestartA.IsEnabled = False
+                End If
+            Case "IDailyRestartBEnabled"
+                If IDailyRestartBEnabled.IsChecked Then
+                    IDailyRestartB.IsEnabled = True
+                Else
+                    IDailyRestartB.IsEnabled = False
+                End If
+        End Select
+    End Sub
+
+    Private Sub IServerFileButton_Click(sender As Object, e As RoutedEventArgs) Handles IServerFileButton.Click
+        Dim dialog As New Microsoft.Win32.OpenFileDialog With {
+            .Filter = "Arma 3 Server Files|arma*.exe"
+        }
+
+        If dialog.ShowDialog() <> DialogResult.OK Then
+            IExecutable.Text = dialog.FileName
+        End If
+    End Sub
+
+    Private Sub IResetPerf_Click(sender As Object, e As RoutedEventArgs) Handles IResetPerf.Click
+        IMaxCustomFileSize.Text = "160"
+        IMaxPacketSize.Text = "1400"
+        IMinBandwidth.Text = "128"
+        IMaxBandwidth.Text = "2000"
+        IMaxMessagesSend.Text = "128"
+        IMaxSizeGuaranteed.Text = "256"
+        IMaxSizeNonguaranteed.Text = "512"
+        IMinErrorToSend.Text = "0.001"
+        IMinErrorToSendNear.Text = "0.01"
+    End Sub
+
+    Private Sub ServerProfile_Initialized(sender As Object, e As EventArgs) Handles Me.Initialized
+        UpdateModsList()
+    End Sub
+
+    Private Sub IModsRefresh_Click(sender As Object, e As RoutedEventArgs) Handles IClientModsRefresh.Click, IServerModsRefresh.Click, IHeadlessModsRefresh.Click
+        UpdateModsList()
+    End Sub
+
+    Private Property ModsToCopy As String
+
+    Private Sub ModsCopy_Click(sender As Controls.Button, e As RoutedEventArgs) Handles IClientModsCopy.Click, IServerModsCopy.Click, IHeadlessModsCopy.Click
+        Select Case sender.Name
+            Case "IClientModsCopy"
+                ModsToCopy = IClientModsList.SelectedValue
+            Case "IServerModsCopy"
+                ModsToCopy = IServerModsList.SelectedValue
+            Case "IHeadlessModsCopy"
+                ModsToCopy = IHeadlessModsList.SelectedValue
+        End Select
+    End Sub
+
+    Private Sub ModsPaste_Click(sender As Controls.Button, e As RoutedEventArgs) Handles IClientModsPaste.Click, IServerModsPaste.Click, IHeadlessModsPaste.Click
+        If ModsToCopy IsNot String.Empty
+            Select Case sender.Name
+                Case "IServerModsPaste"
+                    IServerModsList.SelectedValue = ModsToCopy
+                Case "IClientModsPaste"
+                    IClientModsList.SelectedValue = ModsToCopy
+                Case "IHeadlessModsPaste"
+                    IHeadlessModsList.SelectedValue = ModsToCopy
+            End Select
+        End If
+    End Sub
+
+    Private Sub ModsAll_Click(sender As Controls.Button, e As RoutedEventArgs) Handles IServerModsAll.Click, IClientModsAll.Click, IHeadlessModsAll.Click, IAllMissionsButton.Click
+        Select Case sender.Name
+            Case "IServerModsAll"
+                IServerModsList.SelectedItemsOverride = IServerModsList.Items
+            Case "IClientModsAll"
+                IClientModsList.SelectedItemsOverride = IClientModsList.Items
+            Case "IHeadlessModsAll"
+                IHeadlessModsList.SelectedItemsOverride = IHeadlessModsList.Items
+            Case "IAllMissionsButton"
+                IMissionCheckList.SelectedItemsOverride = IMissionCheckList.Items
+        End Select
+    End Sub
+
+    Private Sub ModsNone_Click(sender As Controls.Button, e As RoutedEventArgs) Handles IServerModsNone.Click, IClientModsNone.Click, IHeadlessModsNone.Click, INoMissionsButton.Click
+        Select Case sender.Name
+            Case "IServerModsNone"
+                IServerModsList.SelectedItemsOverride = Nothing
+            Case "IClientModsNone"
+                IClientModsList.SelectedItemsOverride = Nothing
+            Case "IHeadlessModsNone"
+                IHeadlessModsList.SelectedItemsOverride = Nothing
+            Case "INoMissionsButton"
+                IMissionCheckList.SelectedItemsOverride = Nothing
+        End Select
+    End Sub
+
+    Private Sub ShowRenameInterface(show As Boolean)
+        If show Then
+            IProfileDisplayNameEdit.Text = IDisplayName.Content
+            IDisplayName.Visibility = Visibility.Collapsed
+            IBattleEye.Visibility = Visibility.Collapsed
+            IProfileNameEdit.Visibility = Visibility.Visible
+            IProfileDisplayNameEdit.Focus()
+            IProfileDisplayNameEdit.SelectAll()
+        Else
+            IProfileDisplayNameEdit.Text = String.Empty
+            IDisplayName.Visibility = Visibility.Visible
+            IBattleEye.Visibility = Visibility.Visible
+            IProfileNameEdit.Visibility = Visibility.Collapsed
+        End If
     End Sub
 
     Private Function ReadyToLaunch(profile As String)
@@ -335,8 +543,6 @@ Class ServerProfile
             End If
         End If
     End Sub
-
-    
 
     Private Sub WriteConfigFiles(profile As String)
         Dim profilePath = My.Settings.serverPath
@@ -524,8 +730,7 @@ Class ServerProfile
 
     End Sub
 
-    Private Sub UpdateProfile() 
-
+    Private Sub UpdateProfile()
         Try
             Dim profileName = MainWindow.SafeName(IDisplayName.Content)
             Dim path As String = My.Settings.serverPath & "\Servers\"
@@ -552,7 +757,6 @@ Class ServerProfile
             MsgBox(ex.Message)
             MsgBox("Files in use please close and try again.")
         End Try
-
 
         Dim profile = My.Settings.Servers.ServerProfiles.Find(Function(p) p.SafeName = _safeName)
 
@@ -666,158 +870,6 @@ Class ServerProfile
         My.Settings.Save()
     End Sub
 
-
-    Private Sub ToggleUi(uiElement As Object, Optional e As RoutedEventArgs = Nothing) Handles IHeadlessClientEnabled.Click, IAutoRestartEnabled.Click, IVonEnabled.Click, IVotingEnabled.Click, IServerConsoleLogEnabled.Click,
-                                                                                               IPidEnabled.Click, IRankingEnabled.Click, IRequiredBuildEnabled.Click, IDailyRestartAEnabled.Click, IDailyRestartBEnabled.Click, 
-                                                                                               IPersistentBattlefield.Click, IMaxPacketLossEnabled.Click, IDisconnectTimeOutEnabled.Click, IKickOnSlowNetworkEnabled.Click, IMaxPingEnabled.Click, 
-                                                                                               IMaxDesyncEnabled.Click
-        Select Case uiElement.Name
-            Case "IMaxDesyncEnabled"
-                If IMaxDesyncEnabled.IsChecked Then
-                    IMaxDesync.IsEnabled = True
-                Else
-                    IMaxDesync.IsEnabled = False
-                End If
-            Case "IMaxPingEnabled"
-                If IMaxPingEnabled.IsChecked Then
-                    IMaxPing.IsEnabled = True
-                Else
-                    IMaxPing.IsEnabled = False
-                End If
-            Case "IKickOnSlowNetworkEnabled"
-                If IKickOnSlowNetworkEnabled.IsChecked Then
-                    IKickOnSlowNetwork.IsEnabled = True
-                Else
-                    IKickOnSlowNetwork.IsEnabled = False
-                End If
-            Case "IDisconnectTimeOutEnabled"
-                If IDisconnectTimeOutEnabled.IsChecked Then
-                    IDisconnectTimeOut.IsEnabled = True
-                Else
-                    IDisconnectTimeOut.IsEnabled = False
-                End If
-            Case "IMaxPacketLossEnabled"
-                If IMaxPacketLossEnabled.IsChecked Then
-                    IMaxPacketLoss.IsEnabled = True
-                Else
-                    IMaxPacketLoss.IsEnabled = False
-                End If
-            Case "IPersistentBattlefield"
-                If IPersistentBattlefield.IsChecked Then
-                    IAutoInit.IsEnabled = True
-                Else
-                    IAutoInit.IsEnabled = False
-                End If
-            Case "IHeadlessClientEnabled"
-                If IHeadlessClientEnabled.IsChecked Then
-                    IHcIpGroup.IsEnabled = True
-                    IHcSliderGroup.IsEnabled = True
-                    IHeadlessClientEnabled.ToolTip = "Disable HC"
-                Else
-                    IHcIpGroup.IsEnabled = False
-                    IHcSliderGroup.IsEnabled = False
-                    IHeadlessClientEnabled.ToolTip = "Enable HC"
-                End If
-            Case "IVonEnabled"
-                If IVonEnabled.IsChecked Then
-                    IVonGroup.IsEnabled = True
-                    IVonEnabled.ToolTip = "Disable VON"
-                Else
-                    IVonGroup.IsEnabled = False
-                    IVonEnabled.ToolTip = "Enable VON"
-                End If
-            Case "IVotingEnabled"
-                If IVotingEnabled.IsChecked Then
-                    IVotingMinPlayers.IsEnabled = True
-                    IVotingThreshold.IsEnabled = True
-                    IVotingEnabled.ToolTip = "Disable Voting"
-                Else
-                    IVotingMinPlayers.IsEnabled = False
-                    IVotingThreshold.IsEnabled = False
-                    IVotingEnabled.ToolTip = "Enable Voting"
-                End If
-            Case "IAutoRestartEnabled"
-                If IAutoRestartEnabled.IsChecked Then
-                    IDailyRestartAEnabled.IsEnabled = True
-                    IDailyRestartBEnabled.IsEnabled = True
-                    IAutoRestartEnabled.ToolTip = "Disable Auto Restart"
-                Else
-
-                    IDailyRestartAEnabled.IsEnabled = False
-                    IDailyRestartBEnabled.IsEnabled = False
-                    IAutoRestartEnabled.ToolTip = "Enable Auto Restart"
-                End If
-            Case "IServerConsoleLogEnabled"
-                If IServerConsoleLogEnabled.IsChecked Then
-                    IServerConsoleLog.IsEnabled = True
-                    IConsoleLogButton.IsEnabled = True
-                Else
-                    IServerConsoleLog.IsEnabled = False
-                    IConsoleLogButton.IsEnabled = False
-                End If
-            Case "IPidEnabled"
-                If IPidEnabled.IsChecked Then
-                    IPidLog.IsEnabled = True
-                    IPidButton.IsEnabled = True
-                Else
-                    IPidLog.IsEnabled = False
-                    IPidButton.IsEnabled = False
-                End If
-            Case "IRankingEnabled"
-                If IRankingEnabled.IsChecked Then
-                    IRankingLog.IsEnabled = True
-                    IRankingButton.IsEnabled = True
-                Else
-                    IRankingLog.IsEnabled = False
-                    IRankingButton.IsEnabled = False
-                End If
-            Case "IRequiredBuildEnabled"
-                If IRequiredBuildEnabled.IsChecked Then
-                    IRequiredBuild.IsEnabled = True
-                Else
-                    IRequiredBuild.IsEnabled = False
-                End If
-            Case "IDailyRestartAEnabled"
-                If IDailyRestartAEnabled.IsChecked Then
-                    IDailyRestartA.IsEnabled = True
-                Else
-                    IDailyRestartA.IsEnabled = False
-                End If
-            Case "IDailyRestartBEnabled"
-                If IDailyRestartBEnabled.IsChecked Then
-                    IDailyRestartB.IsEnabled = True
-                Else
-                    IDailyRestartB.IsEnabled = False
-                End If
-        End Select
-    End Sub
-
-    Private Sub IServerFileButton_Click(sender As Object, e As RoutedEventArgs) Handles IServerFileButton.Click
-        Dim dialog As New Microsoft.Win32.OpenFileDialog With {
-            .Filter = "Arma 3 Server Files|arma*.exe"
-        }
-
-        If dialog.ShowDialog() <> DialogResult.OK Then
-            IExecutable.Text = dialog.FileName
-        End If
-    End Sub
-
-    Private Sub IResetPerf_Click(sender As Object, e As RoutedEventArgs) Handles IResetPerf.Click
-        IMaxCustomFileSize.Text = "160"
-        IMaxPacketSize.Text = "1400"
-        IMinBandwidth.Text = "128"
-        IMaxBandwidth.Text = "2000"
-        IMaxMessagesSend.Text = "128"
-        IMaxSizeGuaranteed.Text = "256"
-        IMaxSizeNonguaranteed.Text = "512"
-        IMinErrorToSend.Text = "0.001"
-        IMinErrorToSendNear.Text = "0.01"
-    End Sub
-
-    Private Sub ServerProfile_Initialized(sender As Object, e As EventArgs) Handles Me.Initialized
-        UpdateModsList()
-    End Sub
-
     Private Sub UpdateModsList()
         Dim currentMods = IServerModsList.Items
         Dim newMods As New List(Of String)
@@ -856,62 +908,5 @@ Class ServerProfile
         Else
             MsgBox("Please install game before continuing.")
         End If
-
-    End Sub
-
-    Private Sub IModsRefresh_Click(sender As Object, e As RoutedEventArgs) Handles IClientModsRefresh.Click, IServerModsRefresh.Click, IHeadlessModsRefresh.Click
-        UpdateModsList()
-    End Sub
-
-    Private Property ModsToCopy As String
-
-    Private Sub ModsCopy_Click(sender As Controls.Button, e As RoutedEventArgs) Handles IClientModsCopy.Click, IServerModsCopy.Click, IHeadlessModsCopy.Click
-        Select Case sender.Name
-            Case "IClientModsCopy"
-                ModsToCopy = IClientModsList.SelectedValue
-            Case "IServerModsCopy"
-                ModsToCopy = IServerModsList.SelectedValue
-            Case "IHeadlessModsCopy"
-                ModsToCopy = IHeadlessModsList.SelectedValue
-        End Select
-    End Sub
-
-    Private Sub ModsPaste_Click(sender As Controls.Button, e As RoutedEventArgs) Handles IClientModsPaste.Click, IServerModsPaste.Click, IHeadlessModsPaste.Click
-        If ModsToCopy IsNot String.Empty
-            Select Case sender.Name
-                Case "IServerModsPaste"
-                    IServerModsList.SelectedValue = ModsToCopy
-                Case "IClientModsPaste"
-                    IClientModsList.SelectedValue = ModsToCopy
-                Case "IHeadlessModsPaste"
-                    IHeadlessModsList.SelectedValue = ModsToCopy
-            End Select
-        End If
-    End Sub
-
-    Private Sub ModsAll_Click(sender As Controls.Button, e As RoutedEventArgs) Handles IServerModsAll.Click, IClientModsAll.Click, IHeadlessModsAll.Click, IAllMissionsButton.Click
-        Select Case sender.Name
-            Case "IServerModsAll"
-                IServerModsList.SelectedItemsOverride = IServerModsList.Items
-            Case "IClientModsAll"
-                IClientModsList.SelectedItemsOverride = IClientModsList.Items
-            Case "IHeadlessModsAll"
-                IHeadlessModsList.SelectedItemsOverride = IHeadlessModsList.Items
-            Case "IAllMissionsButton"
-                IMissionCheckList.SelectedItemsOverride = IMissionCheckList.Items
-        End Select
-    End Sub
-
-    Private Sub ModsNone_Click(sender As Controls.Button, e As RoutedEventArgs) Handles IServerModsNone.Click, IClientModsNone.Click, IHeadlessModsNone.Click, INoMissionsButton.Click
-        Select Case sender.Name
-            Case "IServerModsNone"
-                IServerModsList.SelectedItemsOverride = Nothing
-            Case "IClientModsNone"
-                IClientModsList.SelectedItemsOverride = Nothing
-            Case "IHeadlessModsNone"
-                IHeadlessModsList.SelectedItemsOverride = Nothing
-            Case "INoMissionsButton"
-                IMissionCheckList.SelectedItemsOverride = Nothing
-        End Select
     End Sub
 End Class

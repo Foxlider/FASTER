@@ -41,16 +41,6 @@ Class Settings
         IUpdatesOnLaunch.IsChecked = My.Settings.checkForModUpdates
         UpdateLocalModFolders()
     End Sub
-    
-    Private Sub UpdateLocalModFolders()
-        ILocalModFolders.Items.Clear()
-
-        If My.Settings.localModFolders.Count > 0
-            For Each folder in My.Settings.localModFolders
-                ILocalModFolders.Items.Add(folder)
-            Next
-        End If
-    End Sub
 
     Private Sub INewLocalFolder_Click(sender As Object, e As RoutedEventArgs) Handles INewLocalFolder.Click
         My.Settings.localModFolders.Add(MainWindow.SelectFolder())
@@ -81,5 +71,15 @@ Class Settings
             My.Settings.checkForModUpdates = False
         End If
         My.Settings.Save()
+    End Sub
+    
+    Private Sub UpdateLocalModFolders()
+        ILocalModFolders.Items.Clear()
+
+        If My.Settings.localModFolders.Count > 0
+            For Each folder in My.Settings.localModFolders
+                ILocalModFolders.Items.Add(folder)
+            Next
+        End If
     End Sub
 End Class

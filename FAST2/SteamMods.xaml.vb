@@ -1,6 +1,5 @@
 ﻿Imports System.IO
 Imports System.Threading
-Imports System.Windows.Forms
 Imports FAST2.Models
 
 Public Class SteamMods
@@ -31,6 +30,54 @@ Public Class SteamMods
         thread.Start()
     End Sub
 
+    Private Sub SteamMods_Loaded(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
+        If My.Settings.steamMods.Count > 0
+           UpdateModsView()
+        End If
+    End Sub
+
+    Private Sub IImportSteamModDialog_KeyUp(sender As Object, e As KeyEventArgs) Handles IImportSteamModDialog.KeyUp
+        If e.Key = Key.Escape
+            IImportSteamModDialog.IsOpen = False
+            IPrivateModCheck.IsChecked = False
+            ISteamItemBox.Text = String.Empty
+        End If
+    End Sub
+
+    Private Sub IImportModButton_Click(sender As Object, e As RoutedEventArgs) Handles IImportModButton.Click
+        Mouse.OverrideCursor = Cursors.Wait
+        IImportSteamModDialog.IsOpen = False
+        SteamMod.AddSteamMod(ISteamItemBox.Text)
+        IPrivateModCheck.IsChecked = False
+        ISteamItemBox.Text = String.Empty
+        Mouse.OverrideCursor = Cursors.Arrow
+        UpdateModsView()
+    End Sub
+
+    Private Async Sub SteamMods_Initialized(sender As Object, e As EventArgs) Handles Me.Initialized
+        If My.Settings.steamMods.Count > 0 And My.Settings.checkForModUpdates
+            IUpdateProgress.IsIndeterminate = True
+            IModView.IsEnabled = False
+            IProgressInfo.Visibility = Visibility.Visible
+            IProgressInfo.Content = "Checking for updates..."
+
+            Dim tasks As New List(Of Task) From {
+                    Task.Run(
+                        Sub()
+                            SteamMod.UpdateInfoFromSteam()
+                        End Sub
+                        )
+                    }
+
+            Await Task.WhenAll(tasks)
+
+            IModView.IsEnabled = True
+            IProgressInfo.Visibility = Visibility.Collapsed
+            IUpdateProgress.IsIndeterminate = False   
+            UpdateModsView()
+        End If
+    End Sub
+
     Private Async Sub ImportLauncherFile()
         IUpdateProgress.IsIndeterminate = True
         IModView.IsEnabled = False
@@ -53,20 +100,8 @@ Public Class SteamMods
         UpdateModsView()
     End Sub
 
-    Private Shared Function SelectFile(filter As String)
-        Dim dialog As New Microsoft.Win32.OpenFileDialog With {
-                .Filter = filter
-                }
-
-        If dialog.ShowDialog() <> DialogResult.OK Then
-            Return dialog.FileName
-        Else 
-            Return Nothing
-        End If
-    End Function
-
     Private Shared Sub OpenLauncherFile()
-        Dim modsFile = SelectFile("Arma 3 Launcher File|*.html")
+        Dim modsFile = Functions.SelectFile("Arma 3 Launcher File|*.html")
         
         If modsFile IsNot String.Empty
             Dim dataReader As StreamReader
@@ -83,7 +118,7 @@ Public Class SteamMods
                     link = StrReverse(link)
                     link = link.Substring(link.IndexOf("epyt-atad", StringComparison.Ordinal) + 11)
                     link = StrReverse(link)
-                    ModCollection.AddSteamMod(link, True)
+                    SteamMod.AddSteamMod(link, True)
                 End If
             Loop
             dataReader.Close()
@@ -171,7 +206,7 @@ Public Class SteamMods
             Dim tasks As New List(Of Task) From {
                     Task.Run(
                         Sub()
-                            ModCollection.UpdateInfoFromSteam()
+                            SteamMod.UpdateInfoFromSteam()
                         End Sub
                         )
                     }
@@ -189,12 +224,6 @@ Public Class SteamMods
     End Sub
     
 
-    Private Sub SteamMods_Loaded(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
-        If My.Settings.steamMods.Count > 0
-           UpdateModsView()
-        End If
-    End Sub
-
     Private Sub UpdateModsView()
         IModView.Items.Clear()
 
@@ -205,50 +234,8 @@ Public Class SteamMods
         End If
     End Sub
 
-    Private Sub IImportSteamModDialog_KeyUp(sender As Object, e As Input.KeyEventArgs) Handles IImportSteamModDialog.KeyUp
-        If e.Key = Key.Escape
-            IImportSteamModDialog.IsOpen = False
-            IPrivateModCheck.IsChecked = False
-            ISteamItemBox.Text = String.Empty
-        End If
-    End Sub
-
-    Private Sub IImportModButton_Click(sender As Object, e As RoutedEventArgs) Handles IImportModButton.Click
-        Mouse.OverrideCursor = Input.Cursors.Wait
-        IImportSteamModDialog.IsOpen = False
-        ModCollection.AddSteamMod(ISteamItemBox.Text)
-        IPrivateModCheck.IsChecked = False
-        ISteamItemBox.Text = String.Empty
-        Mouse.OverrideCursor = Input.Cursors.Arrow
-        UpdateModsView()
-    End Sub
-
-    Private Async Sub SteamMods_Initialized(sender As Object, e As EventArgs) Handles Me.Initialized
-        If My.Settings.steamMods.Count > 0 And My.Settings.checkForModUpdates
-            IUpdateProgress.IsIndeterminate = True
-            IModView.IsEnabled = False
-            IProgressInfo.Visibility = Visibility.Visible
-            IProgressInfo.Content = "Checking for updates..."
-
-            Dim tasks As New List(Of Task) From {
-                    Task.Run(
-                        Sub()
-                            ModCollection.UpdateInfoFromSteam()
-                        End Sub
-                        )
-                    }
-
-            Await Task.WhenAll(tasks)
-
-            IModView.IsEnabled = True
-            IProgressInfo.Visibility = Visibility.Collapsed
-            IUpdateProgress.IsIndeterminate = False   
-            UpdateModsView()
-        End If
-    End Sub
-
     Private Sub DeleteMod(sender As Object, e As RoutedEventArgs)
-        Dim steamMod = CType((CType(e.Source, Controls.Button)).DataContext, SteamMod)
+        Dim steamMod = CType((CType(e.Source, Button)).DataContext, SteamMod)
 
         If Directory.Exists(My.Settings.steamCMDPath & "\steamapps\workshop\content\107410\" & steamMod.WorkshopId)
             Directory.Delete(My.Settings.steamCMDPath & "\steamapps\workshop\content\107410\" & steamMod.WorkshopId, True)
@@ -258,12 +245,12 @@ Public Class SteamMods
             Directory.Delete(My.Settings.serverPath & "\@" & MainWindow.SafeName(steamMod.Name), True)
         End If
 
-        ModCollection.DeleteSteamMod(steamMod.WorkshopId)
+        SteamMod.DeleteSteamMod(steamMod.WorkshopId)
         UpdateModsView()
     End Sub
 
     Private Sub UpdateMod(sender As Object, e As RoutedEventArgs)
-        Dim steamMod = CType((CType(e.Source, Controls.Button)).DataContext, SteamMod)
+        Dim steamMod = CType((CType(e.Source, Button)).DataContext, SteamMod)
 
         UpdateMod(steamMod.WorkshopId, steamMod.Name)
     End Sub

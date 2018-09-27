@@ -5,13 +5,17 @@ Imports FAST2.Models
 
 Public Class LocalMods
 
+    Private Sub SteamMods_Loaded(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
+        UpdateModsView()
+    End Sub
+
     'Manages actions for steam mods tab buttons
     Private Sub IActionButtons_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles IModActionButtons.SelectionChanged
         
         If IRefreshList.IsSelected
             UpdateModsView()
         'ElseIf IAddLocalMod.IsSelected
-        '    ModCollection.AddLocalMod()
+        '    SteamMod.AddLocalMod()
         ElseIf IEditFolders.IsSelected
             MainWindow.Instance.IMainContent.SelectedIndex = 3
             MainWindow.Instance.ILocalModsTabSelect.IsSelected = False
@@ -31,15 +35,28 @@ Public Class LocalMods
         thread.Start()
     End Sub
 
-    Private Sub SteamMods_Loaded(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
-      UpdateModsView()
-    End Sub
-
     Private Sub UpdateModsView()
         ILocalModsView.Items.Clear()
 
-        Dim localMods = GetLocalMods
+        Dim localMods = LocalMod.GetLocalMods()
+        Dim serverPathMods = LocalMod.GetLocalMods(True)
+        Dim steamMods = SteamMod.GetSteamMods
+        Dim modsToRemove = New List(Of LocalMod)
+
+        For Each localMod As LocalMod In serverPathMods
+            For Each steamMod As SteamMod in steamMods
+                If localMod.Name = MainWindow.SafeName(steamMod.Name)
+                    modsToRemove.Add(localMod)
+                End If
+            Next
+        Next
+
+        For Each remove In modsToRemove
+            serverPathMods.RemoveAt(serverPathMods.IndexOf(serverPathMods.Find(Function(m) m.Name = remove.Name)))
+        Next
        
+        localMods.AddRange(serverPathMods)
+
         If localMods IsNot Nothing
             For Each localMod In localMods
                 ILocalModsView.Items.Add(localMod)
@@ -47,35 +64,22 @@ Public Class LocalMods
         End If
     End Sub
 
-    Private Shared Function GetLocalMods() As List(Of LocalMod)
-        Dim localMods = New List(Of LocalMod)
+    Private Sub DeleteMod(sender As Object, e As RoutedEventArgs)
+        Dim localMod = CType(CType(e.Source, Button).DataContext, LocalMod)
 
-        Dim foldersToSearch As New List(Of String)
-
-        If Not My.Settings.excludeServerFolder And My.Settings.serverPath IsNot String.Empty
-            foldersToSearch.Add(My.Settings.serverPath)
+        If Directory.Exists(localMod.Path) Then
+            Directory.Delete(localMod.Path, True)
         End If
 
-        For Each folder In My.Settings.localModFolders
-            foldersToSearch.Add(folder)
-        Next
-        
-        If foldersToSearch.Count > 0
-            For Each localModFolder In foldersToSearch
-                Dim modFolders = Directory.GetDirectories(localModFolder, "@*")
+        UpdateModsView()
+    End Sub
 
-                For Each modFolder In modFolders
-                    Dim name As String = modFolder.Substring(modFolder.LastIndexOf("@", StringComparison.Ordinal) + 1)
-                    Dim author = "Unknown"
-                    Dim website = "Unknown"
+    Private Sub OpenMod(sender As Object, e As RoutedEventArgs)
+        Dim localMod = CType((CType(e.Source, Button)).DataContext, LocalMod)
 
-                    Dim localMod = New LocalMod(name,modFolder,author,website)
-
-                    localMods.Add(localMod)
-                Next
-            Next
+        If Directory.Exists(localMod.Path) Then
+            Process.Start(localMod.Path)
         End If
 
-        Return localMods
-    End Function
+    End Sub
 End Class

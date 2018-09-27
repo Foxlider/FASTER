@@ -1,20 +1,31 @@
-﻿Imports System.Net
+﻿Imports System.IO
+Imports System.Net
+Imports System.Text
 Imports System.Text.RegularExpressions
-Imports System.Xml.Serialization
 
 Namespace Models
-
+    
     <Serializable()>
-    Public Class ModCollection
-        <XmlElement(Order:=1)>
-        Public Property CollectionName As String = "Main"
+    Public Class SteamMod
+        Private Sub New()
+        End Sub
 
-        <XmlElement(Order:=2, ElementName:="SteamMod")>
-        Public SteamMods As List(Of SteamMod) = New List(Of SteamMod)()
+        Public Sub New(workshopId As Int32, name As String, author As String, steamLastUpdated As Int32, Optional privateMod As Boolean = False)
+            Me.WorkshopId = workshopId
+            Me.Name = name
+            Me.Author = author
+            Me.SteamLastUpdated = steamLastUpdated
+            Me.PrivateMod = privateMod
+        End Sub
 
-        <XmlElement(Order:=3, ElementName:="LocalMod")>
-        Public LocalMods As List(Of LocalMod) = New List(Of LocalMod)()
-        
+        Public Property WorkshopId As Integer = Nothing
+        Public Property Name As String = String.Empty
+        Public Property Author As String = String.Empty
+        Public Property SteamLastUpdated As Integer = Nothing
+        Public Property LocalLastUpdated As Integer = 0
+        Public Property PrivateMod As Boolean = False
+        Public Property Status As String = "Not Installed"
+
         Public Shared Sub AddLocalMod()
             Dim path As String = MainWindow.SelectFolder()
             Dim duplicate = False
@@ -45,6 +56,53 @@ Namespace Models
             
         End Sub
 
+        'Gets mod info from Steam using Steam Web API
+        Private Shared Function SteamApiCall(modId As String)
+            Try
+                ' Create a request using a URL that can receive a post.   
+                Dim request As WebRequest = WebRequest.Create("https://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1/")
+                ' Set the Method property of the request to POST.  
+                request.Method = "POST"
+                ' Create POST data and convert it to a byte array.  
+                Dim postData As String = "itemcount=1&publishedfileids[0]=" & modId
+                Dim byteArray As Byte() = Encoding.UTF8.GetBytes(postData)
+                ' Set the ContentType property of the WebRequest.  
+                request.ContentType = "application/x-www-form-urlencoded"
+                ' Set the ContentLength property of the WebRequest.  
+                request.ContentLength = byteArray.Length
+                ' Get the request stream.  
+                Dim dataStream As Stream = request.GetRequestStream()
+                ' Write the data to the request stream.  
+                dataStream.Write(byteArray, 0, byteArray.Length)
+                ' Close the Stream object.  
+                dataStream.Close()
+                ' Get the response.
+                Dim response As WebResponse = Nothing
+                Try
+                    response = request.GetResponse()
+                Catch ex As Exception
+                    MainWindow.Instance.IMessageDialog.IsOpen = True
+                    MainWindow.Instance.IMessageDialogText.Text = "There may be an issue with Steam please try again shortly."
+                End Try
+                ' Get the stream containing content returned by the server.  
+                dataStream = response.GetResponseStream()
+                ' Open the stream using a StreamReader for easy access.  
+                Dim reader As New StreamReader(dataStream)
+                ' Read the content.  
+                Dim responseFromServer As String = reader.ReadToEnd()
+                ' Clean up the streams.  
+                reader.Close()
+                dataStream.Close()
+                response.Close()
+                ' Return the content.  
+                Return responseFromServer
+
+            Catch ex As Exception
+                MsgBox("GetModInfo - An exception occurred:" & vbCrLf & ex.Message)
+                Return Nothing
+            End Try
+        End Function
+
         Public Shared Sub DeleteSteamMod(workshopId As Int32)
             Dim currentMods = GetSteamMods()
 
@@ -53,7 +111,7 @@ Namespace Models
             My.Settings.Save()
         End Sub
 
-        Private Shared Function GetSteamMods() As List(Of SteamMod)
+        Public Shared Function GetSteamMods() As List(Of SteamMod)
             Dim currentSteamMods As New List(Of SteamMod)
 
             If My.Settings.steamMods IsNot Nothing
@@ -143,7 +201,7 @@ Namespace Models
                 authorLength = authorEnd - authorStart
                 author = sourceString.Substring(authorStart, authorLength)
 
-                Dim modInfo = MainWindow.GetModInfo(modId)
+                Dim modInfo = SteamApiCall(modId)
 
                 steamUpdateTime = modInfo.Substring(modInfo.IndexOf("""time_updated"":") + 15, 10)
                 
@@ -183,34 +241,9 @@ Namespace Models
 
             End If
         End Sub
-    End Class
-    
-    <Serializable()>
-    Public Class SteamMod
-        Private Sub New()
-        End Sub
 
-        Public Sub New(workshopId As Int32, name As String, author As String, steamLastUpdated As Int32, Optional privateMod As Boolean = False)
-            Me.WorkshopId = workshopId
-            Me.Name = name
-            Me.Author = author
-            Me.SteamLastUpdated = steamLastUpdated
-            Me.PrivateMod = privateMod
-        End Sub
 
-        Public Property WorkshopId As Integer = Nothing
 
-        Public Property Name As String = String.Empty
-
-        Public Property Author As String = String.Empty
-
-        Public Property SteamLastUpdated As Integer = Nothing
-
-        Public Property LocalLastUpdated As Integer = 0
-
-        Public Property PrivateMod As Boolean = False
-
-        Public Property Status As String = "Not Installed"
     End Class
 
    

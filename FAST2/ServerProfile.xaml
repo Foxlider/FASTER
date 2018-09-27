@@ -79,7 +79,7 @@
                                 <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="-8"/>
                             </StackPanel>
 
-                            <TextBox Name="IServerName" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="10" materialDesign:HintAssist.Hint="Server Name" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
+                            <TextBox Name="IServerName" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="10" materialDesign:HintAssist.Hint="Server Name" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5,3,5,5"/>
                             <TextBox Name="IExecutable" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="9" materialDesign:HintAssist.Hint="Server File" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
                             <Button Grid.Row="2" Grid.Column="9" Name="IServerFileButton" Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}" Height="20" Width="20" DockPanel.Dock="Right">
                                 <materialDesign:PackIcon Kind="FolderOpen" Height="10" Width="10"/>
@@ -89,6 +89,8 @@
 
                             <TextBox Name="IMaxPlayers" Grid.Row="3" Grid.Column="7" Grid.ColumnSpan="3" materialDesign:HintAssist.Hint="Max Players" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
                             <TextBox Name="IPort" Grid.Row="4" Grid.Column="7" Grid.ColumnSpan="3" materialDesign:HintAssist.Hint="Port" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
+                            
+                            <CheckBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="5" Name="IBattleEye" Content="BattleEye" Margin="5" Foreground="{DynamicResource MaterialDesignBody}"/>
                         </Grid>
                     </materialDesign:Card>
 
@@ -657,7 +659,6 @@
         </dragablz:TabablzControl>
         <StackPanel Grid.Row="1" Orientation="Horizontal">
             <Label Name="IDisplayName" VerticalAlignment="Center" Content="Profile Display Name" Foreground="{DynamicResource MaterialDesignLightForeground}" FontWeight="Bold" FontSize="16" Margin="5"/>
-            <CheckBox Name="IBattleEye" Content="BattleEye" Margin="5"/>
         </StackPanel>
         <StackPanel Name="IProfileNameEdit" Grid.Row="1" Orientation="Horizontal" Margin="10,13" Width="310" HorizontalAlignment="Left" Visibility="Collapsed">
             <TextBox Name="IProfileDisplayNameEdit" FontWeight="Bold" FontSize="16" Width="278" Foreground="{DynamicResource MaterialDesignLightForeground}"/>

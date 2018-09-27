@@ -62,7 +62,7 @@ Public Class Setup
         End If
     End Sub
 
-    'Contiues to main form when button is clicked - stores users options in settings and encrypts steam password
+    'Continues to main form when button is clicked - stores users options in settings and encrypts steam password
     Private Sub IContinueButton_Click(sender As Object, e As RoutedEventArgs) Handles IContinueButton.Click
         My.Settings.serverPath = IServerDirBox.Text
         My.Settings.steamCMDPath = ISteamDirBox.Text
