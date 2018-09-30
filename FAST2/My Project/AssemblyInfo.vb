@@ -11,11 +11,11 @@ Imports System.Windows
 
 ' Review the values of the assembly attributes
 
-<Assembly: AssemblyTitle("FAST2")>
-<Assembly: AssemblyDescription("")>
-<Assembly: AssemblyCompany("Point72 Asset Management, L.P.")>
-<Assembly: AssemblyProduct("FAST2")>
-<Assembly: AssemblyCopyright("Copyright © Point72 Asset Management, L.P. 2018")>
+<Assembly: AssemblyTitle("FAST 2")>
+<Assembly: AssemblyDescription("Flax's Arma Server Tool")>
+<Assembly: AssemblyCompany("Kestrel Studios")>
+<Assembly: AssemblyProduct("Flax's Arma Server Tool")>
+<Assembly: AssemblyCopyright("")>
 <Assembly: AssemblyTrademark("")>
 <Assembly: ComVisible(false)>
 
@@ -55,5 +55,6 @@ Imports System.Windows
 ' by using the '*' as shown below:
 ' <Assembly: AssemblyVersion("1.0.*")>
 
-<Assembly: AssemblyVersion("1.0.0.0")>
-<Assembly: AssemblyFileVersion("1.0.0.0")>
+<Assembly: AssemblyVersion("2.0.0.0")>
+<Assembly: AssemblyFileVersion("2.0.0.0")>
+<Assembly: NeutralResourcesLanguage("en-GB")>
