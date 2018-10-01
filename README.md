@@ -3,6 +3,7 @@
 
 
 **_INTRO_**
+
 An extensive rewirte of FAST. The UI needed updating and the code was messy and inefficient. This new and hoprefully improved FAST2 has more features and better stability than FAST. As before I decided to build FAST to help automate and speed up the deplotment of Arma 3 servers on Windows.  Thanks go out to Optix for his Remote Arma Server tool that gave me some ideas for my tool. Also, a massive thank you to Kju for his continued bug reporting and ideas. 
  
 
