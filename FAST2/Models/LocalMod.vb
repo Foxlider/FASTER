@@ -28,18 +28,20 @@ Namespace Models
                     foldersToSearch.Add(My.Settings.serverPath)
                 End If
             End If
-        
+            
             If Not serverPathOnly Then
                 For Each folder In My.Settings.localModFolders
-                    foldersToSearch.Add(folder)
+                    If folder IsNot Nothing
+                        foldersToSearch.Add(folder)
+                    End If
                 Next
             End If
         
-            If foldersToSearch.Count > 0
-                For Each localModFolder In foldersToSearch
-                    Dim modFolders = Directory.GetDirectories(localModFolder, "@*")
+            If foldersToSearch.Count > 0 
+              For Each localModFolder In foldersToSearch
+                Dim modFolders = Directory.GetDirectories(localModFolder, "@*")
 
-                    localMods.AddRange(From modFolder In modFolders Let name = modFolder.Substring(modFolder.LastIndexOf("@", StringComparison.Ordinal) + 1) Let author = "Unknown" Let website = "Unknown" Select New LocalMod(name, modFolder, author, website))
+                localMods.AddRange(From modFolder In modFolders Let name = modFolder.Substring(modFolder.LastIndexOf("@", StringComparison.Ordinal) + 1) Let author = "Unknown" Let website = "Unknown" Select New LocalMod(name, modFolder, author, website))
                 Next
             End If
 
