@@ -2,9 +2,11 @@
 Imports System.Net
 Imports System.Text
 Imports System.Text.RegularExpressions
+Imports Newtonsoft
+Imports Newtonsoft.Json.Linq
 
 Namespace Models
-    
+
     <Serializable()>
     Public Class SteamMod
         Private Sub New()
@@ -33,19 +35,19 @@ Namespace Models
 
             If path IsNot Nothing
                 Dim modName = path.Substring(path.LastIndexOf("@", StringComparison.Ordinal) + 1)
-                
+
                 If currentMods.Count > 0 Then
                     For Each localMod In currentMods
                         If localMod.Name = modName
-                            duplicate = true
+                            duplicate = True
                         End If
                     Next
                 End If
-           
+
                 If Not duplicate Then
                     currentMods.Add(New LocalMod(modName, path))
 
-                    My.Settings.LocalMods = currentMods
+                    My.Settings.localMods = currentMods
                 Else
                     MainWindow.Instance.IMessageDialog.IsOpen = True
                     MainWindow.Instance.IMessageDialogText.Text = "Mod already imported."
@@ -53,55 +55,10 @@ Namespace Models
 
                 My.Settings.Save()
             End If
-            
+
         End Sub
 
-        'Gets mod info from Steam using Steam Web API
-        Private Shared Function SteamApiCall(modId As String)
-            Try
-                ' Create a request using a URL that can receive a post.   
-                Dim request As WebRequest = WebRequest.Create("https://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1/")
-                ' Set the Method property of the request to POST.  
-                request.Method = "POST"
-                ' Create POST data and convert it to a byte array.  
-                Dim postData As String = "itemcount=1&publishedfileids[0]=" & modId
-                Dim byteArray As Byte() = Encoding.UTF8.GetBytes(postData)
-                ' Set the ContentType property of the WebRequest.  
-                request.ContentType = "application/x-www-form-urlencoded"
-                ' Set the ContentLength property of the WebRequest.  
-                request.ContentLength = byteArray.Length
-                ' Get the request stream.  
-                Dim dataStream As Stream = request.GetRequestStream()
-                ' Write the data to the request stream.  
-                dataStream.Write(byteArray, 0, byteArray.Length)
-                ' Close the Stream object.  
-                dataStream.Close()
-                ' Get the response.
-                Dim response As WebResponse = Nothing
-                Try
-                    response = request.GetResponse()
-                Catch ex As Exception
-                    MainWindow.Instance.IMessageDialog.IsOpen = True
-                    MainWindow.Instance.IMessageDialogText.Text = "There may be an issue with Steam please try again shortly."
-                End Try
-                ' Get the stream containing content returned by the server.  
-                dataStream = response.GetResponseStream()
-                ' Open the stream using a StreamReader for easy access.  
-                Dim reader As New StreamReader(dataStream)
-                ' Read the content.  
-                Dim responseFromServer As String = reader.ReadToEnd()
-                ' Clean up the streams.  
-                reader.Close()
-                dataStream.Close()
-                response.Close()
-                ' Return the content.  
-                Return responseFromServer
-
-            Catch ex As Exception
-                MsgBox("GetModInfo - An exception occurred:" & vbCrLf & ex.Message)
-                Return Nothing
-            End Try
-        End Function
+        
 
         Public Shared Sub DeleteSteamMod(workshopId As Int32)
             Dim currentMods = GetSteamMods()
@@ -132,38 +89,38 @@ Namespace Models
         End Function
 
         Public Shared Sub AddSteamMod(modUrl As String, Optional multiple As Boolean = False)
-            If modUrl  Like "http*://steamcommunity.com/*/filedetails/?id=*" Then
+            If modUrl Like "http*://steamcommunity.com/*/filedetails/?id=*" Then
                 Dim duplicate = False
                 Dim currentMods = GetSteamMods()
-                
+
                 Dim modId = modUrl.Substring(modUrl.IndexOf("?id=", StringComparison.Ordinal))
                 modId = Integer.Parse(Regex.Replace(modId, "[^\d]", ""))
 
                 If currentMods.Count > 0 Then
                     For Each steamMod In currentMods
                         If steamMod.WorkshopId = modId
-                            duplicate = true
+                            duplicate = True
                         End If
                     Next
                 End If
 
                 If Not duplicate Then
                     Try
-                       Dim modInfo = GetModInfo(modId)
-                        
+                        Dim modInfo = GetModInfo(modId)
+
                         If modInfo IsNot Nothing
                             Dim modName = modInfo.Item1
                             Dim steamUpdateTime = modInfo.Item3
                             Dim author = modInfo.Item2
-                            
+
                             currentMods.Add(New SteamMod(modId, modName, author, steamUpdateTime, 0))
 
-                            My.Settings.SteamMods = currentMods
+                            My.Settings.steamMods = currentMods
                             My.Settings.Save()
                         Else
-                           
-                                MainWindow.Instance.IMessageDialog.IsOpen = True
-                                MainWindow.Instance.IMessageDialogText.Text = "This is a workshop Item for a different game."
+
+                            MainWindow.Instance.IMessageDialog.IsOpen = True
+                            MainWindow.Instance.IMessageDialogText.Text = "This is a workshop Item for a different game."
                         End If
                     Catch ex As Exception
                         MsgBox("An exception occurred:" & vbCrLf & ex.Message)
@@ -188,24 +145,24 @@ Namespace Models
             sourceString = New WebClient().DownloadString(url)
 
             appName = sourceString.Substring(sourceString.IndexOf("content=" & ControlChars.Quote & "Steam Workshop:", StringComparison.Ordinal) + 25, 6)
-                        
+
             If appName Like "Arma 3" Then
-                            
+
                 modName = sourceString.Substring(sourceString.IndexOf("<title>Steam Workshop :: ", StringComparison.Ordinal) + 25)
                 modName = StrReverse(modName)
                 modName = modName.Substring(modName.IndexOf(">eltit/<", StringComparison.Ordinal) + 8)
                 modName = StrReverse(modName)
 
-                authorStart = sourceString.IndexOf("myworkshopfiles/?appid=107410"">", StringComparison.Ordinal) +31
+                authorStart = sourceString.IndexOf("myworkshopfiles/?appid=107410"">", StringComparison.Ordinal) + 31
                 authorEnd = sourceString.IndexOf("'s Workshop</a>", StringComparison.Ordinal)
                 authorLength = authorEnd - authorStart
                 author = sourceString.Substring(authorStart, authorLength)
 
-                Dim modInfo = SteamApiCall(modId)
+                'Dim modInfo = SteamApiCall(modId)
 
-                steamUpdateTime = modInfo.Substring(modInfo.IndexOf("""time_updated"":") + 15, 10)
-                
-                Return New Tuple(Of String,String,String)(modName, author, steamUpdateTime)
+                'steamUpdateTime = modInfo.Substring(modInfo.IndexOf("""time_updated"":") + 15, 10)
+
+                Return New Tuple(Of String, String, String)(modName, author, steamUpdateTime)
 
             Else
                 Return Nothing
@@ -221,7 +178,7 @@ Namespace Models
                         Dim modInfo = GetModInfo(steamMod.WorkshopId)
 
                         If modInfo IsNot Nothing
-                            Dim updateMod = currentMods.Find(function(c) c.WorkshopId = steamMod.WorkshopId)
+                            Dim updateMod = currentMods.Find(Function(c) c.WorkshopId = steamMod.WorkshopId)
 
                             updateMod.Name = modInfo.Item1
                             updateMod.Author = modInfo.Item2
@@ -236,7 +193,7 @@ Namespace Models
                     End If
                 Next
 
-                My.Settings.SteamMods = currentMods
+                My.Settings.steamMods = currentMods
                 My.Settings.Save()
 
             End If
@@ -246,5 +203,5 @@ Namespace Models
 
     End Class
 
-   
+
 End Namespace

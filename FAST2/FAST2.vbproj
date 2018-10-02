@@ -108,6 +108,9 @@
     <Reference Include="MaterialDesignThemes.Wpf, Version=2.4.1.1101, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MaterialDesignThemes.2.4.1.1101\lib\net45\MaterialDesignThemes.Wpf.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System.Core" />
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
@@ -160,6 +163,7 @@
     <Compile Include="Models\Functions.vb" />
     <Compile Include="Models\LocalMod.vb" />
     <Compile Include="Models\ServerCollection.vb" />
+    <Compile Include="Models\SteamWebApi.vb" />
     <Compile Include="Models\Theme.vb" />
     <Compile Include="Settings.xaml.vb">
       <DependentUpon>Settings.xaml</DependentUpon>

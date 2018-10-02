@@ -13,7 +13,7 @@ Imports System.Windows
 
 <Assembly: AssemblyTitle("FAST 2")>
 <Assembly: AssemblyDescription("Flax's Arma Server Tool")>
-<Assembly: AssemblyCompany("Kestrel Studios")>
+<Assembly: AssemblyCompany("KestrelStudios")>
 <Assembly: AssemblyProduct("Flax's Arma Server Tool")>
 <Assembly: AssemblyCopyright("")>
 <Assembly: AssemblyTrademark("")>
