@@ -78,7 +78,7 @@ Public Class MainWindow
             branch = "107410 -beta development"
         End If
 
-        steamCommand = "+login " & ISteamUserBox.Text & " " & ISteamPassBox.Password & " +force_install_dir " & IServerDirBox.Text & " +app_update " & branch & " validate +quit"
+        steamCommand = "+login " & ISteamUserBox.Text & " " & ISteamPassBox.Password & " +force_install_dir """ & IServerDirBox.Text & """ +app_update " & branch & " validate +quit"
 
         RunSteamCommand(steamCmd, steamCommand, "server")
     End Sub
