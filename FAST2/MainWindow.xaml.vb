@@ -1,6 +1,5 @@
 ﻿Imports System.ComponentModel
 Imports System.Net
-Imports System.Text.RegularExpressions
 Imports System.IO
 Imports System.IO.Compression
 Imports FAST2.Models
@@ -184,7 +183,7 @@ Public Class MainWindow
             Mouse.OverrideCursor = Cursors.Wait
             Dim profileName = INewProfileName.Text
             INewServerProfileDialog.IsOpen = False
-            ServerCollection.AddServerProfile(profileName, SafeName(profileName))
+            ServerCollection.AddServerProfile(profileName, Functions.SafeName(profileName))
             INewProfileName.Text = String.Empty
             Mouse.OverrideCursor = Cursors.Arrow
         End If
@@ -320,18 +319,7 @@ Public Class MainWindow
         IServerBranch.Text = My.Settings.serverBranch
     End Sub
 
-    'Takes any string and removes illegal characters
-    Public Shared Function SafeName(input As String, Optional ignoreWhiteSpace As Boolean = False, Optional replacement As Char = "_") As String
-        If ignoreWhiteSpace Then
-            input = Regex.Replace(input, "[^a-zA-Z0-9\-_\s]", replacement)
-            input = Replace(input, replacement & replacement, replacement)
-            Return input
-        Else
-            input = Regex.Replace(input, "[^a-zA-Z0-9\-_]", replacement)
-            input = Replace(input, replacement & replacement, replacement)
-            Return input
-        End If
-    End Function
+    
 
     'Installs the SteamCMD tool
     Private Sub InstallSteam()
@@ -582,6 +570,7 @@ Public Class MainWindow
                     End If
                 End If
             Next
+            My.Settings.Save()
         End If
     End Sub
 End Class

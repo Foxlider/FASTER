@@ -1,5 +1,4 @@
-﻿
-Imports FAST2.Models
+﻿Imports FAST2.Models
 
 Public Class Setup
     
@@ -64,28 +63,18 @@ Public Class Setup
 
     'Continues to main form when button is clicked - stores users options in settings and encrypts steam password
     Private Sub IContinueButton_Click(sender As Object, e As RoutedEventArgs) Handles IContinueButton.Click
+        My.Settings.serverPath = IServerDirBox.Text
+        My.Settings.steamCMDPath = ISteamDirBox.Text
+        My.Settings.steamUserName = ISteamUserBox.Text
+        My.Settings.steamPassword = Encryption.Instance.EncryptData(ISteamPassBox.Password)
+        My.Settings.firstRun = False
 
-        Dim mods As New List(Of Integer) From {
-            1087021903,
-            962932583
-        }
+        If IInstallSteamCheck.IsChecked Then
+            MainWindow.Instance.InstallSteamCmd = True
+        End If
 
-        Dim modInfo = SteamWebApi.GetFileDetails(mods)
-        
-        Dim author = SteamWebApi.GetPlayerSummaries(modInfo(0).SelectToken("creator"))
-        
-        'My.Settings.serverPath = IServerDirBox.Text
-        'My.Settings.steamCMDPath = ISteamDirBox.Text
-        'My.Settings.steamUserName = ISteamUserBox.Text
-        'My.Settings.steamPassword = Encryption.Instance.EncryptData(ISteamPassBox.Password)
-        'My.Settings.firstRun = False
-
-        'If IInstallSteamCheck.IsChecked Then
-        '    MainWindow.Instance.InstallSteamCmd = True
-        'End If
-
-        'MainWindow.Instance.Show()
-        'MainWindow.Instance.Activate()
-        'Close()
+        MainWindow.Instance.Show()
+        MainWindow.Instance.Activate()
+        Close()
     End Sub
 End Class

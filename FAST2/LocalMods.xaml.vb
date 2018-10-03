@@ -45,7 +45,7 @@ Public Class LocalMods
 
         For Each localMod As LocalMod In serverPathMods
             For Each steamMod As SteamMod in steamMods
-                If localMod.Name = MainWindow.SafeName(steamMod.Name)
+                If localMod.Name = Functions.SafeName(steamMod.Name)
                     modsToRemove.Add(localMod)
                 End If
             Next

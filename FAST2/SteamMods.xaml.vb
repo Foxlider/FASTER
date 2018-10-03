@@ -171,7 +171,7 @@ Public Class SteamMods
 
                 Directory.CreateDirectory(modPath)
                 
-                linkPath = My.Settings.serverPath & "\@" & MainWindow.SafeName(modName)
+                linkPath = My.Settings.serverPath & "\@" & Functions.SafeName(modName)
                 linkCommand = "/c mklink /D " & linkPath & " " & modPath
 
                 Process.Start("cmd", linkCommand)
@@ -241,8 +241,8 @@ Public Class SteamMods
             Directory.Delete(My.Settings.steamCMDPath & "\steamapps\workshop\content\107410\" & steamMod.WorkshopId, True)
         End If
 
-        If Directory.Exists(My.Settings.serverPath & "\@" & MainWindow.SafeName(steamMod.Name))
-            Directory.Delete(My.Settings.serverPath & "\@" & MainWindow.SafeName(steamMod.Name), True)
+        If Directory.Exists(My.Settings.serverPath & "\@" & Functions.SafeName(steamMod.Name))
+            Directory.Delete(My.Settings.serverPath & "\@" & Functions.SafeName(steamMod.Name), True)
         End If
 
         SteamMod.DeleteSteamMod(steamMod.WorkshopId)

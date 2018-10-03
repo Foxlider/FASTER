@@ -1,6 +1,7 @@
 ﻿Imports System.Collections.Specialized
 Imports System.IO
 Imports System.Text
+Imports System.Text.RegularExpressions
 Imports System.Windows.Forms
 Imports System.Xml
 Imports System.Xml.Serialization
@@ -73,7 +74,7 @@ Namespace Models
             End Using
         End Function
 
-        Public Shared Function SelectFile(filter As String)
+        Public Shared Function SelectFile(filter As String) As String
             Dim dialog As New Microsoft.Win32.OpenFileDialog With {
                     .Filter = filter
                     }
@@ -82,6 +83,19 @@ Namespace Models
                 Return dialog.FileName
             Else 
                 Return Nothing
+            End If
+        End Function
+
+        'Takes any string and removes illegal characters
+        Public Shared Function SafeName(input As String, Optional ignoreWhiteSpace As Boolean = False, Optional replacement As Char = "_") As String
+            If ignoreWhiteSpace Then
+                input = Regex.Replace(input, "[^a-zA-Z0-9\-_\s]", replacement)
+                input = Replace(input, replacement & replacement, replacement)
+                Return input
+            Else
+                input = Regex.Replace(input, "[^a-zA-Z0-9\-_]", replacement)
+                input = Replace(input, replacement & replacement, replacement)
+                Return input
             End If
         End Function
     End Class

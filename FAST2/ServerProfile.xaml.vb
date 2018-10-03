@@ -416,7 +416,7 @@ Class ServerProfile
     End Sub
 
     Private Function ReadyToLaunch(profile As String)
-        profile = MainWindow.SafeName(profile)
+        profile = Functions.SafeName(profile)
 
         If Not ProfileFilesExist(profile) Then
             Return False
@@ -455,7 +455,7 @@ Class ServerProfile
     End Function
 
     Private Sub LaunchServer()
-        Dim profileName As String = MainWindow.SafeName(IDisplayName.Content)
+        Dim profileName As String = Functions.SafeName(IDisplayName.Content)
         Dim profilePath As String = AppDomain.CurrentDomain.BaseDirectory & "\Servers\" & profileName & "\"
         Dim configs As String = profilePath & profileName
         Dim start = True
@@ -546,7 +546,7 @@ Class ServerProfile
 
     Private Sub WriteConfigFiles(profile As String)
         Dim profilePath = My.Settings.serverPath
-        profile = MainWindow.SafeName(profile)
+        profile = Functions.SafeName(profile)
 
         Dim config As String = profilePath & "\Servers\" & profile & "\" & profile & "_config.cfg"
         Dim basic As String = profilePath & "\Servers\" & profile & "\" & profile & "_basic.cfg"
@@ -732,7 +732,7 @@ Class ServerProfile
 
     Private Sub UpdateProfile()
         Try
-            Dim profileName = MainWindow.SafeName(IDisplayName.Content)
+            Dim profileName = Functions.SafeName(IDisplayName.Content)
             Dim path As String = My.Settings.serverPath & "\Servers\"
             Dim profilePath As String = path & profileName & "\"
 

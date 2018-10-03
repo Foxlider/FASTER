@@ -6,13 +6,16 @@ Namespace Models
     Public Class SteamWebApi
 
         Private Const SteamApiKey = "1669DCBF5FD494B07B85358D12FFB85B"
+        Private Const V As String = "&publishedfileids["
+        Private Const V1 As String = "]="
+        Private Const V2 As String = "&steamids="
 
-        'Gets mod info from Steam using Steam Web API
-        Public Shared Function GetFileDetails(modIds As List(Of Int32)) As List(Of JObject)
+        'Gets multiple mods info
+        Public Shared Function GetFileDetails(modIds As List(Of Integer)) As List(Of JObject)
 
             Dim mods As String = String.Empty
             For Each modId In modIds
-                mods = mods & "&publishedfileids[" & modIds.IndexOf(modId) & "]=" & modId
+                mods = mods & V & modIds.IndexOf(modId) & V1 & modId
             Next
 
             Dim response = ApiCall("https://api.steampowered.com/IPublishedFileService/GetDetails/v1?key=" & SteamApiKey & mods)
@@ -20,12 +23,22 @@ Namespace Models
             Return response.SelectTokens("response.publishedfiledetails[*]").Cast (Of JObject)().ToList()
         End Function
 
-        Public Shared Function GetPlayerSummaries(playerId As Integer) As JObject
-            Dim response = ApiCall("https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v1?key=" & SteamApiKey & "&steamids=" & playerId)
+        Public Shared Function GetSingleFileDetails(modId As Integer) As JObject
+            Dim response = ApiCall("https://api.steampowered.com/IPublishedFileService/GetDetails/v1?key=" & SteamApiKey & "&publishedfileids[0]=" & modId)
+            
+            Return response.SelectToken("response.publishedfiledetails[0]")
+        End Function
+
+
+        'Gets user info
+        Public Shared Function GetPlayerSummaries(playerId As String) As JObject
+            Dim response = ApiCall("https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v1?key=" & SteamApiKey & V2 & playerId)
 
             Return response.SelectToken("response.players.player[0]")
         End Function
 
+
+        'Calls to Steam API Endpoint and returns the result as JSON Object
         Private Shared Function ApiCall(uri As String) As JObject
             ' Create a request for the URL. 
             Dim request As WebRequest = WebRequest.Create(uri)

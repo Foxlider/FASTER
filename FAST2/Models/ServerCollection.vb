@@ -51,7 +51,7 @@ Namespace Models
                 Dim currentProfile As ServerProfile = currentProfiles.Find(Function(profile) profile.DisplayName = oldName)
 
                 currentProfile.DisplayName = newName
-                currentProfile.SafeName = MainWindow.SafeName(newName)
+                currentProfile.SafeName = Functions.SafeName(newName)
                 Return True
             Catch ex As Exception
                 MsgBox(ex.Message)
