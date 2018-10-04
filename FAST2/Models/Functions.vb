@@ -8,6 +8,18 @@ Imports System.Xml.Serialization
 
 Namespace Models
     Public Class Functions
+
+        Public Shared Sub CheckSettings()
+            If Not Directory.Exists(My.Settings.serverPath) Then
+                My.Settings.serverPath = String.Empty
+            End If
+
+            If Not Directory.Exists(My.Settings.steamCMDPath) Then
+                My.Settings.steamCMDPath = String.Empty
+            End If
+        End Sub
+
+
         Public Shared Function GetLinesCollectionFromTextBox(textBox As Controls.TextBox) As StringCollection
             Dim lines = New StringCollection()
             Dim lineCount As Integer = textBox.LineCount

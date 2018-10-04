@@ -41,7 +41,7 @@ Public Class MainWindow
 
 
     Private Sub MainWindow_Initialized(sender As Object, e As EventArgs) Handles Me.Initialized
-        CheckSettings()
+        Functions.CheckSettings()
         LoadServerProfiles()
         LoadSteamUpdaterSettings()
     End Sub
@@ -265,16 +265,6 @@ Public Class MainWindow
         End If
     End Sub
 
-    Private Shared Sub CheckSettings()
-        If Not Directory.Exists(My.Settings.serverPath) Then
-            My.Settings.serverPath = String.Empty
-        End If
-
-        If Not Directory.Exists(My.Settings.steamCMDPath) Then
-            My.Settings.steamCMDPath = String.Empty
-        End If
-    End Sub
-
     'Checks if the program is ready to run a command
     Public Function ReadyToUpdate() As Boolean
         If ISteamDirBox.Text = String.Empty Then
@@ -374,14 +364,41 @@ Public Class MainWindow
                         ISteamOutputBox.AppendText(text & Environment.NewLine)
                         ISteamOutputBox.ScrollToEnd()
                     End Sub
-                    )
+                )
 
-                    If text Like "*at the console." Then
+                If text Like "*at the console." Then
                     Dispatcher.Invoke(
                         Sub()
                             ISteamGuardDialog.IsOpen = True
                         End Sub
                     )
+
+                    Do
+                    Loop Until _steamCodeValid
+
+                    _steamCodeValid = False
+                    Dispatcher.Invoke(
+                        Sub()
+                            oStreamWriter.Write(ISteamGuardCode.Text & Environment.NewLine)
+                        End Sub
+                    )
+                End If
+                
+                If text Like "*...*" Then
+                    Dispatcher.Invoke(
+                        Sub()
+                            oStreamWriter.Write(Environment.NewLine & Environment.NewLine)
+                        End Sub
+                        )
+                End If
+
+                If text Like "*Mobile Authenticator*" Then
+                    Dispatcher.Invoke(
+                        Sub()
+                            ISteamGuardDialog.IsOpen = True
+                        End Sub
+                        )
+
                     Do
 
                     Loop Until _steamCodeValid
@@ -392,24 +409,9 @@ Public Class MainWindow
                             oStreamWriter.Write(ISteamGuardCode.Text & Environment.NewLine)
                         End Sub
                         )
-                ElseIf text Like "*Mobile Authenticator*" Then
-                    Dispatcher.Invoke(
-                        Sub()
-                            ISteamGuardDialog.IsOpen = True
-                        End Sub
-                        )
+                End If
 
-                    Do
-
-                    Loop Until _steamCodeValid
-
-                    _steamCodeValid = False
-                    Dispatcher.Invoke(
-                        Sub()
-                            oStreamWriter.Write(ISteamGuardCode.Text & Environment.NewLine)
-                        End Sub
-                        )
-                ElseIf text Like "*Update state*" Then
+                If text Like "*Update state*" Then
                     Dim counter As Integer = text.IndexOf(":", StringComparison.Ordinal)
                     Dim progress As String = text.Substring(counter + 2, 2)
                     Dim progressValue As Integer
@@ -425,13 +427,17 @@ Public Class MainWindow
                             ISteamProgressBar.Value = progressValue
                         End Sub
                         )
-                ElseIf text Like "*Success*" Then
+                End If
+
+                If text Like "*Success*" Then
                     Dispatcher.Invoke(
                         Sub()
                             ISteamProgressBar.Value = 100
                         End Sub
                         )
-                ElseIf text Like "*Timeout*" Then
+                End If
+
+                If text Like "*Timeout*" Then
                     Dispatcher.Invoke(
                         Sub()
                             Instance.IMessageDialog.IsOpen = True

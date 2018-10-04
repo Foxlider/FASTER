@@ -139,7 +139,7 @@
                                 <Label Margin="2" Content="Steam CMD Settings"/>
                                 <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="-8"/>
                             </StackPanel>
-                            <TextBox Grid.Row="1" Grid.Column="0" Name="ISteamDirBox"  materialDesign:HintAssist.Hint="Directory" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" BorderBrush="{DynamicResource PrimaryHueDarkBrush}" Margin="10"/>
+                            <TextBox Grid.Row="1" Grid.Column="0" Name="ISteamDirBox"  materialDesign:HintAssist.Hint="Install Directory" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" BorderBrush="{DynamicResource PrimaryHueDarkBrush}" Margin="10"/>
                             <Button Grid.Row="1" Grid.Column="1" Name="ISteamDirButton" Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}" Height="20" Width="20" Margin="5,5,10,0">
                                 <materialDesign:PackIcon Kind="FolderOpen" Height="10" Width="10"/>
                             </Button>
@@ -164,7 +164,7 @@
                             <Label Margin="2" Content="Arma 3 Settings"/>
                             <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="-8"/>
                         </StackPanel>
-                            <TextBox Grid.Row="1" Grid.Column="0" Name="IServerDirBox" materialDesign:HintAssist.Hint="Directory" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" BorderBrush="{DynamicResource PrimaryHueDarkBrush}" Margin="10"/>
+                            <TextBox Grid.Row="1" Grid.Column="0" Name="IServerDirBox" materialDesign:HintAssist.Hint="Install Directory" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" BorderBrush="{DynamicResource PrimaryHueDarkBrush}" Margin="10"/>
                         <Button Grid.Row="1" Grid.Column="1" Name="IServerDirButton" Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}" ToolTip="MaterialDesignFloatingActionMiniAccentButton" Height="20" Width="20" Margin="5,5,10,0">
                             <materialDesign:PackIcon Kind="FolderOpen" Height="10" Width="10"/>
                         </Button>
