@@ -456,7 +456,7 @@ Class ServerProfile
 
     Private Sub LaunchServer()
         Dim profileName As String = Functions.SafeName(IDisplayName.Content)
-        Dim profilePath As String = AppDomain.CurrentDomain.BaseDirectory & "\Servers\" & profileName & "\"
+        Dim profilePath As String = My.Settings.serverPath & "\Servers\" & profileName & "\"
         Dim configs As String = profilePath & profileName
         Dim start = True
         Dim serverMods As String = Nothing
@@ -664,7 +664,11 @@ Class ServerProfile
         '"forcedDifficulty = ""regular"";"
         '"missionWhitelist[] = {""intro.altis""};"
 
-        File.WriteAllLines(config, configLines)
+
+        Dim configMid = configLines.[Select](Function(s) s.Replace("False", "0")).ToList()
+        Dim configFinal = configMid.[Select](Function(s) s.Replace("True", "1")).ToList()
+
+        File.WriteAllLines(config, configFinal)
 
         Dim basicLines As New List(Of String) From {
             "adapter = -1;",

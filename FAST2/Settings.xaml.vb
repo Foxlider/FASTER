@@ -36,7 +36,7 @@ Class Settings
     End Sub
 
     Private Sub Settings_Initialized(sender As Object, e As EventArgs) Handles Me.Initialized
-        IExcludeServerFolder.IsChecked = My.Settings.excludeServerFolder
+        'IExcludeServerFolder.IsChecked = My.Settings.excludeServerFolder
         IBaseThemeToggle.IsChecked = My.Settings.isDark
         IUpdatesOnLaunch.IsChecked = My.Settings.checkForModUpdates
         UpdateLocalModFolders()
@@ -54,15 +54,15 @@ Class Settings
         Next
         UpdateLocalModFolders()
     End Sub
-    
-    Private Sub IExcludeServerFolder_Click(sender As Object, e As RoutedEventArgs) Handles IExcludeServerFolder.Click
-        If IExcludeServerFolder.IsChecked
-            My.Settings.excludeServerFolder = True
-        Else
-            My.Settings.excludeServerFolder = False
-        End If
-        My.Settings.Save()
-    End Sub
+
+    'Private Sub IExcludeServerFolder_Click(sender As Object, e As RoutedEventArgs) Handles IExcludeServerFolder.Click
+    '    If IExcludeServerFolder.IsChecked
+    '        My.Settings.excludeServerFolder = True
+    '    Else
+    '        My.Settings.excludeServerFolder = False
+    '    End If
+    '    My.Settings.Save()
+    'End Sub
 
     Private Sub IUpdatesOnLaunch_Click(sender As Object, e As RoutedEventArgs) Handles IUpdatesOnLaunch.Click
         If IUpdatesOnLaunch.IsChecked
