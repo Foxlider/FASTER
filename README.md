@@ -1,6 +1,9 @@
 # Flax's Arma Server Tool 2 (FAST2)
 
 
+**CURRENTLY IN CLOSED BETA TESTING**
+
+[Discord Here](https://discord.gg/tkS4evC).
 
 **_INTRO_**
 
