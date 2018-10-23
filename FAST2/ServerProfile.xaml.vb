@@ -341,10 +341,11 @@ Class ServerProfile
 
     Private Sub ServerProfile_Initialized(sender As Object, e As EventArgs) Handles Me.Initialized
         UpdateModsList()
+        UpdateMissionsList()
     End Sub
 
-    Private Sub IModsRefresh_Click(sender As Object, e As RoutedEventArgs) Handles IClientModsRefresh.Click, IServerModsRefresh.Click, IHeadlessModsRefresh.Click
-        UpdateModsList()
+    Private Sub IMissionsRefresh_Click(sender As Object, e As RoutedEventArgs) Handles IRefreshMissionsButton.Click
+        UpdateMissionsList()
     End Sub
 
     Private Property ModsToCopy As String
@@ -740,11 +741,11 @@ Class ServerProfile
             Dim path As String = My.Settings.serverPath & "\Servers\"
             Dim profilePath As String = path & profileName & "\"
 
-            If Not Directory.Exists(path)
+            If Not Directory.Exists(path) Then
                 Directory.CreateDirectory(path)
             End If
 
-            If Not Directory.Exists(profilePath)
+            If Not Directory.Exists(profilePath) Then
                 Directory.CreateDirectory(profilePath)
             End If
 
@@ -780,11 +781,11 @@ Class ServerProfile
         profile.Netlog = INetlog.IsChecked
         profile.AutoRestartEnabled = IAutoRestartEnabled.IsChecked
         profile.DailyRestartAEnabled = IDailyRestartAEnabled.IsChecked
-        If IDailyRestartA.SelectedTime IsNot Nothing
+        If IDailyRestartA.SelectedTime IsNot Nothing Then
             profile.DailyRestartA = IDailyRestartA.SelectedTime
         End If
         profile.DailyRestartBEnabled = IDailyRestartBEnabled.IsChecked
-        If IDailyRestartB.SelectedTime IsNot Nothing
+        If IDailyRestartB.SelectedTime IsNot Nothing Then
             profile.DailyRestartB = IDailyRestartB.SelectedTime
         End If
         profile.VotingEnabled = IVotingEnabled.IsChecked
@@ -872,6 +873,30 @@ Class ServerProfile
         profile.BattleEye = IBattleEye.IsChecked
 
         My.Settings.Save()
+    End Sub
+
+    Private Sub UpdateMissionsList()
+        Dim currentMissions = IMissionCheckList.Items
+        Dim newMissions As New List(Of String)
+        Dim checkedMissions As String = IMissionCheckList.SelectedValue
+
+        IMissionCheckList.Items.Clear()
+
+        If Directory.Exists(My.Settings.serverPath & "\mpmissions") Then
+            For Each mission In Directory.GetFiles(My.Settings.serverPath & "\mpmissions", "*.pbo")
+                newMissions.Add(Replace(mission, My.Settings.serverPath & "\mpmissions\", ""))
+            Next
+
+            For Each mission In newMissions.ToList
+                For Each nMission In currentMissions
+                    If nMission - mission Then
+                        newMissions.Remove(nMission)
+                    End If
+                Next
+            Next
+
+            IMissionCheckList.SelectedValue = checkedMissions
+        End If
     End Sub
 
     Private Sub UpdateModsList()
