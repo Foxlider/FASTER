@@ -123,7 +123,7 @@ Namespace Models
 
                             If updateMod.SteamLastUpdated > updateMod.LocalLastUpdated And updateMod.Status IsNot "Download Not Complete" Then
                                 updateMod.Status = "Update Required"
-                            Else
+                            ElseIf updateMod.Status IsNot "Download Not Complete" Then
                                 updateMod.Status = "Up to Date"
                             End If
                         End If
