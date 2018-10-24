@@ -47,7 +47,9 @@ Namespace Models
                 Dim currentMods = GetSteamMods()
 
                 Dim modId = modUrl.Substring(modUrl.IndexOf("?id=", StringComparison.Ordinal))
-                modId = modId.Substring(0, (InStr(modId, "&") - 1))
+                If modId.Contains("&") Then
+                    modId = modId.Substring(0, InStr(modId, "&") - 1)
+                End If
                 modId = Integer.Parse(Regex.Replace(modId, "[^\d]", ""))
 
                 If currentMods.Count > 0 Then

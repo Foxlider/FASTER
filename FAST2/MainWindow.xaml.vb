@@ -563,12 +563,12 @@ Public Class MainWindow
                 Else
                     Dim modTempPath As String = My.Settings.steamCMDPath & "\steamapps\workshop\downloads\107410\" & modId
                     Dim modPath As String = My.Settings.steamCMDPath & "\steamapps\workshop\content\107410\" & modId
-                
-                    If Directory.Exists(modTempPath)
-                        modToUpdate.Status = "Download Not Complete"
-                    ElseIf Directory.EnumerateFiles(modPath) IsNot Nothing
-                        modToUpdate.Status = "Up to Date"
 
+                    If Directory.Exists(modTempPath) Then
+                        modToUpdate.Status = "Download Not Complete"
+                    ElseIf Directory.GetFiles(modPath).Length <> 0 Then
+                        modToUpdate.Status = "Up to Date"
+                        Dim files = Directory.GetFiles(modPath)
                         Dim nx = New DateTime(1970, 1, 1)
                         Dim ts = Date.UtcNow - nx
 

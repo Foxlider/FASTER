@@ -223,7 +223,7 @@
                         </DockPanel>
                     </materialDesign:Card>
 
-                    <materialDesign:Card Grid.Row="3" Grid.Column="2" Grid.ColumnSpan="2" Margin="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                    <materialDesign:Card Grid.Row="3" Grid.Column="2" Grid.ColumnSpan="2" Margin="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" IsEnabled="False">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
