@@ -55,22 +55,22 @@ Class ServerProfile
         IAutoInit.IsChecked = profile.AutoInit
         IDifficultyPreset.Text = profile.DifficultyPreset
         IReducedDamage.IsChecked = profile.ReducedDamage
-        IGroupIndicators.IsChecked = profile.GroupIndicators
-        IFriendlyNameTags.IsChecked = profile.FriendlyNameTags
-        IEnemyNameTags.IsChecked = profile.EnemyNameTags
-        IDetectedMines.IsChecked = profile.DetectedMines
+        IGroupIndicators.Text = profile.GroupIndicators
+        IFriendlyNameTags.Text = profile.FriendlyNameTags
+        IEnemyNameTags.Text = profile.EnemyNameTags
+        IDetectedMines.Text = profile.DetectedMines
         IMultipleSaves.IsChecked = profile.MultipleSaves
         IThirdPerson.IsChecked = profile.ThirdPerson
-        IWeaponInfo.IsChecked = profile.WeaponInfo
-        IStanceIndicator.IsChecked = profile.StanceIndicator
+        IWeaponInfo.Text = profile.WeaponInfo
+        IStanceIndicator.Text = profile.StanceIndicator
         IStaminaBar.IsChecked = profile.StaminaBar
         ICameraShake.IsChecked = profile.CameraShake
         IVisualAids.IsChecked = profile.VisualAids
         IExtendedMapContent.IsChecked = profile.ExtendedMapContent
-        ICommands.IsChecked = profile.Commands
+        ICommands.Text = profile.Commands
         IVonId.IsChecked = profile.VonId
         IKilledBy.IsChecked = profile.KilledBy
-        IWaypoints.IsChecked = profile.Waypoints
+        IWaypoints.Text = profile.Waypoints
         ICrosshair.IsChecked = profile.Crosshair
         IAutoReporting.IsChecked = profile.AutoReporting
         IScoreTable.IsChecked = profile.ScoreTable
@@ -690,7 +690,6 @@ Class ServerProfile
         configLines.Add("};")
 
 
-        '"admins[] = {""<UID>""};"
         '"drawingInMap = 0;"
         '"forceRotorLibSimulation = 0;"
         '"forcedDifficulty = ""regular"";"
@@ -730,15 +729,15 @@ Class ServerProfile
             vbTab & "class CustomDifficulty {",
             vbTab & vbTab & "class Options {",
             vbTab & vbTab & vbTab & "reduceDamage = " & IReducedDamage.IsChecked & ";",
-            vbTab & vbTab & vbTab & "groupIndicators = " & IGroupIndicators.IsChecked & ";",
-            vbTab & vbTab & vbTab & "friendlyTags = " & IFriendlyNameTags.IsChecked & ";",
-            vbTab & vbTab & vbTab & "enemyTags = " & IEnemyNameTags.IsChecked & ";",
-            vbTab & vbTab & vbTab & "detectedMines = " & IDetectedMines.IsChecked & ";",
-            vbTab & vbTab & vbTab & "commands = " & ICommands.IsChecked & ";",
-            vbTab & vbTab & vbTab & "waypoints = " & IWaypoints.IsChecked & ";",
+            vbTab & vbTab & vbTab & "groupIndicators = " & IGroupIndicators.Text & ";",
+            vbTab & vbTab & vbTab & "friendlyTags = " & IFriendlyNameTags.Text & ";",
+            vbTab & vbTab & vbTab & "enemyTags = " & IEnemyNameTags.Text & ";",
+            vbTab & vbTab & vbTab & "detectedMines = " & IDetectedMines.Text & ";",
+            vbTab & vbTab & vbTab & "commands = " & ICommands.Text & ";",
+            vbTab & vbTab & vbTab & "waypoints = " & IWaypoints.Text & ";",
             vbTab & vbTab & vbTab & "tacticalPing = " & ITacticalPing.IsChecked & ";",
-            vbTab & vbTab & vbTab & "weaponInfo = " & IWeaponInfo.IsChecked & ";",
-            vbTab & vbTab & vbTab & "stanceIndicator = " & IStanceIndicator.IsChecked & ";",
+            vbTab & vbTab & vbTab & "weaponInfo = " & IWeaponInfo.Text & ";",
+            vbTab & vbTab & vbTab & "stanceIndicator = " & IStanceIndicator.Text & ";",
             vbTab & vbTab & vbTab & "staminaBar = " & IStaminaBar.IsChecked & ";",
             vbTab & vbTab & vbTab & "weaponCrosshair = " & ICrosshair.IsChecked & ";",
             vbTab & vbTab & vbTab & "visionAid = " & IVisualAids.IsChecked & ";",
@@ -762,7 +761,14 @@ Class ServerProfile
             "};"
         }
 
-        File.WriteAllLines(serverProfile, profileLines)
+        Dim profileNever = profileLines.[Select](Function(s) s.Replace("Never", "0")).ToList()
+        Dim profileLimited = profileNever.[Select](Function(s) s.Replace("Limited Distance", "1")).ToList()
+        Dim profileFade = profileLimited.[Select](Function(s) s.Replace("Fade Out", "1")).ToList()
+        Dim profileAlways = profileFade.[Select](Function(s) s.Replace("Always", "2")).ToList()
+        Dim profileTrue = profileAlways.[Select](Function(s) s.Replace("True", "1")).ToList()
+        Dim profileFalse = profileTrue.[Select](Function(s) s.Replace("False", "0")).ToList()
+
+        File.WriteAllLines(serverProfile, profileFalse)
 
     End Sub
 
@@ -842,22 +848,22 @@ Class ServerProfile
         profile.AutoInit = IAutoInit.IsChecked
         profile.DifficultyPreset = IDifficultyPreset.Text
         profile.ReducedDamage = IReducedDamage.IsChecked
-        profile.GroupIndicators = IGroupIndicators.IsChecked
-        profile.FriendlyNameTags = IFriendlyNameTags.IsChecked
-        profile.EnemyNameTags = IEnemyNameTags.IsChecked
-        profile.DetectedMines = IDetectedMines.IsChecked
+        profile.GroupIndicators = IGroupIndicators.Text
+        profile.FriendlyNameTags = IFriendlyNameTags.Text
+        profile.EnemyNameTags = IEnemyNameTags.Text
+        profile.DetectedMines = IDetectedMines.Text
         profile.MultipleSaves = IMultipleSaves.IsChecked
         profile.ThirdPerson = IThirdPerson.IsChecked
-        profile.WeaponInfo = IWeaponInfo.IsChecked
-        profile.StanceIndicator = IStanceIndicator.IsChecked
+        profile.WeaponInfo = IWeaponInfo.Text
+        profile.StanceIndicator = IStanceIndicator.Text
         profile.StaminaBar = IStaminaBar.IsChecked
         profile.CameraShake = ICameraShake.IsChecked
         profile.VisualAids = IVisualAids.IsChecked
         profile.ExtendedMapContent = IExtendedMapContent.IsChecked
-        profile.Commands = ICommands.IsChecked
+        profile.Commands = ICommands.Text
         profile.VonId = IVonId.IsChecked
         profile.KilledBy = IKilledBy.IsChecked
-        profile.Waypoints = IWaypoints.IsChecked
+        profile.Waypoints = IWaypoints.Text
         profile.Crosshair = ICrosshair.IsChecked
         profile.AutoReporting = IAutoReporting.IsChecked
         profile.ScoreTable = IScoreTable.IsChecked

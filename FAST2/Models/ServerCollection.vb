@@ -1,4 +1,5 @@
-﻿Imports System.Xml.Serialization
+﻿Imports System.IO.Packaging
+Imports System.Xml.Serialization
 
 Namespace Models
 
@@ -12,26 +13,26 @@ Namespace Models
 
         Private Shared Function GetServerProfiles() As ServerCollection
             Dim currentProfiles As New ServerCollection
-            
-            If My.Settings.Servers IsNot Nothing
+
+            If My.Settings.Servers IsNot Nothing Then
                 currentProfiles = My.Settings.Servers
             End If
 
             Return currentProfiles
         End Function
-        
+
         Public Shared Sub AddServerProfile(name As String, safeName As String)
             Dim duplicate = False
             Dim currentProfiles = GetServerProfiles()
-            
+
             If currentProfiles.ServerProfiles.Count > 0 Then
                 For Each profile In currentProfiles.ServerProfiles
-                    If profile.DisplayName = name
-                        duplicate = true
+                    If profile.DisplayName = name Then
+                        duplicate = True
                     End If
                 Next
             End If
-           
+
             If Not duplicate Then
                 currentProfiles.ServerProfiles.Add(New ServerProfile(name, safeName))
                 My.Settings.Servers = currentProfiles
@@ -41,13 +42,13 @@ Namespace Models
             End If
 
             My.Settings.Save()
-            MainWindow.Instance.LoadServerProfiles
+            MainWindow.Instance.LoadServerProfiles()
         End Sub
 
         Public Shared Function RenameServerProfile(oldName As String, newName As String) As Boolean
             Try
                 Dim currentProfiles = My.Settings.Servers.ServerProfiles
-        
+
                 Dim currentProfile As ServerProfile = currentProfiles.Find(Function(profile) profile.DisplayName = oldName)
 
                 currentProfile.DisplayName = newName
@@ -65,7 +66,7 @@ Namespace Models
             currentProfiles.ServerProfiles.RemoveAll(Function(x) x.SafeName = safeName)
 
             My.Settings.Save()
-            MainWindow.Instance.LoadServerProfiles
+            MainWindow.Instance.LoadServerProfiles()
         End Sub
     End Class
 
@@ -75,7 +76,7 @@ Namespace Models
         End Sub
 
         Public Sub New(name As String, safeName As String)
-            DisplayName =  name
+            DisplayName = name
             Me.SafeName = safeName
         End Sub
 
@@ -126,22 +127,22 @@ Namespace Models
         Public Property AutoInit As Boolean = False
         Public Property DifficultyPreset As String = String.Empty
         Public Property ReducedDamage As Boolean = False
-        Public Property GroupIndicators As Boolean = False
-        Public Property FriendlyNameTags As Boolean = False
-        Public Property EnemyNameTags As Boolean = False
-        Public Property DetectedMines As Boolean = False
+        Public Property GroupIndicators As String = "Never"
+        Public Property FriendlyNameTags As String = "Never"
+        Public Property EnemyNameTags As String = "Never"
+        Public Property DetectedMines As String = "Never"
         Public Property MultipleSaves As Boolean = False
         Public Property ThirdPerson As Boolean = False
-        Public Property WeaponInfo As Boolean = False
-        Public Property StanceIndicator As Boolean = False
+        Public Property WeaponInfo As String = "Never"
+        Public Property StanceIndicator As String = "Never"
         Public Property StaminaBar As Boolean = False
         Public Property CameraShake As Boolean = False
         Public Property VisualAids As Boolean = False
         Public Property ExtendedMapContent As Boolean = False
-        Public Property Commands As Boolean = False
+        Public Property Commands As String = "Never"
         Public Property VonId As Boolean = False
         Public Property KilledBy As Boolean = False
-        Public Property Waypoints As Boolean = False
+        Public Property Waypoints As String = "Never"
         Public Property Crosshair As Boolean = False
         Public Property AutoReporting As Boolean = False
         Public Property ScoreTable As Boolean = False

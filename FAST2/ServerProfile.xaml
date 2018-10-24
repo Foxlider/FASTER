@@ -484,9 +484,18 @@
                     <materialDesign:Card Grid.Row="0" Grid.Column="1" Margin="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                                <ColumnDefinition />
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
@@ -499,36 +508,77 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
-                            <StackPanel Grid.ColumnSpan="3">
+                            <StackPanel Grid.ColumnSpan="12">
                                 <Label Margin="2" Content="Custom Difficulty Settings"/>
                                 <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="-8"/>
                             </StackPanel>
 
-                            <CheckBox Name="IReducedDamage" Grid.Row="1" Grid.Column="0" Style="{StaticResource MaterialDesignCheckBox}" Content="Reduced Damage" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
-                            <CheckBox Name="IGroupIndicators" Grid.Row="2" Grid.Column="0" Style="{StaticResource MaterialDesignCheckBox}" Content="Group Indicators" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
-                            <CheckBox Name="IFriendlyNameTags" Grid.Row="3" Grid.Column="0" Style="{StaticResource MaterialDesignCheckBox}" Content="Friendly Name Tags" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
-                            <CheckBox Name="IEnemyNameTags" Grid.Row="4" Grid.Column="0" Style="{StaticResource MaterialDesignCheckBox}" Content="Enemy Name Tags" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
-                            <CheckBox Name="IDetectedMines" Grid.Row="5" Grid.Column="0" Style="{StaticResource MaterialDesignCheckBox}" Content="Detected Mines" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
-                            <CheckBox Name="IMultipleSaves" Grid.Row="6" Grid.Column="0" Style="{StaticResource MaterialDesignCheckBox}" Content="Multiple Saves" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
-                            <CheckBox Name="IThirdPerson" Grid.Row="7" Grid.Column="0" Style="{StaticResource MaterialDesignCheckBox}" Content="3rd Person Camera" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <CheckBox Name="IReducedDamage" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4" Style="{StaticResource MaterialDesignCheckBox}" Content="Reduced Damage" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <CheckBox Name="IMultipleSaves" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" Style="{StaticResource MaterialDesignCheckBox}" Content="Multiple Saves" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <CheckBox Name="IThirdPerson" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="4" Style="{StaticResource MaterialDesignCheckBox}" Content="3rd Person Camera" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <CheckBox Name="IScoreTable" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="4" Style="{StaticResource MaterialDesignCheckBox}" Content="Score Table" Margin="5,5,10,5"  Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <CheckBox Name="IExtendedMapContent" Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="12" Style="{StaticResource MaterialDesignCheckBox}" Content="Extended Map Content" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
 
-                            <CheckBox Name="IWeaponInfo" Grid.Row="1" Grid.Column="1" Style="{StaticResource MaterialDesignCheckBox}" Content="Weapon Info" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
-                            <CheckBox Name="IStanceIndicator" Grid.Row="2" Grid.Column="1" Style="{StaticResource MaterialDesignCheckBox}" Content="Stance Indicator" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
-                            <CheckBox Name="IStaminaBar" Grid.Row="3" Grid.Column="1" Style="{StaticResource MaterialDesignCheckBox}" Content="Stamina Bar" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
-                            <CheckBox Name="ICameraShake" Grid.Row="4" Grid.Column="1" Style="{StaticResource MaterialDesignCheckBox}" Content="Camera Shake" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
-                            <CheckBox Name="IVisualAids" Grid.Row="5" Grid.Column="1" Style="{StaticResource MaterialDesignCheckBox}" Content="Visual Aids" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
-                            <CheckBox Name="IExtendedMapContent" Grid.Row="6" Grid.Column="1" Style="{StaticResource MaterialDesignCheckBox}" Content="Extended Map Content" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
-                            <CheckBox Name="ICommands" Grid.Row="7" Grid.Column="1" Style="{StaticResource MaterialDesignCheckBox}" Content="Commands" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <CheckBox Name="IStaminaBar" Grid.Row="1" Grid.Column="4" Grid.ColumnSpan="4" Style="{StaticResource MaterialDesignCheckBox}" Content="Stamina Bar" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <CheckBox Name="ICameraShake" Grid.Row="2" Grid.Column="4" Grid.ColumnSpan="4" Style="{StaticResource MaterialDesignCheckBox}" Content="Camera Shake" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <CheckBox Name="IVisualAids" Grid.Row="3" Grid.Column="4" Grid.ColumnSpan="4" Style="{StaticResource MaterialDesignCheckBox}" Content="Visual Aids" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <CheckBox Name="ITacticalPing" Grid.Row="4" Grid.Column="4" Grid.ColumnSpan="4" Style="{StaticResource MaterialDesignCheckBox}" Content="Tactical Ping" Margin="5,5,10,5"  Foreground="{DynamicResource MaterialDesignBody}"/>
 
-                            <CheckBox Name="IVonId" Grid.Row="1" Grid.Column="2" Style="{StaticResource MaterialDesignCheckBox}" Content="VON ID" Margin="5,5,10,5"  Foreground="{DynamicResource MaterialDesignBody}"/>
-                            <CheckBox Name="IKilledBy" Grid.Row="2" Grid.Column="2" Style="{StaticResource MaterialDesignCheckBox}" Content="Killed By" Margin="5,5,10,5"  Foreground="{DynamicResource MaterialDesignBody}"/>
-                            <CheckBox Name="IWaypoints" Grid.Row="3" Grid.Column="2" Style="{StaticResource MaterialDesignCheckBox}" Content="Waypoints" Margin="5,5,10,5"  Foreground="{DynamicResource MaterialDesignBody}"/>
-                            <CheckBox Name="ICrosshair" Grid.Row="4" Grid.Column="2" Style="{StaticResource MaterialDesignCheckBox}" Content="Crosshair" Margin="5,5,10,5"  Foreground="{DynamicResource MaterialDesignBody}"/>
-                            <CheckBox Name="IAutoReporting" Grid.Row="5" Grid.Column="2" Style="{StaticResource MaterialDesignCheckBox}" Content="Auto Reporting" Margin="5,5,10,5"  Foreground="{DynamicResource MaterialDesignBody}"/>
-                            <CheckBox Name="IScoreTable" Grid.Row="6" Grid.Column="2" Style="{StaticResource MaterialDesignCheckBox}" Content="Score Table" Margin="5,5,10,5"  Foreground="{DynamicResource MaterialDesignBody}"/>
-                            <CheckBox Name="ITacticalPing" Grid.Row="7" Grid.Column="2" Style="{StaticResource MaterialDesignCheckBox}" Content="Tactical Ping" Margin="5,5,10,5"  Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <CheckBox Name="IVonId" Grid.Row="1" Grid.Column="8" Grid.ColumnSpan="4" Style="{StaticResource MaterialDesignCheckBox}" Content="VON ID" Margin="5,5,10,5"  Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <CheckBox Name="IKilledBy" Grid.Row="2" Grid.Column="8" Grid.ColumnSpan="4" Style="{StaticResource MaterialDesignCheckBox}" Content="Killed By" Margin="5,5,10,5"  Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <CheckBox Name="ICrosshair" Grid.Row="3" Grid.Column="8" Grid.ColumnSpan="4" Style="{StaticResource MaterialDesignCheckBox}" Content="Crosshair" Margin="5,5,10,5"  Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <CheckBox Name="IAutoReporting" Grid.Row="4" Grid.Column="8" Grid.ColumnSpan="4" Style="{StaticResource MaterialDesignCheckBox}" Content="Auto Reporting" Margin="5,5,10,5"  Foreground="{DynamicResource MaterialDesignBody}"/>
 
-                            <StackPanel Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="3" Orientation="Horizontal" HorizontalAlignment="Center">
+
+                            <ComboBox Name="IGroupIndicators" Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="3" materialDesign:HintAssist.Hint="Group Indicators" Foreground="{DynamicResource MaterialDesignBody}" IsEditable="False" Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="5">
+                                <ComboBoxItem IsSelected="True">Never</ComboBoxItem>
+                                <ComboBoxItem>Limited Distance</ComboBoxItem>
+                                <ComboBoxItem>Always</ComboBoxItem>
+                            </ComboBox>
+
+                            <ComboBox Name="IFriendlyNameTags" Grid.Row="6" Grid.Column="3" Grid.ColumnSpan="3" materialDesign:HintAssist.Hint="Friendly Name Tags" Foreground="{DynamicResource MaterialDesignBody}" IsEditable="False" Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="5">
+                                <ComboBoxItem IsSelected="True">Never</ComboBoxItem>
+                                <ComboBoxItem>Limited Distance</ComboBoxItem>
+                                <ComboBoxItem>Always</ComboBoxItem>
+                            </ComboBox>
+
+                            <ComboBox Name="IEnemyNameTags" Grid.Row="6" Grid.Column="6" Grid.ColumnSpan="3" materialDesign:HintAssist.Hint="Enemy Name Tags" Foreground="{DynamicResource MaterialDesignBody}" IsEditable="False" Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="5">
+                                <ComboBoxItem IsSelected="True">Never</ComboBoxItem>
+                                <ComboBoxItem>Limited Distance</ComboBoxItem>
+                                <ComboBoxItem>Always</ComboBoxItem>
+                            </ComboBox>
+
+                            <ComboBox Name="IDetectedMines" Grid.Row="6" Grid.Column="9" Grid.ColumnSpan="3" materialDesign:HintAssist.Hint="Detected Mines" Foreground="{DynamicResource MaterialDesignBody}" IsEditable="False" Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="5">
+                                <ComboBoxItem IsSelected="True">Never</ComboBoxItem>
+                                <ComboBoxItem>Limited Distance</ComboBoxItem>
+                                <ComboBoxItem>Always</ComboBoxItem>
+                            </ComboBox>
+
+                            <ComboBox Name="ICommands" Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="3" materialDesign:HintAssist.Hint="Commands" Foreground="{DynamicResource MaterialDesignBody}" IsEditable="False" Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="5">
+                                <ComboBoxItem IsSelected="True">Never</ComboBoxItem>
+                                <ComboBoxItem>Fade Out</ComboBoxItem>
+                                <ComboBoxItem>Always</ComboBoxItem>
+                            </ComboBox>
+
+                            <ComboBox Name="IWaypoints" Grid.Row="7" Grid.Column="3" Grid.ColumnSpan="3" materialDesign:HintAssist.Hint="Waypoints" Foreground="{DynamicResource MaterialDesignBody}" IsEditable="False" Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="5">
+                                <ComboBoxItem IsSelected="True">Never</ComboBoxItem>
+                                <ComboBoxItem>Fade Out</ComboBoxItem>
+                                <ComboBoxItem>Always</ComboBoxItem>
+                            </ComboBox>
+
+                            <ComboBox Name="IWeaponInfo" Grid.Row="7" Grid.Column="6" Grid.ColumnSpan="3" materialDesign:HintAssist.Hint="Weapon Info" Foreground="{DynamicResource MaterialDesignBody}" IsEditable="False" Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="5">
+                                <ComboBoxItem IsSelected="True">Never</ComboBoxItem>
+                                <ComboBoxItem>Fade Out</ComboBoxItem>
+                                <ComboBoxItem>Always</ComboBoxItem>
+                            </ComboBox>
+
+                            <ComboBox Name="IStanceIndicator" Grid.Row="7" Grid.Column="9" Grid.ColumnSpan="3" materialDesign:HintAssist.Hint="Stance Indicator" Foreground="{DynamicResource MaterialDesignBody}" IsEditable="False" Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="5">
+                                <ComboBoxItem IsSelected="True">Never</ComboBoxItem>
+                                <ComboBoxItem>Fade Out</ComboBoxItem>
+                                <ComboBoxItem>Always</ComboBoxItem>
+                            </ComboBox>
+
+                            <StackPanel Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="12" Orientation="Horizontal" HorizontalAlignment="Center">
                                 <TextBox Name="IAiAccuracy" materialDesign:HintAssist.Hint="AI Accuracy (0-1)" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5" Width="75" HorizontalAlignment="Center"/>
                                 <TextBox Name="IAiSkill" materialDesign:HintAssist.Hint="AI Skill (0-1)" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5" Width="75" HorizontalAlignment="Right"/>
                                 <ComboBox materialDesign:HintAssist.Hint="AI Preset" Name="IAiPreset" IsEditable="False" Foreground="{DynamicResource MaterialDesignBody}" Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="5" Width="75" HorizontalAlignment="Left">
