@@ -142,7 +142,7 @@ Public Class MainWindow
     Private Sub WindowDragBar_MouseDown(sender As Object, e As MouseButtonEventArgs) Handles IWindowDragBar.MouseLeftButtonDown, ILogoImage.MouseLeftButtonDown, IWindowTitle.MouseLeftButtonDown
         DragMove()
     End Sub
-    
+
     'Executes some code when the window is closing
     Private Sub MainWindow_Closing(sender As Object, e As CancelEventArgs) Handles Me.Closing
         UpdateSteamUpdaterSettings()
@@ -309,15 +309,15 @@ Public Class MainWindow
         IServerBranch.Text = My.Settings.serverBranch
     End Sub
 
-    
+
 
     'Installs the SteamCMD tool
     Private Sub InstallSteam()
-        If ISteamDirBox.Text Is String.Empty
+        If ISteamDirBox.Text Is String.Empty Then
             Instance.IMessageDialog.IsOpen = True
             Instance.IMessageDialogText.Text = "Please make sure you have set a valid path for SteamCMD."
         Else
-            If Not File.Exists(My.Settings.steamCMDPath & "\steamcmd.exe")
+            If Not File.Exists(My.Settings.steamCMDPath & "\steamcmd.exe") Then
                 IMessageDialog.IsOpen = True
                 IMessageDialogText.Text = "Steam CMD will now download and start the install process. If prompted please enter your Steam Guard Code." & Environment.NewLine & Environment.NewLine & "You will receive this by email from steam. When this is all complete type 'quit' to finish."
 
@@ -355,10 +355,10 @@ Public Class MainWindow
     End Sub
 
     Private Sub UpdateTextBox(text As String)
-        If _oProcess IsNot Nothing
+        If _oProcess IsNot Nothing Then
             Dim oStreamWriter = _oProcess.StandardInput
 
-            If text IsNot "\src\comon\contentmanifest.cpp (650) : Assertation Failed: !m_bIsFinalized" Then 
+            If Not (text Like "\src\comon\contentmanifest.cpp (650) : Assertation Failed: !m_bIsFinalized") Then
                 Dispatcher.Invoke(
                     Sub()
                         ISteamOutputBox.AppendText(text & Environment.NewLine)
@@ -383,7 +383,7 @@ Public Class MainWindow
                         End Sub
                     )
                 End If
-                
+
                 If text Like "*...*" Then
                     Dispatcher.Invoke(
                         Sub()
