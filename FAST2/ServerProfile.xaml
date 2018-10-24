@@ -351,7 +351,7 @@
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             <StackPanel Grid.ColumnSpan="5">
-                                <Label Margin="2" Content="Server Side Mods"/>
+                                <Label Margin="2" Content="Server Only Mods"/>
                                 <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="-8"/>
                                 <Button Name="IServerModsCopy" HorizontalAlignment="Right" Margin="2,-27,5,0" ToolTip="Copy Selected" Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}" Height="20" Width="20">
                                     <materialDesign:PackIcon Kind="ContentCopy" Height="10" Width="10"/>
@@ -382,7 +382,7 @@
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             <StackPanel Grid.ColumnSpan="5">
-                                <Label Margin="2" Content="Client Side Mods"/>
+                                <Label Margin="2" Content="Player Required Mods"/>
                                 <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="-8"/>
                                 <Button Name="IClientModsCopy" HorizontalAlignment="Right" Margin="2,-27,5,0" ToolTip="Copy Selected" Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}" Height="20" Width="20">
                                     <materialDesign:PackIcon Kind="ContentCopy" Height="10" Width="10"/>
@@ -413,7 +413,7 @@
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             <StackPanel Grid.ColumnSpan="5">
-                                <Label Margin="2" Content="Headless Mods"/>
+                                <Label Margin="2" Content="Headless Client Mods"/>
                                 <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="-8"/>
                                 <Button Name="IHeadlessModsCopy" HorizontalAlignment="Right" Margin="2,-27,5,0" ToolTip="Copy Selected" Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}" Height="20" Width="20">
                                     <materialDesign:PackIcon Kind="ContentCopy" Height="10" Width="10"/>

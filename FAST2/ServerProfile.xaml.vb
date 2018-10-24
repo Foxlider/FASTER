@@ -460,10 +460,15 @@ Class ServerProfile
         Dim profilePath As String = My.Settings.serverPath & "\Servers\" & profileName & "\"
         Dim configs As String = profilePath & profileName
         Dim start = True
+        Dim playerMods As String = Nothing
         Dim serverMods As String = Nothing
 
         For Each addon In IServerModsList.SelectedItems
             serverMods = serverMods & addon & ";"
+        Next
+
+        For Each addon In IClientModsList.SelectedItems
+            playerMods = playerMods & addon & ";"
         Next
 
         Try
@@ -481,7 +486,8 @@ Class ServerProfile
             commandLine = commandLine & " ""-cfg=" & configs & "_basic.cfg"""
             commandLine = commandLine & " ""-profiles=" & profilePath & """"
             commandLine = commandLine & " -name=" & profileName
-            commandLine = commandLine & " ""-mod=" & serverMods & """"
+            commandLine = commandLine & " ""-mod=" & playerMods & """"
+            commandLine = commandLine & " ""-serverMod=" & serverMods & """"
 
 
             If IHeadlessClientEnabled.IsChecked Then
