@@ -1,5 +1,4 @@
-﻿Imports System.IO.Packaging
-Imports System.Xml.Serialization
+﻿Imports System.Xml.Serialization
 
 Namespace Models
 

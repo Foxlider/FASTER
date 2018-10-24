@@ -568,7 +568,6 @@ Public Class MainWindow
                         modToUpdate.Status = "Download Not Complete"
                     ElseIf Directory.GetFiles(modPath).Length <> 0 Then
                         modToUpdate.Status = "Up to Date"
-                        Dim files = Directory.GetFiles(modPath)
                         Dim nx = New DateTime(1970, 1, 1)
                         Dim ts = Date.UtcNow - nx
 

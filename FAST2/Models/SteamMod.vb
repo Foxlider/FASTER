@@ -121,7 +121,7 @@ Namespace Models
                             updateMod.Author = modInfo.Item2
                             updateMod.SteamLastUpdated = modInfo.Item3
 
-                            If updateMod.SteamLastUpdated > updateMod.LocalLastUpdated And updateMod.Status IsNot "Download Not Complete"
+                            If updateMod.SteamLastUpdated > updateMod.LocalLastUpdated And updateMod.Status IsNot "Download Not Complete" Then
                                 updateMod.Status = "Update Required"
                             Else
                                 updateMod.Status = "Up to Date"
