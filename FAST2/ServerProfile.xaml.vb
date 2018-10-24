@@ -99,7 +99,10 @@ Class ServerProfile
         IMaxSizeGuaranteed.Text = profile.MaxSizeGuaranteed
         IMinErrorToSend.Text = profile.MinErrorToSend
         IMinErrorToSendNear.Text = profile.MinErrorToSendNear
+        ICpuCount.Text = profile.CpuCount
+        IMaxMem.Text = profile.MaxMem
         IExtraParams.Text = profile.ExtraParams
+        IAdminUids.Text = profile.AdminUids
         IEnableHyperThreading.IsChecked = profile.EnableHyperThreading
         IFilePatching.IsChecked = profile.FilePatching
         IServerCommandPassword.Text = profile.ServerCommandPassword
@@ -514,6 +517,14 @@ Class ServerProfile
                 commandLine = commandLine & " -autoInit"
             End If
 
+            If IMaxMem.Text IsNot String.Empty Then
+                commandLine = commandLine & " ""-maxMem=" & IMaxMem.Text & """"
+            End If
+
+            If ICpuCount.Text IsNot String.Empty Then
+                commandLine = commandLine & " ""-cpuCount=" & ICpuCount.Text & """"
+            End If
+
             If IExtraParams.Text IsNot Nothing Then
                 commandLine = commandLine & " " & IExtraParams.Text
             End If
@@ -652,6 +663,20 @@ Class ServerProfile
         configLines.Add("onDifferentData = """ & IOnDifferentData.Text & """;")
         configLines.Add("onUnsignedData = """ & IOnUnsignedData.Text & """;")
         configLines.Add("regularCheck = """ & IRegularCheck.Text & """;")
+
+        configLines.Add("admins[]= {")
+        lines = Functions.GetLinesCollectionFromTextBox(IAdminUids)
+
+        For Each line In lines
+            If Not line = "" Then
+                If line.IndexOf(line, StringComparison.Ordinal) = lines.Count - 1 Then
+                    configLines.Add("""" & line & """")
+                Else
+                    configLines.Add("""" & line & """,")
+                End If
+            End If
+        Next
+        configLines.Add("};")
 
         configLines.Add("timeStampFormat = """ & IRptTimestamp.Text & """;")
 
@@ -861,7 +886,10 @@ Class ServerProfile
         profile.MaxSizeGuaranteed = IMaxSizeGuaranteed.Text
         profile.MinErrorToSend = IMinErrorToSend.Text
         profile.MinErrorToSendNear = IMinErrorToSendNear.Text
+        profile.CpuCount = ICpuCount.Text
+        profile.MaxMem = IMaxMem.Text
         profile.ExtraParams = IExtraParams.Text
+        profile.AdminUids = IAdminUids.Text
         profile.EnableHyperThreading = IEnableHyperThreading.IsChecked
         profile.FilePatching = IFilePatching.IsChecked
         profile.ServerCommandPassword = IServerCommandPassword.Text

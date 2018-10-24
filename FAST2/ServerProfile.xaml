@@ -603,6 +603,8 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
+                                <RowDefinition />
+                                <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             <StackPanel Grid.ColumnSpan="2">
                                 <Label Margin="2" Content="Server Performance"/>
@@ -613,18 +615,25 @@
                             <TextBox Name="IMaxPacketSize" Grid.Row="3" Grid.Column="0" materialDesign:HintAssist.Hint="Max Packet Size" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
                             <TextBox Name="IMinBandwidth" Grid.Row="4" Grid.Column="0" materialDesign:HintAssist.Hint="Min Bandwidth (kbit/s)" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
                             <TextBox Name="IMaxBandwidth" Grid.Row="5" Grid.Column="0" materialDesign:HintAssist.Hint="Max Bandwidth (mbit/s)" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
-                            <TextBox Name="IExtraParams" Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" materialDesign:HintAssist.Hint="Extra Params" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
-
+                            <TextBox Name="IMaxMem" Grid.Row="6" Grid.Column="0" materialDesign:HintAssist.Hint="Max Memory (MiB)" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
+                            
                             <TextBox Name="IMaxMessagesSend" Grid.Row="1" Grid.Column="1" materialDesign:HintAssist.Hint="Max Messages Send" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
                             <TextBox Name="IMaxSizeNonguaranteed" Grid.Row="2" Grid.Column="1" materialDesign:HintAssist.Hint="Max Size Nonguaranteed (Bytes)" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
                             <TextBox Name="IMaxSizeGuaranteed" Grid.Row="3" Grid.Column="1" materialDesign:HintAssist.Hint="Max Size Guaranteed (Bytes)" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
                             <TextBox Name="IMinErrorToSend" Grid.Row="4" Grid.Column="1" materialDesign:HintAssist.Hint="Min Error To Send" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
                             <TextBox Name="IMinErrorToSendNear" Grid.Row="5" Grid.Column="1" materialDesign:HintAssist.Hint="Min Error To Send Near" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
+                            <TextBox Name="ICpuCount" Grid.Row="6" Grid.Column="1" materialDesign:HintAssist.Hint="CPU Core Count" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
 
-                            <StackPanel Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal">
+                            <TextBox Name="IExtraParams" Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" materialDesign:HintAssist.Hint="Extra Params" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
+                            <TextBox Name="IAdminUids" Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2" Margin="5" AcceptsReturn="True" TextWrapping="Wrap" Style="{StaticResource MaterialDesignFloatingHintTextBox}" materialDesign:HintAssist.Hint="Admin IDs (one per line)" VerticalScrollBarVisibility="Auto" Foreground="{DynamicResource MaterialDesignBody}" Background="{DynamicResource MaterialDesignTextAreaInactiveBorder}"/>
+
+
+                            <StackPanel Grid.Row="9" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal">
                                 <CheckBox  Name="IEnableHyperThreading" Content="Enable Hyper Threading" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
                                 <CheckBox Name="IFilePatching" Content="File Patching" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
                             </StackPanel>
+
+                            
                         </Grid>
                     </materialDesign:Card>
                     <materialDesign:Card Grid.Row="0" Grid.Column="1" Margin="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">

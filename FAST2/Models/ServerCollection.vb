@@ -170,7 +170,10 @@ Namespace Models
         Public Property MaxSizeGuaranteed As Integer = 512
         Public Property MinErrorToSend As Decimal = 0.001
         Public Property MinErrorToSendNear As Decimal = 0.01
+        Public Property CpuCount As Integer = Nothing
+        Public Property MaxMem As Integer = Nothing
         Public Property ExtraParams As String = String.Empty
+        Public Property AdminUids As String = String.Empty
         Public Property EnableHyperThreading As Boolean = False
         Public Property FilePatching As Boolean = False
         Public Property ServerCommandPassword As String = String.Empty
