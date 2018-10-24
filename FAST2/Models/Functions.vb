@@ -101,11 +101,13 @@ Namespace Models
         'Takes any string and removes illegal characters
         Public Shared Function SafeName(input As String, Optional ignoreWhiteSpace As Boolean = False, Optional replacement As Char = "_") As String
             If ignoreWhiteSpace Then
-                input = Regex.Replace(input, "[^a-zA-Z0-9\-_\s]", replacement)
+                'input = Regex.Replace(input, "[^a-zA-Z0-9\-_\s]", replacement) >> "-" is allowed
+                input = Regex.Replace(input, "[^a-zA-Z0-9_\s]", replacement)
                 input = Replace(input, replacement & replacement, replacement)
                 Return input
             Else
-                input = Regex.Replace(input, "[^a-zA-Z0-9\-_]", replacement)
+                'input = Regex.Replace(input, "[^a-zA-Z0-9\-_]", replacement) >> "-" is allowed
+                input = Regex.Replace(input, "[^a-zA-Z0-9_]", replacement)
                 input = Replace(input, replacement & replacement, replacement)
                 Return input
             End If
