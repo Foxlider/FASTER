@@ -451,9 +451,44 @@ Public Class MainWindow
         End If
     End Sub
 
-    Private Sub Proc_OutputDataReceived(sender As Object, e As DataReceivedEventArgs)
-        UpdateTextBox(e.Data)
+    ''PART OF OLD STEAM OUTPUT CODE
+    ''Private Sub Proc_OutputDataReceived(sender As Object, e As DataReceivedEventArgs)
+    ''    UpdateTextBox(e.Data)
+    ''End Sub
+
+    Private Sub ProcessOutputCharacters(streamReader As StreamReader)
+        Dim outputCharInt As Integer
+        Dim outputChar As Char
+        Dim line As String = String.Empty
+
+        Do
+            outputCharInt = streamReader.Read()
+            If outputCharInt <> -1 Then
+                outputChar = Chr(outputCharInt)
+                If outputCharInt = 10 Or outputCharInt = 13 Then
+                    If line IsNot String.Empty Then
+                        UpdateTextBox(line)
+                    End If
+                    line = String.Empty
+                ElseIf line.Length > 7 Then
+                    If line.Substring(line.Length - 3) = " .." Then
+                        line = Environment.NewLine & line
+                        UpdateTextBox(line)
+                        line = String.Empty
+                    ElseIf line.Substring(line.Length - 6) = "bytes)" Then
+                        line = Environment.NewLine & line
+                        UpdateTextBox(line)
+                        line = String.Empty
+                    Else
+                        line += outputChar
+                    End If
+                Else
+                    line += outputChar
+                End If
+            End If
+        Loop While Not streamReader.EndOfStream
     End Sub
+
 
     'Runs Steam command via SteamCMD and redirects input and output to FAST
     Public Async Sub RunSteamCommand(steamCmd As String, steamCommand As String, type As String, Optional modIds As List(Of String) = Nothing)
@@ -498,16 +533,19 @@ Public Class MainWindow
                     _oProcess.StartInfo.RedirectStandardInput = True
                     _oProcess.EnableRaisingEvents = True
 
-                    AddHandler _oProcess.ErrorDataReceived, AddressOf Proc_OutputDataReceived
-                    AddHandler _oProcess.OutputDataReceived, AddressOf Proc_OutputDataReceived
+                    ''PART OF OLD STEAM OUTPUT CODE
+                    ''AddHandler _oProcess.ErrorDataReceived, AddressOf Proc_OutputDataReceived
+                    ''AddHandler _oProcess.OutputDataReceived, AddressOf Proc_OutputDataReceived
 
                     _oProcess.start()
 
-                    _oProcess.BeginErrorReadLine()
-                    _oProcess.BeginOutputReadLine()
-                    Do
+                    ProcessOutputCharacters(_oProcess.StandardError)
+                    ProcessOutputCharacters(_oProcess.StandardOutput)
+                    ''PART OF OLD STEAM OUTPUT CODE
+                    ''_oProcess.BeginErrorReadLine()
+                    ''_oProcess.BeginOutputReadLine()
 
-                    Loop Until _oProcess.HasExited = True
+                    _oProcess.WaitForExit()
 
                 End Sub
             ))
