@@ -936,7 +936,7 @@ Class ServerProfile
             Next
 
             For Each mission In newMissions.ToList
-                IMissionCheckList.Items.Add(mission)
+                IMissionCheckList.Items.Add(mission.Replace(".pbo", ""))
             Next
 
             IMissionCheckList.SelectedValue = checkedMissions
