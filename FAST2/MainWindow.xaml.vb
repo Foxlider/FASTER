@@ -375,6 +375,7 @@ Public Class MainWindow
                     )
 
                     Do
+
                     Loop Until _steamCodeValid
 
                     _steamCodeValid = False
@@ -385,10 +386,10 @@ Public Class MainWindow
                     )
                 End If
 
-                If text Like "*...*" Then
+                If text Like "*..." Then
                     Dispatcher.Invoke(
                         Sub()
-                            oStreamWriter.Write(Environment.NewLine & Environment.NewLine)
+                            ISteamOutputBox.AppendText(Environment.NewLine)
                         End Sub
                         )
                 End If
