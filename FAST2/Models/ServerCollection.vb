@@ -163,8 +163,8 @@ Namespace Models
         Public Property MaxDesync As Integer = 0
         Public Property MaxCustomFileSize As Integer = 160
         Public Property MaxPacketSize As Integer = 1400
-        Public Property MinBandwidth As Integer = 128
-        Public Property MaxBandwidth As Integer = 2000
+        Public Property MinBandwidth As Double = 131072
+        Public Property MaxBandwidth As Double = 10000000000
         Public Property MaxMessagesSend As Integer = 128
         Public Property MaxSizeNonguaranteed As Integer = 256
         Public Property MaxSizeGuaranteed As Integer = 512

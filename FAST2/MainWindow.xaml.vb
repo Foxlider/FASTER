@@ -183,7 +183,7 @@ Public Class MainWindow
             Mouse.OverrideCursor = Cursors.Wait
             Dim profileName = INewProfileName.Text
             INewServerProfileDialog.IsOpen = False
-            ServerCollection.AddServerProfile(profileName, Functions.SafeName(profileName))
+            ServerCollection.AddServerProfile(profileName, "_" & Functions.SafeName(profileName))
             INewProfileName.Text = String.Empty
             Mouse.OverrideCursor = Cursors.Arrow
         End If
@@ -226,6 +226,7 @@ Public Class MainWindow
         If My.Settings.Servers IsNot Nothing Then
             Dim currentProfiles = My.Settings.Servers
 
+            IServerProfilesMenu.Items.Clear()
             IServerProfilesMenu.Items.Clear()
 
             For i As Integer = IMainContent.Items.Count - 4 To 0

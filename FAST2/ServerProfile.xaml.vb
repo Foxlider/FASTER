@@ -440,7 +440,7 @@ Class ServerProfile
         Return True
     End Function
 
-    Private Function ProfileFilesExist(profile As String)
+    Private Shared Function ProfileFilesExist(profile As String)
         Dim path = My.Settings.serverPath
 
         If Not Directory.Exists(path & "\Servers\" & profile) Then
@@ -933,6 +933,10 @@ Class ServerProfile
                         newMissions.Remove(nMission)
                     End If
                 Next
+            Next
+
+            For Each mission In newMissions.ToList
+                IMissionCheckList.Items.Add(mission)
             Next
 
             IMissionCheckList.SelectedValue = checkedMissions
