@@ -88,8 +88,8 @@ Namespace Models
         Public Property MaxPlayers As Integer = 32
         Public Property Port As Integer = 2302
         Public Property HeadlessClientEnabled As Boolean = False
-        Public Property HeadlessIps As String = String.Empty
-        Public Property LocalClients As String = String.Empty
+        Public Property HeadlessIps As String = "127.0.0.1"
+        Public Property LocalClients As String = "127.0.0.1"
         Public Property NoOfHeadlessClients As Integer = 0
         Public Property Loopback As Boolean = False
         Public Property Upnp As Boolean = False
@@ -170,8 +170,8 @@ Namespace Models
         Public Property MaxSizeGuaranteed As Integer = 512
         Public Property MinErrorToSend As Decimal = 0.001
         Public Property MinErrorToSendNear As Decimal = 0.01
-        Public Property CpuCount As Integer = Nothing
-        Public Property MaxMem As Integer = Nothing
+        Public Property CpuCount As String = String.Empty
+        Public Property MaxMem As String = String.Empty
         Public Property ExtraParams As String = String.Empty
         Public Property AdminUids As String = String.Empty
         Public Property EnableHyperThreading As Boolean = False

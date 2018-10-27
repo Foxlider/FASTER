@@ -333,8 +333,8 @@ Class ServerProfile
     Private Sub IResetPerf_Click(sender As Object, e As RoutedEventArgs) Handles IResetPerf.Click
         IMaxCustomFileSize.Text = "160"
         IMaxPacketSize.Text = "1400"
-        IMinBandwidth.Text = "128"
-        IMaxBandwidth.Text = "2000"
+        IMinBandwidth.Text = "131072"
+        IMaxBandwidth.Text = "10000000000"
         IMaxMessagesSend.Text = "128"
         IMaxSizeGuaranteed.Text = "256"
         IMaxSizeNonguaranteed.Text = "512"
@@ -351,31 +351,35 @@ Class ServerProfile
         UpdateMissionsList()
     End Sub
 
-    Private Property ModsToCopy As String
-
-    Private Sub ModsCopy_Click(sender As Controls.Button, e As RoutedEventArgs) Handles IClientModsCopy.Click, IServerModsCopy.Click, IHeadlessModsCopy.Click
-        Select Case sender.Name
-            Case "IClientModsCopy"
-                ModsToCopy = IClientModsList.SelectedValue
-            Case "IServerModsCopy"
-                ModsToCopy = IServerModsList.SelectedValue
-            Case "IHeadlessModsCopy"
-                ModsToCopy = IHeadlessModsList.SelectedValue
-        End Select
+    Private Sub IModsRefresh_Click(sender As Object, e As RoutedEventArgs) Handles IClientModsRefresh.Click, IHeadlessModsRefresh.Click, IServerModsRefresh.Click
+        UpdateModsList()
     End Sub
 
-    Private Sub ModsPaste_Click(sender As Controls.Button, e As RoutedEventArgs) Handles IClientModsPaste.Click, IServerModsPaste.Click, IHeadlessModsPaste.Click
-        If ModsToCopy IsNot String.Empty
-            Select Case sender.Name
-                Case "IServerModsPaste"
-                    IServerModsList.SelectedValue = ModsToCopy
-                Case "IClientModsPaste"
-                    IClientModsList.SelectedValue = ModsToCopy
-                Case "IHeadlessModsPaste"
-                    IHeadlessModsList.SelectedValue = ModsToCopy
-            End Select
-        End If
-    End Sub
+    'Private Property ModsToCopy As String
+
+    'Private Sub ModsCopy_Click(sender As Controls.Button, e As RoutedEventArgs) Handles IClientModsCopy.Click, IServerModsCopy.Click, IHeadlessModsCopy.Click
+    '    Select Case sender.Name
+    '        Case "IClientModsCopy"
+    '            ModsToCopy = IClientModsList.SelectedValue
+    '        Case "IServerModsCopy"
+    '            ModsToCopy = IServerModsList.SelectedValue
+    '        Case "IHeadlessModsCopy"
+    '            ModsToCopy = IHeadlessModsList.SelectedValue
+    '    End Select
+    'End Sub
+
+    'Private Sub ModsPaste_Click(sender As Controls.Button, e As RoutedEventArgs) Handles IClientModsPaste.Click, IServerModsPaste.Click, IHeadlessModsPaste.Click
+    '    If ModsToCopy IsNot String.Empty
+    '        Select Case sender.Name
+    '            Case "IServerModsPaste"
+    '                IServerModsList.SelectedValue = ModsToCopy
+    '            Case "IClientModsPaste"
+    '                IClientModsList.SelectedValue = ModsToCopy
+    '            Case "IHeadlessModsPaste"
+    '                IHeadlessModsList.SelectedValue = ModsToCopy
+    '        End Select
+    '    End If
+    'End Sub
 
     Private Sub ModsAll_Click(sender As Controls.Button, e As RoutedEventArgs) Handles IServerModsAll.Click, IClientModsAll.Click, IHeadlessModsAll.Click, IAllMissionsButton.Click
         Select Case sender.Name
@@ -572,6 +576,8 @@ Class ServerProfile
 
         Directory.CreateDirectory(profilePath & "\Servers\" & profile & "\users\" & profile)
 
+        Dim von = Not (IVonEnabled.IsChecked)
+
         Dim configLines As New List(Of String) From {
             "passwordAdmin = """ & IAdminPassword.Text & """;",
             "password = """ & IPassword.Text & """;",
@@ -582,7 +588,7 @@ Class ServerProfile
             "upnp = " & IUpnp.IsChecked & ";",
             "allowedFilePatching = " & IAllowFilePatching.Text & ";",
             "verifySignatures = " & IVerifySignatures.Text & ";",
-            "disableVoN = " & IVonEnabled.IsChecked & ";",
+            "disableVoN = " & von & ";",
             "vonCodecQuality = " & ICodecQuality.Value & ";",
             "vonCodec = 1;",
             "BattlEye = " & IBattleEye.IsChecked & ";",
@@ -605,9 +611,13 @@ Class ServerProfile
 
         configLines.Add("motdInterval = " & IMotdDelay.Text & ";")
 
+        Dim headless = IHeadlessIps.Text.Replace(",", """,""")
+        Dim local = ILocalClients.Text.Replace(",", """,""")
+
+
         If IHeadlessClientEnabled.IsChecked Then
-            configLines.Add("headlessClients[] = {""" & IHeadlessIps.Text & """};")
-            configLines.Add("localClient[] = {""" & ILocalClients.Text & """};")
+            configLines.Add("headlessClients[] = {""" & headless & """};")
+            configLines.Add("localClient[] = {""" & local & """};")
         End If
 
         If IVotingEnabled.IsChecked Then
