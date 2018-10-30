@@ -599,11 +599,12 @@ Class ServerProfile
         Dim lines = Functions.GetLinesCollectionFromTextBox(IMotd)
 
         For Each line In lines
+            line = line.Replace(vbCr, "").Replace(vbLf, "")
             If Not line = "" Then
-                If line.IndexOf(line, StringComparison.Ordinal) = lines.Count -1 Then
-                    configLines.Add("""" & line & """")
+                If lines.IndexOf(line) = lines.Count - 1 Then
+                    configLines.Add(vbTab & """" & line & """")
                 Else
-                    configLines.Add("""" & line & """,")
+                    configLines.Add(vbTab & """" & line & """,")
                 End If
             End If
         Next
@@ -678,11 +679,12 @@ Class ServerProfile
         lines = Functions.GetLinesCollectionFromTextBox(IAdminUids)
 
         For Each line In lines
+            line = line.Replace(vbCr, "").Replace(vbLf, "")
             If Not line = "" Then
-                If line.IndexOf(line, StringComparison.Ordinal) = lines.Count - 1 Then
-                    configLines.Add("""" & line & """")
+                If lines.IndexOf(line) = lines.Count - 1 Then
+                    configLines.Add(vbTab & """" & line & """")
                 Else
-                    configLines.Add("""" & line & """,")
+                    configLines.Add(vbTab & """" & line & """,")
                 End If
             End If
         Next
