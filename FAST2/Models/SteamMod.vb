@@ -17,7 +17,7 @@ Namespace Models
 
         Public Property WorkshopId As Integer = Nothing
         Public Property Name As String = String.Empty
-        Private Property Author As String = String.Empty
+        Public Property Author As String = String.Empty
         Public Property SteamLastUpdated As Integer = Nothing
         Public Property LocalLastUpdated As Integer = 0
         Private Property PrivateMod As Boolean = False
@@ -34,27 +34,44 @@ Namespace Models
         Public Shared Function GetSteamMods() As List(Of SteamMod)
             Dim currentSteamMods As New List(Of SteamMod)
 
-            If My.Settings.steamMods IsNot Nothing
+            If My.Settings.steamMods IsNot Nothing Then
                 currentSteamMods = My.Settings.steamMods
             End If
 
             Return currentSteamMods
         End Function
 
+        Private Shared Function SteamIdFromUrl(modUrl As String)
+            Dim modId = modUrl.Substring(modUrl.IndexOf("?id=", StringComparison.Ordinal))
+            If modId.Contains("&") Then
+                modId = modId.Substring(0, InStr(modId, "&") - 1)
+            End If
+            modId = Double.Parse(Regex.Replace(modId, "[^\d]", ""))
+
+            Return modId
+        End Function
+
         Public Shared Sub AddSteamMod(modUrl As String, Optional multiple As Boolean = False)
-            If modUrl Like "http*://steamcommunity.com/*/filedetails/?id=*" Then
+            Dim modId = Nothing
+            Dim invalid = False
+
+            If IsNumeric(modUrl) Then
+                modId = modUrl
+            ElseIf modUrl Like "http*://steamcommunity.com/*/filedetails/?id=*" Then
+                modId = SteamIdFromUrl(modUrl)
+            Else
+                invalid = True
+            End If
+
+            If Not invalid Then
                 Dim duplicate = False
                 Dim currentMods = GetSteamMods()
 
-                Dim modId = modUrl.Substring(modUrl.IndexOf("?id=", StringComparison.Ordinal))
-                If modId.Contains("&") Then
-                    modId = modId.Substring(0, InStr(modId, "&") - 1)
-                End If
-                modId = Integer.Parse(Regex.Replace(modId, "[^\d]", ""))
+
 
                 If currentMods.Count > 0 Then
                     For Each steamMod In currentMods
-                        If steamMod.WorkshopId = modId
+                        If steamMod.WorkshopId = modId Then
                             duplicate = True
                         End If
                     Next
@@ -64,7 +81,7 @@ Namespace Models
                     Try
                         Dim modInfo = GetModInfo(modId)
 
-                        If modInfo IsNot Nothing
+                        If modInfo IsNot Nothing Then
                             Dim modName = modInfo.Item1
                             Dim steamUpdateTime = modInfo.Item3
                             Dim author = modInfo.Item2
@@ -82,7 +99,7 @@ Namespace Models
                         MsgBox("An exception occurred:" & vbCrLf & ex.Message)
                     End Try
                 Else
-                    If Not multiple
+                    If Not multiple Then
                         MainWindow.Instance.IMessageDialog.IsOpen = True
                         MainWindow.Instance.IMessageDialogText.Text = "Mod already imported."
                     End If

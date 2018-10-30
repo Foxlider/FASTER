@@ -9,6 +9,7 @@ Namespace Models
         Private Const V As String = "&publishedfileids["
         Private Const V1 As String = "]="
         Private Const V2 As String = "&steamids="
+        Private Const V3 As String = "&publishedfileids[0]="
 
         'Gets mod info for multiple mods
         Public Shared Function GetFileDetails(modIds As List(Of Integer)) As List(Of JObject)
@@ -25,8 +26,8 @@ Namespace Models
 
         'Get mod info for single mod
         Public Shared Function GetSingleFileDetails(modId As Integer) As JObject
-            Dim response = ApiCall("https://api.steampowered.com/IPublishedFileService/GetDetails/v1?key=" & SteamApiKey & "&publishedfileids[0]=" & modId)
-            
+            Dim response = ApiCall("https://api.steampowered.com/IPublishedFileService/GetDetails/v1?key=" & SteamApiKey & V3 & modId)
+
             Return response.SelectToken("response.publishedfiledetails[0]")
         End Function
 
