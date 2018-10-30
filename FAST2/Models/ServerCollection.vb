@@ -124,7 +124,7 @@ Namespace Models
         Public Property Missions As String = String.Empty
         Public Property PersistentBattlefield As Boolean = False
         Public Property AutoInit As Boolean = False
-        Public Property DifficultyPreset As String = String.Empty
+        Public Property DifficultyPreset As String = "Regular"
         Public Property ReducedDamage As Boolean = False
         Public Property GroupIndicators As String = "Never"
         Public Property FriendlyNameTags As String = "Never"

@@ -691,10 +691,14 @@ Class ServerProfile
         configLines.Add("timeStampFormat = """ & IRptTimestamp.Text & """;")
 
         configLines.Add("class Missions {")
+        Dim difficulty = IDifficultyPreset.Text
+        If difficulty = String.Empty Then
+            difficulty = "Regular"
+        End If
         For Each mission In IMissionCheckList.SelectedItems
             configLines.Add(vbTab & "class Mission_" & IMissionCheckList.SelectedItems.IndexOf(mission) + 1 & " {")
             configLines.Add(vbTab & vbTab & "template = """ & mission & """;")
-            configLines.Add(vbTab & vbTab & "difficulty = """ & IDifficultyPreset.Text & """;")
+            configLines.Add(vbTab & vbTab & "difficulty = """ & difficulty & """;")
             configLines.Add(vbTab & "};")
         Next
         configLines.Add("};")
