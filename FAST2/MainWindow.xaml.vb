@@ -359,94 +359,92 @@ Public Class MainWindow
         If _oProcess IsNot Nothing Then
             Dim oStreamWriter = _oProcess.StandardInput
 
-            If Not (text Like "\src\comon\contentmanifest.cpp (650) : Assertation Failed: !m_bIsFinalized") Then
+            Dispatcher.Invoke(
+                Sub()
+                    ISteamOutputBox.AppendText(text & Environment.NewLine)
+                    ISteamOutputBox.ScrollToEnd()
+                End Sub
+            )
+
+            If text Like "*at the console." Then
                 Dispatcher.Invoke(
                     Sub()
-                        ISteamOutputBox.AppendText(text & Environment.NewLine)
-                        ISteamOutputBox.ScrollToEnd()
+                        ISteamGuardDialog.IsOpen = True
                     End Sub
                 )
 
-                If text Like "*at the console." Then
-                    Dispatcher.Invoke(
-                        Sub()
-                            ISteamGuardDialog.IsOpen = True
-                        End Sub
+                Do
+
+                Loop Until _steamCodeValid
+
+                _steamCodeValid = False
+                Dispatcher.Invoke(
+                    Sub()
+                        oStreamWriter.Write(ISteamGuardCode.Text & Environment.NewLine)
+                    End Sub
+                )
+            End If
+
+            If text Like "*..." Then
+                Dispatcher.Invoke(
+                    Sub()
+                        ISteamOutputBox.AppendText(Environment.NewLine)
+                    End Sub
+                    )
+            End If
+
+            If text Like "*Mobile Authenticator*" Then
+                Dispatcher.Invoke(
+                    Sub()
+                        ISteamGuardDialog.IsOpen = True
+                    End Sub
                     )
 
-                    Do
+                Do
 
-                    Loop Until _steamCodeValid
+                Loop Until _steamCodeValid
 
-                    _steamCodeValid = False
-                    Dispatcher.Invoke(
-                        Sub()
-                            oStreamWriter.Write(ISteamGuardCode.Text & Environment.NewLine)
-                        End Sub
+                _steamCodeValid = False
+                Dispatcher.Invoke(
+                    Sub()
+                        oStreamWriter.Write(ISteamGuardCode.Text & Environment.NewLine)
+                    End Sub
                     )
+            End If
+
+            If text Like "*Update state*" Then
+                Dim counter As Integer = text.IndexOf(":", StringComparison.Ordinal)
+                Dim progress As String = text.Substring(counter + 2, 2)
+                Dim progressValue As Integer
+
+                If progress.Contains(".") Then
+                    progressValue = progress.Substring(0, 1)
+                Else
+                    progressValue = progress
                 End If
+                Dispatcher.Invoke(
+                    Sub()
+                        ISteamProgressBar.IsIndeterminate = False
+                        ISteamProgressBar.Value = progressValue
+                    End Sub
+                    )
+            End If
 
-                If text Like "*..." Then
-                    Dispatcher.Invoke(
-                        Sub()
-                            ISteamOutputBox.AppendText(Environment.NewLine)
-                        End Sub
-                        )
-                End If
+            If text Like "*Success*" Then
+                Dispatcher.Invoke(
+                    Sub()
+                        ISteamProgressBar.Value = 100
+                    End Sub
+                    )
+            End If
 
-                If text Like "*Mobile Authenticator*" Then
-                    Dispatcher.Invoke(
-                        Sub()
-                            ISteamGuardDialog.IsOpen = True
-                        End Sub
-                        )
-
-                    Do
-
-                    Loop Until _steamCodeValid
-
-                    _steamCodeValid = False
-                    Dispatcher.Invoke(
-                        Sub()
-                            oStreamWriter.Write(ISteamGuardCode.Text & Environment.NewLine)
-                        End Sub
-                        )
-                End If
-
-                If text Like "*Update state*" Then
-                    Dim counter As Integer = text.IndexOf(":", StringComparison.Ordinal)
-                    Dim progress As String = text.Substring(counter + 2, 2)
-                    Dim progressValue As Integer
-
-                    If progress.Contains(".") Then
-                        progressValue = progress.Substring(0, 1)
-                    Else
-                        progressValue = progress
-                    End If
-                    Dispatcher.Invoke(
-                        Sub()
-                            ISteamProgressBar.IsIndeterminate = False
-                            ISteamProgressBar.Value = progressValue
-                        End Sub
-                        )
-                End If
-
-                If text Like "*Success*" Then
-                    Dispatcher.Invoke(
-                        Sub()
-                            ISteamProgressBar.Value = 100
-                        End Sub
-                        )
-                End If
-
-                If text Like "*Timeout*" Then
-                    Dispatcher.Invoke(
-                        Sub()
-                            Instance.IMessageDialog.IsOpen = True
-                            Instance.IMessageDialogText.Text = "A Steam Download timed out. You may have to download again when task is complete."
-                        End Sub
-                        )
-                End If
+            If text Like "*Timeout*" Then
+                Dispatcher.Invoke(
+                    Sub()
+                        Instance.IMessageDialog.IsOpen = True
+                        Instance.IMessageDialogText.Text = "A Steam Download timed out. You may have to download again when task is complete."
+                    End Sub
+                    )
             End If
         End If
     End Sub
@@ -467,7 +465,9 @@ Public Class MainWindow
                 outputChar = Chr(outputCharInt)
                 If outputCharInt = 10 Or outputCharInt = 13 Then
                     If line IsNot String.Empty Then
-                        UpdateTextBox(line)
+                        If Not line Like "\src\common\contentmanifest.cpp (650) : Assertion Failed: !m_bIsFinalized*" Then
+                            UpdateTextBox(line)
+                        End If
                     End If
                     line = String.Empty
                 ElseIf line.Length > 7 Then
@@ -565,7 +565,7 @@ Public Class MainWindow
                 _oProcess = Nothing
                 CheckModUpdatesComplete(modIds)
             Else
-                ISteamOutputBox.AppendText("Task Completed" & Environment.NewLine)
+                ISteamOutputBox.AppendText("SteamCMD Exited" & Environment.NewLine)
                 ISteamOutputBox.ScrollToEnd()
                 ISteamProgressBar.IsIndeterminate = False
                 ISteamProgressBar.Value = 100
