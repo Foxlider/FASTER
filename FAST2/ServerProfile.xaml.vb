@@ -958,9 +958,9 @@ Class ServerProfile
         Dim newMods As New List(Of String)
         Dim checkedServerMods, checkedHcMods, checkedClientMods As String
 
-       checkedServerMods = IServerModsList.SelectedValue
-       checkedHcMods = IHeadlessModsList.SelectedValue
-       checkedClientMods = IClientModsList.SelectedValue
+        checkedServerMods = IServerModsList.SelectedValue
+        checkedHcMods = IHeadlessModsList.SelectedValue
+        checkedClientMods = IClientModsList.SelectedValue
 
         IServerModsList.Items.Clear()
         IClientModsList.Items.Clear()
@@ -990,6 +990,16 @@ Class ServerProfile
             IHeadlessModsList.SelectedValue = checkedHcMods
         Else
             MsgBox("Please install game before continuing.")
+        End If
+    End Sub
+
+    Private Sub IOpenRpt_Click(sender As Object, e As RoutedEventArgs) Handles IOpenRpt.Click
+        Dim dir = New System.IO.DirectoryInfo(My.Settings.serverPath & "\Servers")
+        Dim file = dir.EnumerateFiles("*.rpt").
+                OrderByDescending(Function(f) f.LastWriteTime).
+                FirstOrDefault()
+        If file IsNot Nothing Then
+            Process.Start(file.FullName)
         End If
     End Sub
 End Class
