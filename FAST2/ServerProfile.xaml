@@ -660,7 +660,7 @@
                                 <Label Margin="2" Content="Server Performance"/>
                                 <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="-8"/>
                             </StackPanel>
-                            <Button Name="IResetPerf" Grid.Row="1" Grid.Column="0" Content="Reset All Values" FontSize="11" Width="100" Height="25" Margin="5" Padding="0"/>
+                            <Button Name="IResetPerf" Grid.Row="1" Grid.Column="0" Content="Reset To Default" FontSize="11" Width="100" Height="25" Margin="5" Padding="0"/>
                             <TextBox Name="IMaxCustomFileSize" Grid.Row="2" Grid.Column="0" materialDesign:HintAssist.Hint="Max Custom File Size (kB)" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
                             <TextBox Name="IMaxPacketSize" Grid.Row="3" Grid.Column="0" materialDesign:HintAssist.Hint="Max Packet Size" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
                             <TextBox Name="IMinBandwidth" Grid.Row="4" Grid.Column="0" materialDesign:HintAssist.Hint="Min Bandwidth (bps)" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
