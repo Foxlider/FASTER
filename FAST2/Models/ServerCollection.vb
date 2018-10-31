@@ -110,11 +110,11 @@ Namespace Models
         Public Property VonEnabled As Boolean = True
         Public Property CodecQuality As Integer = 3
         Public Property ServerConsoleLogEnabled As Boolean = False
-        Public Property ServerConsoleLog As String = "server_console.log"
+        'Public Property ServerConsoleLog As String = "server_console.log"
         Public Property PidEnabled As Boolean = False
-        Public Property PidLog As String = "pid.log"
+        'Public Property PidLog As String = "pid.log"
         Public Property RankingEnabled As Boolean = False
-        Public Property RankingLog As String = "ranking.log"
+        'Public Property RankingLog As String = "ranking.log"
         Public Property RptTimestamp As String = "none"
         Public Property Motd As String = String.Empty
         Public Property MotdDelay As Integer = 5

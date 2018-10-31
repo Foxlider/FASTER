@@ -5,7 +5,8 @@ Imports FAST2.Models
 
 Class ServerProfile
     Shared _safeName As String
-    
+    Private ReadOnly _profilesPath = My.Settings.serverPath & "\Servers\"
+
     Public Sub New(profile As Models.ServerProfile)
         ' This call is required by the designer.
         InitializeComponent()
@@ -43,13 +44,10 @@ Class ServerProfile
         IVonEnabled.IsChecked = profile.VonEnabled
         ICodecQuality.Value = profile.CodecQuality
         IServerConsoleLogEnabled.IsChecked = profile.ServerConsoleLogEnabled
-        IServerConsoleLog.Text = profile.ServerConsoleLog
         IPidEnabled.IsChecked = profile.PidEnabled
-        IPidLog.Text = profile.PidLog
         IRankingEnabled.IsChecked = profile.RankingEnabled
-        IRankingLog.Text = profile.RankingLog
         IRptTimestamp.Text = profile.RptTimestamp
-        IMotd.Text = profile.Motd      
+        IMotd.Text = profile.Motd
         IMotdDelay.Text = profile.MotdDelay
         IPersistentBattlefield.IsChecked = profile.PersistentBattlefield
         IAutoInit.IsChecked = profile.AutoInit
@@ -124,6 +122,9 @@ Class ServerProfile
         ToggleUi(IAutoRestartEnabled)
         ToggleUi(IVonEnabled)
         ToggleUi(IVotingEnabled)
+        ToggleUi(IServerConsoleLogEnabled)
+        ToggleUi(IPidEnabled)
+        ToggleUi(IRankingEnabled)
 
     End Sub
 
@@ -196,8 +197,8 @@ Class ServerProfile
     End Sub
 
     Private Sub ToggleUi(uiElement As Object, Optional e As RoutedEventArgs = Nothing) Handles IHeadlessClientEnabled.Click, IAutoRestartEnabled.Click, IVonEnabled.Click, IVotingEnabled.Click, IServerConsoleLogEnabled.Click,
-                                                                                               IPidEnabled.Click, IRankingEnabled.Click, IRequiredBuildEnabled.Click, IDailyRestartAEnabled.Click, IDailyRestartBEnabled.Click, 
-                                                                                               IPersistentBattlefield.Click, IMaxPacketLossEnabled.Click, IDisconnectTimeOutEnabled.Click, IKickOnSlowNetworkEnabled.Click, IMaxPingEnabled.Click, 
+                                                                                               IPidEnabled.Click, IRankingEnabled.Click, IRequiredBuildEnabled.Click, IDailyRestartAEnabled.Click, IDailyRestartBEnabled.Click,
+                                                                                               IPersistentBattlefield.Click, IMaxPacketLossEnabled.Click, IDisconnectTimeOutEnabled.Click, IKickOnSlowNetworkEnabled.Click, IMaxPingEnabled.Click,
                                                                                                IMaxDesyncEnabled.Click
         Select Case uiElement.Name
             Case "IMaxDesyncEnabled"
@@ -407,6 +408,34 @@ Class ServerProfile
         End Select
     End Sub
 
+    Private Sub IOpenRpt_Click(sender As Object, e As RoutedEventArgs) Handles IOpenRpt.Click
+        OpenLastFile(_profilesPath & Functions.SafeName(IDisplayName.Content), "*.rpt")
+    End Sub
+
+    Private Sub IOpenNetlog_Click(sender As Object, e As RoutedEventArgs) Handles IOpenNetlog.Click
+        OpenLastFile(Environment.ExpandEnvironmentVariables("%LocalAppData%") & "\Arma 3", "netlog-*.log")
+    End Sub
+
+    Private Sub IRankingButton_Click(sender As Object, e As RoutedEventArgs) Handles IRankingButton.Click
+        OpenLastFile(_profilesPath & Functions.SafeName(IDisplayName.Content), "ranking.log")
+    End Sub
+
+    Private Sub IPidButton_Click(sender As Object, e As RoutedEventArgs) Handles IPidButton.Click
+        OpenLastFile(_profilesPath & Functions.SafeName(IDisplayName.Content), "*pid*.log")
+    End Sub
+
+    Private Sub IConsoleLogButton_Click(sender As Object, e As RoutedEventArgs) Handles IConsoleLogButton.Click
+        OpenLastFile(_profilesPath & Functions.SafeName(IDisplayName.Content), "server_console*.log")
+    End Sub
+
+    Private Sub IDeleteRpt_Click(sender As Object, e As RoutedEventArgs) Handles IDeleteRpt.Click
+        DeleteAllFiles(_profilesPath & Functions.SafeName(IDisplayName.Content), "*.rpt")
+    End Sub
+
+    Private Shared Sub IDeleteNetlog_Click(sender As Object, e As RoutedEventArgs) Handles IDeleteNetlog.Click
+        DeleteAllFiles(Environment.ExpandEnvironmentVariables("%LocalAppData%") & "\Arma 3", "netlog-*.log")
+    End Sub
+
     Private Sub ShowRenameInterface(show As Boolean)
         If show Then
             IProfileDisplayNameEdit.Text = IDisplayName.Content
@@ -436,7 +465,7 @@ Class ServerProfile
             Return False
         End If
 
-        If Not File.Exists(IExecutable.Text)
+        If Not File.Exists(IExecutable.Text) Then
             MainWindow.Instance.IMessageDialog.IsOpen = True
             MainWindow.Instance.IMessageDialogText.Text = "Arma 3 Server Executable does not exist. Please reselect correct file."
             Return False
@@ -464,7 +493,7 @@ Class ServerProfile
 
     Private Sub LaunchServer()
         Dim profileName As String = Functions.SafeName(IDisplayName.Content)
-        Dim profilePath As String = My.Settings.serverPath & "\Servers\" & profileName & "\"
+        Dim profilePath As String = _profilesPath & profileName & "\"
         Dim configs As String = profilePath & profileName
         Dim start = True
         Dim playerMods As String = Nothing
@@ -481,8 +510,8 @@ Class ServerProfile
         Try
             WriteConfigFiles(profileName)
         Catch ex As Exception
-            MsgBox(ex.Message)
-            MsgBox("Config files in use elsewhere - make sure server is not running.")
+            MainWindow.Instance.IMessageDialog.IsOpen = True
+            MainWindow.Instance.IMessageDialogText.Text = "Config files in use elsewhere - make sure server is not running."
             start = False
         End Try
 
@@ -510,11 +539,11 @@ Class ServerProfile
             End If
 
             If IRankingEnabled.IsChecked Then
-                commandLine = commandLine & " -ranking=" & IRankingLog.Text
+                commandLine = commandLine & " -ranking=Servers\" & Functions.SafeName(IDisplayName.Content) & "\" & "ranking.log"
             End If
 
             If IPidEnabled.IsChecked Then
-                commandLine = commandLine & " -pid=" & IPidLog.Text
+                commandLine = commandLine & " -pid=Servers\" & Functions.SafeName(IDisplayName.Content) & "\" & "pid.log"
             End If
 
             If IAutoInit.IsChecked Then
@@ -660,7 +689,7 @@ Class ServerProfile
         End If
 
         If IServerConsoleLogEnabled.IsChecked Then
-            configLines.Add("logFile = """ & IServerConsoleLog.Text & """;")
+            configLines.Add("logFile = ""server_console.log"";")
         End If
 
         If IRequiredBuildEnabled.IsChecked Then
@@ -791,7 +820,7 @@ Class ServerProfile
     Private Sub UpdateProfile()
         Try
             Dim profileName = Functions.SafeName(IDisplayName.Content)
-            Dim path As String = My.Settings.serverPath & "\Servers\"
+            Dim path As String = _profilesPath
             Dim profilePath As String = path & profileName & "\"
 
             If Not Directory.Exists(path) Then
@@ -812,8 +841,7 @@ Class ServerProfile
                 cfg.Close()
             End If
         Catch ex As Exception
-            MsgBox(ex.Message)
-            MsgBox("Files in use please close and try again.")
+
         End Try
 
         Dim profile = My.Settings.Servers.ServerProfiles.Find(Function(p) p.SafeName = _safeName)
@@ -852,11 +880,8 @@ Class ServerProfile
         profile.VonEnabled = IVonEnabled.IsChecked
         profile.CodecQuality = ICodecQuality.Value
         profile.ServerConsoleLogEnabled = IServerConsoleLogEnabled.IsChecked
-        profile.ServerConsoleLog = IServerConsoleLog.Text
         profile.PidEnabled = IPidEnabled.IsChecked
-        profile.PidLog = IPidLog.Text
         profile.RankingEnabled = IRankingEnabled.IsChecked
-        profile.RankingLog = IRankingLog.Text
         profile.RptTimestamp = IRptTimestamp.Text
         profile.Motd = IMotd.Text
         profile.MotdDelay = IMotdDelay.Text
@@ -999,13 +1024,31 @@ Class ServerProfile
         End If
     End Sub
 
-    Private Sub IOpenRpt_Click(sender As Object, e As RoutedEventArgs) Handles IOpenRpt.Click
-        Dim dir = New System.IO.DirectoryInfo(My.Settings.serverPath & "\Servers")
-        Dim file = dir.EnumerateFiles("*.rpt").
-                OrderByDescending(Function(f) f.LastWriteTime).
-                FirstOrDefault()
-        If file IsNot Nothing Then
-            Process.Start(file.FullName)
-        End If
+    Private Shared Sub OpenLastFile(path As String, filter As String)
+        Try
+            Dim dir = New DirectoryInfo(path)
+            Dim file = dir.EnumerateFiles(filter).OrderByDescending(Function(f) f.LastWriteTime).FirstOrDefault()
+            If file IsNot Nothing Then
+                Process.Start(file.FullName)
+            Else
+                MainWindow.Instance.IMessageDialog.IsOpen = True
+                MainWindow.Instance.IMessageDialogText.Text = "Cannot Open - File Not Found" & Environment.NewLine & Environment.NewLine & "If Opening PID file make sure Server is running."
+            End If
+        Catch ex As Exception
+            MainWindow.Instance.IMessageDialog.IsOpen = True
+            MainWindow.Instance.IMessageDialogText.Text = "Cannot Open - File Not Found" & Environment.NewLine & Environment.NewLine & "If Opening PID file make sure Server is running."
+        End Try
+    End Sub
+
+    Private Shared Sub DeleteAllFiles(path As String, filter As String)
+        Dim dir = New DirectoryInfo(path)
+        Dim files = dir.EnumerateFiles(filter)
+        Dim i = 0
+        For Each file In files
+            file.Delete()
+            i += 1
+        Next
+        MainWindow.Instance.IMessageDialog.IsOpen = True
+        MainWindow.Instance.IMessageDialogText.Text = "Deleted " & i & " files."
     End Sub
 End Class

@@ -163,15 +163,15 @@
                                 </StackPanel>
 
                                 <CheckBox Grid.Row="1" Grid.Column="0" Name="IServerConsoleLogEnabled" Margin="5" Style="{StaticResource MaterialDesignCheckBox}"/>
-                                <TextBox Grid.Row="1" Grid.Column="1" Name="IServerConsoleLog" Text="server_console.log" Margin="5" Foreground="{DynamicResource MaterialDesignBody}" IsEnabled="False"/>
+                                <Label Grid.Row="1" Grid.Column="1" Name="IServerConsoleLog" Content="Server Console" Margin="5" Foreground="{DynamicResource MaterialDesignBody}" IsEnabled="False"/>
                                 <Button Grid.Row="1" Grid.Column="2" Name="IConsoleLogButton" Content="Open" Height="20" Width="60" FontSize="11" Margin="5" IsEnabled="False"/>
 
                                 <CheckBox Grid.Row="2" Grid.Column="0" Name="IPidEnabled" Margin="5" Style="{StaticResource MaterialDesignCheckBox}"/>
-                                <TextBox Grid.Row="2" Grid.Column="1" Name="IPidLog" Text="pid.log" Margin="5" Foreground="{DynamicResource MaterialDesignBody}" IsEnabled="False"/>
+                                <Label Grid.Row="2" Grid.Column="1" Name="IPidLog" Content="PID" Margin="5" Foreground="{DynamicResource MaterialDesignBody}" IsEnabled="False"/>
                                 <Button Grid.Row="2" Grid.Column="2" Name="IPidButton" Content="Open" Height="20" Width="60" FontSize="11" Margin="5" IsEnabled="False"/>
 
                                 <CheckBox Grid.Row="3" Grid.Column="0" Name="IRankingEnabled" Margin="5" Style="{StaticResource MaterialDesignCheckBox}"/>
-                                <TextBox Grid.Row="3" Grid.Column="1" Name="IRankingLog" Text="ranking.log" Margin="5" Foreground="{DynamicResource MaterialDesignBody}" IsEnabled="False"/>
+                                <Label Grid.Row="3" Grid.Column="1" Name="IRankingLog" Content="Ranking" Margin="5" Foreground="{DynamicResource MaterialDesignBody}" IsEnabled="False"/>
                                 <Button Grid.Row="3" Grid.Column="2" Name="IRankingButton" Content="Open" Height="20" Width="60" FontSize="11" Margin="5" IsEnabled="False"/>
                             </Grid>
 
@@ -197,21 +197,21 @@
                                 </StackPanel>
 
 
-                                <ComboBox Grid.Row="1" Grid.Column="0" Name="IRptTimestamp" materialDesign:HintAssist.Hint="TimeStamp" IsEditable="False" Foreground="{DynamicResource MaterialDesignBody}" Width="60" Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="5">
+                                <Button Name="IOpenRpt" Grid.Row="1" Grid.Column="0" Height="30" Width="30" Margin="5" VerticalAlignment="Bottom" FontSize="10" ToolTip="Open Last RPT">
+                                    <materialDesign:PackIcon Kind="FolderOpen" Width="22" Height="22" Margin="-12,0,-15,0"/>
+                                </Button>
+                                <Button Name="IDeleteRpt" Grid.Row="1" Grid.Column="1" Height="30" Width="30" Margin="5" VerticalAlignment="Bottom" FontSize="10" ToolTip="Delete All RPTs">
+                                    <materialDesign:PackIcon Kind="Delete" Width="22" Height="22" Margin="-12,0,-15,0"/>
+                                </Button>
+                                <ComboBox Grid.Row="1" Grid.Column="2" Name="IRptTimestamp" materialDesign:HintAssist.Hint="TimeStamp" IsEditable="False" Foreground="{DynamicResource MaterialDesignBody}" Width="60" Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="5">
                                     <ComboBoxItem IsSelected="True">none</ComboBoxItem>
                                     <ComboBoxItem>short</ComboBoxItem>
                                     <ComboBoxItem>full</ComboBoxItem>
                                 </ComboBox>
-                                <Button Name="IOpenRpt" Grid.Row="1" Grid.Column="1" Height="30" Width="30" Margin="5" VerticalAlignment="Bottom" FontSize="10" ToolTip="Open Last RPT">
-                                    <materialDesign:PackIcon Kind="FolderOpen" Width="22" Height="22" Margin="-12,0,-15,0"/>
-                                </Button>
-                                <Button Name="IDeleteRpt" Grid.Row="1" Grid.Column="2" Height="30" Width="30" Margin="5" VerticalAlignment="Bottom" FontSize="10" ToolTip="Delete All RPTs">
-                                    <materialDesign:PackIcon Kind="Delete" Width="22" Height="22" Margin="-12,0,-15,0"/>
-                                </Button>
 
-                                <Button Grid.Row="1" Grid.Column="4" Height="30" Width="30" Margin="5" VerticalAlignment="Bottom" FontSize="10" ToolTip="Rotate Netlog">
+                                <!--<Button Grid.Row="1" Grid.Column="4" Height="30" Width="30" Margin="5" VerticalAlignment="Bottom" FontSize="10" ToolTip="Rotate Netlog">
                                     <materialDesign:PackIcon Kind="RotateLeft" Width="22" Height="22" Margin="-12,0,-15,0"/>
-                                </Button>
+                                </Button>-->
                                 <Button Name="IOpenNetlog" Grid.Row="1" Grid.Column="5" Height="30" Width="30" Margin="5" VerticalAlignment="Bottom" FontSize="10" ToolTip="Open Last Netlog">
                                     <materialDesign:PackIcon Kind="FolderOpen" Width="22" Height="22" Margin="-12,0,-15,0"/>
                                 </Button>
