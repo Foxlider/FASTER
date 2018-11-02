@@ -49,6 +49,8 @@ Class ServerProfile
         IRptTimestamp.Text = profile.RptTimestamp
         IMotd.Text = profile.Motd
         IMotdDelay.Text = profile.MotdDelay
+        IManualMissions.IsChecked = profile.ManualMissions
+        IMissionConfig.Text = profile.MissionsClass
         IPersistentBattlefield.IsChecked = profile.PersistentBattlefield
         IAutoInit.IsChecked = profile.AutoInit
         IDifficultyPreset.Text = profile.DifficultyPreset
@@ -125,6 +127,7 @@ Class ServerProfile
         ToggleUi(IServerConsoleLogEnabled)
         ToggleUi(IPidEnabled)
         ToggleUi(IRankingEnabled)
+        ToggleUi(IManualMissions)
 
     End Sub
 
@@ -199,8 +202,16 @@ Class ServerProfile
     Private Sub ToggleUi(uiElement As Object, Optional e As RoutedEventArgs = Nothing) Handles IHeadlessClientEnabled.Click, IAutoRestartEnabled.Click, IVonEnabled.Click, IVotingEnabled.Click, IServerConsoleLogEnabled.Click,
                                                                                                IPidEnabled.Click, IRankingEnabled.Click, IRequiredBuildEnabled.Click, IDailyRestartAEnabled.Click, IDailyRestartBEnabled.Click,
                                                                                                IPersistentBattlefield.Click, IMaxPacketLossEnabled.Click, IDisconnectTimeOutEnabled.Click, IKickOnSlowNetworkEnabled.Click, IMaxPingEnabled.Click,
-                                                                                               IMaxDesyncEnabled.Click
+                                                                                               IMaxDesyncEnabled.Click, IManualMissions.Click
         Select Case uiElement.Name
+            Case "IManualMissions"
+                If IManualMissions.IsChecked Then
+                    IMissionAutoGrid.Visibility = Visibility.Collapsed
+                    IMissionManualGrid.Visibility = Visibility.Visible
+                Else
+                    IMissionAutoGrid.Visibility = Visibility.Visible
+                    IMissionManualGrid.Visibility = Visibility.Collapsed
+                End If
             Case "IMaxDesyncEnabled"
                 If IMaxDesyncEnabled.IsChecked Then
                     IMaxDesync.IsEnabled = True
@@ -721,19 +732,26 @@ Class ServerProfile
 
         configLines.Add("timeStampFormat = """ & IRptTimestamp.Text & """;")
 
-        configLines.Add("class Missions {")
-        Dim difficulty = IDifficultyPreset.Text
-        If difficulty = String.Empty Then
-            difficulty = "Regular"
-        End If
-        For Each mission In IMissionCheckList.SelectedItems
-            configLines.Add(vbTab & "class Mission_" & IMissionCheckList.SelectedItems.IndexOf(mission) + 1 & " {")
-            configLines.Add(vbTab & vbTab & "template = """ & mission & """;")
-            configLines.Add(vbTab & vbTab & "difficulty = """ & difficulty & """;")
-            configLines.Add(vbTab & "};")
-        Next
-        configLines.Add("};")
+        If IManualMissions.IsChecked Then
+            Dim missionLines = Functions.GetLinesCollectionFromTextBox(IMissionConfig)
 
+            For Each line In missionLines
+                configLines.Add(line)
+            Next
+        Else
+            configLines.Add("class Missions {")
+            Dim difficulty = IDifficultyPreset.Text
+            If difficulty = String.Empty Then
+                difficulty = "Regular"
+            End If
+            For Each mission In IMissionCheckList.SelectedItems
+                configLines.Add(vbTab & "class Mission_" & IMissionCheckList.SelectedItems.IndexOf(mission) + 1 & " {")
+                configLines.Add(vbTab & vbTab & "template = """ & mission & """;")
+                configLines.Add(vbTab & vbTab & "difficulty = """ & difficulty & """;")
+                configLines.Add(vbTab & "};")
+            Next
+            configLines.Add("};")
+        End If
 
         '"drawingInMap = 0;"
         '"forceRotorLibSimulation = 0;"
@@ -885,6 +903,8 @@ Class ServerProfile
         profile.RptTimestamp = IRptTimestamp.Text
         profile.Motd = IMotd.Text
         profile.MotdDelay = IMotdDelay.Text
+        profile.ManualMissions = IManualMissions.IsChecked
+        profile.MissionsClass = IMissionConfig.Text
         profile.PersistentBattlefield = IPersistentBattlefield.IsChecked
         profile.AutoInit = IAutoInit.IsChecked
         profile.DifficultyPreset = IDifficultyPreset.Text
@@ -1050,5 +1070,9 @@ Class ServerProfile
         Next
         MainWindow.Instance.IMessageDialog.IsOpen = True
         MainWindow.Instance.IMessageDialogText.Text = "Deleted " & i & " files."
+    End Sub
+
+    Private Sub IManualMissions_Checked(sender As Object, e As RoutedEventArgs) Handles IManualMissions.Checked
+
     End Sub
 End Class

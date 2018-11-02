@@ -121,6 +121,8 @@ Namespace Models
         Public Property ServerMods As String = String.Empty
         Public Property ClientMods As String = String.Empty
         Public Property HeadlessMods As String = String.Empty
+        Public Property ManualMissions As Boolean = False
+        Public Property MissionsClass As String = String.Empty
         Public Property Missions As String = String.Empty
         Public Property PersistentBattlefield As Boolean = False
         Public Property AutoInit As Boolean = False

@@ -450,35 +450,58 @@
                     <materialDesign:Card Margin="5" Grid.RowSpan="2"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="*"/>
                                 <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             <StackPanel Grid.ColumnSpan="4">
                                 <Label Margin="2" Content="Missions"/>
                                 <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="-8"/>
+                                <ToggleButton Name="IManualMissions" Style="{StaticResource MaterialDesignSwitchToggleButton}" IsChecked="False" HorizontalAlignment="Right" Margin="2,-25,5,0" ToolTip="Manual Mission Config"/>
                             </StackPanel>
-                            <xctk:CheckListBox Grid.Row="1" Grid.Column="0" Name="IMissionCheckList" Margin="10" Grid.ColumnSpan="4" Background="{DynamicResource MaterialDesignTextAreaInactiveBorder}" Foreground="{DynamicResource MaterialDesignBody}"/>
-                            <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" Orientation="Horizontal" Margin="5,0">
+
+                            <Grid Name="IMissionManualGrid" Grid.Row="1" Visibility="Collapsed">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <Label Content="Use this text box to write your custom missions class." Margin="5" HorizontalAlignment="Center"/>
+                                <TextBox Name="IMissionConfig" Grid.Row="1" Grid.Column="0" Margin="10" AcceptsReturn="True" AcceptsTab="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" Foreground="{DynamicResource MaterialDesignBody}" Background="{DynamicResource MaterialDesignTextAreaInactiveBorder}"/>
+                            </Grid>
+
+                            <Grid Name="IMissionAutoGrid" Grid.Row="1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <xctk:CheckListBox Grid.Row="1" Grid.Column="0" Name="IMissionCheckList" Margin="10" Grid.ColumnSpan="4" Background="{DynamicResource MaterialDesignTextAreaInactiveBorder}" Foreground="{DynamicResource MaterialDesignBody}"/>
+                                
+                                <Button Grid.Row="3" Grid.Column="0" Name="IAllMissionsButton" Margin="10,10,5,10" Content="All" FontSize="10" Height="20" />
+                                <Button Grid.Row="3" Grid.Column="1" Name="INoMissionsButton" Margin="5,10" Content="None" FontSize="10" Height="20"/>
+                                <Button Grid.Row="3" Grid.Column="2" Name="IRefreshMissionsButton" Margin="5,10" Content="{materialDesign:PackIcon Kind=Refresh}" FontSize="10" Height="20" Width="20" Padding="0"/>
+                                <ComboBox Grid.Row="3" Grid.Column="3" materialDesign:HintAssist.Hint="Difficulty Preset" Name="IDifficultyPreset" IsEditable="False" Foreground="{DynamicResource MaterialDesignBody}" Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="10,0,10,10" Width="75" HorizontalAlignment="Right">
+                                    <ComboBoxItem IsSelected="True">Recruit</ComboBoxItem>
+                                    <ComboBoxItem>Regular</ComboBoxItem>
+                                    <ComboBoxItem>Veteran</ComboBoxItem>
+                                    <ComboBoxItem>Custom</ComboBoxItem>
+                                </ComboBox>
+                            </Grid>
+                            <StackPanel Grid.Row="2" Grid.Column="0" Orientation="Horizontal" Margin="5,0,5,10">
                                 <CheckBox Name="IPersistentBattlefield" Style="{StaticResource MaterialDesignCheckBox}" Content="Persistent Battlefield" Margin="5,0" Foreground="{DynamicResource MaterialDesignBody}"/>
                                 <CheckBox Name="IAutoInit" Style="{StaticResource MaterialDesignCheckBox}" Content="Auto Init" Margin="5,0" IsEnabled="False" Foreground="{DynamicResource MaterialDesignBody}"/>
                             </StackPanel>
-                            <Button Grid.Row="3" Grid.Column="0" Name="IAllMissionsButton" Margin="10,10,5,10" Content="All" FontSize="10" Height="20" />
-                            <Button Grid.Row="3" Grid.Column="1" Name="INoMissionsButton" Margin="5,10" Content="None" FontSize="10" Height="20"/>
-                            <Button Grid.Row="3" Grid.Column="2" Name="IRefreshMissionsButton" Margin="5,10" Content="{materialDesign:PackIcon Kind=Refresh}" FontSize="10" Height="20" Width="20" Padding="0"/>
-                            <ComboBox Grid.Row="3" Grid.Column="3" materialDesign:HintAssist.Hint="Difficulty Preset" Name="IDifficultyPreset" IsEditable="False" Foreground="{DynamicResource MaterialDesignBody}" Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="10,0,10,10" Width="75" HorizontalAlignment="Right">
-                                <ComboBoxItem IsSelected="True">Recruit</ComboBoxItem>
-                                <ComboBoxItem>Regular</ComboBoxItem>
-                                <ComboBoxItem>Veteran</ComboBoxItem>
-                                <ComboBoxItem>Custom</ComboBoxItem>
-                            </ComboBox>
+
                         </Grid>
                     </materialDesign:Card>
                     <materialDesign:Card Grid.Row="0" Grid.Column="1" Margin="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
@@ -624,9 +647,9 @@
                                 <ComboBoxItem IsSelected="True">Log</ComboBoxItem>
                                 <ComboBoxItem>Log and Kick</ComboBoxItem>
                             </ComboBox>
-                            
-                            <TextBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Name="ITerrainGrid" materialDesign:HintAssist.Hint="Terrain Grid" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5" HorizontalAlignment="Center"/>
-                            <TextBox Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" Name="IViewDistance" materialDesign:HintAssist.Hint="View Distance (m)" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"  HorizontalAlignment="Right"/>
+
+                            <TextBox Grid.Row="3" Grid.Column="2" Name="ITerrainGrid" materialDesign:HintAssist.Hint="Terrain Grid" Width="70" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="-12,5,5,5"/>
+                            <TextBox Grid.Row="3" Grid.Column="3" Name="IViewDistance" materialDesign:HintAssist.Hint="View Distance (m)" Width="70" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="-12,5,5,5"/>
                         </Grid>
                     </materialDesign:Card>
                 </Grid>

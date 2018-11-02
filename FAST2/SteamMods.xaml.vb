@@ -3,10 +3,10 @@ Imports System.Threading
 Imports FAST2.Models
 
 Public Class SteamMods
-    
+
     'Manages actions for steam mods tab buttons
     Private Sub IActionButtons_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles IModActionButtons.SelectionChanged
-        
+
         If ICheckForUpdates.IsSelected Then
             CheckForUpdates()
         ElseIf IUpdateAll.IsSelected Then
@@ -16,7 +16,7 @@ Public Class SteamMods
         ElseIf IAddSteamMod.IsSelected Then
             IImportSteamModDialog.IsOpen = True
         End If
-        
+
         Dim thread As New Thread(
             Sub()
                 Thread.Sleep(600)
@@ -31,13 +31,13 @@ Public Class SteamMods
     End Sub
 
     Private Sub SteamMods_Loaded(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
-        If My.Settings.steamMods.Count > 0
-           UpdateModsView()
+        If My.Settings.steamMods.Count > 0 Then
+            UpdateModsView()
         End If
     End Sub
 
     Private Sub IImportSteamModDialog_KeyUp(sender As Object, e As KeyEventArgs) Handles IImportSteamModDialog.KeyUp
-        If e.Key = Key.Escape
+        If e.Key = Key.Escape Then
             IImportSteamModDialog.IsOpen = False
             IPrivateModCheck.IsChecked = False
             ISteamItemBox.Text = String.Empty
@@ -55,7 +55,7 @@ Public Class SteamMods
     End Sub
 
     Private Async Sub SteamMods_Initialized(sender As Object, e As EventArgs) Handles Me.Initialized
-        If My.Settings.steamMods.Count > 0 And My.Settings.checkForModUpdates
+        If My.Settings.steamMods.Count > 0 And My.Settings.checkForModUpdates Then
             IUpdateProgress.IsIndeterminate = True
             IModView.IsEnabled = False
             IProgressInfo.Visibility = Visibility.Visible
@@ -73,7 +73,7 @@ Public Class SteamMods
 
             IModView.IsEnabled = True
             IProgressInfo.Visibility = Visibility.Collapsed
-            IUpdateProgress.IsIndeterminate = False   
+            IUpdateProgress.IsIndeterminate = False
             UpdateModsView()
         End If
     End Sub
@@ -102,8 +102,8 @@ Public Class SteamMods
 
     Private Shared Sub OpenLauncherFile()
         Dim modsFile = Functions.SelectFile("Arma 3 Launcher File|*.html")
-        
-        If modsFile IsNot String.Empty
+
+        If modsFile IsNot String.Empty Then
             Dim dataReader As StreamReader
             dataReader = My.Computer.FileSystem.OpenTextFileReader(modsFile)
 
@@ -126,20 +126,20 @@ Public Class SteamMods
     End Sub
 
     Private Shared Sub UpdateAllMods()
-        If MainWindow.Instance.ReadyToUpdate Then 
+        If MainWindow.Instance.ReadyToUpdate Then
             Dim modsToUpdate = New List(Of String)
 
             For Each steamMod In My.Settings.steamMods
-                If steamMod.SteamLastUpdated > steamMod.LocalLastUpdated
+                If steamMod.SteamLastUpdated > steamMod.LocalLastUpdated Then
                     modsToUpdate.Add(steamMod.WorkshopId)
-                    
+
                     UpdateMod(steamMod.WorkshopId, steamMod.Name, False)
                 End If
             Next
 
-            If modsToUpdate.Count > 0
+            If modsToUpdate.Count > 0 Then
                 Dim steamCommand As String = "+login " & MainWindow.Instance.ISteamUserBox.Text & " " & MainWindow.Instance.ISteamPassBox.Password
-                
+
                 For Each steamMod In modsToUpdate
                     steamCommand = steamCommand & " +workshop_download_item 107410 " & steamMod
                 Next
@@ -170,7 +170,7 @@ Public Class SteamMods
                 Dim linkPath As String
 
                 Directory.CreateDirectory(modPath)
-                
+
                 linkPath = My.Settings.serverPath & "\@" & Functions.SafeName(modName)
                 linkCommand = "/c mklink /D " & linkPath & " " & modPath
 
@@ -197,7 +197,7 @@ Public Class SteamMods
     End Sub
 
     Private Async Sub CheckForUpdates()
-        If My.Settings.steamMods.Count > 0
+        If My.Settings.steamMods.Count > 0 Then
             IUpdateProgress.IsIndeterminate = True
             IModView.IsEnabled = False
             IProgressInfo.Visibility = Visibility.Visible
@@ -222,13 +222,14 @@ Public Class SteamMods
             MainWindow.Instance.IMessageDialogText.Text = "No Mods To Check"
         End If
     End Sub
-    
+
 
     Private Sub UpdateModsView()
         IModView.Items.Clear()
 
-        If My.Settings.SteamMods IsNot Nothing
-            For Each steamMod In My.Settings.SteamMods
+        If My.Settings.steamMods IsNot Nothing Then
+
+            For Each steamMod In My.Settings.steamMods
                 IModView.Items.Add(steamMod)
             Next
         End If
@@ -237,11 +238,11 @@ Public Class SteamMods
     Private Sub DeleteMod(sender As Object, e As RoutedEventArgs)
         Dim steamMod = CType((CType(e.Source, Button)).DataContext, SteamMod)
 
-        If Directory.Exists(My.Settings.steamCMDPath & "\steamapps\workshop\content\107410\" & steamMod.WorkshopId)
+        If Directory.Exists(My.Settings.steamCMDPath & "\steamapps\workshop\content\107410\" & steamMod.WorkshopId) Then
             Directory.Delete(My.Settings.steamCMDPath & "\steamapps\workshop\content\107410\" & steamMod.WorkshopId, True)
         End If
 
-        If Directory.Exists(My.Settings.serverPath & "\@" & Functions.SafeName(steamMod.Name))
+        If Directory.Exists(My.Settings.serverPath & "\@" & Functions.SafeName(steamMod.Name)) Then
             Directory.Delete(My.Settings.serverPath & "\@" & Functions.SafeName(steamMod.Name), True)
         End If
 
