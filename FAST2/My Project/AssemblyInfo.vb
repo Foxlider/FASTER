@@ -11,7 +11,7 @@ Imports System.Windows
 
 ' Review the values of the assembly attributes
 
-<Assembly: AssemblyTitle("FAST 2")>
+<Assembly: AssemblyTitle("FAST2")>
 <Assembly: AssemblyDescription("Flax's Arma Server Tool")>
 <Assembly: AssemblyCompany("KestrelStudios")>
 <Assembly: AssemblyProduct("Flax's Arma Server Tool")>
