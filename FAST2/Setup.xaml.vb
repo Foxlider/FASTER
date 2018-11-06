@@ -5,7 +5,6 @@ Public Class Setup
 
     'Checks to see if setup has been run before - continues to main window if true
     Private Sub Setup_Initialized(sender As Object, e As EventArgs) Handles MyBase.Initialized
-        AutoUpdater.Start("https://deploy.kestrelstudios.co.uk/updates/FAST2.xml")
         Theme.ApplyPrimary(My.Settings.primaryColour)
         Theme.ApplyAccent(My.Settings.accentColour)
         Theme.SwitchBase(My.Settings.isDark)
@@ -78,5 +77,9 @@ Public Class Setup
         MainWindow.Instance.Show()
         MainWindow.Instance.Activate()
         Close()
+    End Sub
+
+    Private Sub Setup_Loaded(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
+        AutoUpdater.Start("https://deploy.kestrelstudios.co.uk/updates/FAST2.xml")
     End Sub
 End Class
