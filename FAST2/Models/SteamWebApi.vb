@@ -45,7 +45,13 @@ Namespace Models
             ' Create a request for the URL. 
             Dim request As WebRequest = WebRequest.Create(uri)
             ' Get the response.
-            Dim response As WebResponse = request.GetResponse()
+            Dim response As WebResponse = Nothing
+            Try
+                response = request.GetResponse()
+            Catch ex As WebException
+                MainWindow.Instance.IMessageDialog.IsOpen = True
+                MainWindow.Instance.IMessageDialogText.Text = "Cannot reach Steam API" & Environment.NewLine & Environment.NewLine & "Check https://steamstat.us/"
+            End Try
             ' Display the status.
             Console.WriteLine(CType(response, HttpWebResponse).StatusDescription)
             ' Get the stream containing content returned by the server.
