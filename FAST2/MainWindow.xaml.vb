@@ -362,7 +362,6 @@ Public Class MainWindow
 
     Private Sub UpdateTextBox(text As String)
         If _oProcess IsNot Nothing Then
-            Dim oStreamWriter = _oProcess.StandardInput
 
             Dispatcher.Invoke(
                 Sub()

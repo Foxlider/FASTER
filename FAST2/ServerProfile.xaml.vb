@@ -28,11 +28,11 @@ Class ServerProfile
         ILoopback.IsChecked = profile.Loopback
         IUpnp.IsChecked = profile.Upnp
         INetlog.IsChecked = profile.Netlog
-        IAutoRestartEnabled.IsChecked = profile.AutoRestartEnabled
-        IDailyRestartAEnabled.IsChecked = profile.DailyRestartAEnabled
-        IDailyRestartA.SelectedTime = profile.DailyRestartA
-        IDailyRestartBEnabled.IsChecked = profile.DailyRestartBEnabled
-        IDailyRestartB.Text = profile.DailyRestartB
+        'IAutoRestartEnabled.IsChecked = profile.AutoRestartEnabled
+        'IDailyRestartAEnabled.IsChecked = profile.DailyRestartAEnabled
+        'IDailyRestartA.SelectedTime = profile.DailyRestartA
+        'IDailyRestartBEnabled.IsChecked = profile.DailyRestartBEnabled
+        'IDailyRestartB.Text = profile.DailyRestartB
         IVotingEnabled.IsChecked = profile.VotingEnabled
         IVotingMinPlayers.Text = profile.VotingMinPlayers
         IVotingThreshold.Text = profile.VotingThreshold
@@ -121,7 +121,7 @@ Class ServerProfile
 
 
         ToggleUi(IHeadlessClientEnabled)
-        ToggleUi(IAutoRestartEnabled)
+        'ToggleUi(IAutoRestartEnabled)
         ToggleUi(IVonEnabled)
         ToggleUi(IVotingEnabled)
         ToggleUi(IServerConsoleLogEnabled)
@@ -177,7 +177,7 @@ Class ServerProfile
                 MainWindow.Instance.IMainContent.SelectedIndex = 0
             End If
 
-        ElseIf IExportProfile.IsSelected Then
+            'ElseIf IExportProfile.IsSelected Then
 
         ElseIf ILaunchServer.IsSelected Then
             If ReadyToLaunch(IDisplayName.Content) Then
@@ -199,10 +199,10 @@ Class ServerProfile
         thread.Start()
     End Sub
 
-    Private Sub ToggleUi(uiElement As Object, Optional e As RoutedEventArgs = Nothing) Handles IHeadlessClientEnabled.Click, IAutoRestartEnabled.Click, IVonEnabled.Click, IVotingEnabled.Click, IServerConsoleLogEnabled.Click,
-                                                                                               IPidEnabled.Click, IRankingEnabled.Click, IRequiredBuildEnabled.Click, IDailyRestartAEnabled.Click, IDailyRestartBEnabled.Click,
-                                                                                               IPersistentBattlefield.Click, IMaxPacketLossEnabled.Click, IDisconnectTimeOutEnabled.Click, IKickOnSlowNetworkEnabled.Click, IMaxPingEnabled.Click,
-                                                                                               IMaxDesyncEnabled.Click, IManualMissions.Click
+    Private Sub ToggleUi(uiElement As Object, Optional e As RoutedEventArgs = Nothing) Handles IHeadlessClientEnabled.Click, IVonEnabled.Click, IVotingEnabled.Click, IServerConsoleLogEnabled.Click,
+                                                                                               IPidEnabled.Click, IRankingEnabled.Click, IRequiredBuildEnabled.Click, IPersistentBattlefield.Click,
+                                                                                               IMaxPacketLossEnabled.Click, IDisconnectTimeOutEnabled.Click, IKickOnSlowNetworkEnabled.Click, IMaxPingEnabled.Click,
+                                                                                               IMaxDesyncEnabled.Click, IManualMissions.Click ', IAutoRestartEnabled.Click,IDailyRestartAEnabled.Click, IDailyRestartBEnabled.Click
         Select Case uiElement.Name
             Case "IManualMissions"
                 If IManualMissions.IsChecked Then
@@ -276,17 +276,17 @@ Class ServerProfile
                     IVotingThreshold.IsEnabled = False
                     IVotingEnabled.ToolTip = "Enable Voting"
                 End If
-            Case "IAutoRestartEnabled"
-                If IAutoRestartEnabled.IsChecked Then
-                    IDailyRestartAEnabled.IsEnabled = True
-                    IDailyRestartBEnabled.IsEnabled = True
-                    IAutoRestartEnabled.ToolTip = "Disable Auto Restart"
-                Else
+            'Case "IAutoRestartEnabled"
+            '    If IAutoRestartEnabled.IsChecked Then
+            '        IDailyRestartAEnabled.IsEnabled = True
+            '        IDailyRestartBEnabled.IsEnabled = True
+            '        IAutoRestartEnabled.ToolTip = "Disable Auto Restart"
+            '    Else
 
-                    IDailyRestartAEnabled.IsEnabled = False
-                    IDailyRestartBEnabled.IsEnabled = False
-                    IAutoRestartEnabled.ToolTip = "Enable Auto Restart"
-                End If
+            '        IDailyRestartAEnabled.IsEnabled = False
+            '        IDailyRestartBEnabled.IsEnabled = False
+            '        IAutoRestartEnabled.ToolTip = "Enable Auto Restart"
+            '    End If
             Case "IServerConsoleLogEnabled"
                 If IServerConsoleLogEnabled.IsChecked Then
                     IServerConsoleLog.IsEnabled = True
@@ -317,18 +317,18 @@ Class ServerProfile
                 Else
                     IRequiredBuild.IsEnabled = False
                 End If
-            Case "IDailyRestartAEnabled"
-                If IDailyRestartAEnabled.IsChecked Then
-                    IDailyRestartA.IsEnabled = True
-                Else
-                    IDailyRestartA.IsEnabled = False
-                End If
-            Case "IDailyRestartBEnabled"
-                If IDailyRestartBEnabled.IsChecked Then
-                    IDailyRestartB.IsEnabled = True
-                Else
-                    IDailyRestartB.IsEnabled = False
-                End If
+                'Case "IDailyRestartAEnabled"
+                '    If IDailyRestartAEnabled.IsChecked Then
+                '        IDailyRestartA.IsEnabled = True
+                '    Else
+                '        IDailyRestartA.IsEnabled = False
+                '    End If
+                'Case "IDailyRestartBEnabled"
+                '    If IDailyRestartBEnabled.IsChecked Then
+                '        IDailyRestartB.IsEnabled = True
+                '    Else
+                '        IDailyRestartB.IsEnabled = False
+                '    End If
         End Select
     End Sub
 
@@ -878,15 +878,15 @@ Class ServerProfile
         profile.Loopback = ILoopback.IsChecked
         profile.Upnp = IUpnp.IsChecked
         profile.Netlog = INetlog.IsChecked
-        profile.AutoRestartEnabled = IAutoRestartEnabled.IsChecked
-        profile.DailyRestartAEnabled = IDailyRestartAEnabled.IsChecked
-        If IDailyRestartA.SelectedTime IsNot Nothing Then
-            profile.DailyRestartA = IDailyRestartA.SelectedTime
-        End If
-        profile.DailyRestartBEnabled = IDailyRestartBEnabled.IsChecked
-        If IDailyRestartB.SelectedTime IsNot Nothing Then
-            profile.DailyRestartB = IDailyRestartB.SelectedTime
-        End If
+        'profile.AutoRestartEnabled = IAutoRestartEnabled.IsChecked
+        'profile.DailyRestartAEnabled = IDailyRestartAEnabled.IsChecked
+        'If IDailyRestartA.SelectedTime IsNot Nothing Then
+        '    profile.DailyRestartA = IDailyRestartA.SelectedTime
+        'End If
+        'profile.DailyRestartBEnabled = IDailyRestartBEnabled.IsChecked
+        'If IDailyRestartB.SelectedTime IsNot Nothing Then
+        '    profile.DailyRestartB = IDailyRestartB.SelectedTime
+        'End If
         profile.VotingEnabled = IVotingEnabled.IsChecked
         profile.VotingMinPlayers = IVotingMinPlayers.Text
         profile.VotingThreshold = IVotingThreshold.Text
@@ -1022,6 +1022,12 @@ Class ServerProfile
                 newMods.Add(Replace(addon, My.Settings.serverPath & "\", ""))
             Next
 
+            For Each folder In My.Settings.localModFolders
+                For Each addon In Directory.GetDirectories(folder, "@*")
+                    newMods.Add(addon)
+                Next
+            Next
+
             For Each addon In newMods.ToList
                 For Each nAddon In currentMods
                     If nAddon = addon Then
@@ -1072,7 +1078,7 @@ Class ServerProfile
         MainWindow.Instance.IMessageDialogText.Text = "Deleted " & i & " files."
     End Sub
 
-    Private Sub IManualMissions_Checked(sender As Object, e As RoutedEventArgs) Handles IManualMissions.Checked
-
+    Private Sub ServerProfile_Loaded(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
+        UpdateProfile()
     End Sub
 End Class

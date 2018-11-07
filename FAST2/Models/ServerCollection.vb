@@ -34,6 +34,9 @@ Namespace Models
 
             If Not duplicate Then
                 currentProfiles.ServerProfiles.Add(New ServerProfile(name, safeName))
+                Dim profile As ServerProfile = My.Settings.Servers.ServerProfiles.Find(Function(newProfile) newProfile.SafeName = safeName)
+                profile.ServerName = name
+                profile.Executable = My.Settings.serverPath & "\arma3server_x64.exe"
                 My.Settings.Servers = currentProfiles
             Else
                 MainWindow.Instance.IMessageDialog.IsOpen = True

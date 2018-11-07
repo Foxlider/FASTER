@@ -58,10 +58,11 @@
         <DataGrid Name="IModView" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="5" CanUserReorderColumns="False" CanUserResizeRows="False" GridLinesVisibility="All" IsReadOnly="True" CanUserAddRows="False" AutoGenerateColumns="False" ItemsSource="{Binding NotifyOnSourceUpdated=True}" materialDesign:DataGridAssist.CellPadding="2 2 2 2" materialDesign:DataGridAssist.ColumnHeaderPadding="3 3 3 3">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="ID" Binding="{Binding Path=WorkshopId}"/>
-                <DataGridTextColumn Header="Name" Binding="{Binding Path=Name}" Width="*"/>
+                <DataGridTextColumn Header="Name" Binding="{Binding Path=Name}"/>
                 <DataGridTextColumn Header="Author" Binding="{Binding Path=Author}"/>
                 <DataGridTextColumn Header="Status" Binding="{Binding Path=Status}"/>
-                <DataGridTemplateColumn Header="Update">
+
+                <DataGridTemplateColumn Header="Update" Width="55" CanUserResize="False">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Button Height="25" Width="25" Padding="0" Click="UpdateMod">
@@ -70,11 +71,20 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Delete">
+                <DataGridTemplateColumn Header="Delete" Width="55" CanUserResize="False">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Button Height="25" Width="25" Padding="0" Click="DeleteMod">
                                 <materialDesign:PackIcon Kind="Delete" Width="20" Height="20"/>
+                            </Button>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Info" Width="55" CanUserResize="False">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Height="25" Width="25" Padding="0" Click="OpenModPage">
+                                <materialDesign:PackIcon Kind="Globe" Width="20" Height="20"/>
                             </Button>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>

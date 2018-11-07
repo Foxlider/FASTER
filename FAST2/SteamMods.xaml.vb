@@ -255,4 +255,10 @@ Public Class SteamMods
 
         UpdateMod(steamMod.WorkshopId, steamMod.Name)
     End Sub
+
+    Private Sub OpenModPage(sender As Object, e As RoutedEventArgs)
+        Dim steamMod = CType((CType(e.Source, Button)).DataContext, SteamMod)
+
+        Process.Start("https://steamcommunity.com/workshop/filedetails/?id=" & steamMod.WorkshopId)
+    End Sub
 End Class
