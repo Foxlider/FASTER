@@ -37,7 +37,6 @@ Public Class MainWindow
     Public InstallSteamCmd As Boolean = False
     Private _cancelled As Boolean
     Private _oProcess As New Process()
-    Private _steamCodeValid As Boolean = False
 
 
     Private Sub MainWindow_Initialized(sender As Object, e As EventArgs) Handles Me.Initialized
@@ -213,7 +212,13 @@ Public Class MainWindow
     End Sub
 
     Private Sub ISubmitCode_Click(sender As Object, e As RoutedEventArgs) Handles ISubmitCode.Click
-        _steamCodeValid = True
+        Dim oStreamWriter = _oProcess.StandardInput
+
+        Dispatcher.Invoke(
+            Sub()
+                oStreamWriter.Write(ISteamGuardCode.Text & Environment.NewLine)
+            End Sub
+            )
         ISteamGuardDialog.IsOpen = False
     End Sub
 
@@ -372,17 +377,6 @@ Public Class MainWindow
                         ISteamGuardDialog.IsOpen = True
                     End Sub
                 )
-
-                Do
-
-                Loop Until _steamCodeValid
-
-                _steamCodeValid = False
-                Dispatcher.Invoke(
-                    Sub()
-                        oStreamWriter.Write(ISteamGuardCode.Text & Environment.NewLine)
-                    End Sub
-                )
             End If
 
             If text Like "*..." Then
@@ -398,18 +392,7 @@ Public Class MainWindow
                     Sub()
                         ISteamGuardDialog.IsOpen = True
                     End Sub
-                    )
-
-                Do
-
-                Loop Until _steamCodeValid
-
-                _steamCodeValid = False
-                Dispatcher.Invoke(
-                    Sub()
-                        oStreamWriter.Write(ISteamGuardCode.Text & Environment.NewLine)
-                    End Sub
-                    )
+                )
             End If
 
             If text Like "*Update state*" Then
