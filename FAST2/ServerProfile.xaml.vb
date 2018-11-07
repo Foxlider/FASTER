@@ -1055,7 +1055,11 @@ Class ServerProfile
             Dim dir = New DirectoryInfo(path)
             Dim file = dir.EnumerateFiles(filter).OrderByDescending(Function(f) f.LastWriteTime).FirstOrDefault()
             If file IsNot Nothing Then
-                Process.Start(file.FullName)
+                Try
+                    Process.Start(file.FullName)
+                Catch ex As Exception
+
+                End Try
             Else
                 MainWindow.Instance.IMessageDialog.IsOpen = True
                 MainWindow.Instance.IMessageDialogText.Text = "Cannot Open - File Not Found" & Environment.NewLine & Environment.NewLine & "If Opening PID file make sure Server is running."
@@ -1071,7 +1075,11 @@ Class ServerProfile
         Dim files = dir.EnumerateFiles(filter)
         Dim i = 0
         For Each file In files
-            file.Delete()
+            Try
+                file.Delete()
+            Catch ex As Exception
+
+            End Try
             i += 1
         Next
         MainWindow.Instance.IMessageDialog.IsOpen = True
