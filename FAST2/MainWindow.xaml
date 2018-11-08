@@ -112,7 +112,7 @@
             </TabControl.ItemContainerStyle>
 
             <!--Main Content - Steam Updater Tab-->
-            <TabItem Name="ISteamUpdaterTab" Header="TabItem">
+            <TabItem Name="ISteamUpdaterTab" Header="ISteamUpdaterTab">
                 <Grid VerticalAlignment="Stretch" >
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1*"/>
@@ -207,22 +207,22 @@
             </TabItem>
 
             <!--Main Content - Steam Mods Tab-->
-            <TabItem Name="ISteamModsTab" Header="TabItem">
+            <TabItem Name="ISteamModsTab" Header="ISteamModsTab">
                 <fast2:SteamMods/>
             </TabItem>
 
             <!--Main Content - Local Mods Tab-->
-            <TabItem Name="ILocalModsTab" Header="TabItem">
+            <TabItem Name="ILocalModsTab" Header="ILocalModsTab">
                 <fast2:LocalMods/>
             </TabItem>
 
             <!--Main Content - Settings Tab-->
-            <TabItem Name="ISettingsTab" Header="TabItem">
+            <TabItem Name="ISettingsTab" Header="ISettingsTab">
                 <fast2:Settings/>
             </TabItem>
 
             <!--Main Content - About Tab-->
-            <TabItem Name="IAboutTab" Header="TabItem">
+            <TabItem Name="IAboutTab" Header="IAboutTab">
                 <fast2:About/>
             </TabItem>
         </TabControl>

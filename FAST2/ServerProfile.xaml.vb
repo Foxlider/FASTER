@@ -4,8 +4,12 @@ Imports System.Windows.Forms
 Imports FAST2.Models
 
 Class ServerProfile
-    Shared _safeName As String
+    Private ReadOnly _safeName As String
     Private ReadOnly _profilesPath = My.Settings.serverPath & "\Servers\"
+
+    Private Sub ServerProfile_Loaded(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
+        UpdateProfile()
+    End Sub
 
     Public Sub New(profile As Models.ServerProfile)
         ' This call is required by the designer.
@@ -169,13 +173,32 @@ Class ServerProfile
             ShowRenameInterface(True)
 
         ElseIf IDeleteProfile.IsSelected Then
-            MainWindow.Instance.IMainContent.Items.RemoveAt(MainWindow.Instance.IMainContent.SelectedIndex)
             ServerCollection.DeleteServerProfile(_safeName)
-            If MainWindow.Instance.IMainContent.Items.Count > 5 Then
-                MainWindow.Instance.IMainContent.SelectedIndex = 6
-            Else
-                MainWindow.Instance.IMainContent.SelectedIndex = 0
-            End If
+
+            MainWindow.Instance.IMainContent.SelectedIndex = 0
+
+            Dim tabs = MainWindow.Instance.IMainContent.Items
+            Dim menus = MainWindow.Instance.IServerProfilesMenu.Items
+            Dim menu As New ListBoxItem
+            Dim tab As New TabItem
+
+            For Each m As ListBoxItem In menus
+                If m.Name = _safeName Then
+                    menu = m
+                End If
+            Next
+
+            For Each t As TabItem In tabs
+                If t.Name = _safeName Then
+                    tab = t
+                End If
+            Next
+
+            MainWindow.Instance.IMainContent.Items.Remove(tab)
+            MainWindow.Instance.IServerProfilesMenu.Items.Remove(menu)
+
+            MainWindow.Instance.IServerProfilesMenu.SelectedIndex = -1
+            MainWindow.Instance.IMainMenuItems.SelectedIndex = 0
 
             'ElseIf IExportProfile.IsSelected Then
 
@@ -1086,7 +1109,4 @@ Class ServerProfile
         MainWindow.Instance.IMessageDialogText.Text = "Deleted " & i & " files."
     End Sub
 
-    Private Sub ServerProfile_Loaded(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
-        UpdateProfile()
-    End Sub
 End Class

@@ -68,7 +68,6 @@ Namespace Models
             currentProfiles.ServerProfiles.RemoveAll(Function(x) x.SafeName = safeName)
 
             My.Settings.Save()
-            MainWindow.Instance.LoadServerProfiles()
         End Sub
     End Class
 

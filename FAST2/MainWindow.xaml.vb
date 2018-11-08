@@ -232,7 +232,6 @@ Public Class MainWindow
             Dim currentProfiles = My.Settings.Servers
 
             IServerProfilesMenu.Items.Clear()
-            IServerProfilesMenu.Items.Clear()
 
             For i As Integer = IMainContent.Items.Count - 4 To 0
                 IMainContent.Items.RemoveAt(i)
