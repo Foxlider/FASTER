@@ -1,4 +1,5 @@
-﻿Imports FAST2.Models
+﻿Imports AutoUpdaterDotNET
+Imports FAST2.Models
 
 Class Settings
     'Switches base theme between light and dark when control is switched 
@@ -55,15 +56,6 @@ Class Settings
         UpdateLocalModFolders()
     End Sub
 
-    'Private Sub IExcludeServerFolder_Click(sender As Object, e As RoutedEventArgs) Handles IExcludeServerFolder.Click
-    '    If IExcludeServerFolder.IsChecked
-    '        My.Settings.excludeServerFolder = True
-    '    Else
-    '        My.Settings.excludeServerFolder = False
-    '    End If
-    '    My.Settings.Save()
-    'End Sub
-
     Private Sub IUpdatesOnLaunch_Click(sender As Object, e As RoutedEventArgs) Handles IUpdatesOnLaunch.Click
         If IUpdatesOnLaunch.IsChecked
             My.Settings.checkForModUpdates = True
@@ -81,5 +73,19 @@ Class Settings
                 ILocalModFolders.Items.Add(folder)
             Next
         End If
+    End Sub
+
+    Private Sub IUpdateApp_Click(sender As Object, e As RoutedEventArgs) Handles IUpdateApp.Click
+        AutoUpdater.ReportErrors = True
+        AutoUpdater.Start("https://deploy.kestrelstudios.co.uk/updates/FAST2.xml")
+    End Sub
+
+    Private Sub IAppUpdatesOnLaunch_Click(sender As Object, e As RoutedEventArgs) Handles IAppUpdatesOnLaunch.Click
+        If IUpdatesOnLaunch.IsChecked Then
+            My.Settings.checkForAppUpdates = True
+        Else
+            My.Settings.checkForAppUpdates = False
+        End If
+        My.Settings.Save()
     End Sub
 End Class

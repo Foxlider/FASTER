@@ -138,18 +138,6 @@ Partial Friend NotInheritable Class MySettings
     End Property
 
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
-     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-     Global.System.Configuration.DefaultSettingValueAttribute("False")>  _
-    Public Property excludeServerFolder() As Boolean
-        Get
-            Return CType(Me("excludeServerFolder"),Boolean)
-        End Get
-        Set
-            Me("excludeServerFolder") = value
-        End Set
-    End Property
-    
-    <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute()>  _
     Public Property Servers() As Global.FAST2.Models.ServerCollection
         Get
@@ -172,18 +160,30 @@ Partial Friend NotInheritable Class MySettings
         End Set
     End Property
 
-    <Global.System.Configuration.UserScopedSettingAttribute(),  _
-     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-     Global.System.Configuration.DefaultSettingValueAttribute("True")>  _
+    <Global.System.Configuration.UserScopedSettingAttribute(),
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),
+     Global.System.Configuration.DefaultSettingValueAttribute("True")>
     Public Property checkForModUpdates() As Boolean
         Get
-            Return CType(Me("checkForModUpdates"),Boolean)
+            Return CType(Me("checkForModUpdates"), Boolean)
         End Get
         Set
             Me("checkForModUpdates") = value
         End Set
     End Property
-    
+
+    <Global.System.Configuration.UserScopedSettingAttribute(),
+        Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),
+        Global.System.Configuration.DefaultSettingValueAttribute("True")>
+    Public Property checkForAppUpdates() As Boolean
+        Get
+            Return CType(Me("checkForAppUpdates"), Boolean)
+        End Get
+        Set
+            Me("checkForAppUpdates") = Value
+        End Set
+    End Property
+
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Configuration.DefaultSettingValueAttribute("LightBlue")>  _

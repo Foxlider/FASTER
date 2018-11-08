@@ -78,8 +78,4 @@ Public Class Setup
         MainWindow.Instance.Activate()
         Close()
     End Sub
-
-    Private Sub Setup_Loaded(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
-        AutoUpdater.Start("https://deploy.kestrelstudios.co.uk/updates/FAST2.xml")
-    End Sub
 End Class

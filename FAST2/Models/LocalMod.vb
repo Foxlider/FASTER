@@ -24,7 +24,7 @@ Namespace Models
             Dim foldersToSearch As New List(Of String)
 
             If serverPathOnly Then
-                If Not My.Settings.excludeServerFolder And My.Settings.serverPath IsNot String.Empty
+                If My.Settings.serverPath IsNot String.Empty Then
                     foldersToSearch.Add(My.Settings.serverPath)
                 End If
             End If

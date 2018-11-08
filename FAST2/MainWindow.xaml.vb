@@ -2,6 +2,7 @@
 Imports System.Net
 Imports System.IO
 Imports System.IO.Compression
+Imports AutoUpdaterDotNET
 Imports FAST2.Models
 Imports WPFFolderBrowser
 Imports Xceed.Wpf.AvalonDock.Controls
@@ -46,6 +47,10 @@ Public Class MainWindow
     End Sub
 
     Private Sub MainWindow_Loaded(sender As Object, e As EventArgs) Handles Me.Loaded
+        If My.Settings.checkForAppUpdates Then
+            AutoUpdater.Start("https://deploy.kestrelstudios.co.uk/updates/FAST2.xml")
+        End If
+
         If InstallSteamCmd Then
             InstallSteam()
         End If
