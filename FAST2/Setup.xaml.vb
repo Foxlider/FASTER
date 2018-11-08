@@ -5,13 +5,13 @@ Public Class Setup
 
     'Checks to see if setup has been run before - continues to main window if true
     Private Sub Setup_Initialized(sender As Object, e As EventArgs) Handles MyBase.Initialized
+        My.Settings.Upgrade()
+
         Theme.ApplyPrimary(My.Settings.primaryColour)
         Theme.ApplyAccent(My.Settings.accentColour)
         Theme.SwitchBase(My.Settings.isDark)
 
-        If My.Settings.firstRun Then
-
-        Else
+        If Not My.Settings.firstRun Then
             MainWindow.Instance.Show()
             MainWindow.Instance.Activate()
             Close()
