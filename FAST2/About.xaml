@@ -38,9 +38,9 @@
                 <TextBlock Grid.Row="0" Style="{StaticResource MaterialDesignHeadlineTextBlock}" Margin="16">About FAST2</TextBlock>
                 <TextBlock Grid.Row="0" Name="IVersionLabel" Style="{StaticResource MaterialDesignBody1TextBlock}" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="16">Version:</TextBlock>
                 <TextBlock Grid.Row="1" Margin="16,0" TextWrapping="Wrap" FontSize="13" TextAlignment="Justify">
-                    FAST 2 is an extensive rewrite of FAST. The UI needed updating and the code was messy and inefficient. 
-                    This new and hopefully improved version has more features and better stability than FAST. As before I decided to build FAST to help automate 
-                    and speed up the deployment of Arma 3 servers on Windows.
+                    FAST2 is an extensive rewrite of FAST, which was a project I started to help automate and speed 
+                    up the deployment of Arma 3 servers on Windows. The UI needed updating and the code was messy and 
+                    inefficient. This new and hopefully improved version has more features and better stability than FAST.
                 </TextBlock>
                 <TextBlock Grid.Row="2" Margin="16,12,16,0" TextWrapping="Wrap" FontSize="13" TextAlignment="Justify">
                     Thanks go out to all the guys who helped test this version before release with special mentions to Kju and JamieKG for their continuous 

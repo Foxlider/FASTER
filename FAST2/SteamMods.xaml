@@ -58,8 +58,7 @@
         <DataGrid Name="IModView" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="5" CanUserReorderColumns="False" CanUserResizeRows="False" GridLinesVisibility="All" IsReadOnly="True" CanUserAddRows="False" AutoGenerateColumns="False" ItemsSource="{Binding NotifyOnSourceUpdated=True}" materialDesign:DataGridAssist.CellPadding="2 2 2 2" materialDesign:DataGridAssist.ColumnHeaderPadding="3 3 3 3">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="ID" Binding="{Binding Path=WorkshopId}"/>
-                <DataGridTextColumn Header="Name" Binding="{Binding Path=Name}"/>
-                <DataGridTextColumn Header="Author" Binding="{Binding Path=Author}"/>
+                
                 <DataGridTextColumn Header="Status" Binding="{Binding Path=Status}"/>
 
                 <DataGridTemplateColumn Header="Update" Width="55" CanUserResize="False">
@@ -89,6 +88,9 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
+
+                <DataGridTextColumn Header="Name" Binding="{Binding Path=Name}"/>
+                <DataGridTextColumn Header="Author" Binding="{Binding Path=Author}"/>
             </DataGrid.Columns>
         </DataGrid>
         

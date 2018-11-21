@@ -96,7 +96,7 @@ Namespace Models
                             MainWindow.Instance.IMessageDialogText.Text = "This is a workshop Item for a different game."
                         End If
                     Catch ex As Exception
-                        MsgBox("An exception occurred:" & vbCrLf & ex.Message)
+                        'MsgBox("An exception occurred:" & vbCrLf & ex.Message)
                     End Try
                 Else
                     If Not multiple Then
