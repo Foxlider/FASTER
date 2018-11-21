@@ -14,4 +14,8 @@
     Private Sub IForumsButton_Click(sender As Object, e As RoutedEventArgs) Handles IForumsButton.Click
         Process.Start("https://links.kestrelstudios.co.uk/fast2-forums")
     End Sub
+
+    Private Sub About_Loaded(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
+        IVersionLabel.Text = "Version: " & [GetType].Assembly.GetName.Version.ToString
+    End Sub
 End Class

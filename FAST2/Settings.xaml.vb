@@ -39,7 +39,8 @@ Class Settings
     Private Sub Settings_Initialized(sender As Object, e As EventArgs) Handles Me.Initialized
         'IExcludeServerFolder.IsChecked = My.Settings.excludeServerFolder
         IBaseThemeToggle.IsChecked = My.Settings.isDark
-        IUpdatesOnLaunch.IsChecked = My.Settings.checkForModUpdates
+        IModUpdatesOnLaunch.IsChecked = My.Settings.checkForModUpdates
+        IAppUpdatesOnLaunch.IsChecked = My.Settings.checkForAppUpdates
         UpdateLocalModFolders()
     End Sub
 
@@ -55,16 +56,15 @@ Class Settings
         Next
         UpdateLocalModFolders()
     End Sub
-
-    Private Sub IUpdatesOnLaunch_Click(sender As Object, e As RoutedEventArgs) Handles IUpdatesOnLaunch.Click
-        If IUpdatesOnLaunch.IsChecked
-            My.Settings.checkForModUpdates = True
-        Else
-            My.Settings.checkForModUpdates = False
-        End If
+    Private Sub IModUpdatesOnLaunch_Checked(sender As Object, e As RoutedEventArgs) Handles IModUpdatesOnLaunch.Click
+        My.Settings.checkForModUpdates = IModUpdatesOnLaunch.IsChecked
         My.Settings.Save()
     End Sub
-    
+    Private Sub IAppUpdatesOnLaunch_Checked(sender As Object, e As RoutedEventArgs) Handles IAppUpdatesOnLaunch.Click
+        My.Settings.checkForAppUpdates = IAppUpdatesOnLaunch.IsChecked
+        My.Settings.Save()
+    End Sub
+
     Private Sub UpdateLocalModFolders()
         ILocalModFolders.Items.Clear()
 
@@ -78,14 +78,5 @@ Class Settings
     Private Sub IUpdateApp_Click(sender As Object, e As RoutedEventArgs) Handles IUpdateApp.Click
         AutoUpdater.ReportErrors = True
         AutoUpdater.Start("https://deploy.kestrelstudios.co.uk/updates/FAST2.xml")
-    End Sub
-
-    Private Sub IAppUpdatesOnLaunch_Click(sender As Object, e As RoutedEventArgs) Handles IAppUpdatesOnLaunch.Click
-        If IUpdatesOnLaunch.IsChecked Then
-            My.Settings.checkForAppUpdates = True
-        Else
-            My.Settings.checkForAppUpdates = False
-        End If
-        My.Settings.Save()
     End Sub
 End Class

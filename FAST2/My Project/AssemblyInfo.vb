@@ -12,9 +12,9 @@ Imports System.Windows
 ' Review the values of the assembly attributes
 
 <Assembly: AssemblyTitle("FAST2")>
-<Assembly: AssemblyDescription("Flax's Arma Server Tool")>
+<Assembly: AssemblyDescription("Flax's Arma Server Tool 2")>
 <Assembly: AssemblyCompany("KestrelStudios")>
-<Assembly: AssemblyProduct("Flax's Arma Server Tool")>
+<Assembly: AssemblyProduct("Flax's Arma Server Tool 2")>
 <Assembly: AssemblyCopyright("")>
 <Assembly: AssemblyTrademark("")>
 <Assembly: ComVisible(false)>

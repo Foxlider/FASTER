@@ -54,7 +54,7 @@
                     <materialDesign:PackIcon Kind="Delete" Height="10" Width="10"/>
                 </Button>
                 <xctk:CheckListBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" Name="ILocalModFolders" Margin="10" Padding="5" MinHeight="200" MaxHeight="200" Foreground="{DynamicResource MaterialDesignBody}" Background="{DynamicResource MaterialDesignTextAreaInactiveBorder}"/>
-                <CheckBox Name="IUpdatesOnLaunch" Grid.ColumnSpan="2" Grid.Row="4" Grid.Column="0" Content="Check for Steam Mod Updates on Launch" IsChecked="True" Margin="10,0,10,10"/>
+                <CheckBox Name="IModUpdatesOnLaunch" Grid.ColumnSpan="2" Grid.Row="4" Grid.Column="0" Content="Check for Steam Mod Updates on Launch" IsChecked="True" Margin="10,0,10,10"/>
                 <CheckBox Name="IAppUpdatesOnLaunch" Grid.ColumnSpan="2" Grid.Row="5" Grid.Column="0" Content="Auto Update FAST on Launch" IsChecked="True" Margin="10,0,10,10"/>
                 <Button Grid.Row="6" Grid.Column="0" Name="IClearSettings" Content="Reset FAST" Margin="10" Width="120" HorizontalAlignment="Left"/>
                 <Button Grid.Row="6" Grid.Column="1" Name="IUpdateApp" Content="Update FAST" Margin="10" Width="120" HorizontalAlignment="Left"/>

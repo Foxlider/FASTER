@@ -476,7 +476,7 @@ Class ServerProfile
             IDisplayName.Visibility = Visibility.Collapsed
             IBattleEye.Visibility = Visibility.Collapsed
             IProfileNameEdit.Visibility = Visibility.Visible
-            IProfileDisplayNameEdit.Focus()
+            IProfileDisplayNameEdit.Background = New SolidColorBrush(Color.FromArgb(100, 0, 100, 255))
             IProfileDisplayNameEdit.SelectAll()
         Else
             IProfileDisplayNameEdit.Text = String.Empty

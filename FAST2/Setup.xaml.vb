@@ -1,5 +1,4 @@
 ﻿Imports FAST2.Models
-Imports AutoUpdaterDotNET
 
 Public Class Setup
 

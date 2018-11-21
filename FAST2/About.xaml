@@ -36,6 +36,7 @@
                     <RowDefinition />
                 </Grid.RowDefinitions>
                 <TextBlock Grid.Row="0" Style="{StaticResource MaterialDesignHeadlineTextBlock}" Margin="16">About FAST2</TextBlock>
+                <TextBlock Grid.Row="0" Name="IVersionLabel" Style="{StaticResource MaterialDesignBody1TextBlock}" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="16">Version:</TextBlock>
                 <TextBlock Grid.Row="1" Margin="16,0" TextWrapping="Wrap" FontSize="13" TextAlignment="Justify">
                     FAST 2 is an extensive rewrite of FAST. The UI needed updating and the code was messy and inefficient. 
                     This new and hopefully improved version has more features and better stability than FAST. As before I decided to build FAST to help automate 
