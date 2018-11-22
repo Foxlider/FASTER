@@ -172,7 +172,7 @@ Public Class SteamMods
                 Directory.CreateDirectory(modPath)
 
                 linkPath = My.Settings.serverPath & "\@" & Functions.SafeName(modName)
-                linkCommand = "/c mklink /D " & linkPath & " " & modPath
+                linkCommand = "/c mklink /D """ & linkPath & """ """ & modPath & """"
 
                 Process.Start("cmd", linkCommand)
 
