@@ -560,7 +560,7 @@ Class ServerProfile
             commandLine = commandLine & " ""-serverMod=" & serverMods & """"
 
 
-            If IHeadlessClientEnabled.IsChecked Then
+            If IEnableHyperThreading.IsChecked Then
                 commandLine = commandLine & " -enableHT"
             End If
 
