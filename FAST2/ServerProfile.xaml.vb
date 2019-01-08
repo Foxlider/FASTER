@@ -690,8 +690,8 @@ Class ServerProfile
             configLines.Add("voteMissionPlayers = " & IVotingMinPlayers.Text & ";")
             configLines.Add("voteThreshold = " & IVotingThreshold.Text / 100 & ";")
         Else
-            configLines.Add("voteMissionPlayers = " & IVotingMinPlayers.Text & ";")
-            configLines.Add("voteThreshold = " & IVotingThreshold.Text / 100 & ";")
+            configLines.Add("voteMissionPlayers = 1;")
+            configLines.Add("voteThreshold = 0;")
         End If
 
         If ILoopback.IsChecked Then

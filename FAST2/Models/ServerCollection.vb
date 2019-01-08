@@ -103,7 +103,7 @@ Namespace Models
         Public Property DailyRestartB As Date
         Public Property VotingEnabled As Boolean = True
         Public Property VotingMinPlayers As Integer = 3
-        Public Property VotingThreshold As Decimal = 0.33
+        Public Property VotingThreshold As Decimal = 33
         Public Property AllowFilePatching As Integer = 0
         Public Property VerifySignatures As Integer = 0
         Public Property RequiredBuildEnabled As Boolean = False
