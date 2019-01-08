@@ -608,7 +608,7 @@ Class ServerProfile
 
             If IHeadlessClientEnabled.IsChecked Then
                 For hc = 1 To INoOfHeadlessClients.Value
-                    Dim hcCommandLine As String = "-client -connect=127.0.0.1 -password=" & IPassword.Text & " -profiles=" & profilePath & " -nosound"
+                    Dim hcCommandLine As String = "-client -connect=127.0.0.1 -password=" & IPassword.Text & " -profiles=" & profilePath & " -nosound -port=" & IPort.Text
                     Dim hcMods As String = Nothing
 
                     For Each addon In IHeadlessModsList.SelectedItems
