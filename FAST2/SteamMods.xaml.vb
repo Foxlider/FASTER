@@ -174,7 +174,16 @@ Public Class SteamMods
                 linkPath = My.Settings.serverPath & "\@" & Functions.SafeName(modName)
                 linkCommand = "/c mklink /D """ & linkPath & """ """ & modPath & """"
 
-                Process.Start("cmd", linkCommand)
+
+                Dim startInfo As New ProcessStartInfo("cmd.exe") With {
+                    .WindowStyle = ProcessWindowStyle.Hidden,
+                    .CreateNoWindow = True,
+                    .UseShellExecute = False,
+                    .Arguments = linkCommand
+                }
+                Process.Start(startInfo)
+
+                'Process.Start("cmd", linkCommand)
 
             Catch ex As Exception
                 MsgBox("An exception occurred:" & vbCrLf & ex.Message)
