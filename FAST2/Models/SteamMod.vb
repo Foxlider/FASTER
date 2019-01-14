@@ -114,8 +114,8 @@ Namespace Models
             Dim modInfo = SteamWebApi.GetSingleFileDetails(modId)
             Dim author = SteamWebApi.GetPlayerSummaries(modInfo.SelectToken("creator")).SelectToken("personaname")
             Dim modName = modInfo.SelectToken("title")
-            Dim steamUpdateTime =modInfo.SelectToken("time_updated")
-            
+            Dim steamUpdateTime = modInfo.SelectToken("time_updated")
+
             If modInfo.SelectToken("creator_appid") = "107410" Then
                 Return New Tuple(Of String, String, String)(modName, author, steamUpdateTime)
             Else
@@ -124,14 +124,14 @@ Namespace Models
         End Function
 
         Public Shared Sub UpdateInfoFromSteam()
-            If My.Settings.steamMods.Count > 0
+            If My.Settings.steamMods.Count > 0 Then
                 Dim currentMods = My.Settings.steamMods
 
                 For Each steamMod In My.Settings.steamMods
-                    If Not steamMod.PrivateMod
+                    If Not steamMod.PrivateMod Then
                         Dim modInfo = GetModInfo(steamMod.WorkshopId)
 
-                        If modInfo IsNot Nothing
+                        If modInfo IsNot Nothing Then
                             Dim updateMod = currentMods.Find(Function(c) c.WorkshopId = steamMod.WorkshopId)
 
                             updateMod.Name = modInfo.Item1
