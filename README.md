@@ -1,13 +1,14 @@
-# Flax's Arma Server Tool 2 (FAST2)
+# Fox's Arma Server Tool Extended Rewrite (FASTER)
 
 
-**CURRENTLY IN CLOSED BETA TESTING**
+**CURRENTLY IN OPEN BETA TESTING**
 
-[Discord Here](https://discord.gg/tkS4evC).
+[Discord Here](https://discord.gg/uPjgqHU).
 
 **INTRO**
 
-FAST2 is an extensive rewrite of FAST. The UI needed updating and the code was messy and inefficient. This new and hopefully improved version has more features and better stability than FAST. As before I decided to build FAST to help automate and speed up the deployment of Arma 3 servers on Windows. Thanks go out to all the guys who helped test this version before release with special mentions to Kju and JamieKG for their continuous bug reports and testing. Also, to BI for giving us an awesome game to play with and break.
+FASTER is an extensive rewrite of FAST2 and FAST. There was no update for a long time and it was written in VB. I transleted the whole project to C# using .NET Core 3.0. 
+Thanks go out to all the guys who helped the developpment and those who will test it. Also, to BI for giving us an awesome game to play with and break.
 
 **PREREQUISITES**
 
@@ -18,14 +19,13 @@ FAST2 is an extensive rewrite of FAST. The UI needed updating and the code was m
 **_FEATURES_**
 
 - General Features
-  - Theming System &amp; Material Design
-  - Auto Updates
+  - Theming System and Material Design
   - Improved UI from FAST
-  - Improved stability from FAST
+  - Improved stability from FAST2
   - Easy to read and share config files
 
 - SteamCMD Automation
-  - Install and update Arma 3 Server (Stable &amp; Dev)
+  - Install and update Arma 3 Server (Stable and Dev)
   - Install, update and manage Arma 3 Workshop mods
   - Supports Steam Guard and Mobile Auth
   - Import mod presets from Arma 3 Launcher
@@ -37,7 +37,7 @@ FAST2 is an extensive rewrite of FAST. The UI needed updating and the code was m
   - Supports all server command line options
   - Custom mission params
   - Custom difficulty
-  - Headless Client support &amp; auto launch
+  - Headless Client support and auto launch
   - Correctly displays mods in Server Browser
 
 - Local Mod Support
@@ -53,12 +53,13 @@ FAST2 is an extensive rewrite of FAST. The UI needed updating and the code was m
 - Set CPU Affinity and Priority
 - Schedule Auto Restart of servers
 - Schedule Auto Update of mods and server
+- Automatic Updates
 
-**_ISSUES &amp; FEEDBACK_**
+**_ISSUES and FEEDBACK_**
 
-As always best place to report issues is on the GitHub Repo, as for general discussion I&#39;ll always keep an eye on this thread or come and join us in Discord.
+As always best place to report issues is on the GitHub Repo, as for general discussion I'll always keep an eye on this thread or come and join us in Discord.
 
 **_DOCUMENTATION_**
   
-Can be found on the FAST2 part of my site, here. This will be updated continuously as new features are added and others changed.
+No documentation (yet) but you can always check the original FAST2 documentation.
   
