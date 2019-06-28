@@ -30,7 +30,7 @@ steps:
   inputs:
     command: publish
     publishWebProjects: False
-    arguments: '--configuration $(BuildConfiguration) --self-contained true --output $(Build.ArtifactStagingDirectory)\Release'
+    arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)\Release --self-contained true'
     zipAfterPublish: True
 - task: PublishBuildArtifacts@1
   displayName: 'Publish artifacts'
