@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Xml.Serialization;
+// ReSharper disable UnusedAutoPropertyAccessor.Global
 
 namespace FASTER.Models
 {
@@ -9,6 +10,7 @@ namespace FASTER.Models
     public class SteamModCollection
     {
         [XmlElement(Order = 1)]
+        // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public string CollectionName { get; set; } = "Main";
 
         [XmlElement(Order = 2, ElementName = "SteamMod")]
@@ -68,7 +70,7 @@ namespace FASTER.Models
         {
             
         }
-        public SteamMod(Int32 workshopId, string name, string author, Int32 steamLastUpdated, bool privateMod = false)
+        public SteamMod(int workshopId, string name, string author, int steamLastUpdated, bool privateMod = false)
         {
             WorkshopId = workshopId;
             Name = name;
@@ -85,7 +87,7 @@ namespace FASTER.Models
         public bool PrivateMod { get; set; }
         public string Status { get; set; } = "Not Installed";
 
-        public static void DeleteSteamMod(Int32 workshopId)
+        public static void DeleteSteamMod(int workshopId)
         {
             var currentMods = GetSteamMods();
 

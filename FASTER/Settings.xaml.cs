@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 
 namespace FASTER
@@ -13,13 +14,25 @@ namespace FASTER
     {
         public Settings()
         {
-
             Initialized += Settings_Initialized;
             InitializeComponent();
             IModUpdatesOnLaunch.Checked += IModUpdatesOnLaunch_Checked;
             IAppUpdatesOnLaunch.Checked += IAppUpdatesOnLaunch_Checked;
+            IResetDialog.KeyUp += IResetDialog_KeyUp;
+            MouseDown          += IResetDialog_LostFocus;
         }
 
+        private void IResetDialog_LostFocus(object sender, MouseButtonEventArgs e)
+        {
+            if (!IResetDialogContent.IsMouseOver)
+            { IResetDialog.IsOpen = false; }
+        }
+
+        private void IResetDialog_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Escape)
+            { IResetDialog.IsOpen = false; }
+        }
 
         private void IBaseThemeButton_Click(object sender, RoutedEventArgs e)
         { MainWindow.Instance.IWindowCloseButton.Background = (Brush)FindResource("MaterialDesignPaper"); }
@@ -53,8 +66,8 @@ namespace FASTER
         {
             //TODO : WHEN THEME HANDLING DONE GET VALUE FROM SETTINGS FILE
             IBaseThemeToggle.IsChecked = true;
-            IModUpdatesOnLaunch.IsChecked = Properties.Options.Default.checkForModUpdates;
-            IAppUpdatesOnLaunch.IsChecked = Properties.Options.Default.checkForAppUpdates;
+            IModUpdatesOnLaunch.IsChecked = Properties.Options.Default?.checkForModUpdates;
+            IAppUpdatesOnLaunch.IsChecked = Properties.Options.Default?.checkForAppUpdates;
             UpdateLocalModFolders();
         }
 
@@ -107,16 +120,21 @@ namespace FASTER
 
         private void UpdateLocalModFolders()
         {
-            ILocalModFolders.Items.Clear();
-
-            if (Properties.Options.Default.localModFolders.Count > 0)
+            try
             {
-                foreach (var folder in Properties.Options.Default.localModFolders)
+                ILocalModFolders.Items.Clear();
+
+                if (Properties.Options.Default?.localModFolders.Count > 0)
                 {
-                    var cb = new CheckBox { Content = folder, IsChecked = false };
-                    ILocalModFolders.Items.Add(cb);
+                    foreach (var folder in Properties.Options.Default?.localModFolders)
+                    {
+                        var cb = new CheckBox { Content = folder, IsChecked = false };
+                        ILocalModFolders.Items.Add(cb);
+                    }
                 }
             }
+            catch
+            { /*ignored*/ }
         }
     }
 }

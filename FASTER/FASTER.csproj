@@ -4,7 +4,7 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <UseWPF>true</UseWPF>
-    <Version>1.0.1</Version>
+    <Version>1.1.4</Version>
     <Authors>Keelah Fox</Authors>
     <Company>FoxliCorp.</Company>
     <Description>Fox'sArma Server Tool Extended Rewrite</Description>
@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <None Remove="Resources\FASTER.ico" />
+    <None Remove="Themes\Overrides.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -25,8 +26,8 @@
 
   <ItemGroup>
     <PackageReference Include="Dragablz" Version="0.0.3.203" />
-    <PackageReference Include="MaterialDesignColors" Version="1.1.3" />
-    <PackageReference Include="MaterialDesignThemes" Version="2.5.1" />
+    <PackageReference Include="MaterialDesignColors" Version="1.2.0" />
+    <PackageReference Include="MaterialDesignThemes" Version="2.6.0" />
     <PackageReference Include="Microsoft-WindowsAPICodePack-Core" Version="1.1.3.3" />
     <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.3.3" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />

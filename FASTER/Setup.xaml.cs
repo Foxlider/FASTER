@@ -62,7 +62,7 @@ namespace FASTER
             {
                 if ((Equals(sender, ISteamDirButton)))
                 { ISteamDirBox.Text = path; }
-                else if ((Equals(sender, IServerDirButton)))
+                else if (Equals(sender, IServerDirButton))
                 { IServerDirBox.Text = path; }
             }
         }
