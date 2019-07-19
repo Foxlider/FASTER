@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+// ReSharper disable UnusedAutoPropertyAccessor.Global
 
 namespace FASTER.Models
 {

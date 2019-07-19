@@ -35,7 +35,7 @@ namespace FASTER
             //this.Loaded += MainWindow_Initialized;
             Loaded += MainWindow_Loaded;
             Closing += MainWindow_Closing;
-            INewServerProfileDialog.KeyUp += INewServerProfileDialog_KeyUp;
+            
             ISteamUserBox.LostFocus += ISteamSettings_Changed;
             ISteamPassBox.LostFocus += ISteamSettings_Changed;
             IServerDirBox.LostFocus += ISteamSettings_Changed;
@@ -48,7 +48,14 @@ namespace FASTER
             ISettingsTabSelect.Selected += MenuItem_Selected;
             IAboutTabSelect.Selected += MenuItem_Selected;
             ILocalModsTabSelect.Selected += MenuItem_Selected;
+            IToolsDialog.KeyUp += IToolsDialog_KeyUp;
+            IMessageDialog.KeyUp += IMessageDialog_KeyUp;
+            ISteamGuardDialog.KeyUp += ISteamGuardDialog_KeyUp;
+            INewServerProfileDialog.KeyUp += INewServerProfileDialog_KeyUp;
+            MouseDown += IDialog_LostFocus;
         }
+
+        
 
         /// <summary>
         ///     Gets the one and only instance.
@@ -65,7 +72,12 @@ namespace FASTER
         { WindowState = WindowState.Minimized; }
 
         private void IWindowMaximizeButton_Click(object sender, RoutedEventArgs e)
-        { WindowState = WindowState.Maximized; }
+        {
+            if (WindowState == WindowState.Maximized)
+                WindowState = WindowState.Normal;
+            else if (WindowState == WindowState.Normal)
+                WindowState = WindowState.Maximized;
+        }
 
         private void WindowDragBar_MouseDown(object sender, MouseButtonEventArgs e)
         { DragMove(); }
@@ -165,6 +177,42 @@ namespace FASTER
             }
         }
 
+        private void IDialog_LostFocus(object sender, MouseButtonEventArgs e)
+        {
+            if (!ISteamGuardDialogContent.IsMouseOver && ISteamGuardDialog.IsOpen)
+            {
+                ISteamGuardDialog.IsOpen = false;
+                ISteamGuardCode.Text     = string.Empty;
+            }
+            if (!IToolsDialogContent.IsMouseOver && IToolsDialog.IsOpen)
+            {  IToolsDialog.IsOpen = false; }
+            if (!ImessageDialogContent.IsMouseOver && IMessageDialog.IsOpen)
+            { IMessageDialog.IsOpen = false; }
+            if (!INewServerProfileDialogContent.IsMouseOver && INewServerProfileDialog.IsOpen)
+            { INewServerProfileDialog.IsOpen = false; }
+        }
+
+        private void ISteamGuardDialog_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Escape)
+            {
+                ISteamGuardDialog.IsOpen = false;
+                ISteamGuardCode.Text     = string.Empty;
+            }
+        }
+
+        private void IMessageDialog_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Escape)
+            { IMessageDialog.IsOpen = false; }
+        }
+
+        private void IToolsDialog_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Escape)
+            { IToolsDialog.IsOpen = false; }
+        }
+
         private void ICreateProfileButton_Click(object sender, RoutedEventArgs e)
         {
             INewProfileName.Text = INewProfileName.Text.Trim();
@@ -179,7 +227,7 @@ namespace FASTER
                 var profileName = INewProfileName.Text;
                 INewServerProfileDialog.IsOpen = false;
                 ServerCollection.AddServerProfile(profileName, "_" + Functions.SafeName(profileName));
-                INewProfileName.Text = String.Empty;
+                INewProfileName.Text = string.Empty;
                 Mouse.OverrideCursor = Cursors.Arrow;
             }
         }
@@ -214,13 +262,13 @@ namespace FASTER
         private void OpenArmaServerLocation_Click(object sender, RoutedEventArgs e)
         {
             IToolsDialog.IsOpen = false;
-            if(!String.IsNullOrEmpty(IServerDirBox.Text))
+            if(!string.IsNullOrEmpty(IServerDirBox.Text))
                 Process.Start(IServerDirBox.Text);
         }
         private void OpenSteamCmdLocation_Click(object sender, RoutedEventArgs e)
         {
             IToolsDialog.IsOpen = false;
-            if (!String.IsNullOrEmpty(ISteamDirBox.Text))
+            if (!string.IsNullOrEmpty(ISteamDirBox.Text))
                 Process.Start(ISteamDirBox.Text);
         }
 
@@ -352,13 +400,11 @@ namespace FASTER
             else if (!File.Exists(Properties.Options.Default.steamCMDPath + "\\steamcmd.exe"))
             {
                 IMessageDialog.IsOpen = true;
-                IMessageDialogText.Text = ("Steam CMD will now download and start the install process. If prompted please enter your Steam Guard " +
-                                           "Code."
-                                         + (Environment.NewLine
-                                          + (Environment.NewLine + "You will receive this by email from steam. When this is all complete type \'quit\' to finish.")));
+                IMessageDialogText.Text = "Steam CMD will now download and start the install process. If prompted please enter your Steam Guard " +
+                                          "Code.\n\nYou will receive this by email from steam. When this is all complete type \'quit\' to finish.";
                 ISteamOutputBox.Document.Blocks.Clear();
                 ISteamOutputBox.AppendText("Installing SteamCMD");
-                ISteamOutputBox.AppendText((Environment.NewLine + "File Downloading..."));
+                ISteamOutputBox.AppendText("\nFile Downloading...");
                 const string url = "https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip";
                 string       fileName = (Properties.Options.Default.steamCMDPath + "\\steamcmd.zip");
                 WebClient    client   = new WebClient();
@@ -368,9 +414,7 @@ namespace FASTER
             else
             {
                 Instance.IMessageDialog.IsOpen = true;
-                Instance.IMessageDialogText.Text = ("SteamCMD already appears to be installed."
-                                                  + (Environment.NewLine
-                                                   + (Environment.NewLine + "Please delete all files in the selected folder to reinstall.")));
+                Instance.IMessageDialogText.Text = "SteamCMD already appears to be installed.\n\nPlease delete all files in the selected folder to reinstall.";
             }
         }
 
@@ -670,7 +714,7 @@ namespace FASTER
         }
 
 
-        public static IEnumerable<T> FindVisualChildren<T>(DependencyObject depObj) where T : DependencyObject
+        private static IEnumerable<T> FindVisualChildren<T>(DependencyObject depObj) where T : DependencyObject
         {
             if (depObj != null)
             {

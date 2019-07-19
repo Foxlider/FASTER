@@ -23,7 +23,7 @@ namespace FASTER
             Loaded                             += SteamMods_Loaded;
             IModActionButtons.SelectionChanged += IActionButtons_SelectionChanged;
             IImportSteamModDialog.KeyUp += IImportSteamModDialog_KeyUp;
-            
+            MouseDown += IImportSteamModDialog_LostFocus;
         }
 
         private void SteamMods_Loaded(object sender, RoutedEventArgs e)
@@ -75,6 +75,16 @@ namespace FASTER
             thread.Start();
         }
 
+
+        private void IImportSteamModDialog_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (!IImportSteamModDialog.IsMouseOver)
+            {
+                IImportSteamModDialog.IsOpen = false;
+                IPrivateModCheck.IsChecked   = false;
+                ISteamItemBox.Text           = "";
+            }
+        }   
 
         private void IImportSteamModDialog_KeyUp(object sender, KeyEventArgs e)
         {
@@ -168,7 +178,7 @@ namespace FASTER
                     { steamCommand = steamCommand + " +workshop_download_item 107410 " + steamMod; }
 
                     string steamCmd = MainWindow.Instance.ISteamDirBox.Text + @"\steamcmd.exe";
-                    steamCommand = steamCommand + " validate +quit";
+                    steamCommand += " validate +quit";
                     MainWindow.Instance.RunSteamCommand(steamCmd, steamCommand, "addon", modsToUpdate);
                 }
                 else
@@ -302,7 +312,7 @@ namespace FASTER
             Process.Start("https://steamcommunity.com/workshop/filedetails/?id=" + steamMod.WorkshopId);
         }
 
-        public static string Reverse(string s)
+        private static string Reverse(string s)
         {
             char[] charArray = s.ToCharArray();
             Array.Reverse(charArray);

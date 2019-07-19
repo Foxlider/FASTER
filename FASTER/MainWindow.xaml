@@ -38,17 +38,17 @@
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="30"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto" MinHeight="146.956"/>
+                <RowDefinition/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
             <!--Custom Window Bar Elements-->
-            <Grid x:Name="IWindowDragBar" Height="30" VerticalAlignment="Top" Grid.ColumnSpan="2">
+            <Grid x:Name="IWindowDragBar" Grid.ColumnSpan="2" Margin="0,0,0,144.956" Grid.RowSpan="2">
                 <Image Name="ILogoImage" HorizontalAlignment="Left" Margin="2,2,0,2" Width="28" Source="pack://application:,,,/Resources/FASTER.ico"/>
                 <Label Name="WindowTitle"  Content="Fox's Arma Server Tool Extended Rewrite " Margin="33,0,0,0" HorizontalAlignment="Left" Width="676" FontSize="16" FontWeight="Bold"/>
                 <Grid Width="200" HorizontalAlignment="Right">
-                    <Button x:Name="IToolsButton" Style="{StaticResource MaterialDesignFlatButton}" Margin="0,0,150,0" Click="ToolsButton_Click" Height="Auto" HorizontalAlignment="Right" Width="50" >
+                    <Button x:Name="IToolsButton" Style="{StaticResource MaterialDesignFlatButton}" Click="ToolsButton_Click" Height="Auto" HorizontalAlignment="Left" Width="50" >
                         <md:PackIcon Kind="Wrench" Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Button>
                     <Button x:Name="IWindowMinimizeButton" Style="{StaticResource MaterialDesignFlatButton}" Margin="0,0,100,0" Click="WindowMinimizeButton_Click" HorizontalAlignment="Right" Width="50" Height="Auto" >
@@ -87,7 +87,7 @@
 
 
             <!--Menu Column - Main Items-->
-            <StackPanel Grid.Column="0" Grid.Row="1" TextElement.FontSize="13">
+            <StackPanel Grid.Column="0" Grid.Row="1" TextElement.FontSize="13" Margin="0,1,0,5">
                 <Label  Content="Main" Margin="10,10,0,0" FontWeight="Bold" FontStyle="Italic"/>
                 <ListBox Name="IMainMenuItems" HorizontalAlignment="Stretch" Margin="0,0,0,10">
                     <ListBoxItem Name="ISteamUpdaterTabSelect" Content="Steam Updater"/>
@@ -97,7 +97,7 @@
             </StackPanel>
 
             <!--Menu Column - Server Profiles-->
-            <StackPanel Grid.Column="0" Grid.Row="2" TextElement.FontSize="13">
+            <StackPanel Grid.Column="0" Grid.Row="1" TextElement.FontSize="13" Margin="0,140,0,0" Grid.RowSpan="2">
                 <Rectangle Fill="Black" Height="2"/>
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -114,7 +114,7 @@
             </StackPanel>
 
             <!--Menu Column - Other Items-->
-            <StackPanel Grid.Column="0" Grid.Row="3" TextElement.FontSize="13">
+            <StackPanel Grid.Column="0" Grid.Row="2" TextElement.FontSize="13" Margin="1,290,0,0">
                 <Rectangle Fill="Black" Height="2"/>
                 <Label Content="Other" Margin="10,10,0,0" FontWeight="Bold" FontStyle="Italic" />
                 <ListBox Name="IOtherMenuItems" HorizontalAlignment="Stretch" Margin="0,0,0,10">
@@ -124,7 +124,7 @@
             </StackPanel>
 
             <!--Content Column - Main Content-->
-            <TabControl Grid.Column="1" Grid.Row="0" Grid.RowSpan="4" Name="IMainContent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,25,0,0"  BorderBrush="{x:Null}" >
+            <TabControl Grid.Column="1" Grid.Row="1" Grid.RowSpan="2" Name="IMainContent" Margin="0,0,0,4"  BorderBrush="{x:Null}" >
                 <!--Removes Visible Tab Controls-->
                 <TabControl.ItemContainerStyle>
                     <Style TargetType="{x:Type TabItem}">
@@ -213,7 +213,7 @@
                                     <Label Margin="2" Content="Steam CMD Output"/>
                                     <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="-8"/>
                                 </StackPanel>
-                                <RichTextBox Name="ISteamOutputBox" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" IsReadOnly="True" Background="LightGray" Margin="10,10,10,0" VerticalScrollBarVisibility="Auto">
+                                <RichTextBox Name="ISteamOutputBox" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" IsReadOnly="True" IsEnabled="False" Background="LightGray" Margin="10,10,10,0" VerticalScrollBarVisibility="Auto">
                                     <RichTextBox.Resources>
                                         <Style TargetType="{x:Type Paragraph}">
                                             <Setter Property="Margin" Value="0"/>
@@ -248,9 +248,9 @@
                 </TabItem>
             </TabControl>
 
-            <md:DialogHost Grid.ColumnSpan="2" Grid.RowSpan="3" Grid.Row="1" Grid.Column="0" IsOpen="False" Name="IMessageDialog" Margin="-2">
+            <md:DialogHost Visibility="Hidden" Grid.ColumnSpan="2" Grid.Row="0" Grid.RowSpan="4" Grid.Column="0" IsOpen="False" Name="IMessageDialog" Margin="-2,27,-2,-1.96">
                 <md:DialogHost.DialogContent>
-                    <StackPanel Grid.Row="1" Margin="15">
+                    <StackPanel Grid.Row="1" Margin="15" Name="ImessageDialogContent">
                         <TextBlock Name="IMessageDialogText" TextWrapping="Wrap" TextAlignment="Center" Margin="10">
                        MESSAGE GOES HERE
                         </TextBlock>
@@ -259,9 +259,9 @@
                 </md:DialogHost.DialogContent>
             </md:DialogHost>
 
-            <md:DialogHost Grid.ColumnSpan="2" Grid.RowSpan="3" Grid.Row="1" Grid.Column="0" IsOpen="False" Name="INewServerProfileDialog" Margin="-2">
+            <md:DialogHost Visibility="Hidden" Grid.ColumnSpan="2" Grid.Row="0" Grid.RowSpan="4" Grid.Column="0" IsOpen="False" Name="INewServerProfileDialog" Margin="-2,27,-2,-1.96">
                 <md:DialogHost.DialogContent>
-                    <Grid>
+                    <Grid Name="INewServerProfileDialogContent">
                         <!--Grid Definitions-->
                         <Grid.RowDefinitions>
                             <RowDefinition Height="30"/>
@@ -281,9 +281,9 @@
                 </md:DialogHost.DialogContent>
             </md:DialogHost>
 
-            <md:DialogHost Grid.ColumnSpan="2" Grid.RowSpan="3" Grid.Row="1" Grid.Column="0" IsOpen="False" Name="ISteamGuardDialog" Margin="-2">
+            <md:DialogHost Visibility="Hidden" Grid.ColumnSpan="2" Grid.Row="0" Grid.RowSpan="4" Grid.Column="0" IsOpen="False" Name="ISteamGuardDialog" Margin="-2,27,-2,-1.96">
                 <md:DialogHost.DialogContent>
-                    <Grid>
+                    <Grid Name="ISteamGuardDialogContent">
                         <!--Grid Definitions-->
                         <Grid.RowDefinitions>
                             <RowDefinition Height="30"/>
@@ -303,9 +303,9 @@
                 </md:DialogHost.DialogContent>
             </md:DialogHost>
 
-            <md:DialogHost Grid.ColumnSpan="2" Grid.RowSpan="3" Grid.Row="1" Grid.Column="0" IsOpen="False" Name="IToolsDialog" Margin="-2">
+            <md:DialogHost Visibility="Hidden" Grid.ColumnSpan="2" Grid.Row="0" Grid.RowSpan="4" Grid.Column="0" IsOpen="False" Name="IToolsDialog" Margin="-2,27,-2,-1.96">
                 <md:DialogHost.DialogContent>
-                    <Grid>
+                    <Grid Name="IToolsDialogContent">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
