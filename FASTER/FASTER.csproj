@@ -4,12 +4,12 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <UseWPF>true</UseWPF>
-    <Version>1.1.4</Version>
+    <Version>1.1.5</Version>
     <Authors>Keelah Fox</Authors>
     <Company>FoxliCorp.</Company>
-    <Description>Fox'sArma Server Tool Extended Rewrite</Description>
+    <Description>Fox's Arma Server Tool Extended Rewrite</Description>
     <Copyright>Copyright © 2019</Copyright>
-    <PackageProjectUrl>Copyright ©  2019</PackageProjectUrl>
+    <PackageProjectUrl>https://forums.bohemia.net/forums/topic/224359-foxs-arma-server-tool-extended-rewrite-faster/</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite</RepositoryUrl>
     <ApplicationIcon>Resources\FASTER.ico</ApplicationIcon>
     <StartupObject>FASTER.App</StartupObject>

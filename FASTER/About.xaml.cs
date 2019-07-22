@@ -28,7 +28,7 @@ namespace FASTER
         }
 
         private void IForumsButton_Click(object sender, RoutedEventArgs e)
-        { OpenBrowser("https://github.com/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite"); }
+        { OpenBrowser("https://forums.bohemia.net/forums/topic/224359-foxs-arma-server-tool-extended-rewrite-faster/"); }
 
         private void OpenBrowser(string url)
         {
