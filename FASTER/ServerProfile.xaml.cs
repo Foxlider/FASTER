@@ -848,10 +848,10 @@ namespace FASTER
             #region PROFILE FILE CREATION
             List<string> profileLines = new List<string>
             {
-                "difficulty = \"{IDifficultyPreset.Text}\";",
+                $"difficulty = \"{IDifficultyPreset.Text}\";",
                 "class DifficultyPresets {",
                 "\tclass CustomDifficulty {",
-                "\t\t{class Options {",
+                "\t\tclass Options {",
                 $"\t\t\treduceDamage{IReducedDamage.IsChecked};",
                 $"\t\t\tgroupIndicators{IGroupIndicators.Text};",
                 $"\t\t\tfriendlyTags{IFriendlyNameTags.Text};",
@@ -877,7 +877,7 @@ namespace FASTER
                 "",
                 $"\t\taiLevelPreset{IAiPreset.Text};",
                 "",
-                "\t\t{class CustomAILevel {",
+                "\t\tclass CustomAILevel {",
                 $"\t\t\tskillAI{IAiSkill.Text};",
                 $"\t\t\tprecisionAI{IAiAccuracy.Text};",
                 "\t\t};",
