@@ -56,9 +56,10 @@
 
                 </ListBox>
                 <CheckBox Name="IModUpdatesOnLaunch" Grid.ColumnSpan="2" Grid.Row="4" Grid.Column="0" Content="Check for Steam Mod Updates on Launch" IsChecked="True" Margin="10,0,10,10"/>
-                <CheckBox Name="IAppUpdatesOnLaunch" Grid.ColumnSpan="2" Grid.Row="5" Grid.Column="0" Content="Auto Update FASTER on Launch" IsChecked="False" IsEnabled="False" Margin="10,0,10,10"/>
+                <CheckBox Name="IAppUpdatesOnLaunch" Grid.ColumnSpan="2" Grid.Row="5" Grid.Column="0" Content="Auto Update FASTER on Launch" IsChecked="False" Margin="10,0,10,10"/>
                 <Button Grid.Row="6" Grid.Column="0" Name="IClearSettings" Click="IClearSettings_Click" Content="Reset FASTER" Margin="10" Width="130" HorizontalAlignment="Center"/>
-                <Button Grid.Row="6" Grid.Column="1" Name="IUpdateApp" Content="Update FASTER" Margin="10" Width="130" HorizontalAlignment="Center"/>
+                <Button Grid.Row="6" Grid.Column="1" Name="IUpdateApp" Content="Update FASTER" Margin="10" Width="130" Click="IUpdateApp_OnClick" HorizontalAlignment="Center"/>
+                <Button Grid.Row="6" Grid.Column="1" Name="ITestLoginApp" Content="Update FASTER" Margin="10" Width="130" Click="ITestLogin_Click" HorizontalAlignment="Center"/>
             </Grid>
         </materialDesign:Card>
 

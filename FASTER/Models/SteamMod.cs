@@ -198,7 +198,7 @@ namespace FASTER.Models
             int steamUpdateTime = 0;
             if (modInfo != null)
             {
-                author = SteamWebApi.GetPlayerSummaries(modInfo.SelectToken("creator").ToString()).SelectToken("personaname").ToString();
+                author = SteamWebApi.GetPlayerSummaries(modInfo.SelectToken("creator").ToString())?.SelectToken("personaname").ToString();
                 steamUpdateTime = int.Parse(modInfo.SelectToken("time_updated").ToString());
             }
             var modName = modInfo?.SelectToken("title").ToString();

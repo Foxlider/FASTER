@@ -1,9 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows;
-using System.Windows.Controls;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
+using AutoUpdaterDotNET;
+using Application = System.Windows.Application;
+using CheckBox = System.Windows.Controls.CheckBox;
+using KeyEventArgs = System.Windows.Input.KeyEventArgs;
+using MessageBox = System.Windows.MessageBox;
+using UserControl = System.Windows.Controls.UserControl;
 
 namespace FASTER
 {
@@ -20,6 +26,63 @@ namespace FASTER
             IAppUpdatesOnLaunch.Click += IAppUpdatesOnLaunch_Checked;
             IResetDialog.KeyUp += IResetDialog_KeyUp;
             MouseDown          += IResetDialog_LostFocus;
+            AutoUpdater.CheckForUpdateEvent += AutoUpdaterOnCheckForUpdateEvent;
+
+        }
+
+        private void AutoUpdaterOnCheckForUpdateEvent(UpdateInfoEventArgs args)
+        {
+            if (args != null)
+            {
+                if (args.IsUpdateAvailable)
+                {
+                    MessageBoxResult dialogResult;
+                    if (args.Mandatory)
+                    {
+                        dialogResult =
+                            MessageBox.Show(
+                                $@"There is new version {args.CurrentVersion} available. You are using version {args.InstalledVersion}. This is required update. Press Ok to begin updating the application.", @"Update Available",
+                                MessageBoxButton.OK,
+                                MessageBoxImage.Information);
+                    }
+                    else
+                    {
+                        dialogResult =
+                            MessageBox.Show(
+                                $@"There is new version {args.CurrentVersion} available. You are using version {
+                                        args.InstalledVersion
+                                    }. Do you want to update the application now?", @"Update Available",
+                                MessageBoxButton.YesNo,
+                                MessageBoxImage.Information);
+                    }
+                    if (dialogResult == MessageBoxResult.OK || dialogResult == MessageBoxResult.OK)
+                    {
+                        try
+                        {
+                            if (AutoUpdater.DownloadUpdate())
+                            {
+                                if (Application.Current.MainWindow != null) Application.Current.MainWindow.Close();
+                            }
+                        }
+                        catch (Exception exception)
+                        {
+                            MessageBox.Show(exception.Message, exception.GetType().ToString(), MessageBoxButton.OK,
+                                MessageBoxImage.Error);
+                        }
+                    }
+                }
+                else
+                {
+                    MessageBox.Show(@"There is no update available please try again later.", @"No update available",
+                        MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+            }
+            else
+            {
+                MessageBox.Show(
+                    @"There is a problem reaching update server please check your internet connection and try again later.",
+                    @"Update check failed", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void IResetDialog_LostFocus(object sender, MouseButtonEventArgs e)
@@ -112,10 +175,9 @@ namespace FASTER
 
         private void IAppUpdatesOnLaunch_Checked(object sender, RoutedEventArgs e)
         {
-            Properties.Options.Default.checkForAppUpdates = IModUpdatesOnLaunch.IsChecked ?? true;
+            Properties.Options.Default.checkForAppUpdates = IAppUpdatesOnLaunch.IsChecked ?? true;
             Properties.Options.Default.Save();
         }
-
 
 
         private void UpdateLocalModFolders()
@@ -135,6 +197,27 @@ namespace FASTER
             }
             catch
             { /*ignored*/ }
+        }
+
+        private void IUpdateApp_OnClick(object sender, RoutedEventArgs e)
+        {
+            AutoUpdater.Start("https://raw.githubusercontent.com/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite/feature/Auto-Update/FASTER_Version.xml");
+        }
+
+        private void ITestLogin_Click(object sender, RoutedEventArgs e)
+        {
+            if (MainWindow.Instance.ReadyToUpdate())
+            {
+                string steamCmd = MainWindow.Instance.ISteamDirBox.Text + @"\steamcmd.exe";
+                string steamCommand = "+login " + MainWindow.Instance.ISteamUserBox.Text + " " + MainWindow.Instance.ISteamPassBox.Password;
+
+                MainWindow.Instance.RunSteamCommand(steamCmd, steamCommand, "install");
+            }
+            else
+            {
+                MainWindow.Instance.IMessageDialog.IsOpen = true;
+                MainWindow.Instance.IMessageDialogText.Text = "Check all fields are correctly filled out on Steam Updater";
+            }
         }
     }
 }

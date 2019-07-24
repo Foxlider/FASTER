@@ -13,6 +13,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using AutoUpdaterDotNET;
 
 namespace FASTER
 {
@@ -53,6 +54,16 @@ namespace FASTER
             ISteamGuardDialog.KeyUp += ISteamGuardDialog_KeyUp;
             INewServerProfileDialog.KeyUp += INewServerProfileDialog_KeyUp;
             MouseDown += IDialog_LostFocus;
+
+            if (Properties.Options.Default.checkForAppUpdates)
+            {
+                AutoUpdater.ReportErrors = true;
+                AutoUpdater.LetUserSelectRemindLater = false;
+                AutoUpdater.RemindLaterTimeSpan = RemindLaterFormat.Minutes;
+                AutoUpdater.RemindLaterAt = 1;
+                AutoUpdater.RunUpdateAsAdmin = true;
+                AutoUpdater.Start("https://raw.githubusercontent.com/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite/feature/Auto-Update/FASTER_Version.xml");
+            }
         }
 
         
@@ -65,7 +76,7 @@ namespace FASTER
         #region event handlers
         
         #region Custom Window Bar Click events
-        private void WindowCloseButton_Click(object sender, RoutedEventArgs e)
+        public void WindowCloseButton_Click(object sender, RoutedEventArgs e)
         { Close(); }
 
         private void WindowMinimizeButton_Click(object sender, RoutedEventArgs e)
@@ -442,7 +453,7 @@ namespace FASTER
                     ISteamOutputBox.AppendText(text + "\n");
                     ISteamOutputBox.ScrollToEnd();
                 });
-                if (text.EndsWith("at the console."))
+                if (text.EndsWith("Guard"))
                 {
                     Dispatcher.Invoke(() =>
                     {
@@ -458,7 +469,7 @@ namespace FASTER
                     });
                 }
 
-                if (text.Contains("Mobile Authenticator") )
+                if (text.Contains("Two-factor code") )
                 {
                     Dispatcher.Invoke(() =>
                     {
@@ -603,17 +614,17 @@ namespace FASTER
                     //AddHandler _oProcess.ErrorDataReceived, AddressOf  Proc_OutputDataReceived
                     //AddHandler _oProcess.OutputDataReceived, AddressOf Proc_OutputDataReceived
 
-                    _oProcess.OutputDataReceived += ProcessOutputEvent;
-                    _oProcess.ErrorDataReceived += ProcessOutputEvent;
+                    //_oProcess.OutputDataReceived += ProcessOutputEvent;
+                    //_oProcess.ErrorDataReceived += ProcessOutputEvent;
 
                     _oProcess.Start();
 
-                    //ProcessOutputCharacters(_oProcess.StandardError);
-                    //ProcessOutputCharacters(_oProcess.StandardOutput);
+                    ProcessOutputCharacters(_oProcess.StandardError);
+                    ProcessOutputCharacters(_oProcess.StandardOutput);
 
                     //PART OF OLD STEAM OUTPUT CODE
-                    _oProcess.BeginErrorReadLine();
-                    _oProcess.BeginOutputReadLine();
+                    //_oProcess.BeginErrorReadLine();
+                    //_oProcess.BeginOutputReadLine();
 
                     _oProcess.WaitForExit();
                 }));
@@ -672,6 +683,16 @@ namespace FASTER
             }
         }
 
+        private void ProcessOutputCharacters(StreamReader output)
+        {
+            while (!output.EndOfStream)
+            {
+                string line = output.ReadLine();
+                if (!line.Contains("\\src\\common\\contentmanifest.cpp (650) : Assertion Failed: !m_bIsFinalized*"))
+                { UpdateTextBox(line); }
+            }
+        }
+
         private void ProcessOutputEvent(object sender, DataReceivedEventArgs e)
         {
             if (!string.IsNullOrEmpty(e.Data))
@@ -680,7 +701,7 @@ namespace FASTER
                 { UpdateTextBox(e.Data); }
             }
         }
-
+        
         private static void CheckModUpdatesComplete(IReadOnlyCollection<string> modIds)
         {
             if (modIds != null)
