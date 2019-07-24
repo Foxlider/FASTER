@@ -16,8 +16,8 @@ namespace FASTER
         {
             Initialized += Settings_Initialized;
             InitializeComponent();
-            IModUpdatesOnLaunch.Checked += IModUpdatesOnLaunch_Checked;
-            IAppUpdatesOnLaunch.Checked += IAppUpdatesOnLaunch_Checked;
+            IModUpdatesOnLaunch.Click += IModUpdatesOnLaunch_Checked;
+            IAppUpdatesOnLaunch.Click += IAppUpdatesOnLaunch_Checked;
             IResetDialog.KeyUp += IResetDialog_KeyUp;
             MouseDown          += IResetDialog_LostFocus;
         }

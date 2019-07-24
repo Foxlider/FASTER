@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Xml.Serialization;
+
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
 namespace FASTER.Models
@@ -193,14 +194,19 @@ namespace FASTER.Models
         private static Tuple<string, string, int> GetModInfo(int modId)
         {
             var modInfo = SteamWebApi.GetSingleFileDetails(modId);
-            var author = SteamWebApi.GetPlayerSummaries(modInfo.SelectToken("creator").ToString()).SelectToken("personaname").ToString();
-            var modName = modInfo.SelectToken("title").ToString();
-            var steamUpdateTime = int.Parse(modInfo.SelectToken("time_updated").ToString());
+            string author = null;
+            int steamUpdateTime = 0;
+            if (modInfo != null)
+            {
+                author = SteamWebApi.GetPlayerSummaries(modInfo.SelectToken("creator").ToString()).SelectToken("personaname").ToString();
+                steamUpdateTime = int.Parse(modInfo.SelectToken("time_updated").ToString());
+            }
+            var modName = modInfo?.SelectToken("title").ToString();
+            
 
-            if (modInfo.SelectToken("creator_appid").ToString() == "107410")
+            if (modInfo?.SelectToken("creator_appid").ToString() == "107410")
                 return new Tuple<string, string, int>(modName, author, steamUpdateTime);
-            else
-                return null;
+            return null;
         }
 
         public static void UpdateInfoFromSteam()

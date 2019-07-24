@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Windows;
 
 namespace FASTER.Models
 {
@@ -32,7 +33,7 @@ namespace FASTER.Models
         {
             var response = ApiCall("https://api.steampowered.com/IPublishedFileService/GetDetails/v1?key=" + SteamApiKey + V3 + modId);
 
-            return (JObject) response.SelectToken("response.publishedfiledetails[0]");
+            return (JObject) response?.SelectToken("response.publishedfiledetails[0]");
         }
 
 
@@ -53,14 +54,19 @@ namespace FASTER.Models
             // Get the response.
             WebResponse response = null;
             try
-            {
-                response = request.GetResponse();
-            }
+            { response = request.GetResponse(); }
             catch (WebException)
             {
-                MainWindow.Instance.IMessageDialog.IsOpen = true;
-                MainWindow.Instance.IMessageDialogText.Text = "Cannot reach Steam API \n\n"
-                                                            + "Check https://steamstat.us/";
+                try
+                {
+                    MainWindow.Instance.Dispatcher.InvokeAsync(() =>
+                    {
+                        MainWindow.Instance.IMessageDialogText.Text = "Cannot reach Steam API \n\nCheck https://steamstat.us/";
+                        MainWindow.Instance.IMessageDialog.IsOpen = true;
+                    });
+                }
+                catch (Exception) //In case it was called before Initialized in SteamMods_Initialized() and could not connect to SteamAPI
+                { MessageBox.Show("Cannot reach Steam API \n\nCheck https://steamstat.us/", "Steam API Error", MessageBoxButton.OK, MessageBoxImage.Warning); }
             }
             // Display the status.
             Console.WriteLine(((HttpWebResponse)response)?.StatusDescription);
