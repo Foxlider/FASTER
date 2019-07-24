@@ -26,7 +26,7 @@ A clear and concise description of what actually happened.
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
 
-**Desktop (please complete the following information):**
+**OS Version (required):**
  - OS: [e.g. Windows 10 1903]
  - Version [e.g. 1.1a]
 

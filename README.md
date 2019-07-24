@@ -1,5 +1,18 @@
 # Fox's Arma Server Tool Extended Rewrite (FASTER)
 
+#### Badges 
+***GitHub***  
+[![Azure DevOps builds](https://img.shields.io/azure-devops/build/keelah/4b51eb35-4363-4038-8d99-543c01a3578f/8.svg?logo=azuredevops&style=flat-square)](https://dev.azure.com/keelah/FASTER/_build/latest?definitionId=8&branchName=master)
+![Discord](https://img.shields.io/discord/366955806777671681.svg?label=discord&logo=discord&logoColor=white&style=flat-square)
+![GitHub issues](https://img.shields.io/github/issues/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite.svg?logo=github&style=flat-square)
+![GitHub](https://img.shields.io/github/license/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite.svg?style=flat-square)
+![GitHub release](https://img.shields.io/github/release/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite.svg?logo=github&style=flat-square)
+[![Github all releases](https://img.shields.io/github/downloads/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite/total.svg?logo=github&style=flat-square)](https://GitHub.com/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite/releases/)
+[![Github all releases](https://img.shields.io/github/downloads/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite/latest/total.svg?logo=github&style=flat-square)](https://GitHub.com/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite/releases/)
+  
+***Azure***  
+[![Build Status](https://dev.azure.com/keelah/FASTER/_apis/build/status/Faster%20Release%20Builder?branchName=master)](https://dev.azure.com/keelah/FASTER/_build/latest?definitionId=8&branchName=master)
+[![Build Status](https://vsrm.dev.azure.com/keelah/_apis/public/Release/badge/4b51eb35-4363-4038-8d99-543c01a3578f/2/2)](https://dev.azure.com/keelah/FASTER/_release)
 
 **CURRENTLY IN OPEN BETA TESTING**
 
@@ -57,9 +70,17 @@ Thanks go out to all the guys who helped the developpment and those who will tes
 
 **_ISSUES and FEEDBACK_**
 
-As always best place to report issues is on the GitHub Repo, as for general discussion I'll always keep an eye on this thread or come and join us in Discord.
+As always best place to report issues is on the [GitHub Repo](https://github.com/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite/issues), as for general discussion I'll always keep an eye on the BI forum thread or come and join us in [Discord](https://discord.gg/uPjgqHU).
 
 **_DOCUMENTATION_**
   
 No documentation (yet) but you can always check the original FAST2 documentation.
+  
+**_SOCIAL_**  
+Twitter :
+[@FoxliderAtom](https://twitter.com/FoxliderAtom)  
+![Twitter Follow](https://img.shields.io/twitter/follow/FoxliderAtom.svg?label=Follow&logo=twitter&style=flat-square)
+
+Bohemia Interactive Forums :  
+[Fox's Arma Server Tool Extended Rewrite (FASTER)](https://forums.bohemia.net/forums/topic/224359-foxs-arma-server-tool-extended-rewrite-faster/)
   

@@ -29,8 +29,7 @@ namespace FASTER
         private void SteamMods_Loaded(object sender, RoutedEventArgs e)
         { UpdateModsView(); }
 
-
-        private async void SteamMods_Initialized(object sender, EventArgs e)
+        private void SteamMods_Initialized(object sender, EventArgs e)
         {
             if (Properties.Options.Default.steamMods?.SteamMods?.Count > 0 && Properties.Options.Default.checkForModUpdates)
             {
@@ -38,18 +37,21 @@ namespace FASTER
                 IModView.IsEnabled = false;
                 IProgressInfo.Visibility = Visibility.Visible;
                 IProgressInfo.Content = "Checking for updates...";
-
-                var tasks = new List<Task>
+                
+                Thread thread = new Thread(() =>
                 {
-                    Task.Run(SteamMod.UpdateInfoFromSteam)
-                };
-
-                await Task.WhenAll(tasks);
-
-                IModView.IsEnabled = true;
-                IProgressInfo.Visibility = Visibility.Collapsed;
-                IUpdateProgress.IsIndeterminate = false;
-                UpdateModsView();
+                    SteamMod.UpdateInfoFromSteam();
+                    Dispatcher.Invoke(() =>
+                    {
+                        IModView.IsEnabled = true;
+                        IProgressInfo.Visibility = Visibility.Collapsed;
+                        IUpdateProgress.IsIndeterminate = false;
+                    });
+                    
+                    UpdateModsView();
+                } );
+                thread.SetApartmentState(ApartmentState.STA);
+                thread.Start();
             }
         }
 
@@ -277,12 +279,12 @@ namespace FASTER
 
         private void UpdateModsView()
         {
-            IModView.Items.Clear();
+            Dispatcher.Invoke(() => IModView.Items.Clear());
 
             if (Properties.Options.Default.steamMods != null)
             {
                 foreach (var steamMod in Properties.Options.Default.steamMods.SteamMods)
-                { IModView.Items.Add(steamMod); }
+                { Dispatcher.Invoke(() => IModView.Items.Add(steamMod)); }
             }
         }
 

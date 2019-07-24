@@ -12,7 +12,6 @@
              TextOptions.TextFormattingMode="Ideal"
              TextOptions.TextRenderingMode="Auto"
 
-             Initialized="SteamMods_Initialized"
              mc:Ignorable="d"
              d:DesignHeight="570.4"
              d:DesignWidth="796.8">
