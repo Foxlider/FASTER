@@ -8,6 +8,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -30,8 +31,10 @@ namespace FASTER
         public MainWindow()
         {
             Initialized += MainWindow_Initialized;
+            Properties.Options.Default.Reload();
             InitializeComponent();
             IWindowDragBar.MouseDown += WindowDragBar_MouseDown;
+            Properties.Options.Default.PropertyChanged += Default_PropertyChanged;
             
             //this.Loaded += MainWindow_Initialized;
             Loaded += MainWindow_Loaded;
@@ -62,11 +65,14 @@ namespace FASTER
                 AutoUpdater.RemindLaterTimeSpan = RemindLaterFormat.Minutes;
                 AutoUpdater.RemindLaterAt = 1;
                 AutoUpdater.RunUpdateAsAdmin = true;
-                AutoUpdater.Start("https://raw.githubusercontent.com/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite/feature/Auto-Update/FASTER_Version.xml");
+                AutoUpdater.Start("https://raw.githubusercontent.com/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite/master/FASTER_Version.xml");
             }
         }
 
-        
+        private void Default_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            Properties.Options.Default.Save();
+        }
 
         /// <summary>
         ///     Gets the one and only instance.
@@ -444,6 +450,9 @@ namespace FASTER
             File.Delete(zip);
         }
 
+        private static bool   _runLog;
+        private static object _runLogLock = new object();
+        private static int threadSlept;
         private void UpdateTextBox(string text)
         {
             if (_oProcess != null)
@@ -453,13 +462,41 @@ namespace FASTER
                     ISteamOutputBox.AppendText(text + "\n");
                     ISteamOutputBox.ScrollToEnd();
                 });
-                if (text.EndsWith("Guard"))
+
+                if (text.StartsWith("Logging in user") && text.Contains("to Steam"))
                 {
-                    Dispatcher.Invoke(() =>
+                    _runLog = true;
+                    Thread t = new Thread(() =>
                     {
-                        ISteamGuardDialog.IsOpen = true;
+                        threadSlept = 0;
+                        bool _localRunThread = true;
+                        do
+                        {
+                            Thread.Sleep(500);
+                            threadSlept += 500;
+                            lock (_runLogLock)
+                            { _localRunThread = _runLog; }
+                        }
+                        while (_localRunThread && threadSlept < 10000);
+                        if (_localRunThread)
+                        {
+                            Dispatcher.Invoke(() =>
+                            {
+                                ISteamGuardDialog.IsOpen = true;
+                            });
+                        }
                     });
+                    t.Start();
                 }
+
+                if (text.Contains("Logged in OK"))
+                {
+                    lock (_runLogLock)
+                    { _runLog = false; }
+                }
+
+                if (text.StartsWith("Retrying..."))
+                { threadSlept = 0; }
 
                 if (text.EndsWith("..."))
                 {

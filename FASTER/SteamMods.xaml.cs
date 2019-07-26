@@ -311,7 +311,18 @@ namespace FASTER
         private void OpenModPage(object sender, RoutedEventArgs e)
         {
             var steamMod = (SteamMod)((Button)e.Source).DataContext;
-            Process.Start("https://steamcommunity.com/workshop/filedetails/?id=" + steamMod.WorkshopId);
+            var url = "https://steamcommunity.com/workshop/filedetails/?id=" + steamMod.WorkshopId;
+            try { Process.Start(url); }
+            catch
+            {
+                try
+                {
+                        url = url.Replace("&", "^&");
+                        Process.Start(new ProcessStartInfo("cmd", $"/c start {url}") { CreateNoWindow = true });
+                }
+                catch
+                {  MessageBox.Show($"Could not open \"{url}\""); }
+            }
         }
 
         private static string Reverse(string s)

@@ -201,7 +201,7 @@ namespace FASTER
 
         private void IUpdateApp_OnClick(object sender, RoutedEventArgs e)
         {
-            AutoUpdater.Start("https://raw.githubusercontent.com/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite/feature/Auto-Update/FASTER_Version.xml");
+            AutoUpdater.Start("https://raw.githubusercontent.com/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite/master/FASTER_Version.xml");
         }
 
         private void ITestLogin_Click(object sender, RoutedEventArgs e)

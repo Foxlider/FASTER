@@ -16,10 +16,6 @@ namespace FASTER
             InitializeComponent();
             IWindowDragBar.MouseDown += WindowDragBar_MouseDown;
 
-
-
-            //Update and init settings
-            Properties.Options.Default.Upgrade();
             if (Properties.Options.Default.steamMods == null)
             {
                 Properties.Options.Default.steamMods = new SteamModCollection();
