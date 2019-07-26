@@ -8,7 +8,6 @@
 
              FontFamily="{DynamicResource MaterialDesignFont}"
 
-             Initialized="ServerProfile_Initialized"
              TextElement.FontWeight="Regular"
              TextElement.FontSize="11"
              TextElement.Foreground="{DynamicResource MaterialDesignBody}"

@@ -8,11 +8,13 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using AutoUpdaterDotNET;
 
 namespace FASTER
 {
@@ -29,8 +31,10 @@ namespace FASTER
         public MainWindow()
         {
             Initialized += MainWindow_Initialized;
+            Properties.Options.Default.Reload();
             InitializeComponent();
             IWindowDragBar.MouseDown += WindowDragBar_MouseDown;
+            Properties.Options.Default.PropertyChanged += Default_PropertyChanged;
             
             //this.Loaded += MainWindow_Initialized;
             Loaded += MainWindow_Loaded;
@@ -53,9 +57,22 @@ namespace FASTER
             ISteamGuardDialog.KeyUp += ISteamGuardDialog_KeyUp;
             INewServerProfileDialog.KeyUp += INewServerProfileDialog_KeyUp;
             MouseDown += IDialog_LostFocus;
+
+            if (Properties.Options.Default.checkForAppUpdates)
+            {
+                AutoUpdater.ReportErrors = true;
+                AutoUpdater.LetUserSelectRemindLater = false;
+                AutoUpdater.RemindLaterTimeSpan = RemindLaterFormat.Minutes;
+                AutoUpdater.RemindLaterAt = 1;
+                AutoUpdater.RunUpdateAsAdmin = true;
+                AutoUpdater.Start("https://raw.githubusercontent.com/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite/master/FASTER_Version.xml");
+            }
         }
 
-        
+        private void Default_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            Properties.Options.Default.Save();
+        }
 
         /// <summary>
         ///     Gets the one and only instance.
@@ -65,7 +82,7 @@ namespace FASTER
         #region event handlers
         
         #region Custom Window Bar Click events
-        private void WindowCloseButton_Click(object sender, RoutedEventArgs e)
+        public void WindowCloseButton_Click(object sender, RoutedEventArgs e)
         { Close(); }
 
         private void WindowMinimizeButton_Click(object sender, RoutedEventArgs e)
@@ -433,6 +450,9 @@ namespace FASTER
             File.Delete(zip);
         }
 
+        private static bool   _runLog;
+        private static object _runLogLock = new object();
+        private static int threadSlept;
         private void UpdateTextBox(string text)
         {
             if (_oProcess != null)
@@ -442,13 +462,41 @@ namespace FASTER
                     ISteamOutputBox.AppendText(text + "\n");
                     ISteamOutputBox.ScrollToEnd();
                 });
-                if (text.EndsWith("at the console."))
+
+                if (text.StartsWith("Logging in user") && text.Contains("to Steam"))
                 {
-                    Dispatcher.Invoke(() =>
+                    _runLog = true;
+                    Thread t = new Thread(() =>
                     {
-                        ISteamGuardDialog.IsOpen = true;
+                        threadSlept = 0;
+                        bool _localRunThread = true;
+                        do
+                        {
+                            Thread.Sleep(500);
+                            threadSlept += 500;
+                            lock (_runLogLock)
+                            { _localRunThread = _runLog; }
+                        }
+                        while (_localRunThread && threadSlept < 10000);
+                        if (_localRunThread)
+                        {
+                            Dispatcher.Invoke(() =>
+                            {
+                                ISteamGuardDialog.IsOpen = true;
+                            });
+                        }
                     });
+                    t.Start();
                 }
+
+                if (text.Contains("Logged in OK"))
+                {
+                    lock (_runLogLock)
+                    { _runLog = false; }
+                }
+
+                if (text.StartsWith("Retrying..."))
+                { threadSlept = 0; }
 
                 if (text.EndsWith("..."))
                 {
@@ -458,7 +506,7 @@ namespace FASTER
                     });
                 }
 
-                if (text.Contains("Mobile Authenticator") )
+                if (text.Contains("Two-factor code") )
                 {
                     Dispatcher.Invoke(() =>
                     {
@@ -603,17 +651,17 @@ namespace FASTER
                     //AddHandler _oProcess.ErrorDataReceived, AddressOf  Proc_OutputDataReceived
                     //AddHandler _oProcess.OutputDataReceived, AddressOf Proc_OutputDataReceived
 
-                    _oProcess.OutputDataReceived += ProcessOutputEvent;
-                    _oProcess.ErrorDataReceived += ProcessOutputEvent;
+                    //_oProcess.OutputDataReceived += ProcessOutputEvent;
+                    //_oProcess.ErrorDataReceived += ProcessOutputEvent;
 
                     _oProcess.Start();
 
-                    //ProcessOutputCharacters(_oProcess.StandardError);
-                    //ProcessOutputCharacters(_oProcess.StandardOutput);
+                    ProcessOutputCharacters(_oProcess.StandardError);
+                    ProcessOutputCharacters(_oProcess.StandardOutput);
 
                     //PART OF OLD STEAM OUTPUT CODE
-                    _oProcess.BeginErrorReadLine();
-                    _oProcess.BeginOutputReadLine();
+                    //_oProcess.BeginErrorReadLine();
+                    //_oProcess.BeginOutputReadLine();
 
                     _oProcess.WaitForExit();
                 }));
@@ -672,6 +720,16 @@ namespace FASTER
             }
         }
 
+        private void ProcessOutputCharacters(StreamReader output)
+        {
+            while (!output.EndOfStream)
+            {
+                string line = output.ReadLine();
+                if (!line.Contains("\\src\\common\\contentmanifest.cpp (650) : Assertion Failed: !m_bIsFinalized*"))
+                { UpdateTextBox(line); }
+            }
+        }
+
         private void ProcessOutputEvent(object sender, DataReceivedEventArgs e)
         {
             if (!string.IsNullOrEmpty(e.Data))
@@ -680,7 +738,7 @@ namespace FASTER
                 { UpdateTextBox(e.Data); }
             }
         }
-
+        
         private static void CheckModUpdatesComplete(IReadOnlyCollection<string> modIds)
         {
             if (modIds != null)

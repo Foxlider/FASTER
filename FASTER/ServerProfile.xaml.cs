@@ -25,7 +25,8 @@ namespace FASTER
 
         private void ServerProfile_Loaded(object sender, RoutedEventArgs e)
         {
-            UpdateProfile();
+            UpdateModsList();
+            UpdateMissionsList();
         }
 
 
@@ -662,24 +663,28 @@ namespace FASTER
             profile.OnDifferentData = IOnDifferentData.Text;
             profile.OnUnsignedData = IOnUnsignedData.Text;
             profile.RegularCheck = IRegularCheck.Text;
+            profile.ServerMods = "";
             foreach (CheckBox addon in IServerModsList.Items)
             {
-                if (addon.IsChecked ?? false)
+                if (!profile.ServerMods.Contains((string)addon.Content) && (addon.IsChecked ?? false) )
                 { profile.ServerMods += addon.Content + ";"; }
             }
+            profile.ClientMods = "";
             foreach (CheckBox addon in IClientModsList.Items)
             {
-                if (addon.IsChecked ?? false)
+                if (!profile.ClientMods.Contains((string)addon.Content) && (addon.IsChecked ?? false))
                 { profile.ClientMods += addon.Content + ";"; }
             }
+            profile.HeadlessMods = "";
             foreach (CheckBox addon in IHeadlessModsList.Items)
             {
-                if (addon.IsChecked ?? false)
+                if (!profile.HeadlessMods.Contains((string)addon.Content) && (addon.IsChecked ?? false))
                 { profile.HeadlessMods += addon.Content + ";"; }
             }
+            profile.Missions = "";
             foreach (CheckBox addon in IMissionCheckList.Items)
             {
-                if (addon.IsChecked ?? false)
+                if (!profile.Missions.Contains((string)addon.Content) && (addon.IsChecked ?? false))
                 { profile.Missions += addon.Content + ";"; }
             }
             profile.BattleEye = IBattleEye.IsChecked ?? false;
@@ -898,7 +903,17 @@ namespace FASTER
         {
             var          currentMissions = IMissionCheckList.Items;
             List<string> newMissions     = new List<string>();
-            var       checkedMissions = IMissionCheckList.SelectedValue;
+            var          checkedMissions = new List<CheckBox>();
+            var          profile         = Properties.Options.Default.Servers.ServerProfiles.Find(p => p.SafeName == _safeName);
+
+            if (profile != null)
+            {
+                foreach (var mission in profile.Missions.Split(';'))
+                {
+                    if (checkedMissions.FirstOrDefault(c => (string) c.Content == mission.Replace(";", "")) == null && !string.IsNullOrWhiteSpace(mission))
+                        checkedMissions.Add(new CheckBox { Content = mission.Replace(";", ""), IsChecked = true });
+                }
+            }
 
             IMissionCheckList.Items.Clear();
 
@@ -913,8 +928,15 @@ namespace FASTER
                     { newMissions.Remove(mission); }
                 }
 
+                
+
                 foreach (var mission in newMissions.ToList())
-                { IMissionCheckList.Items.Add(new CheckBox { Content = mission.Replace(".pbo", "") }); }
+                {
+                    var checkedMission = checkedMissions.FirstOrDefault(m => (string)m.Content == mission.Replace(".pbo", ""))?.IsChecked ?? false;
+                    IMissionCheckList.Items.Add(new CheckBox { Content = mission.Replace(".pbo", "") , IsChecked = checkedMission});
+                }
+
+                
 
                 IMissionCheckList.SelectedValue = checkedMissions;
             }
@@ -925,9 +947,29 @@ namespace FASTER
             var          currentMods = IServerModsList.Items;
             List<string> newMods     = new List<string>();
 
-            var checkedServerMods = IServerModsList.SelectedValue;
-            var checkedHcMods     = IHeadlessModsList.SelectedValue;
-            var checkedClientMods = IClientModsList.SelectedValue;
+            var profile           = Properties.Options.Default.Servers.ServerProfiles.Find(p => p.SafeName == _safeName);
+            var checkedServerMods = new List<CheckBox>();
+            var checkedHcMods = new List<CheckBox>();
+            var checkedClientMods = new List<CheckBox>();
+            
+            if (profile != null)
+            { 
+                foreach (var mod in profile.ServerMods.Split(';'))
+                {
+                    if (checkedServerMods.FirstOrDefault(c => (string) c.Content == mod.Replace(";", "")) == null && !string.IsNullOrWhiteSpace(mod))
+                        checkedServerMods.Add(new CheckBox { Content = mod.Replace(";", ""), IsChecked = true });
+                }
+                foreach (var mod in profile.HeadlessMods.Split(';'))
+                {
+                    if (checkedHcMods.FirstOrDefault(c => (string)c.Content == mod.Replace(";", "")) == null && !string.IsNullOrWhiteSpace(mod))
+                        checkedHcMods.Add(new CheckBox { Content = mod.Replace(";",             ""), IsChecked = true });
+                }
+                foreach (var mod in profile.ClientMods.Split(';'))
+                {
+                    if (checkedClientMods.FirstOrDefault(c => (string)c.Content == mod.Replace(";", "")) == null && !string.IsNullOrWhiteSpace(mod))
+                        checkedClientMods.Add(new CheckBox { Content = mod.Replace(";",             ""), IsChecked = true });
+                }
+            }
 
             IServerModsList.Items.Clear();
             IClientModsList.Items.Clear();
@@ -952,9 +994,12 @@ namespace FASTER
 
                 foreach (var addon in newMods.ToList())
                 {
-                    IServerModsList.Items.Add(new CheckBox { Content = addon });
-                    IClientModsList.Items.Add(new CheckBox { Content = addon });
-                    IHeadlessModsList.Items.Add(new CheckBox { Content = addon });
+                    var serverCheck = checkedServerMods.FirstOrDefault(m => (string) m.Content == addon)?.IsChecked ?? false;
+                    var clientCheck = checkedClientMods.FirstOrDefault(m => (string)m.Content == addon)?.IsChecked ?? false;
+                    var hcCheck = checkedHcMods.FirstOrDefault(m => (string)m.Content == addon)?.IsChecked ?? false;
+                    IServerModsList.Items.Add(new CheckBox { Content = addon, IsChecked = serverCheck });
+                    IClientModsList.Items.Add(new CheckBox { Content = addon, IsChecked = clientCheck  });
+                    IHeadlessModsList.Items.Add(new CheckBox { Content = addon, IsChecked = hcCheck });
                 }
 
                 IServerModsList.SelectedValue   = checkedServerMods;
