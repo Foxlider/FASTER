@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows;
-using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using AutoUpdaterDotNET;
@@ -202,22 +201,6 @@ namespace FASTER
         private void IUpdateApp_OnClick(object sender, RoutedEventArgs e)
         {
             AutoUpdater.Start("https://raw.githubusercontent.com/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite/master/FASTER_Version.xml");
-        }
-
-        private void ITestLogin_Click(object sender, RoutedEventArgs e)
-        {
-            if (MainWindow.Instance.ReadyToUpdate())
-            {
-                string steamCmd = MainWindow.Instance.ISteamDirBox.Text + @"\steamcmd.exe";
-                string steamCommand = "+login " + MainWindow.Instance.ISteamUserBox.Text + " " + MainWindow.Instance.ISteamPassBox.Password;
-
-                MainWindow.Instance.RunSteamCommand(steamCmd, steamCommand, "install");
-            }
-            else
-            {
-                MainWindow.Instance.IMessageDialog.IsOpen = true;
-                MainWindow.Instance.IMessageDialogText.Text = "Check all fields are correctly filled out on Steam Updater";
-            }
         }
     }
 }

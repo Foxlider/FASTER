@@ -710,7 +710,7 @@ namespace FASTER
                 $"password = \"{IPassword.Text}\";",
                 $"serverCommandPassword = \"{IServerCommandPassword.Text}\";",
                 $"hostname = \"{IServerName.Text}\";",
-                $"maxPlayers = \"{IMaxPlayers.Text}\";",
+                $"maxPlayers = {IMaxPlayers.Text};",
                 $"kickduplicate = {(IKickDuplicates.IsChecked != null && (bool) IKickDuplicates.IsChecked ? "1" : "0")};",
                 $"upnp = {(IUpnp.IsChecked                    != null && (bool) IUpnp.IsChecked ? "1" : "0")};",
                 $"allowedFilePatching = {IAllowFilePatching.Text};",
@@ -808,12 +808,15 @@ namespace FASTER
                 if (string.IsNullOrEmpty(difficulty))
                 { difficulty = "Regular"; }
 
-                foreach (var mission in IMissionCheckList.SelectedItems)
+                foreach (CheckBox mission in IMissionCheckList.Items)
                 {
-                    configLines.Add($"\tclass Mission_{IMissionCheckList.SelectedItems.IndexOf(mission) + 1} " + "{");
-                    configLines.Add($"\t\ttemplate = \"{mission}\";");
-                    configLines.Add($"\t\tdifficulty = \"{difficulty}\";");
-                    configLines.Add("\t};");
+                    if (mission.IsChecked ?? false)
+                    {
+                        configLines.Add($"\tclass Mission_{IMissionCheckList.Items.IndexOf(mission) + 1} " + "{");
+                        configLines.Add($"\t\ttemplate = \"{mission.Content}\";");
+                        configLines.Add($"\t\tdifficulty = \"{difficulty}\";");
+                        configLines.Add("\t};");
+                    }
                 }
                 configLines.Add("};");
             }
