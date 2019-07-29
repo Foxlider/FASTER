@@ -3,12 +3,13 @@
 #### Badges 
 ***GitHub***  
 [![Azure DevOps builds](https://img.shields.io/azure-devops/build/keelah/4b51eb35-4363-4038-8d99-543c01a3578f/8.svg?logo=azuredevops&style=flat-square)](https://dev.azure.com/keelah/FASTER/_build/latest?definitionId=8&branchName=master)
+[![Azure DevOps releases](https://img.shields.io/azure-devops/release/keelah/4b51eb35-4363-4038-8d99-543c01a3578f/2/2?logo=azuredevops&style=flat-square)](https://dev.azure.com/keelah/FASTER/_release)
 ![Discord](https://img.shields.io/discord/366955806777671681.svg?label=discord&logo=discord&logoColor=white&style=flat-square)
 ![GitHub issues](https://img.shields.io/github/issues/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite.svg?logo=github&style=flat-square)
 ![GitHub](https://img.shields.io/github/license/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite.svg?style=flat-square)
-![GitHub release](https://img.shields.io/github/release/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite.svg?logo=github&style=flat-square)
-[![Github all releases](https://img.shields.io/github/downloads/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite/total.svg?logo=github&style=flat-square)](https://GitHub.com/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite/releases/)
-[![Github all releases](https://img.shields.io/github/downloads/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite/latest/total.svg?logo=github&style=flat-square)](https://GitHub.com/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite/releases/)
+![GitHub release](https://img.shields.io/github/release/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite.svg?logo=github&style=flat-square)  
+[![Github total downloads](https://img.shields.io/github/downloads/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite/total.svg?logo=github&style=flat-square)](https://GitHub.com/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite/releases/)
+[![Github latest downloads](https://img.shields.io/github/downloads/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite/latest/total.svg?logo=github&style=flat-square)](https://GitHub.com/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite/releases/)
   
 ***Azure***  
 [![Build Status](https://dev.azure.com/keelah/FASTER/_apis/build/status/Faster%20Release%20Builder?branchName=master)](https://dev.azure.com/keelah/FASTER/_build/latest?definitionId=8&branchName=master)
@@ -16,7 +17,8 @@
 
 **CURRENTLY IN OPEN BETA TESTING**
 
-[Discord Here](https://discord.gg/uPjgqHU).
+[![Discord](https://img.shields.io/discord/366955806777671681?label=Discord&logo=discord&logoColor=white&style=for-the-badge)](https://discord.gg/uPjgqHU)
+
 
 **INTRO**
 
@@ -36,6 +38,7 @@ Thanks go out to all the guys who helped the developpment and those who will tes
   - Improved UI from FAST
   - Improved stability from FAST2
   - Easy to read and share config files
+  - Automated Update process
 
 - SteamCMD Automation
   - Install and update Arma 3 Server (Stable and Dev)
@@ -66,7 +69,6 @@ Thanks go out to all the guys who helped the developpment and those who will tes
 - Set CPU Affinity and Priority
 - Schedule Auto Restart of servers
 - Schedule Auto Update of mods and server
-- Automatic Updates
 
 **_ISSUES and FEEDBACK_**
 
@@ -79,7 +81,7 @@ No documentation (yet) but you can always check the original FAST2 documentation
 **_SOCIAL_**  
 Twitter :
 [@FoxliderAtom](https://twitter.com/FoxliderAtom)  
-![Twitter Follow](https://img.shields.io/twitter/follow/FoxliderAtom.svg?label=Follow&logo=twitter&style=flat-square)
+![Twitter Follow](https://img.shields.io/twitter/follow/FoxliderAtom.svg?label=Follow&logo=twitter&style=for-the-badge)
 
 Bohemia Interactive Forums :  
 [Fox's Arma Server Tool Extended Rewrite (FASTER)](https://forums.bohemia.net/forums/topic/224359-foxs-arma-server-tool-extended-rewrite-faster/)

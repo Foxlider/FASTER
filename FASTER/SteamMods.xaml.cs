@@ -27,31 +27,37 @@ namespace FASTER
         }
 
         private void SteamMods_Loaded(object sender, RoutedEventArgs e)
-        { UpdateModsView(); }
+        {
+            if (Properties.Options.Default.steamMods?.SteamMods?.Count > 0 && Properties.Options.Default.checkForModUpdates)
+            {
+                IUpdateProgress.IsIndeterminate = true;
+                IProgressInfo.Visibility        = Visibility.Visible;
+                IProgressInfo.Content           = "Checking for updates...";
+
+                Thread thread = new Thread(() =>
+                {
+                    SteamMod.UpdateInfoFromSteam();
+                    Dispatcher.Invoke(() =>
+                    {
+                        IModView.IsEnabled              = true;
+                        IProgressInfo.Visibility        = Visibility.Collapsed;
+                        IUpdateProgress.IsIndeterminate = false;
+                    });
+
+                    UpdateModsView();
+                });
+                thread.SetApartmentState(ApartmentState.STA);
+                thread.Start();
+            }
+        }
 
         private void SteamMods_Initialized(object sender, EventArgs e)
         {
             if (Properties.Options.Default.steamMods?.SteamMods?.Count > 0 && Properties.Options.Default.checkForModUpdates)
             {
                 IUpdateProgress.IsIndeterminate = true;
-                IModView.IsEnabled = false;
-                IProgressInfo.Visibility = Visibility.Visible;
-                IProgressInfo.Content = "Checking for updates...";
-                
-                Thread thread = new Thread(() =>
-                {
-                    SteamMod.UpdateInfoFromSteam();
-                    Dispatcher.Invoke(() =>
-                    {
-                        IModView.IsEnabled = true;
-                        IProgressInfo.Visibility = Visibility.Collapsed;
-                        IUpdateProgress.IsIndeterminate = false;
-                    });
-                    
-                    UpdateModsView();
-                } );
-                thread.SetApartmentState(ApartmentState.STA);
-                thread.Start();
+                IModView.IsEnabled              = false;
+                IProgressInfo.Visibility        = Visibility.Visible;
             }
         }
 

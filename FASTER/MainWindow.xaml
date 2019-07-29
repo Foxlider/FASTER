@@ -29,7 +29,7 @@
         <WindowChrome CaptionHeight="0"/>
     </WindowChrome.WindowChrome>
 
-    <Grid Margin="0,0,0,0">
+    <Grid Margin="0,0,0,0" x:Name="MainGrid">
         <Grid>
             <!--Grid Definitions-->
             <Grid.ColumnDefinitions>
@@ -213,7 +213,7 @@
                                     <Label Margin="2" Content="Steam CMD Output"/>
                                     <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="-8"/>
                                 </StackPanel>
-                                <RichTextBox Name="ISteamOutputBox" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" IsReadOnly="True" IsEnabled="False" Background="LightGray" Margin="10,10,10,0" VerticalScrollBarVisibility="Auto">
+                                <RichTextBox Name="ISteamOutputBox" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" IsReadOnly="True" IsEnabled="True" Background="LightGray" Margin="10,10,10,0" VerticalScrollBarVisibility="Visible">
                                     <RichTextBox.Resources>
                                         <Style TargetType="{x:Type Paragraph}">
                                             <Setter Property="Margin" Value="0"/>
@@ -248,7 +248,7 @@
                 </TabItem>
             </TabControl>
 
-            <md:DialogHost Visibility="Hidden" Grid.ColumnSpan="2" Grid.Row="0" Grid.RowSpan="4" Grid.Column="0" IsOpen="False" Name="IMessageDialog" Margin="-2,27,-2,-1.96">
+            <md:DialogHost Visibility="Visible" Grid.ColumnSpan="2" Grid.Row="0" Grid.RowSpan="4" Grid.Column="0" IsOpen="False" Name="IMessageDialog" Margin="-2,27,-2,-1.96">
                 <md:DialogHost.DialogContent>
                     <StackPanel Grid.Row="1" Margin="15" Name="ImessageDialogContent">
                         <TextBlock Name="IMessageDialogText" TextWrapping="Wrap" TextAlignment="Center" Margin="10">
@@ -259,7 +259,7 @@
                 </md:DialogHost.DialogContent>
             </md:DialogHost>
 
-            <md:DialogHost Visibility="Hidden" Grid.ColumnSpan="2" Grid.Row="0" Grid.RowSpan="4" Grid.Column="0" IsOpen="False" Name="INewServerProfileDialog" Margin="-2,27,-2,-1.96">
+            <md:DialogHost Visibility="Visible" Grid.ColumnSpan="2" Grid.Row="0" Grid.RowSpan="4" Grid.Column="0" IsOpen="False" Name="INewServerProfileDialog" Margin="-2,27,-2,-1.96">
                 <md:DialogHost.DialogContent>
                     <Grid Name="INewServerProfileDialogContent">
                         <!--Grid Definitions-->
@@ -281,7 +281,7 @@
                 </md:DialogHost.DialogContent>
             </md:DialogHost>
 
-            <md:DialogHost Visibility="Hidden" Grid.ColumnSpan="2" Grid.Row="0" Grid.RowSpan="4" Grid.Column="0" IsOpen="False" Name="ISteamGuardDialog" Margin="-2,27,-2,-1.96">
+            <md:DialogHost Visibility="Visible" Grid.ColumnSpan="2" Grid.Row="0" Grid.RowSpan="4" Grid.Column="0" IsOpen="False" Name="ISteamGuardDialog" Margin="-2,27,-2,-1.96">
                 <md:DialogHost.DialogContent>
                     <Grid Name="ISteamGuardDialogContent">
                         <!--Grid Definitions-->
@@ -303,7 +303,7 @@
                 </md:DialogHost.DialogContent>
             </md:DialogHost>
 
-            <md:DialogHost Visibility="Hidden" Grid.ColumnSpan="2" Grid.Row="0" Grid.RowSpan="4" Grid.Column="0" IsOpen="False" Name="IToolsDialog" Margin="-2,27,-2,-1.96">
+            <md:DialogHost Visibility="Visible"  Grid.ColumnSpan="2" Grid.Row="0" Grid.RowSpan="4" Grid.Column="0" IsOpen="False" Name="IToolsDialog" Margin="-2,27,-2,-1.96">
                 <md:DialogHost.DialogContent>
                     <Grid Name="IToolsDialogContent">
                         <Grid.ColumnDefinitions>
