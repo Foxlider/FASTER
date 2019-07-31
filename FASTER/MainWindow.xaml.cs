@@ -60,14 +60,23 @@ namespace FASTER
             MouseDown += IDialog_LostFocus;
             ISteamOutputBox.MouseLeftButtonDown  += IDialog_LostFocus;
 
-            if (Properties.Options.Default.checkForAppUpdates)
+            try
             {
-                AutoUpdater.ReportErrors = true;
-                AutoUpdater.LetUserSelectRemindLater = false;
-                AutoUpdater.RemindLaterTimeSpan = RemindLaterFormat.Minutes;
-                AutoUpdater.RemindLaterAt = 1;
-                AutoUpdater.RunUpdateAsAdmin = true;
-                AutoUpdater.Start("https://raw.githubusercontent.com/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite/master/FASTER_Version.xml");
+                if (Properties.Options.Default.checkForAppUpdates)
+                {
+                    AutoUpdater.ReportErrors = true;
+                    AutoUpdater.LetUserSelectRemindLater = false;
+                    AutoUpdater.RemindLaterTimeSpan = RemindLaterFormat.Minutes;
+                    AutoUpdater.RemindLaterAt = 1;
+                    AutoUpdater.RunUpdateAsAdmin = true;
+                    AutoUpdater.Start("https://raw.githubusercontent.com/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite/master/FASTER_Version.xml");
+                }
+            }
+            catch
+            {
+                MessageBox.Show(
+                    @"There is a problem reaching update server please check your internet connection and try again later.",
+                    @"Update check failed", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 

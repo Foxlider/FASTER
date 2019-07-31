@@ -19,30 +19,42 @@ namespace FASTER.Models
         // Gets mod info for multiple mods
         public static List<JObject> GetFileDetails(List<int> modIds)
         {
-            string mods = string.Empty;
-            foreach (var modId in modIds)
-                mods = mods + V + modIds.IndexOf(modId) + V1 + modId;
+            try {
+                string mods = string.Empty;
+                foreach (var modId in modIds)
+                    mods = mods + V + modIds.IndexOf(modId) + V1 + modId;
 
-            var response = ApiCall("https://api.steampowered.com/IPublishedFileService/GetDetails/v1?key=" + SteamApiKey + mods);
+                var response = ApiCall("https://api.steampowered.com/IPublishedFileService/GetDetails/v1?key=" + SteamApiKey + mods);
 
-            return response.SelectTokens("response.publishedfiledetails[*]").Cast<JObject>().ToList();
+                return response.SelectTokens("response.publishedfiledetails[*]").Cast<JObject>().ToList();
+            }
+            catch
+            { return null; }
         }
 
         // Get mod info for single mod
         public static JObject GetSingleFileDetails(int modId)
         {
-            var response = ApiCall("https://api.steampowered.com/IPublishedFileService/GetDetails/v1?key=" + SteamApiKey + V3 + modId);
-
-            return (JObject) response?.SelectToken("response.publishedfiledetails[0]");
+            try
+            {
+                var response = ApiCall("https://api.steampowered.com/IPublishedFileService/GetDetails/v1?key=" + SteamApiKey + V3 + modId);
+                return (JObject) response?.SelectToken("response.publishedfiledetails[0]");
+            }
+            catch
+            { return null; }
         }
 
 
         // Gets user info
         public static JObject GetPlayerSummaries(string playerId)
         {
-            var response = ApiCall("https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v1?key=" + SteamApiKey + V2 + playerId);
-
-            return (JObject) response.SelectToken("response.players.player[0]");
+            try
+            {
+                var response = ApiCall("https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v1?key=" + SteamApiKey + V2 + playerId);
+                return (JObject) response.SelectToken("response.players.player[0]");
+            }
+            catch
+            { return null; }
         }
 
 
