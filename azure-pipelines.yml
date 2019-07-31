@@ -14,31 +14,37 @@ variables:
 
 steps:
 - task: UseDotNet@2
+  displayName: 'Use DotNet 3.0'
   inputs:
     packageType: 'sdk'
-    version: '3.0.100-preview6-012264'
+    version: '3.0.100-preview7-012821'
     includePreviewVersions: true
+
 - task: DotNetCoreCLI@2
+  displayName: 'Dotnet Restore'
   inputs:
     command: 'restore'
     feedsToUse: 'select'
+
 - script: dotnet build --configuration $(buildConfiguration)
-  displayName: 'dotnet build $(buildConfiguration)'
+  displayName: 'Dotnet Build $(buildConfiguration)'
 
 - task: DotNetCoreCLI@2
-  displayName: 'dotnet publish $(buildConfiguration) x64'
+  displayName: 'Dotnet Publish $(buildConfiguration) x64'
   inputs:
     command: publish
     publishWebProjects: False
     arguments: '--configuration $(BuildConfiguration) -r win-x64 --self-contained true --output $(Build.ArtifactStagingDirectory)\Release_x64'
     zipAfterPublish: True
+
 - task: DotNetCoreCLI@2
-  displayName: 'dotnet publish $(buildConfiguration) x86'
+  displayName: 'Dotnet Publish $(buildConfiguration) x86'
   inputs:
     command: publish
     publishWebProjects: False
     arguments: '--configuration $(BuildConfiguration) -r win-x86 --self-contained true --output $(Build.ArtifactStagingDirectory)\Release_x86'
     zipAfterPublish: True
+
 - task: PublishBuildArtifacts@1
   displayName: 'Publish artifacts'
   inputs:
