@@ -923,7 +923,7 @@ namespace FASTER
             if (Directory.Exists(Path.Combine(Properties.Options.Default.serverPath, "mpmissions")))
             {
                 foreach (var mission in Directory.GetFiles(Path.Combine(Properties.Options.Default.serverPath, "mpmissions"), "*.pbo"))
-                { newMissions.Add(mission.Replace(Path.Combine(Properties.Options.Default.serverPath, "mpmissions"), "")); }
+                { newMissions.Add(mission.Replace(Path.Combine(Properties.Options.Default.serverPath, "mpmissions") + "\\", "")); }
 
                 foreach (var mission in newMissions.ToList())
                 {
