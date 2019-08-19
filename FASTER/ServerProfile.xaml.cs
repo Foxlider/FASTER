@@ -785,8 +785,8 @@ namespace FASTER
             configLines.Add($"onUnsignedData = \"{IOnUnsignedData.Text}\";");
             configLines.Add($"regularCheck = \"{IRegularCheck.Text}\";");
             configLines.Add("admins[]= {");
-            lines = Functions.GetLinesCollectionFromTextBox(IAdminUids);
-            foreach (var line in lines)
+            var admins = IAdminUids.Text.Split('\n');
+            foreach (var line in admins)
             {
                 _replace = line;
                 _replace = _replace.Replace("\r", "").Replace("\n", "");
@@ -870,7 +870,7 @@ namespace FASTER
                 $"\t\t\ttacticalPing={ITacticalPing.IsChecked};",
                 $"\t\t\tweaponInfo={IWeaponInfo.Text};",
                 $"\t\t\tstanceIndicator={IStanceIndicator.Text};",
-                $"\t\t\ttaminaBar={IStaminaBar.IsChecked};",
+                $"\t\t\tstaminaBar={IStaminaBar.IsChecked};",
                 $"\t\t\tweaponCrosshair={ICrosshair.IsChecked};",
                 $"\t\t\tvisionAid={IVisualAids.IsChecked};",
                 $"\t\t\tthirdPersonView={IThirdPerson.IsChecked};",
@@ -938,9 +938,7 @@ namespace FASTER
                     var checkedMission = checkedMissions.FirstOrDefault(m => (string)m.Content == mission.Replace(".pbo", ""))?.IsChecked ?? false;
                     IMissionCheckList.Items.Add(new CheckBox { Content = mission.Replace(".pbo", "") , IsChecked = checkedMission});
                 }
-
                 
-
                 IMissionCheckList.SelectedValue = checkedMissions;
             }
         }
