@@ -1,4 +1,5 @@
-﻿using FASTER.Models;
+﻿using AutoUpdaterDotNET;
+using FASTER.Models;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
 using System.Collections.Generic;
@@ -15,7 +16,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
-using AutoUpdaterDotNET;
 
 namespace FASTER
 {
@@ -128,17 +128,13 @@ namespace FASTER
 
         private void MainWindow_Loaded(object sender, EventArgs e)
         {
+            //FIX for issue #22 : not necessary
+            //CheckAdmin();
+
             LoadSteamUpdaterSettings();
-            if (Properties.Options.Default.checkForAppUpdates)
-            {
-                //TODO SET THIS UP
-                //AutoUpdater.Start("https://deploy.kestrelstudios.co.uk/updates/FAST2.xml");
-            }
 
             if (InstallSteamCmd)
-            {
-                InstallSteam();
-            }
+            { InstallSteam(); }
         }
 
         private void MainWindow_Closing(object sender, EventArgs e)
@@ -353,6 +349,29 @@ namespace FASTER
         private void ISteamSettings_Changed(object sender, RoutedEventArgs e)
         { UpdateSteamUpdaterSettings(); }
         #endregion
+
+        //FIX for issue #22 not necessary
+        //private void CheckAdmin()
+        //{
+        //    try
+        //    {
+        //        using WindowsIdentity identity = WindowsIdentity.GetCurrent();
+        //        WindowsPrincipal principal = new WindowsPrincipal(identity);
+        //        if (!principal.IsInRole(WindowsBuiltInRole.Administrator))
+        //        {
+        //            var dialogResult =
+        //                MessageBox.Show(
+        //                    "Application must be run as administrator",
+        //                    "Error",
+        //                    MessageBoxButton.OK,
+        //                    MessageBoxImage.Error);
+        //            //if (dialogResult == MessageBoxResult.OK)
+        //            //    Close();
+        //        }
+        //    }
+        //    catch (Exception e)
+        //    { throw new ApplicationException("Unable to determine administrator or root status", e); }
+        //}
 
         public void LoadServerProfiles()
         {
@@ -679,18 +698,17 @@ namespace FASTER
                 switch (type)
                 {
                     case "addon":
+                        ISteamOutputBox.Document.Blocks.Clear();
                         ISteamOutputBox.AppendText("Starting SteamCMD to update Addon" + Environment.NewLine + Environment.NewLine);
                         break;
                     case "server:":
+                        ISteamOutputBox.Document.Blocks.Clear();
                         ISteamOutputBox.AppendText("Starting SteamCMD to update Server" + Environment.NewLine);
                         break;
                     case "install":
-                        clear = false;
+                        ISteamOutputBox.AppendText("Proceeding with install" + Environment.NewLine);
                         break;
                 }
-
-                if (clear)
-                { ISteamOutputBox.Document.Blocks.Clear(); }
 
                 tasks.Add(Task.Run(() =>
                 {
@@ -704,14 +722,23 @@ namespace FASTER
                     _oProcess.StartInfo.RedirectStandardInput  = true;
                     _oProcess.EnableRaisingEvents              = true;
 
-                    _oProcess.OutputDataReceived += ProcessOutputEvent;
-                    _oProcess.ErrorDataReceived += ProcessOutputEvent;
+                    //Not realtime for some reason
+                    //_oProcess.OutputDataReceived += ProcessOutputEvent;
+                    //_oProcess.ErrorDataReceived += ProcessOutputEvent;
 
                     _oProcess.Start();
-                    //ProcessOutputCharacters(_oProcess.StandardError);
-                    //ProcessOutputCharacters(_oProcess.StandardOutput);
-                    _oProcess.BeginErrorReadLine();
-                    _oProcess.BeginOutputReadLine();
+
+                    //NOTES
+                    // SteamCMD's behaviour is quite odd. It seems like it does not keep on writing new lines but is almost constantly editing lines
+                    // Editing lines does not trigger the OutputDataReceived event and nor does the Input header
+                    // (When asking for user input, the programmer can add a header specifying what to enter and it is not picked by the event until the user entered its text)
+
+                    ProcessOutputCharacters(_oProcess.StandardError);
+                    ProcessOutputCharacters(_oProcess.StandardOutput);
+
+                    //TO USE WITH _oProcess.DataReceived ONLY
+                    //_oProcess.BeginErrorReadLine();
+                    //_oProcess.BeginOutputReadLine();
 
                     _oProcess.WaitForExit();
                 }));

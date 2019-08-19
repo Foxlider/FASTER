@@ -53,7 +53,7 @@ namespace FASTER
 
         private void About_Loaded(object sender, RoutedEventArgs e)
         {
-            string rev = $"{(char)(Assembly.GetExecutingAssembly().GetName().Version.Build + 97)}";
+            string rev = $"{(char)(Assembly.GetExecutingAssembly().GetName().Version.Build + 96)}";
             #if DEBUG
                 rev += "-DEV";
             #endif
