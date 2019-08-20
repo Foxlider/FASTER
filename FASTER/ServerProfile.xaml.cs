@@ -96,7 +96,9 @@ namespace FASTER
             IStaminaBar.IsChecked = profile.StaminaBar;
             ICameraShake.IsChecked = profile.CameraShake;
             IVisualAids.IsChecked = profile.VisualAids;
-            IExtendedMapContent.IsChecked = profile.ExtendedMapContent;
+            IMapContentFriendly.IsChecked = profile.MapContentFriendly;
+            IMapContentEnemy.IsChecked = profile.MapContentEnemy;
+            IMapContentMines.IsChecked = profile.MapContentMines;
             ICommands.Text = profile.Commands;
             IVonId.IsChecked = profile.VonId;
             IKilledBy.IsChecked = profile.KilledBy;
@@ -616,7 +618,9 @@ namespace FASTER
             profile.StaminaBar = IStaminaBar.IsChecked ?? false;
             profile.CameraShake = ICameraShake.IsChecked ?? false;
             profile.VisualAids = IVisualAids.IsChecked ?? false;
-            profile.ExtendedMapContent = IExtendedMapContent.IsChecked ?? false;
+            profile.MapContentFriendly = IMapContentFriendly.IsChecked ?? false;
+            profile.MapContentEnemy = IMapContentEnemy.IsChecked ?? false;
+            profile.MapContentMines = IMapContentMines.IsChecked ?? false;
             profile.Commands = ICommands.Text;
             profile.VonId = IVonId.IsChecked ?? false;
             profile.KilledBy = IKilledBy.IsChecked ?? false;
@@ -785,8 +789,8 @@ namespace FASTER
             configLines.Add($"onUnsignedData = \"{IOnUnsignedData.Text}\";");
             configLines.Add($"regularCheck = \"{IRegularCheck.Text}\";");
             configLines.Add("admins[]= {");
-            lines = Functions.GetLinesCollectionFromTextBox(IAdminUids);
-            foreach (var line in lines)
+            var admins = IAdminUids.Text.Split('\n');
+            foreach (var line in admins)
             {
                 _replace = line;
                 _replace = _replace.Replace("\r", "").Replace("\n", "");
@@ -819,6 +823,13 @@ namespace FASTER
                     }
                 }
                 configLines.Add("};");
+            }
+
+            if (IEnableAdditionalParams.IsChecked ?? false)
+            {
+                var moreParams = Functions.GetLinesCollectionFromTextBox(IAdditionalParams);
+                foreach (var line in moreParams)
+                { configLines.Add(line); }
             }
 
             // "drawingInMap = 0;"
@@ -870,7 +881,7 @@ namespace FASTER
                 $"\t\t\ttacticalPing={ITacticalPing.IsChecked};",
                 $"\t\t\tweaponInfo={IWeaponInfo.Text};",
                 $"\t\t\tstanceIndicator={IStanceIndicator.Text};",
-                $"\t\t\ttaminaBar={IStaminaBar.IsChecked};",
+                $"\t\t\tstaminaBar={IStaminaBar.IsChecked};",
                 $"\t\t\tweaponCrosshair={ICrosshair.IsChecked};",
                 $"\t\t\tvisionAid={IVisualAids.IsChecked};",
                 $"\t\t\tthirdPersonView={IThirdPerson.IsChecked};",
@@ -878,7 +889,9 @@ namespace FASTER
                 $"\t\t\tcoreTable={IScoreTable.IsChecked};",
                 $"\t\t\tdeathMessages={IKilledBy.IsChecked};",
                 $"\t\t\tvonID={IVonId.IsChecked};",
-                $"\t\t\tmapContent={IExtendedMapContent.IsChecked};",
+                $"\t\t\tmapContentFriendly={IMapContentFriendly.IsChecked};",
+                $"\t\t\tmapContentEnemy={IMapContentEnemy.IsChecked};",
+                $"\t\t\tmapContentMines={IMapContentMines.IsChecked};",
                 $"\t\t\tautoReport={IAutoReporting.IsChecked};",
                 $"\t\t\tmultipleSaves={IMultipleSaves.IsChecked};",
                 "\t\t};",
@@ -923,7 +936,7 @@ namespace FASTER
             if (Directory.Exists(Path.Combine(Properties.Options.Default.serverPath, "mpmissions")))
             {
                 foreach (var mission in Directory.GetFiles(Path.Combine(Properties.Options.Default.serverPath, "mpmissions"), "*.pbo"))
-                { newMissions.Add(mission.Replace(Path.Combine(Properties.Options.Default.serverPath, "mpmissions"), "")); }
+                { newMissions.Add(mission.Replace(Path.Combine(Properties.Options.Default.serverPath, "mpmissions") + "\\", "")); }
 
                 foreach (var mission in newMissions.ToList())
                 {
@@ -938,9 +951,7 @@ namespace FASTER
                     var checkedMission = checkedMissions.FirstOrDefault(m => (string)m.Content == mission.Replace(".pbo", ""))?.IsChecked ?? false;
                     IMissionCheckList.Items.Add(new CheckBox { Content = mission.Replace(".pbo", "") , IsChecked = checkedMission});
                 }
-
                 
-
                 IMissionCheckList.SelectedValue = checkedMissions;
             }
         }

@@ -38,7 +38,7 @@
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="30"/>
-                <RowDefinition Height="Auto" MinHeight="146.956"/>
+                <RowDefinition Height="Auto" MinHeight="145"/>
                 <RowDefinition/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
@@ -87,7 +87,7 @@
 
 
             <!--Menu Column - Main Items-->
-            <StackPanel Grid.Column="0" Grid.Row="1" TextElement.FontSize="13" Margin="0,1,0,5">
+            <StackPanel Grid.Column="0" Grid.Row="1" TextElement.FontSize="13" Margin="0,1,0,4.956">
                 <Label  Content="Main" Margin="10,10,0,0" FontWeight="Bold" FontStyle="Italic"/>
                 <ListBox Name="IMainMenuItems" HorizontalAlignment="Stretch" Margin="0,0,0,10">
                     <ListBoxItem Name="ISteamUpdaterTabSelect" Content="Steam Updater"/>
@@ -97,9 +97,15 @@
             </StackPanel>
 
             <!--Menu Column - Server Profiles-->
-            <StackPanel Grid.Column="0" Grid.Row="1" TextElement.FontSize="13" Margin="0,140,0,0" Grid.RowSpan="2">
-                <Rectangle Fill="Black" Height="2"/>
-                <Grid>
+            <Grid Grid.Column="0" Grid.Row="2" TextElement.FontSize="13" Margin="0,2,0,5">
+                <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Rectangle Grid.Row="0" Fill="Black" Height="2"/>
+                    
+                <Grid Grid.Row="1">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
                         <ColumnDefinition Width="40"/>
@@ -109,12 +115,11 @@
                         <md:PackIcon Kind="Plus" Height="10" Width="10" />
                     </Button>
                 </Grid>
-
-                <ListBox Name="IServerProfilesMenu" HorizontalAlignment="Stretch" Margin="0,0,0,10"/>
-            </StackPanel>
+                <ListBox Grid.Row="2" Name="IServerProfilesMenu" HorizontalAlignment="Stretch"  Margin="10,0,0,2" ScrollViewer.VerticalScrollBarVisibility="Auto" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch"/>
+            </Grid>
 
             <!--Menu Column - Other Items-->
-            <StackPanel Grid.Column="0" Grid.Row="2" TextElement.FontSize="13" Margin="1,290,0,0">
+            <StackPanel Grid.Column="0" Grid.Row="3" TextElement.FontSize="13" Margin="1,0,0,0.04">
                 <Rectangle Fill="Black" Height="2"/>
                 <Label Content="Other" Margin="10,10,0,0" FontWeight="Bold" FontStyle="Italic" />
                 <ListBox Name="IOtherMenuItems" HorizontalAlignment="Stretch" Margin="0,0,0,10">
@@ -124,7 +129,7 @@
             </StackPanel>
 
             <!--Content Column - Main Content-->
-            <TabControl Grid.Column="1" Grid.Row="1" Grid.RowSpan="2" Name="IMainContent" Margin="0,0,0,4"  BorderBrush="{x:Null}" >
+            <TabControl Grid.Column="1" Grid.Row="1" Grid.RowSpan="3" Name="IMainContent" Margin="0,0,10,10.04"  BorderBrush="{x:Null}" >
                 <!--Removes Visible Tab Controls-->
                 <TabControl.ItemContainerStyle>
                     <Style TargetType="{x:Type TabItem}">

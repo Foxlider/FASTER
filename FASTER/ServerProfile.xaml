@@ -536,18 +536,19 @@
                             <CheckBox Name="IMultipleSaves" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" Style="{StaticResource MaterialDesignCheckBox}" Content="Multiple Saves" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
                             <CheckBox Name="IThirdPerson" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="4" Style="{StaticResource MaterialDesignCheckBox}" Content="3rd Person Camera" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
                             <CheckBox Name="IScoreTable" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="4" Style="{StaticResource MaterialDesignCheckBox}" Content="Score Table" Margin="5,5,10,5"  Foreground="{DynamicResource MaterialDesignBody}"/>
-                            <CheckBox Name="IExtendedMapContent" Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="12" Style="{StaticResource MaterialDesignCheckBox}" Content="Extended Map Content" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <CheckBox Name="IMapContentFriendly" Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="5" Style="{StaticResource MaterialDesignCheckBox}" Content="Map Content Frienly" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
 
                             <CheckBox Name="IStaminaBar" Grid.Row="1" Grid.Column="4" Grid.ColumnSpan="4" Style="{StaticResource MaterialDesignCheckBox}" Content="Stamina Bar" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
                             <CheckBox Name="ICameraShake" Grid.Row="2" Grid.Column="4" Grid.ColumnSpan="4" Style="{StaticResource MaterialDesignCheckBox}" Content="Camera Shake" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
                             <CheckBox Name="IVisualAids" Grid.Row="3" Grid.Column="4" Grid.ColumnSpan="4" Style="{StaticResource MaterialDesignCheckBox}" Content="Visual Aids" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
                             <CheckBox Name="ITacticalPing" Grid.Row="4" Grid.Column="4" Grid.ColumnSpan="4" Style="{StaticResource MaterialDesignCheckBox}" Content="Tactical Ping" Margin="5,5,10,5"  Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <CheckBox Name="IMapContentEnemy" Grid.Row="5" Grid.Column="4" Grid.ColumnSpan="5" Style="{StaticResource MaterialDesignCheckBox}" Content="Map Content Enemy" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
 
                             <CheckBox Name="IVonId" Grid.Row="1" Grid.Column="8" Grid.ColumnSpan="4" Style="{StaticResource MaterialDesignCheckBox}" Content="VON ID" Margin="5,5,10,5"  Foreground="{DynamicResource MaterialDesignBody}"/>
                             <CheckBox Name="IKilledBy" Grid.Row="2" Grid.Column="8" Grid.ColumnSpan="4" Style="{StaticResource MaterialDesignCheckBox}" Content="Killed By" Margin="5,5,10,5"  Foreground="{DynamicResource MaterialDesignBody}"/>
                             <CheckBox Name="ICrosshair" Grid.Row="3" Grid.Column="8" Grid.ColumnSpan="4" Style="{StaticResource MaterialDesignCheckBox}" Content="Crosshair" Margin="5,5,10,5"  Foreground="{DynamicResource MaterialDesignBody}"/>
                             <CheckBox Name="IAutoReporting" Grid.Row="4" Grid.Column="8" Grid.ColumnSpan="4" Style="{StaticResource MaterialDesignCheckBox}" Content="Auto Reporting" Margin="5,5,10,5"  Foreground="{DynamicResource MaterialDesignBody}"/>
-
+                            <CheckBox Name="IMapContentMines" Grid.Row="5" Grid.Column="8" Grid.ColumnSpan="5" Style="{StaticResource MaterialDesignCheckBox}" Content="Map Content Mines" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
 
                             <ComboBox Name="IGroupIndicators" Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="3" materialDesign:HintAssist.Hint="Group Indicators" Foreground="{DynamicResource MaterialDesignBody}" IsEditable="False" Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="5">
                                 <ComboBoxItem IsSelected="True">Never</ComboBoxItem>
@@ -653,8 +654,9 @@
             <TabItem Header="Performance + Scripting">
                 <Grid Margin="5">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="1.5*"/>
                         <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="1*"/>
                     </Grid.ColumnDefinitions>
 
                     <materialDesign:Card Grid.Column="0" Grid.Row="0" Margin="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
@@ -730,6 +732,21 @@
                             <TextBox Name="IOnDifferentData" Grid.Row="2" Grid.Column="1" AcceptsReturn="True" TextWrapping="Wrap" materialDesign:HintAssist.Hint="onDifferentData" Margin="10" Foreground="{DynamicResource MaterialDesignBody}"/>
                             <TextBox Name="IOnUnsignedData" Grid.Row="3" Grid.Column="1" AcceptsReturn="True" TextWrapping="Wrap" materialDesign:HintAssist.Hint="onUnsignedData" Margin="10" Foreground="{DynamicResource MaterialDesignBody}"/>
                             <TextBox Name="IRegularCheck" Grid.Row="4" Grid.Column="1" AcceptsReturn="True" TextWrapping="Wrap" materialDesign:HintAssist.Hint="regularCheck" Margin="10" Foreground="{DynamicResource MaterialDesignBody}"/>
+                        </Grid>
+                    </materialDesign:Card>
+                    <materialDesign:Card Grid.Row="0" Grid.Column="2" Margin="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"></RowDefinition>
+                                <RowDefinition></RowDefinition>
+                                <RowDefinition Height="Auto"></RowDefinition>
+                            </Grid.RowDefinitions>
+                                <StackPanel Grid.Row="0">
+                                    <Label Margin="2" Content="Additional Parameters"/>
+                                <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="-8"/>
+                            </StackPanel>
+                            <TextBox Name="IAdditionalParams" Grid.Row="1" Margin="10" AcceptsReturn="True" TextWrapping="Wrap" Style="{StaticResource MaterialDesignFloatingHintTextBox}" materialDesign:HintAssist.Hint="Config file parameters" VerticalScrollBarVisibility="Auto" Foreground="{DynamicResource MaterialDesignBody}" Background="{DynamicResource MaterialDesignTextAreaInactiveBorder}"/>
+                            <CheckBox Name="IEnableAdditionalParams" Grid.Row="2" Margin="10,0,10,10" ToolTip="May be unsafe to add those parameters.\nUse with caution." Style="{StaticResource MaterialDesignCheckBox}" Content="Add parameters to config" Foreground="{DynamicResource MaterialDesignBody}"/>
                         </Grid>
                     </materialDesign:Card>
                 </Grid>
