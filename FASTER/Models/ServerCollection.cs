@@ -158,7 +158,10 @@ namespace FASTER.Models
         public bool StaminaBar { get; set; }
         public bool CameraShake { get; set; }
         public bool VisualAids { get; set; }
-        public bool ExtendedMapContent { get; set; }
+        //public bool ExtendedMapContent { get; set; }
+        public bool MapContentFriendly { get; set; }
+        public bool MapContentEnemy { get; set; }
+        public bool MapContentMines { get; set; }
         public string Commands { get; set; } = "Never";
         public bool VonId { get; set; }
         public bool KilledBy { get; set; }

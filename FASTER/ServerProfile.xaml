@@ -536,18 +536,19 @@
                             <CheckBox Name="IMultipleSaves" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" Style="{StaticResource MaterialDesignCheckBox}" Content="Multiple Saves" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
                             <CheckBox Name="IThirdPerson" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="4" Style="{StaticResource MaterialDesignCheckBox}" Content="3rd Person Camera" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
                             <CheckBox Name="IScoreTable" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="4" Style="{StaticResource MaterialDesignCheckBox}" Content="Score Table" Margin="5,5,10,5"  Foreground="{DynamicResource MaterialDesignBody}"/>
-                            <CheckBox Name="IExtendedMapContent" Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="12" Style="{StaticResource MaterialDesignCheckBox}" Content="Extended Map Content" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <CheckBox Name="IMapContentFriendly" Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="5" Style="{StaticResource MaterialDesignCheckBox}" Content="Map Content Frienly" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
 
                             <CheckBox Name="IStaminaBar" Grid.Row="1" Grid.Column="4" Grid.ColumnSpan="4" Style="{StaticResource MaterialDesignCheckBox}" Content="Stamina Bar" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
                             <CheckBox Name="ICameraShake" Grid.Row="2" Grid.Column="4" Grid.ColumnSpan="4" Style="{StaticResource MaterialDesignCheckBox}" Content="Camera Shake" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
                             <CheckBox Name="IVisualAids" Grid.Row="3" Grid.Column="4" Grid.ColumnSpan="4" Style="{StaticResource MaterialDesignCheckBox}" Content="Visual Aids" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
                             <CheckBox Name="ITacticalPing" Grid.Row="4" Grid.Column="4" Grid.ColumnSpan="4" Style="{StaticResource MaterialDesignCheckBox}" Content="Tactical Ping" Margin="5,5,10,5"  Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <CheckBox Name="IMapContentEnemy" Grid.Row="5" Grid.Column="4" Grid.ColumnSpan="5" Style="{StaticResource MaterialDesignCheckBox}" Content="Map Content Enemy" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
 
                             <CheckBox Name="IVonId" Grid.Row="1" Grid.Column="8" Grid.ColumnSpan="4" Style="{StaticResource MaterialDesignCheckBox}" Content="VON ID" Margin="5,5,10,5"  Foreground="{DynamicResource MaterialDesignBody}"/>
                             <CheckBox Name="IKilledBy" Grid.Row="2" Grid.Column="8" Grid.ColumnSpan="4" Style="{StaticResource MaterialDesignCheckBox}" Content="Killed By" Margin="5,5,10,5"  Foreground="{DynamicResource MaterialDesignBody}"/>
                             <CheckBox Name="ICrosshair" Grid.Row="3" Grid.Column="8" Grid.ColumnSpan="4" Style="{StaticResource MaterialDesignCheckBox}" Content="Crosshair" Margin="5,5,10,5"  Foreground="{DynamicResource MaterialDesignBody}"/>
                             <CheckBox Name="IAutoReporting" Grid.Row="4" Grid.Column="8" Grid.ColumnSpan="4" Style="{StaticResource MaterialDesignCheckBox}" Content="Auto Reporting" Margin="5,5,10,5"  Foreground="{DynamicResource MaterialDesignBody}"/>
-
+                            <CheckBox Name="IMapContentMines" Grid.Row="5" Grid.Column="8" Grid.ColumnSpan="5" Style="{StaticResource MaterialDesignCheckBox}" Content="Map Content Mines" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
 
                             <ComboBox Name="IGroupIndicators" Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="3" materialDesign:HintAssist.Hint="Group Indicators" Foreground="{DynamicResource MaterialDesignBody}" IsEditable="False" Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="5">
                                 <ComboBoxItem IsSelected="True">Never</ComboBoxItem>

@@ -96,7 +96,9 @@ namespace FASTER
             IStaminaBar.IsChecked = profile.StaminaBar;
             ICameraShake.IsChecked = profile.CameraShake;
             IVisualAids.IsChecked = profile.VisualAids;
-            IExtendedMapContent.IsChecked = profile.ExtendedMapContent;
+            IMapContentFriendly.IsChecked = profile.MapContentFriendly;
+            IMapContentEnemy.IsChecked = profile.MapContentEnemy;
+            IMapContentMines.IsChecked = profile.MapContentMines;
             ICommands.Text = profile.Commands;
             IVonId.IsChecked = profile.VonId;
             IKilledBy.IsChecked = profile.KilledBy;
@@ -616,7 +618,9 @@ namespace FASTER
             profile.StaminaBar = IStaminaBar.IsChecked ?? false;
             profile.CameraShake = ICameraShake.IsChecked ?? false;
             profile.VisualAids = IVisualAids.IsChecked ?? false;
-            profile.ExtendedMapContent = IExtendedMapContent.IsChecked ?? false;
+            profile.MapContentFriendly = IMapContentFriendly.IsChecked ?? false;
+            profile.MapContentEnemy = IMapContentEnemy.IsChecked ?? false;
+            profile.MapContentMines = IMapContentMines.IsChecked ?? false;
             profile.Commands = ICommands.Text;
             profile.VonId = IVonId.IsChecked ?? false;
             profile.KilledBy = IKilledBy.IsChecked ?? false;
@@ -885,7 +889,9 @@ namespace FASTER
                 $"\t\t\tcoreTable={IScoreTable.IsChecked};",
                 $"\t\t\tdeathMessages={IKilledBy.IsChecked};",
                 $"\t\t\tvonID={IVonId.IsChecked};",
-                $"\t\t\tmapContent={IExtendedMapContent.IsChecked};",
+                $"\t\t\tmapContentFriendly={IMapContentFriendly.IsChecked};",
+                $"\t\t\tmapContentEnemy={IMapContentEnemy.IsChecked};",
+                $"\t\t\tmapContentMines={IMapContentMines.IsChecked};",
                 $"\t\t\tautoReport={IAutoReporting.IsChecked};",
                 $"\t\t\tmultipleSaves={IMultipleSaves.IsChecked};",
                 "\t\t};",
