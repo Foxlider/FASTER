@@ -821,6 +821,13 @@ namespace FASTER
                 configLines.Add("};");
             }
 
+            if (IEnableAdditionnalParams.IsChecked ?? false)
+            {
+                var moreParams = Functions.GetLinesCollectionFromTextBox(IAdditionnalParams);
+                foreach (var line in moreParams)
+                { configLines.Add(line); }
+            }
+
             // "drawingInMap = 0;"
             // "forceRotorLibSimulation = 0;"
             // "forcedDifficulty = ""regular"";"
