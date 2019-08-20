@@ -678,7 +678,6 @@ namespace FASTER
         {
             if (ReadyToUpdate())
             {
-                bool clear = true;
                 _oProcess = new Process();
                 ISteamProgressBar.Value = 0;
                 ISteamCancelButton.IsEnabled = true;

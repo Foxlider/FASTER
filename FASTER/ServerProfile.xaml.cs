@@ -825,9 +825,9 @@ namespace FASTER
                 configLines.Add("};");
             }
 
-            if (IEnableAdditionnalParams.IsChecked ?? false)
+            if (IEnableAdditionalParams.IsChecked ?? false)
             {
-                var moreParams = Functions.GetLinesCollectionFromTextBox(IAdditionnalParams);
+                var moreParams = Functions.GetLinesCollectionFromTextBox(IAdditionalParams);
                 foreach (var line in moreParams)
                 { configLines.Add(line); }
             }

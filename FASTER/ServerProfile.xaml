@@ -742,11 +742,11 @@
                                 <RowDefinition Height="Auto"></RowDefinition>
                             </Grid.RowDefinitions>
                                 <StackPanel Grid.Row="0">
-                                    <Label Margin="2" Content="Additionnal Parameters"/>
+                                    <Label Margin="2" Content="Additional Parameters"/>
                                 <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="-8"/>
                             </StackPanel>
-                            <TextBox Name="IAdditionnalParams" Grid.Row="1" Margin="10" AcceptsReturn="True" TextWrapping="Wrap" Style="{StaticResource MaterialDesignFloatingHintTextBox}" materialDesign:HintAssist.Hint="Config file parameters" VerticalScrollBarVisibility="Auto" Foreground="{DynamicResource MaterialDesignBody}" Background="{DynamicResource MaterialDesignTextAreaInactiveBorder}"/>
-                            <CheckBox Name="IEnableAdditionnalParams" Grid.Row="2" Margin="10,0,10,10" ToolTip="May be unsafe to add those parameters.\nUse with caution." Style="{StaticResource MaterialDesignCheckBox}" Content="Add parameters to config" Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <TextBox Name="IAdditionalParams" Grid.Row="1" Margin="10" AcceptsReturn="True" TextWrapping="Wrap" Style="{StaticResource MaterialDesignFloatingHintTextBox}" materialDesign:HintAssist.Hint="Config file parameters" VerticalScrollBarVisibility="Auto" Foreground="{DynamicResource MaterialDesignBody}" Background="{DynamicResource MaterialDesignTextAreaInactiveBorder}"/>
+                            <CheckBox Name="IEnableAdditionalParams" Grid.Row="2" Margin="10,0,10,10" ToolTip="May be unsafe to add those parameters.\nUse with caution." Style="{StaticResource MaterialDesignCheckBox}" Content="Add parameters to config" Foreground="{DynamicResource MaterialDesignBody}"/>
                         </Grid>
                     </materialDesign:Card>
                 </Grid>
