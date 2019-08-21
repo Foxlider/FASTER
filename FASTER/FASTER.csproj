@@ -25,7 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Autoupdater.NET.Official" Version="1.5.4" />
+    <PackageReference Include="Autoupdater.NET.Official" Version="1.5.5" />
     <PackageReference Include="Dragablz" Version="0.0.3.203" />
     <PackageReference Include="MaterialDesignColors" Version="1.2.0" />
     <PackageReference Include="MaterialDesignThemes" Version="2.6.0" />

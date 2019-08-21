@@ -40,7 +40,8 @@ namespace FASTER
             //this.Loaded += MainWindow_Initialized;
             Loaded += MainWindow_Loaded;
             Closing += MainWindow_Closing;
-            
+
+            IMessageDialogClose.Click += IMessageDialogClose_Click;
             ISteamUserBox.LostFocus += ISteamSettings_Changed;
             ISteamPassBox.LostFocus += ISteamSettings_Changed;
             IServerDirBox.LostFocus += ISteamSettings_Changed;
@@ -254,6 +255,12 @@ namespace FASTER
             }
         }
 
+        private void IMessageDialogClose_Click(object sender, RoutedEventArgs e)
+        {
+            IMessageDialog.IsOpen = false;
+            MainGrid.Effect       = null;
+        }
+
         private void IToolsDialog_KeyUp(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Escape)
@@ -317,15 +324,35 @@ namespace FASTER
         {
             IToolsDialog.IsOpen = false;
             MainGrid.Effect = null;
-            if (!string.IsNullOrEmpty(IServerDirBox.Text))
-                Process.Start(IServerDirBox.Text);
+            if (!string.IsNullOrEmpty(IServerDirBox.Text) && Directory.Exists(IServerDirBox.Text))
+            {
+                try
+                {
+                    ProcessStartInfo startInfo = new ProcessStartInfo { Arguments = IServerDirBox.Text, FileName = "explorer.exe" };
+                    Process.Start(startInfo);
+                }
+                catch
+                { MessageBox.Show($" Could not open {IServerDirBox.Text}"); }
+            }
+            else
+            { MessageBox.Show($"{IServerDirBox.Text} Directory does not exist!"); }
         }
         private void OpenSteamCmdLocation_Click(object sender, RoutedEventArgs e)
         {
             IToolsDialog.IsOpen = false;
             MainGrid.Effect = null;
-            if (!string.IsNullOrEmpty(ISteamDirBox.Text))
-                Process.Start(ISteamDirBox.Text);
+            if (!string.IsNullOrEmpty(ISteamDirBox.Text) && Directory.Exists(ISteamDirBox.Text))
+            {
+                try
+                {
+                    ProcessStartInfo startInfo = new ProcessStartInfo { Arguments = ISteamDirBox.Text, FileName = "explorer.exe" };
+                    Process.Start(startInfo);
+                }
+                catch
+                { MessageBox.Show($" Could not open {ISteamDirBox.Text}"); }
+            }
+            else
+            { MessageBox.Show($"{ISteamDirBox.Text} Directory does not exist!"); }
         }
 
         private void IToolsDialog_MouseLeftButtonUp(object sender, RoutedEventArgs e)
