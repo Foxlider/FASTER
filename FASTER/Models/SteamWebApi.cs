@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -67,15 +68,20 @@ namespace FASTER.Models
             WebResponse response = null;
             try
             { response = request.GetResponse(); }
-            catch (WebException)
+            catch (WebException e)
             {
                 try
                 {
                     MainWindow.Instance.Dispatcher.InvokeAsync(() =>
                     {
-                        MainWindow.Instance.IMessageDialogText.Text = "Cannot reach Steam API \n\nCheck https://steamstat.us/";
+                        MainWindow.Instance.IMessageDialogText.Text = "Cannot reach Steam API \n\nCheck https://steamstat.us/ \n\nPlease check the Windows Event Logs for more informations";
                         MainWindow.Instance.IMessageDialog.IsOpen = true;
                     });
+
+                    // Create an EventLog instance and assign its source.
+                    using EventLog eventLog = new EventLog("Application")
+                    { Source = "Application" };
+                    eventLog.WriteEntry($"Could not reach Steam API : \n[WebException] {e.Message}\n\n{e.StackTrace}", EventLogEntryType.Error, 166, 1);
                 }
                 catch (Exception) //In case it was called before Initialized in SteamMods_Initialized() and could not connect to SteamAPI
                 { MessageBox.Show("Cannot reach Steam API \n\nCheck https://steamstat.us/", "Steam API Error", MessageBoxButton.OK, MessageBoxImage.Warning); }

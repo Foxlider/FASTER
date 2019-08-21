@@ -214,7 +214,7 @@ namespace FASTER.Models
             if (Properties.Options.Default.steamMods.SteamMods.Count > 0)
             {
                 var currentMods = Properties.Options.Default.steamMods.SteamMods;
-
+                var failnum = 0;
                 foreach (var steamMod in Properties.Options.Default.steamMods.SteamMods)
                 {
                     if (!steamMod.PrivateMod)
@@ -225,14 +225,24 @@ namespace FASTER.Models
                         {
                             var updateMod = currentMods.Find(c => c.WorkshopId == steamMod.WorkshopId);
 
-                            updateMod.Name = modInfo.Item1;
-                            updateMod.Author = modInfo.Item2;
+                            updateMod.Name             = modInfo.Item1;
+                            updateMod.Author           = modInfo.Item2;
                             updateMod.SteamLastUpdated = modInfo.Item3;
 
                             if (updateMod.SteamLastUpdated > updateMod.LocalLastUpdated & updateMod.Status != "Download Not Complete")
-                                updateMod.Status = "Update Required";
-                            else if (updateMod.Status != "Download Not Complete")
-                                updateMod.Status = "Up to Date";
+                                updateMod.Status                                                   = "Update Required";
+                            else if (updateMod.Status != "Download Not Complete") updateMod.Status = "Up to Date";
+                        }
+                        else
+                            failnum++;
+                        if (failnum >= 3)
+                        {
+                            MainWindow.Instance.Dispatcher?.InvokeAsync(() =>
+                            {
+                                MainWindow.Instance.IMessageDialogText.Text = "Could not reach stream after 3 attempts.\n\nPlease check the event logs.";
+                                MainWindow.Instance.IMessageDialog.IsOpen   = true;
+                            });
+                            break;
                         }
                     }
                 }
