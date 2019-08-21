@@ -519,6 +519,8 @@ namespace FASTER
                 ISteamOutputBox.AppendText("\nFile Downloading...");
                 const string url = "https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip";
                 string       fileName = (Properties.Options.Default.steamCMDPath + "\\steamcmd.zip");
+                if (!Directory.Exists(Properties.Options.Default.steamCMDPath))
+                    Directory.CreateDirectory(Properties.Options.Default.steamCMDPath);
                 WebClient    client   = new WebClient();
                 client.DownloadFileCompleted += SteamDownloadCompleted;
                 client.DownloadFileAsync(new Uri(url), fileName);
