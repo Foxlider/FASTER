@@ -17,6 +17,8 @@ namespace FASTER
             IWindowDragBar.MouseDown += WindowDragBar_MouseDown;
             if (Properties.Options.Default.firstRun)
             { Properties.Options.Default.Upgrade(); }
+            if (Properties.Options.Default.clearSettings)
+                Properties.Options.Default.Reset();
 
             if (Properties.Options.Default.steamMods == null)
             {
@@ -77,8 +79,8 @@ namespace FASTER
             settings.firstRun = false;
             settings.Save();
             //TODO THIS
-            //if (IInstallSteamCheck.IsChecked != null && (bool)IInstallSteamCheck.IsChecked)
-            //{ MainWindow.Instance.InstallSteamCMD = true; }
+            if (IInstallSteamCheck.IsChecked != null && (bool)IInstallSteamCheck.IsChecked)
+            { MainWindow.Instance.InstallSteamCmd = true; }
 
             MainWindow.Instance.Show();
             Close();

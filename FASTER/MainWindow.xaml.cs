@@ -143,8 +143,8 @@ namespace FASTER
             //UpdateSteamUpdaterSettings();
             Properties.Options.Default.Save();
 
-            if(Properties.Options.Default.clearSettings)
-            { Properties.Options.Default.Reset(); }
+            //if(Properties.Options.Default.clearSettings)
+            //{ Properties.Options.Default.Reset(); }
         }
         #endregion
 
