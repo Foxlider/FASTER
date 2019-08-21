@@ -49,6 +49,8 @@ namespace FASTER
                 thread.SetApartmentState(ApartmentState.STA);
                 thread.Start();
             }
+            else
+            { UpdateModsView(); }
         }
 
         private void SteamMods_Initialized(object sender, EventArgs e)
