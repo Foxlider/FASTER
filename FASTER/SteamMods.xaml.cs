@@ -37,7 +37,7 @@ namespace FASTER
                 Thread thread = new Thread(() =>
                 {
                     SteamMod.UpdateInfoFromSteam();
-                    Dispatcher.Invoke(() =>
+                    Dispatcher?.Invoke(() =>
                     {
                         IModView.IsEnabled              = true;
                         IProgressInfo.Visibility        = Visibility.Collapsed;
@@ -55,12 +55,10 @@ namespace FASTER
 
         private void SteamMods_Initialized(object sender, EventArgs e)
         {
-            if (Properties.Options.Default.steamMods?.SteamMods?.Count > 0 && Properties.Options.Default.checkForModUpdates)
-            {
-                IUpdateProgress.IsIndeterminate = true;
-                IModView.IsEnabled              = false;
-                IProgressInfo.Visibility        = Visibility.Visible;
-            }
+            if (!(Properties.Options.Default.steamMods?.SteamMods?.Count > 0) || !Properties.Options.Default.checkForModUpdates) return;
+            IUpdateProgress.IsIndeterminate = true;
+            IModView.IsEnabled              = false;
+            IProgressInfo.Visibility        = Visibility.Visible;
         }
 
         private void IActionButtons_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -77,7 +75,7 @@ namespace FASTER
             Thread thread = new Thread(() =>
             {
                 Thread.Sleep(600);
-                Dispatcher.Invoke(() =>
+                Dispatcher?.Invoke(() =>
                 {
                     ((ListBox)sender).SelectedItem = null;
                 });
@@ -242,7 +240,7 @@ namespace FASTER
                     string steamCmd     = MainWindow.Instance.ISteamDirBox.Text                                                                                                              + @"\steamcmd.exe";
                     string steamCommand = "+login " + MainWindow.Instance.ISteamUserBox.Text + " " + MainWindow.Instance.ISteamPassBox.Password + " +workshop_download_item 107410 " + modId + " validate +quit";
 
-                    List<string> modIDs = new List<string>()
+                    List<string> modIDs = new List<string>
                     {
                         modId.ToString()
                     };
@@ -287,12 +285,12 @@ namespace FASTER
 
         private void UpdateModsView()
         {
-            Dispatcher.Invoke(() => IModView.Items.Clear());
+            Dispatcher?.Invoke(() => IModView.Items.Clear());
 
             if (Properties.Options.Default.steamMods != null)
             {
                 foreach (var steamMod in Properties.Options.Default.steamMods.SteamMods)
-                { Dispatcher.Invoke(() => IModView.Items.Add(steamMod)); }
+                { Dispatcher?.Invoke(() => IModView.Items.Add(steamMod)); }
             }
         }
 

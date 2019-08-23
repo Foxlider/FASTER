@@ -9,7 +9,7 @@ using System.Windows;
 
 namespace FASTER.Models
 {
-    class SteamWebApi
+    internal static class SteamWebApi
     {
         private const string SteamApiKey = "1669DCBF5FD494B07B85358D12FFB85B";
         private const string V = "&publishedfileids[";
@@ -72,7 +72,7 @@ namespace FASTER.Models
             {
                 try
                 {
-                    MainWindow.Instance.Dispatcher.InvokeAsync(() =>
+                    MainWindow.Instance.Dispatcher?.InvokeAsync(() =>
                     {
                         MainWindow.Instance.IMessageDialogText.Text = "Cannot reach Steam API \n\nCheck https://steamstat.us/ \n\nPlease check the Windows Event Logs for more informations";
                         MainWindow.Instance.IMessageDialog.IsOpen = true;

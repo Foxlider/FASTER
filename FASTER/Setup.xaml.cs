@@ -38,11 +38,9 @@ namespace FASTER
             //if (Properties.Settings.Default.Servers == null)
             //{ Properties.Settings.Default.Servers = new ServerCollection(); }
 
-            if (!Properties.Options.Default.firstRun)
-            {
-                MainWindow.Instance.Show();
-                Close();
-            }
+            if (Properties.Options.Default.firstRun) return;
+            MainWindow.Instance.Show();
+            Close();
         }
 
         private void IWindowCloseButton_Click(object sender, RoutedEventArgs e)
@@ -58,13 +56,11 @@ namespace FASTER
         private void DirButton_Click(object sender, RoutedEventArgs e)
         {
             string path = MainWindow.Instance.SelectFolder();
-            if (!string.IsNullOrEmpty(path))
-            {
-                if ((Equals(sender, ISteamDirButton)))
-                { ISteamDirBox.Text = path; }
-                else if (Equals(sender, IServerDirButton))
-                { IServerDirBox.Text = path; }
-            }
+            if (string.IsNullOrEmpty(path)) return;
+            if (Equals(sender, ISteamDirButton))
+            { ISteamDirBox.Text = path; }
+            else if (Equals(sender, IServerDirButton))
+            { IServerDirBox.Text = path; }
         }
 
         private void IContinueButton_Click(object sender, RoutedEventArgs e)

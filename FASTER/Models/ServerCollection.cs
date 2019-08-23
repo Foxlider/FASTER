@@ -5,7 +5,7 @@ using System.Xml.Serialization;
 
 namespace FASTER.Models
 {
-    [Serializable()]
+    [Serializable]
     public class ServerCollection
     {
         [XmlElement(Order = 1)]
@@ -85,7 +85,7 @@ namespace FASTER.Models
         }
     }
 
-    [Serializable()]
+    [Serializable]
     public class ServerProfile
     {
         private ServerProfile()

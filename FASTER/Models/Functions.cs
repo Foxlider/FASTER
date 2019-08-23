@@ -10,7 +10,7 @@ using System.Xml.Serialization;
 
 namespace FASTER.Models
 {
-    class Functions
+    internal static class Functions
     {
         public static void CheckSettings()
         {
@@ -61,7 +61,7 @@ namespace FASTER.Models
                 return null;
 
             var serializer = new XmlSerializer(typeof(T));
-            var settings = new XmlWriterSettings()
+            var settings = new XmlWriterSettings
             {
                 Encoding = new UnicodeEncoding(false, false),
                 Indent = true,
@@ -93,13 +93,11 @@ namespace FASTER.Models
 
         public static string SelectFile(string filter)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog()
+            OpenFileDialog openFileDialog = new OpenFileDialog
             {
                 Filter = filter
             };
-            if (openFileDialog.ShowDialog() == true)
-                return openFileDialog.FileName;
-            return null;
+            return openFileDialog.ShowDialog() == true ? openFileDialog.FileName : null;
         }
 
         // Takes any string and removes illegal characters
@@ -112,13 +110,10 @@ namespace FASTER.Models
                 input = input.Replace(replacement + replacement, replacement);
                 return input;
             }
-            else
-            {
-                // input = Regex.Replace(input, "[^a-zA-Z0-9\-_]", replacement) >> "-" is allowed
-                input = Regex.Replace(input, "[^a-zA-Z0-9_]", replacement);
-                input = input.Replace(replacement + replacement, replacement);
-                return input;
-            }
+            // input = Regex.Replace(input, "[^a-zA-Z0-9\-_]", replacement) >> "-" is allowed
+            input = Regex.Replace(input, "[^a-zA-Z0-9_]", replacement);
+            input = input.Replace(replacement + replacement, replacement);
+            return input;
         }
     }
 }

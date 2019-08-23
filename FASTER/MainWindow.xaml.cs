@@ -94,7 +94,7 @@ namespace FASTER
         #region event handlers
         
         #region Custom Window Bar Click events
-        public void WindowCloseButton_Click(object sender, RoutedEventArgs e)
+        private void WindowCloseButton_Click(object sender, RoutedEventArgs e)
         { Close(); }
 
         private void WindowMinimizeButton_Click(object sender, RoutedEventArgs e)
@@ -102,10 +102,15 @@ namespace FASTER
 
         private void IWindowMaximizeButton_Click(object sender, RoutedEventArgs e)
         {
-            if (WindowState == WindowState.Maximized)
-                WindowState = WindowState.Normal;
-            else if (WindowState == WindowState.Normal)
-                WindowState = WindowState.Maximized;
+            switch (WindowState)
+            {
+                case WindowState.Maximized:
+                    WindowState = WindowState.Normal;
+                    break;
+                case WindowState.Normal:
+                    WindowState = WindowState.Maximized;
+                    break;
+            }
         }
 
         private void WindowDragBar_MouseDown(object sender, MouseButtonEventArgs e)
@@ -367,7 +372,7 @@ namespace FASTER
         private void ISubmitCode_Click(object sender, RoutedEventArgs e)
         {
             var oStreamWriter = _oProcess.StandardInput;
-            Dispatcher.Invoke(() =>
+            Dispatcher?.Invoke(() =>
             { oStreamWriter.Write(ISteamGuardCode.Text + "\n"); });
             ISteamGuardDialog.IsOpen = false;
             MainGrid.Effect = null;
@@ -412,7 +417,7 @@ namespace FASTER
 
                 foreach (var profile in currentProfiles.ServerProfiles)
                 {
-                    ListBoxItem newItem = new ListBoxItem()
+                    ListBoxItem newItem = new ListBoxItem
                     {
                         Name    = profile.SafeName,
                         Content = profile.DisplayName
@@ -434,7 +439,7 @@ namespace FASTER
                     {
                         var tabControls = new ServerProfile(profile);
 
-                        TabItem newTab = new TabItem()
+                        TabItem newTab = new TabItem
                         {
                             Name    = profile.SafeName,
                             Content = tabControls,
@@ -449,13 +454,11 @@ namespace FASTER
 
         public bool ReadyToUpdate()
         {
-            if (string.IsNullOrEmpty(ISteamDirBox.Text)
-             || string.IsNullOrEmpty(ISteamUserBox.Text)
-             || string.IsNullOrEmpty(ISteamPassBox.Password)
-             || string.IsNullOrEmpty(IServerDirBox.Text)
-             || !File.Exists(Properties.Options.Default.steamCMDPath + "\\steamcmd.exe"))
-            { return false; }
-            return true;
+            return !string.IsNullOrEmpty(ISteamDirBox.Text) 
+                && !string.IsNullOrEmpty(ISteamUserBox.Text) 
+                && !string.IsNullOrEmpty(ISteamPassBox.Password) 
+                && !string.IsNullOrEmpty(IServerDirBox.Text) 
+                && File.Exists(Properties.Options.Default.steamCMDPath + "\\steamcmd.exe");
         }
 
         // Opens Folder select dialog and returns selected path
@@ -477,9 +480,9 @@ namespace FASTER
                 ShowPlacesList            = true
             };
 
-            if (dlg.ShowDialog() == CommonFileDialogResult.Ok)
-            { return dlg.FileName; }
-            return null;
+            return dlg.ShowDialog() == CommonFileDialogResult.Ok 
+                ? dlg.FileName 
+                : null;
         }
 
         private void UpdateSteamUpdaterSettings()
@@ -517,11 +520,10 @@ namespace FASTER
                 ISteamOutputBox.Document.Blocks.Clear();
                 ISteamOutputBox.AppendText("Installing SteamCMD");
                 ISteamOutputBox.AppendText("\nFile Downloading...");
-                const string url = "https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip";
-                string       fileName = (Properties.Options.Default.steamCMDPath + "\\steamcmd.zip");
-                if (!Directory.Exists(Properties.Options.Default.steamCMDPath))
-                    Directory.CreateDirectory(Properties.Options.Default.steamCMDPath);
-                WebClient    client   = new WebClient();
+                const string url      = "https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip";
+                string       fileName = Properties.Options.Default.steamCMDPath + "\\steamcmd.zip";
+                if (!Directory.Exists(Properties.Options.Default.steamCMDPath)) Directory.CreateDirectory(Properties.Options.Default.steamCMDPath);
+                WebClient client = new WebClient();
                 client.DownloadFileCompleted += SteamDownloadCompleted;
                 client.DownloadFileAsync(new Uri(url), fileName);
             }
@@ -556,7 +558,7 @@ namespace FASTER
         {
             if (_oProcess != null)
             {
-                Dispatcher.Invoke(() =>
+                Dispatcher?.Invoke(() =>
                 {
                     ISteamOutputBox.AppendText(text + "\n");
                     ISteamOutputBox.ScrollToEnd();
@@ -568,7 +570,7 @@ namespace FASTER
                     Thread t = new Thread(() =>
                     {
                         threadSlept = 0;
-                        bool _localRunThread = true;
+                        bool _localRunThread;
                         do
                         {
                             Thread.Sleep(500);
@@ -579,7 +581,7 @@ namespace FASTER
                         while (_localRunThread && threadSlept < 10000);
                         if (_localRunThread)
                         {
-                            Dispatcher.Invoke(() =>
+                            Dispatcher?.Invoke(() =>
                             {
                                 ISteamGuardDialog.IsOpen = true;
                                 BlurEffect bme = new BlurEffect();
@@ -601,7 +603,7 @@ namespace FASTER
 
                 if (text.EndsWith("..."))
                 {
-                    Dispatcher.Invoke(() =>
+                    Dispatcher?.Invoke(() =>
                     {
                         ISteamOutputBox.AppendText(Environment.NewLine);
                     });
@@ -609,7 +611,7 @@ namespace FASTER
 
                 if (text.Contains("Two-factor code") )
                 {
-                    Dispatcher.Invoke(() =>
+                    Dispatcher?.Invoke(() =>
                     {
                         ISteamGuardDialog.IsOpen = true;
                         BlurEffect bme = new BlurEffect();
@@ -620,12 +622,12 @@ namespace FASTER
                 if (text.Contains("Update state"))
                 {
                     int    counter  = text.IndexOf(":", StringComparison.Ordinal);
-                    string progress = text.Substring((counter + 2), 2);
+                    string progress = text.Substring(counter + 2, 2);
                     int    progressValue;
                     if (progress.Contains(".")) { int.TryParse(progress.Substring(0, 1), out progressValue); }
                     else { int.TryParse(progress,                                        out progressValue); }
 
-                    Dispatcher.Invoke(() =>
+                    Dispatcher?.Invoke(() =>
                     {
                         ISteamProgressBar.IsIndeterminate = false;
                         ISteamProgressBar.Value = progressValue;
@@ -634,7 +636,7 @@ namespace FASTER
 
                 if (text.Contains("Success"))
                 {
-                    Dispatcher.Invoke(() =>
+                    Dispatcher?.Invoke(() =>
                     {
                         ISteamProgressBar.Value = 100;
                     });
@@ -642,7 +644,7 @@ namespace FASTER
 
                 if (text.Contains("Timeout"))
                 {
-                    Dispatcher.Invoke(() =>
+                    Dispatcher?.Invoke(() =>
                     {
                         Instance.IMessageDialog.IsOpen = true;
                         BlurEffect bme = new BlurEffect();
@@ -839,14 +841,14 @@ namespace FASTER
             }
         }
 
-        private void ProcessOutputEvent(object sender, DataReceivedEventArgs e)
-        {
-            if (!string.IsNullOrEmpty(e.Data))
-            {
-                if (!e.Data.Contains("\\src\\common\\contentmanifest.cpp (650) : Assertion Failed: !m_bIsFinalized*"))
-                { UpdateTextBox(e.Data); }
-            }
-        }
+        //private void ProcessOutputEvent(object sender, DataReceivedEventArgs e)
+        //{
+        //    if (!string.IsNullOrEmpty(e.Data))
+        //    {
+        //        if (!e.Data.Contains("\\src\\common\\contentmanifest.cpp (650) : Assertion Failed: !m_bIsFinalized*"))
+        //        { UpdateTextBox(e.Data); }
+        //    }
+        //}
         
         private static void CheckModUpdatesComplete(IReadOnlyCollection<string> modIds)
         {

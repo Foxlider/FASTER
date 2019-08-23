@@ -4,7 +4,7 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <UseWPF>true</UseWPF>
-    <Version>1.2.5</Version>
+    <Version>1.2.6</Version>
     <Authors>Keelah Fox</Authors>
     <Company>FoxliCorp.</Company>
     <Description>Fox's Arma Server Tool Extended Rewrite</Description>
@@ -25,7 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Autoupdater.NET.Official" Version="1.5.5" />
+    <PackageReference Include="Autoupdater.NET.Official" Version="1.5.6" />
     <PackageReference Include="Dragablz" Version="0.0.3.203" />
     <PackageReference Include="MaterialDesignColors" Version="1.2.0" />
     <PackageReference Include="MaterialDesignThemes" Version="2.6.0" />
