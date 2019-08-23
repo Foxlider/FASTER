@@ -119,7 +119,7 @@ namespace FASTER
         private void IResetButton_Click(object sender, RoutedEventArgs e)
         {
             Properties.Options.Default.clearSettings = true;
-            System.Diagnostics.Process.Start(Application.ResourceAssembly.Location);
+            Properties.Options.Default.Save();
             Application.Current.Shutdown();
         }
 

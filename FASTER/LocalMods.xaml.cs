@@ -39,7 +39,7 @@ namespace FASTER
             Thread thread = new Thread(() =>
             {
                 Thread.Sleep(600);
-                Dispatcher.Invoke(() =>
+                Dispatcher?.Invoke(() =>
                 {
                     ((ListBox)sender).SelectedItem = null;
                 });
