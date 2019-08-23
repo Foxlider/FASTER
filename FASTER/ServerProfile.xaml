@@ -548,7 +548,7 @@
                             <CheckBox Name="IKilledBy" Grid.Row="2" Grid.Column="8" Grid.ColumnSpan="4" Style="{StaticResource MaterialDesignCheckBox}" Content="Killed By" Margin="5,5,10,5"  Foreground="{DynamicResource MaterialDesignBody}"/>
                             <CheckBox Name="ICrosshair" Grid.Row="3" Grid.Column="8" Grid.ColumnSpan="4" Style="{StaticResource MaterialDesignCheckBox}" Content="Crosshair" Margin="5,5,10,5"  Foreground="{DynamicResource MaterialDesignBody}"/>
                             <CheckBox Name="IAutoReporting" Grid.Row="4" Grid.Column="8" Grid.ColumnSpan="4" Style="{StaticResource MaterialDesignCheckBox}" Content="Auto Reporting" Margin="5,5,10,5"  Foreground="{DynamicResource MaterialDesignBody}"/>
-                            <CheckBox Name="IMapContentMines" Grid.Row="5" Grid.Column="8" Grid.ColumnSpan="5" Style="{StaticResource MaterialDesignCheckBox}" Content="Map Content Mines" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <CheckBox Name="IMapContentMines" Grid.Row="5" Grid.Column="8" Grid.ColumnSpan="4" Style="{StaticResource MaterialDesignCheckBox}" Content="Map Content Mines" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
 
                             <ComboBox Name="IGroupIndicators" Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="3" materialDesign:HintAssist.Hint="Group Indicators" Foreground="{DynamicResource MaterialDesignBody}" IsEditable="False" Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="5">
                                 <ComboBoxItem IsSelected="True">Never</ComboBoxItem>

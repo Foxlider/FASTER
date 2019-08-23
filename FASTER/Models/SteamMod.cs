@@ -7,7 +7,7 @@ using System.Xml.Serialization;
 
 namespace FASTER.Models
 {
-    [Serializable()]
+    [Serializable]
     public class SteamModCollection
     {
         [XmlElement(Order = 1)]
@@ -64,7 +64,7 @@ namespace FASTER.Models
         }
     }
 
-    [Serializable()]
+    [Serializable]
     public class SteamMod
     {
         private SteamMod()
@@ -197,16 +197,12 @@ namespace FASTER.Models
             string author = null;
             int steamUpdateTime = 0;
             if (modInfo != null)
-            {
-                author = SteamWebApi.GetPlayerSummaries(modInfo.SelectToken("creator").ToString())?.SelectToken("personaname")?.ToString();
-                steamUpdateTime = int.Parse(modInfo.SelectToken("time_updated")?.ToString());
-            }
+            { author = SteamWebApi.GetPlayerSummaries(modInfo.SelectToken("creator").ToString())?.SelectToken("personaname")?.ToString(); }
+            if (modInfo?.SelectToken("time_updated") != null)
+            {  steamUpdateTime = int.Parse(modInfo.SelectToken("time_updated").ToString()); }
             var modName = modInfo?.SelectToken("title").ToString();
             
-
-            if (modInfo?.SelectToken("creator_appid").ToString() == "107410")
-                return new Tuple<string, string, int>(modName, author, steamUpdateTime);
-            return null;
+            return modInfo?.SelectToken("creator_appid").ToString() == "107410" ? new Tuple<string, string, int>(modName, author, steamUpdateTime) : null;
         }
 
         public static void UpdateInfoFromSteam()
@@ -214,7 +210,7 @@ namespace FASTER.Models
             if (Properties.Options.Default.steamMods.SteamMods.Count > 0)
             {
                 var currentMods = Properties.Options.Default.steamMods.SteamMods;
-
+                var failnum = 0;
                 foreach (var steamMod in Properties.Options.Default.steamMods.SteamMods)
                 {
                     if (!steamMod.PrivateMod)
@@ -225,14 +221,24 @@ namespace FASTER.Models
                         {
                             var updateMod = currentMods.Find(c => c.WorkshopId == steamMod.WorkshopId);
 
-                            updateMod.Name = modInfo.Item1;
-                            updateMod.Author = modInfo.Item2;
+                            updateMod.Name             = modInfo.Item1;
+                            updateMod.Author           = modInfo.Item2;
                             updateMod.SteamLastUpdated = modInfo.Item3;
 
                             if (updateMod.SteamLastUpdated > updateMod.LocalLastUpdated & updateMod.Status != "Download Not Complete")
-                                updateMod.Status = "Update Required";
-                            else if (updateMod.Status != "Download Not Complete")
-                                updateMod.Status = "Up to Date";
+                                updateMod.Status                                                   = "Update Required";
+                            else if (updateMod.Status != "Download Not Complete") updateMod.Status = "Up to Date";
+                        }
+                        else
+                            failnum++;
+                        if (failnum >= 3)
+                        {
+                            MainWindow.Instance.Dispatcher?.InvokeAsync(() =>
+                            {
+                                MainWindow.Instance.IMessageDialogText.Text = "Could not reach stream after 3 attempts.\n\nPlease check the event logs.";
+                                MainWindow.Instance.IMessageDialog.IsOpen   = true;
+                            });
+                            break;
                         }
                     }
                 }

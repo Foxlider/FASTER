@@ -173,7 +173,7 @@ namespace FASTER
             var thread = new Thread(() =>
             {
                 Thread.Sleep(600);
-                Dispatcher.Invoke(() =>
+                Dispatcher?.Invoke(() =>
                 {
                     ((ListBox) sender).SelectedItem = null;
                 });
@@ -247,7 +247,7 @@ namespace FASTER
             var thread = new Thread(() =>
             {
                 Thread.Sleep(600);
-                Dispatcher.Invoke(() =>
+                Dispatcher?.Invoke(() =>
                 {
                     ((ListBox)sender).SelectedItem = null;
                 });
@@ -536,23 +536,23 @@ namespace FASTER
             {
                 object profileName = Functions.SafeName(IDisplayName.Content.ToString());
                 string path = _profilesPath;
-                string profilePath = (path
-                            + (profileName + "\\"));
+                string profilePath = path
+                                   + (profileName + "\\");
                 if (!Directory.Exists(path))
                 { Directory.CreateDirectory(path); }
 
                 if (!Directory.Exists(profilePath))
                 { Directory.CreateDirectory(profilePath); }
 
-                if (!File.Exists((profilePath + (profileName + "_config.cfg"))))
+                if (!File.Exists(profilePath + (profileName + "_config.cfg")))
                 {
-                    var cfg = File.Create((profilePath + (profileName + "_config.cfg")));
+                    var cfg = File.Create(profilePath + (profileName + "_config.cfg"));
                     cfg.Close();
                 }
 
-                if (!File.Exists((profilePath + (profileName + "_basic.cfg"))))
+                if (!File.Exists(profilePath + (profileName + "_basic.cfg")))
                 {
-                    var cfg = File.Create((profilePath + (profileName + "_basic.cfg")));
+                    var cfg = File.Create(profilePath + (profileName + "_basic.cfg"));
                     cfg.Close();
                 }
 
@@ -734,7 +734,7 @@ namespace FASTER
                 _replace = line;
                 _replace = _replace.Replace("\r", "").Replace("\n", "");
 
-                configLines.Add(lines.IndexOf(_replace) == (lines.Count - 1) ? $"\t\"{_replace}\"" : $"\t\"{_replace}\",");
+                configLines.Add(lines.IndexOf(_replace) == lines.Count - 1 ? $"\t\"{_replace}\"" : $"\t\"{_replace}\",");
             }
 
             configLines.Add("};");
@@ -773,8 +773,15 @@ namespace FASTER
 
             if (IKickOnSlowNetworkEnabled.IsChecked ?? false)
             {
-                if ((IKickOnSlowNetwork.Text      == "Log")) { configLines.Add("kickClientsOnSlowNetwork[] = { 0, 0, 0, 0 };"); }
-                else if ((IKickOnSlowNetwork.Text == "Log & Kick")) { configLines.Add("kickClientsOnSlowNetwork[] = { 1, 1, 1, 1 };"); }
+                switch (IKickOnSlowNetwork.Text)
+                {
+                    case "Log":
+                        configLines.Add("kickClientsOnSlowNetwork[] = { 0, 0, 0, 0 };");
+                        break;
+                    case "Log & Kick":
+                        configLines.Add("kickClientsOnSlowNetwork[] = { 1, 1, 1, 1 };");
+                        break;
+                }
             }
 
             if (IServerConsoleLogEnabled.IsChecked ?? false) { configLines.Add("logFile = \"server_console.log\";"); }
@@ -841,7 +848,7 @@ namespace FASTER
             #endregion
 
             #region BASIC FILE CREATION
-            List<string> basicLines = new List<string>()
+            List<string> basicLines = new List<string>
             {
                 "adapter = -1;",
                 "3D_Performance=1;",
@@ -935,8 +942,8 @@ namespace FASTER
 
             if (Directory.Exists(Path.Combine(Properties.Options.Default.serverPath, "mpmissions")))
             {
-                foreach (var mission in Directory.GetFiles(Path.Combine(Properties.Options.Default.serverPath, "mpmissions"), "*.pbo"))
-                { newMissions.Add(mission.Replace(Path.Combine(Properties.Options.Default.serverPath, "mpmissions") + "\\", "")); }
+                newMissions.AddRange(Directory.GetFiles(Path.Combine(Properties.Options.Default.serverPath, "mpmissions"), "*.pbo")
+                                              .Select(mission => mission.Replace(Path.Combine(Properties.Options.Default.serverPath, "mpmissions") + "\\", "")));
 
                 foreach (var mission in newMissions.ToList())
                 {
@@ -991,14 +998,10 @@ namespace FASTER
 
             if (Directory.Exists(Properties.Options.Default.serverPath))
             {
-                foreach (var addon in Directory.GetDirectories(Properties.Options.Default.serverPath, "@*"))
-                { newMods.Add(addon.Replace(Properties.Options.Default.serverPath + @"\", "")); }
+                newMods.AddRange(Directory.GetDirectories(Properties.Options.Default.serverPath, "@*")
+                                          .Select(addon => addon.Replace(Properties.Options.Default.serverPath + @"\", "")));
 
-                foreach (var folder in Properties.Options.Default.localModFolders)
-                {
-                    foreach (var addon in Directory.GetDirectories(folder, "@*"))
-                    { newMods.Add(addon); }
-                }
+                foreach (var folder in Properties.Options.Default.localModFolders) { newMods.AddRange(Directory.GetDirectories(folder, "@*")); }
 
                 foreach (var addon in newMods.ToList())
                 {
@@ -1072,23 +1075,16 @@ namespace FASTER
         private void LaunchServer()
         {
             string profileName = Functions.SafeName(IDisplayName.Content.ToString());
-            string profilePath = (_profilesPath + (profileName + "\\"));
-            string configs = (profilePath + profileName);
+            string profilePath = _profilesPath + profileName + "\\";
+            string configs = profilePath + profileName;
             bool start = true;
-            string playerMods = null;
-            string serverMods = null;
-            foreach (CheckBox addon in IServerModsList.Items)
-            {
-                if (addon.IsChecked ?? false)
-                { serverMods += addon.Content + ";"; }
-            }
+            string serverMods = IServerModsList.Items.Cast<CheckBox>()
+                                               .Where(addon => addon.IsChecked ?? false)
+                                               .Aggregate<CheckBox, string>(null, (current, addon) => current + (addon.Content + ";"));
 
-            foreach (CheckBox addon in IClientModsList.Items)
-            {
-                if (addon.IsChecked ?? false)
-                { playerMods += addon.Content + ";"; }
-                
-            }
+            string playerMods = IClientModsList.Items.Cast<CheckBox>()
+                                               .Where(addon => addon.IsChecked ?? false)
+                                               .Aggregate<CheckBox, string>(null, (current, addon) => current + (addon.Content + ";"));
 
             try
             { WriteConfigFiles(profileName); }
@@ -1101,44 +1097,39 @@ namespace FASTER
 
             if (start)
             {
-                var commandLine = ("-port=" + IPort.Text);
-                commandLine = (commandLine + (" \"-config="
-                            + (configs + "_config.cfg\"")));
-                commandLine = (commandLine + (" \"-cfg="
-                            + (configs + "_basic.cfg\"")));
-                commandLine = (commandLine + (" \"-profiles="
-                            + (profilePath + "\"")));
-                commandLine = (commandLine + (" -name=" + profileName));
-                commandLine = (commandLine + (" \"-mod="
-                            + (playerMods + "\"")));
-                commandLine = (commandLine + (" \"-serverMod="
-                            + (serverMods + "\"")));
+                var commandLine = "-port=" + IPort.Text;
+                commandLine = commandLine + " \"-config=" + configs + "_config.cfg\"";
+                commandLine = commandLine + " \"-cfg=" + configs + "_basic.cfg\"";
+                commandLine = commandLine + " \"-profiles=" + profilePath + "\"";
+                commandLine = commandLine + " -name=" + profileName;
+                commandLine = commandLine + " \"-mod=" + playerMods + "\"";
+                commandLine = commandLine + " \"-serverMod=" + serverMods + "\"";
                 if (IEnableHyperThreading.IsChecked ?? false)
-                { commandLine = (commandLine + " -enableHT"); }
+                { commandLine += " -enableHT"; }
 
                 if (IFilePatching.IsChecked ?? false)
-                { commandLine = (commandLine + " -filePatching"); }
+                { commandLine += " -filePatching"; }
 
                 if (INetlog.IsChecked ?? false)
-                { commandLine = (commandLine + " -netlog"); }
+                { commandLine += " -netlog"; }
 
                 if (IRankingEnabled.IsChecked ?? false)
-                { commandLine = (commandLine + (" -ranking=Servers\\" + (Functions.SafeName(IDisplayName.Content.ToString()) + ("\\" + "ranking.log")))); }
+                { commandLine = commandLine + " -ranking=Servers\\" + Functions.SafeName(IDisplayName.Content.ToString()) + "\\" + "ranking.log"; }
 
                 if (IPidEnabled.IsChecked ?? false)
-                { commandLine = (commandLine + (" -pid=Servers\\" + (Functions.SafeName(IDisplayName.Content.ToString()) + ("\\" + "pid.log")))); }
+                { commandLine = commandLine + " -pid=Servers\\" + Functions.SafeName(IDisplayName.Content.ToString()) + "\\" + "pid.log"; }
 
                 if (IAutoInit.IsChecked ?? false)
-                { commandLine = (commandLine + " -autoInit"); }
+                { commandLine += " -autoInit"; }
 
                 if (!string.IsNullOrEmpty(IMaxMem.Text))
-                { commandLine = (commandLine + (" \"-maxMem=" + (IMaxMem.Text + "\""))); }
+                { commandLine = commandLine + " \"-maxMem=" + IMaxMem.Text + "\""; }
 
                 if (!string.IsNullOrEmpty(ICpuCount.Text))
-                { commandLine = (commandLine + (" \"-cpuCount=" + (ICpuCount.Text + "\""))); }
+                { commandLine = commandLine + " \"-cpuCount=" + ICpuCount.Text + "\""; }
 
                 if (!string.IsNullOrEmpty(IExtraParams.Text))
-                { commandLine = (commandLine + (" " + IExtraParams.Text)); }
+                { commandLine = commandLine + " " + IExtraParams.Text; }
 
                 Clipboard.SetText(commandLine);
                 ProcessStartInfo sStartInfo = new ProcessStartInfo(IExecutable.Text, commandLine);
@@ -1146,20 +1137,14 @@ namespace FASTER
                 sProcess.Start();
                 if (IHeadlessClientEnabled.IsChecked ?? false)
                 {
-                    for (int hc = 1; (hc <= INoOfHeadlessClients.Value); hc++)
+                    for (int hc = 1; hc <= INoOfHeadlessClients.Value; hc++)
                     {
-                        string hcCommandLine = ("-client -connect=127.0.0.1 -password="
-                                    + (IPassword.Text + (" -profiles="
-                                    + (profilePath + (" -nosound -port=" + IPort.Text)))));
-                        string hcMods = null;
-                        foreach (CheckBox addon in IHeadlessModsList.SelectedItems)
-                        {
-                            if (addon.IsChecked ?? false)
-                            { hcMods += addon.Content + ";"; }
-                        }
+                        string hcCommandLine = "-client -connect=127.0.0.1 -password=" + IPassword.Text + " -profiles=" + profilePath + " -nosound -port=" + IPort.Text;
+                        string hcMods = IHeadlessModsList.SelectedItems.Cast<CheckBox>()
+                                                         .Where(addon => addon.IsChecked ?? false)
+                                                         .Aggregate<CheckBox, string>(null, (current, addon) => current + (addon.Content + ";"));
 
-                        hcCommandLine = (hcCommandLine + (" \"-mod="
-                                    + (hcMods + "\"")));
+                        hcCommandLine = hcCommandLine + " \"-mod=" + hcMods + "\"";
                         Clipboard.SetText(hcCommandLine);
                         ProcessStartInfo hcStartInfo = new ProcessStartInfo(IExecutable.Text, hcCommandLine);
                         Process hcProcess = new Process { StartInfo = hcStartInfo };
@@ -1222,7 +1207,7 @@ namespace FASTER
                 IProfileDisplayNameEdit.SelectAll();
                 return;
             }
-            IProfileDisplayNameEdit.Text = String.Empty;
+            IProfileDisplayNameEdit.Text = string.Empty;
             IDisplayName.Visibility = Visibility.Visible;
             IBattleEye.Visibility = Visibility.Visible;
             IProfileNameEdit.Visibility = Visibility.Collapsed;

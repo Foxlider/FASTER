@@ -8,14 +8,14 @@ namespace FASTER.Models
 {
 
 
-    [Serializable()]
-    class LocalMod
+    [Serializable]
+    internal class LocalMod
     {
         private LocalMod()
         {
         }
 
-        public LocalMod(string name, string path, string author = "Unknown", string website = null)
+        private LocalMod(string name, string path, string author = "Unknown", string website = null)
         {
             Name = name;
             Path = path;
