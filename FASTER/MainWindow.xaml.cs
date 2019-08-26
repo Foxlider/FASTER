@@ -9,6 +9,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
+using System.Security.Principal;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -127,15 +128,20 @@ namespace FASTER
         #region WindowEvents
         private void MainWindow_Initialized(object sender, EventArgs e)
         {
-            Functions.CheckSettings();
-            LoadServerProfiles();
-            LoadSteamUpdaterSettings();
+            if (CheckAdmin())
+            {
+                Functions.CheckSettings();
+                LoadServerProfiles();
+                LoadSteamUpdaterSettings();
+            }
+            else
+            { Close(); }
         }
 
         private void MainWindow_Loaded(object sender, EventArgs e)
         {
             //FIX for issue #22 : not necessary
-            //CheckAdmin();
+            
 
             LoadSteamUpdaterSettings();
 
@@ -383,27 +389,31 @@ namespace FASTER
         #endregion
 
         //FIX for issue #22 not necessary
-        //private void CheckAdmin()
-        //{
-        //    try
-        //    {
-        //        using WindowsIdentity identity = WindowsIdentity.GetCurrent();
-        //        WindowsPrincipal principal = new WindowsPrincipal(identity);
-        //        if (!principal.IsInRole(WindowsBuiltInRole.Administrator))
-        //        {
-        //            var dialogResult =
-        //                MessageBox.Show(
-        //                    "Application must be run as administrator",
-        //                    "Error",
-        //                    MessageBoxButton.OK,
-        //                    MessageBoxImage.Error);
-        //            //if (dialogResult == MessageBoxResult.OK)
-        //            //    Close();
-        //        }
-        //    }
-        //    catch (Exception e)
-        //    { throw new ApplicationException("Unable to determine administrator or root status", e); }
-        //}
+        private bool CheckAdmin()
+        {
+            try
+            {
+                using WindowsIdentity identity  = WindowsIdentity.GetCurrent();
+                WindowsPrincipal      principal = new WindowsPrincipal(identity);
+                if (!principal.IsInRole(WindowsBuiltInRole.Administrator))
+                {
+                    MessageBox.Show("Application must be run as administrator",
+                                    "Error",
+                                    MessageBoxButton.OK,
+                                    MessageBoxImage.Error);
+                    return false;
+                }
+                return true;
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("Unable to determine administrator status",
+                                "Error",
+                                MessageBoxButton.OK,
+                                MessageBoxImage.Error);
+                throw new ApplicationException("Unable to determine administrator status", e);
+            }
+        }
 
         public void LoadServerProfiles()
         {

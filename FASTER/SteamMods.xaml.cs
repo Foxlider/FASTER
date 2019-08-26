@@ -214,13 +214,13 @@ namespace FASTER
                 try
                 {
                     Directory.CreateDirectory(modPath);
-
                     var linkPath = Path.Combine(Properties.Options.Default.serverPath, $"@{Functions.SafeName(modName)}");
                     var linkCommand = "/c mklink /D \"" + linkPath + "\" \"" + modPath + "\"";
                     
                     ProcessStartInfo startInfo = new ProcessStartInfo("cmd.exe")
                     {
                         WindowStyle     = ProcessWindowStyle.Hidden,
+                        Verb = "runas",
                         CreateNoWindow  = true,
                         UseShellExecute = false,
                         Arguments       = linkCommand

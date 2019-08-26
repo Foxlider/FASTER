@@ -13,11 +13,22 @@
     <RepositoryUrl>https://github.com/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite</RepositoryUrl>
     <ApplicationIcon>Resources\FASTER.ico</ApplicationIcon>
     <StartupObject>FASTER.App</StartupObject>
+    <ApplicationManifest>Properties\FASTER.manifest</ApplicationManifest>
+    <LangVersion>8.0</LangVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="Resources\FASTER.ico" />
     <None Remove="Themes\Overrides.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <RuntimeHostConfigurationOption Include="System.Globalization.Invariant" Value="true" />
   </ItemGroup>
 
   <ItemGroup>
