@@ -361,7 +361,7 @@
                             </StackPanel>
                             <ListBox Grid.Row="1" Grid.Column="0" Name="IServerModsList" Margin="10" Background="{DynamicResource MaterialDesignTextAreaInactiveBorder}" Foreground="{DynamicResource MaterialDesignBody}">
                                 <ListBox.ItemContainerStyle>
-                                    <Style TargetType="ListBoxItem">
+                                    <Style TargetType="ListBoxItem" BasedOn="{StaticResource MaterialDesignListBoxItem}">
                                         <Setter Property="Padding" Value="10,3,0,3"/>
                                     </Style>
                                 </ListBox.ItemContainerStyle>
@@ -398,7 +398,7 @@
                             </StackPanel>
                             <ListBox Grid.Row="1" Grid.Column="0" Name="IClientModsList" Margin="10" Background="{DynamicResource MaterialDesignTextAreaInactiveBorder}" Foreground="{DynamicResource MaterialDesignBody}">
                                 <ListBox.ItemContainerStyle>
-                                    <Style TargetType="ListBoxItem">
+                                    <Style TargetType="ListBoxItem" BasedOn="{StaticResource MaterialDesignListBoxItem}">
                                         <Setter Property="Padding" Value="10,3,0,3"/>
                                     </Style>
                                 </ListBox.ItemContainerStyle>
@@ -435,7 +435,7 @@
                             </StackPanel>
                             <ListBox Grid.Row="1" Grid.Column="0" Name="IHeadlessModsList" Margin="10" Background="{DynamicResource MaterialDesignTextAreaInactiveBorder}" Foreground="{DynamicResource MaterialDesignBody}">
                                 <ListBox.ItemContainerStyle>
-                                    <Style TargetType="ListBoxItem">
+                                    <Style TargetType="ListBoxItem" BasedOn="{StaticResource MaterialDesignListBoxItem}">
                                         <Setter Property="Padding" Value="10,3,0,3"/>
                                     </Style>
                                 </ListBox.ItemContainerStyle>

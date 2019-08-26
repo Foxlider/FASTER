@@ -115,10 +115,10 @@
                         <md:PackIcon Kind="Plus" Height="10" Width="10" />
                     </Button>
                 </Grid>
-                <ListBox Grid.Row="2" Name="IServerProfilesMenu" HorizontalAlignment="Stretch"  Margin="0,0,0,2" ScrollViewer.VerticalScrollBarVisibility="Auto" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch">
+                <ListBox Grid.Row="2" Name="IServerProfilesMenu" HorizontalAlignment="Stretch" Margin="0,0,0,2" ScrollViewer.VerticalScrollBarVisibility="Auto" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch">
                     <ListBox.ItemContainerStyle>
-                        <Style TargetType="ListBoxItem">
-                            <Setter Property="Padding" Value="10,5,0,5"/>
+                        <Style TargetType="ListBoxItem" BasedOn="{StaticResource MaterialDesignListBoxItem}">
+                            <Setter Property="Padding" Value="10,5,0,5" />
                         </Style>
                     </ListBox.ItemContainerStyle>
                 </ListBox>
