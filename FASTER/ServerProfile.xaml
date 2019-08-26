@@ -359,7 +359,13 @@
                                     <materialDesign:PackIcon Kind="Refresh" Height="10" Width="10"/>
                                 </Button>
                             </StackPanel>
-                            <ListBox Grid.Row="1" Grid.Column="0" Name="IServerModsList" Margin="10" Background="{DynamicResource MaterialDesignTextAreaInactiveBorder}" Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <ListBox Grid.Row="1" Grid.Column="0" Name="IServerModsList" Margin="10" Background="{DynamicResource MaterialDesignTextAreaInactiveBorder}" Foreground="{DynamicResource MaterialDesignBody}">
+                                <ListBox.ItemContainerStyle>
+                                    <Style TargetType="ListBoxItem">
+                                        <Setter Property="Padding" Value="10,3,0,3"/>
+                                    </Style>
+                                </ListBox.ItemContainerStyle>
+                            </ListBox>
                             <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,10">
                                 <Button Name="IServerModsAll" Click="ModsAll_Click" Margin="5" Content="All" FontSize="10" Height="20" />
                                 <Button Name="IServerModsNone" Click="ModsNone_Click" Margin="5" Content="None" FontSize="10" Height="20"/>
@@ -390,7 +396,13 @@
                                     <materialDesign:PackIcon Kind="Refresh" Height="10" Width="10"/>
                                 </Button>
                             </StackPanel>
-                            <ListBox Grid.Row="1" Grid.Column="0" Name="IClientModsList" Margin="10" Background="{DynamicResource MaterialDesignTextAreaInactiveBorder}" Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <ListBox Grid.Row="1" Grid.Column="0" Name="IClientModsList" Margin="10" Background="{DynamicResource MaterialDesignTextAreaInactiveBorder}" Foreground="{DynamicResource MaterialDesignBody}">
+                                <ListBox.ItemContainerStyle>
+                                    <Style TargetType="ListBoxItem">
+                                        <Setter Property="Padding" Value="10,3,0,3"/>
+                                    </Style>
+                                </ListBox.ItemContainerStyle>
+                            </ListBox>
                             <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,10">
                                 <Button Name="IClientModsAll" Click="ModsAll_Click" Margin="5" Content="All" FontSize="10" Height="20" />
                                 <Button Name="IClientModsNone" Click="ModsNone_Click" Margin="5" Content="None" FontSize="10" Height="20"/>
@@ -421,7 +433,13 @@
                                     <materialDesign:PackIcon Kind="Refresh" Height="10" Width="10"/>
                                 </Button>
                             </StackPanel>
-                            <ListBox Grid.Row="1" Grid.Column="0" Name="IHeadlessModsList" Margin="10" Background="{DynamicResource MaterialDesignTextAreaInactiveBorder}" Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <ListBox Grid.Row="1" Grid.Column="0" Name="IHeadlessModsList" Margin="10" Background="{DynamicResource MaterialDesignTextAreaInactiveBorder}" Foreground="{DynamicResource MaterialDesignBody}">
+                                <ListBox.ItemContainerStyle>
+                                    <Style TargetType="ListBoxItem">
+                                        <Setter Property="Padding" Value="10,3,0,3"/>
+                                    </Style>
+                                </ListBox.ItemContainerStyle>
+                            </ListBox>
                             <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,10">
                                 <Button Name="IHeadlessModsAll" Click="ModsAll_Click" Margin="5" Content="All" FontSize="10" Height="20" />
                                 <Button Name="IHeadlessModsNone" Click="ModsNone_Click" Margin="5" Content="None" FontSize="10" Height="20"/>
@@ -794,5 +812,32 @@
                 <materialDesign:PackIcon Kind="Play" />
             </ListBoxItem>
         </ListBox>
+
+
+        <materialDesign:DialogHost Name="IConfirmDeleteDialog"  HorizontalAlignment="Center" IsOpen="False" VerticalAlignment="Center">
+            <materialDesign:DialogHost.DialogContent>
+                <StackPanel Margin="16">
+                    <TextBlock Name="IConfirmDeleteText" Text="Are you sure ?" TextWrapping="Wrap" TextAlignment="Left" Margin="0,0,0,5"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" >
+                        <Button Style="{StaticResource MaterialDesignFlatButton}"
+                                        Name="IConfirmDeleteBtn"
+                                        IsDefault="True"
+                                        Margin="0 8 8 0"
+                                        Command="materialDesign:DialogHost.CloseDialogCommand">
+                            ACCEPT
+                        </Button>
+                        <Button Style="{StaticResource MaterialDesignFlatButton}"
+                                        Name="ICancelDeleteBtn"
+                                        IsCancel="True"
+                                        Margin="0 8 8 0"
+                                        Command="materialDesign:DialogHost.CloseDialogCommand">
+                            CANCEL
+                        </Button>
+                    </StackPanel>
+                </StackPanel>
+            </materialDesign:DialogHost.DialogContent>
+        </materialDesign:DialogHost>
+
+
     </Grid>
 </UserControl>
