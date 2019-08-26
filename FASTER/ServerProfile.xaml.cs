@@ -1140,7 +1140,7 @@ namespace FASTER
                     for (int hc = 1; hc <= INoOfHeadlessClients.Value; hc++)
                     {
                         string hcCommandLine = "-client -connect=127.0.0.1 -password=" + IPassword.Text + " -profiles=" + profilePath + " -nosound -port=" + IPort.Text;
-                        string hcMods = IHeadlessModsList.SelectedItems.Cast<CheckBox>()
+                        string hcMods = IHeadlessModsList.Items.Cast<CheckBox>()
                                                          .Where(addon => addon.IsChecked ?? false)
                                                          .Aggregate<CheckBox, string>(null, (current, addon) => current + (addon.Content + ";"));
 
