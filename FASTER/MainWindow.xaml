@@ -8,10 +8,10 @@
         mc:Ignorable="d"
 
         Title="FASTER"
-        Height="600"
-        Width="1000"
+        Height="700"
+        Width="1100"
         MinWidth="1000"
-        MinHeight="600"
+        MinHeight="700"
 
         TextElement.FontWeight="Regular"
         TextElement.FontSize="11"
@@ -115,7 +115,13 @@
                         <md:PackIcon Kind="Plus" Height="10" Width="10" />
                     </Button>
                 </Grid>
-                <ListBox Grid.Row="2" Name="IServerProfilesMenu" HorizontalAlignment="Stretch"  Margin="10,0,0,2" ScrollViewer.VerticalScrollBarVisibility="Auto" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch"/>
+                <ListBox Grid.Row="2" Name="IServerProfilesMenu" HorizontalAlignment="Stretch"  Margin="0,0,0,2" ScrollViewer.VerticalScrollBarVisibility="Auto" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch">
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+                            <Setter Property="Padding" Value="10,5,0,5"/>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                </ListBox>
             </Grid>
 
             <!--Menu Column - Other Items-->
