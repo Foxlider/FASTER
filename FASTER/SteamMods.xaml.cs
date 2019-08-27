@@ -38,14 +38,18 @@ namespace FASTER
                 Thread thread = new Thread(() =>
                 {
                     SteamMod.UpdateInfoFromSteam();
-                    Dispatcher?.Invoke(() =>
+                    try
                     {
-                        IModView.IsEnabled              = true;
-                        IProgressInfo.Visibility        = Visibility.Collapsed;
-                        IUpdateProgress.IsIndeterminate = false;
-                    });
-
-                    UpdateModsView();
+                        Dispatcher?.Invoke(() =>
+                        {
+                            IModView.IsEnabled              = true;
+                            IProgressInfo.Visibility        = Visibility.Collapsed;
+                            IUpdateProgress.IsIndeterminate = false;
+                        });
+                        UpdateModsView();
+                    }
+                    catch
+                    { /* FASTER CLOSED ALREADY, DON'T CATCH THIS */ }
                 });
                 thread.SetApartmentState(ApartmentState.STA);
                 thread.Start();
