@@ -115,7 +115,10 @@ namespace FASTER
         }
 
         private void WindowDragBar_MouseDown(object sender, MouseButtonEventArgs e)
-        { DragMove(); }
+        {
+            if(e.LeftButton == MouseButtonState.Pressed)
+            { DragMove(); }
+        }
 
         private void ToolsButton_Click(object sender, RoutedEventArgs e)
         {
