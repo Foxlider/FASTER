@@ -1,5 +1,7 @@
-﻿using FASTER.Models;
+﻿using System;
+using FASTER.Models;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
 
@@ -8,13 +10,12 @@ namespace FASTER
     /// <summary>
     /// Interaction logic for Setup.xaml
     /// </summary>
-    public partial class Setup : Window
+    public partial class Setup
     {
 
         public Setup()
         {
             InitializeComponent();
-            IWindowDragBar.MouseDown += WindowDragBar_MouseDown;
             if (Properties.Options.Default.firstRun)
             { Properties.Options.Default.Upgrade(); }
             if (Properties.Options.Default.clearSettings)
@@ -39,7 +40,15 @@ namespace FASTER
             //{ Properties.Settings.Default.Servers = new ServerCollection(); }
 
             if (Properties.Options.Default.firstRun) return;
-            MainWindow.Instance.Show();
+            try
+            { MainWindow.Instance.Show(); }
+            catch (Exception e)
+            {
+                using EventLog eventLog = new EventLog("Application")
+                    { Source = "Application" };
+                eventLog.WriteEntry($"Could not start FASTER : \n[{e.GetType()}] {e.Message}\n\n{e.StackTrace}", EventLogEntryType.Error, 122, 1);
+            }
+
             Close();
         }
 

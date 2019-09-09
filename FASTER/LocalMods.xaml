@@ -3,7 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
         FontFamily="{DynamicResource MaterialDesignFont}"
              
         TextElement.FontWeight="Regular"
@@ -16,18 +17,18 @@
         d:DesignHeight="570.4"
         d:DesignWidth="796.8">
 
-    <Grid>
+    <Grid Background="{StaticResource MahApps.Brushes.Gray9}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition />
         </Grid.RowDefinitions>
 
         <ListBox x:Name="IModActionButtons" SelectionMode="Extended" Style="{StaticResource MaterialDesignToolToggleListBox}" Margin="5">
-            <ListBoxItem x:Name="IRefreshList">
+            <ListBoxItem x:Name="IRefreshList" Padding="15,10,15,10">
                 <ListBoxItem.ToolTip>
                     <TextBlock><Run Text="Refresh List"/></TextBlock>
                 </ListBoxItem.ToolTip>
-                <materialDesign:PackIcon Kind="Refresh"/>
+                <iconPacks:MaterialDesign Kind="Refresh"/>
             </ListBoxItem>
             <!--<ListBoxItem x:Name="IAddLocalMod">
                 <ListBoxItem.ToolTip>
@@ -35,14 +36,14 @@
                 </ListBoxItem.ToolTip>
                 <materialDesign:PackIcon Kind="FolderOpen"/>
             </ListBoxItem>-->
-            <ListBoxItem x:Name="IEditFolders">
+            <ListBoxItem x:Name="IEditFolders" Padding="15,10,15,10">
                 <ListBoxItem.ToolTip>
                     <TextBlock><Run Text="Edit Folders To Search"/></TextBlock>
                 </ListBoxItem.ToolTip>
-                <materialDesign:PackIcon Kind="Pencil"/>
+                <iconPacks:Material Kind="Pencil"/>
             </ListBoxItem>
         </ListBox>
-        <DataGrid Name="ILocalModsView" Grid.Row="1" Grid.Column="0" Margin="5" CanUserReorderColumns="False" CanUserResizeRows="False" GridLinesVisibility="All" IsReadOnly="True" CanUserAddRows="False" AutoGenerateColumns="False" ItemsSource="{Binding NotifyOnSourceUpdated=True}" materialDesign:DataGridAssist.CellPadding="2 2 2 2" materialDesign:DataGridAssist.ColumnHeaderPadding="3 3 3 3">
+        <DataGrid Name="ILocalModsView" Grid.Row="1" Grid.Column="0" Margin="5" CanUserReorderColumns="False" CanUserResizeRows="False" GridLinesVisibility="All" IsReadOnly="True" CanUserAddRows="False" AutoGenerateColumns="False" ItemsSource="{Binding NotifyOnSourceUpdated=True}">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Name" Binding="{Binding Path=Name}" Width="Auto"/>
                 <DataGridTextColumn Header="Author" Binding="{Binding Path=Author}" Width="Auto"/>
@@ -60,7 +61,7 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Button Height="25" Width="25" Padding="0" Click="DeleteMod">
-                                <materialDesign:PackIcon Kind="Delete" Width="20" Height="20"/>
+                                <iconPacks:MaterialDesign Kind="Delete" Width="20" Height="20"/>
                             </Button>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
@@ -69,7 +70,7 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Button Height="25" Width="25" Padding="0" Click="OpenMod">
-                                <materialDesign:PackIcon Kind="FolderOpen" Width="20" Height="20"/>
+                                <iconPacks:MaterialDesign Kind="FolderOpen" Width="20" Height="20"/>
                             </Button>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>

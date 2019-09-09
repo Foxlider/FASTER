@@ -5,6 +5,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:dragablz="clr-namespace:Dragablz;assembly=Dragablz"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
 
              FontFamily="{DynamicResource MaterialDesignFont}"
 
@@ -15,40 +17,44 @@
              TextOptions.TextRenderingMode="Auto"
              
              
-             mc:Ignorable="d"
-             d:DesignHeight="570.4"
-             d:DesignWidth="796.8">
-    <Grid>
+             mc:Ignorable="d">
+    <Grid Background="{StaticResource MahApps.Brushes.Gray9}">
         <Grid.RowDefinitions>
             <RowDefinition />
-            <RowDefinition Height="55" />
+            <RowDefinition Height="50" />
         </Grid.RowDefinitions>
-        <dragablz:TabablzControl Margin="-2,-2,-5,48" Grid.Row="0" Grid.RowSpan="2" BorderThickness="0" FixedHeaderCount="6" Background="{x:Null}">
-            <dragablz:TabablzControl.InterTabController>
+        <TabControl Margin="0" Grid.Row="0" BorderThickness="0" Background="{x:Null}">
+            <!--<dragablz:TabablzControl.InterTabController>
                 <dragablz:InterTabController />
-            </dragablz:TabablzControl.InterTabController>
+            </dragablz:TabablzControl.InterTabController>-->
             <TabItem Header="Settings">
-                <Grid Margin="5">
+                <Grid Margin="5,0,5,0" >
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="78*" />
+                        <ColumnDefinition Width="78*" />
+                        <ColumnDefinition Width="78*" />
+                        <ColumnDefinition Width="78*" />
+                        <ColumnDefinition Width="78*" />
+                        <ColumnDefinition Width="142*" />
+                        <ColumnDefinition Width="40*" />
+                        <ColumnDefinition Width="53*" />
+                        <ColumnDefinition Width="78*" />
+                        <ColumnDefinition Width="78*" />
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="1*" />
-                        <RowDefinition Height="1*" />
-                        <RowDefinition Height="1*" />
-                        <RowDefinition Height="1*" />
+                        <RowDefinition Height="117*" />
+                        <RowDefinition Height="117*" />
+                        <RowDefinition Height="105*" />
+                        <RowDefinition Height="130*" />
                     </Grid.RowDefinitions>
 
-                    <materialDesign:Card Grid.ColumnSpan="4" Grid.RowSpan="2" Margin="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                    <Grid Grid.ColumnSpan="4" Grid.RowSpan="2" Margin="5,5,4.719,4.994">
+                        <Grid.Style>
+                            <Style TargetType="Grid">
+                                <Setter Property="Margin" Value="5"/>
+                                <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Window.Background}"></Setter>
+                            </Style>
+                        </Grid.Style>
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="1*"/>
@@ -72,53 +78,65 @@
                             </Grid.RowDefinitions>
                             <StackPanel Grid.ColumnSpan="10">
                                 <Label Margin="2" Content="Main"/>
-                                <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="-8"/>
+                                <Separator/>
                             </StackPanel>
 
-                            <TextBox Name="IServerName" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="10" materialDesign:HintAssist.Hint="Server Name" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5,3,5,5"/>
-                            <TextBox Name="IExecutable" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="9" materialDesign:HintAssist.Hint="Server File" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
+                            <TextBox Name="IServerName" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="10" mah:TextBoxHelper.Watermark="Server Name"  Margin="5,3,5,5"/>
+                            <TextBox Name="IExecutable" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="9" mah:TextBoxHelper.Watermark="Server File" Margin="5"/>
                             <Button Grid.Row="2" Grid.Column="9" Name="IServerFileButton" Click="IServerFileButton_Click" Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}" Height="20" Width="20" DockPanel.Dock="Right">
                                 <materialDesign:PackIcon Kind="FolderOpen" Height="10" Width="10"/>
                             </Button>
-                            <TextBox Name="IPassword" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="5" materialDesign:HintAssist.Hint="Password" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
-                            <TextBox Name="IAdminPassword" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="5" materialDesign:HintAssist.Hint="Admin Password" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
+                            <TextBox Name="IPassword" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="5" mah:TextBoxHelper.Watermark="Password" Margin="5"/>
+                            <TextBox Name="IAdminPassword" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="5" mah:TextBoxHelper.Watermark="Admin Password" Margin="5"/>
 
-                            <TextBox Name="IMaxPlayers" Grid.Row="3" Grid.Column="7" Grid.ColumnSpan="3" materialDesign:HintAssist.Hint="Max Players" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
-                            <TextBox Name="IPort" Grid.Row="4" Grid.Column="7" Grid.ColumnSpan="3" materialDesign:HintAssist.Hint="Port" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
+                            <TextBox Name="IMaxPlayers" Grid.Row="3" Grid.Column="7" Grid.ColumnSpan="3" mah:TextBoxHelper.Watermark="Max Players" Margin="5"/>
+                            <TextBox Name="IPort" Grid.Row="4" Grid.Column="7" Grid.ColumnSpan="3" mah:TextBoxHelper.Watermark="Port" Margin="5"/>
 
-                            <CheckBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="5" Name="IBattleEye" Content="BattleEye" Margin="5" Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <CheckBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="5" Name="IBattleEye" Content="BattleEye" Margin="5,4.797,4.56,15.7"/>
                         </Grid>
-                    </materialDesign:Card>
+                    </Grid>
 
-                    <materialDesign:Card Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" Margin="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                    <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" Margin="5,5.006,4.719,5.337">
+                        <Grid.Style>
+                            <Style TargetType="Grid">
+                                <Setter Property="Margin" Value="5"/>
+                                <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Window.Background}"></Setter>
+                            </Style>
+                        </Grid.Style>
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition />
-                                <ColumnDefinition />
+                                <ColumnDefinition Width="2*" />
+                                <ColumnDefinition Width="1*" />
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
-                            <StackPanel Grid.ColumnSpan="2">
+                            <StackPanel Grid.ColumnSpan="2" Margin="0,0,0.12,3.892">
                                 <Label Margin="2" Content="Headless Client"/>
                                 <ToggleButton Name="IHeadlessClientEnabled" Click="ToggleUi" Style="{StaticResource MaterialDesignSwitchToggleButton}" IsChecked="False" HorizontalAlignment="Right" Margin="2,-25,5,0" ToolTip="Enable HC"/>
-                                <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="-8"/>
+                                <Separator />
                             </StackPanel>
 
-                            <StackPanel Name="IHcIpGroup" Grid.Row="1" Grid.Column="0" IsEnabled="False">
-                                <TextBox Name="IHeadlessIps" materialDesign:HintAssist.Hint="Headless IPs (comma separated)" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
-                                <TextBox Name="ILocalClients" materialDesign:HintAssist.Hint="Local Clients (comma separated)" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5,-2,5,5"/>
+                            <StackPanel Name="IHcIpGroup" Grid.Column="0" IsEnabled="False" Margin="0,30,0.08,2.891" Grid.RowSpan="2">
+                                <TextBox Name="IHeadlessIps" mah:TextBoxHelper.Watermark="Headless IPs (comma separated)" Margin="5"/>
+                                <TextBox Name="ILocalClients" mah:TextBoxHelper.Watermark="Local Clients (comma separated)" Margin="5,-2,5,5"/>
                             </StackPanel>
 
-                            <StackPanel Name="IHcSliderGroup" Grid.Row="1" Grid.Column="1" IsEnabled="False">
+                            <StackPanel Name="IHcSliderGroup" IsEnabled="False" Grid.Column="1" Margin="4.92,30,0.12,2.891" Grid.RowSpan="2">
                                 <Slider Name="INoOfHeadlessClients" Minimum="0" Maximum="5" Style="{StaticResource MaterialDesignDiscreteSlider}" Width="100" ToolTip="No of HCs" Margin="5,-7"/>
                                 <Label Content="No of HCs" ToolTip="No of HCs" HorizontalAlignment="Center" Margin="5"/>
                             </StackPanel>
                         </Grid>
-                    </materialDesign:Card>
+                    </Grid>
 
-                    <materialDesign:Card Grid.Row="03" Grid.Column="0" Grid.ColumnSpan="4" Margin="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                    <Grid Grid.Row="03" Grid.Column="0" Grid.ColumnSpan="4" Margin="5,4.663,4.719,5">
+                        <Grid.Style>
+                            <Style TargetType="Grid">
+                                <Setter Property="Margin" Value="5"/>
+                                <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Window.Background}"></Setter>
+                            </Style>
+                        </Grid.Style>
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
@@ -129,16 +147,22 @@
 
                             <StackPanel>
                                 <Label Margin="2" Content="Network"/>
-                                <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="-8"/>
+                                <Separator/>
                             </StackPanel>
 
-                            <CheckBox Name="ILoopback" Grid.Row="1" Style="{StaticResource MaterialDesignCheckBox}" Content="Loopback" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
-                            <CheckBox Name="IUpnp" Grid.Row="2" Style="{StaticResource MaterialDesignCheckBox}" Content="UPNP" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
-                            <CheckBox Name="INetlog" Grid.Row="3" Style="{StaticResource MaterialDesignCheckBox}" Content="Netlog" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
+                            <CheckBox Name="ILoopback" Grid.Row="1" Content="Loopback" Margin="5"/>
+                            <CheckBox Name="IUpnp" Grid.Row="2" Content="UPNP" Margin="5"/>
+                            <CheckBox Name="INetlog" Grid.Row="3" Content="Netlog" Margin="5"/>
                         </Grid>
-                    </materialDesign:Card>
+                    </Grid>
 
-                    <materialDesign:Card Grid.Row="0" Grid.Column="6" Grid.RowSpan="2" Grid.ColumnSpan="4" Margin="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                    <Grid Grid.Row="0" Grid.Column="6" Grid.RowSpan="2" Grid.ColumnSpan="4" Margin="4.774,5,4.8,4.994">
+                        <Grid.Style>
+                            <Style TargetType="Grid">
+                                <Setter Property="Margin" Value="5"/>
+                                <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Window.Background}"></Setter>
+                            </Style>
+                        </Grid.Style>
                         <DockPanel>
                             <Grid DockPanel.Dock="Top">
                                 <Grid.ColumnDefinitions>
@@ -155,19 +179,19 @@
 
                                 <StackPanel Grid.ColumnSpan="4">
                                     <Label Margin="2" Content="Logging"/>
-                                    <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="-8"/>
+                                    <Separator/>
                                 </StackPanel>
 
-                                <CheckBox Grid.Row="1" Grid.Column="0" Name="IServerConsoleLogEnabled" Click="ToggleUi" Margin="5" Style="{StaticResource MaterialDesignCheckBox}"/>
-                                <Label Grid.Row="1" Grid.Column="1" Name="IServerConsoleLog" Content="Server Console" Margin="5" Foreground="{DynamicResource MaterialDesignBody}" IsEnabled="False"/>
+                                <CheckBox Grid.Row="1" Grid.Column="0" Name="IServerConsoleLogEnabled" Click="ToggleUi" Margin="5"/>
+                                <Label Grid.Row="1" Grid.Column="1" Name="IServerConsoleLog" Content="Server Console" Margin="5" IsEnabled="False"/>
                                 <Button Grid.Row="1" Grid.Column="2" Name="IConsoleLogButton" Click="IOpenConsoleLog_Click" Content="Open" Height="20" Width="60" FontSize="11" Margin="5" IsEnabled="False"/>
 
-                                <CheckBox Grid.Row="2" Grid.Column="0" Name="IPidEnabled" Click="ToggleUi" Margin="5" Style="{StaticResource MaterialDesignCheckBox}"/>
-                                <Label Grid.Row="2" Grid.Column="1" Name="IPidLog" Content="PID" Margin="5" Foreground="{DynamicResource MaterialDesignBody}" IsEnabled="False"/>
+                                <CheckBox Grid.Row="2" Grid.Column="0" Name="IPidEnabled" Click="ToggleUi" Margin="5"/>
+                                <Label Grid.Row="2" Grid.Column="1" Name="IPidLog" Content="PID" Margin="5" IsEnabled="False"/>
                                 <Button Grid.Row="2" Grid.Column="2" Name="IPidButton" Content="Open" Height="20" Width="60" FontSize="11" Margin="5" IsEnabled="False"/>
 
-                                <CheckBox Grid.Row="3" Grid.Column="0" Name="IRankingEnabled" Click="ToggleUi" Margin="5" Style="{StaticResource MaterialDesignCheckBox}"/>
-                                <Label Grid.Row="3" Grid.Column="1" Name="IRankingLog" Content="Ranking" Margin="5" Foreground="{DynamicResource MaterialDesignBody}" IsEnabled="False"/>
+                                <CheckBox Grid.Row="3" Grid.Column="0" Name="IRankingEnabled" Click="ToggleUi" Margin="5"/>
+                                <Label Grid.Row="3" Grid.Column="1" Name="IRankingLog" Content="Ranking" Margin="5" IsEnabled="False"/>
                                 <Button Grid.Row="3" Grid.Column="2" Name="IRankingButton" Click="IOpenRanking_Click" Content="Open" Height="20" Width="60" FontSize="11" Margin="5" IsEnabled="False"/>
                             </Grid>
 
@@ -189,7 +213,7 @@
                                 <StackPanel Grid.ColumnSpan="7" Grid.Column="0" Margin="0,10,0,0">
                                     <Label Margin="2" Content="RPT"/>
                                     <Label Margin="2,-25" Content="NETLOG" HorizontalAlignment="Right"/>
-                                    <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="-8"/>
+                                    <Separator/>
                                 </StackPanel>
 
 
@@ -199,7 +223,7 @@
                                 <Button Name="IDeleteRpt" Click="IDeleteRpt_Click" Grid.Row="1" Grid.Column="1" Height="30" Width="30" Margin="5" VerticalAlignment="Bottom" FontSize="10" ToolTip="Delete All RPTs">
                                     <materialDesign:PackIcon Kind="Delete" Width="22" Height="22" Margin="-12,0,-15,0"/>
                                 </Button>
-                                <ComboBox Grid.Row="1" Grid.Column="2" Name="IRptTimestamp" materialDesign:HintAssist.Hint="TimeStamp" IsEditable="False" Foreground="{DynamicResource MaterialDesignBody}" Width="60" Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="5">
+                                <ComboBox Grid.Row="1" Grid.Column="2" Name="IRptTimestamp" mah:TextBoxHelper.Watermark="TimeStamp" IsEditable="False" Foreground="{DynamicResource MaterialDesignBody}" Width="60" Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="5">
                                     <ComboBoxItem IsSelected="True">none</ComboBoxItem>
                                     <ComboBoxItem>short</ComboBoxItem>
                                     <ComboBoxItem>full</ComboBoxItem>
@@ -217,7 +241,7 @@
 
                             </Grid>
                         </DockPanel>
-                    </materialDesign:Card>
+                    </Grid>
 
                     <!--<materialDesign:Card Grid.Row="3" Grid.Column="2" Grid.ColumnSpan="2" Margin="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" IsEnabled="False">
                         <Grid>
@@ -236,13 +260,19 @@
                                 <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="-8"/>
                             </StackPanel>
                             <CheckBox Grid.Row="1" Grid.Column="0" Name="IDailyRestartAEnabled" IsEnabled="False" Margin="5"/>
-                            <materialDesign:TimePicker Grid.Row="1" Grid.Column="1" Name="IDailyRestartA" Is24Hours="True" materialDesign:HintAssist.Hint="Daily At" Foreground="{DynamicResource MaterialDesignBody}" IsEnabled="False" Margin="5,5,10,5"/>
+                            <materialDesign:TimePicker Grid.Row="1" Grid.Column="1" Name="IDailyRestartA" Is24Hours="True" mah:TextBoxHelper.Watermark="Daily At" Foreground="{DynamicResource MaterialDesignBody}" IsEnabled="False" Margin="5,5,10,5"/>
                             <CheckBox Grid.Row="2" Grid.Column="0" Name="IDailyRestartBEnabled" IsEnabled="False" Margin="5"/>
-                            <materialDesign:TimePicker Grid.Row="2" Grid.Column="1" Name="IDailyRestartB" Is24Hours="True" materialDesign:HintAssist.Hint="Daily At" Foreground="{DynamicResource MaterialDesignBody}" IsEnabled="False" Margin="5,5,10,5"/>
+                            <materialDesign:TimePicker Grid.Row="2" Grid.Column="1" Name="IDailyRestartB" Is24Hours="True" mah:TextBoxHelper.Watermark="Daily At" Foreground="{DynamicResource MaterialDesignBody}" IsEnabled="False" Margin="5,5,10,5"/>
                         </Grid>
                     </materialDesign:Card>-->
 
-                    <materialDesign:Card Grid.Row="1" Grid.Column="4" Grid.ColumnSpan="2" Grid.RowSpan="2" Margin="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                    <Grid Grid.Row="1" Grid.Column="4" Grid.ColumnSpan="2" Grid.RowSpan="2" Margin="5.281,4.503,5.226,5.337">
+                        <Grid.Style>
+                            <Style TargetType="Grid">
+                                <Setter Property="Margin" Value="5"/>
+                                <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Window.Background}"></Setter>
+                            </Style>
+                        </Grid.Style>
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
@@ -260,23 +290,29 @@
                                 <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="-8"/>
                             </StackPanel>
 
-                            <ComboBox Name="IAllowFilePatching" Grid.Row="1" Grid.ColumnSpan="2" Grid.Column="0" materialDesign:HintAssist.Hint="Allow File Patching" Foreground="{DynamicResource MaterialDesignBody}" IsEditable="False" Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="5">
+                            <ComboBox Name="IAllowFilePatching" Grid.Row="1" Grid.ColumnSpan="2" Grid.Column="0" mah:TextBoxHelper.Watermark="Allow File Patching" IsEditable="False" Margin="5">
                                 <ComboBoxItem IsSelected="True">0</ComboBoxItem>
                                 <ComboBoxItem>1</ComboBoxItem>
                                 <ComboBoxItem>2</ComboBoxItem>
                             </ComboBox>
-                            <ComboBox Name="IVerifySignatures" Grid.Row="2" Grid.ColumnSpan="2" Grid.Column="0" materialDesign:HintAssist.Hint="Verify Signatures" Foreground="{DynamicResource MaterialDesignBody}" IsEditable="False" Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="5">
+                            <ComboBox Name="IVerifySignatures" Grid.Row="2" Grid.ColumnSpan="2" Grid.Column="0" mah:TextBoxHelper.Watermark="Verify Signatures" IsEditable="False" Margin="5">
                                 <ComboBoxItem IsSelected="True">0</ComboBoxItem>
                                 <ComboBoxItem>1</ComboBoxItem>
                                 <ComboBoxItem>2</ComboBoxItem>
                             </ComboBox>
-                            <CheckBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Name="IKickDuplicates" Content="Kick Duplicates" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
-                            <CheckBox Grid.Row="3" Grid.Column="1" Name="IRequiredBuildEnabled" Click="ToggleUi" Margin="5" Style="{StaticResource MaterialDesignCheckBox}"/>
-                            <TextBox Grid.Row="3" Grid.Column="0" Name="IRequiredBuild" materialDesign:HintAssist.Hint="Required Build" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5" VerticalAlignment="Center" IsEnabled="False"/>
+                            <CheckBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Name="IKickDuplicates" Content="Kick Duplicates" Margin="5,10,5,0"/>
+                            <CheckBox Grid.Row="3" Grid.Column="1" Name="IRequiredBuildEnabled" Click="ToggleUi" Margin="5"/>
+                            <TextBox Grid.Row="3" Grid.Column="0" Name="IRequiredBuild" mah:TextBoxHelper.Watermark="Required Build" Margin="5" VerticalAlignment="Center" IsEnabled="False"/>
                         </Grid>
-                    </materialDesign:Card>
+                    </Grid>
 
-                    <materialDesign:Card Grid.Row="2" Grid.Column="6" Grid.ColumnSpan="4" Grid.RowSpan="2" Margin="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                    <Grid Grid.Row="2" Grid.Column="6" Grid.ColumnSpan="4" Grid.RowSpan="2" Margin="4.774,5.006,4.8,5">
+                        <Grid.Style>
+                            <Style TargetType="Grid">
+                                <Setter Property="Margin" Value="5"/>
+                                <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Window.Background}"></Setter>
+                            </Style>
+                        </Grid.Style>
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
@@ -285,14 +321,20 @@
                             </Grid.RowDefinitions>
                             <StackPanel>
                                 <Label Margin="2" Content="Message Of The Day"/>
-                                <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="-8"/>
+                                <Separator/>
                             </StackPanel>
-                            <TextBox Name="IMotd" Grid.Row="1" Margin="10" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" Foreground="{DynamicResource MaterialDesignBody}" Background="{DynamicResource MaterialDesignTextAreaInactiveBorder}"/>
-                            <TextBox Grid.Row="2" Grid.Column="0" Name="IMotdDelay" materialDesign:HintAssist.Hint="Delay Between Messages" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="10,0,10,5" HorizontalAlignment="Left" Width="100"/>
+                            <TextBox Name="IMotd" Grid.Row="1" Margin="10" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"/>
+                            <TextBox Grid.Row="2" Grid.Column="0" Name="IMotdDelay" mah:TextBoxHelper.Watermark="Delay Between Messages" Margin="10,0,10,5" HorizontalAlignment="Left"/>
                         </Grid>
-                    </materialDesign:Card>
+                    </Grid>
 
-                    <materialDesign:Card Grid.Row="0" Grid.Column="4" Grid.ColumnSpan="2" Margin="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                    <Grid Grid.Row="0" Grid.Column="4" Grid.ColumnSpan="2" Margin="5.281,5,5.226,5.497">
+                        <Grid.Style>
+                            <Style TargetType="Grid">
+                                <Setter Property="Margin" Value="5"/>
+                                <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Window.Background}"></Setter>
+                            </Style>
+                        </Grid.Style>
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition />
@@ -305,15 +347,21 @@
                             <StackPanel Grid.ColumnSpan="2">
                                 <Label Margin="2" Content="Voting"/>
                                 <ToggleButton Name="IVotingEnabled" Click="ToggleUi" Style="{StaticResource MaterialDesignSwitchToggleButton}" IsChecked="True" HorizontalAlignment="Right" Margin="2,-25,5,0" ToolTip="Disable Voting"/>
-                                <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="-8"/>
+                                <Separator/>
                             </StackPanel>
 
-                            <TextBox Name="IVotingMinPlayers" Grid.Row="1" Grid.Column="0" materialDesign:HintAssist.Hint="Min Players" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5" VerticalAlignment="Center"/>
-                            <TextBox  Name="IVotingThreshold" Grid.Row="1" Grid.Column="1" materialDesign:HintAssist.Hint="Threshold (%)" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5" VerticalAlignment="Center"/>
+                            <TextBox Name="IVotingMinPlayers" Grid.Row="1" Grid.Column="0" mah:TextBoxHelper.Watermark="Min Players" Margin="5" VerticalAlignment="Center"/>
+                            <TextBox  Name="IVotingThreshold" Grid.Row="1" Grid.Column="1" mah:TextBoxHelper.Watermark="Threshold (%)"  Margin="5" VerticalAlignment="Center"/>
                         </Grid>
-                    </materialDesign:Card>
+                    </Grid>
 
-                    <materialDesign:Card Grid.Row="3" Grid.Column="4" Grid.ColumnSpan="2" Margin="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                    <Grid Grid.Row="3" Grid.Column="4" Grid.ColumnSpan="2" Margin="5.281,4.663,5.226,5">
+                        <Grid.Style>
+                            <Style TargetType="Grid">
+                                <Setter Property="Margin" Value="5"/>
+                                <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Window.Background}"></Setter>
+                            </Style>
+                        </Grid.Style>
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
@@ -322,14 +370,14 @@
                             <StackPanel>
                                 <Label Margin="2" Content="VON Settings"/>
                                 <ToggleButton Name="IVonEnabled" Click="ToggleUi" Style="{StaticResource MaterialDesignSwitchToggleButton}" IsChecked="True" HorizontalAlignment="Right" Margin="2,-25,5,0" ToolTip="Disable VON"/>
-                                <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="-8"/>
+                                <Separator/>
                             </StackPanel>
                             <StackPanel Name="IVonGroup" Grid.Row="1">
-                                <Slider Name="ICodecQuality" Minimum="1" Maximum="30" Style="{StaticResource MaterialDesignDiscreteSlider}" Width="120" ToolTip="Codec Quality" Margin="5,-7"/>
-                                <Label Content="Codec Quality" HorizontalAlignment="Center" Margin="5"/>
+                                <Slider Name="ICodecQuality" Minimum="1" Maximum="30" Width="120" ToolTip="Codec Quality" Margin="10"/>
+                                <Label Content="Codec Quality" HorizontalAlignment="Center" Margin="10"/>
                             </StackPanel>
                         </Grid>
-                    </materialDesign:Card>
+                    </Grid>
                 </Grid>
             </TabItem>
             <TabItem Header="Mods">
@@ -339,7 +387,13 @@
                         <ColumnDefinition Width="1*"/>
                         <ColumnDefinition Width="1*"/>
                     </Grid.ColumnDefinitions>
-                    <materialDesign:Card Margin="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                    <Grid Margin="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                        <Grid.Style>
+                            <Style TargetType="Grid">
+                                <Setter Property="Margin" Value="5"/>
+                                <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Window.Background}"></Setter>
+                            </Style>
+                        </Grid.Style>
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
@@ -359,7 +413,13 @@
                                     <materialDesign:PackIcon Kind="Refresh" Height="10" Width="10"/>
                                 </Button>
                             </StackPanel>
-                            <ListBox Grid.Row="1" Grid.Column="0" Name="IServerModsList" Margin="10" Background="{DynamicResource MaterialDesignTextAreaInactiveBorder}" Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <ListBox Grid.Row="1" Grid.Column="0" Name="IServerModsList" Margin="10" Background="{DynamicResource MaterialDesignTextAreaInactiveBorder}" Foreground="{DynamicResource MaterialDesignBody}">
+                                <ListBox.ItemContainerStyle>
+                                    <Style TargetType="ListBoxItem" BasedOn="{StaticResource MaterialDesignListBoxItem}">
+                                        <Setter Property="Padding" Value="10,3,0,3"/>
+                                    </Style>
+                                </ListBox.ItemContainerStyle>
+                            </ListBox>
                             <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,10">
                                 <Button Name="IServerModsAll" Click="ModsAll_Click" Margin="5" Content="All" FontSize="10" Height="20" />
                                 <Button Name="IServerModsNone" Click="ModsNone_Click" Margin="5" Content="None" FontSize="10" Height="20"/>
@@ -368,9 +428,15 @@
                                 <Button Name="IServerModsAz" Margin="5" Content="A-Z" FontSize="10" Height="20"/>-->
                             </StackPanel>
                         </Grid>
-                    </materialDesign:Card>
+                    </Grid>
 
-                    <materialDesign:Card Grid.Column="1" Margin="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                    <Grid Grid.Column="1" Margin="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                        <Grid.Style>
+                            <Style TargetType="Grid">
+                                <Setter Property="Margin" Value="5"/>
+                                <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Window.Background}"></Setter>
+                            </Style>
+                        </Grid.Style>
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
@@ -390,7 +456,13 @@
                                     <materialDesign:PackIcon Kind="Refresh" Height="10" Width="10"/>
                                 </Button>
                             </StackPanel>
-                            <ListBox Grid.Row="1" Grid.Column="0" Name="IClientModsList" Margin="10" Background="{DynamicResource MaterialDesignTextAreaInactiveBorder}" Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <ListBox Grid.Row="1" Grid.Column="0" Name="IClientModsList" Margin="10" Background="{DynamicResource MaterialDesignTextAreaInactiveBorder}" Foreground="{DynamicResource MaterialDesignBody}">
+                                <ListBox.ItemContainerStyle>
+                                    <Style TargetType="ListBoxItem" BasedOn="{StaticResource MaterialDesignListBoxItem}">
+                                        <Setter Property="Padding" Value="10,3,0,3"/>
+                                    </Style>
+                                </ListBox.ItemContainerStyle>
+                            </ListBox>
                             <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,10">
                                 <Button Name="IClientModsAll" Click="ModsAll_Click" Margin="5" Content="All" FontSize="10" Height="20" />
                                 <Button Name="IClientModsNone" Click="ModsNone_Click" Margin="5" Content="None" FontSize="10" Height="20"/>
@@ -399,9 +471,15 @@
                                 <Button Name="IClientModsAz" Margin="5" Content="A-Z" FontSize="10" Height="20"/>-->
                             </StackPanel>
                         </Grid>
-                    </materialDesign:Card>
+                    </Grid>
 
-                    <materialDesign:Card Grid.Column="2" Margin="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                    <Grid Grid.Column="2" Margin="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                        <Grid.Style>
+                            <Style TargetType="Grid">
+                                <Setter Property="Margin" Value="5"/>
+                                <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Window.Background}"></Setter>
+                            </Style>
+                        </Grid.Style>
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
@@ -421,7 +499,13 @@
                                     <materialDesign:PackIcon Kind="Refresh" Height="10" Width="10"/>
                                 </Button>
                             </StackPanel>
-                            <ListBox Grid.Row="1" Grid.Column="0" Name="IHeadlessModsList" Margin="10" Background="{DynamicResource MaterialDesignTextAreaInactiveBorder}" Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <ListBox Grid.Row="1" Grid.Column="0" Name="IHeadlessModsList" Margin="10" Background="{DynamicResource MaterialDesignTextAreaInactiveBorder}" Foreground="{DynamicResource MaterialDesignBody}">
+                                <ListBox.ItemContainerStyle>
+                                    <Style TargetType="ListBoxItem" BasedOn="{StaticResource MaterialDesignListBoxItem}">
+                                        <Setter Property="Padding" Value="10,3,0,3"/>
+                                    </Style>
+                                </ListBox.ItemContainerStyle>
+                            </ListBox>
                             <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,10">
                                 <Button Name="IHeadlessModsAll" Click="ModsAll_Click" Margin="5" Content="All" FontSize="10" Height="20" />
                                 <Button Name="IHeadlessModsNone" Click="ModsNone_Click" Margin="5" Content="None" FontSize="10" Height="20"/>
@@ -430,11 +514,11 @@
                                 <Button Name="IHeadlessModsAz" Margin="5" Content="A-Z" FontSize="10" Height="20"/>-->
                             </StackPanel>
                         </Grid>
-                    </materialDesign:Card>
+                    </Grid>
                 </Grid>
             </TabItem>
             <TabItem Header="Missions + Client">
-                <Grid Margin="5">
+                <Grid Margin="5,0,4.8,0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition />
@@ -443,7 +527,13 @@
                         <ColumnDefinition />
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
-                    <materialDesign:Card Margin="5" Grid.RowSpan="2"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                    <Grid Margin="5" Grid.RowSpan="2"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                        <Grid.Style>
+                            <Style TargetType="Grid">
+                                <Setter Property="Margin" Value="5"/>
+                                <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Window.Background}"></Setter>
+                            </Style>
+                        </Grid.Style>
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
@@ -455,7 +545,7 @@
                             </Grid.RowDefinitions>
                             <StackPanel Grid.ColumnSpan="4">
                                 <Label Margin="2" Content="Missions"/>
-                                <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="-8"/>
+                                <Separator/>
                                 <ToggleButton Name="IManualMissions" Click="ToggleUi" Style="{StaticResource MaterialDesignSwitchToggleButton}" IsChecked="False" HorizontalAlignment="Right" Margin="2,-25,5,0" ToolTip="Manual Mission Config"/>
                             </StackPanel>
 
@@ -486,7 +576,7 @@
                                 <Button Grid.Row="3" Grid.Column="0" Name="IAllMissionsButton" Click="ModsAll_Click" Margin="10,10,5,10" Content="All" FontSize="10" Height="20" />
                                 <Button Grid.Row="3" Grid.Column="1" Name="INoMissionsButton" Click="ModsNone_Click" Margin="5,10" Content="None" FontSize="10" Height="20"/>
                                 <Button Grid.Row="3" Grid.Column="2" Name="IRefreshMissionsButton" Click="IMissionsRefresh_Click" Margin="5,10" Content="{materialDesign:PackIcon Kind=Refresh}" FontSize="10" Height="20" Width="20" Padding="0"/>
-                                <ComboBox Grid.Row="3" Grid.Column="3" materialDesign:HintAssist.Hint="Difficulty Preset" Name="IDifficultyPreset" IsEditable="False" Foreground="{DynamicResource MaterialDesignBody}" Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="10,0,10,10" Width="75" HorizontalAlignment="Right">
+                                <ComboBox Grid.Row="3" Grid.Column="3" mah:TextBoxHelper.Watermark="Difficulty Preset" Name="IDifficultyPreset" IsEditable="False" Foreground="{DynamicResource MaterialDesignBody}" Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="10,0,10,10" Width="75" HorizontalAlignment="Right">
                                     <ComboBoxItem IsSelected="True">Recruit</ComboBoxItem>
                                     <ComboBoxItem>Regular</ComboBoxItem>
                                     <ComboBoxItem>Veteran</ComboBoxItem>
@@ -499,8 +589,14 @@
                             </StackPanel>
 
                         </Grid>
-                    </materialDesign:Card>
-                    <materialDesign:Card Grid.Row="0" Grid.Column="1" Margin="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                    </Grid>
+                    <Grid Grid.Row="0" Grid.Column="1" Margin="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                        <Grid.Style>
+                            <Style TargetType="Grid">
+                                <Setter Property="Margin" Value="5"/>
+                                <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Window.Background}"></Setter>
+                            </Style>
+                        </Grid.Style>
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition />
@@ -529,7 +625,7 @@
                             </Grid.RowDefinitions>
                             <StackPanel Grid.ColumnSpan="12">
                                 <Label Margin="2" Content="Custom Difficulty Settings"/>
-                                <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="-8"/>
+                                <Separator/>
                             </StackPanel>
 
                             <CheckBox Name="IReducedDamage" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4" Style="{StaticResource MaterialDesignCheckBox}" Content="Reduced Damage" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
@@ -550,58 +646,58 @@
                             <CheckBox Name="IAutoReporting" Grid.Row="4" Grid.Column="8" Grid.ColumnSpan="4" Style="{StaticResource MaterialDesignCheckBox}" Content="Auto Reporting" Margin="5,5,10,5"  Foreground="{DynamicResource MaterialDesignBody}"/>
                             <CheckBox Name="IMapContentMines" Grid.Row="5" Grid.Column="8" Grid.ColumnSpan="4" Style="{StaticResource MaterialDesignCheckBox}" Content="Map Content Mines" Margin="5"  Foreground="{DynamicResource MaterialDesignBody}"/>
 
-                            <ComboBox Name="IGroupIndicators" Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="3" materialDesign:HintAssist.Hint="Group Indicators" Foreground="{DynamicResource MaterialDesignBody}" IsEditable="False" Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="5">
+                            <ComboBox Name="IGroupIndicators" Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="3" mah:TextBoxHelper.Watermark="Group Indicators" Foreground="{DynamicResource MaterialDesignBody}" IsEditable="False" Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="5">
                                 <ComboBoxItem IsSelected="True">Never</ComboBoxItem>
                                 <ComboBoxItem>Limited Distance</ComboBoxItem>
                                 <ComboBoxItem>Always</ComboBoxItem>
                             </ComboBox>
 
-                            <ComboBox Name="IFriendlyNameTags" Grid.Row="6" Grid.Column="3" Grid.ColumnSpan="3" materialDesign:HintAssist.Hint="Friendly Name Tags" Foreground="{DynamicResource MaterialDesignBody}" IsEditable="False" Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="5">
+                            <ComboBox Name="IFriendlyNameTags" Grid.Row="6" Grid.Column="3" Grid.ColumnSpan="3" mah:TextBoxHelper.Watermark="Friendly Name Tags" Foreground="{DynamicResource MaterialDesignBody}" IsEditable="False" Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="5">
                                 <ComboBoxItem IsSelected="True">Never</ComboBoxItem>
                                 <ComboBoxItem>Limited Distance</ComboBoxItem>
                                 <ComboBoxItem>Always</ComboBoxItem>
                             </ComboBox>
 
-                            <ComboBox Name="IEnemyNameTags" Grid.Row="6" Grid.Column="6" Grid.ColumnSpan="3" materialDesign:HintAssist.Hint="Enemy Name Tags" Foreground="{DynamicResource MaterialDesignBody}" IsEditable="False" Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="5">
+                            <ComboBox Name="IEnemyNameTags" Grid.Row="6" Grid.Column="6" Grid.ColumnSpan="3" mah:TextBoxHelper.Watermark="Enemy Name Tags" Foreground="{DynamicResource MaterialDesignBody}" IsEditable="False" Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="5">
                                 <ComboBoxItem IsSelected="True">Never</ComboBoxItem>
                                 <ComboBoxItem>Limited Distance</ComboBoxItem>
                                 <ComboBoxItem>Always</ComboBoxItem>
                             </ComboBox>
 
-                            <ComboBox Name="IDetectedMines" Grid.Row="6" Grid.Column="9" Grid.ColumnSpan="3" materialDesign:HintAssist.Hint="Detected Mines" Foreground="{DynamicResource MaterialDesignBody}" IsEditable="False" Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="5">
+                            <ComboBox Name="IDetectedMines" Grid.Row="6" Grid.Column="9" Grid.ColumnSpan="3" mah:TextBoxHelper.Watermark="Detected Mines" Foreground="{DynamicResource MaterialDesignBody}" IsEditable="False" Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="5">
                                 <ComboBoxItem IsSelected="True">Never</ComboBoxItem>
                                 <ComboBoxItem>Limited Distance</ComboBoxItem>
                                 <ComboBoxItem>Always</ComboBoxItem>
                             </ComboBox>
 
-                            <ComboBox Name="ICommands" Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="3" materialDesign:HintAssist.Hint="Commands" Foreground="{DynamicResource MaterialDesignBody}" IsEditable="False" Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="5">
+                            <ComboBox Name="ICommands" Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="3" mah:TextBoxHelper.Watermark="Commands" Foreground="{DynamicResource MaterialDesignBody}" IsEditable="False" Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="5">
                                 <ComboBoxItem IsSelected="True">Never</ComboBoxItem>
                                 <ComboBoxItem>Fade Out</ComboBoxItem>
                                 <ComboBoxItem>Always</ComboBoxItem>
                             </ComboBox>
 
-                            <ComboBox Name="IWaypoints" Grid.Row="7" Grid.Column="3" Grid.ColumnSpan="3" materialDesign:HintAssist.Hint="Waypoints" Foreground="{DynamicResource MaterialDesignBody}" IsEditable="False" Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="5">
+                            <ComboBox Name="IWaypoints" Grid.Row="7" Grid.Column="3" Grid.ColumnSpan="3" mah:TextBoxHelper.Watermark="Waypoints" Foreground="{DynamicResource MaterialDesignBody}" IsEditable="False" Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="5">
                                 <ComboBoxItem IsSelected="True">Never</ComboBoxItem>
                                 <ComboBoxItem>Fade Out</ComboBoxItem>
                                 <ComboBoxItem>Always</ComboBoxItem>
                             </ComboBox>
 
-                            <ComboBox Name="IWeaponInfo" Grid.Row="7" Grid.Column="6" Grid.ColumnSpan="3" materialDesign:HintAssist.Hint="Weapon Info" Foreground="{DynamicResource MaterialDesignBody}" IsEditable="False" Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="5">
+                            <ComboBox Name="IWeaponInfo" Grid.Row="7" Grid.Column="6" Grid.ColumnSpan="3" mah:TextBoxHelper.Watermark="Weapon Info" Foreground="{DynamicResource MaterialDesignBody}" IsEditable="False" Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="5">
                                 <ComboBoxItem IsSelected="True">Never</ComboBoxItem>
                                 <ComboBoxItem>Fade Out</ComboBoxItem>
                                 <ComboBoxItem>Always</ComboBoxItem>
                             </ComboBox>
 
-                            <ComboBox Name="IStanceIndicator" Grid.Row="7" Grid.Column="9" Grid.ColumnSpan="3" materialDesign:HintAssist.Hint="Stance Indicator" Foreground="{DynamicResource MaterialDesignBody}" IsEditable="False" Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="5">
+                            <ComboBox Name="IStanceIndicator" Grid.Row="7" Grid.Column="9" Grid.ColumnSpan="3" mah:TextBoxHelper.Watermark="Stance Indicator" Foreground="{DynamicResource MaterialDesignBody}" IsEditable="False" Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="5">
                                 <ComboBoxItem IsSelected="True">Never</ComboBoxItem>
                                 <ComboBoxItem>Fade Out</ComboBoxItem>
                                 <ComboBoxItem>Always</ComboBoxItem>
                             </ComboBox>
 
                             <StackPanel Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="12" Orientation="Horizontal" HorizontalAlignment="Center">
-                                <TextBox Name="IAiAccuracy" materialDesign:HintAssist.Hint="AI Accuracy (0-1)" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5" Width="75" HorizontalAlignment="Center"/>
-                                <TextBox Name="IAiSkill" materialDesign:HintAssist.Hint="AI Skill (0-1)" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5" Width="75" HorizontalAlignment="Right"/>
-                                <ComboBox materialDesign:HintAssist.Hint="AI Preset" Name="IAiPreset" IsEditable="False" Foreground="{DynamicResource MaterialDesignBody}" Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="5" Width="75" HorizontalAlignment="Left">
+                                <TextBox Name="IAiAccuracy" mah:TextBoxHelper.Watermark="AI Accuracy (0-1)" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5" Width="75" HorizontalAlignment="Center"/>
+                                <TextBox Name="IAiSkill" mah:TextBoxHelper.Watermark="AI Skill (0-1)" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5" Width="75" HorizontalAlignment="Right"/>
+                                <ComboBox mah:TextBoxHelper.Watermark="AI Preset" Name="IAiPreset" IsEditable="False" Foreground="{DynamicResource MaterialDesignBody}" Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="5" Width="75" HorizontalAlignment="Left">
                                     <ComboBoxItem IsSelected="True">0</ComboBoxItem>
                                     <ComboBoxItem>1</ComboBoxItem>
                                     <ComboBoxItem>2</ComboBoxItem>
@@ -609,8 +705,14 @@
                                 </ComboBox>
                             </StackPanel>
                         </Grid>
-                    </materialDesign:Card>
-                    <materialDesign:Card Grid.Column="1" Grid.Row="1" Margin="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                    </Grid>
+                    <Grid Grid.Column="1" Grid.Row="1" Margin="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                        <Grid.Style>
+                            <Style TargetType="Grid">
+                                <Setter Property="Margin" Value="5"/>
+                                <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Window.Background}"></Setter>
+                            </Style>
+                        </Grid.Style>
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
@@ -628,7 +730,7 @@
                             </Grid.RowDefinitions>
                             <StackPanel Grid.ColumnSpan="4">
                                 <Label Margin="2" Content="Client Performance"/>
-                                <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="-8"/>
+                                <Separator/>
                             </StackPanel>
                             <CheckBox Name="IMaxPingEnabled" Click="ToggleUi" Grid.Row="1" Grid.Column="2" Margin="5" Style="{StaticResource MaterialDesignCheckBox}" Content="Max Ping (ms)" Foreground="{DynamicResource MaterialDesignBody}"/>
                             <TextBox Name="IMaxPing" Grid.Row="1" Grid.Column="3" Margin="5" Foreground="{DynamicResource MaterialDesignBody}" IsEnabled="False" Width="50"/>
@@ -645,10 +747,10 @@
                                 <ComboBoxItem>Log and Kick</ComboBoxItem>
                             </ComboBox>
 
-                            <TextBox Grid.Row="3" Grid.Column="2" Name="ITerrainGrid" materialDesign:HintAssist.Hint="Terrain Grid" Width="70" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="-12,5,5,5"/>
-                            <TextBox Grid.Row="3" Grid.Column="3" Name="IViewDistance" materialDesign:HintAssist.Hint="View Distance (m)" Width="70" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="-12,5,5,5"/>
+                            <TextBox Grid.Row="3" Grid.Column="2" Name="ITerrainGrid" mah:TextBoxHelper.Watermark="Terrain Grid" Width="70" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="-12,5,5,5"/>
+                            <TextBox Grid.Row="3" Grid.Column="3" Name="IViewDistance" mah:TextBoxHelper.Watermark="View Distance (m)" Width="70" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="-12,5,5,5"/>
                         </Grid>
-                    </materialDesign:Card>
+                    </Grid>
                 </Grid>
             </TabItem>
             <TabItem Header="Performance + Scripting">
@@ -659,7 +761,13 @@
                         <ColumnDefinition Width="1*"/>
                     </Grid.ColumnDefinitions>
 
-                    <materialDesign:Card Grid.Column="0" Grid.Row="0" Margin="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                    <Grid Grid.Column="0" Grid.Row="0" Margin="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                        <Grid.Style>
+                            <Style TargetType="Grid">
+                                <Setter Property="Margin" Value="5"/>
+                                <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Window.Background}"></Setter>
+                            </Style>
+                        </Grid.Style>
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition />
@@ -682,21 +790,21 @@
                                 <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="-8"/>
                             </StackPanel>
                             <Button Name="IResetPerf" Click="IResetPerf_Click" Grid.Row="1" Grid.Column="0" Content="Reset To Default" FontSize="11" Width="100" Height="25" Margin="5" Padding="0"/>
-                            <TextBox Name="IMaxCustomFileSize" Grid.Row="2" Grid.Column="0" materialDesign:HintAssist.Hint="Max Custom File Size (kB)" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
-                            <TextBox Name="IMaxPacketSize" Grid.Row="3" Grid.Column="0" materialDesign:HintAssist.Hint="Max Packet Size" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
-                            <TextBox Name="IMinBandwidth" Grid.Row="4" Grid.Column="0" materialDesign:HintAssist.Hint="Min Bandwidth (bps)" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
-                            <TextBox Name="IMaxBandwidth" Grid.Row="5" Grid.Column="0" materialDesign:HintAssist.Hint="Max Bandwidth (bps)" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
-                            <TextBox Name="IMaxMem" Grid.Row="6" Grid.Column="0" materialDesign:HintAssist.Hint="Max Memory (MiB)" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
+                            <TextBox Name="IMaxCustomFileSize" Grid.Row="2" Grid.Column="0" mah:TextBoxHelper.Watermark="Max Custom File Size (kB)" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
+                            <TextBox Name="IMaxPacketSize" Grid.Row="3" Grid.Column="0" mah:TextBoxHelper.Watermark="Max Packet Size" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
+                            <TextBox Name="IMinBandwidth" Grid.Row="4" Grid.Column="0" mah:TextBoxHelper.Watermark="Min Bandwidth (bps)" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
+                            <TextBox Name="IMaxBandwidth" Grid.Row="5" Grid.Column="0" mah:TextBoxHelper.Watermark="Max Bandwidth (bps)" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
+                            <TextBox Name="IMaxMem" Grid.Row="6" Grid.Column="0" mah:TextBoxHelper.Watermark="Max Memory (MiB)" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
 
-                            <TextBox Name="IMaxMessagesSend" Grid.Row="1" Grid.Column="1" materialDesign:HintAssist.Hint="Max Messages Send" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
-                            <TextBox Name="IMaxSizeNonguaranteed" Grid.Row="2" Grid.Column="1" materialDesign:HintAssist.Hint="Max Size Nonguaranteed (Bytes)" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
-                            <TextBox Name="IMaxSizeGuaranteed" Grid.Row="3" Grid.Column="1" materialDesign:HintAssist.Hint="Max Size Guaranteed (Bytes)" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
-                            <TextBox Name="IMinErrorToSend" Grid.Row="4" Grid.Column="1" materialDesign:HintAssist.Hint="Min Error To Send" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
-                            <TextBox Name="IMinErrorToSendNear" Grid.Row="5" Grid.Column="1" materialDesign:HintAssist.Hint="Min Error To Send Near" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
-                            <TextBox Name="ICpuCount" Grid.Row="6" Grid.Column="1" materialDesign:HintAssist.Hint="CPU Core Count" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
+                            <TextBox Name="IMaxMessagesSend" Grid.Row="1" Grid.Column="1" mah:TextBoxHelper.Watermark="Max Messages Send" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
+                            <TextBox Name="IMaxSizeNonguaranteed" Grid.Row="2" Grid.Column="1" mah:TextBoxHelper.Watermark="Max Size Nonguaranteed (Bytes)" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
+                            <TextBox Name="IMaxSizeGuaranteed" Grid.Row="3" Grid.Column="1" mah:TextBoxHelper.Watermark="Max Size Guaranteed (Bytes)" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
+                            <TextBox Name="IMinErrorToSend" Grid.Row="4" Grid.Column="1" mah:TextBoxHelper.Watermark="Min Error To Send" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
+                            <TextBox Name="IMinErrorToSendNear" Grid.Row="5" Grid.Column="1" mah:TextBoxHelper.Watermark="Min Error To Send Near" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
+                            <TextBox Name="ICpuCount" Grid.Row="6" Grid.Column="1" mah:TextBoxHelper.Watermark="CPU Core Count" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
 
-                            <TextBox Name="IExtraParams" Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" materialDesign:HintAssist.Hint="Extra Params" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
-                            <TextBox Name="IAdminUids" Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2" Margin="5" AcceptsReturn="True" TextWrapping="Wrap" Style="{StaticResource MaterialDesignFloatingHintTextBox}" materialDesign:HintAssist.Hint="Admin IDs (one per line)" VerticalScrollBarVisibility="Auto" Foreground="{DynamicResource MaterialDesignBody}" Background="{DynamicResource MaterialDesignTextAreaInactiveBorder}"/>
+                            <TextBox Name="IExtraParams" Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" mah:TextBoxHelper.Watermark="Extra Params" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="{DynamicResource MaterialDesignBody}" Margin="5"/>
+                            <TextBox Name="IAdminUids" Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2" Margin="5" AcceptsReturn="True" TextWrapping="Wrap" Style="{StaticResource MaterialDesignFloatingHintTextBox}" mah:TextBoxHelper.Watermark="Admin IDs (one per line)" VerticalScrollBarVisibility="Auto" Foreground="{DynamicResource MaterialDesignBody}" Background="{DynamicResource MaterialDesignTextAreaInactiveBorder}"/>
 
 
                             <StackPanel Grid.Row="9" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal">
@@ -706,8 +814,14 @@
 
 
                         </Grid>
-                    </materialDesign:Card>
-                    <materialDesign:Card Grid.Row="0" Grid.Column="1" Margin="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                    </Grid>
+                    <Grid Grid.Row="0" Grid.Column="1" Margin="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                        <Grid.Style>
+                            <Style TargetType="Grid">
+                                <Setter Property="Margin" Value="5"/>
+                                <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Window.Background}"></Setter>
+                            </Style>
+                        </Grid.Style>
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition />
@@ -724,36 +838,42 @@
                                 <Label Margin="2" Content="Server Scripting"/>
                                 <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="-8"/>
                             </StackPanel>
-                            <TextBox Name="IServerCommandPassword" Grid.Row="1" Grid.Column="0" AcceptsReturn="True" TextWrapping="Wrap" materialDesign:HintAssist.Hint="Server Command Password" Margin="10" Foreground="{DynamicResource MaterialDesignBody}"/>
-                            <TextBox Name="IDoubleIdDetected" Grid.Row="2" Grid.Column="0" AcceptsReturn="True" TextWrapping="Wrap" materialDesign:HintAssist.Hint="doubleIdDetected" Margin="10" Foreground="{DynamicResource MaterialDesignBody}"/>
-                            <TextBox Name="IOnUserConnected" Grid.Row="3" Grid.Column="0" AcceptsReturn="True" TextWrapping="Wrap" materialDesign:HintAssist.Hint="onUserConnected" Margin="10" Foreground="{DynamicResource MaterialDesignBody}"/>
-                            <TextBox Name="IOnUserDisconnected" Grid.Row="4" Grid.Column="0" AcceptsReturn="True" TextWrapping="Wrap" materialDesign:HintAssist.Hint="onUserDisconnected" Margin="10" Foreground="{DynamicResource MaterialDesignBody}"/>
-                            <TextBox Name="IOnHackedData" Grid.Row="1" Grid.Column="1" AcceptsReturn="True" TextWrapping="Wrap" materialDesign:HintAssist.Hint="onHackedData" Margin="10" Foreground="{DynamicResource MaterialDesignBody}"/>
-                            <TextBox Name="IOnDifferentData" Grid.Row="2" Grid.Column="1" AcceptsReturn="True" TextWrapping="Wrap" materialDesign:HintAssist.Hint="onDifferentData" Margin="10" Foreground="{DynamicResource MaterialDesignBody}"/>
-                            <TextBox Name="IOnUnsignedData" Grid.Row="3" Grid.Column="1" AcceptsReturn="True" TextWrapping="Wrap" materialDesign:HintAssist.Hint="onUnsignedData" Margin="10" Foreground="{DynamicResource MaterialDesignBody}"/>
-                            <TextBox Name="IRegularCheck" Grid.Row="4" Grid.Column="1" AcceptsReturn="True" TextWrapping="Wrap" materialDesign:HintAssist.Hint="regularCheck" Margin="10" Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <TextBox Name="IServerCommandPassword" Grid.Row="1" Grid.Column="0" AcceptsReturn="True" TextWrapping="Wrap" mah:TextBoxHelper.Watermark="Server Command Password" Margin="10" Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <TextBox Name="IDoubleIdDetected" Grid.Row="2" Grid.Column="0" AcceptsReturn="True" TextWrapping="Wrap" mah:TextBoxHelper.Watermark="doubleIdDetected" Margin="10" Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <TextBox Name="IOnUserConnected" Grid.Row="3" Grid.Column="0" AcceptsReturn="True" TextWrapping="Wrap" mah:TextBoxHelper.Watermark="onUserConnected" Margin="10" Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <TextBox Name="IOnUserDisconnected" Grid.Row="4" Grid.Column="0" AcceptsReturn="True" TextWrapping="Wrap" mah:TextBoxHelper.Watermark="onUserDisconnected" Margin="10" Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <TextBox Name="IOnHackedData" Grid.Row="1" Grid.Column="1" AcceptsReturn="True" TextWrapping="Wrap" mah:TextBoxHelper.Watermark="onHackedData" Margin="10" Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <TextBox Name="IOnDifferentData" Grid.Row="2" Grid.Column="1" AcceptsReturn="True" TextWrapping="Wrap" mah:TextBoxHelper.Watermark="onDifferentData" Margin="10" Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <TextBox Name="IOnUnsignedData" Grid.Row="3" Grid.Column="1" AcceptsReturn="True" TextWrapping="Wrap" mah:TextBoxHelper.Watermark="onUnsignedData" Margin="10" Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <TextBox Name="IRegularCheck" Grid.Row="4" Grid.Column="1" AcceptsReturn="True" TextWrapping="Wrap" mah:TextBoxHelper.Watermark="regularCheck" Margin="10" Foreground="{DynamicResource MaterialDesignBody}"/>
                         </Grid>
-                    </materialDesign:Card>
-                    <materialDesign:Card Grid.Row="0" Grid.Column="2" Margin="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                    </Grid>
+                    <Grid Grid.Row="0" Grid.Column="2" Margin="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                        <Grid.Style>
+                            <Style TargetType="Grid">
+                                <Setter Property="Margin" Value="5"/>
+                                <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Window.Background}"></Setter>
+                            </Style>
+                        </Grid.Style>
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"></RowDefinition>
                                 <RowDefinition></RowDefinition>
                                 <RowDefinition Height="Auto"></RowDefinition>
                             </Grid.RowDefinitions>
-                                <StackPanel Grid.Row="0">
-                                    <Label Margin="2" Content="Additional Parameters"/>
+                            <StackPanel Grid.Row="0">
+                                <Label Margin="2" Content="Additional Parameters"/>
                                 <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="-8"/>
                             </StackPanel>
-                            <TextBox Name="IAdditionalParams" Grid.Row="1" Margin="10" AcceptsReturn="True" TextWrapping="Wrap" Style="{StaticResource MaterialDesignFloatingHintTextBox}" materialDesign:HintAssist.Hint="Config file parameters" VerticalScrollBarVisibility="Auto" Foreground="{DynamicResource MaterialDesignBody}" Background="{DynamicResource MaterialDesignTextAreaInactiveBorder}"/>
+                            <TextBox Name="IAdditionalParams" Grid.Row="1" Margin="10" AcceptsReturn="True" TextWrapping="Wrap" Style="{StaticResource MaterialDesignFloatingHintTextBox}" mah:TextBoxHelper.Watermark="Config file parameters" VerticalScrollBarVisibility="Auto" Foreground="{DynamicResource MaterialDesignBody}" Background="{DynamicResource MaterialDesignTextAreaInactiveBorder}"/>
                             <CheckBox Name="IEnableAdditionalParams" Grid.Row="2" Margin="10,0,10,10" ToolTip="May be unsafe to add those parameters.\nUse with caution." Style="{StaticResource MaterialDesignCheckBox}" Content="Add parameters to config" Foreground="{DynamicResource MaterialDesignBody}"/>
                         </Grid>
-                    </materialDesign:Card>
+                    </Grid>
                 </Grid>
             </TabItem>
-        </dragablz:TabablzControl>
+        </TabControl>
         <StackPanel Grid.Row="1" Orientation="Horizontal">
-            <Label Name="IDisplayName" VerticalAlignment="Center" Content="Profile Display Name" Foreground="{DynamicResource MaterialDesignLightForeground}" FontWeight="Bold" FontSize="16" Margin="5"/>
+            <Label Name="IDisplayName" VerticalAlignment="Center" Content="Profile Display Name" FontWeight="Bold" FontSize="16" Margin="5"/>
         </StackPanel>
         <StackPanel Name="IProfileNameEdit" Grid.Row="1" Orientation="Horizontal" Margin="10,13" Width="310" HorizontalAlignment="Left" Visibility="Collapsed">
             <TextBox Name="IProfileDisplayNameEdit" FontWeight="Bold" FontSize="16" Width="278" Foreground="{DynamicResource MaterialDesignLightForeground}"/>
@@ -767,19 +887,19 @@
                 <ListBoxItem.ToolTip>
                     <TextBlock>Save</TextBlock>
                 </ListBoxItem.ToolTip>
-                <materialDesign:PackIcon Kind="ContentSave" />
+                <iconPacks:Material Kind="ContentSave" />
             </ListBoxItem>
             <ListBoxItem Name="IRenameProfile">
                 <ListBoxItem.ToolTip>
                     <TextBlock>Rename</TextBlock>
                 </ListBoxItem.ToolTip>
-                <materialDesign:PackIcon Kind="Pencil" />
+                <iconPacks:Material Kind="Pencil" />
             </ListBoxItem>
             <ListBoxItem Name="IDeleteProfile">
                 <ListBoxItem.ToolTip>
                     <TextBlock>Delete</TextBlock>
                 </ListBoxItem.ToolTip>
-                <materialDesign:PackIcon Kind="Delete" />
+                <iconPacks:Material Kind="Delete" />
             </ListBoxItem>
             <!--<ListBoxItem Name="IExportProfile">
                 <ListBoxItem.ToolTip>
@@ -791,8 +911,35 @@
                 <ListBoxItem.ToolTip>
                     <TextBlock>Launch</TextBlock>
                 </ListBoxItem.ToolTip>
-                <materialDesign:PackIcon Kind="Play" />
+                <iconPacks:Material Kind="Play" />
             </ListBoxItem>
         </ListBox>
+
+
+        <materialDesign:DialogHost Name="IConfirmDeleteDialog"  HorizontalAlignment="Center" IsOpen="False" VerticalAlignment="Center">
+            <materialDesign:DialogHost.DialogContent>
+                <StackPanel Margin="16">
+                    <TextBlock Name="IConfirmDeleteText" Text="Are you sure ?" TextWrapping="Wrap" TextAlignment="Left" Margin="0,0,0,5"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" >
+                        <Button Style="{StaticResource MaterialDesignFlatButton}"
+                                        Name="IConfirmDeleteBtn"
+                                        IsDefault="True"
+                                        Margin="0 8 8 0"
+                                        Command="materialDesign:DialogHost.CloseDialogCommand">
+                            ACCEPT
+                        </Button>
+                        <Button Style="{StaticResource MaterialDesignFlatButton}"
+                                        Name="ICancelDeleteBtn"
+                                        IsCancel="True"
+                                        Margin="0 8 8 0"
+                                        Command="materialDesign:DialogHost.CloseDialogCommand">
+                            CANCEL
+                        </Button>
+                    </StackPanel>
+                </StackPanel>
+            </materialDesign:DialogHost.DialogContent>
+        </materialDesign:DialogHost>
+
+
     </Grid>
 </UserControl>

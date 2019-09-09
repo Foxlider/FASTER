@@ -1,89 +1,44 @@
-﻿<Window x:Class="FASTER.Setup"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
-        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-        TextElement.FontWeight="Regular"
-        TextElement.FontSize="13"
-        TextOptions.TextFormattingMode="Ideal"
-        TextOptions.TextRenderingMode="Auto"
-        Background="{DynamicResource MaterialDesignPaper}"
-        FontFamily="{DynamicResource MaterialDesignFont}"
-
-        mc:Ignorable="d"
-        Title="FASTER - Initial Setup" 
-        Height="400" 
-        Width="300" 
-        WindowStartupLocation="CenterScreen"
-        WindowStyle="None">
-    <WindowChrome.WindowChrome>
-        <WindowChrome CaptionHeight="0"/>
-    </WindowChrome.WindowChrome>
-
+﻿<mah:MetroWindow
+    xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+    x:Class="FASTER.Setup"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+    xmlns:local="clr-namespace:FASTER"
+    mc:Ignorable="d"
+    
+    GlowBrush="Black"
+    BorderThickness="0" 
+    ResizeMode="NoResize"
+    
+    Title="FASTER - Initial Setup" 
+    Height="400" 
+    Width="300"
+    
+    WindowStartupLocation="CenterScreen">
     <Grid>
-        <!--Grid Definitions-->
-        <Grid.RowDefinitions>
-            <RowDefinition Height="34"/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
-
-        <!--Custom Window Bar Elements-->
-        <!--<Rectangle Name="IWindowDragBar" Grid.Row="0" Grid.Column="0" Margin="0,0,86,0" Fill="{DynamicResource MaterialDesignPaper}"/>-->
-        <Grid x:Name="IWindowDragBar" Height="34" VerticalAlignment="Center">
-            <Image Name="ILogoImage" HorizontalAlignment="Left" Margin="5,0" Height="20" Width="20" Source=".\Resources\FASTER.ico"/>
-            <Label Name="IWindowTitle"  Content="FASTER - Initial Setup" VerticalAlignment="Center" Margin="30,0,86,0"/>
-            <Grid Width="86" Margin="214,0,0,0" HorizontalAlignment="Left">
-                <Button x:Name="IWindowMinimizeButton" Style="{StaticResource MaterialDesignFlatButton}" Margin="0,0,43,0" Click="IWindowMinimizeButton_Click" >
-                    <md:PackIcon Kind="WindowMinimize" Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                </Button>
-                <Button x:Name="IWindowCloseButton"  Margin="43,0,0,0" Click="IWindowCloseButton_Click" >
-                    <Button.Style>
-                        <Style TargetType="{x:Type Button}" BasedOn="{StaticResource MaterialDesignFlatButton}">
-                            <Setter Property="Background" Value="#00FF0000"/>
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="{x:Type Button}">
-                                        <Border Background="{TemplateBinding Background}">
-                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                        </Border>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                            <Style.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter Property="Background" Value="Red"/>
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Button.Style>
-                    <md:PackIcon Kind="WindowClose" Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                </Button>
-            </Grid>
-        </Grid>
-
-        <TextBlock TextWrapping="Wrap" TextAlignment="Center" Margin="10,10,10,0" Grid.Row="1" Height="50" VerticalAlignment="Top">
+        <StackPanel Orientation="Vertical">
+            <TextBlock TextWrapping="Wrap" TextAlignment="Center" Margin="10,10,10,0" Height="50" VerticalAlignment="Top">
                Welcome to FASTER - an unoffical Arma 3 server updater. Use the form below to setup a few options.
-        </TextBlock>
-        <TextBox Name="ISteamUserBox" md:HintAssist.Hint="Steam Username" Style="{StaticResource MaterialDesignFloatingHintTextBox}" BorderBrush="{DynamicResource PrimaryHueDarkBrush}" Margin="10,65,10,0" Grid.Row="1" Height="35" VerticalAlignment="Top"/>
-        <PasswordBox Name="ISteamPassBox" md:HintAssist.Hint="Steam Password" Style="{StaticResource MaterialDesignFloatingHintPasswordBox}" BorderBrush="{DynamicResource PrimaryHueDarkBrush}" Margin="10,105,10,0" Grid.Row="1" Height="35" VerticalAlignment="Top"/>
-        <StackPanel Orientation="Horizontal" Margin="10,0,10,0" Grid.Row="1" Height="40" VerticalAlignment="Center">
-            <TextBox Name="ISteamDirBox"  md:HintAssist.Hint="Steam Install Directory" Style="{StaticResource MaterialDesignFloatingHintTextBox}" BorderBrush="{DynamicResource PrimaryHueDarkBrush}" Width="240" Margin="0,0,0,5"/>
-            <Button Name="ISteamDirButton" Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}" Height="20" Width="20" Margin="10,0,0,0" Click="DirButton_Click">
-                <md:PackIcon Kind="FolderOpen" Height="10" Width="10"/>
-            </Button>
+            </TextBlock>
+            <TextBox x:Name="ISteamUserBox" mah:TextBoxHelper.Watermark="Steam Username" Margin="10"/>
+            <PasswordBox x:Name="ISteamPassBox" mah:TextBoxHelper.Watermark="Steam Password" Margin="10"/>
+            <Separator Margin="10"/>
+            <StackPanel Orientation="Horizontal" Margin="5">
+                <TextBox x:Name="ISteamDirBox" mah:TextBoxHelper.Watermark="Steam Install Directory" Margin="5" Width="245"/>
+                <Button Name="ISteamDirButton" Content="{iconPacks:Material Kind=Folder}" Style="{DynamicResource MahApps.Styles.Button.Flat}" Height="25" Width="25" Margin="5" Padding="2" Click="DirButton_Click"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="5">
+                <TextBox x:Name="IServerDirBox" mah:TextBoxHelper.Watermark="Arma Install Directory" Margin="5" Width="245"/>
+                <Button Name="IServerDirButton" Content="{iconPacks:Material Kind=Folder}" Style="{DynamicResource MahApps.Styles.Button.Flat}" Height="25" Width="25" Margin="5" Padding="2" Click="DirButton_Click"/>
+            </StackPanel>
+            <Separator Margin="10"/>
         </StackPanel>
-        <StackPanel Orientation="Horizontal" Margin="10,202,10,0" Grid.Row="1" Height="40" VerticalAlignment="Top">
-            <TextBox Name="IServerDirBox"  md:HintAssist.Hint="Arma 3 Install Directory" Style="{StaticResource MaterialDesignFloatingHintTextBox}" BorderBrush="{DynamicResource PrimaryHueDarkBrush}" Width="240" Margin="0,0,0,5"/>
-            <Button Name="IServerDirButton" Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}" Height="20" Width="20" Margin="10,0,0,0" Click="DirButton_Click" >
-                <md:PackIcon Kind="FolderOpen" Height="10" Width="10"/>
-            </Button>
-        </StackPanel>
-        <CheckBox Name="IInstallSteamCheck" IsChecked="False" Style="{StaticResource MaterialDesignCheckBox}" Margin="10,247,10,0" Grid.Row="1" Height="30" VerticalAlignment="Top">
-            Install SteamCMD
-        </CheckBox>
-        <Button x:Name="IContinueButton" Content="Continue" Width="90" HorizontalAlignment="Right" Margin="0,0,10,10" Grid.Row="1" Height="32" VerticalAlignment="Bottom" Click="IContinueButton_Click" />
-
+        <Grid Height="100" HorizontalAlignment="Stretch" VerticalAlignment="Bottom">
+            <mah:ToggleSwitch Header="Install SteamCMD" Name="IInstallSteamCheck" IsChecked="False" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10"/>
+            <Button x:Name="IContinueButton" Content="Continue"  HorizontalAlignment="Right" Margin="10" VerticalAlignment="Bottom" Click="IContinueButton_Click" />
+        </Grid>
     </Grid>
-</Window>
+</mah:MetroWindow>
