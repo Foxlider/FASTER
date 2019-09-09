@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace FASTER
 {
@@ -37,14 +38,18 @@ namespace FASTER
                 Thread thread = new Thread(() =>
                 {
                     SteamMod.UpdateInfoFromSteam();
-                    Dispatcher?.Invoke(() =>
+                    try
                     {
-                        IModView.IsEnabled              = true;
-                        IProgressInfo.Visibility        = Visibility.Collapsed;
-                        IUpdateProgress.IsIndeterminate = false;
-                    });
-
-                    UpdateModsView();
+                        Dispatcher?.Invoke(() =>
+                        {
+                            IModView.IsEnabled              = true;
+                            IProgressInfo.Visibility        = Visibility.Collapsed;
+                            IUpdateProgress.IsIndeterminate = false;
+                        });
+                        UpdateModsView();
+                    }
+                    catch
+                    { /* FASTER CLOSED ALREADY, DON'T CATCH THIS */ }
                 });
                 thread.SetApartmentState(ApartmentState.STA);
                 thread.Start();
@@ -136,26 +141,46 @@ namespace FASTER
             UpdateModsView();
         }
 
-        private static void OpenLauncherFile()
+        private void OpenLauncherFile()
         {
             string modsFile = Functions.SelectFile("Arma 3 Launcher File|*.html");
 
-            if (modsFile != string.Empty)
+            if (!string.IsNullOrEmpty(modsFile))
             {
                 StreamReader dataReader = new StreamReader(modsFile);
 
                 do
                 {
-                    var modLine = dataReader.ReadLine();
-                    if (modLine == null)
-                        break;
-                    if (modLine.Contains("data-type=\"Link\">"))
+                    try
                     {
-                        var link = modLine.Substring(modLine.IndexOf("http://steam", StringComparison.Ordinal));
-                        link = Reverse(link);
-                        link = link.Substring(link.IndexOf("epyt-atad", StringComparison.Ordinal) + 11);
-                        link = Reverse(link);
-                        SteamMod.AddSteamMod(link, true);
+                        var modLine = dataReader.ReadLine();
+                        if (modLine == null) break;
+                        if (modLine.Contains("data-type=\"Link\">") && !modLine.Contains("/?id="))
+                        {
+                            var link = modLine.Substring(modLine.IndexOf("http://steam", StringComparison.Ordinal));
+                            link = Reverse(link);
+                            link = link.Substring(link.IndexOf("epyt-atad", StringComparison.Ordinal) + 11);
+                            link = Reverse(link);
+                            try
+                            { SteamMod.AddSteamMod(link, true); }
+                            catch
+                            {
+                                using EventLog eventLog = new EventLog("Application")
+                                    { Source = "Application" };
+                                eventLog.WriteEntry($"Could not import mod {link}", EventLogEntryType.Error, 1000, 1);
+                                Dispatcher?.Invoke(() =>
+                                {
+                                    IMessageText.Text = $"Could not import mod {link}";
+                                    IMessageDialog.IsOpen = true;
+                                });
+                            }
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        using EventLog eventLog = new EventLog("Application")
+                            { Source = "Application" };
+                        eventLog.WriteEntry($"Error occured while importing mod file : [{e.GetType()}] {e.Message}", EventLogEntryType.Warning, 1000, 1);
                     }
                 }
                 while (true);
@@ -214,13 +239,13 @@ namespace FASTER
                 try
                 {
                     Directory.CreateDirectory(modPath);
-
                     var linkPath = Path.Combine(Properties.Options.Default.serverPath, $"@{Functions.SafeName(modName)}");
                     var linkCommand = "/c mklink /D \"" + linkPath + "\" \"" + modPath + "\"";
                     
                     ProcessStartInfo startInfo = new ProcessStartInfo("cmd.exe")
                     {
                         WindowStyle     = ProcessWindowStyle.Hidden,
+                        Verb = "runas",
                         CreateNoWindow  = true,
                         UseShellExecute = false,
                         Arguments       = linkCommand

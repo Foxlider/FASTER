@@ -9,6 +9,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
+using System.Security.Principal;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -22,7 +23,7 @@ namespace FASTER
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow
     {
         private static MainWindow _instance;
         public  bool    InstallSteamCmd = false;
@@ -31,15 +32,15 @@ namespace FASTER
 
         public MainWindow()
         {
-            Initialized += MainWindow_Initialized;
+            //Initialized += MainWindow_Initialized;
             Properties.Options.Default.Reload();
             InitializeComponent();
-            IWindowDragBar.MouseDown += WindowDragBar_MouseDown;
+            //IWindowDragBar.MouseDown += WindowDragBar_MouseDown;
             Properties.Options.Default.PropertyChanged += Default_PropertyChanged;
             
             //this.Loaded += MainWindow_Initialized;
-            Loaded += MainWindow_Loaded;
-            Closing += MainWindow_Closing;
+            //Loaded += MainWindow_Loaded;
+            //Closing += MainWindow_Closing;
 
             IMessageDialogClose.Click += IMessageDialogClose_Click;
             ISteamUserBox.LostFocus += ISteamSettings_Changed;
@@ -114,7 +115,10 @@ namespace FASTER
         }
 
         private void WindowDragBar_MouseDown(object sender, MouseButtonEventArgs e)
-        { DragMove(); }
+        {
+            if(e.LeftButton == MouseButtonState.Pressed)
+            { DragMove(); }
+        }
 
         private void ToolsButton_Click(object sender, RoutedEventArgs e)
         {
@@ -125,17 +129,22 @@ namespace FASTER
         #endregion
         
         #region WindowEvents
-        private void MainWindow_Initialized(object sender, EventArgs e)
+        private void MetroWindow_Initialized(object sender, EventArgs e)
         {
-            Functions.CheckSettings();
-            LoadServerProfiles();
-            LoadSteamUpdaterSettings();
+            if (CheckAdmin())
+            {
+                Functions.CheckSettings();
+                LoadServerProfiles();
+                LoadSteamUpdaterSettings();
+            }
+            else
+            { Close(); }
         }
 
-        private void MainWindow_Loaded(object sender, EventArgs e)
+        private void MetroWindow_Loaded(object sender, EventArgs e)
         {
             //FIX for issue #22 : not necessary
-            //CheckAdmin();
+            
 
             LoadSteamUpdaterSettings();
 
@@ -143,7 +152,7 @@ namespace FASTER
             { InstallSteam(); }
         }
 
-        private void MainWindow_Closing(object sender, EventArgs e)
+        private void MetroWindow_Closing(object sender, EventArgs e)
         {
             //UpdateSteamUpdaterSettings();
             Properties.Options.Default.Save();
@@ -229,7 +238,7 @@ namespace FASTER
                 IToolsDialog.IsOpen = false;
                 MainGrid.Effect = null;
             }
-            if (!ImessageDialogContent.IsMouseOver && IMessageDialog.IsOpen)
+            if (!IMessageDialogContent.IsMouseOver && IMessageDialog.IsOpen)
             {
                 IMessageDialog.IsOpen = false;
                 MainGrid.Effect = null;
@@ -383,27 +392,31 @@ namespace FASTER
         #endregion
 
         //FIX for issue #22 not necessary
-        //private void CheckAdmin()
-        //{
-        //    try
-        //    {
-        //        using WindowsIdentity identity = WindowsIdentity.GetCurrent();
-        //        WindowsPrincipal principal = new WindowsPrincipal(identity);
-        //        if (!principal.IsInRole(WindowsBuiltInRole.Administrator))
-        //        {
-        //            var dialogResult =
-        //                MessageBox.Show(
-        //                    "Application must be run as administrator",
-        //                    "Error",
-        //                    MessageBoxButton.OK,
-        //                    MessageBoxImage.Error);
-        //            //if (dialogResult == MessageBoxResult.OK)
-        //            //    Close();
-        //        }
-        //    }
-        //    catch (Exception e)
-        //    { throw new ApplicationException("Unable to determine administrator or root status", e); }
-        //}
+        private bool CheckAdmin()
+        {
+            try
+            {
+                using WindowsIdentity identity  = WindowsIdentity.GetCurrent();
+                WindowsPrincipal      principal = new WindowsPrincipal(identity);
+                if (!principal.IsInRole(WindowsBuiltInRole.Administrator))
+                {
+                    MessageBox.Show("Application must be run as administrator",
+                                    "Error",
+                                    MessageBoxButton.OK,
+                                    MessageBoxImage.Error);
+                    return false;
+                }
+                return true;
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("Unable to determine administrator status",
+                                "Error",
+                                MessageBoxButton.OK,
+                                MessageBoxImage.Error);
+                throw new ApplicationException("Unable to determine administrator status", e);
+            }
+        }
 
         public void LoadServerProfiles()
         {

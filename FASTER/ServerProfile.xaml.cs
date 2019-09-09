@@ -207,32 +207,9 @@ namespace FASTER
             { ShowRenameInterface(true); }
             if (IDeleteProfile.IsSelected)
             {
-                ServerCollection.DeleteServerProfile(_safeName);
-                MainWindow.Instance.IMainContent.SelectedIndex = 0;
-
-
-                var tabs = MainWindow.Instance.IMainContent.Items;
-                var menus = MainWindow.Instance.IServerProfilesMenu.Items;
-                var menu = new ListBoxItem();
-                var tab = new TabItem();
-
-                foreach (ListBoxItem m in menus)
-                {
-                    if (m.Name == _safeName)
-                    { menu = m; }
-                }
-
-                foreach (TabItem t in tabs)
-                {
-                    if (t.Name == _safeName)
-                    { tab = t; }
-                }
-
-                MainWindow.Instance.IMainContent.Items.Remove(tab);
-                MainWindow.Instance.IServerProfilesMenu.Items.Remove(menu);
-
-                MainWindow.Instance.IServerProfilesMenu.SelectedIndex = -1;
-                MainWindow.Instance.IMainMenuItems.SelectedIndex = 0;
+                IConfirmDeleteDialog.IsOpen = true;
+                IConfirmDeleteText.Text = $"Are you sure you want to delete the profile \"{IDisplayName.Content}\" ?";
+                IConfirmDeleteBtn.Click += DeleteProfile;
 
             }
             if (ILaunchServer.IsSelected)
@@ -253,6 +230,37 @@ namespace FASTER
                 });
             });
             thread.Start();
+        }
+
+        private void DeleteProfile(object sender, RoutedEventArgs e)
+        {
+            ServerCollection.DeleteServerProfile(_safeName);
+            MainWindow.Instance.IMainContent.SelectedIndex = 0;
+
+
+            var tabs  = MainWindow.Instance.IMainContent.Items;
+            var menus = MainWindow.Instance.IServerProfilesMenu.Items;
+            var menu  = new ListBoxItem();
+            var tab   = new TabItem();
+
+            foreach (ListBoxItem m in menus)
+            {
+                if (m.Name == _safeName)
+                { menu = m; }
+            }
+
+            foreach (TabItem t in tabs)
+            {
+                if (t.Name == _safeName)
+                { tab = t; }
+            }
+
+            MainWindow.Instance.IMainContent.Items.Remove(tab);
+            MainWindow.Instance.IServerProfilesMenu.Items.Remove(menu);
+
+            MainWindow.Instance.IServerProfilesMenu.SelectedIndex = -1;
+            MainWindow.Instance.IMainMenuItems.SelectedIndex      = 0;
+            IConfirmDeleteBtn.Click -= DeleteProfile;
         }
 
         private void ToggleUi(object uiElement, RoutedEventArgs e = null)
@@ -1140,7 +1148,7 @@ namespace FASTER
                     for (int hc = 1; hc <= INoOfHeadlessClients.Value; hc++)
                     {
                         string hcCommandLine = "-client -connect=127.0.0.1 -password=" + IPassword.Text + " -profiles=" + profilePath + " -nosound -port=" + IPort.Text;
-                        string hcMods = IHeadlessModsList.SelectedItems.Cast<CheckBox>()
+                        string hcMods = IHeadlessModsList.Items.Cast<CheckBox>()
                                                          .Where(addon => addon.IsChecked ?? false)
                                                          .Aggregate<CheckBox, string>(null, (current, addon) => current + (addon.Content + ";"));
 

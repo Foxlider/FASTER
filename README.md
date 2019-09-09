@@ -4,8 +4,8 @@
 ***GitHub***  
 [![Azure DevOps builds](https://img.shields.io/azure-devops/build/keelah/4b51eb35-4363-4038-8d99-543c01a3578f/8.svg?logo=azuredevops&style=flat-square)](https://dev.azure.com/keelah/FASTER/_build/latest?definitionId=8&branchName=master)
 [![Azure DevOps releases](https://img.shields.io/azure-devops/release/keelah/4b51eb35-4363-4038-8d99-543c01a3578f/2/2?logo=azuredevops&style=flat-square)](https://dev.azure.com/keelah/FASTER/_release)
-![Discord](https://img.shields.io/discord/366955806777671681.svg?label=discord&logo=discord&logoColor=white&style=flat-square)
-![GitHub issues](https://img.shields.io/github/issues/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite.svg?logo=github&style=flat-square)
+[![Discord](https://img.shields.io/discord/366955806777671681.svg?label=discord&logo=discord&logoColor=white&style=flat-square)](https://discord.gg/uPjgqHU)
+[![GitHub issues](https://img.shields.io/github/issues/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite.svg?logo=github&style=flat-square)](https://github.com/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite/issues)
 ![GitHub](https://img.shields.io/github/license/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite.svg?style=flat-square)
 ![GitHub release](https://img.shields.io/github/release/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite.svg?logo=github&style=flat-square)  
 [![Github total downloads](https://img.shields.io/github/downloads/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite/total.svg?logo=github&style=flat-square)](https://GitHub.com/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite/releases/)
@@ -20,18 +20,18 @@
 [![Discord](https://img.shields.io/discord/366955806777671681?label=Discord&logo=discord&logoColor=white&style=for-the-badge)](https://discord.gg/uPjgqHU)
 
 
-**INTRO**
+#### **INTRO**
 
 FASTER is an extensive rewrite of FAST2 and FAST. There was no update for a long time and it was written in VB. I transleted the whole project to C# using .NET Core 3.0. 
 Thanks go out to all the guys who helped the developpment and those who will test it. Also, to BI for giving us an awesome game to play with and break.
 
-**PREREQUISITES**
+##### **PREREQUISITES**
 
 - Steam account with valid copy of Arma 3.
 - Basic understanding of Arma 3 dedicated servers.
 
 
-**_FEATURES_**
+##### **_FEATURES_**
 
 - General Features
   - Theming System and Material Design
@@ -60,7 +60,7 @@ Thanks go out to all the guys who helped the developpment and those who will tes
   - Reads local mods from server folder
   - Include additional folders to search
 
-**_PLANNED FEATURES_**
+##### **_PLANNED FEATURES_**
 
 - Automatic Server Crash Handling (Auto-restart, reporting, etc.)
 - Detection of existing Steam Workshop Mods
@@ -70,18 +70,18 @@ Thanks go out to all the guys who helped the developpment and those who will tes
 - Schedule Auto Restart of servers
 - Schedule Auto Update of mods and server
 
-**_ISSUES and FEEDBACK_**
+##### **_ISSUES and FEEDBACK_**
 
 As always best place to report issues is on the [GitHub Repo](https://github.com/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite/issues), as for general discussion I'll always keep an eye on the BI forum thread or come and join us in [Discord](https://discord.gg/uPjgqHU).
 
-**_DOCUMENTATION_**
+##### **_DOCUMENTATION_**
   
 No documentation (yet) but you can always check the original FAST2 documentation.
   
-**_SOCIAL_**  
+##### **_SOCIAL_**  
 Twitter :
 [@FoxliderAtom](https://twitter.com/FoxliderAtom)  
-![Twitter Follow](https://img.shields.io/twitter/follow/FoxliderAtom.svg?label=Follow&logo=twitter&style=for-the-badge)
+[![Twitter Follow](https://img.shields.io/twitter/follow/FoxliderAtom.svg?label=Follow&logo=twitter&style=for-the-badge)](https://twitter.com/FoxliderAtom)
 
 Bohemia Interactive Forums :  
 [Fox's Arma Server Tool Extended Rewrite (FASTER)](https://forums.bohemia.net/forums/topic/224359-foxs-arma-server-tool-extended-rewrite-faster/)

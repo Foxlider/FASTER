@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using AutoUpdaterDotNET;
+using MaterialDesignThemes.Wpf;
 using Application = System.Windows.Application;
 using CheckBox = System.Windows.Controls.CheckBox;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
@@ -29,58 +30,62 @@ namespace FASTER
 
         }
 
+
+        private void UpdateDialog_Closing(object sender, DialogClosingEventArgs e)
+        {
+            if (!Equals(e.Parameter, true)) return;
+            try
+            {
+                if (AutoUpdater.DownloadUpdate())
+                {
+                    if (Application.Current.MainWindow != null) Application.Current.MainWindow.Close();
+                }
+            }
+            catch (Exception exception)
+            {
+                IMessageText.Text     = exception.Message + " " + exception.GetType();
+                IMessageDialog.IsOpen = true;
+                //MessageBox.Show(exception.Message, exception.GetType().ToString(), MessageBoxButton.OK,
+                //                MessageBoxImage.Error);
+            }
+        }
+
         private void AutoUpdaterOnCheckForUpdateEvent(UpdateInfoEventArgs args)
         {
             if (args != null)
             {
                 if (args.IsUpdateAvailable)
                 {
-                    MessageBoxResult dialogResult;
                     if (args.Mandatory)
                     {
-                        dialogResult =
-                            MessageBox.Show(
-                                $@"There is new version {args.CurrentVersion} available. You are using version {args.InstalledVersion}. This is required update. Press Ok to begin updating the application.", @"Update Available",
-                                MessageBoxButton.OK,
-                                MessageBoxImage.Information);
+                        IUpdateText.Text = $"There is a new version ({args.CurrentVersion}) available. You are using version {args.InstalledVersion}. \nThis is a required update. Press Ok to begin the update.";
+                        IUpdateBtnCancel.Visibility = Visibility.Hidden;
+                        IUpdateBtnOK.Content = "OK";
                     }
                     else
                     {
-                        dialogResult =
-                            MessageBox.Show(
-                                $@"There is new version {args.CurrentVersion} available. You are using version {
-                                        args.InstalledVersion
-                                    }. Do you want to update the application now?", @"Update Available",
-                                MessageBoxButton.YesNo,
-                                MessageBoxImage.Information);
+                        IUpdateText.Text = $"There is a new version ({args.CurrentVersion}) available. You are using version {args.InstalledVersion}. \nDo you want to update the application now?";
+                        IUpdateBtnCancel.Content = "No";
+                        IUpdateBtnOK.Content = "Yes";
+                        IUpdateBtnCancel.Visibility = Visibility.Visible;
                     }
-                    if (dialogResult == MessageBoxResult.OK || dialogResult == MessageBoxResult.OK)
-                    {
-                        try
-                        {
-                            if (AutoUpdater.DownloadUpdate())
-                            {
-                                if (Application.Current.MainWindow != null) Application.Current.MainWindow.Close();
-                            }
-                        }
-                        catch (Exception exception)
-                        {
-                            MessageBox.Show(exception.Message, exception.GetType().ToString(), MessageBoxButton.OK,
-                                MessageBoxImage.Error);
-                        }
-                    }
+                    IUpdateDialog.IsOpen = true;
                 }
                 else
                 {
-                    MessageBox.Show(@"There is no update available please try again later.", @"No update available",
-                        MessageBoxButton.OK, MessageBoxImage.Information);
+                    IMessageText.Text = "There is no update available please try again later.";
+                    IMessageDialog.IsOpen = true;
+                    //MessageBox.Show(@"There is no update available please try again later.", @"No update available",
+                    //                MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             }
             else
             {
-                MessageBox.Show(
-                    @"There is a problem reaching update server please check your internet connection and try again later.",
-                    @"Update check failed", MessageBoxButton.OK, MessageBoxImage.Error);
+                IMessageText.Text     = "There is a problem reaching update server please check your internet connection and try again later.";
+                IMessageDialog.IsOpen = true;
+                //MessageBox.Show(
+                //    @"There is a problem reaching update server please check your internet connection and try again later.",
+                //    @"Update check failed", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -96,8 +101,8 @@ namespace FASTER
             { IResetDialog.IsOpen = false; }
         }
 
-        private void IBaseThemeButton_Click(object sender, RoutedEventArgs e)
-        { MainWindow.Instance.IWindowCloseButton.Background = (Brush)FindResource("MaterialDesignPaper"); }
+        //private void IBaseThemeButton_Click(object sender, RoutedEventArgs e)
+        //{ MainWindow.Instance.IWindowCloseButton.Background = (Brush)FindResource("MaterialDesignPaper"); }
 
 
         //private void PrimaryColor_Click(object sender, RoutedEventArgs e)
@@ -127,7 +132,7 @@ namespace FASTER
         private void Settings_Initialized(object sender, EventArgs e)
         {
             //TODO : WHEN THEME HANDLING DONE GET VALUE FROM SETTINGS FILE
-            IBaseThemeToggle.IsChecked = true;
+            //IBaseThemeToggle.IsChecked = true;
             IModUpdatesOnLaunch.IsChecked = Properties.Options.Default?.checkForModUpdates;
             IAppUpdatesOnLaunch.IsChecked = Properties.Options.Default?.checkForAppUpdates;
             UpdateLocalModFolders();
