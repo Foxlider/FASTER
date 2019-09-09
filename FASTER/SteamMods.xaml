@@ -4,6 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              FontFamily="{DynamicResource MaterialDesignFont}"
              
              TextElement.FontWeight="Regular"
@@ -15,7 +17,7 @@
              mc:Ignorable="d"
              d:DesignHeight="570.4"
              d:DesignWidth="796.8">
-    <Grid>
+    <Grid Background="{StaticResource MahApps.Brushes.Gray9}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition />
@@ -26,29 +28,30 @@
         </Grid.RowDefinitions>
 
         <ListBox x:Name="IModActionButtons" SelectionMode="Extended" Style="{StaticResource MaterialDesignToolToggleListBox}" HorizontalAlignment="Left" Margin="5">
-            <ListBoxItem x:Name="IAddSteamMod">
+            <ListBoxItem x:Name="IAddSteamMod" Padding="15,10,15,10">
                 <ListBoxItem.ToolTip>
                     <TextBlock><Run Text="Add Steam Mod"/></TextBlock>
                 </ListBoxItem.ToolTip>
-                <materialDesign:PackIcon Kind="Plus"/>
+                <!--<materialDesign:PackIcon Kind="Plus"/>-->
+                <iconPacks:Material Kind="Plus"/>
             </ListBoxItem>
-            <ListBoxItem Name="IImportLauncherFile">
+            <ListBoxItem Name="IImportLauncherFile" Padding="15,10,15,10">
                 <ListBoxItem.ToolTip>
                     <TextBlock><Run Text="Import from Arma 3 Launcher File"/></TextBlock>
                 </ListBoxItem.ToolTip>
-                <materialDesign:PackIcon Kind="FileDocument"/>
+                <iconPacks:Material Kind="FileDocument"/>
             </ListBoxItem>
-            <ListBoxItem Name="ICheckForUpdates">
+            <ListBoxItem Name="ICheckForUpdates" Padding="15,10,15,10">
                 <ListBoxItem.ToolTip>
                     <TextBlock><Run Text="Check For Updates"/></TextBlock>
                 </ListBoxItem.ToolTip>
-                <materialDesign:PackIcon Kind="Clock"/>
+                <iconPacks:Material Kind="Clock"/>
             </ListBoxItem>
-            <ListBoxItem  Name="IUpdateAll">
+            <ListBoxItem  Name="IUpdateAll" Padding="15,10,15,10">
                 <ListBoxItem.ToolTip>
                     <TextBlock><Run Text="Update All"/></TextBlock>
                 </ListBoxItem.ToolTip>
-                <materialDesign:PackIcon Kind="Update"/>
+                <iconPacks:Material Kind="Update"/>
             </ListBoxItem>
         </ListBox>
         <ProgressBar Name="IUpdateProgress" Grid.Row="0" Grid.Column="1" Height="Auto" Width="Auto" Margin="5"/>

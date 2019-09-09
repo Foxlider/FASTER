@@ -101,8 +101,8 @@ namespace FASTER
             { IResetDialog.IsOpen = false; }
         }
 
-        private void IBaseThemeButton_Click(object sender, RoutedEventArgs e)
-        { MainWindow.Instance.IWindowCloseButton.Background = (Brush)FindResource("MaterialDesignPaper"); }
+        //private void IBaseThemeButton_Click(object sender, RoutedEventArgs e)
+        //{ MainWindow.Instance.IWindowCloseButton.Background = (Brush)FindResource("MaterialDesignPaper"); }
 
 
         //private void PrimaryColor_Click(object sender, RoutedEventArgs e)
@@ -132,7 +132,7 @@ namespace FASTER
         private void Settings_Initialized(object sender, EventArgs e)
         {
             //TODO : WHEN THEME HANDLING DONE GET VALUE FROM SETTINGS FILE
-            IBaseThemeToggle.IsChecked = true;
+            //IBaseThemeToggle.IsChecked = true;
             IModUpdatesOnLaunch.IsChecked = Properties.Options.Default?.checkForModUpdates;
             IAppUpdatesOnLaunch.IsChecked = Properties.Options.Default?.checkForAppUpdates;
             UpdateLocalModFolders();

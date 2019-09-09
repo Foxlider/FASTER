@@ -4,6 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              xmlns:system="clr-namespace:System;assembly=System.Runtime"
 
              FontFamily="{DynamicResource MaterialDesignFont}"
@@ -18,12 +20,18 @@
              mc:Ignorable="d"
              d:DesignHeight="570.4"
              d:DesignWidth="796.8">
-    <Grid>
+    <Grid Background="{StaticResource MahApps.Brushes.Gray9}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
-        <materialDesign:Card Margin="5" Grid.Column="0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+        <Grid Margin="5" Grid.Column="0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+            <Grid.Style>
+                <Style TargetType="Grid">
+                    <Setter Property="Margin" Value="5"/>
+                    <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Window.Background}"></Setter>
+                </Style>
+            </Grid.Style>
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -42,15 +50,13 @@
                 </Grid.RowDefinitions>
                 <StackPanel Grid.ColumnSpan="10">
                     <Label Margin="8" Content="Program Settings" FontSize="12"/>
-                    <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="-10"/>
+                    <Separator/>
                 </StackPanel>
 
                 <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="10,10,10,0" Content="Folders To Search For Local Mods"/>
-                <Button Grid.Row="1" Grid.Column="2" Name="INewLocalFolder" Click="INewLocalFolder_Click" Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}" Height="20" Width="20" Margin="10">
-                    <materialDesign:PackIcon Kind="Plus" Height="10" Width="10"/>
+                <Button Grid.Row="1" Grid.Column="2" Name="INewLocalFolder" Click="INewLocalFolder_Click" Content="{iconPacks:Material Kind=Plus}" Style="{DynamicResource MahApps.Styles.Button.Flat}"  Padding="2" Height="20" Width="20" Margin="10">
                 </Button>
-                <Button Grid.Row="1" Grid.Column="3" Name="IRemoveLocalFolders" Click="IRemoveLocalFolders_Click" Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}" Height="20" Width="20" Margin="10">
-                    <materialDesign:PackIcon Kind="Delete" Height="10" Width="10"/>
+                <Button Grid.Row="1" Grid.Column="3" Name="IRemoveLocalFolders" Click="IRemoveLocalFolders_Click" Content="{iconPacks:Material Kind=Delete}" Style="{DynamicResource MahApps.Styles.Button.Flat}" Padding="2" Height="20" Width="20" Margin="10">
                 </Button>
                 <!--<xctk:CheckListBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" Name="ILocalModFolders" Margin="10" Padding="5" MinHeight="200" MaxHeight="200" Foreground="{DynamicResource MaterialDesignBody}" Background="{DynamicResource MaterialDesignTextAreaInactiveBorder}"/>-->
                 <ListBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" Name="ILocalModFolders" Margin="10" Padding="5" MinHeight="200" MaxHeight="200" Foreground="{DynamicResource MaterialDesignBody}" Background="{DynamicResource MaterialDesignTextAreaInactiveBorder}">
@@ -58,13 +64,19 @@
                 </ListBox>
                 <CheckBox Name="IModUpdatesOnLaunch" Grid.ColumnSpan="2" Grid.Row="4" Grid.Column="0" Content="Check for Steam Mod Updates on Launch" IsChecked="True" Margin="10,0,10,10"/>
                 <CheckBox Name="IAppUpdatesOnLaunch" Grid.ColumnSpan="2" Grid.Row="5" Grid.Column="0" Content="Auto Update FASTER on Launch" IsChecked="False" Margin="10,0,10,10"/>
-                <Button Grid.Row="6" Grid.Column="0" Name="IClearSettings" Click="IClearSettings_Click" Content="Reset FASTER" Margin="10" Width="130" HorizontalAlignment="Center"/>
-                <Button Grid.Row="6" Grid.Column="1" Name="IUpdateApp" Content="Update FASTER" Margin="10" Width="130" Click="IUpdateApp_OnClick" HorizontalAlignment="Center"/>
+                <Button Grid.Row="6" Grid.Column="0" Name="IClearSettings" Click="IClearSettings_Click" Content="Reset FASTER" Style="{DynamicResource MahApps.Styles.Button.Flat}" Margin="10" Width="130" HorizontalAlignment="Center"/>
+                <Button Grid.Row="6" Grid.Column="1" Name="IUpdateApp" Content="Update FASTER" Style="{DynamicResource MahApps.Styles.Button.Flat}" Margin="10" Width="130" Click="IUpdateApp_OnClick" HorizontalAlignment="Center"/>
             </Grid>
-        </materialDesign:Card>
+        </Grid>
 
 
-        <materialDesign:Card Grid.Column="1" Margin="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+        <Grid Grid.Column="1" Margin="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+            <Grid.Style>
+                <Style TargetType="Grid">
+                    <Setter Property="Margin" Value="5"/>
+                    <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Window.Background}"></Setter>
+                </Style>
+            </Grid.Style>
             <StackPanel>
                 <DockPanel>
                     <Label Margin="8" Content="Theme Settings" FontSize="12"/>
@@ -72,13 +84,13 @@
                         <Label VerticalAlignment="Center">
                             <Run Text="Light"/>
                         </Label>
-                        <ToggleButton Name="IBaseThemeToggle" Click="IBaseThemeButton_Click" Style="{StaticResource MaterialDesignSwitchToggleButton}" IsChecked="True"/>
+                        <!--<ToggleButton Name="IBaseThemeToggle" Click="IBaseThemeButton_Click" Style="{StaticResource MaterialDesignSwitchToggleButton}" IsChecked="True"/>-->
                         <Label VerticalAlignment="Center">
                             <Run Text="Dark"/>
                         </Label>
                     </StackPanel>
                 </DockPanel>
-                <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="-10"/>
+                <Separator/>
                 <Label Margin="8,8,8,0" Content="WORK IN PROGRESS" Foreground="{DynamicResource WarningBrush}" FontSize="25" Height="47">
                     <Label.Resources>
                         <SolidColorBrush x:Key="WarningBrush" Color="#FFEE1010"/>
@@ -134,7 +146,7 @@
                     <Button Name="IPurpleA" Width="32" Margin="4" Background="#D500F9"/>
                 </StackPanel>-->
             </StackPanel>
-        </materialDesign:Card>
+        </Grid>
 
         <materialDesign:DialogHost Visibility="Hidden" Grid.ColumnSpan="2" Grid.Row="0" Grid.Column="0" IsOpen="False" Name="IResetDialog" Margin="-2">
             <materialDesign:DialogHost.DialogContent>

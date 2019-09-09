@@ -10,13 +10,12 @@ namespace FASTER
     /// <summary>
     /// Interaction logic for Setup.xaml
     /// </summary>
-    public partial class Setup : Window
+    public partial class Setup
     {
 
         public Setup()
         {
             InitializeComponent();
-            IWindowDragBar.MouseDown += WindowDragBar_MouseDown;
             if (Properties.Options.Default.firstRun)
             { Properties.Options.Default.Upgrade(); }
             if (Properties.Options.Default.clearSettings)
