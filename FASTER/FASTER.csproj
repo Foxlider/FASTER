@@ -4,7 +4,7 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <UseWPF>true</UseWPF>
-    <Version>1.2.6</Version>
+    <Version>1.3.2</Version>
     <Authors>Keelah Fox</Authors>
     <Company>FoxliCorp.</Company>
     <Description>Fox's Arma Server Tool Extended Rewrite</Description>
