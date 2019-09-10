@@ -189,8 +189,27 @@ namespace FASTER
         private void ISteamUpdateButton_Click(object sender, RoutedEventArgs e)
         {
             string steamCmd = ISteamDirBox.Text + @"\steamcmd.exe";
-
-            var branch = IServerBranch.Text == "Stable" ? "233780" : "107410 -beta development";
+            string branch = "";
+            switch (IServerBranch.Text)
+            {
+                case "Stable":
+                    branch = "233780"; //Arma3 Server main branch
+                    break;
+                case "Contact": //Arma 3 server Contact DLC
+                    branch = "233780 -beta contact";
+                    break;
+                case "Creator DLC": //Arma 3 server Creator DLC
+                    branch = "233780 -beta creatordlc";
+                    break;
+                case "LegacyPorts": //Arma 3 server Legacy Ports branch for linux
+                    branch = "233780 -beta legacyPorts Arma3LegacyPorts";
+                    break;
+                case "Developpment": //Arma 3 Developpment branch, only for developpment clients
+                    branch = "107410 -beta development";
+                    break;
+                default:
+                    break;
+            }
 
             var steamCommand = "+login " + ISteamUserBox.Text + " " + ISteamPassBox.Password + " +force_install_dir \"" + IServerDirBox.Text + "\" +app_update " + branch + " validate +quit";
             

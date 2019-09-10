@@ -172,6 +172,9 @@
 
                             <ComboBox Name="IServerBranch" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" mah:TextBoxHelper.Watermark="Version" Margin="10,20,10,15">
                                 <ComboBoxItem Content="Stable" IsSelected="True"/>
+                                <ComboBoxItem Content="Contact"/>
+                                <ComboBoxItem Content="Creator DLC"/>
+                                <ComboBoxItem Content="LegacyPorts"/>
                                 <ComboBoxItem Content="Development"/>
                             </ComboBox>
                             <Button Name="ISteamUpdateButton" Style="{DynamicResource MahApps.Styles.Button.Flat}" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="3" Content="Update" Margin="10,5,10,10" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Click="ISteamUpdateButton_Click"/>
