@@ -154,7 +154,7 @@ namespace FASTER
         {
             //UpdateSteamUpdaterSettings();
             Properties.Options.Default.Save();
-
+            Application.Current.Shutdown();
             //if(Properties.Options.Default.clearSettings)
             //{ Properties.Options.Default.Reset(); }
         }
