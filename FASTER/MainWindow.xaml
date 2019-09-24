@@ -72,7 +72,7 @@
                         <ColumnDefinition Width="40"/>
                     </Grid.ColumnDefinitions>
                     <Label Content="Server Profiles" Margin="5" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center" FontStyle="Italic"/>
-                    <Button Grid.Column="1" Content="{iconPacks:Material Kind=Plus}" Name="INewServerProfileButton" Click="NewServerProfileButton_Click" Style="{DynamicResource MahApps.Styles.Button.Flat}" Height="25" Width="25" VerticalAlignment="Center" Padding="0">
+                    <Button Grid.Column="1" Content="{iconPacks:Material Kind=Plus}" Name="INewServerProfileButton" Click="NewServerProfileButton_Click" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Height="25" Width="25" VerticalAlignment="Center" Padding="0">
                     </Button>
                 </Grid>
                 <ListBox Grid.Row="2" Name="IServerProfilesMenu" HorizontalAlignment="Stretch" Margin="0,0,0,2" ScrollViewer.VerticalScrollBarVisibility="Auto" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch">
@@ -139,10 +139,10 @@
                                 <Label Margin="2" Content="Steam CMD Settings"/>
                                 <Separator/>
                             </StackPanel>
-                            <TextBox Grid.Row="1" Grid.Column="0" Name="ISteamDirBox" mah:TextBoxHelper.Watermark="Install Directory" Margin="10,20,10,10"/>
-                            <Button Grid.Row="1" Grid.Column="1" Name="ISteamDirButton" Background="{StaticResource MahApps.Brushes.Accent}" Content="{iconPacks:Material Kind=Folder}" Style="{DynamicResource MahApps.Styles.Button.Flat}" Height="25" Width="25" Margin="5,10,10,0" Padding="2" Click="DirButton_Click"/>
-                            <TextBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Name="ISteamUserBox" mah:TextBoxHelper.Watermark="User Name" Margin="10,30,10,10"/>
-                            <PasswordBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Name="ISteamPassBox" mah:TextBoxHelper.Watermark="Password" Margin="10,10,10,30"/>
+                            <TextBox Grid.Row="1" Grid.Column="0" Name="ISteamDirBox" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Install Directory" Margin="10,20,10,10"/>
+                            <Button Grid.Row="1" Grid.Column="1" Name="ISteamDirButton" Content="{iconPacks:Material Kind=Folder}" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Height="25" Width="25" Margin="5,10,10,0" Padding="2" Click="DirButton_Click"/>
+                            <TextBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Name="ISteamUserBox" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="User Name" Margin="10,30,10,10"/>
+                            <PasswordBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Name="ISteamPassBox" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Password" Margin="10,10,10,30"/>
                         </Grid>
                     </Grid>
 
@@ -168,17 +168,17 @@
                                 <Label Margin="2" Content="Arma 3 Settings"/>
                                 <Separator/>
                             </StackPanel>
-                            <TextBox Grid.Row="1" Grid.Column="0" Name="IServerDirBox" mah:TextBoxHelper.Watermark="Install Directory" Margin="10,20,10,10"/>
-                            <Button Grid.Row="1" Grid.Column="1" Name="IServerDirButton" Background="{StaticResource MahApps.Brushes.Accent}" Content="{iconPacks:Material Kind=Folder}" Style="{DynamicResource MahApps.Styles.Button.Flat}" Height="25" Width="25" Margin="5,10,10,0" Padding="2" Click="DirButton_Click"/>
+                            <TextBox Grid.Row="1" Grid.Column="0" Name="IServerDirBox" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Install Directory" Margin="10,20,10,10"/>
+                            <Button Grid.Row="1" Grid.Column="1" Name="IServerDirButton" Content="{iconPacks:Material Kind=Folder}" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Height="25" Width="25" Margin="5,10,10,0" Padding="2" Click="DirButton_Click"/>
 
-                            <ComboBox Name="IServerBranch" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" mah:TextBoxHelper.Watermark="Version" Margin="10,20,10,15">
+                            <ComboBox Name="IServerBranch" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Version" Margin="10,20,10,15">
                                 <ComboBoxItem Content="Stable" IsSelected="True"/>
                                 <ComboBoxItem Content="Contact"/>
                                 <ComboBoxItem Content="Creator DLC"/>
                                 <ComboBoxItem Content="LegacyPorts"/>
                                 <ComboBoxItem Content="Development"/>
                             </ComboBox>
-                            <Button Name="ISteamUpdateButton" Style="{DynamicResource MahApps.Styles.Button.Flat}" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="3" Content="Update" Margin="10,5,10,10" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Click="ISteamUpdateButton_Click"/>
+                            <Button Name="ISteamUpdateButton" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="3" Content="Update" Margin="10,5,10,10" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Click="ISteamUpdateButton_Click"/>
                         </Grid>
                     </Grid>
 
@@ -237,7 +237,7 @@
                                 </RichTextBox.Resources>
                             </RichTextBox>
                             <ProgressBar Name="ISteamProgressBar" Grid.Row="2" Grid.Column="0" Margin="10,10,10,10" Height="32"/>
-                            <Button Name="ISteamCancelButton" Grid.Row="2" Grid.Column="1" Content="Cancel" Margin="0,10,10,10" IsEnabled="False" Click="ISteamCancelButton_Click"/>
+                            <Button Name="ISteamCancelButton" Grid.Row="2" Grid.Column="1" Content="Cancel" Margin="0,10,10,10" IsEnabled="False" Click="ISteamCancelButton_Click" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0"/>
                         </Grid>
                     </Grid>
                 </Grid>
