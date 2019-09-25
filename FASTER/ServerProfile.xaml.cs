@@ -879,7 +879,7 @@ namespace FASTER
                 $"\t\t\tvisionAid={IVisualAids.IsChecked};",
                 $"\t\t\tthirdPersonView={IThirdPerson.IsChecked};",
                 $"\t\t\tcameraShake={ICameraShake.IsChecked};",
-                $"\t\t\tcoreTable={IScoreTable.IsChecked};",
+                $"\t\t\tscoreTable={IScoreTable.IsChecked};",
                 $"\t\t\tdeathMessages={IKilledBy.IsChecked};",
                 $"\t\t\tvonID={IVonId.IsChecked};",
                 $"\t\t\tmapContentFriendly={IMapContentFriendly.IsChecked};",
