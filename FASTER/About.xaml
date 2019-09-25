@@ -99,14 +99,8 @@
                     <TextBlock Margin="16 16 16 8" >Open Source</TextBlock>
                     <TextBlock TextWrapping="Wrap" Style="{DynamicResource MahApps.Styles.TextBlock.Watermark}" Margin="16 0 16 8" VerticalAlignment="Top">This project is completely open source. If you like it and want to say thanks you could hit the GitHub Star button, or contribute if you can!</TextBlock>
                 </StackPanel>
-                <Border Grid.Row="1" Grid.ColumnSpan="2" Grid.Column="0" BorderThickness="0 1 0 0" BorderBrush="{DynamicResource MaterialDesignDivider}" Padding="8">
+                <Border Grid.Row="1" Grid.ColumnSpan="2" Grid.Column="0" BorderThickness="0 1 0 0" Padding="8">
                     <Grid>
-                        <!--<Button Style="{DynamicResource MaterialDesignFlatButton}" DockPanel.Dock="Right" Name="IDonateButton">
-                            <StackPanel Orientation="Horizontal">
-                                <materialDesign:PackIcon Kind="Gift" />
-                                <TextBlock Margin="8 0 0 0" VerticalAlignment="Center">Donate</TextBlock>
-                            </StackPanel>
-                        </Button>-->
                         <TextBlock TextWrapping="Wrap" Style="{DynamicResource MahApps.Styles.TextBlock.Watermark}" VerticalAlignment="Center">
                             I do not support donations for now.
                         </TextBlock>

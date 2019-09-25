@@ -151,8 +151,7 @@ namespace FASTER
             IMissionCheckList.SelectedValue = profile.Missions;
             IBattleEye.IsChecked = profile.BattleEye;
 
-            IServerActionButtons.SelectionChanged += IActionButtons_SelectionChanged;
-            IServerActionButtons.SelectionChanged += IServerActionButtons_SelectionChanged;
+            //IServerActionButtons.SelectionChanged += IServerActionButtons_SelectionChanged;
             Loaded += ServerProfile_Loaded;
             Initialized += ServerProfile_Initialized;
             
@@ -165,20 +164,6 @@ namespace FASTER
             ToggleUi(IRankingEnabled);
             ToggleUi(IManualMissions);
 
-        }
-
-
-        private void IActionButtons_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            var thread = new Thread(() =>
-            {
-                Thread.Sleep(600);
-                Dispatcher?.Invoke(() =>
-                {
-                    ((ListBox) sender).SelectedItem = null;
-                });
-            });
-            thread.Start();
         }
 
 
@@ -199,37 +184,30 @@ namespace FASTER
             }
         }
 
-        private void IServerActionButtons_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void ISaveProfile_Click(object sender, RoutedEventArgs e)
         {
-            if (ISaveProfile.IsSelected)
-            { UpdateProfile(); }
-            if (IRenameProfile.IsSelected)
-            { ShowRenameInterface(true); }
-            if (IDeleteProfile.IsSelected)
-            {
-                IConfirmDeleteDialog.IsOpen = true;
-                IConfirmDeleteText.Text = $"Are you sure you want to delete the profile \"{IDisplayName.Content}\" ?";
-                IConfirmDeleteBtn.Click += DeleteProfile;
+            UpdateProfile();
+        }
 
-            }
-            if (ILaunchServer.IsSelected)
-            {
-                if (ReadyToLaunch(IDisplayName.Content.ToString()))
-                {
-                    UpdateProfile();
-                    LaunchServer();
-                }
-            }
+        private void IRenameProfile_Click(object sender, RoutedEventArgs e)
+        {
+            ShowRenameInterface(true);
+        }
 
-            var thread = new Thread(() =>
+        private void IDeleteProfile_Click(object sender, RoutedEventArgs e)
+        {
+            IConfirmDeleteDialog.IsOpen =  true;
+            IConfirmDeleteText.Text     =  $"Are you sure you want to delete the profile \"{IDisplayName.Content}\" ?";
+            IConfirmDeleteBtn.Click     += DeleteProfile;
+        }
+
+        private void ILaunchServer_Click(object sender, RoutedEventArgs e)
+        {
+            if (ReadyToLaunch(IDisplayName.Content.ToString()))
             {
-                Thread.Sleep(600);
-                Dispatcher?.Invoke(() =>
-                {
-                    ((ListBox)sender).SelectedItem = null;
-                });
-            });
-            thread.Start();
+                UpdateProfile();
+                LaunchServer();
+            }
         }
 
         private void DeleteProfile(object sender, RoutedEventArgs e)
@@ -758,13 +736,13 @@ namespace FASTER
 
             if (IVotingEnabled.IsChecked ?? false)
             {
-                configLines.Add("allowedVoteCmds[] = {};");
-                configLines.Add("allowedVotedAdminCmds[] = {};");
                 configLines.Add($"voteMissionPlayers = {IVotingMinPlayers.Text};");
                 configLines.Add($"voteThreshold = {double.Parse(IVotingThreshold.Text)/100.0};");
             }
             else
             {
+                configLines.Add("allowedVoteCmds[] = {};");
+                configLines.Add("allowedVotedAdminCmds[] = {};");
                 configLines.Add("voteMissionPlayers = 1;");
                 configLines.Add("voteThreshold = 0;");
             }
@@ -901,7 +879,7 @@ namespace FASTER
                 $"\t\t\tvisionAid={IVisualAids.IsChecked};",
                 $"\t\t\tthirdPersonView={IThirdPerson.IsChecked};",
                 $"\t\t\tcameraShake={ICameraShake.IsChecked};",
-                $"\t\t\tcoreTable={IScoreTable.IsChecked};",
+                $"\t\t\tscoreTable={IScoreTable.IsChecked};",
                 $"\t\t\tdeathMessages={IKilledBy.IsChecked};",
                 $"\t\t\tvonID={IVonId.IsChecked};",
                 $"\t\t\tmapContentFriendly={IMapContentFriendly.IsChecked};",

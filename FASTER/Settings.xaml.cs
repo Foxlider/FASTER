@@ -4,11 +4,9 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using AutoUpdaterDotNET;
-using MaterialDesignThemes.Wpf;
 using Application = System.Windows.Application;
 using CheckBox = System.Windows.Controls.CheckBox;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
-using MessageBox = System.Windows.MessageBox;
 using UserControl = System.Windows.Controls.UserControl;
 
 namespace FASTER
@@ -30,25 +28,45 @@ namespace FASTER
 
         }
 
+        // OLD CODE
+        //private void UpdateDialog_Closing(object sender, DialogClosingEventArgs e)
+        //{
+        //    if (!Equals(e.Parameter, true)) return;
+        //    try
+        //    {
+        //        if (AutoUpdater.DownloadUpdate())
+        //        {
+        //            if (Application.Current.MainWindow != null) Application.Current.MainWindow.Close();
+        //        }
+        //    }
+        //    catch (Exception exception)
+        //    {
+        //        IMessageText.Text     = exception.Message + " " + exception.GetType();
+        //        IMessageDialog.IsOpen = true;
+        //        //MessageBox.Show(exception.Message, exception.GetType().ToString(), MessageBoxButton.OK,
+        //        //                MessageBoxImage.Error);
+        //    }
+        //} OLD CODE
 
-        private void UpdateDialog_Closing(object sender, DialogClosingEventArgs e)
+        private void IUpdateBtnOK_Click(object sender, RoutedEventArgs e)
         {
-            if (!Equals(e.Parameter, true)) return;
             try
             {
                 if (AutoUpdater.DownloadUpdate())
                 {
-                    if (Application.Current.MainWindow != null) Application.Current.MainWindow.Close();
+                    if (Application.Current.MainWindow != null) 
+                        Application.Current.MainWindow.Close();
                 }
             }
             catch (Exception exception)
             {
                 IMessageText.Text     = exception.Message + " " + exception.GetType();
                 IMessageDialog.IsOpen = true;
-                //MessageBox.Show(exception.Message, exception.GetType().ToString(), MessageBoxButton.OK,
-                //                MessageBoxImage.Error);
             }
         }
+
+        private void IUpdateBtnCancel_Click(object sender, RoutedEventArgs e)
+        { IUpdateDialog.IsOpen = false; }
 
         private void AutoUpdaterOnCheckForUpdateEvent(UpdateInfoEventArgs args)
         {
@@ -75,17 +93,12 @@ namespace FASTER
                 {
                     IMessageText.Text = "There is no update available please try again later.";
                     IMessageDialog.IsOpen = true;
-                    //MessageBox.Show(@"There is no update available please try again later.", @"No update available",
-                    //                MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             }
             else
             {
                 IMessageText.Text     = "There is a problem reaching update server please check your internet connection and try again later.";
                 IMessageDialog.IsOpen = true;
-                //MessageBox.Show(
-                //    @"There is a problem reaching update server please check your internet connection and try again later.",
-                //    @"Update check failed", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -120,6 +133,11 @@ namespace FASTER
         private void IClearSettings_Click(object sender, RoutedEventArgs e)
         { IResetDialog.IsOpen = true; }
 
+        private void IMessageButton_Click(object sender, RoutedEventArgs e)
+        { IMessageDialog.IsOpen = false; }
+
+        private void ICancelButton_Click(object sender, RoutedEventArgs e)
+        { IResetDialog.IsOpen = false; }
 
         private void IResetButton_Click(object sender, RoutedEventArgs e)
         {
@@ -127,8 +145,7 @@ namespace FASTER
             Properties.Options.Default.Save();
             Application.Current.Shutdown();
         }
-
-
+        
         private void Settings_Initialized(object sender, EventArgs e)
         {
             //TODO : WHEN THEME HANDLING DONE GET VALUE FROM SETTINGS FILE
@@ -137,8 +154,7 @@ namespace FASTER
             IAppUpdatesOnLaunch.IsChecked = Properties.Options.Default?.checkForAppUpdates;
             UpdateLocalModFolders();
         }
-
-
+        
         private void INewLocalFolder_Click(object sender, RoutedEventArgs e)
         {
             string newModFolder = MainWindow.Instance.SelectFolder();
@@ -152,8 +168,6 @@ namespace FASTER
             }
             UpdateLocalModFolders();
         }
-
-        
 
         private void IRemoveLocalFolders_Click(object sender, RoutedEventArgs e)
         {
@@ -204,8 +218,8 @@ namespace FASTER
         }
 
         private void IUpdateApp_OnClick(object sender, RoutedEventArgs e)
-        {
-            AutoUpdater.Start("https://raw.githubusercontent.com/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite/master/FASTER_Version.xml");
-        }
+        { AutoUpdater.Start("https://raw.githubusercontent.com/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite/master/FASTER_Version.xml"); }
+
+        
     }
 }
