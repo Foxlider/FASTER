@@ -31,8 +31,8 @@
     <mah:MetroWindow.RightWindowCommands>
         <mah:WindowCommands>
             <Button Content="{iconPacks:Material Kind=Wrench}" Click="ToolsButton_Click"/>
-            <Button Content="{iconPacks:Material Kind=WindowMinimize}" Click="WindowMinimizeButton_Click"/>
-            <Button Content="{iconPacks:Material Kind=WindowMaximize}" Click="IWindowMaximizeButton_Click"/>
+            <!--<Button Content="{iconPacks:Material Kind=WindowMinimize}" Click="WindowMinimizeButton_Click"/>
+            <Button Content="{iconPacks:Material Kind=WindowMaximize}" Click="IWindowMaximizeButton_Click"/>-->
         </mah:WindowCommands>
     </mah:MetroWindow.RightWindowCommands>
     <Grid x:Name="MainGrid">
