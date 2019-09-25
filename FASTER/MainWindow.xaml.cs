@@ -123,8 +123,6 @@ namespace FASTER
         private void ToolsButton_Click(object sender, RoutedEventArgs e)
         {
             IToolsDialog.IsOpen = true;
-            BlurEffect bme = new BlurEffect();
-            MainGrid.Effect = bme;
         }
         #endregion
         
@@ -156,7 +154,7 @@ namespace FASTER
         {
             //UpdateSteamUpdaterSettings();
             Properties.Options.Default.Save();
-
+            Application.Current.Shutdown();
             //if(Properties.Options.Default.clearSettings)
             //{ Properties.Options.Default.Reset(); }
         }
@@ -189,8 +187,27 @@ namespace FASTER
         private void ISteamUpdateButton_Click(object sender, RoutedEventArgs e)
         {
             string steamCmd = ISteamDirBox.Text + @"\steamcmd.exe";
-
-            var branch = IServerBranch.Text == "Stable" ? "233780" : "107410 -beta development";
+            string branch = "";
+            switch (IServerBranch.Text)
+            {
+                case "Stable":
+                    branch = "233780"; //Arma3 Server main branch
+                    break;
+                case "Contact": //Arma 3 server Contact DLC
+                    branch = "233780 -beta contact";
+                    break;
+                case "Creator DLC": //Arma 3 server Creator DLC
+                    branch = "233780 -beta creatordlc";
+                    break;
+                case "LegacyPorts": //Arma 3 server Legacy Ports branch for linux
+                    branch = "233780 -beta legacyPorts Arma3LegacyPorts";
+                    break;
+                case "Developpment": //Arma 3 Developpment branch, only for developpment clients
+                    branch = "107410 -beta development";
+                    break;
+                default:
+                    break;
+            }
 
             var steamCommand = "+login " + ISteamUserBox.Text + " " + ISteamPassBox.Password + " +force_install_dir \"" + IServerDirBox.Text + "\" +app_update " + branch + " validate +quit";
             
@@ -211,8 +228,6 @@ namespace FASTER
         private void NewServerProfileButton_Click(object sender, RoutedEventArgs e)
         {
             INewServerProfileDialog.IsOpen = true;
-            BlurEffect bme = new BlurEffect();
-            MainGrid.Effect = bme;
         }
 
         private void INewServerProfileDialog_KeyUp(object sender, KeyEventArgs e)
@@ -272,7 +287,6 @@ namespace FASTER
         private void IMessageDialogClose_Click(object sender, RoutedEventArgs e)
         {
             IMessageDialog.IsOpen = false;
-            MainGrid.Effect       = null;
         }
 
         private void IToolsDialog_KeyUp(object sender, KeyEventArgs e)
@@ -280,7 +294,6 @@ namespace FASTER
             if (e.Key == Key.Escape)
             {
                 IToolsDialog.IsOpen = false;
-                MainGrid.Effect = null;
             }
         }
 
@@ -289,9 +302,8 @@ namespace FASTER
             INewProfileName.Text = INewProfileName.Text.Trim();
             if (string.IsNullOrEmpty(INewProfileName.Text))
             {
+                INewServerProfileDialog.IsOpen = false;
                 IMessageDialog.IsOpen = true;
-                BlurEffect bme = new BlurEffect();
-                MainGrid.Effect = bme;
                 IMessageDialogText.Text = "Please use a suitable profile name.";
             }
             else
@@ -299,7 +311,6 @@ namespace FASTER
                 Mouse.OverrideCursor = Cursors.Wait;
                 var profileName = INewProfileName.Text;
                 INewServerProfileDialog.IsOpen = false;
-                MainGrid.Effect = null;
                 ServerCollection.AddServerProfile(profileName, "_" + Functions.SafeName(profileName));
                 INewProfileName.Text = string.Empty;
                 Mouse.OverrideCursor = Cursors.Arrow;
@@ -526,8 +537,6 @@ namespace FASTER
             else if (!File.Exists(Properties.Options.Default.steamCMDPath + "\\steamcmd.exe"))
             {
                 IMessageDialog.IsOpen = true;
-                BlurEffect bme = new BlurEffect();
-                MainGrid.Effect = bme;
                 IMessageDialogText.Text = "Steam CMD will now download and start the install process. If prompted please enter your Steam Guard " +
                                           "Code.\n\nYou will receive this by email from steam. When this is all complete type \'quit\' to finish.";
                 ISteamOutputBox.Document.Blocks.Clear();
@@ -543,8 +552,6 @@ namespace FASTER
             else
             {
                 Instance.IMessageDialog.IsOpen = true;
-                BlurEffect bme = new BlurEffect();
-                MainGrid.Effect = bme;
                 Instance.IMessageDialogText.Text = "SteamCMD already appears to be installed.\n\nPlease delete all files in the selected folder to reinstall.";
             }
         }
@@ -597,8 +604,6 @@ namespace FASTER
                             Dispatcher?.Invoke(() =>
                             {
                                 ISteamGuardDialog.IsOpen = true;
-                                BlurEffect bme = new BlurEffect();
-                                MainGrid.Effect = bme;
                             });
                         }
                     });
@@ -627,8 +632,6 @@ namespace FASTER
                     Dispatcher?.Invoke(() =>
                     {
                         ISteamGuardDialog.IsOpen = true;
-                        BlurEffect bme = new BlurEffect();
-                        MainGrid.Effect = bme;
                     });
                 }
 
@@ -660,8 +663,6 @@ namespace FASTER
                     Dispatcher?.Invoke(() =>
                     {
                         Instance.IMessageDialog.IsOpen = true;
-                        BlurEffect bme = new BlurEffect();
-                        MainGrid.Effect = bme;
                         Instance.IMessageDialogText.Text = "A Steam Download timed out. You may have to download again when task is complete.";
                     });
                 }
@@ -807,7 +808,6 @@ namespace FASTER
                     ISteamOutputBox.ScrollToEnd();
                     ISteamProgressBar.IsIndeterminate = false;
                     ISteamProgressBar.Value = 100;
-                    BlurEffect bme = new BlurEffect();
                     switch (type)
                     {
                         case "addon":
@@ -815,12 +815,10 @@ namespace FASTER
                             break;
                         case "server:":
                             Instance.IMessageDialog.IsOpen = true;
-                            MainGrid.Effect = bme;
                             Instance.IMessageDialogText.Text = "Server Installed/ Updated.";
                             break;
                         case "install":
                             Instance.IMessageDialog.IsOpen = true;
-                            MainGrid.Effect = bme;
                             Instance.IMessageDialogText.Text = "SteamCMD Installed.";
                             break;
                     }
@@ -835,8 +833,6 @@ namespace FASTER
             else
             {
                 IMessageDialog.IsOpen = true;
-                BlurEffect bme = new BlurEffect();
-                MainGrid.Effect = bme;
                 IMessageDialogText.Text = "Please check that SteamCMD is installed and that all fields are correct: \n\n\n"
                                         + "   -  Steam Dir\n\n"
                                         + "   -  User Name & Pass\n\n"

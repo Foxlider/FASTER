@@ -18,35 +18,22 @@ namespace FASTER
         {
             InitializeComponent();
             Loaded += LocalMods_Loaded;
-            IModActionButtons.SelectionChanged += IActionButtons_SelectionChanged;
         }
 
 
         private void LocalMods_Loaded(object sender, RoutedEventArgs e)
         { UpdateModsView(); }
+        
+        private void IRefreshList_Click(object sender, RoutedEventArgs e)
+        { UpdateModsView(); }
 
-        private void IActionButtons_SelectionChanged(object sender, SelectionChangedEventArgs e)
+
+        private void IEditFolders_Click(object sender, RoutedEventArgs e)
         {
-            if (IRefreshList.IsSelected)
-            { UpdateModsView(); }
-            else if (IEditFolders.IsSelected)
-            {
-                MainWindow.Instance.IMainContent.SelectedIndex     = 3;
-                MainWindow.Instance.ILocalModsTabSelect.IsSelected = false;
-                MainWindow.Instance.ISettingsTabSelect.IsSelected  = true;
-            }
-
-            Thread thread = new Thread(() =>
-            {
-                Thread.Sleep(600);
-                Dispatcher?.Invoke(() =>
-                {
-                    ((ListBox)sender).SelectedItem = null;
-                });
-            });
-            thread.Start();
+            MainWindow.Instance.IMainContent.SelectedIndex     = 3;
+            MainWindow.Instance.ILocalModsTabSelect.IsSelected = false;
+            MainWindow.Instance.ISettingsTabSelect.IsSelected  = true;
         }
-
 
         private void UpdateModsView()
         {

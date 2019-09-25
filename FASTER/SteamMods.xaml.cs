@@ -17,20 +17,21 @@ namespace FASTER
     /// </summary>
     public partial class SteamMods : UserControl
     {
+        bool firstLoad = true;
         public SteamMods()
         {
             Initialized += SteamMods_Initialized;
             InitializeComponent();
-            Loaded                             += SteamMods_Loaded;
-            IModActionButtons.SelectionChanged += IActionButtons_SelectionChanged;
+            Loaded                      += SteamMods_Loaded;
             IImportSteamModDialog.KeyUp += IImportSteamModDialog_KeyUp;
-            MouseDown += IImportSteamModDialog_LostFocus;
+            MouseDown                   += IImportSteamModDialog_LostFocus;
         }
 
         private void SteamMods_Loaded(object sender, RoutedEventArgs e)
         {
-            if (Properties.Options.Default.steamMods?.SteamMods?.Count > 0 && Properties.Options.Default.checkForModUpdates)
+            if (Properties.Options.Default.steamMods?.SteamMods?.Count > 0 && Properties.Options.Default.checkForModUpdates && firstLoad)
             {
+                firstLoad = false;
                 IUpdateProgress.IsIndeterminate = true;
                 IProgressInfo.Visibility        = Visibility.Visible;
                 IProgressInfo.Content           = "Checking for updates...";
@@ -66,29 +67,24 @@ namespace FASTER
             IProgressInfo.Visibility        = Visibility.Visible;
         }
 
-        private void IActionButtons_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (ICheckForUpdates.IsSelected)
-            { CheckForUpdates(); }
-            if (IUpdateAll.IsSelected)
-            { UpdateAllMods(); }
-            if (IImportLauncherFile.IsSelected)
-            { ImportLauncherFile(); }
-            if (IAddSteamMod.IsSelected)
-            { IImportSteamModDialog.IsOpen = true; }
 
-            Thread thread = new Thread(() =>
-            {
-                Thread.Sleep(600);
-                Dispatcher?.Invoke(() =>
-                {
-                    ((ListBox)sender).SelectedItem = null;
-                });
-            });
-            thread.Start();
-        }
+        private void ICheckForUpdates_Click(object sender, RoutedEventArgs e)
+        { CheckForUpdates(); }
+
+        private void IMessageButton_Click(object sender, RoutedEventArgs e)
+        { IMessageDialog.IsOpen = false; }
+
+        private void IUpdateAll_Click(object sender, RoutedEventArgs e)
+        { UpdateAllMods(); }
 
 
+        private void IImportLauncherFile_Click(object sender, RoutedEventArgs e)
+        { ImportLauncherFile(); }
+
+
+        private void IAddSteamMod_Click(object sender, RoutedEventArgs e)
+        { IImportSteamModDialog.IsOpen = true; }
+        
         private void IImportSteamModDialog_LostFocus(object sender, RoutedEventArgs e)
         {
             if (!IImportSteamModDialog.IsMouseOver)
@@ -154,8 +150,8 @@ namespace FASTER
                     try
                     {
                         var modLine = dataReader.ReadLine();
-                        if (modLine == null) break;
-                        if (modLine.Contains("data-type=\"Link\">") && !modLine.Contains("/?id="))
+                        if (string.IsNullOrEmpty(modLine)) continue;
+                        if (modLine.Contains("data-type=\"Link\">http://steam") && modLine.Contains("/?id="))
                         {
                             var link = modLine.Substring(modLine.IndexOf("http://steam", StringComparison.Ordinal));
                             link = Reverse(link);
@@ -166,8 +162,8 @@ namespace FASTER
                             catch
                             {
                                 using EventLog eventLog = new EventLog("Application")
-                                    { Source = "Application" };
-                                eventLog.WriteEntry($"Could not import mod {link}", EventLogEntryType.Error, 1000, 1);
+                                    { Source = "FASTER" };
+                                eventLog.WriteEntry($"Could not import mod {link}", EventLogEntryType.Error);
                                 Dispatcher?.Invoke(() =>
                                 {
                                     IMessageText.Text = $"Could not import mod {link}";
@@ -179,8 +175,8 @@ namespace FASTER
                     catch (Exception e)
                     {
                         using EventLog eventLog = new EventLog("Application")
-                            { Source = "Application" };
-                        eventLog.WriteEntry($"Error occured while importing mod file : [{e.GetType()}] {e.Message}", EventLogEntryType.Warning, 1000, 1);
+                            { Source = "FASTER" };
+                        eventLog.WriteEntry($"Error occured while importing mod file : [{e.GetType()}] {e.Message}", EventLogEntryType.Warning);
                     }
                 }
                 while (true);

@@ -45,8 +45,8 @@ namespace FASTER
             catch (Exception e)
             {
                 using EventLog eventLog = new EventLog("Application")
-                    { Source = "Application" };
-                eventLog.WriteEntry($"Could not start FASTER : \n[{e.GetType()}] {e.Message}\n\n{e.StackTrace}", EventLogEntryType.Error, 122, 1);
+                    { Source = "FASTER" };
+                eventLog.WriteEntry($"Could not start FASTER : \n[{e.GetType()}] {e.Message}\n\n{e.StackTrace}", EventLogEntryType.Error);
             }
 
             Close();

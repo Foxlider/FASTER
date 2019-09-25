@@ -80,8 +80,8 @@ namespace FASTER.Models
 
                     // Create an EventLog instance and assign its source.
                     using EventLog eventLog = new EventLog("Application")
-                    { Source = "Application" };
-                    eventLog.WriteEntry($"Could not reach Steam API : \n[WebException] {e.Message}\n\n{e.StackTrace}", EventLogEntryType.Error, 166, 1);
+                    { Source = "FASTER" };
+                    eventLog.WriteEntry($"Could not reach Steam API : \n[WebException] {e.Message}\n\n{e.StackTrace}", EventLogEntryType.Error);
                 }
                 catch (Exception) //In case it was called before Initialized in SteamMods_Initialized() and could not connect to SteamAPI
                 { MessageBox.Show("Cannot reach Steam API \n\nCheck https://steamstat.us/", "Steam API Error", MessageBoxButton.OK, MessageBoxImage.Warning); }
