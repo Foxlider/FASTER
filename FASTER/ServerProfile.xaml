@@ -301,7 +301,7 @@
                             <StackPanel Grid.ColumnSpan="2">
                                 <Grid>
                                     <Label Content="Voting" Margin="2" HorizontalAlignment="Left"/>
-                                    <mah:ToggleSwitchButton x:Name="IVotingEnabled" Click="ToggleUi" Style="{StaticResource MahApps.Styles.ToggleSwitchButton.Win10}" IsChecked="True" HorizontalAlignment="Right" Margin="10,0" ToolTip="Disable Voting"/>
+                                    <mah:ToggleSwitchButton x:Name="IVotingEnabled" Click="ToggleUi" Style="{StaticResource MahApps.Styles.ToggleSwitchButton.Win10}" IsChecked="False" HorizontalAlignment="Right" Margin="10,0" ToolTip="Enable Voting"/>
                                 </Grid>
                                 <Separator VerticalAlignment="Bottom"/>
                             </StackPanel>
@@ -326,7 +326,7 @@
                             <StackPanel>
                                 <Grid>
                                     <Label Content="VON Settings" Margin="2" HorizontalAlignment="Left"/>
-                                    <mah:ToggleSwitchButton x:Name="IVonEnabled" Click="ToggleUi" Style="{StaticResource MahApps.Styles.ToggleSwitchButton.Win10}" IsChecked="false" HorizontalAlignment="Right" Margin="10,0" ToolTip="Disable VON"/>
+                                    <mah:ToggleSwitchButton x:Name="IVonEnabled" Click="ToggleUi" Style="{StaticResource MahApps.Styles.ToggleSwitchButton.Win10}" IsChecked="True" HorizontalAlignment="Right" Margin="10,0" ToolTip="Enable VON"/>
                                 </Grid>
                                 <Separator VerticalAlignment="Bottom"/>
                             </StackPanel>

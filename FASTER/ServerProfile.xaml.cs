@@ -736,13 +736,13 @@ namespace FASTER
 
             if (IVotingEnabled.IsChecked ?? false)
             {
-                configLines.Add("allowedVoteCmds[] = {};");
-                configLines.Add("allowedVotedAdminCmds[] = {};");
                 configLines.Add($"voteMissionPlayers = {IVotingMinPlayers.Text};");
                 configLines.Add($"voteThreshold = {double.Parse(IVotingThreshold.Text)/100.0};");
             }
             else
             {
+                configLines.Add("allowedVoteCmds[] = {};");
+                configLines.Add("allowedVotedAdminCmds[] = {};");
                 configLines.Add("voteMissionPlayers = 1;");
                 configLines.Add("voteThreshold = 0;");
             }
