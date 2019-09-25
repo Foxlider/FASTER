@@ -73,8 +73,14 @@
                             </StackPanel>
 
                             <TextBox Name="IServerName" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="10" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Server Name"  Margin="5,3,5,5"/>
-                            <TextBox Name="IExecutable" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="9" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Server File" Margin="5"/>
-                            <Button Grid.Row="2" Content="{iconPacks:Material Kind=FolderOpen}" Grid.Column="9" Name="IServerFileButton" Click="IServerFileButton_Click" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" HorizontalAlignment="Center" Padding="2" DockPanel.Dock="Right"/>
+                            <Grid Grid.Row="2" Grid.ColumnSpan="10" Grid.Column="0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBox Name="IExecutable" Grid.Column="0" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Server File" Margin="5,5,5,5"/>
+                                <Button Content="{iconPacks:Material Kind=FolderOpen}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="1" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" Height="auto" Margin="5" Name="IServerFileButton" Click="IServerFileButton_Click" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Padding="3"/>
+                            </Grid>
                             <TextBox Name="IPassword" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="5" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Password" Margin="5"/>
                             <TextBox Name="IAdminPassword" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="5" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Admin Password" Margin="5"/>
 
@@ -115,7 +121,7 @@
                             </StackPanel>
 
                             <StackPanel Name="IHcSliderGroup" IsEnabled="False" Grid.Column="1" Margin="4.92,30,0.12,2.891" Grid.RowSpan="2">
-                                <Slider Name="INoOfHeadlessClients" Minimum="0" Maximum="5" TickFrequency="1" Width="100" ToolTip="No of HCs" Margin="5,7"/>
+                                <Slider Name="INoOfHeadlessClients" Minimum="0" Maximum="5" IsSnapToTickEnabled="True" TickFrequency="1" Width="100" ToolTip="No of HCs" Margin="5,7"/>
                                 <Label Content="No of HCs" ToolTip="N° of HCs" HorizontalAlignment="Center" Margin="5"/>
                             </StackPanel>
                         </Grid>
@@ -331,7 +337,7 @@
                                 <Separator VerticalAlignment="Bottom"/>
                             </StackPanel>
                             <StackPanel Name="IVonGroup" Grid.Row="1">
-                                <Slider Name="ICodecQuality" Minimum="1" Maximum="30" TickFrequency="1" Width="120" ToolTip="Codec Quality" Margin="10"/>
+                                <Slider Name="ICodecQuality" Minimum="1" Maximum="30" IsSnapToTickEnabled="True" TickFrequency="1" Width="120" ToolTip="Codec Quality" Margin="10"/>
                                 <Label Content="Codec Quality" HorizontalAlignment="Center" Margin="10"/>
                             </StackPanel>
                         </Grid>
@@ -360,8 +366,8 @@
                             </Grid.RowDefinitions>
                             <StackPanel Grid.ColumnSpan="5">
                                 <Grid>
-                                    <Label Margin="2" Content="Server Only Mods" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                                    <Button Name="IServerModsRefresh" Content="{iconPacks:Material Kind=Refresh}" Padding="0" Click="IModsRefresh_Click" HorizontalAlignment="Right" Margin="5,2" ToolTip="Refresh Mods" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Height="20" Width="20"/>
+                                    <Label Margin="2" Content="Server Only Mods" Height="26" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                    <Button Name="IServerModsRefresh" Content="{iconPacks:Material Kind=Refresh}" Padding="2" Click="IModsRefresh_Click" HorizontalAlignment="Right" Margin="5" ToolTip="Refresh Mods" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0"/>
                                 </Grid>
                                 <Separator/>
                             </StackPanel>
@@ -398,7 +404,7 @@
                             <StackPanel Grid.ColumnSpan="5">
                                 <Grid>
                                     <Label Content="Player Required Mods" HorizontalAlignment="Left" Height="26" VerticalAlignment="Center"/>
-                                    <Button Name="IClientModsRefresh" Click="IModsRefresh_Click" Content="{iconPacks:Material Kind=Refresh}" Padding="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="5,2" ToolTip="Refresh Mods" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Height="20" Width="20"/>
+                                    <Button Name="IClientModsRefresh" Click="IModsRefresh_Click" Content="{iconPacks:Material Kind=Refresh}" Padding="2" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="5" ToolTip="Refresh Mods" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0"/>
                                 </Grid>
                                 <Separator/>
                             </StackPanel>
@@ -435,7 +441,7 @@
                             <StackPanel Grid.ColumnSpan="5">
                                 <Grid>
                                     <Label Content="Headless Client Mods" HorizontalAlignment="Left" Height="26" VerticalAlignment="Center"/>
-                                    <Button Name="IHeadlessModsRefresh" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" VerticalAlignment="Center" HorizontalAlignment="Right" BorderThickness="0" Click="IModsRefresh_Click" Content="{iconPacks:Material Kind=Refresh}" Padding="0" Margin="5,2" ToolTip="Refresh Mods" Height="20" Width="20"/>
+                                    <Button Name="IHeadlessModsRefresh" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" VerticalAlignment="Center" HorizontalAlignment="Right" BorderThickness="0" Click="IModsRefresh_Click" Content="{iconPacks:Material Kind=Refresh}" Padding="2" Margin="5" ToolTip="Refresh Mods"/>
                                 </Grid>
                                 <Separator/>
                             </StackPanel>
