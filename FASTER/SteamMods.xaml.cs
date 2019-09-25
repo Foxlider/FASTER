@@ -162,8 +162,8 @@ namespace FASTER
                             catch
                             {
                                 using EventLog eventLog = new EventLog("Application")
-                                    { Source = "Application" };
-                                eventLog.WriteEntry($"Could not import mod {link}", EventLogEntryType.Error, 1000, 1);
+                                    { Source = "FASTER" };
+                                eventLog.WriteEntry($"Could not import mod {link}", EventLogEntryType.Error);
                                 Dispatcher?.Invoke(() =>
                                 {
                                     IMessageText.Text = $"Could not import mod {link}";
@@ -175,8 +175,8 @@ namespace FASTER
                     catch (Exception e)
                     {
                         using EventLog eventLog = new EventLog("Application")
-                            { Source = "Application" };
-                        eventLog.WriteEntry($"Error occured while importing mod file : [{e.GetType()}] {e.Message}", EventLogEntryType.Warning, 1000, 1);
+                            { Source = "FASTER" };
+                        eventLog.WriteEntry($"Error occured while importing mod file : [{e.GetType()}] {e.Message}", EventLogEntryType.Warning);
                     }
                 }
                 while (true);
