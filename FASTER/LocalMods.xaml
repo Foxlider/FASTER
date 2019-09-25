@@ -18,7 +18,7 @@
 
         <StackPanel Orientation="Horizontal" Margin="5">
             <Button Name="IRefreshList" ToolTip="Refresh List"  Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Padding="7,5" Content="{iconPacks:Material Kind=Refresh}" Click="IRefreshList_Click"/>
-            <Button Name="IEditFolders" ToolTip="Edit Folders To Search"  Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Padding="7,5" Content="{iconPacks:Material Kind=Pencil}" Click="IEditFolders_Click"/>
+            <Button Name="IEditFolders" ToolTip="Edit Folders To Search" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Padding="7,5" Content="{iconPacks:Material Kind=Pencil}" Click="IEditFolders_Click"/>
         </StackPanel>
         <DataGrid Name="ILocalModsView" Grid.Row="1" Grid.Column="0" Margin="5" CanUserReorderColumns="False" CanUserResizeRows="False" GridLinesVisibility="All" IsReadOnly="True" CanUserAddRows="False" AutoGenerateColumns="False" ItemsSource="{Binding NotifyOnSourceUpdated=True}">
             <DataGrid.Columns>

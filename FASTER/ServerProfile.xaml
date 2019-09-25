@@ -822,10 +822,10 @@
             <Button Name="IProfileNameEditSave" Click="IProfileNameEditSave_Click" Content="{iconPacks:Material Kind=Check}" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Height="30" Width="30" Padding="0" Margin="5,2" VerticalAlignment="Bottom" FontSize="10"/>
         </StackPanel>
         <StackPanel Name="IServerActionButtons" Grid.Row="1" HorizontalAlignment="Right" Margin="5,10" Orientation="Horizontal">
-            <Button Name="ISaveProfile" ToolTip="Save" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Padding="7,5" Content="{iconPacks:Material Kind=ContentSave}" Click="ISaveProfile_Click"/>
-            <Button Name="IRenameProfile" ToolTip="Save" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Padding="7,5" Content="{iconPacks:Material Kind=Pencil}" Click="IRenameProfile_Click"/>
-            <Button Name="IDeleteProfile" ToolTip="Save" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Padding="7,5" Content="{iconPacks:Material Kind=Delete}" Click="IDeleteProfile_Click"/>
-            <Button Name="ILaunchServer" ToolTip="Save" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Padding="7,5" Content="{iconPacks:Material Kind=Play}" Click="ILaunchServer_Click"/>
+            <Button Name="ISaveProfile" ToolTip="Save Profile" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Padding="7,5" Content="{iconPacks:Material Kind=ContentSave}" Click="ISaveProfile_Click"/>
+            <Button Name="IRenameProfile" ToolTip="Rename Profile" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Padding="7,5" Content="{iconPacks:Material Kind=Pencil}" Click="IRenameProfile_Click"/>
+            <Button Name="IDeleteProfile" ToolTip="Delete Profile" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Padding="7,5" Content="{iconPacks:Material Kind=Delete}" Click="IDeleteProfile_Click"/>
+            <Button Name="ILaunchServer" ToolTip="Launch Server" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Padding="7,5" Content="{iconPacks:Material Kind=Play}" Click="ILaunchServer_Click"/>
         </StackPanel>
 
         <simpleChildWindow:ChildWindow

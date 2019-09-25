@@ -211,7 +211,7 @@
                                 </RichTextBox.Resources>
                             </RichTextBox>
                             <ProgressBar Name="ISteamProgressBar" Grid.Row="2" Grid.Column="0" Margin="10,10,10,10" Height="32"/>
-                            <Button Name="ISteamCancelButton" Grid.Row="2" Grid.Column="1" Content="Cancel" Margin="0,10,10,10" IsEnabled="False" Click="ISteamCancelButton_Click" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0"/>
+                            <Button Name="ISteamCancelButton" Grid.Row="2" VerticalAlignment="Stretch" Grid.Column="1" Content="Cancel" Margin="0,10,10,10" IsEnabled="False" Click="ISteamCancelButton_Click" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0"/>
                         </Grid>
                     </Grid>
                 </Grid>
