@@ -28,7 +28,7 @@
                 <DataGridTemplateColumn Header="Delete">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Height="25" Width="25" Padding="0" Click="DeleteMod" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0">
+                            <Button Height="25" Width="25" Padding="0" Click="DeleteMod" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" HorizontalAlignment="Center" BorderThickness="0">
                                 <iconPacks:Material Kind="Delete" Width="20" Height="20"/>
                             </Button>
                         </DataTemplate>
@@ -37,7 +37,7 @@
                 <DataGridTemplateColumn Header="Open">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Height="25" Width="25" Padding="0" Click="OpenMod" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0">
+                            <Button Height="25" Width="25" Padding="0" Click="OpenMod" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" HorizontalAlignment="Center" BorderThickness="0">
                                 <iconPacks:Material Kind="FolderOpen" Width="20" Height="20"/>
                             </Button>
                         </DataTemplate>
