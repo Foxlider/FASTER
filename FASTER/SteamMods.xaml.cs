@@ -150,8 +150,8 @@ namespace FASTER
                     try
                     {
                         var modLine = dataReader.ReadLine();
-                        if (modLine == null) break;
-                        if (modLine.Contains("data-type=\"Link\">") && !modLine.Contains("/?id="))
+                        if (string.IsNullOrEmpty(modLine)) continue;
+                        if (modLine.Contains("data-type=\"Link\">http://steam") && modLine.Contains("/?id="))
                         {
                             var link = modLine.Substring(modLine.IndexOf("http://steam", StringComparison.Ordinal));
                             link = Reverse(link);
