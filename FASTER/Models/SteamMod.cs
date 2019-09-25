@@ -115,7 +115,7 @@ namespace FASTER.Models
             var modId = modUrl.Substring(modUrl.IndexOf("?id=", StringComparison.Ordinal));
             if (modId.Contains("&"))
                 // ReSharper disable once StringIndexOfIsCultureSpecific.1
-                modId = modId.Substring(0, modId.IndexOf("&") - 1);
+                modId = modId.Substring(0, modId.IndexOf("&"));
             modId = int.Parse(Regex.Replace(modId, @"[^\d]", "")).ToString();
 
             return int.Parse(modId);
