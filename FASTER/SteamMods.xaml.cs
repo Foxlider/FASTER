@@ -21,10 +21,9 @@ namespace FASTER
         {
             Initialized += SteamMods_Initialized;
             InitializeComponent();
-            Loaded                             += SteamMods_Loaded;
-            IModActionButtons.SelectionChanged += IActionButtons_SelectionChanged;
+            Loaded                      += SteamMods_Loaded;
             IImportSteamModDialog.KeyUp += IImportSteamModDialog_KeyUp;
-            MouseDown += IImportSteamModDialog_LostFocus;
+            MouseDown                   += IImportSteamModDialog_LostFocus;
         }
 
         private void SteamMods_Loaded(object sender, RoutedEventArgs e)
@@ -66,29 +65,22 @@ namespace FASTER
             IProgressInfo.Visibility        = Visibility.Visible;
         }
 
-        private void IActionButtons_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (ICheckForUpdates.IsSelected)
-            { CheckForUpdates(); }
-            if (IUpdateAll.IsSelected)
-            { UpdateAllMods(); }
-            if (IImportLauncherFile.IsSelected)
-            { ImportLauncherFile(); }
-            if (IAddSteamMod.IsSelected)
-            { IImportSteamModDialog.IsOpen = true; }
 
-            Thread thread = new Thread(() =>
-            {
-                Thread.Sleep(600);
-                Dispatcher?.Invoke(() =>
-                {
-                    ((ListBox)sender).SelectedItem = null;
-                });
-            });
-            thread.Start();
-        }
+        private void ICheckForUpdates_Click(object sender, RoutedEventArgs e)
+        { CheckForUpdates(); }
 
 
+        private void IUpdateAll_Click(object sender, RoutedEventArgs e)
+        { UpdateAllMods(); }
+
+
+        private void IImportLauncherFile_Click(object sender, RoutedEventArgs e)
+        { ImportLauncherFile(); }
+
+
+        private void IAddSteamMod_Click(object sender, RoutedEventArgs e)
+        { IImportSteamModDialog.IsOpen = true; }
+        
         private void IImportSteamModDialog_LostFocus(object sender, RoutedEventArgs e)
         {
             if (!IImportSteamModDialog.IsMouseOver)

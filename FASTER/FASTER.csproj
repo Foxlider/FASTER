@@ -24,7 +24,6 @@
 
   <ItemGroup>
     <None Remove="Resources\FASTER.ico" />
-    <None Remove="Themes\Overrides.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -37,8 +36,6 @@
     <PackageReference Include="MahApps.Metro" Version="2.0.0-alpha0479" />
     <PackageReference Include="MahApps.Metro.IconPacks" Version="3.0.0-alpha0206" />
     <PackageReference Include="MahApps.Metro.SimpleChildWindow" Version="2.0.0-alpha0027" />
-    <PackageReference Include="MaterialDesignColors" Version="1.2.0" />
-    <PackageReference Include="MaterialDesignThemes" Version="2.6.0" />
     <PackageReference Include="Microsoft-WindowsAPICodePack-Core" Version="1.1.3.3" />
     <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.3.3" />
     <PackageReference Include="Microsoft.Extensions.Logging.EventLog" Version="3.0.0-preview8.19405.4" />

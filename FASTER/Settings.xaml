@@ -2,20 +2,10 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              xmlns:system="clr-namespace:System;assembly=System.Runtime"
-
-             FontFamily="{DynamicResource MaterialDesignFont}"
-             
-
-             TextElement.FontWeight="Regular"
-             TextElement.FontSize="11"
-             TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-             TextOptions.TextFormattingMode="Ideal"
-             TextOptions.TextRenderingMode="Auto"
+             xmlns:simpleChildWindow="http://metro.mahapps.com/winfx/xaml/simplechildwindow"
 
              mc:Ignorable="d"
              d:DesignHeight="570.4"
@@ -54,18 +44,17 @@
                 </StackPanel>
 
                 <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="10,10,10,0" Content="Folders To Search For Local Mods"/>
-                <Button Grid.Row="1" Grid.Column="2" Name="INewLocalFolder" Click="INewLocalFolder_Click" Content="{iconPacks:Material Kind=Plus}" Style="{DynamicResource MahApps.Styles.Button.Flat}"  Padding="2" Height="20" Width="20" Margin="10">
+                <Button Grid.Row="1" Grid.Column="2" Name="INewLocalFolder" Click="INewLocalFolder_Click" Content="{iconPacks:Material Kind=Plus}" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Padding="2" Height="20" Width="20" Margin="10">
                 </Button>
-                <Button Grid.Row="1" Grid.Column="3" Name="IRemoveLocalFolders" Click="IRemoveLocalFolders_Click" Content="{iconPacks:Material Kind=Delete}" Style="{DynamicResource MahApps.Styles.Button.Flat}" Padding="2" Height="20" Width="20" Margin="10">
+                <Button Grid.Row="1" Grid.Column="3" Name="IRemoveLocalFolders" Click="IRemoveLocalFolders_Click" Content="{iconPacks:Material Kind=Delete}"  Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Padding="2" Height="20" Width="20" Margin="10">
                 </Button>
-                <!--<xctk:CheckListBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" Name="ILocalModFolders" Margin="10" Padding="5" MinHeight="200" MaxHeight="200" Foreground="{DynamicResource MaterialDesignBody}" Background="{DynamicResource MaterialDesignTextAreaInactiveBorder}"/>-->
-                <ListBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" Name="ILocalModFolders" Margin="10" Padding="5" MinHeight="200" MaxHeight="200" Foreground="{DynamicResource MaterialDesignBody}" Background="{DynamicResource MaterialDesignTextAreaInactiveBorder}">
+                <ListBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" Name="ILocalModFolders" Margin="10" Padding="5" MinHeight="200" MaxHeight="200">
 
                 </ListBox>
                 <CheckBox Name="IModUpdatesOnLaunch" Grid.ColumnSpan="2" Grid.Row="4" Grid.Column="0" Content="Check for Steam Mod Updates on Launch" IsChecked="True" Margin="10,0,10,10"/>
                 <CheckBox Name="IAppUpdatesOnLaunch" Grid.ColumnSpan="2" Grid.Row="5" Grid.Column="0" Content="Auto Update FASTER on Launch" IsChecked="False" Margin="10,0,10,10"/>
-                <Button Grid.Row="6" Grid.Column="0" Name="IClearSettings" Click="IClearSettings_Click" Content="Reset FASTER" Style="{DynamicResource MahApps.Styles.Button.Flat}" Margin="10" Width="130" HorizontalAlignment="Center"/>
-                <Button Grid.Row="6" Grid.Column="1" Name="IUpdateApp" Content="Update FASTER" Style="{DynamicResource MahApps.Styles.Button.Flat}" Margin="10" Width="130" Click="IUpdateApp_OnClick" HorizontalAlignment="Center"/>
+                <Button Grid.Row="6" Grid.Column="0" Name="IClearSettings" Click="IClearSettings_Click" Content="Reset FASTER" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Margin="10" Width="130" HorizontalAlignment="Center"/>
+                <Button Grid.Row="6" Grid.Column="1" Name="IUpdateApp" Content="Update FASTER" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Margin="10" Width="130" Click="IUpdateApp_OnClick" HorizontalAlignment="Center"/>
             </Grid>
         </Grid>
 
@@ -84,7 +73,6 @@
                         <Label VerticalAlignment="Center">
                             <Run Text="Light"/>
                         </Label>
-                        <!--<ToggleButton Name="IBaseThemeToggle" Click="IBaseThemeButton_Click" Style="{StaticResource MaterialDesignSwitchToggleButton}" IsChecked="True"/>-->
                         <Label VerticalAlignment="Center">
                             <Run Text="Dark"/>
                         </Label>
@@ -96,114 +84,122 @@
                         <SolidColorBrush x:Key="WarningBrush" Color="#FFEE1010"/>
                     </Label.Resources>
                 </Label>
-                <!--
-                <StackPanel Orientation="Horizontal" Margin="5,0" >
-                    <Button Name="IYellowP" Width="32" Margin="4" Background="#FFEB3B"/>
-                    <Button Name="IAmberP" Width="32" Margin="4" Background="#FFC107"/>
-                    <Button Name="IDeepOrangeP" Width="32" Margin="4" Background="#FF5722"/>
-                    <Button Name="ILightBlueP" Width="32" Margin="4" Background="#03A9F4"/>
-                    <Button Name="ITealP" Width="32" Margin="4" Background="#009688"/>
-                    <Button Name="ICyanP" Width="32" Margin="4" Background="#00BCD4"/>
-                    <Button Name="IPinkP" Width="32" Margin="4" Background="#E91E63"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="5,0">
-                    <Button Name="IGreenP" Width="32" Margin="4" Background="#4CAF50"/>
-                    <Button Name="IDeepPurpleP" Width="32" Margin="4" Background="#673AB7"/>
-                    <Button Name="IIndigoP" Width="32" Margin="4" Background="#3F51B5"/>
-                    <Button Name="ILightGreenP" Width="32" Margin="4" Background="#8BC34A"/>
-                    <Button Name="IBlueP" Width="32" Margin="4" Background="#2196F3"/>
-                    <Button Name="ILimeP" Width="32" Margin="4" Background="#CDDC39"/>
-                    <Button Name="IRedP" Width="32" Margin="4" Background="#F44336"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="5,0">
-                    <Button Name="IOrangeP" Width="32" Margin="4" Background="#FF9800"/>
-                    <Button Name="IPurpleP" Width="32" Margin="4" Background="#9C27B0"/>
-                    <Button Name="IBlueGreyP" Width="32" Margin="4" Background="#607D8B"/>
-                    <Button Name="IGreyP" Width="32" Margin="4" Background="#9E9E9E"/>
-                </StackPanel>
-
-                <Label Margin="8,8,8,0" Content="Accent Color" FontSize="12"/>
-                <StackPanel Orientation="Horizontal" Margin="5,0">
-                    <Button Name="IYellowA" Width="32" Margin="4" Background="#FFEA00"/>
-                    <Button Name="IAmberA" Width="32" Margin="4" Background="#FFC400"/>
-                    <Button Name="IDeepOrangeA" Width="32" Margin="4" Background="#FF3D00"/>
-                    <Button Name="ILightBlueA" Width="32" Margin="4" Background="#00B0FF"/>
-                    <Button Name="ITealA" Width="32" Margin="4" Background="#1DE9B6"/>
-                    <Button Name="ICyanA" Width="32" Margin="4" Background="#00E5FF"/>
-                    <Button Name="IPinkA" Width="32" Margin="4" Background="#F50057"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="5,0">
-                    <Button Name="IGreenA" Width="32" Margin="4" Background="#00E676"/>
-                    <Button Name="IDeepPurpleA" Width="32" Margin="4" Background="#651FFF"/>
-                    <Button Name="IIndigoA" Width="32" Margin="4" Background="#3D5AFE"/>
-                    <Button Name="ILightGreenA" Width="32" Margin="4" Background="#76FF03"/>
-                    <Button Name="IBlueA" Width="32" Margin="4" Background="#2979FF"/>
-                    <Button Name="ILimeA" Width="32" Margin="4" Background="#C6FF00"/>
-                    <Button Name="IRedA" Width="32" Margin="4" Background="#FF1744"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="5,0">
-                    <Button Name="IOrangeA" Width="32" Margin="4" Background="#FF9100"/>
-                    <Button Name="IPurpleA" Width="32" Margin="4" Background="#D500F9"/>
-                </StackPanel>-->
             </StackPanel>
         </Grid>
 
-        <materialDesign:DialogHost Visibility="Hidden" Grid.ColumnSpan="2" Grid.Row="0" Grid.Column="0" IsOpen="False" Name="IResetDialog" Margin="-2">
-            <materialDesign:DialogHost.DialogContent>
-                <StackPanel Name="IResetDialogContent" Grid.Row="1" Margin="15">
-                    <TextBlock TextWrapping="Wrap" TextAlignment="Left" Margin="5" Text="This will reset FASTER and remove all server profiles and imported mods."/>
-                    <StackPanel Margin="10" Orientation="Horizontal" HorizontalAlignment="Center">
-                        <Button Name="IResetButton" Click="IResetButton_Click" Content="Reset" Width="90" Margin="5"/>
-                        <Button Name="ICancelButton" Content="Cancel" Width="90" Margin="5" Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}" CommandTarget="{Binding ElementName=IResetDialog}"/>
-                    </StackPanel>
+        <simpleChildWindow:ChildWindow
+            Name="IResetDialog"
+            Grid.ColumnSpan="2" Grid.Row="0" Grid.Column="0"
+            IsOpen="False"
+            HorizontalContentAlignment="Center"
+            VerticalContentAlignment="Center"
+            Foreground="White"
+            Padding="15"
+            CloseOnOverlay="True"
+            GlowBrush="Black"
+            BorderThickness="0"
+            Title="Are you sure ?">
+            <simpleChildWindow:ChildWindow.Icon>
+                <iconPacks:PackIconModern
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Foreground="White"
+                    Kind="Warning" />
+            </simpleChildWindow:ChildWindow.Icon>
+            <simpleChildWindow:ChildWindow.OverlayBrush>
+                <SolidColorBrush Opacity="0.7" Color="{StaticResource MahApps.Colors.Gray10}"/>
+            </simpleChildWindow:ChildWindow.OverlayBrush>
+            <StackPanel Name="IResetDialogContent" Grid.Row="1" Margin="15">
+                <TextBlock TextWrapping="Wrap" TextAlignment="Left" Margin="5" Text="This will reset FASTER and remove all server profiles and imported mods."/>
+                <StackPanel Margin="10" Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Button Name="IResetButton" Click="IResetButton_Click" Content="Reset" Width="90" Margin="5"  Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0"/>
+                    <Button Name="ICancelButton" Content="Cancel" Width="90" Margin="5" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0"/>
                 </StackPanel>
-            </materialDesign:DialogHost.DialogContent>
-        </materialDesign:DialogHost>
+            </StackPanel>
+        </simpleChildWindow:ChildWindow>
 
-        <materialDesign:DialogHost Name="IUpdateDialog" DialogClosing="UpdateDialog_Closing" HorizontalAlignment="Center" VerticalAlignment="Center">
-            <materialDesign:DialogHost.DialogContent>
-                <StackPanel Margin="16">
-                    <TextBlock Name="IUpdateText" Margin="15"/>
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" >
-                        <Button Name="IUpdateBtnOK" Style="{StaticResource MaterialDesignFlatButton}"
-                                        IsDefault="True"
-                                        Margin="0 8 8 0"
-                                        Command="materialDesign:DialogHost.CloseDialogCommand">
-                            <Button.CommandParameter>
-                                <system:Boolean>True</system:Boolean>
-                            </Button.CommandParameter>
-                            OK
-                        </Button>
-                        <Button Name="IUpdateBtnCancel" Style="{StaticResource MaterialDesignFlatButton}"
-                                        IsCancel="True"
-                                        Margin="0 8 8 0"
-                                        Command="materialDesign:DialogHost.CloseDialogCommand">
-                            <Button.CommandParameter>
-                                <system:Boolean>False</system:Boolean>
-                            </Button.CommandParameter>
-                            CANCEL
-                        </Button>
-                    </StackPanel>
+        <simpleChildWindow:ChildWindow
+            Name="IUpdateDialog"
+            Closing="IUpdateDialog_Closing"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            IsOpen="False"
+            HorizontalContentAlignment="Center"
+            VerticalContentAlignment="Center"
+            Foreground="White"
+            Padding="15"
+            CloseOnOverlay="True"
+            GlowBrush="Black"
+            BorderThickness="0"
+            Title="FASTER Update">
+            <simpleChildWindow:ChildWindow.Icon>
+                <iconPacks:PackIconMaterial
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Foreground="White"
+                    Kind="Update" />
+            </simpleChildWindow:ChildWindow.Icon>
+            <simpleChildWindow:ChildWindow.OverlayBrush>
+                <SolidColorBrush Opacity="0.7" Color="{StaticResource MahApps.Colors.Gray10}"/>
+            </simpleChildWindow:ChildWindow.OverlayBrush>
+            <StackPanel Margin="16">
+                <TextBlock Name="IUpdateText" Margin="15"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" >
+                    <Button Name="IUpdateBtnOK"
+                            IsDefault="True"
+                            Margin="0 8 8 0" 
+                            Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0">
+                        <Button.CommandParameter>
+                            <system:Boolean>True</system:Boolean>
+                        </Button.CommandParameter>
+                        OK
+                    </Button>
+                    <Button Name="IUpdateBtnCancel"
+                            IsCancel="True"
+                            Margin="0 8 8 0" 
+                            Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0">
+                        <Button.CommandParameter>
+                            <system:Boolean>False</system:Boolean>
+                        </Button.CommandParameter>
+                        CANCEL
+                    </Button>
                 </StackPanel>
-            </materialDesign:DialogHost.DialogContent>
-        </materialDesign:DialogHost>
+            </StackPanel>
+        </simpleChildWindow:ChildWindow>
 
-
-        <materialDesign:DialogHost Name="IMessageDialog" CloseOnClickAway="True" HorizontalAlignment="Center" VerticalAlignment="Center">
-            <materialDesign:DialogHost.DialogContent>
-                <StackPanel Margin="16">
-                    <TextBlock Name="IMessageText" Margin="10"/>
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" >
-                        <Button Style="{StaticResource MaterialDesignFlatButton}"
-                                IsDefault="True"
-                                Margin="0 8 8 0"
-                                Command="materialDesign:DialogHost.CloseDialogCommand">
-                            OK
-                        </Button>
-                    </StackPanel>
+        <simpleChildWindow:ChildWindow
+            Name="IMessageDialog"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            IsOpen="False"
+            HorizontalContentAlignment="Center"
+            VerticalContentAlignment="Center"
+            Foreground="White"
+            Padding="15"
+            CloseOnOverlay="True"
+            GlowBrush="Black"
+            BorderThickness="0"
+            Title="Message">
+            <simpleChildWindow:ChildWindow.Icon>
+                <iconPacks:PackIconModern
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Foreground="White"
+                    Kind="Information" />
+            </simpleChildWindow:ChildWindow.Icon>
+            <simpleChildWindow:ChildWindow.OverlayBrush>
+                <SolidColorBrush Opacity="0.7" Color="{StaticResource MahApps.Colors.Gray10}"/>
+            </simpleChildWindow:ChildWindow.OverlayBrush>
+            <StackPanel Margin="16">
+                <TextBlock Name="IMessageText" Margin="10"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" >
+                    <Button IsDefault="True"
+                            Margin="0 8 8 0"
+                            Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0">
+                        OK
+                    </Button>
                 </StackPanel>
-            </materialDesign:DialogHost.DialogContent>
-        </materialDesign:DialogHost>
-
+            </StackPanel>
+        </simpleChildWindow:ChildWindow>
     </Grid>
 </UserControl>

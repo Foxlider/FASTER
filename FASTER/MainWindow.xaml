@@ -182,32 +182,6 @@
                         </Grid>
                     </Grid>
 
-                    <!--<md:Card Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" Margin="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="*"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
-                            <StackPanel Grid.ColumnSpan="2">
-                                <Label Margin="2" Content="Steam CMD Output"/>
-                                <Separator Style="{StaticResource MaterialDesignSeparator}" Margin="-8"/>
-                            </StackPanel>
-                            <RichTextBox Name="ISteamOutputBox" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" IsReadOnly="True" IsEnabled="True" Background="LightGray" Margin="10,10,10,0" VerticalScrollBarVisibility="Visible">
-                                <RichTextBox.Resources>
-                                    <Style TargetType="{x:Type Paragraph}">
-                                        <Setter Property="Margin" Value="0"/>
-                                    </Style>
-                                </RichTextBox.Resources>
-                            </RichTextBox>
-                            <ProgressBar Name="ISteamProgressBar" Grid.Row="2" Grid.Column="0" Margin="10,10,10,10" Height="32"/>
-                            <Button Name="ISteamCancelButton" Style="{StaticResource MaterialDesignRaisedAccentButton}" Grid.Row="2" Grid.Column="1" Content="Cancel" Margin="0,10,10,10" IsEnabled="False" Click="ISteamCancelButton_Click"/>
-                        </Grid>
-                    </md:Card>-->
                     <Grid Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" Margin="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
                         <Grid.Style>
                             <Style TargetType="Grid">

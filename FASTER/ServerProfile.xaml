@@ -497,7 +497,7 @@
                                     <RowDefinition />
                                 </Grid.RowDefinitions>
                                 <Label Content="Use this text box to write your custom missions class." Margin="5" HorizontalAlignment="Center"/>
-                                <TextBox Name="IMissionConfig" Grid.Row="1" Grid.Column="0" Margin="10" AcceptsReturn="True" AcceptsTab="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" Foreground="{DynamicResource MaterialDesignBody}" Background="{DynamicResource MaterialDesignTextAreaInactiveBorder}"/>
+                                <TextBox Name="IMissionConfig" Grid.Row="1" Grid.Column="0" Margin="10" AcceptsReturn="True" AcceptsTab="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"/>
                             </Grid>
 
                             <Grid Name="IMissionAutoGrid" Grid.Row="1">
@@ -854,12 +854,14 @@
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" >
                     <Button Name="IConfirmDeleteBtn"
                             IsDefault="True"
-                            Margin="0 8 8 0">
+                            Margin="0 8 8 0"
+                            Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0">
                         ACCEPT
                     </Button>
                     <Button Name="ICancelDeleteBtn"
                             IsCancel="True"
-                            Margin="0 8 8 0">
+                            Margin="0 8 8 0"
+                            Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0">
                         CANCEL
                     </Button>
                 </StackPanel>

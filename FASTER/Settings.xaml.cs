@@ -4,11 +4,9 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using AutoUpdaterDotNET;
-using MaterialDesignThemes.Wpf;
 using Application = System.Windows.Application;
 using CheckBox = System.Windows.Controls.CheckBox;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
-using MessageBox = System.Windows.MessageBox;
 using UserControl = System.Windows.Controls.UserControl;
 
 namespace FASTER
@@ -30,23 +28,41 @@ namespace FASTER
 
         }
 
+        // OLD CODE
+        //private void UpdateDialog_Closing(object sender, DialogClosingEventArgs e)
+        //{
+        //    if (!Equals(e.Parameter, true)) return;
+        //    try
+        //    {
+        //        if (AutoUpdater.DownloadUpdate())
+        //        {
+        //            if (Application.Current.MainWindow != null) Application.Current.MainWindow.Close();
+        //        }
+        //    }
+        //    catch (Exception exception)
+        //    {
+        //        IMessageText.Text     = exception.Message + " " + exception.GetType();
+        //        IMessageDialog.IsOpen = true;
+        //        //MessageBox.Show(exception.Message, exception.GetType().ToString(), MessageBoxButton.OK,
+        //        //                MessageBoxImage.Error);
+        //    }
+        //} OLD CODE
 
-        private void UpdateDialog_Closing(object sender, DialogClosingEventArgs e)
+        private void IUpdateDialog_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (!Equals(e.Parameter, true)) return;
+            if (!Equals(e.Cancel, true)) return;
             try
             {
                 if (AutoUpdater.DownloadUpdate())
                 {
-                    if (Application.Current.MainWindow != null) Application.Current.MainWindow.Close();
+                    if (Application.Current.MainWindow != null) 
+                        Application.Current.MainWindow.Close();
                 }
             }
             catch (Exception exception)
             {
                 IMessageText.Text     = exception.Message + " " + exception.GetType();
                 IMessageDialog.IsOpen = true;
-                //MessageBox.Show(exception.Message, exception.GetType().ToString(), MessageBoxButton.OK,
-                //                MessageBoxImage.Error);
             }
         }
 
@@ -75,17 +91,12 @@ namespace FASTER
                 {
                     IMessageText.Text = "There is no update available please try again later.";
                     IMessageDialog.IsOpen = true;
-                    //MessageBox.Show(@"There is no update available please try again later.", @"No update available",
-                    //                MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             }
             else
             {
                 IMessageText.Text     = "There is a problem reaching update server please check your internet connection and try again later.";
                 IMessageDialog.IsOpen = true;
-                //MessageBox.Show(
-                //    @"There is a problem reaching update server please check your internet connection and try again later.",
-                //    @"Update check failed", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -152,8 +163,6 @@ namespace FASTER
             }
             UpdateLocalModFolders();
         }
-
-        
 
         private void IRemoveLocalFolders_Click(object sender, RoutedEventArgs e)
         {
