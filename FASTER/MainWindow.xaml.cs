@@ -287,7 +287,6 @@ namespace FASTER
         private void IMessageDialogClose_Click(object sender, RoutedEventArgs e)
         {
             IMessageDialog.IsOpen = false;
-            MainGrid.Effect       = null;
         }
 
         private void IToolsDialog_KeyUp(object sender, KeyEventArgs e)
@@ -295,7 +294,6 @@ namespace FASTER
             if (e.Key == Key.Escape)
             {
                 IToolsDialog.IsOpen = false;
-                MainGrid.Effect = null;
             }
         }
 
@@ -304,6 +302,7 @@ namespace FASTER
             INewProfileName.Text = INewProfileName.Text.Trim();
             if (string.IsNullOrEmpty(INewProfileName.Text))
             {
+                INewServerProfileDialog.IsOpen = false;
                 IMessageDialog.IsOpen = true;
                 IMessageDialogText.Text = "Please use a suitable profile name.";
             }
@@ -312,7 +311,6 @@ namespace FASTER
                 Mouse.OverrideCursor = Cursors.Wait;
                 var profileName = INewProfileName.Text;
                 INewServerProfileDialog.IsOpen = false;
-                MainGrid.Effect = null;
                 ServerCollection.AddServerProfile(profileName, "_" + Functions.SafeName(profileName));
                 INewProfileName.Text = string.Empty;
                 Mouse.OverrideCursor = Cursors.Arrow;

@@ -123,7 +123,7 @@
             <StackPanel Margin="16">
                 <TextBlock Name="IMessageText" Margin="10"/>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" >
-                    <Button IsDefault="True" Margin="0 8 8 0"  Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Content="OK"/>
+                    <Button IsDefault="True" Margin="0 8 8 0" Name="IMessageButton" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" Click="IMessageButton_Click"  BorderThickness="0" Content="OK"/>
                 </StackPanel>
             </StackPanel>
         </simpleChildWindow:ChildWindow>

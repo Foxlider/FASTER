@@ -14,11 +14,11 @@
     
     GlowBrush="Black"
     BorderThickness="0" 
-    ResizeMode="NoResize"
+    ResizeMode="CanResizeWithGrip"
     
     Title="FASTER" 
     Height="700" Width="1100"
-    MinHeight="700" MinWidth="1100"
+    MinHeight="700" MinWidth="1000"
     
     Initialized="MetroWindow_Initialized"
     Loaded="MetroWindow_Loaded"
@@ -266,7 +266,7 @@
                 <TextBlock Name="IMessageDialogText" TextWrapping="Wrap" TextAlignment="Center" Margin="10">
                     MESSAGE GOES HERE
                 </TextBlock>
-                <Button Name="IMessageDialogClose" Content="OK" HorizontalAlignment="Center" Style="{DynamicResource MahApps.Styles.Button.Flat}" Margin="5"/>
+                <Button Name="IMessageDialogClose" Content="OK" HorizontalAlignment="Center" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Margin="5"/>
             </StackPanel>
         </simpleChildWindow:ChildWindow>
 
@@ -306,7 +306,7 @@
                         </TextBlock>
                     <TextBox Name="INewProfileName" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Profile Name" />
                         <DockPanel Margin="0,10">
-                            <Button Name="ICreateProfileButton" Click="ICreateProfileButton_Click" Style="{DynamicResource MahApps.Styles.Button.Flat}" Content="Create" Width="90" HorizontalAlignment="Right"/>
+                            <Button Name="ICreateProfileButton" Click="ICreateProfileButton_Click" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Content="Create" Width="90" HorizontalAlignment="Right"/>
                         </DockPanel>
                     </StackPanel>
                 </Grid>
@@ -348,7 +348,7 @@
                     </TextBlock>
                     <TextBox Name="ISteamGuardCode" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Steam Guard Code"/>
                     <DockPanel Margin="0,10">
-                        <Button Name="ISubmitCode" Click="ISubmitCode_Click" Content="Submit" HorizontalAlignment="Right" Style="{DynamicResource MahApps.Styles.Button.Flat}"/>
+                        <Button Name="ISubmitCode" Click="ISubmitCode_Click" Content="Submit" HorizontalAlignment="Right" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0"/>
                     </DockPanel>
                 </StackPanel>
             </Grid>
@@ -379,9 +379,9 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
-                <Button Grid.Row="0" Style="{DynamicResource MahApps.Styles.Button.Flat}" Click="InstallSteamCmd_Click" Name="InstallSteamCmdButton" Content="Install SteamCMD" Margin="10"/>
-                <Button Grid.Row="1" Style="{DynamicResource MahApps.Styles.Button.Flat}" Click="OpenSteamCmdLocation_Click" Name="OpenSteamCmdLocation" Content="Open SteamCMD Folder" Margin="10"/>
-                <Button Grid.Row="2" Style="{DynamicResource MahApps.Styles.Button.Flat}" Click="OpenArmaServerLocation_Click" Name="OpenArmaServerLocation" Content="Open Arma 3 Server Folder" Margin="10"/>
+                <Button Grid.Row="0" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" HorizontalAlignment="Stretch" Click="InstallSteamCmd_Click" Name="InstallSteamCmdButton" Content="Install SteamCMD" Margin="10"/>
+                <Button Grid.Row="1" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" HorizontalAlignment="Stretch" Click="OpenSteamCmdLocation_Click" Name="OpenSteamCmdLocation" Content="Open SteamCMD Folder" Margin="10"/>
+                <Button Grid.Row="2" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" HorizontalAlignment="Stretch" Click="OpenArmaServerLocation_Click" Name="OpenArmaServerLocation" Content="Open Arma 3 Server Folder" Margin="10"/>
             </Grid>
         </simpleChildWindow:ChildWindow>
     </Grid>

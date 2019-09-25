@@ -71,6 +71,8 @@ namespace FASTER
         private void ICheckForUpdates_Click(object sender, RoutedEventArgs e)
         { CheckForUpdates(); }
 
+        private void IMessageButton_Click(object sender, RoutedEventArgs e)
+        { IMessageDialog.IsOpen = false; }
 
         private void IUpdateAll_Click(object sender, RoutedEventArgs e)
         { UpdateAllMods(); }

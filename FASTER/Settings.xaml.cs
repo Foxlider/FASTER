@@ -48,9 +48,8 @@ namespace FASTER
         //    }
         //} OLD CODE
 
-        private void IUpdateDialog_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void IUpdateBtnOK_Click(object sender, RoutedEventArgs e)
         {
-            if (!Equals(e.Cancel, true)) return;
             try
             {
                 if (AutoUpdater.DownloadUpdate())
@@ -65,6 +64,9 @@ namespace FASTER
                 IMessageDialog.IsOpen = true;
             }
         }
+
+        private void IUpdateBtnCancel_Click(object sender, RoutedEventArgs e)
+        { IUpdateDialog.IsOpen = false; }
 
         private void AutoUpdaterOnCheckForUpdateEvent(UpdateInfoEventArgs args)
         {
@@ -131,6 +133,11 @@ namespace FASTER
         private void IClearSettings_Click(object sender, RoutedEventArgs e)
         { IResetDialog.IsOpen = true; }
 
+        private void IMessageButton_Click(object sender, RoutedEventArgs e)
+        { IMessageDialog.IsOpen = false; }
+
+        private void ICancelButton_Click(object sender, RoutedEventArgs e)
+        { IResetDialog.IsOpen = false; }
 
         private void IResetButton_Click(object sender, RoutedEventArgs e)
         {
@@ -138,8 +145,7 @@ namespace FASTER
             Properties.Options.Default.Save();
             Application.Current.Shutdown();
         }
-
-
+        
         private void Settings_Initialized(object sender, EventArgs e)
         {
             //TODO : WHEN THEME HANDLING DONE GET VALUE FROM SETTINGS FILE
@@ -148,8 +154,7 @@ namespace FASTER
             IAppUpdatesOnLaunch.IsChecked = Properties.Options.Default?.checkForAppUpdates;
             UpdateLocalModFolders();
         }
-
-
+        
         private void INewLocalFolder_Click(object sender, RoutedEventArgs e)
         {
             string newModFolder = MainWindow.Instance.SelectFolder();
@@ -213,8 +218,8 @@ namespace FASTER
         }
 
         private void IUpdateApp_OnClick(object sender, RoutedEventArgs e)
-        {
-            AutoUpdater.Start("https://raw.githubusercontent.com/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite/master/FASTER_Version.xml");
-        }
+        { AutoUpdater.Start("https://raw.githubusercontent.com/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite/master/FASTER_Version.xml"); }
+
+        
     }
 }

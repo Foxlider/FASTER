@@ -58,7 +58,6 @@
             </Grid>
         </Grid>
 
-
         <Grid Grid.Column="1" Margin="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
             <Grid.Style>
                 <Style TargetType="Grid">
@@ -113,14 +112,13 @@
                 <TextBlock TextWrapping="Wrap" TextAlignment="Left" Margin="5" Text="This will reset FASTER and remove all server profiles and imported mods."/>
                 <StackPanel Margin="10" Orientation="Horizontal" HorizontalAlignment="Center">
                     <Button Name="IResetButton" Click="IResetButton_Click" Content="Reset" Width="90" Margin="5"  Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0"/>
-                    <Button Name="ICancelButton" Content="Cancel" Width="90" Margin="5" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0"/>
+                    <Button Name="ICancelButton" Click="ICancelButton_Click" Content="Cancel" Width="90" Margin="5" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0"/>
                 </StackPanel>
             </StackPanel>
         </simpleChildWindow:ChildWindow>
 
         <simpleChildWindow:ChildWindow
             Name="IUpdateDialog"
-            Closing="IUpdateDialog_Closing"
             Grid.Column="0"
             Grid.ColumnSpan="2"
             IsOpen="False"
@@ -148,19 +146,13 @@
                     <Button Name="IUpdateBtnOK"
                             IsDefault="True"
                             Margin="0 8 8 0" 
-                            Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0">
-                        <Button.CommandParameter>
-                            <system:Boolean>True</system:Boolean>
-                        </Button.CommandParameter>
+                            Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Click="IUpdateBtnOK_Click">
                         OK
                     </Button>
                     <Button Name="IUpdateBtnCancel"
                             IsCancel="True"
                             Margin="0 8 8 0" 
-                            Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0">
-                        <Button.CommandParameter>
-                            <system:Boolean>False</system:Boolean>
-                        </Button.CommandParameter>
+                            Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Click="IUpdateBtnCancel_Click">
                         CANCEL
                     </Button>
                 </StackPanel>
@@ -194,8 +186,9 @@
                 <TextBlock Name="IMessageText" Margin="10"/>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" >
                     <Button IsDefault="True"
+                            Name="IMessageButton"
                             Margin="0 8 8 0"
-                            Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0">
+                            Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Click="IMessageButton_Click">
                         OK
                     </Button>
                 </StackPanel>
