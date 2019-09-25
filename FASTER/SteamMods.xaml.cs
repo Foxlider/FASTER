@@ -17,6 +17,7 @@ namespace FASTER
     /// </summary>
     public partial class SteamMods : UserControl
     {
+        bool firstLoad = true;
         public SteamMods()
         {
             Initialized += SteamMods_Initialized;
@@ -28,8 +29,9 @@ namespace FASTER
 
         private void SteamMods_Loaded(object sender, RoutedEventArgs e)
         {
-            if (Properties.Options.Default.steamMods?.SteamMods?.Count > 0 && Properties.Options.Default.checkForModUpdates)
+            if (Properties.Options.Default.steamMods?.SteamMods?.Count > 0 && Properties.Options.Default.checkForModUpdates && firstLoad)
             {
+                firstLoad = false;
                 IUpdateProgress.IsIndeterminate = true;
                 IProgressInfo.Visibility        = Visibility.Visible;
                 IProgressInfo.Content           = "Checking for updates...";

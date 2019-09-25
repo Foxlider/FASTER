@@ -52,7 +52,7 @@
                 <DataGridTemplateColumn Header="Info" Width="55" CanUserResize="False">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Height="25" Width="25" Padding="0" Click="OpenModPage" Content="{iconPacks:Material Kind=GlobeModel}" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" HorizontalAlignment="Center"/>
+                            <Button Height="25" Width="25" Padding="0" Click="OpenModPage" Content="{iconPacks:Material Kind=Web}" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" HorizontalAlignment="Center"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
