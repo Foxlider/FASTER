@@ -637,8 +637,8 @@ namespace FASTER
             profile.MaxMessagesSend = int.Parse(IMaxMessagesSend.Text);
             profile.MaxSizeNonguaranteed = int.Parse(IMaxSizeNonguaranteed.Text);
             profile.MaxSizeGuaranteed = int.Parse(IMaxSizeGuaranteed.Text);
-            profile.MinErrorToSend = double.Parse(IMinErrorToSend.Text);
-            profile.MinErrorToSendNear = double.Parse(IMinErrorToSendNear.Text);
+            profile.MinErrorToSend = double.Parse(IMinErrorToSend.Text.Replace(',', '.'));
+            profile.MinErrorToSendNear = double.Parse(IMinErrorToSendNear.Text.Replace(',', '.'));
             profile.CpuCount = ICpuCount.Text;
             profile.MaxMem = IMaxMem.Text;
             profile.ExtraParams = IExtraParams.Text;
@@ -849,8 +849,8 @@ namespace FASTER
                 $"MaxSizeNonguaranteed = {IMaxSizeNonguaranteed.Text};",
                 $"MinBandwidth = {IMinBandwidth.Text};",
                 $"MaxBandwidth = {IMaxBandwidth.Text};",
-                $"MinErrorToSend = {IMinErrorToSend.Text};",
-                $"MinErrorToSendNear = {IMinErrorToSendNear.Text};",
+                $"MinErrorToSend = {IMinErrorToSend.Text.Replace(',', '.')};",
+                $"MinErrorToSendNear = {IMinErrorToSendNear.Text.Replace(',', '.')};",
                 $"MaxCustomFileSize = {IMaxCustomFileSize.Text};",
                 "class sockets{maxPacketSize = " + IMaxPacketSize.Text + ";};"
             };
