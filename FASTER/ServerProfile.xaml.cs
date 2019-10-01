@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -1199,5 +1200,38 @@ namespace FASTER
             IProfileNameEdit.Visibility = Visibility.Collapsed;
         }
 
+        private async void ICopyModsKeys_Click(object sender, RoutedEventArgs e)
+        {
+            ICopyModsKeys.IsEnabled = false;
+            await CopyModsKeysToKeyFolder();
+            ICopyModsKeys.IsEnabled = true;
+        }
+
+        private static async Task CopyModsKeysToKeyFolder()
+        {
+            var mods      = new List<string>();
+            var steamMods = Directory.GetDirectories(Path.Combine(Properties.Options.Default.steamCMDPath, "steamapps", "workshop", "content", "107410"));
+
+            foreach (var line in steamMods)
+            {
+                try 
+                { mods.AddRange(Directory.GetFiles(Path.Combine(line, "keys"))); }
+                catch (DirectoryNotFoundException)
+                { /*there was no directory*/ }
+            }
+
+            foreach (var folder in Properties.Options.Default.localModFolders)
+            {
+                try 
+                { mods.AddRange(Directory.GetFiles(Path.Combine(folder, "keys"))); }
+                catch (DirectoryNotFoundException)
+                { /*there was no directory*/ }
+            }
+
+            if (!Directory.Exists(Path.Combine(Properties.Options.Default.serverPath, "keys"))) { Directory.CreateDirectory(Path.Combine(Properties.Options.Default.serverPath, "keys")); }
+
+            foreach (var link in mods) { File.Copy(link, Path.Combine(Properties.Options.Default.serverPath, "keys", Path.GetFileName(link)), true); }
+            await Task.Delay(1000);
+        }
     }
 }
