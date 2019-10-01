@@ -109,6 +109,7 @@
                             <StackPanel Grid.ColumnSpan="2" Margin="0,0,0.12,3.892">
                                 <Grid>
                                     <Label Margin="2" Content="Headless Client" HorizontalAlignment="Left" />
+                                    <Button Name="ILaunchHCs" Click="ILaunchHCs_Click" ToolTip="Use with Caution : Might crash" Content="Launch HCs" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" HorizontalAlignment="Right" Margin="65,3" Visibility="Collapsed" />
                                     <mah:ToggleSwitchButton Name="IHeadlessClientEnabled" Click="ToggleUi" Style="{StaticResource MahApps.Styles.ToggleSwitchButton.Win10}" IsChecked="False" HorizontalAlignment="Right" Margin="10,0" ToolTip="Enable HC"/>
                                 </Grid>
                                 <Separator />
