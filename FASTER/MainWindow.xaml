@@ -214,7 +214,7 @@
                                 <Label Margin="2" Content="Steam CMD Output"/>
                                 <Separator/>
                             </StackPanel>
-                            <RichTextBox Name="ISteamOutputBox" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" IsReadOnly="True" IsEnabled="True" Background="LightGray" Margin="10,10,10,0" VerticalScrollBarVisibility="Visible">
+                            <RichTextBox Name="ISteamOutputBox" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" IsReadOnly="True" IsEnabled="True" Background="{StaticResource MahApps.Brushes.Gray10}" Margin="10,10,10,0" VerticalScrollBarVisibility="Visible">
                                 <RichTextBox.Resources>
                                     <Style TargetType="{x:Type Paragraph}">
                                         <Setter Property="Margin" Value="0"/>

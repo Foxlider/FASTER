@@ -84,7 +84,7 @@
             <simpleChildWindow:ChildWindow.OverlayBrush>
                 <SolidColorBrush Opacity="0.7" Color="{StaticResource MahApps.Colors.Gray10}"/>
             </simpleChildWindow:ChildWindow.OverlayBrush>
-            <StackPanel Grid.Row="1" Margin="15">
+            <StackPanel Margin="15">
                 <TextBlock TextWrapping="Wrap" TextAlignment="Left" Margin="0,0,0,5" Text="Please enter the steam workshop ID of the mod or its URL">
                 </TextBlock>
                 <TextBox Name="ISteamItemBox" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Steam ID / URL" BorderBrush="{DynamicResource PrimaryHueDarkBrush}"/>

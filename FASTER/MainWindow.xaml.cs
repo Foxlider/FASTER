@@ -16,7 +16,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Effects;
 
 namespace FASTER
 {
@@ -95,31 +94,6 @@ namespace FASTER
         #region event handlers
         
         #region Custom Window Bar Click events
-        private void WindowCloseButton_Click(object sender, RoutedEventArgs e)
-        { Close(); }
-
-        private void WindowMinimizeButton_Click(object sender, RoutedEventArgs e)
-        { WindowState = WindowState.Minimized; }
-
-        private void IWindowMaximizeButton_Click(object sender, RoutedEventArgs e)
-        {
-            switch (WindowState)
-            {
-                case WindowState.Maximized:
-                    WindowState = WindowState.Normal;
-                    break;
-                case WindowState.Normal:
-                    WindowState = WindowState.Maximized;
-                    break;
-            }
-        }
-
-        private void WindowDragBar_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            if(e.LeftButton == MouseButtonState.Pressed)
-            { DragMove(); }
-        }
-
         private void ToolsButton_Click(object sender, RoutedEventArgs e)
         {
             IToolsDialog.IsOpen = true;

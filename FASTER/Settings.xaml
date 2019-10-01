@@ -4,7 +4,6 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
-             xmlns:system="clr-namespace:System;assembly=System.Runtime"
              xmlns:simpleChildWindow="http://metro.mahapps.com/winfx/xaml/simplechildwindow"
 
              mc:Ignorable="d"
@@ -108,7 +107,7 @@
             <simpleChildWindow:ChildWindow.OverlayBrush>
                 <SolidColorBrush Opacity="0.7" Color="{StaticResource MahApps.Colors.Gray10}"/>
             </simpleChildWindow:ChildWindow.OverlayBrush>
-            <StackPanel Name="IResetDialogContent" Grid.Row="1" Margin="15">
+            <StackPanel Name="IResetDialogContent" Margin="15">
                 <TextBlock TextWrapping="Wrap" TextAlignment="Left" Margin="5" Text="This will reset FASTER and remove all server profiles and imported mods."/>
                 <StackPanel Margin="10" Orientation="Horizontal" HorizontalAlignment="Center">
                     <Button Name="IResetButton" Click="IResetButton_Click" Content="Reset" Width="90" Margin="5"  Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0"/>

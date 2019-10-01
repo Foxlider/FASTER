@@ -3,7 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:dragablz="clr-namespace:Dragablz;assembly=Dragablz"
              xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              xmlns:simpleChildWindow="http://metro.mahapps.com/winfx/xaml/simplechildwindow"
@@ -115,12 +114,12 @@
                                 <Separator />
                             </StackPanel>
 
-                            <StackPanel Name="IHcIpGroup" Grid.Column="0" IsEnabled="False" Margin="0,30,0.08,2.891" Grid.RowSpan="2">
+                            <StackPanel Name="IHcIpGroup" Grid.Row="0" Grid.Column="0" IsEnabled="False" Margin="0,30,0.08,2.891" Grid.RowSpan="2">
                                 <TextBox Name="IHeadlessIps" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Headless IPs (comma separated)" Margin="5"/>
                                 <TextBox Name="ILocalClients" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Local Clients (comma separated)" Margin="5,-2,5,5"/>
                             </StackPanel>
 
-                            <StackPanel Name="IHcSliderGroup" IsEnabled="False" Grid.Column="1" Margin="4.92,30,0.12,2.891" Grid.RowSpan="2">
+                            <StackPanel Name="IHcSliderGroup" Grid.Row="0" IsEnabled="False" Grid.Column="1" Margin="4.92,30,0.12,2.891" Grid.RowSpan="2">
                                 <Slider Name="INoOfHeadlessClients" Minimum="0" Maximum="5" IsSnapToTickEnabled="True" TickFrequency="1" Width="100" ToolTip="No of HCs" Margin="5,7"/>
                                 <Label Content="No of HCs" ToolTip="N° of HCs" HorizontalAlignment="Center" Margin="5"/>
                             </StackPanel>
@@ -845,6 +844,7 @@
         </StackPanel>
 
         <simpleChildWindow:ChildWindow
+            Grid.Row="0"
             Name="IConfirmDeleteDialog"
             IsOpen="False"
             HorizontalContentAlignment="Center"
