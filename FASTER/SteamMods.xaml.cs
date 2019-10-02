@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -104,6 +105,50 @@ namespace FASTER
             }
         }
 
+        private async void IScanSteam_Click(object sender, RoutedEventArgs e)
+        {
+            IScanSteam.IsEnabled = false;
+            await Task.Run(ImportModsFromSteam);
+            IScanSteam.IsEnabled = true;
+        }
+
+        private void ImportModsFromSteam()
+        {
+            var            steamMods   = Directory.GetDirectories(Path.Combine(Properties.Options.Default.steamCMDPath, "steamapps", "workshop", "content", "107410"));
+            List<SteamMod> currentMods = new List<SteamMod>();
+
+            if (Properties.Options.Default.steamMods != null)
+            {
+                Properties.Options.Default.Reload();
+                currentMods = Properties.Options.Default.steamMods?.SteamMods;
+            }
+            foreach (var steamMod in steamMods)
+            {
+                try
+                {
+                    var sModId = steamMod.Replace(Path.Combine(Properties.Options.Default.steamCMDPath, "steamapps", "workshop", "content", "107410"), "").Replace("\\", "");
+                    var modId = int.Parse(sModId);
+                    var info  = SteamMod.GetModInfo(modId);
+                    var temp  = currentMods?.Where(m => m.WorkshopId == modId);
+                    if (info != null && temp == null)
+                    {
+                        var modName         = info.Item1;
+                        var steamUpdateTime = info.Item3;
+                        var author          = info.Item2;
+
+                        currentMods?.Add(new SteamMod(modId, modName, author, steamUpdateTime));
+
+                        var modCollection = new SteamModCollection { CollectionName = "Steam", SteamMods = currentMods };
+
+                        Properties.Options.Default.steamMods = modCollection;
+                        Properties.Options.Default.Save();
+                    }
+                }
+                catch
+                { /*ignored*/ }
+            }
+            UpdateModsView();
+        }
 
         private void IImportModButton_Click(object sender, RoutedEventArgs e)
         {

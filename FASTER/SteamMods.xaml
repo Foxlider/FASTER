@@ -25,6 +25,7 @@
             <Button Name="IImportLauncherFile" ToolTip="Import from Arma 3 Launcher File"  Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Padding="7,5" Content="{iconPacks:Material Kind=FileDocument}" Click="IImportLauncherFile_Click"/>
             <Button Name="ICheckForUpdates" ToolTip="Check For Updates"  Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Padding="7,5" Content="{iconPacks:Material Kind=Clock}" Click="ICheckForUpdates_Click"/>
             <Button Name="IUpdateAll" ToolTip="Update All"  Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Padding="7,5" Content="{iconPacks:Material Kind=Update}" Click="IUpdateAll_Click"/>
+            <Button Name="IScanSteam" ToolTip="Scan Mods from Steam"  Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Padding="7,5" Content="{iconPacks:Modern Kind=Steam}" Click="IScanSteam_Click"/>
         </StackPanel>
 
         <ProgressBar Name="IUpdateProgress" Grid.Row="0" Grid.Column="1" Height="Auto" Width="Auto" Margin="5"/>

@@ -191,15 +191,25 @@ namespace FASTER.Models
             }
         }
 
-        private static Tuple<string, string, int> GetModInfo(int modId)
+        public static Tuple<string, string, int> GetModInfo(int modId)
         {
             var modInfo = SteamWebApi.GetSingleFileDetails(modId);
             string author = null;
             int steamUpdateTime = 0;
-            if (modInfo != null)
-            { author = SteamWebApi.GetPlayerSummaries(modInfo.SelectToken("creator").ToString())?.SelectToken("personaname")?.ToString(); }
-            if (modInfo?.SelectToken("time_updated") != null)
-            {  steamUpdateTime = int.Parse(modInfo.SelectToken("time_updated").ToString()); }
+            try
+            {
+                if (modInfo != null) 
+                { author = SteamWebApi.GetPlayerSummaries(modInfo.SelectToken("creator").ToString())?.SelectToken("personaname")?.ToString(); }
+            }
+            catch { author = "Unknown"; }
+
+            try
+            {
+                if (modInfo?.SelectToken("time_updated") != null) 
+                { steamUpdateTime = int.Parse(modInfo.SelectToken("time_updated").ToString()); }
+            }
+            catch { steamUpdateTime = 0; }
+
             var modName = modInfo?.SelectToken("title").ToString();
             
             return modInfo?.SelectToken("creator_appid").ToString() == "107410" ? new Tuple<string, string, int>(modName, author, steamUpdateTime) : null;
