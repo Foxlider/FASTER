@@ -7,7 +7,7 @@
 [![Discord](https://img.shields.io/discord/366955806777671681.svg?label=discord&logo=discord&logoColor=white&style=flat-square)](https://discord.gg/uPjgqHU)
 [![GitHub issues](https://img.shields.io/github/issues/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite.svg?logo=github&style=flat-square)](https://github.com/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite/issues)
 ![GitHub](https://img.shields.io/github/license/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite.svg?style=flat-square)
-![GitHub release](https://img.shields.io/github/release/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite.svg?logo=github&style=flat-square)  
+[![GitHub release](https://img.shields.io/github/release/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite.svg?logo=github&style=flat-square)](https://GitHub.com/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite/releases/)  
 [![Github total downloads](https://img.shields.io/github/downloads/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite/total.svg?logo=github&style=flat-square)](https://GitHub.com/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite/releases/)
 [![Github latest downloads](https://img.shields.io/github/downloads/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite/latest/total.svg?logo=github&style=flat-square)](https://GitHub.com/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite/releases/)
   
@@ -22,7 +22,7 @@
 
 #### **INTRO**
 
-FASTER is an extensive rewrite of FAST2 and FAST. There was no update for a long time and it was written in VB. I transleted the whole project to C# using .NET Core 3.0. 
+FASTER is an extensive rewrite of FAST2 and FAST. There was no update for a long time and it was written in VB. I translated the whole project to C# using .NET Core 3.0.  
 Thanks go out to all the guys who helped the developpment and those who will test it. Also, to BI for giving us an awesome game to play with and break.
 
 ##### **PREREQUISITES**
@@ -34,15 +34,16 @@ Thanks go out to all the guys who helped the developpment and those who will tes
 ##### **_FEATURES_**
 
 - General Features
-  - Theming System and Material Design
+  - Theming System and Metro UI
   - Improved UI from FAST
   - Improved stability from FAST2
   - Easy to read and share config files
   - Automated Update process
 
 - SteamCMD Automation
-  - Install and update Arma 3 Server (Stable and Dev)
+  - Install and update Arma 3 Server (Stable, Dev, DLCs, Legacy)
   - Install, update and manage Arma 3 Workshop mods
+  - Import installed Steam Mods
   - Supports Steam Guard and Mobile Auth
   - Import mod presets from Arma 3 Launcher
   - Check for mod updates on app launch
@@ -60,15 +61,6 @@ Thanks go out to all the guys who helped the developpment and those who will tes
   - Reads local mods from server folder
   - Include additional folders to search
 
-##### **_PLANNED FEATURES_**
-
-- Automatic Server Crash Handling (Auto-restart, reporting, etc.)
-- Detection of existing Steam Workshop Mods
-- Ability to clone server profiles
-- Export server profiles to .bat files
-- Set CPU Affinity and Priority
-- Schedule Auto Restart of servers
-- Schedule Auto Update of mods and server
 
 ##### **_ISSUES and FEEDBACK_**
 
