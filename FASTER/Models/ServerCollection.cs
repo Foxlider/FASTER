@@ -56,6 +56,38 @@ namespace FASTER.Models
             MainWindow.Instance.LoadServerProfiles();
         }
 
+        public static void AddServerProfile(ServerProfile newProfile)
+        {
+            var duplicate       = false;
+            var currentProfiles = GetServerProfiles();
+
+            if (currentProfiles.ServerProfiles.Count > 0)
+            {
+                foreach (var profile in currentProfiles.ServerProfiles)
+                {
+                    if (profile.DisplayName == newProfile.DisplayName)
+                        duplicate = true;
+                }
+            }
+
+            if (!duplicate)
+            {
+                currentProfiles.ServerProfiles.Add(newProfile);
+                Properties.Options.Default.Servers = currentProfiles;
+                ServerProfile profile = Properties.Options.Default.Servers.ServerProfiles.Find(findProfile => findProfile.SafeName == newProfile.SafeName);
+                profile.ServerName = newProfile.ServerName;
+                profile.Executable = Properties.Options.Default.serverPath + @"\arma3server_x64.exe";
+            }
+            else
+            {
+                MainWindow.Instance.IMessageDialog.IsOpen   = true;
+                MainWindow.Instance.IMessageDialogText.Text = "Profile Already Exists";
+            }
+
+            Properties.Options.Default.Save();
+            MainWindow.Instance.LoadServerProfiles();
+        }
+
         public static bool RenameServerProfile(string oldName, string newName)
         {
             try
@@ -88,16 +120,15 @@ namespace FASTER.Models
     [Serializable]
     public class ServerProfile
     {
-        private ServerProfile()
-        {
-        }
+        public ServerProfile()
+        { }
 
         public ServerProfile(string name, string safeName)
         {
             DisplayName = name;
             SafeName = safeName;
         }
-
+        
         public string SafeName { get; set; } = string.Empty;
         public string DisplayName { get; set; } = string.Empty;
         public string ServerName { get; set; } = string.Empty;

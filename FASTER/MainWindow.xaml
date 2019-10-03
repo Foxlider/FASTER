@@ -76,11 +76,23 @@
                     </Button>
                 </Grid>
                 <ListBox Grid.Row="2" Name="IServerProfilesMenu" HorizontalAlignment="Stretch" Margin="0,0,0,2" ScrollViewer.VerticalScrollBarVisibility="Auto" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch">
+                    <ListBox.Resources>
+                        <ContextMenu x:Key="ProfileContextMenu">
+                            <MenuItem Header="Clone" Click="MenuItemClone_Click">
+                                <MenuItem.Icon>
+                                    <iconPacks:PackIconModern Kind="PageCopy"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                        </ContextMenu>
+                    </ListBox.Resources>
                     <ListBox.ItemContainerStyle>
                         <Style TargetType="ListBoxItem">
                             <Setter Property="Padding" Value="10,5,0,5" />
+                            <Setter Property="ContextMenu" Value="{StaticResource ProfileContextMenu}"/>
                         </Style>
                     </ListBox.ItemContainerStyle>
+                    <ListBoxItem Content="oui"/>
+                    <ListBoxItem Content="non"/>
                 </ListBox>
             </Grid>
 
@@ -306,21 +318,21 @@
             </simpleChildWindow:ChildWindow.OverlayBrush>
             <Grid Name="INewServerProfileDialogContent">
                 <!--Grid Definitions-->
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="30"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
 
-                    <StackPanel Grid.Row="1" Margin="20,10">
-                        <TextBlock TextWrapping="Wrap" TextAlignment="Left" Margin="0,0,0,5">
-                            Enter a name for the Server Profile.
-                        </TextBlock>
-                    <TextBox Name="INewProfileName" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Profile Name" />
-                        <DockPanel Margin="0,10">
-                            <Button Name="ICreateProfileButton" Click="ICreateProfileButton_Click" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Content="Create" Width="90" HorizontalAlignment="Right"/>
-                        </DockPanel>
-                    </StackPanel>
-                </Grid>
+                <StackPanel Grid.Row="1" Margin="20,10">
+                    <TextBlock TextWrapping="Wrap" TextAlignment="Left" Margin="0,0,0,5">
+                        Enter a name for the Server Profile.
+                    </TextBlock>
+                <TextBox Name="INewProfileName" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Profile Name" />
+                    <DockPanel Margin="0,10">
+                        <Button Name="ICreateProfileButton" Click="ICreateProfileButton_Click" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Content="Create" Width="90" HorizontalAlignment="Right"/>
+                    </DockPanel>
+                </StackPanel>
+            </Grid>
         </simpleChildWindow:ChildWindow>
 
         <simpleChildWindow:ChildWindow
