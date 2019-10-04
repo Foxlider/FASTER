@@ -480,8 +480,8 @@
                         <RowDefinition />
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition />
+                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="3*" />
                     </Grid.ColumnDefinitions>
                     <Grid Margin="5" Grid.RowSpan="2"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
                         <Grid.Style>

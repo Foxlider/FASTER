@@ -36,21 +36,21 @@
 
                 <DataGridTextColumn Header="Status" Binding="{Binding Path=Status}"/>
 
-                <DataGridTemplateColumn Header="Update" Width="55" CanUserResize="False">
+                <DataGridTemplateColumn Header="Update" CanUserResize="False">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Button Height="25" Width="25" Padding="0" Click="UpdateMod" Content="{iconPacks:Material Kind=Update}"  Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" HorizontalAlignment="Center"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Delete" Width="55" CanUserResize="False">
+                <DataGridTemplateColumn Header="Delete" CanUserResize="False">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Button Height="25" Width="25" Padding="0" Click="DeleteMod" Content="{iconPacks:Material Kind=Delete}" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" HorizontalAlignment="Center"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Info" Width="55" CanUserResize="False">
+                <DataGridTemplateColumn Header="Info" CanUserResize="False">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Button Height="25" Width="25" Padding="0" Click="OpenModPage" Content="{iconPacks:Material Kind=Web}" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" HorizontalAlignment="Center"/>
