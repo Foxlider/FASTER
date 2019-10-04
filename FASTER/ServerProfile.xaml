@@ -3,7 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:dragablz="clr-namespace:Dragablz;assembly=Dragablz"
              xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              xmlns:simpleChildWindow="http://metro.mahapps.com/winfx/xaml/simplechildwindow"
@@ -110,17 +109,18 @@
                             <StackPanel Grid.ColumnSpan="2" Margin="0,0,0.12,3.892">
                                 <Grid>
                                     <Label Margin="2" Content="Headless Client" HorizontalAlignment="Left" />
+                                    <Button Name="ILaunchHCs" Click="ILaunchHCs_Click" ToolTip="Use with Caution : Might crash" Content="Launch HCs" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" HorizontalAlignment="Right" Margin="65,3" Visibility="Collapsed" />
                                     <mah:ToggleSwitchButton Name="IHeadlessClientEnabled" Click="ToggleUi" Style="{StaticResource MahApps.Styles.ToggleSwitchButton.Win10}" IsChecked="False" HorizontalAlignment="Right" Margin="10,0" ToolTip="Enable HC"/>
                                 </Grid>
                                 <Separator />
                             </StackPanel>
 
-                            <StackPanel Name="IHcIpGroup" Grid.Column="0" IsEnabled="False" Margin="0,30,0.08,2.891" Grid.RowSpan="2">
+                            <StackPanel Name="IHcIpGroup" Grid.Row="0" Grid.Column="0" IsEnabled="False" Margin="0,30,0.08,2.891" Grid.RowSpan="2">
                                 <TextBox Name="IHeadlessIps" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Headless IPs (comma separated)" Margin="5"/>
                                 <TextBox Name="ILocalClients" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Local Clients (comma separated)" Margin="5,-2,5,5"/>
                             </StackPanel>
 
-                            <StackPanel Name="IHcSliderGroup" IsEnabled="False" Grid.Column="1" Margin="4.92,30,0.12,2.891" Grid.RowSpan="2">
+                            <StackPanel Name="IHcSliderGroup" Grid.Row="0" IsEnabled="False" Grid.Column="1" Margin="4.92,30,0.12,2.891" Grid.RowSpan="2">
                                 <Slider Name="INoOfHeadlessClients" Minimum="0" Maximum="5" IsSnapToTickEnabled="True" TickFrequency="1" Width="100" ToolTip="No of HCs" Margin="5,7"/>
                                 <Label Content="No of HCs" ToolTip="N° of HCs" HorizontalAlignment="Center" Margin="5"/>
                             </StackPanel>
@@ -351,7 +351,11 @@
                         <ColumnDefinition Width="1*"/>
                         <ColumnDefinition Width="1*"/>
                     </Grid.ColumnDefinitions>
-                    <Grid Margin="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid Margin="5" Grid.Row="0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
                         <Grid.Style>
                             <Style TargetType="Grid">
                                 <Setter Property="Margin" Value="5"/>
@@ -388,7 +392,7 @@
                         </Grid>
                     </Grid>
 
-                    <Grid Grid.Column="1" Margin="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                    <Grid Grid.Column="1" Grid.Row="0" Margin="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
                         <Grid.Style>
                             <Style TargetType="Grid">
                                 <Setter Property="Margin" Value="5"/>
@@ -425,7 +429,7 @@
                         </Grid>
                     </Grid>
 
-                    <Grid Grid.Column="2" Margin="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                    <Grid Grid.Column="2" Grid.Row="0" Margin="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
                         <Grid.Style>
                             <Style TargetType="Grid">
                                 <Setter Property="Margin" Value="5"/>
@@ -461,6 +465,12 @@
                             </StackPanel>
                         </Grid>
                     </Grid>
+                    <Button Name="ICopyModsKeys" Grid.ColumnSpan="3" Grid.Column="0" Grid.Row="1" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" HorizontalAlignment="Right" Click="ICopyModsKeys_Click"  VerticalAlignment="Bottom" Margin="5,2">
+                        <StackPanel Orientation="Horizontal">
+                            <iconPacks:PackIconModern Name="ICopyModIco" Kind="PageCopy"/>
+                            <TextBlock Text="Copy Mods Keys" Margin="10,0"/>
+                        </StackPanel>
+                    </Button>
                 </Grid>
             </TabItem>
             <TabItem Header="Missions + Client">
@@ -470,8 +480,8 @@
                         <RowDefinition />
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition />
+                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="3*" />
                     </Grid.ColumnDefinitions>
                     <Grid Margin="5" Grid.RowSpan="2"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
                         <Grid.Style>
@@ -835,6 +845,7 @@
         </StackPanel>
 
         <simpleChildWindow:ChildWindow
+            Grid.Row="0"
             Name="IConfirmDeleteDialog"
             IsOpen="False"
             HorizontalContentAlignment="Center"

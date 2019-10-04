@@ -1,7 +1,9 @@
-﻿using Microsoft.Win32;
+﻿using System;
+using Microsoft.Win32;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Documents;
@@ -21,6 +23,15 @@ namespace FASTER.Models
                 Properties.Options.Default.steamCMDPath = string.Empty;
         }
 
+        public static T CloneObjectSerializable < T > (this T obj) where T: class {  
+            MemoryStream    ms = new MemoryStream();  
+            BinaryFormatter bf = new BinaryFormatter();  
+            bf.Serialize(ms, obj);  
+            ms.Position = 0;  
+            object result = bf.Deserialize(ms);  
+            ms.Close();  
+            return (T) result;  
+        }  
 
         public static StringCollection GetLinesCollectionFromTextBox(System.Windows.Controls.TextBox textBox)
         {

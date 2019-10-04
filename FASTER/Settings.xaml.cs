@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media;
 using AutoUpdaterDotNET;
 using Application = System.Windows.Application;
 using CheckBox = System.Windows.Controls.CheckBox;
