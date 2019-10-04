@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -22,6 +22,7 @@ namespace FASTER
         private readonly string _safeName;
         private readonly string _profilesPath = Properties.Options.Default.serverPath + "\\Servers\\";
         private string _replace;
+        private bool headlessClientLaunched = false;
 
         private void ServerProfile_Loaded(object sender, RoutedEventArgs e)
         {
@@ -291,12 +292,14 @@ namespace FASTER
                 case "IHeadlessClientEnabled":
                     if (IHeadlessClientEnabled.IsChecked ?? false)
                     {
+                        ILaunchHCs.Visibility          = Visibility.Visible;
                         IHcIpGroup.IsEnabled           = true;
                         IHcSliderGroup.IsEnabled       = true;
                         IHeadlessClientEnabled.ToolTip = "Disable HC";
                     }
                     else
                     {
+                        ILaunchHCs.Visibility          = Visibility.Collapsed;
                         IHcIpGroup.IsEnabled           = false;
                         IHcSliderGroup.IsEnabled       = false;
                         IHeadlessClientEnabled.ToolTip = "Enable HC";
@@ -397,6 +400,29 @@ namespace FASTER
                     //         IDailyRestartB.IsEnabled = False
                     //     End If
                     break;
+            }
+        }
+
+        private void ILaunchHCs_Click(object sender, RoutedEventArgs e)
+        {
+            string profileName = Functions.SafeName(IDisplayName.Content.ToString());
+            string profilePath = _profilesPath + profileName + "\\";
+            if (IHeadlessClientEnabled.IsChecked ?? false)
+            {
+                headlessClientLaunched = true;
+                for (int hc = 1; hc <= INoOfHeadlessClients.Value; hc++)
+                {
+                    string hcCommandLine = "-client -connect=127.0.0.1 -password=" + IPassword.Text + " -profiles=" + profilePath + " -nosound -port=" + IPort.Text;
+                    string hcMods = IHeadlessModsList.Items.Cast<CheckBox>()
+                                                     .Where(addon => addon.IsChecked ?? false)
+                                                     .Aggregate<CheckBox, string>(null, (current, addon) => current + (addon.Content + ";"));
+
+                    hcCommandLine = hcCommandLine + " \"-mod=" + hcMods + "\"";
+                    Clipboard.SetText(hcCommandLine);
+                    ProcessStartInfo hcStartInfo = new ProcessStartInfo(IExecutable.Text, hcCommandLine);
+                    Process          hcProcess   = new Process { StartInfo = hcStartInfo };
+                    hcProcess.Start();
+                }
             }
         }
 
@@ -637,8 +663,8 @@ namespace FASTER
             profile.MaxMessagesSend = int.Parse(IMaxMessagesSend.Text);
             profile.MaxSizeNonguaranteed = int.Parse(IMaxSizeNonguaranteed.Text);
             profile.MaxSizeGuaranteed = int.Parse(IMaxSizeGuaranteed.Text);
-            profile.MinErrorToSend = double.Parse(IMinErrorToSend.Text);
-            profile.MinErrorToSendNear = double.Parse(IMinErrorToSendNear.Text);
+            profile.MinErrorToSend = double.Parse(IMinErrorToSend.Text.Replace(',', '.'));
+            profile.MinErrorToSendNear = double.Parse(IMinErrorToSendNear.Text.Replace(',', '.'));
             profile.CpuCount = ICpuCount.Text;
             profile.MaxMem = IMaxMem.Text;
             profile.ExtraParams = IExtraParams.Text;
@@ -849,8 +875,8 @@ namespace FASTER
                 $"MaxSizeNonguaranteed = {IMaxSizeNonguaranteed.Text};",
                 $"MinBandwidth = {IMinBandwidth.Text};",
                 $"MaxBandwidth = {IMaxBandwidth.Text};",
-                $"MinErrorToSend = {IMinErrorToSend.Text};",
-                $"MinErrorToSendNear = {IMinErrorToSendNear.Text};",
+                $"MinErrorToSend = {IMinErrorToSend.Text.Replace(',', '.')};",
+                $"MinErrorToSendNear = {IMinErrorToSendNear.Text.Replace(',', '.')};",
                 $"MaxCustomFileSize = {IMaxCustomFileSize.Text};",
                 "class sockets{maxPacketSize = " + IMaxPacketSize.Text + ";};"
             };
@@ -1121,7 +1147,7 @@ namespace FASTER
                 ProcessStartInfo sStartInfo = new ProcessStartInfo(IExecutable.Text, commandLine);
                 Process sProcess = new Process { StartInfo = sStartInfo };
                 sProcess.Start();
-                if (IHeadlessClientEnabled.IsChecked ?? false)
+                if (!headlessClientLaunched && (IHeadlessClientEnabled.IsChecked ?? false))
                 {
                     for (int hc = 1; hc <= INoOfHeadlessClients.Value; hc++)
                     {
@@ -1137,6 +1163,7 @@ namespace FASTER
                         hcProcess.Start();
                     }
                 }
+                headlessClientLaunched = false;
             }
         }
 
@@ -1199,5 +1226,38 @@ namespace FASTER
             IProfileNameEdit.Visibility = Visibility.Collapsed;
         }
 
+        private async void ICopyModsKeys_Click(object sender, RoutedEventArgs e)
+        {
+            ICopyModsKeys.IsEnabled = false;
+            await CopyModsKeysToKeyFolder();
+            ICopyModsKeys.IsEnabled = true;
+        }
+
+        private static async Task CopyModsKeysToKeyFolder()
+        {
+            var mods      = new List<string>();
+            var steamMods = Directory.GetDirectories(Path.Combine(Properties.Options.Default.steamCMDPath, "steamapps", "workshop", "content", "107410"));
+
+            foreach (var line in steamMods)
+            {
+                try 
+                { mods.AddRange(Directory.GetFiles(Path.Combine(line, "keys"))); }
+                catch (DirectoryNotFoundException)
+                { /*there was no directory*/ }
+            }
+
+            foreach (var folder in Properties.Options.Default.localModFolders)
+            {
+                try 
+                { mods.AddRange(Directory.GetFiles(Path.Combine(folder, "keys"))); }
+                catch (DirectoryNotFoundException)
+                { /*there was no directory*/ }
+            }
+
+            if (!Directory.Exists(Path.Combine(Properties.Options.Default.serverPath, "keys"))) { Directory.CreateDirectory(Path.Combine(Properties.Options.Default.serverPath, "keys")); }
+
+            foreach (var link in mods) { File.Copy(link, Path.Combine(Properties.Options.Default.serverPath, "keys", Path.GetFileName(link)), true); }
+            await Task.Delay(1000);
+        }
     }
 }

@@ -3,7 +3,6 @@ using FASTER.Models;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows;
-using System.Windows.Input;
 
 namespace FASTER
 {
@@ -51,15 +50,6 @@ namespace FASTER
 
             Close();
         }
-
-        private void IWindowCloseButton_Click(object sender, RoutedEventArgs e)
-        { Close(); }
-
-        private void IWindowMinimizeButton_Click(object sender, RoutedEventArgs e)
-        { WindowState = WindowState.Minimized; }
-
-        private void WindowDragBar_MouseDown(object sender, MouseButtonEventArgs e)
-        { DragMove(); }
 
         // Opens folder select dialog when clicking certain buttons
         private void DirButton_Click(object sender, RoutedEventArgs e)

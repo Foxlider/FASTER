@@ -16,7 +16,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Effects;
 
 namespace FASTER
 {
@@ -95,31 +94,6 @@ namespace FASTER
         #region event handlers
         
         #region Custom Window Bar Click events
-        private void WindowCloseButton_Click(object sender, RoutedEventArgs e)
-        { Close(); }
-
-        private void WindowMinimizeButton_Click(object sender, RoutedEventArgs e)
-        { WindowState = WindowState.Minimized; }
-
-        private void IWindowMaximizeButton_Click(object sender, RoutedEventArgs e)
-        {
-            switch (WindowState)
-            {
-                case WindowState.Maximized:
-                    WindowState = WindowState.Normal;
-                    break;
-                case WindowState.Normal:
-                    WindowState = WindowState.Maximized;
-                    break;
-            }
-        }
-
-        private void WindowDragBar_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            if(e.LeftButton == MouseButtonState.Pressed)
-            { DragMove(); }
-        }
-
         private void ToolsButton_Click(object sender, RoutedEventArgs e)
         {
             IToolsDialog.IsOpen = true;
@@ -317,6 +291,23 @@ namespace FASTER
             }
         }
 
+        private void MenuItemClone_Click(object sender, RoutedEventArgs e)
+        {
+            if (IServerProfilesMenu.SelectedIndex == -1) 
+            { return; }
+            var temp = Properties.Options.Default.Servers.ServerProfiles.FirstOrDefault(s => s.SafeName == ((ListBoxItem) IServerProfilesMenu.SelectedItem).Name);
+            if (temp == null)
+            {
+                Instance.IMessageDialog.IsOpen   = true;
+                Instance.IMessageDialogText.Text = "Could not find the selected profile.";
+                return;
+            }
+            Models.ServerProfile serverProfile             =  temp.CloneObjectSerializable();
+            serverProfile.DisplayName += " 2";
+            serverProfile.SafeName    =  "_" + Functions.SafeName(serverProfile.DisplayName);
+            ServerCollection.AddServerProfile(serverProfile);
+        }
+        
         //Handles when any menu item is selected
         private void MenuItem_Selected(object sender, RoutedEventArgs e)
         {
@@ -362,6 +353,7 @@ namespace FASTER
             else
             { MessageBox.Show($"{IServerDirBox.Text} Directory does not exist!"); }
         }
+
         private void OpenSteamCmdLocation_Click(object sender, RoutedEventArgs e)
         {
             IToolsDialog.IsOpen = false;
@@ -434,7 +426,10 @@ namespace FASTER
             if (Properties.Options.Default.Servers != null)
             {
                 var currentProfiles = Properties.Options.Default.Servers;
-                IServerProfilesMenu.Items.Clear();
+                Dispatcher.Invoke(() =>
+                {
+                    IServerProfilesMenu.Items.Clear();
+                });
 
                 for (int i = IMainContent.Items.Count - 4; i <= 0; i++)
                     IMainContent.Items.RemoveAt(i);
@@ -446,8 +441,10 @@ namespace FASTER
                         Name    = profile.SafeName,
                         Content = profile.DisplayName
                     };
-
-                    IServerProfilesMenu.Items.Add(newItem);
+                    Dispatcher.Invoke(() =>
+                    {
+                        IServerProfilesMenu.Items.Add(newItem);
+                    });
 
                     newItem.Selected += MenuItem_Selected;
 
@@ -469,8 +466,10 @@ namespace FASTER
                             Content = tabControls,
                             Header  = profile.SafeName
                         };
-
-                        IMainContent.Items.Add(newTab);
+                        Dispatcher.Invoke(() =>
+                        {
+                            IMainContent.Items.Add(newTab);
+                        });
                     }
                 }
             }
