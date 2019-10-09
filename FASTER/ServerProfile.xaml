@@ -71,7 +71,7 @@
                                 <Separator/>
                             </StackPanel>
 
-                            <TextBox Name="IServerName" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="10" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Server Name"  Margin="5,3,5,5"/>
+                            <TextBox Name="IServerName" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="10" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Server Name" ToolTip="Name to display in the server browser" Margin="5,3,5,5"/>
                             <Grid Grid.Row="2" Grid.ColumnSpan="10" Grid.Column="0">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition />
@@ -80,13 +80,13 @@
                                 <TextBox Name="IExecutable" Grid.Column="0" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Server File" Margin="5,5,5,5"/>
                                 <Button Content="{iconPacks:Material Kind=FolderOpen}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="1" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" Height="auto" Margin="5" Name="IServerFileButton" Click="IServerFileButton_Click" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Padding="3"/>
                             </Grid>
-                            <TextBox Name="IPassword" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="5" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Password" Margin="5"/>
-                            <TextBox Name="IAdminPassword" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="5" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Admin Password" Margin="5"/>
+                            <TextBox Name="IPassword" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="5" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Password" ToolTip="Password for users" Margin="5"/>
+                            <TextBox Name="IAdminPassword" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="5" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Admin Password" ToolTip="Password for admins" Margin="5"/>
 
-                            <TextBox Name="IMaxPlayers" Grid.Row="3" Grid.Column="7" Grid.ColumnSpan="3" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Max Players" Margin="5"/>
-                            <TextBox Name="IPort" Grid.Row="4" Grid.Column="7" Grid.ColumnSpan="3" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Port" Margin="5"/>
+                            <TextBox Name="IMaxPlayers" Grid.Row="3" Grid.Column="7" Grid.ColumnSpan="3" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Max Players" ToolTip="Maximum players allowed" Margin="5"/>
+                            <TextBox Name="IPort" Grid.Row="4" Grid.Column="7" Grid.ColumnSpan="3" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Port" ToolTip="Port for ArmaServer" Margin="5"/>
 
-                            <CheckBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="5" Name="IBattleEye" Content="BattleEye" Margin="5,4.797,4.56,15.7"/>
+                            <CheckBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="5" Name="IBattleEye" Content="BattleEye" ToolTip="Use BattleEye" Margin="5,4.797,4.56,15.7"/>
                         </Grid>
                     </Grid>
 
@@ -121,8 +121,8 @@
                             </StackPanel>
 
                             <StackPanel Name="IHcSliderGroup" Grid.Row="0" IsEnabled="False" Grid.Column="1" Margin="4.92,30,0.12,2.891" Grid.RowSpan="2">
-                                <Slider Name="INoOfHeadlessClients" Minimum="0" Maximum="5" IsSnapToTickEnabled="True" TickFrequency="1" Width="100" ToolTip="No of HCs" Margin="5,7"/>
-                                <Label Content="No of HCs" ToolTip="N° of HCs" HorizontalAlignment="Center" Margin="5"/>
+                                <Slider Name="INoOfHeadlessClients" Minimum="0" Maximum="5" IsSnapToTickEnabled="True" TickFrequency="1" Width="100" ToolTip="Number of Headless Clients" Margin="5,7"/>
+                                <Label Content="No of HCs" ToolTip="Number of Headless Clients" HorizontalAlignment="Center" Margin="5"/>
                             </StackPanel>
                         </Grid>
                     </Grid>
@@ -148,7 +148,7 @@
                             </StackPanel>
 
                             <CheckBox Name="ILoopback" Grid.Row="1" Content="Loopback" Margin="5"/>
-                            <CheckBox Name="IUpnp" Grid.Row="2" Content="UPNP" Margin="5"/>
+                            <CheckBox Name="IUpnp" Grid.Row="2" Content="UPNP" ToolTip="Use UPNP for server" Margin="5"/>
                             <CheckBox Name="INetlog" Grid.Row="3" Content="Netlog" Margin="5"/>
                         </Grid>
                     </Grid>
@@ -181,15 +181,15 @@
 
                                 <CheckBox Grid.Row="1" Grid.Column="0" Name="IServerConsoleLogEnabled" Click="ToggleUi" Margin="5"/>
                                 <Label Grid.Row="1" Grid.Column="1" Name="IServerConsoleLog" Content="Server Console" Margin="5" IsEnabled="False"/>
-                                <Button Grid.Row="1" Grid.Column="2" Name="IConsoleLogButton" Click="IOpenConsoleLog_Click" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Content="Open" Height="20" Width="60" FontSize="11" Margin="5" IsEnabled="False"/>
+                                <Button Grid.Row="1" Grid.Column="2" Name="IConsoleLogButton" Click="IOpenConsoleLog_Click" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Content="Open" Height="20" Width="60" FontSize="11" Margin="5" ToolTip="Open server console logs" IsEnabled="False"/>
 
                                 <CheckBox Grid.Row="2" Grid.Column="0" Name="IPidEnabled" Click="ToggleUi" Margin="5"/>
                                 <Label Grid.Row="2" Grid.Column="1" Name="IPidLog" Content="PID" Margin="5" IsEnabled="False"/>
-                                <Button Grid.Row="2" Grid.Column="2" Name="IPidButton" Content="Open" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Height="20" Width="60" FontSize="11" Margin="5" IsEnabled="False"/>
+                                <Button Grid.Row="2" Grid.Column="2" Name="IPidButton" Content="Open" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Height="20" Width="60" FontSize="11" Margin="5" ToolTip="Open PID file" IsEnabled="False"/>
 
                                 <CheckBox Grid.Row="3" Grid.Column="0" Name="IRankingEnabled" Click="ToggleUi" Margin="5"/>
                                 <Label Grid.Row="3" Grid.Column="1" Name="IRankingLog" Content="Ranking" Margin="5" IsEnabled="False"/>
-                                <Button Grid.Row="3" Grid.Column="2" Name="IRankingButton" Click="IOpenRanking_Click" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Content="Open" Height="20" Width="60" FontSize="11" Margin="5" IsEnabled="False"/>
+                                <Button Grid.Row="3" Grid.Column="2" Name="IRankingButton" Click="IOpenRanking_Click" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Content="Open" Height="20" Width="60" FontSize="11" Margin="5" ToolTip="Open ranking file" IsEnabled="False"/>
                             </Grid>
 
                             <Grid DockPanel.Dock="Bottom">
@@ -207,11 +207,11 @@
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
 
-                                <StackPanel Grid.ColumnSpan="7" Grid.Column="0" Margin="0,10,0,0">
+                                <Grid Grid.ColumnSpan="7" Grid.Column="0" Margin="0,10,0,0">
                                     <Label Margin="2" Content="RPT"/>
-                                    <Label Margin="2,-25" Content="NETLOG" HorizontalAlignment="Right"/>
-                                    <Separator/>
-                                </StackPanel>
+                                    <Label Margin="2" Content="NETLOG" HorizontalAlignment="Right"/>
+                                    <Separator VerticalAlignment="Bottom"/>
+                                </Grid>
 
                                 <Button Name="IOpenRpt" Content="{iconPacks:Material Kind=FolderOpen}" Click="IOpenRpt_Click" Grid.Row="1" Grid.Column="0" Height="30" Width="30" Padding="0" Margin="5" VerticalAlignment="Bottom" FontSize="10" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" ToolTip="Open Last RPT"/>
                                 <Button Name="IDeleteRpt" Content="{iconPacks:Material Kind=Delete}" Click="IDeleteRpt_Click" Grid.Row="1" Grid.Column="1" Height="30" Width="30" Padding="0" Margin="5" VerticalAlignment="Bottom" FontSize="10" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" ToolTip="Delete All RPTs"/>
@@ -260,7 +260,7 @@
                                 <ComboBoxItem>1</ComboBoxItem>
                                 <ComboBoxItem>2</ComboBoxItem>
                             </ComboBox>
-                            <CheckBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Name="IKickDuplicates" Content="Kick Duplicates" Margin="5,10,5,0"/>
+                            <CheckBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Name="IKickDuplicates" Content="Kick Duplicates" Margin="5,10,5,5"/>
                             <CheckBox Grid.Row="3" Grid.Column="1" Name="IRequiredBuildEnabled" Click="ToggleUi" Margin="5"/>
                             <TextBox Grid.Row="3" Grid.Column="0" Name="IRequiredBuild" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Required Build" Margin="5" VerticalAlignment="Center" IsEnabled="False"/>
                         </Grid>
@@ -534,7 +534,7 @@
                                 <Button Grid.Row="3" Grid.Column="0" Name="IAllMissionsButton" Click="ModsAll_Click" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Margin="10,10,5,10" Content="All" FontSize="10" Height="25" />
                                 <Button Grid.Row="3" Grid.Column="1" Name="INoMissionsButton" Click="ModsNone_Click" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Margin="5,10" Content="None" FontSize="10" Height="25"/>
                                 <Button Grid.Row="3" Grid.Column="2" Name="IRefreshMissionsButton" Click="IMissionsRefresh_Click" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Margin="5,10" Content="{iconPacks:Material Kind=Refresh}" FontSize="10" Height="25" Width="25" Padding="0"/>
-                                <ComboBox Grid.Row="3" Grid.Column="3" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Difficulty Preset" Name="IDifficultyPreset" IsEditable="False" Margin="10,0,10,10" HorizontalAlignment="Right">
+                                <ComboBox Grid.Row="3" Grid.Column="3" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Difficulty Preset" Name="IDifficultyPreset" IsEditable="False" Margin="10" VerticalAlignment="Center" HorizontalAlignment="Right">
                                     <ComboBoxItem IsSelected="True">Recruit</ComboBoxItem>
                                     <ComboBoxItem>Regular</ComboBoxItem>
                                     <ComboBoxItem>Veteran</ComboBoxItem>
@@ -586,23 +586,23 @@
                                 <Separator/>
                             </StackPanel>
 
-                            <CheckBox Name="IReducedDamage" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4" Content="Reduced Damage" Margin="5"/>
-                            <CheckBox Name="IMultipleSaves" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" Content="Multiple Saves" Margin="5"/>
-                            <CheckBox Name="IThirdPerson" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="4" Content="3rd Person Camera" Margin="5"/>
-                            <CheckBox Name="IScoreTable" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="4" Content="Score Table" Margin="5,5,10,5"/>
-                            <CheckBox Name="IMapContentFriendly" Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="5" Content="Map Content Frienly" Margin="5"/>
+                            <CheckBox Name="IReducedDamage" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4" Content="Reduced Damage" ToolTip="Reduce player damage received" Margin="5"/>
+                            <CheckBox Name="IMultipleSaves" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" Content="Multiple Saves" ToolTip="Allow multiple saves" Margin="5"/>
+                            <CheckBox Name="IThirdPerson" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="4" Content="3rd Person Camera" ToolTip="Enable third person camera" Margin="5"/>
+                            <CheckBox Name="IScoreTable" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="4" Content="Score Table" ToolTip="Enable score table" Margin="5,5,10,5"/>
+                            <CheckBox Name="IMapContentFriendly" Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="5" Content="Map Content Frienly" ToolTip="Display friendly units on Map" Margin="5"/>
 
-                            <CheckBox Name="IStaminaBar" Grid.Row="1" Grid.Column="4" Grid.ColumnSpan="4"  Content="Stamina Bar" Margin="5"/>
-                            <CheckBox Name="ICameraShake" Grid.Row="2" Grid.Column="4" Grid.ColumnSpan="4"  Content="Camera Shake" Margin="5"/>
-                            <CheckBox Name="IVisualAids" Grid.Row="3" Grid.Column="4" Grid.ColumnSpan="4"  Content="Visual Aids" Margin="5"/>
-                            <CheckBox Name="ITacticalPing" Grid.Row="4" Grid.Column="4" Grid.ColumnSpan="4"  Content="Tactical Ping" Margin="5,5,10,5"/>
-                            <CheckBox Name="IMapContentEnemy" Grid.Row="5" Grid.Column="4" Grid.ColumnSpan="5"  Content="Map Content Enemy" Margin="5"/>
+                            <CheckBox Name="IStaminaBar" Grid.Row="1" Grid.Column="4" Grid.ColumnSpan="4"  Content="Stamina Bar" ToolTip="Display Stamina bar" Margin="5"/>
+                            <CheckBox Name="ICameraShake" Grid.Row="2" Grid.Column="4" Grid.ColumnSpan="4"  Content="Camera Shake" ToolTip="Enable camera shake" Margin="5"/>
+                            <CheckBox Name="IVisualAids" Grid.Row="3" Grid.Column="4" Grid.ColumnSpan="4"  Content="Visual Aids" ToolTip="Enable Visual aids" Margin="5"/>
+                            <CheckBox Name="ITacticalPing" Grid.Row="4" Grid.Column="4" Grid.ColumnSpan="4"  Content="Tactical Ping" ToolTip="Enable Tactical Ping" Margin="5,5,10,5"/>
+                            <CheckBox Name="IMapContentEnemy" Grid.Row="5" Grid.Column="4" Grid.ColumnSpan="5"  Content="Map Content Enemy" ToolTip="Display Enemy units on Map" Margin="5"/>
 
-                            <CheckBox Name="IVonId" Grid.Row="1" Grid.Column="8" Grid.ColumnSpan="4"  Content="VON ID" Margin="5,5,10,5"/>
-                            <CheckBox Name="IKilledBy" Grid.Row="2" Grid.Column="8" Grid.ColumnSpan="4"  Content="Killed By" Margin="5,5,10,5"/>
-                            <CheckBox Name="ICrosshair" Grid.Row="3" Grid.Column="8" Grid.ColumnSpan="4"  Content="Crosshair" Margin="5,5,10,5"/>
-                            <CheckBox Name="IAutoReporting" Grid.Row="4" Grid.Column="8" Grid.ColumnSpan="4"  Content="Auto Reporting" Margin="5,5,10,5"/>
-                            <CheckBox Name="IMapContentMines" Grid.Row="5" Grid.Column="8" Grid.ColumnSpan="4"  Content="Map Content Mines" Margin="5"/>
+                            <CheckBox Name="IVonId" Grid.Row="1" Grid.Column="8" Grid.ColumnSpan="4"  Content="VON ID" ToolTip="Display VON Player ID" Margin="5,5,10,5"/>
+                            <CheckBox Name="IKilledBy" Grid.Row="2" Grid.Column="8" Grid.ColumnSpan="4"  Content="Killed By" ToolTip="Display kills in chat" Margin="5,5,10,5"/>
+                            <CheckBox Name="ICrosshair" Grid.Row="3" Grid.Column="8" Grid.ColumnSpan="4"  Content="Crosshair" ToolTip="Enable crosshair" Margin="5,5,10,5"/>
+                            <CheckBox Name="IAutoReporting" Grid.Row="4" Grid.Column="8" Grid.ColumnSpan="4"  Content="Auto Reporting" ToolTip="Enable auto-reporting" Margin="5,5,10,5"/>
+                            <CheckBox Name="IMapContentMines" Grid.Row="5" Grid.Column="8" Grid.ColumnSpan="4"  Content="Map Content Mines" ToolTip="Display mines in Map" Margin="5"/>
 
                             <ComboBox Name="IGroupIndicators" Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="3" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Group Indicators" ToolTip="Group Indicators" IsEditable="False" Margin="5">
                                 <ComboBoxItem IsSelected="True">Never</ComboBoxItem>
@@ -653,8 +653,8 @@
                             </ComboBox>
 
                             <StackPanel Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="12" Orientation="Horizontal" HorizontalAlignment="Center">
-                                <TextBox Name="IAiAccuracy" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="AI Accuracy (0-1)" Margin="5" HorizontalAlignment="Center"/>
-                                <TextBox Name="IAiSkill" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="AI Skill (0-1)" Margin="5" HorizontalAlignment="Right"/>
+                                <TextBox Name="IAiAccuracy" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="AI Accuracy (0-1)" Margin="5" ToolTip="Custom AI Accuracy" HorizontalAlignment="Center"/>
+                                <TextBox Name="IAiSkill" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="AI Skill (0-1)" Margin="5" ToolTip="Custom AI Skill" HorizontalAlignment="Right"/>
                                 <ComboBox  mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="AI Preset" Name="IAiPreset" IsEditable="False" Margin="5" HorizontalAlignment="Left">
                                     <ComboBoxItem IsSelected="True">0</ComboBoxItem>
                                     <ComboBoxItem>1</ComboBoxItem>
@@ -706,7 +706,7 @@
                             </ComboBox>
 
                             <TextBox Grid.Row="3" Grid.Column="2" Name="ITerrainGrid" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Terrain Grid" Margin="2,5" HorizontalAlignment="Stretch"/>
-                            <TextBox Grid.Row="3" Grid.Column="3" Name="IViewDistance" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="View Distance (m)" Margin="2,5"/>
+                            <TextBox Grid.Row="3" Grid.Column="3" Name="IViewDistance" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="View Distance (m)" Width="120" Margin="5"/>
                         </Grid>
                     </Grid>
                 </Grid>
