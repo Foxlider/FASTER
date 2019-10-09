@@ -445,6 +445,7 @@
                             <StackPanel Grid.ColumnSpan="5">
                                 <Grid>
                                     <Label Content="Headless Client Mods" HorizontalAlignment="Left" Height="26" VerticalAlignment="Center"/>
+                                    <Button Name="ICopyFromPlayerMods" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" VerticalAlignment="Center" HorizontalAlignment="Right" BorderThickness="0" Click="ICopyFromPlayerMods_Click"  Content="{iconPacks:Modern Kind=PageCopy}" Padding="2" Margin="5,5,30,5" ToolTip="Copy from Player Mods"/>
                                     <Button Name="IHeadlessModsRefresh" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" VerticalAlignment="Center" HorizontalAlignment="Right" BorderThickness="0" Click="IModsRefresh_Click" Content="{iconPacks:Material Kind=Refresh}" Padding="2" Margin="5" ToolTip="Refresh Mods"/>
                                 </Grid>
                                 <Separator/>

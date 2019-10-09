@@ -426,7 +426,6 @@ namespace FASTER
             }
         }
 
-
         private void IServerFileButton_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new CommonOpenFileDialog
@@ -541,6 +540,23 @@ namespace FASTER
 
         private void IDeleteNetLog_Click(object sender, RoutedEventArgs e)
         { DeleteAllFiles(Path.Combine(Environment.ExpandEnvironmentVariables("%LocalAppData%"), "Arma 3"), "netlog-*.log"); }
+
+        private void ICopyFromPlayerMods_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (CheckBox cb in IClientModsList.Items)
+            {
+                if (!(cb.IsChecked ?? false)) continue;
+                var c = ((CheckBox)IHeadlessModsList.Items.GetItemAt(IClientModsList.Items.IndexOf(cb)));
+                c.IsChecked = true;
+            }
+        }
+        
+        private async void ICopyModsKeys_Click(object sender, RoutedEventArgs e)
+        {
+            ICopyModsKeys.IsEnabled = false;
+            await CopyModsKeysToKeyFolder();
+            ICopyModsKeys.IsEnabled = true;
+        }
 
         private void UpdateProfile()
         {
@@ -1224,13 +1240,6 @@ namespace FASTER
             IDisplayName.Visibility = Visibility.Visible;
             IBattleEye.Visibility = Visibility.Visible;
             IProfileNameEdit.Visibility = Visibility.Collapsed;
-        }
-
-        private async void ICopyModsKeys_Click(object sender, RoutedEventArgs e)
-        {
-            ICopyModsKeys.IsEnabled = false;
-            await CopyModsKeysToKeyFolder();
-            ICopyModsKeys.IsEnabled = true;
         }
 
         private static async Task CopyModsKeysToKeyFolder()
