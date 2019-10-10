@@ -426,7 +426,6 @@ namespace FASTER
             }
         }
 
-
         private void IServerFileButton_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new CommonOpenFileDialog
@@ -541,6 +540,39 @@ namespace FASTER
 
         private void IDeleteNetLog_Click(object sender, RoutedEventArgs e)
         { DeleteAllFiles(Path.Combine(Environment.ExpandEnvironmentVariables("%LocalAppData%"), "Arma 3"), "netlog-*.log"); }
+
+        private void ICopyFromPlayerMods_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (CheckBox cb in IClientModsList.Items)
+            {
+                var c = ((CheckBox)IHeadlessModsList.Items.GetItemAt(IClientModsList.Items.IndexOf(cb)));
+                c.IsChecked = cb.IsChecked;
+            }
+            IHeadlessModsCount.Content = IHeadlessModsList.Items.Cast<object>().Count(i => ((CheckBox) i).IsChecked == true);
+        }
+        
+        private async void ICopyModsKeys_Click(object sender, RoutedEventArgs e)
+        {
+            ICopyModsKeys.IsEnabled = false;
+            await CopyModsKeysToKeyFolder();
+            ICopyModsKeys.IsEnabled = true;
+        }
+
+        private void CheckBox_Click(object sender, RoutedEventArgs e)
+        {
+            switch ((sender as Control)?.Name)
+            {
+                case "IServerCheckBox":
+                    IServerModsCount.Content = IServerModsList.Items.Cast<object>().Count(i => ((CheckBox) i).IsChecked == true);
+                    break;
+                case "IClientCheckBox":
+                    IClientModsCount.Content = IClientModsList.Items.Cast<object>().Count(i => ((CheckBox) i).IsChecked == true);
+                    break;
+                case "IHeadlessCheckBox":
+                    IHeadlessModsCount.Content = IHeadlessModsList.Items.Cast<object>().Count(i => ((CheckBox) i).IsChecked == true);
+                    break;
+            }
+        }
 
         private void UpdateProfile()
         {
@@ -992,16 +1024,19 @@ namespace FASTER
                     if (checkedServerMods.FirstOrDefault(c => (string) c.Content == mod.Replace(";", "")) == null && !string.IsNullOrWhiteSpace(mod))
                         checkedServerMods.Add(new CheckBox { Content = mod.Replace(";", ""), IsChecked = true });
                 }
+                IServerModsCount.Content = IServerModsList.Items.Cast<object>().Count(i => ((CheckBox) i).IsChecked == true);
                 foreach (var mod in profile.HeadlessMods.Split(';'))
                 {
                     if (checkedHcMods.FirstOrDefault(c => (string)c.Content == mod.Replace(";", "")) == null && !string.IsNullOrWhiteSpace(mod))
                         checkedHcMods.Add(new CheckBox { Content = mod.Replace(";",             ""), IsChecked = true });
                 }
+                IClientModsCount.Content = IClientModsList.Items.Cast<object>().Count(i => ((CheckBox) i).IsChecked == true);
                 foreach (var mod in profile.ClientMods.Split(';'))
                 {
                     if (checkedClientMods.FirstOrDefault(c => (string)c.Content == mod.Replace(";", "")) == null && !string.IsNullOrWhiteSpace(mod))
                         checkedClientMods.Add(new CheckBox { Content = mod.Replace(";",             ""), IsChecked = true });
                 }
+                IHeadlessModsCount.Content = IHeadlessModsList.Items.Cast<object>().Count(i => ((CheckBox) i).IsChecked == true);
             }
 
             IServerModsList.Items.Clear();
@@ -1224,13 +1259,6 @@ namespace FASTER
             IDisplayName.Visibility = Visibility.Visible;
             IBattleEye.Visibility = Visibility.Visible;
             IProfileNameEdit.Visibility = Visibility.Collapsed;
-        }
-
-        private async void ICopyModsKeys_Click(object sender, RoutedEventArgs e)
-        {
-            ICopyModsKeys.IsEnabled = false;
-            await CopyModsKeysToKeyFolder();
-            ICopyModsKeys.IsEnabled = true;
         }
 
         private static async Task CopyModsKeysToKeyFolder()
