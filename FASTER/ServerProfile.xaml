@@ -121,7 +121,7 @@
                             </StackPanel>
 
                             <StackPanel Name="IHcSliderGroup" Grid.Row="0" IsEnabled="False" Grid.Column="1" Margin="4.92,30,0.12,2.891" Grid.RowSpan="2">
-                                <Slider Name="INoOfHeadlessClients" Minimum="0" Maximum="5" IsSnapToTickEnabled="True" TickFrequency="1" Width="100" ToolTip="Number of Headless Clients" Margin="5,7"/>
+                                <Slider Name="INoOfHeadlessClients" Style="{StaticResource MahApps.Styles.Slider.Flat}" AutoToolTipPlacement="TopLeft" AutoToolTipPrecision="0" Minimum="0" Maximum="5" IsSnapToTickEnabled="True" TickFrequency="1" Width="100" ToolTip="Number of Headless Clients" Margin="5,7"/>
                                 <Label Content="No of HCs" ToolTip="Number of Headless Clients" HorizontalAlignment="Center" Margin="5"/>
                             </StackPanel>
                         </Grid>
@@ -337,7 +337,7 @@
                                 <Separator VerticalAlignment="Bottom"/>
                             </StackPanel>
                             <StackPanel Name="IVonGroup" Grid.Row="1">
-                                <Slider Name="ICodecQuality" Minimum="1" Maximum="30" IsSnapToTickEnabled="True" TickFrequency="1" Width="120" ToolTip="Codec Quality" Margin="10"/>
+                                <Slider Name="ICodecQuality" Minimum="1" Maximum="30" Style="{StaticResource MahApps.Styles.Slider.Flat}" AutoToolTipPlacement="TopLeft" AutoToolTipPrecision="0" IsSnapToTickEnabled="True" TickFrequency="1" Width="120" ToolTip="Codec Quality" Margin="10"/>
                                 <Label Content="Codec Quality" HorizontalAlignment="Center" Margin="10"/>
                             </StackPanel>
                         </Grid>
