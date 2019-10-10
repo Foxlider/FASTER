@@ -25,19 +25,27 @@
             <TextBox x:Name="ISteamUserBox" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Steam Username" Margin="10"/>
             <PasswordBox x:Name="ISteamPassBox" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Steam Password" Margin="10"/>
             <Separator Margin="10"/>
-            <StackPanel Orientation="Horizontal" Margin="5">
-                <TextBox x:Name="ISteamDirBox" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Steam Install Directory" Margin="5" Width="245"/>
-                <Button Name="ISteamDirButton" Content="{iconPacks:Material Kind=Folder}" Style="{DynamicResource MahApps.Styles.Button.Flat}" Height="25" Width="25" Margin="5" Padding="2" Click="DirButton_Click"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="5">
-                <TextBox x:Name="IServerDirBox" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Arma Install Directory" Margin="5" Width="245"/>
-                <Button Name="IServerDirButton" Content="{iconPacks:Material Kind=Folder}" Style="{DynamicResource MahApps.Styles.Button.Flat}" Height="25" Width="25" Margin="5" Padding="2" Click="DirButton_Click"/>
-            </StackPanel>
+            <Grid  Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="5,10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBox x:Name="ISteamDirBox" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Steam Install Directory" Margin="5"/>
+                <Button Grid.Column="1" Name="ISteamDirButton" Content="{iconPacks:Material Kind=Folder}" Style="{DynamicResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" VerticalAlignment="Stretch" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" Margin="5" Padding="0" Click="DirButton_Click"/>
+            </Grid>
+            <Grid  Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="5,10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBox x:Name="IServerDirBox" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Arma Install Directory" Margin="5"/>
+                <Button Grid.Column="1" Name="IServerDirButton" Content="{iconPacks:Material Kind=Folder}" Style="{DynamicResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" VerticalAlignment="Stretch" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" Margin="5" Padding="2" Click="DirButton_Click"/>
+            </Grid>
             <Separator Margin="10"/>
         </StackPanel>
-        <Grid Height="100" HorizontalAlignment="Stretch" VerticalAlignment="Bottom">
-            <mah:ToggleSwitch Header="Install SteamCMD" Name="IInstallSteamCheck" IsChecked="False" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10"/>
-            <Button x:Name="IContinueButton" Content="Continue"  HorizontalAlignment="Right" Margin="10" VerticalAlignment="Bottom" Click="IContinueButton_Click" />
+        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Bottom">
+            <mah:ToggleSwitch Style="{StaticResource MahApps.Styles.ToggleSwitch.Win10}" Header="Install SteamCMD" Name="IInstallSteamCheck" IsChecked="False" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,20"/>
+            <Button x:Name="IContinueButton" Content="Continue" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" HorizontalAlignment="Right" Margin="10" VerticalAlignment="Bottom" Click="IContinueButton_Click" />
         </Grid>
     </Grid>
 </mah:MetroWindow>
