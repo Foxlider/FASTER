@@ -54,6 +54,7 @@
                     <ListBoxItem Name="ISteamUpdaterTabSelect" Content="Steam Updater"/>
                     <ListBoxItem Name="ISteamModsTabSelect" Content="Steam Mods"/>
                     <ListBoxItem Name="ILocalModsTabSelect" Content="Local Mods"/>
+                    <ListBoxItem Name="IServerStatusTabSelect" Content="Server Status"/>
                 </ListBox>
             </StackPanel>
 
@@ -248,6 +249,11 @@
             <!--Main Content - Local Mods Tab-->
             <TabItem Name="ILocalModsTab" Header="ILocalModsTab">
                 <local:LocalMods/>
+            </TabItem>
+
+            <!--Main Content - Steam Mods Tab-->
+            <TabItem Name="IServerStatusTab" Header="IServerStatusTab">
+                <local:ServerStatus/>
             </TabItem>
 
             <!--Main Content - Settings Tab-->

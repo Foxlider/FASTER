@@ -1,0 +1,169 @@
+﻿<UserControl x:Class="FASTER.ServerStatus"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:wpf="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:faster="clr-namespace:FASTER"
+             mc:Ignorable="d"
+             d:DesignHeight="550" d:DesignWidth="800">
+    <Grid Background="{StaticResource MahApps.Brushes.Gray9}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            <wpf:Gauge Name="gaugeCpu" Grid.Column="0" Grid.Row="0"  From="0" To="100" Foreground="White"/>
+            <wpf:Gauge Name="gaugeRam" Grid.Column="1" Grid.Row="0" From="0" To="100" Foreground="White"/>
+            <Label Grid.Column="0" Grid.Row="1" Content="CPU Usage" HorizontalAlignment="Center" FontWeight="Bold"/>
+            <Label Grid.Column="1" Grid.Row="1" Content="Memory Usage" HorizontalAlignment="Center" FontWeight="Bold"/>
+        </Grid>
+        <DataGrid x:Name="dgProcess" 
+                  Grid.Row="1" 
+                  AutoGenerateColumns="False" 
+                  CanUserAddRows="False"
+                  CanUserDeleteRows="False"
+                  Margin="5" 
+                  ScrollViewer.CanContentScroll="False" 
+                  SelectedCellsChanged="DgProcess_SelectedCellsChanged">
+            <DataGrid.Columns>
+                <DataGridTemplateColumn Width="5" CanUserResize="False">
+                    <DataGridTemplateColumn.HeaderStyle>
+                        <Style BasedOn="{StaticResource MahApps.Styles.DataGridColumnHeader}" TargetType="{x:Type DataGridColumnHeader}">
+                            <Setter Property="Padding" Value="0"/>
+                            <Setter Property="Content" Value=""/>
+                        </Style>
+                    </DataGridTemplateColumn.HeaderStyle>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate DataType="faster:ProcessSpy">
+                            <Grid Width="10" MinHeight="200" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="{Binding Path=Color}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Process ID">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate DataType="faster:ProcessSpy">
+                            <Label Content="{Binding Path=ProcessId}" ToolTip="{Binding Path=ProcessCmd}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="CPU Graph" CanUserResize="True" MinWidth="100" Width="1*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate DataType="faster:ProcessSpy">
+                            <wpf:CartesianChart MinHeight="200" VerticalAlignment="Stretch" Background="{StaticResource MahApps.Brushes.Gray7}" Margin="2,5" Padding="3" AnimationsSpeed="0:0:0.5" Hoverable="False">
+                                <wpf:CartesianChart.Series>
+                                    <wpf:LineSeries Values="{Binding CPUChartValues}" 
+                                                    PointGeometry="{x:Null}" 
+                                                    LineSmoothness="1"
+                                                    StrokeThickness="3"
+                                                    Fill="Transparent"/>
+                                </wpf:CartesianChart.Series>
+                                <wpf:CartesianChart.AxisX>
+                                    <wpf:Axis LabelFormatter="{Binding DateTimeFormatter}" 
+                                              MaxValue="{Binding AxisMax}" 
+                                              MinValue="{Binding AxisMin}"
+                                              Unit="{Binding CPUAxisUnit}" Foreground="White">
+                                    </wpf:Axis>
+                                </wpf:CartesianChart.AxisX>
+                                <wpf:CartesianChart.AxisY>
+                                    <wpf:Axis MinValue="0"
+                                              MaxValue="100"
+                                              Unit="1"
+                                              Foreground="White"
+                                              LabelFormatter="{Binding PercentageFormatter}"/>
+                                </wpf:CartesianChart.AxisY>
+                            </wpf:CartesianChart>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Mem Graph" CanUserResize="True" MinWidth="100" Width="1*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate DataType="faster:ProcessSpy">
+                            <wpf:CartesianChart MinHeight="200" VerticalAlignment="Stretch" Background="{StaticResource MahApps.Brushes.Gray7}" Margin="2,5" Padding="3" AnimationsSpeed="0:0:0.5" Hoverable="False">
+                                <wpf:CartesianChart.Series>
+                                    <wpf:LineSeries Values="{Binding MemChartValues}" 
+                                                    PointGeometry="{x:Null}" 
+                                                    LineSmoothness="1"
+                                                    StrokeThickness="3"
+                                                    Stroke="#f44336"
+                                                    Fill="Transparent"/>
+                                </wpf:CartesianChart.Series>
+                                <wpf:CartesianChart.AxisX>
+                                    <wpf:Axis LabelFormatter="{Binding DateTimeFormatter}" 
+                                              MaxValue="{Binding AxisMax}" 
+                                              MinValue="{Binding AxisMin}"
+                                              Unit="{Binding CPUAxisUnit}" Foreground="White">
+                                    </wpf:Axis>
+                                </wpf:CartesianChart.AxisX>
+                                <wpf:CartesianChart.AxisY>
+                                    <wpf:Axis Foreground="White"
+                                              MinValue="0"
+                                              LabelFormatter="{Binding MemFormatter}"/>
+                                </wpf:CartesianChart.AxisY>
+                            </wpf:CartesianChart>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="" Width="40" CanUserResize="False">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate DataType="faster:ProcessSpy">
+                            <Grid MinHeight="60" VerticalAlignment="Stretch">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="1*"/>
+                                    <RowDefinition Height="1*"/>
+                                </Grid.RowDefinitions>
+                                <ToggleButton Grid.Row="0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" IsChecked="{Binding IsReading}" Margin="5" Padding="0" BorderThickness="0" Click="PlayPause_Click">
+                                    <ToggleButton.Style>
+                                        <Style BasedOn="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" TargetType="{x:Type ToggleButton}">
+                                            <Setter Property="Content" Value="{iconPacks:Material Kind=Play}" />
+                                            <Setter Property="ToolTip" Value="Run performance analysis" />
+                                    <Style.Triggers>
+                                        <Trigger Property="IsChecked" Value="true">
+                                            <Setter Property="Content" Value="{iconPacks:Material Kind=Pause}" />
+                                            <Setter Property="ToolTip" Value="Stop performance analysis" />
+                                        </Trigger>
+                                    </Style.Triggers>
+                                        </Style>
+                                    </ToggleButton.Style>
+                                </ToggleButton>
+                                <Button Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="5" Padding="0" BorderThickness="0" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" Content="{iconPacks:Material Kind=Close}" ToolTip="Terminate Process" Click="KillProcess_Click"/>
+                            </Grid>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+        <Grid Grid.Row="2">
+            <DockPanel  VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="2,2,5,5">
+                <Button DockPanel.Dock="Left" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Content="{iconPacks:Modern Kind=ControlPlay}" Name="IStartPerfs" ToolTip="Start Performance counters" Click="IStartPerfs_Click"/>
+                <Button DockPanel.Dock="Left" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Content="{iconPacks:Modern Kind=ControlPause}" Name="IStopPerfs" ToolTip="Stop Performance Counters" Click="IStopPerfs_Click"/>
+                <Button DockPanel.Dock="Left" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Content="{iconPacks:Modern Kind=Close}" Name="IKillAll" ToolTip="Kill all Server Instances" Click="IKillAll_Click"/>
+                <Button DockPanel.Dock="Left" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Content="{iconPacks:Modern Kind=Refresh}" Name="IRescanAll" ToolTip="Rescan Server Instances" Click="IRescanAll_Click"/>
+            </DockPanel>
+            <ToggleButton HorizontalAlignment="Left" Margin="5,2,2,5" BorderThickness="0" Name="IToggleGauges" IsChecked="{Binding Path=Updating}" Click="IToggleGauges_Click">
+                <ToggleButton.Style>
+                    <Style BasedOn="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" TargetType="{x:Type ToggleButton}">
+                        <Setter Property="Content" Value="{iconPacks:Modern Kind=ControlStop}"/>
+                        <Setter Property="ToolTip" Value="Stop Performance Gauges" />
+                        <Style.Triggers>
+                            <Trigger Property="IsChecked" Value="true">
+                                <Setter Property="Content" Value="{iconPacks:Material Kind=Restart}" />
+                                <Setter Property="ToolTip" Value="Restart Performance Gauge" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </ToggleButton.Style>
+            </ToggleButton>
+        </Grid>
+    </Grid>
+</UserControl>

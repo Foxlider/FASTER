@@ -54,6 +54,7 @@ namespace FASTER
             ISettingsTabSelect.Selected += MenuItem_Selected;
             IAboutTabSelect.Selected += MenuItem_Selected;
             ILocalModsTabSelect.Selected += MenuItem_Selected;
+            IServerStatusTabSelect.Selected += MenuItem_Selected;
             IToolsDialog.KeyUp += IToolsDialog_KeyUp;
             IMessageDialog.KeyUp += IMessageDialog_KeyUp;
             ISteamGuardDialog.KeyUp += ISteamGuardDialog_KeyUp;
@@ -426,7 +427,7 @@ namespace FASTER
             if (Properties.Options.Default.Servers != null)
             {
                 var currentProfiles = Properties.Options.Default.Servers;
-                Dispatcher.Invoke(() =>
+                Dispatcher?.Invoke(() =>
                 {
                     IServerProfilesMenu.Items.Clear();
                 });
