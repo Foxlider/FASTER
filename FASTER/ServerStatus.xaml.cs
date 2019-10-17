@@ -61,24 +61,27 @@ namespace FASTER
             while (Updating)
             {
                 var ram = ramCounter.NextValue();
-                Dispatcher?.Invoke(() =>
+                Dispatcher?.BeginInvoke(new Action(() =>
                 {
                     gaugeCpu.Value = cpuCounter.NextValue();
                     gaugeRam.Value = totalRamBytes > ram 
                         ? Convert.ToInt64((totalRamBytes - ram) / 1024)
                         : Convert.ToInt64(totalRamBytes         / 1024);
-                });
+                }));
                 Thread.Sleep(1000);
             }
         }
 
+        #region Gauges buttons
         private void IToggleGauges_Click(object sender, RoutedEventArgs e)
         {
             Updating = !Updating;
             if(Updating)
             { Task.Factory.StartNew(Updater, TaskCreationOptions.LongRunning); }
         }
+        #endregion
 
+        #region Process Buttons
         private void PlayPause_Click(object sender, RoutedEventArgs e)
         {
             if (!(((FrameworkElement) e.Source).DataContext is ProcessSpy view)) return;
@@ -92,10 +95,26 @@ namespace FASTER
             view.proc.Kill();
             RefreshServers();
         }
+        #endregion
+
+        #region Console Viewer
+        private void ReadOutput_Click(object sender, RoutedEventArgs e)
+        {
+            if (!(((FrameworkElement) e.Source).DataContext is ProcessSpy view)) return;
+            var s = view.GetOutput();
+            IConsoleViewer.Title = $"Process {view.ProcessId}";
+            IConsoleViewer.IsOpen = true;
+            IConsoleViewerContent.Text = s ?? ">_ ";
+        }
+
+        private void IConsoleViewer_Closing(object sender, CancelEventArgs e)
+        { IConsoleViewerContent.Text = ""; }
+        #endregion
 
         private void DgProcess_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e)
         { dgProcess.UnselectAll(); }
 
+        #region Processes Buttons
         private void IStartPerfs_Click(object sender, RoutedEventArgs e)
         {
             foreach (ProcessSpy element in dgProcess.Items)
@@ -116,7 +135,6 @@ namespace FASTER
 
         private async void IKillAll_Click(object sender, RoutedEventArgs e)
         {
-            //TODO remake this to ProcessSpy
             foreach (ProcessSpy element in dgProcess.Items)
             {
                 element.IsReading = false;
@@ -128,6 +146,8 @@ namespace FASTER
 
         private void IRescanAll_Click(object sender, RoutedEventArgs e)
         { RefreshServers(); }
+        #endregion
+
 
         private void RefreshServers()
         {
@@ -138,6 +158,20 @@ namespace FASTER
                 processes.Add(p);
             }
         }
+
+        //private void Expander_Expanded(object sender, RoutedEventArgs e)
+        //{
+        //    if (GaugeExpander.IsExpanded)
+        //    {
+        //        GaugeRow.Height = new GridLength(2, GridUnitType.Star);
+        //        DataRow.Height = new GridLength(0.5, GridUnitType.Star);
+        //    }
+        //    else
+        //    {
+        //        GaugeRow.Height = GridLength.Auto;
+        //        DataRow.Height = new GridLength(2, GridUnitType.Star);
+        //    }
+        //}
     }
 
     public class ProcessSpy : INotifyPropertyChanged
@@ -173,6 +207,8 @@ namespace FASTER
         private          bool              _isReading;
         private readonly CancellationToken token;
 
+        private string Output;
+
         public ProcessSpy(Process p)
         {
             //Process Data
@@ -180,6 +216,9 @@ namespace FASTER
             ProcessName = p.ProcessName;
             ProcessCmd  = p.ProcessName; //TODO use real command line parameters 
             proc        = p;
+            proc.EnableRaisingEvents = true;
+            proc.OutputDataReceived += DataToString;
+
             token = new CancellationToken();
             var r = new Random();
             var col = ThemeManager.ColorSchemes[r.Next(0, ThemeManager.ColorSchemes.Count)];
@@ -207,6 +246,9 @@ namespace FASTER
             SetAxisLimits(DateTime.Now);
             IsReading = false;
         }
+
+        private void DataToString(object sender, DataReceivedEventArgs e)
+        { Output += e.Data; }
 
         public double AxisMax
         {
@@ -277,6 +319,9 @@ namespace FASTER
                 Thread.Sleep(1000);
             }
         }
+
+        public string GetOutput()
+        { return Output; }
  
         private void SetAxisLimits(DateTime now)
         {
