@@ -25,30 +25,52 @@
                 <RowDefinition/>
                 <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
-            <wpf:Gauge Name="gaugeCpu" Grid.Column="0" Grid.Row="0"  From="0" To="100" Foreground="White"/>
-            <wpf:Gauge Name="gaugeRam" Grid.Column="1" Grid.Row="0" From="0" To="100" Foreground="White"/>
+            <wpf:Gauge Name="gaugeCpu" Grid.Column="0" Grid.Row="0" AnimationsSpeed="0:0:0.2" From="0" To="100" Foreground="White"/>
+            <wpf:Gauge Name="gaugeRam" Grid.Column="1" Grid.Row="0" AnimationsSpeed="0:0:0.1" From="0" To="100" Foreground="White"/>
             <Label Grid.Column="0" Grid.Row="1" Content="CPU Usage" HorizontalAlignment="Center" FontWeight="Bold"/>
             <Label Grid.Column="1" Grid.Row="1" Content="Memory Usage" HorizontalAlignment="Center" FontWeight="Bold"/>
         </Grid>
-        <!--<Expander Name="GaugeExpander" Expanded="Expander_Expanded" Collapsed="Expander_Expanded" Grid.Row="1" >
+        <Expander Name="GaugeExpander" Header="Additional Gauges" Expanded="Expander_Expanded" Collapsed="Expander_Expanded" Grid.Row="1" >
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="auto"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition/>
                     <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
-                <wpf:CartesianChart MinHeight="100" VerticalAlignment="Stretch" Background="{StaticResource MahApps.Brushes.Gray7}" Margin="2,5" Padding="3" AnimationsSpeed="0:0:0.5" Hoverable="False"/>
+                <wpf:CartesianChart Name="ICPUChart" MinHeight="100" VerticalAlignment="Stretch" Background="{StaticResource MahApps.Brushes.Gray7}" Margin="5" DisableAnimations="True" Hoverable="False">
+                    <wpf:CartesianChart.Series>
+                        <wpf:LineSeries Values="{Binding ChartValues}" 
+                                        PointGeometry="{x:Null}" 
+                                        LineSmoothness="0"
+                                        StrokeThickness="3"
+                                        Fill="Transparent"/>
+                    </wpf:CartesianChart.Series>
+                    <wpf:CartesianChart.AxisX>
+                        <wpf:Axis LabelFormatter="{Binding DateTimeFormatter}" 
+                                  MaxValue="{Binding AxisXMax}" 
+                                  MinValue="{Binding AxisXMin}"
+                                  Unit="{Binding AxisUnit}" Foreground="White">
+                        </wpf:Axis>
+                    </wpf:CartesianChart.AxisX>
+                    <wpf:CartesianChart.AxisY>
+                        <wpf:Axis Unit="1"
+                                  Foreground="White"
+                                  MaxValue="{Binding AxisYMax}" 
+                                  MinValue="{Binding AxisYMin}"
+                                  LabelFormatter="{Binding TempFormatter}"/>
+                    </wpf:CartesianChart.AxisY>
+                </wpf:CartesianChart>
                 <Label Grid.Column="0" Grid.Row="1" Content="CPU Temp" HorizontalAlignment="Center" FontWeight="Bold"/>
-                <wpf:Gauge Grid.Column="1" Grid.Row="0" Name="gaugeGpu" From="0" To="100" Foreground="White"/>
-                <Label Grid.Column="1" Grid.Row="1" Content="GPU Usage" HorizontalAlignment="Center" FontWeight="Bold"/>
-                <wpf:CartesianChart Grid.Row="0" Grid.Column="2" MinHeight="100" VerticalAlignment="Stretch" Background="{StaticResource MahApps.Brushes.Gray7}" Margin="2,5" Padding="3" AnimationsSpeed="0:0:0.5" Hoverable="False"/>
-                <Label Grid.Column="2" Grid.Row="1" Content="GPU Temp" HorizontalAlignment="Center" FontWeight="Bold"/>
+                <wpf:Gauge Visibility="Collapsed" IsEnabled="False" Grid.Column="1" Grid.Row="0" Name="gaugeGpu" From="0" To="100" Foreground="White"/>
+                <Label Visibility="Collapsed" IsEnabled="False" Grid.Column="1" Grid.Row="1" Content="GPU Usage" HorizontalAlignment="Center" FontWeight="Bold"/>
+                <wpf:CartesianChart Visibility="Collapsed" IsEnabled="False" Grid.Row="0" Grid.Column="2" MinHeight="100" VerticalAlignment="Stretch" Background="{StaticResource MahApps.Brushes.Gray7}" Margin="2,5" Padding="3" AnimationsSpeed="0:0:0.5" Hoverable="False"/>
+                <Label Visibility="Collapsed" IsEnabled="False" Grid.Column="2" Grid.Row="1" Content="GPU Temp" HorizontalAlignment="Center" FontWeight="Bold"/>
             </Grid>
-        </Expander>-->
+        </Expander>
         <DataGrid x:Name="dgProcess" 
                   Grid.Row="2" 
                   AutoGenerateColumns="False" 
@@ -81,11 +103,11 @@
                 <DataGridTemplateColumn Header="CPU Graph" CanUserResize="True" MinWidth="100" Width="1*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate DataType="faster:ProcessSpy">
-                            <wpf:CartesianChart MinHeight="200" VerticalAlignment="Stretch" Background="{StaticResource MahApps.Brushes.Gray7}" Margin="2,5" Padding="3" AnimationsSpeed="0:0:0.5" Hoverable="False">
+                            <wpf:CartesianChart MinHeight="200" VerticalAlignment="Stretch" Background="{StaticResource MahApps.Brushes.Gray7}" Margin="2,5" Padding="3" AnimationsSpeed="0:0:0.2" Hoverable="False">
                                 <wpf:CartesianChart.Series>
                                     <wpf:LineSeries Values="{Binding CPUChartValues}" 
                                                     PointGeometry="{x:Null}" 
-                                                    LineSmoothness="1"
+                                                    LineSmoothness="0"
                                                     StrokeThickness="3"
                                                     Fill="Transparent"/>
                                 </wpf:CartesianChart.Series>
@@ -110,11 +132,11 @@
                 <DataGridTemplateColumn Header="Mem Graph" CanUserResize="True" MinWidth="100" Width="1*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate DataType="faster:ProcessSpy">
-                            <wpf:CartesianChart MinHeight="200" VerticalAlignment="Stretch" Background="{StaticResource MahApps.Brushes.Gray7}" Margin="2,5" Padding="3" AnimationsSpeed="0:0:0.5" Hoverable="False">
+                            <wpf:CartesianChart MinHeight="200" VerticalAlignment="Stretch" Background="{StaticResource MahApps.Brushes.Gray7}" Margin="2,5" Padding="3" AnimationsSpeed="0:0:0.2" Hoverable="False">
                                 <wpf:CartesianChart.Series>
                                     <wpf:LineSeries Values="{Binding MemChartValues}" 
                                                     PointGeometry="{x:Null}" 
-                                                    LineSmoothness="1"
+                                                    LineSmoothness="0"
                                                     StrokeThickness="3"
                                                     Stroke="#f44336"
                                                     Fill="Transparent"/>

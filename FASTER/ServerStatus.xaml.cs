@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
+using System.Management;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -29,6 +30,7 @@ namespace FASTER
         
         private ObservableCollection<ProcessSpy> processes = new ObservableCollection<ProcessSpy>();
         readonly long totalRamBytes;
+        private TempData td;
 
         [DllImport("kernel32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -51,6 +53,9 @@ namespace FASTER
             //Format gauges labels
             gaugeRam.LabelFormatter = value => $"{value / 1024:0.00} Gb";
             gaugeCpu.LabelFormatter = value => $"{value:0.00} %";
+
+            td = new TempData();
+            ICPUChart.DataContext = td;
 
             RefreshServers();
             Task.Factory.StartNew(Updater, TaskCreationOptions.LongRunning);
@@ -159,19 +164,21 @@ namespace FASTER
             }
         }
 
-        //private void Expander_Expanded(object sender, RoutedEventArgs e)
-        //{
-        //    if (GaugeExpander.IsExpanded)
-        //    {
-        //        GaugeRow.Height = new GridLength(2, GridUnitType.Star);
-        //        DataRow.Height = new GridLength(0.5, GridUnitType.Star);
-        //    }
-        //    else
-        //    {
-        //        GaugeRow.Height = GridLength.Auto;
-        //        DataRow.Height = new GridLength(2, GridUnitType.Star);
-        //    }
-        //}
+        private void Expander_Expanded(object sender, RoutedEventArgs e)
+        {
+            if (GaugeExpander.IsExpanded)
+            {
+                GaugeRow.Height = new GridLength(2, GridUnitType.Star);
+                DataRow.Height = new GridLength(0.5, GridUnitType.Star);
+                td.StartStop(true);
+            }
+            else
+            {
+                GaugeRow.Height = GridLength.Auto;
+                DataRow.Height = new GridLength(2, GridUnitType.Star);
+                td.StartStop(false);
+            }
+        }
     }
 
     public class ProcessSpy : INotifyPropertyChanged
@@ -269,7 +276,7 @@ namespace FASTER
                 OnPropertyChanged("AxisMin");
             }
         }
-
+        
         public void ReadCPU()
         {
             //Get Performance counters
@@ -343,6 +350,158 @@ namespace FASTER
         protected virtual void OnPropertyChanged(string propertyName = null)
         { PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName)); }
  
+        #endregion
+    }
+
+    public class TempData : INotifyPropertyChanged
+    {
+        public ChartValues<MeasureModel> ChartValues       { get; set; }
+        public double                    AxisStep          { get; set; }
+        public double                    AxisUnit          { get; set; }
+        public Func<double, string>      DateTimeFormatter { get; set; }
+        public Func<double, string>      TempFormatter     { get; set; }
+        public bool IsReading
+        {
+            get => _isReading;
+            set
+            {
+                _isReading = value;
+                OnPropertyChanged("IsReading");
+            }
+        }
+
+        private Task   _t;
+        private double _axisMax;
+        private double _axisMin;
+        private double _axisYMax = 0;
+        private double _axisYMin = 150;
+        private bool   _isReading;
+
+        public TempData()
+        {
+            var mapper = Mappers.Xy<MeasureModel>()
+                                .X(model => model.DateTime.Ticks) //use DateTime.Ticks as X
+                                .Y(model => model.Value);         //use the value property as Y
+            Charting.For<MeasureModel>(mapper);
+
+            //Fore distance between each step for 1 second
+            AxisStep = TimeSpan.FromSeconds(1).Ticks;
+            AxisUnit = TimeSpan.TicksPerSecond;
+
+            //Set the formatter for the labelling
+            DateTimeFormatter = value => new DateTime((long) value).ToString("mm:ss");
+            TempFormatter = value => $"{value:0.00} °C";
+
+            //storing values for the CPU Data
+            ChartValues = new ChartValues<MeasureModel>();
+            SetAxisLimits(DateTime.Now);
+        }
+        public void StartStop(bool? launch = null)
+        {
+            if (launch != null) 
+                IsReading = (bool) launch;
+            else
+            { IsReading = !IsReading; }
+            if (IsReading)
+                _t = Task.Factory.StartNew(TempLoop, TaskCreationOptions.LongRunning);
+        }
+
+        private void TempLoop()
+        {
+            while (IsReading)
+            {
+                var now = DateTime.Now;
+                ManagementObjectSearcher searcher = new ManagementObjectSearcher(@"root\WMI", "SELECT * FROM MSAcpi_ThermalZoneTemperature");
+                foreach (var o in searcher.Get())
+                {
+                    var obj = (ManagementObject) o;
+                    var temperature = float.Parse(obj["CurrentTemperature"].ToString());
+                    // Convert the value to celsius degrees
+                    temperature  = (temperature - (float)2732.0) / (float)10.0;
+                    if (temperature >= AxisYMax) AxisYMax = temperature + 1;
+                    if (temperature <= AxisYMin) AxisYMin = temperature - 1;
+                    try
+                    { 
+                        ChartValues.Add(new MeasureModel
+                        {
+                            DateTime = now,
+                            Value    = temperature
+                        });
+                    }
+                    catch
+                    { 
+                        //If the performance counter fails somehow, fill data with 0
+                        ChartValues.Add(new MeasureModel
+                        {
+                            DateTime = now,
+                            Value    = 0
+                        });
+                    }
+                }
+
+                //recalculate axes
+                SetAxisLimits(now);
+ 
+                //lets only use the last 20 values
+                if (ChartValues.Count > 20) 
+                { ChartValues.RemoveAt(0); }
+
+                //Wait 1sec before next measurement
+                Thread.Sleep(1000);
+            }
+        }
+
+        public double AxisXMax
+        {
+            get => _axisMax;
+            set
+            {
+                _axisMax = value;
+                OnPropertyChanged("AxisXMax");
+            }
+        }
+
+        public double AxisXMin
+        {
+            get => _axisMin;
+            set
+            {
+                _axisMin = value;
+                OnPropertyChanged("AxisXMin");
+            }
+        }
+
+        public double AxisYMax
+        {
+            get => _axisYMax;
+            set
+            {
+                _axisYMax = value;
+                OnPropertyChanged("AxisYMax");
+            }
+        }
+
+        public double AxisYMin
+        {
+            get => _axisYMin;
+            set
+            {
+                _axisYMin = value;
+                OnPropertyChanged("AxisYMin");
+            }
+        }
+
+        private void SetAxisLimits(DateTime now)
+        {
+            AxisXMax = now.Ticks + TimeSpan.FromSeconds(1).Ticks;  // lets force the axis to be 1 second ahead
+            AxisXMin = now.Ticks - TimeSpan.FromSeconds(15).Ticks; // and 8 seconds behind
+        }
+
+        #region INotifyPropertyChanged implementation
+        public event PropertyChangedEventHandler PropertyChanged;
+ 
+        protected virtual void OnPropertyChanged(string propertyName = null)
+        { PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName)); }
         #endregion
     }
 
