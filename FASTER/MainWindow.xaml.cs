@@ -34,6 +34,7 @@ namespace FASTER
             //Initialized += MainWindow_Initialized;
             Properties.Options.Default.Reload();
             InitializeComponent();
+            WindowStartupLocation = WindowStartupLocation.CenterScreen;
             //IWindowDragBar.MouseDown += WindowDragBar_MouseDown;
             Properties.Options.Default.PropertyChanged += Default_PropertyChanged;
             
@@ -54,6 +55,7 @@ namespace FASTER
             ISettingsTabSelect.Selected += MenuItem_Selected;
             IAboutTabSelect.Selected += MenuItem_Selected;
             ILocalModsTabSelect.Selected += MenuItem_Selected;
+            IServerStatusTabSelect.Selected += MenuItem_Selected;
             IToolsDialog.KeyUp += IToolsDialog_KeyUp;
             IMessageDialog.KeyUp += IMessageDialog_KeyUp;
             ISteamGuardDialog.KeyUp += ISteamGuardDialog_KeyUp;
@@ -180,6 +182,7 @@ namespace FASTER
                     branch = "107410 -beta development";
                     break;
                 default:
+                    Console.WriteLine("Nothing to see here");
                     break;
             }
 
@@ -426,7 +429,7 @@ namespace FASTER
             if (Properties.Options.Default.Servers != null)
             {
                 var currentProfiles = Properties.Options.Default.Servers;
-                Dispatcher.Invoke(() =>
+                Dispatcher?.Invoke(() =>
                 {
                     IServerProfilesMenu.Items.Clear();
                 });
@@ -441,7 +444,7 @@ namespace FASTER
                         Name    = profile.SafeName,
                         Content = profile.DisplayName
                     };
-                    Dispatcher.Invoke(() =>
+                    Dispatcher?.Invoke(() =>
                     {
                         IServerProfilesMenu.Items.Add(newItem);
                     });
@@ -466,7 +469,7 @@ namespace FASTER
                             Content = tabControls,
                             Header  = profile.SafeName
                         };
-                        Dispatcher.Invoke(() =>
+                        Dispatcher?.Invoke(() =>
                         {
                             IMainContent.Items.Add(newTab);
                         });

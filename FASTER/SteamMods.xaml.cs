@@ -114,6 +114,15 @@ namespace FASTER
 
         private void ImportModsFromSteam()
         {
+            if (!Directory.Exists(Path.Combine(Properties.Options.Default.steamCMDPath, "steamapps", "workshop", "content", "107410")))
+            {
+                Dispatcher?.Invoke(() =>
+                {
+                    IMessageText.Text     = "Could not find Arma 3 workshop folder";
+                    IMessageDialog.IsOpen = true;
+                });
+                return;
+            }
             var            steamMods   = Directory.GetDirectories(Path.Combine(Properties.Options.Default.steamCMDPath, "steamapps", "workshop", "content", "107410"));
             List<SteamMod> currentMods = new List<SteamMod>();
 
@@ -122,6 +131,7 @@ namespace FASTER
                 Properties.Options.Default.Reload();
                 currentMods = Properties.Options.Default.steamMods?.SteamMods;
             }
+
             foreach (var steamMod in steamMods)
             {
                 try
@@ -187,8 +197,7 @@ namespace FASTER
 
             if (!string.IsNullOrEmpty(modsFile))
             {
-                StreamReader dataReader = new StreamReader(modsFile);
-
+                using StreamReader dataReader = new StreamReader(modsFile);
                 do
                 {
                     try
@@ -206,7 +215,7 @@ namespace FASTER
                             catch
                             {
                                 using EventLog eventLog = new EventLog("Application")
-                                    { Source = "FASTER" };
+                                { Source = "FASTER" };
                                 eventLog.WriteEntry($"Could not import mod {link}", EventLogEntryType.Error);
                                 Dispatcher?.Invoke(() =>
                                 {
@@ -219,12 +228,11 @@ namespace FASTER
                     catch (Exception e)
                     {
                         using EventLog eventLog = new EventLog("Application")
-                            { Source = "FASTER" };
+                        { Source = "FASTER" };
                         eventLog.WriteEntry($"Error occured while importing mod file : [{e.GetType()}] {e.Message}", EventLogEntryType.Warning);
                     }
                 }
                 while (true);
-                dataReader.Close();
             }
         }
 
