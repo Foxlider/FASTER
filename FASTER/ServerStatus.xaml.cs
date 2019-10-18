@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
 using System.Management;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -157,7 +158,7 @@ namespace FASTER
         private void RefreshServers()
         {
             processes.Clear();
-            foreach (var proc in Process.GetProcessesByName("arma3server"))
+            foreach (var proc in Process.GetProcesses().Where(p => p.ProcessName.Contains("arma3server")))
             {
                 var p = new ProcessSpy(proc);
                 processes.Add(p);
