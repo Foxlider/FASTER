@@ -10,7 +10,6 @@
     xmlns:local="clr-namespace:FASTER"
     xmlns:simpleChildWindow="http://metro.mahapps.com/winfx/xaml/simplechildwindow"
     mc:Ignorable="d"
-    WindowStartupLocation="CenterScreen"
     
     GlowBrush="Black"
     BorderThickness="0" 
@@ -92,8 +91,6 @@
                             <Setter Property="ContextMenu" Value="{StaticResource ProfileContextMenu}"/>
                         </Style>
                     </ListBox.ItemContainerStyle>
-                    <ListBoxItem Content="oui"/>
-                    <ListBoxItem Content="non"/>
                 </ListBox>
             </Grid>
 

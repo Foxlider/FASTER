@@ -34,6 +34,7 @@ namespace FASTER
             //Initialized += MainWindow_Initialized;
             Properties.Options.Default.Reload();
             InitializeComponent();
+            WindowStartupLocation = WindowStartupLocation.CenterScreen;
             //IWindowDragBar.MouseDown += WindowDragBar_MouseDown;
             Properties.Options.Default.PropertyChanged += Default_PropertyChanged;
             
