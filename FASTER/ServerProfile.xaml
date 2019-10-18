@@ -377,7 +377,7 @@
                             </StackPanel>
                             <ListBox Grid.Row="1" Grid.Column="0" Name="IServerModsList" Margin="10">
                                 <ListBox.ItemTemplate>
-                                    <DataTemplate>
+                                    <DataTemplate DataType="CheckBox">
                                         <CheckBox x:Name="IServerCheckBox" Click="CheckBox_Click" Content="{Binding Path=Content}" IsChecked="{Binding Path=IsChecked}"/>
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
@@ -420,7 +420,7 @@
                             </StackPanel>
                             <ListBox Grid.Row="1" Grid.Column="0" Name="IClientModsList" Margin="10">
                                 <ListBox.ItemTemplate>
-                                    <DataTemplate>
+                                    <DataTemplate DataType="CheckBox">
                                         <CheckBox x:Name="IClientCheckBox" Click="CheckBox_Click" Content="{Binding Path=Content}" IsChecked="{Binding Path=IsChecked}"/>
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
@@ -464,7 +464,7 @@
                             </StackPanel>
                             <ListBox Grid.Row="1" Grid.Column="0" Name="IHeadlessModsList" Margin="10">
                                 <ListBox.ItemTemplate>
-                                    <DataTemplate>
+                                    <DataTemplate DataType="CheckBox">
                                         <CheckBox x:Name="IHeadlessCheckBox" Click="CheckBox_Click" Content="{Binding Path=Content}" IsChecked="{Binding Path=IsChecked}"/>
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
