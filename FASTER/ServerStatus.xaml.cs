@@ -371,10 +371,9 @@ namespace FASTER
             }
         }
 
-        private Task   _t;
         private double _axisMax;
         private double _axisMin;
-        private double _axisYMax = 0;
+        private double _axisYMax;
         private double _axisYMin = 150;
         private bool   _isReading;
 
@@ -404,7 +403,7 @@ namespace FASTER
             else
             { IsReading = !IsReading; }
             if (IsReading)
-                _t = Task.Factory.StartNew(TempLoop, TaskCreationOptions.LongRunning);
+                Task.Factory.StartNew(TempLoop, TaskCreationOptions.LongRunning);
         }
 
         private void TempLoop()
@@ -412,31 +411,33 @@ namespace FASTER
             while (IsReading)
             {
                 var now = DateTime.Now;
-                ManagementObjectSearcher searcher = new ManagementObjectSearcher(@"root\WMI", "SELECT * FROM MSAcpi_ThermalZoneTemperature");
-                foreach (var o in searcher.Get())
-                {
-                    var obj = (ManagementObject) o;
-                    var temperature = float.Parse(obj["CurrentTemperature"].ToString());
-                    // Convert the value to celsius degrees
-                    temperature  = (temperature - (float)2732.0) / (float)10.0;
-                    if (temperature >= AxisYMax) AxisYMax = temperature + 1;
-                    if (temperature <= AxisYMin) AxisYMin = temperature - 1;
-                    try
-                    { 
-                        ChartValues.Add(new MeasureModel
-                        {
-                            DateTime = now,
-                            Value    = temperature
-                        });
-                    }
-                    catch
-                    { 
-                        //If the performance counter fails somehow, fill data with 0
-                        ChartValues.Add(new MeasureModel
-                        {
-                            DateTime = now,
-                            Value    = 0
-                        });
+                using(ManagementObjectSearcher searcher = new ManagementObjectSearcher(@"root\WMI", "SELECT * FROM MSAcpi_ThermalZoneTemperature"))
+                { 
+                    foreach (var o in searcher.Get())
+                    {
+                        var obj = (ManagementObject) o;
+                        var temperature = float.Parse(obj["CurrentTemperature"].ToString());
+                        // Convert the value to celsius degrees
+                        temperature  = (temperature - (float)2732.0) / (float)10.0;
+                        if (temperature >= AxisYMax) AxisYMax = temperature + 1;
+                        if (temperature <= AxisYMin) AxisYMin = temperature - 1;
+                        try
+                        { 
+                            ChartValues.Add(new MeasureModel
+                            {
+                                DateTime = now,
+                                Value    = temperature
+                            });
+                        }
+                        catch
+                        { 
+                            //If the performance counter fails somehow, fill data with 0
+                            ChartValues.Add(new MeasureModel
+                            {
+                                DateTime = now,
+                                Value    = 0
+                            });
+                        }
                     }
                 }
 

@@ -182,6 +182,7 @@ namespace FASTER
                     branch = "107410 -beta development";
                     break;
                 default:
+                    Console.WriteLine("Nothing to see here");
                     break;
             }
 
@@ -443,7 +444,7 @@ namespace FASTER
                         Name    = profile.SafeName,
                         Content = profile.DisplayName
                     };
-                    Dispatcher.Invoke(() =>
+                    Dispatcher?.Invoke(() =>
                     {
                         IServerProfilesMenu.Items.Add(newItem);
                     });
@@ -468,7 +469,7 @@ namespace FASTER
                             Content = tabControls,
                             Header  = profile.SafeName
                         };
-                        Dispatcher.Invoke(() =>
+                        Dispatcher?.Invoke(() =>
                         {
                             IMainContent.Items.Add(newTab);
                         });

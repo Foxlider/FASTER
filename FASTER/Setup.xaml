@@ -25,7 +25,7 @@
             <TextBox x:Name="ISteamUserBox" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Steam Username" Margin="10"/>
             <PasswordBox x:Name="ISteamPassBox" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Steam Password" Margin="10"/>
             <Separator Margin="10"/>
-            <Grid  Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="5,10">
+            <Grid Margin="5,10">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
                     <ColumnDefinition Width="auto"/>
@@ -33,7 +33,7 @@
                 <TextBox x:Name="ISteamDirBox" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Steam Install Directory" Margin="5"/>
                 <Button Grid.Column="1" Name="ISteamDirButton" Content="{iconPacks:Material Kind=Folder}" Style="{DynamicResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" VerticalAlignment="Stretch" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" Margin="5" Padding="0" Click="DirButton_Click"/>
             </Grid>
-            <Grid  Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="5,10">
+            <Grid Margin="5,10">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
                     <ColumnDefinition Width="auto"/>

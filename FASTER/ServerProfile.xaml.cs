@@ -22,7 +22,7 @@ namespace FASTER
         private readonly string _safeName;
         private readonly string _profilesPath = Properties.Options.Default.serverPath + "\\Servers\\";
         private string _replace;
-        private bool headlessClientLaunched = false;
+        private bool headlessClientLaunched;
 
         private void ServerProfile_Loaded(object sender, RoutedEventArgs e)
         {
