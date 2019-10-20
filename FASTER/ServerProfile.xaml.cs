@@ -3,6 +3,7 @@ using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -42,6 +43,9 @@ namespace FASTER
             // This call is required by the designer.
             InitializeComponent();
 
+            //Get System number format provider
+            NumberFormatInfo provider = CultureInfo.CurrentCulture.NumberFormat;
+
             // Add any initialization after the InitializeComponent() call
             _safeName = profile.SafeName;
 
@@ -66,7 +70,7 @@ namespace FASTER
             // IDailyRestartB.Text = profile.DailyRestartB
             IVotingEnabled.IsChecked = profile.VotingEnabled;
             IVotingMinPlayers.Text = profile.VotingMinPlayers.ToString();
-            IVotingThreshold.Text = profile.VotingThreshold.ToString();
+            IVotingThreshold.Text = profile.VotingThreshold.ToString(provider);
             IAllowFilePatching.Text = profile.AllowFilePatching.ToString();
             IVerifySignatures.Text = profile.VerifySignatures.ToString();
             IRequiredBuildEnabled.IsChecked = profile.RequiredBuildEnabled;
@@ -108,8 +112,8 @@ namespace FASTER
             IAutoReporting.IsChecked = profile.AutoReporting;
             IScoreTable.IsChecked = profile.ScoreTable;
             ITacticalPing.IsChecked = profile.TacticalPing;
-            IAiAccuracy.Text = profile.AiAccuracy.ToString();
-            IAiSkill.Text = profile.AiSkill.ToString();
+            IAiAccuracy.Text = profile.AiAccuracy.ToString(provider);
+            IAiSkill.Text = profile.AiSkill.ToString(provider);
             IAiPreset.Text = profile.AiPreset.ToString();
             IMaxPacketLossEnabled.IsChecked = profile.MaxPacketLossEnabled;
             IMaxPacketLoss.Text = profile.MaxPacketLoss.ToString();
@@ -125,13 +129,13 @@ namespace FASTER
             IMaxDesync.Text = profile.MaxDesync.ToString();
             IMaxCustomFileSize.Text = profile.MaxCustomFileSize.ToString();
             IMaxPacketSize.Text = profile.MaxPacketSize.ToString();
-            IMinBandwidth.Text = profile.MinBandwidth.ToString();
-            IMaxBandwidth.Text = profile.MaxBandwidth.ToString();
+            IMinBandwidth.Text = profile.MinBandwidth.ToString(provider);
+            IMaxBandwidth.Text = profile.MaxBandwidth.ToString(provider);
             IMaxMessagesSend.Text = profile.MaxMessagesSend.ToString();
             IMaxSizeNonguaranteed.Text = profile.MaxSizeNonguaranteed.ToString();
             IMaxSizeGuaranteed.Text = profile.MaxSizeGuaranteed.ToString();
-            IMinErrorToSend.Text = profile.MinErrorToSend.ToString();
-            IMinErrorToSendNear.Text = profile.MinErrorToSendNear.ToString();
+            IMinErrorToSend.Text = profile.MinErrorToSend.ToString(provider);
+            IMinErrorToSendNear.Text = profile.MinErrorToSendNear.ToString(provider);
             ICpuCount.Text = profile.CpuCount;
             IMaxMem.Text = profile.MaxMem;
             IExtraParams.Text = profile.ExtraParams;
@@ -604,14 +608,17 @@ namespace FASTER
             catch (Exception)
             { /*ignored*/}
 
+            NumberFormatInfo provider = CultureInfo.CurrentCulture.NumberFormat;
+
+
             var profile = Properties.Options.Default.Servers.ServerProfiles.Find(p => p.SafeName == _safeName);
             profile.DisplayName = IDisplayName.Content.ToString();
             profile.ServerName = IServerName.Text;
             profile.Executable = IExecutable.Text;
             profile.Password = IPassword.Text;
             profile.AdminPassword = IAdminPassword.Text;
-            profile.MaxPlayers = Convert.ToInt32(Convert.ToDouble(IMaxPlayers.Text));
-            profile.Port = Convert.ToInt32(Convert.ToDouble(IPort.Text));
+            profile.MaxPlayers = Convert.ToInt32(Convert.ToDouble(IMaxPlayers.Text), provider);
+            profile.Port = Convert.ToInt32(Convert.ToDouble(IPort.Text), provider);
             profile.HeadlessClientEnabled = IHeadlessClientEnabled.IsChecked?? false;
             profile.HeadlessIps = IHeadlessIps.Text;
             profile.LocalClients = ILocalClients.Text;
@@ -629,22 +636,22 @@ namespace FASTER
             //     profile.DailyRestartB = IDailyRestartB.SelectedTime
             // End If
             profile.VotingEnabled = IVotingEnabled.IsChecked ?? false;
-            profile.VotingMinPlayers = Convert.ToInt32(Convert.ToDouble(IVotingMinPlayers.Text));
-            profile.VotingThreshold = decimal.Parse(IVotingThreshold.Text);
-            profile.AllowFilePatching = Convert.ToInt32(Convert.ToDouble(IAllowFilePatching.Text));
-            profile.VerifySignatures = Convert.ToInt32(Convert.ToDouble(IVerifySignatures.Text));
+            profile.VotingMinPlayers = Convert.ToInt32(Convert.ToDouble(IVotingMinPlayers.Text), provider);
+            profile.VotingThreshold = decimal.Parse(IVotingThreshold.Text, provider);
+            profile.AllowFilePatching = Convert.ToInt32(Convert.ToDouble(IAllowFilePatching.Text), provider);
+            profile.VerifySignatures = Convert.ToInt32(Convert.ToDouble(IVerifySignatures.Text), provider);
             profile.RequiredBuildEnabled = IRequiredBuildEnabled.IsChecked ?? false;
             //TODO Check this
             //profile.RequiredBuild = IRequiredBuild.Text;
             profile.KickDuplicates = IKickDuplicates.IsChecked ?? false;
             profile.VonEnabled = IVonEnabled.IsChecked ?? false;
-            profile.CodecQuality = Convert.ToInt32(Convert.ToDouble(ICodecQuality.Value.ToString()));
+            profile.CodecQuality = Convert.ToInt32(Convert.ToDouble(ICodecQuality.Value.ToString(provider), provider), provider);
             profile.ServerConsoleLogEnabled = IServerConsoleLogEnabled.IsChecked ?? false;
             profile.PidEnabled = IPidEnabled.IsChecked ?? false;
             profile.RankingEnabled = IRankingEnabled.IsChecked ?? false;
             profile.RptTimestamp = IRptTimestamp.Text;
             profile.Motd = IMotd.Text;
-            profile.MotdDelay = Convert.ToInt32(Convert.ToDouble(IMotdDelay.Text));
+            profile.MotdDelay = Convert.ToInt32(Convert.ToDouble(IMotdDelay.Text), provider);
             profile.ManualMissions = IManualMissions.IsChecked ?? false;
             profile.MissionsClass = IMissionConfig.Text;
             profile.PersistentBattlefield = IPersistentBattlefield.IsChecked ?? false;
@@ -673,30 +680,30 @@ namespace FASTER
             profile.AutoReporting = IAutoReporting.IsChecked ?? false;
             profile.ScoreTable = IScoreTable.IsChecked ?? false;
             profile.TacticalPing = ITacticalPing.IsChecked ?? false;
-            profile.AiAccuracy = double.Parse(IAiAccuracy.Text);
-            profile.AiSkill = double.Parse(IAiSkill.Text);
-            profile.AiPreset = Convert.ToInt32(Convert.ToDouble(IAiPreset.Text));
+            profile.AiAccuracy = double.Parse(IAiAccuracy.Text, provider);
+            profile.AiSkill = double.Parse(IAiSkill.Text, provider);
+            profile.AiPreset = Convert.ToInt32(Convert.ToDouble(IAiPreset.Text), provider);
             profile.MaxPacketLossEnabled = IMaxPacketLossEnabled.IsChecked ?? false;
-            profile.MaxPacketLoss = Convert.ToInt32(Convert.ToDouble(IMaxPacketLoss.Text));
+            profile.MaxPacketLoss = Convert.ToInt32(Convert.ToDouble(IMaxPacketLoss.Text, provider), provider);
             profile.DisconnectTimeoutEnabled = IDisconnectTimeOutEnabled.IsChecked ?? false;
-            profile.DisconnectTimeout = Convert.ToInt32(Convert.ToDouble(IDisconnectTimeOut.Text));
+            profile.DisconnectTimeout = Convert.ToInt32(Convert.ToDouble(IDisconnectTimeOut.Text, provider), provider);
             profile.KickOnSlowNetworkEnabled = IKickOnSlowNetworkEnabled.IsChecked ?? false;
             profile.KickOnSlowNetwork = IKickOnSlowNetwork.Text;
-            profile.TerrainGrid = Convert.ToInt32(Convert.ToDouble(ITerrainGrid.Text));
-            profile.ViewDistance = Convert.ToInt32(Convert.ToDouble(IViewDistance.Text));
+            profile.TerrainGrid = Convert.ToInt32(Convert.ToDouble(ITerrainGrid.Text, provider), provider);
+            profile.ViewDistance = Convert.ToInt32(Convert.ToDouble(IViewDistance.Text, provider), provider);
             profile.MaxPingEnabled = IMaxPingEnabled.IsChecked ?? false;
-            profile.MaxPing = Convert.ToInt32(Convert.ToDouble(IMaxPing.Text));
+            profile.MaxPing = Convert.ToInt32(Convert.ToDouble(IMaxPing.Text, provider), provider);
             profile.MaxDesyncEnabled = IMaxDesyncEnabled.IsChecked ?? false;
-            profile.MaxDesync = Convert.ToInt32(Convert.ToDouble(IMaxDesync.Text));
-            profile.MaxCustomFileSize = Convert.ToInt32(Convert.ToDouble(IMaxCustomFileSize.Text));
-            profile.MaxPacketSize = Convert.ToInt32(Convert.ToDouble(IMaxPacketSize.Text));
-            profile.MinBandwidth = double.Parse(IMinBandwidth.Text);
-            profile.MaxBandwidth = double.Parse(IMaxBandwidth.Text);
-            profile.MaxMessagesSend = Convert.ToInt32(Convert.ToDouble(IMaxMessagesSend.Text));
-            profile.MaxSizeNonguaranteed = Convert.ToInt32(Convert.ToDouble(IMaxSizeNonguaranteed.Text));
-            profile.MaxSizeGuaranteed = Convert.ToInt32(Convert.ToDouble(IMaxSizeGuaranteed.Text));
-            profile.MinErrorToSend = double.Parse(IMinErrorToSend.Text.Replace(',', '.'));
-            profile.MinErrorToSendNear = double.Parse(IMinErrorToSendNear.Text.Replace(',', '.'));
+            profile.MaxDesync = Convert.ToInt32(Convert.ToDouble(IMaxDesync.Text, provider), provider);
+            profile.MaxCustomFileSize = Convert.ToInt32(Convert.ToDouble(IMaxCustomFileSize.Text, provider), provider);
+            profile.MaxPacketSize = Convert.ToInt32(Convert.ToDouble(IMaxPacketSize.Text, provider), provider);
+            profile.MinBandwidth = double.Parse(IMinBandwidth.Text, provider);
+            profile.MaxBandwidth = double.Parse(IMaxBandwidth.Text, provider);
+            profile.MaxMessagesSend = Convert.ToInt32(Convert.ToDouble(IMaxMessagesSend.Text, provider), provider);
+            profile.MaxSizeNonguaranteed = Convert.ToInt32(Convert.ToDouble(IMaxSizeNonguaranteed.Text, provider), provider);
+            profile.MaxSizeGuaranteed = Convert.ToInt32(Convert.ToDouble(IMaxSizeGuaranteed.Text, provider), provider);
+            profile.MinErrorToSend = double.Parse(IMinErrorToSend.Text, provider);
+            profile.MinErrorToSendNear = double.Parse(IMinErrorToSendNear.Text, provider);
             profile.CpuCount = ICpuCount.Text;
             profile.MaxMem = IMaxMem.Text;
             profile.ExtraParams = IExtraParams.Text;
