@@ -1054,9 +1054,26 @@ namespace FASTER
             {
                 newMods.AddRange(Directory.GetDirectories(Properties.Options.Default.serverPath, "@*")
                                           .Select(addon => addon.Replace(Properties.Options.Default.serverPath + @"\", "")));
-
-                foreach (var folder in Properties.Options.Default.localModFolders) { newMods.AddRange(Directory.GetDirectories(folder, "@*")); }
-
+                List<string> targetForDeletion = new List<string>();
+                foreach (var folder in Properties.Options.Default.localModFolders)
+                {
+                    if (Directory.Exists(folder))
+                        newMods.AddRange(Directory.GetDirectories(folder, "@*"));
+                    else
+                    {
+                        if (!IFlyout.IsOpen || IFlyoutMessage.Content as string != "A folder could not be found and have been deleted")
+                        {
+                            IFlyoutMessage.Content = "A folder could not be found and have been deleted";
+                            IFlyout.IsOpen         = true;
+                        }
+                        targetForDeletion.Add(folder);
+                    }
+                }
+                //Cleanup localmodfolders
+                foreach (var folder in targetForDeletion)
+                { Properties.Options.Default.localModFolders.Remove(folder); }
+                targetForDeletion = null; //mark for GC cleanup
+                
                 foreach (var addon in newMods.ToList())
                 {
                     if (currentMods.Contains(addon))
