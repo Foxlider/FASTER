@@ -462,13 +462,13 @@ namespace FASTER
 
         private void IResetPerf_Click(object sender, RoutedEventArgs e)
         {
-            IMaxCustomFileSize.Text    = "160";
+            IMaxCustomFileSize.Text    = "160000";
             IMaxPacketSize.Text        = "1400";
             IMinBandwidth.Text         = "131072";
             IMaxBandwidth.Text         = "10000000000";
             IMaxMessagesSend.Text      = "128";
-            IMaxSizeGuaranteed.Text    = "256";
-            IMaxSizeNonguaranteed.Text = "512";
+            IMaxSizeGuaranteed.Text    = "512";
+            IMaxSizeNonguaranteed.Text = "256";
             IMinErrorToSend.Text       = "0.001";
             IMinErrorToSendNear.Text   = "0.01";
         }

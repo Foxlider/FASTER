@@ -767,7 +767,7 @@
                                 <Separator/>
                             </StackPanel>
                             <Button Name="IResetPerf" Click="IResetPerf_Click" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Grid.Row="1" Grid.Column="0" Content="Reset To Default" FontSize="11" Height="25" Margin="5"/>
-                            <TextBox Name="IMaxCustomFileSize" Grid.Row="2" Grid.Column="0" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Max Custom File Size (kB)"  Margin="5"/>
+                            <TextBox Name="IMaxCustomFileSize" Grid.Row="2" Grid.Column="0" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Max Custom File Size (Bits)"  Margin="5"/>
                             <TextBox Name="IMaxPacketSize" Grid.Row="3" Grid.Column="0" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Max Packet Size"  Margin="5"/>
                             <TextBox Name="IMinBandwidth" Grid.Row="4" Grid.Column="0" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Min Bandwidth (bps)"  Margin="5"/>
                             <TextBox Name="IMaxBandwidth" Grid.Row="5" Grid.Column="0" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Max Bandwidth (bps)"  Margin="5"/>
