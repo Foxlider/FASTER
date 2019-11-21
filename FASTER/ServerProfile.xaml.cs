@@ -155,6 +155,8 @@ namespace FASTER
             IHeadlessModsList.SelectedValue = profile.HeadlessMods;
             IMissionCheckList.SelectedValue = profile.Missions;
             IBattleEye.IsChecked = profile.BattleEye;
+            IAdditionalParams.Text = profile.additionalParams;
+            IEnableAdditionalParams.IsChecked = profile.enableAdditionalParams;
 
             //IServerActionButtons.SelectionChanged += IServerActionButtons_SelectionChanged;
             Loaded += ServerProfile_Loaded;
@@ -743,6 +745,9 @@ namespace FASTER
                 { profile.Missions += addon.Content + ";"; }
             }
             profile.BattleEye = IBattleEye.IsChecked ?? false;
+            profile.additionalParams = IAdditionalParams.Text;
+            profile.enableAdditionalParams = IEnableAdditionalParams.IsChecked ?? false;
+
             Properties.Options.Default.Save();
         }
 
