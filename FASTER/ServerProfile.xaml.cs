@@ -1151,8 +1151,8 @@ namespace FASTER
         private void LaunchServer()
         {
             string profileName = Functions.SafeName(IDisplayName.Content.ToString());
-            string profilePath = _profilesPath + profileName + "\\";
-            string configs = profilePath + profileName;
+            string profilePath = Path.Combine(_profilesPath ,profileName);
+            string configs = Path.Combine(profilePath ,profileName);
             bool start = true;
             string serverMods = IServerModsList.Items.Cast<CheckBox>()
                                                .Where(addon => addon.IsChecked ?? false)
