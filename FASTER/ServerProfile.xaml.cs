@@ -155,6 +155,8 @@ namespace FASTER
             IHeadlessModsList.SelectedValue = profile.HeadlessMods;
             IMissionCheckList.SelectedValue = profile.Missions;
             IBattleEye.IsChecked = profile.BattleEye;
+            IAdditionalParams.Text = profile.additionalParams;
+            IEnableAdditionalParams.IsChecked = profile.enableAdditionalParams;
 
             //IServerActionButtons.SelectionChanged += IServerActionButtons_SelectionChanged;
             Loaded += ServerProfile_Loaded;
@@ -460,13 +462,13 @@ namespace FASTER
 
         private void IResetPerf_Click(object sender, RoutedEventArgs e)
         {
-            IMaxCustomFileSize.Text    = "160";
+            IMaxCustomFileSize.Text    = "160000";
             IMaxPacketSize.Text        = "1400";
             IMinBandwidth.Text         = "131072";
             IMaxBandwidth.Text         = "10000000000";
             IMaxMessagesSend.Text      = "128";
-            IMaxSizeGuaranteed.Text    = "256";
-            IMaxSizeNonguaranteed.Text = "512";
+            IMaxSizeGuaranteed.Text    = "512";
+            IMaxSizeNonguaranteed.Text = "256";
             IMinErrorToSend.Text       = "0.001";
             IMinErrorToSendNear.Text   = "0.01";
         }
@@ -743,6 +745,9 @@ namespace FASTER
                 { profile.Missions += addon.Content + ";"; }
             }
             profile.BattleEye = IBattleEye.IsChecked ?? false;
+            profile.additionalParams = IAdditionalParams.Text;
+            profile.enableAdditionalParams = IEnableAdditionalParams.IsChecked ?? false;
+
             Properties.Options.Default.Save();
         }
 
@@ -1054,9 +1059,26 @@ namespace FASTER
             {
                 newMods.AddRange(Directory.GetDirectories(Properties.Options.Default.serverPath, "@*")
                                           .Select(addon => addon.Replace(Properties.Options.Default.serverPath + @"\", "")));
-
-                foreach (var folder in Properties.Options.Default.localModFolders) { newMods.AddRange(Directory.GetDirectories(folder, "@*")); }
-
+                List<string> targetForDeletion = new List<string>();
+                foreach (var folder in Properties.Options.Default.localModFolders)
+                {
+                    if (Directory.Exists(folder))
+                        newMods.AddRange(Directory.GetDirectories(folder, "@*"));
+                    else
+                    {
+                        if (!IFlyout.IsOpen || IFlyoutMessage.Content as string != "A folder could not be found and have been deleted")
+                        {
+                            IFlyoutMessage.Content = "A folder could not be found and have been deleted";
+                            IFlyout.IsOpen         = true;
+                        }
+                        targetForDeletion.Add(folder);
+                    }
+                }
+                //Cleanup localmodfolders
+                foreach (var folder in targetForDeletion)
+                { Properties.Options.Default.localModFolders.Remove(folder); }
+                targetForDeletion = null; //mark for GC cleanup
+                
                 foreach (var addon in newMods.ToList())
                 {
                     if (currentMods.Contains(addon))
@@ -1129,8 +1151,8 @@ namespace FASTER
         private void LaunchServer()
         {
             string profileName = Functions.SafeName(IDisplayName.Content.ToString());
-            string profilePath = _profilesPath + profileName + "\\";
-            string configs = profilePath + profileName;
+            string profilePath = Path.Combine(_profilesPath ,profileName);
+            string configs = Path.Combine(profilePath ,profileName);
             bool start = true;
             string serverMods = IServerModsList.Items.Cast<CheckBox>()
                                                .Where(addon => addon.IsChecked ?? false)
