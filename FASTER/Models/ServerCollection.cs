@@ -240,5 +240,7 @@ namespace FASTER.Models
         public string OnUnsignedData { get; set; } = string.Empty;
         public string RegularCheck { get; set; } = string.Empty;
         public bool BattleEye { get; set; } = true;
+        public bool enableAdditionalParams { get; set; } = false;
+        public string additionalParams { get; set; } = string.Empty;
     }
 }

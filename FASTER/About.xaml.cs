@@ -30,6 +30,10 @@ namespace FASTER
         private void IForumsButton_Click(object sender, RoutedEventArgs e)
         { OpenBrowser("https://forums.bohemia.net/forums/topic/224359-foxs-arma-server-tool-extended-rewrite-faster/"); }
 
+        private void IDonateButton_Click(object sender, RoutedEventArgs e)
+        {
+            OpenBrowser("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=49H6MZNFUJYWA&source=url");
+        }
         private void OpenBrowser(string url)
         {
             try

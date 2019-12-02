@@ -3,8 +3,10 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.0</TargetFramework>
+    <PublishSingleFile>true</PublishSingleFile>
+    <RuntimeIdentifier>win-x86</RuntimeIdentifier>
     <UseWPF>true</UseWPF>
-    <Version>1.4.2</Version>
+    <Version>1.4.3</Version>
     <Authors>Keelah Fox</Authors>
     <Company>FoxliCorp.</Company>
     <Description>Fox's Arma Server Tool Extended Rewrite</Description>

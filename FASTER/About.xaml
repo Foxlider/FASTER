@@ -98,11 +98,18 @@
                     <TextBlock TextWrapping="Wrap" Style="{DynamicResource MahApps.Styles.TextBlock.Watermark}" Margin="16 0 16 8" VerticalAlignment="Top">This project is completely open source. If you like it and want to say thanks you could hit the GitHub Star button, or contribute if you can!</TextBlock>
                 </StackPanel>
                 <Border Grid.Row="1" Grid.ColumnSpan="2" Grid.Column="0" BorderThickness="0 1 0 0" Padding="8">
-                    <Grid>
-                        <TextBlock TextWrapping="Wrap" Style="{DynamicResource MahApps.Styles.TextBlock.Watermark}" VerticalAlignment="Center">
+                    <Button HorizontalAlignment="Center" Style="{DynamicResource MahApps.Styles.Button.Chromeless}" Name="IDonateButton" Click="IDonateButton_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <iconPacks:PackIconModern Kind="Gift" Margin="10"/>
+                            <TextBlock Margin="10" VerticalAlignment="Center" TextWrapping="WrapWithOverflow">Linking the app ? Consider supporting me !</TextBlock>
+                        </StackPanel>
+                    </Button>
+                    <!--<StackPanel Orientation="Horizontal">
+                        <iconPacks:PackIconModern Kind="Paypal" VerticalAlignment="Center" Margin="5, 10"/>
+                        <TextBlock TextWrapping="Wrap" Style="{DynamicResource MahApps.Styles.TextBlock.Watermark}" VerticalAlignment="Center" Margin="5,10">
                             I do not support donations for now.
                         </TextBlock>
-                    </Grid>
+                    </StackPanel>-->
                 </Border>
             </Grid>
         </GroupBox>
