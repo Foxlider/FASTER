@@ -101,7 +101,7 @@
                     <Button HorizontalAlignment="Center" Style="{DynamicResource MahApps.Styles.Button.Chromeless}" Name="IDonateButton" Click="IDonateButton_Click">
                         <StackPanel Orientation="Horizontal">
                             <iconPacks:PackIconModern Kind="Gift" Margin="10"/>
-                            <TextBlock Margin="10" VerticalAlignment="Center" TextWrapping="WrapWithOverflow">Linking the app ? Consider supporting me !</TextBlock>
+                            <TextBlock Margin="10" VerticalAlignment="Center" TextWrapping="WrapWithOverflow">Liking the app ? Consider supporting me !</TextBlock>
                         </StackPanel>
                     </Button>
                     <!--<StackPanel Orientation="Horizontal">
