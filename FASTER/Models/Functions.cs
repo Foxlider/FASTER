@@ -35,13 +35,6 @@ namespace FASTER.Models
 
         public static StringCollection GetLinesCollectionFromTextBox(System.Windows.Controls.TextBox textBox)
         {
-            //var lines = new StringCollection();
-            //int lineCount = textBox.LineCount;
-
-            //for (var line = 0; line <= lineCount - 1; line++)
-            //    lines.Add(textBox.GetLineText(line));
-
-            //return lines;
             var lines = new StringCollection();
             lines.AddRange(textBox.Text.Split('\n'));
             return lines;

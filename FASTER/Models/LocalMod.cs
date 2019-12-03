@@ -34,39 +34,28 @@ namespace FASTER.Models
 
             List<string> foldersToSearch = new List<string>();
 
-            if (serverPathOnly)
+            if (serverPathOnly && Properties.Options.Default.serverPath != string.Empty)
             {
-                if (Properties.Options.Default.serverPath != string.Empty)
-                    foldersToSearch.Add(Properties.Options.Default.serverPath);
+                foldersToSearch.Add(Properties.Options.Default.serverPath);
             }
 
-            if (!serverPathOnly)
-            {
-                if (Properties.Options.Default.localModFolders != null)
-                {
-                    foreach (var folder in Properties.Options.Default.localModFolders)
-                    {
-                        if (folder != null && folder != Properties.Options.Default.serverPath) foldersToSearch.Add(folder);
-                    }
-                }
-            }
+            if (!serverPathOnly && Properties.Options.Default.localModFolders != null) 
+            { foldersToSearch.AddRange(Properties.Options.Default.localModFolders.Where(folder => folder != null && folder != Properties.Options.Default.serverPath)); }
 
-            if (foldersToSearch.Count > 0)
+            if (foldersToSearch.Count <= 0) return localMods;
+            foreach (var localModFolder in foldersToSearch)
             {
-                foreach (var localModFolder in foldersToSearch)
+                try
                 {
-                    try
-                    {
-                        var modFolders = Directory.GetDirectories(localModFolder, "@*");
+                    var modFolders = Directory.GetDirectories(localModFolder, "@*");
 
-                        localMods.AddRange(from modFolder in modFolders
-                                           let name = modFolder.Substring(modFolder.LastIndexOf("@", StringComparison.Ordinal) + 1)
-                                           let author = "Unknown"
-                                           let website = "Unknown"
-                                           select new LocalMod(name, modFolder, author, website));
-                    }
-                    catch (Exception) { /* ignored */ }
+                    localMods.AddRange(from modFolder in modFolders
+                                       let name = modFolder.Substring(modFolder.LastIndexOf("@", StringComparison.Ordinal) + 1)
+                                       let author = "Unknown"
+                                       let website = "Unknown"
+                                       select new LocalMod(name, modFolder, author, website));
                 }
+                catch (Exception) { /* ignored */ }
             }
 
             return localMods;

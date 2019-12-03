@@ -41,16 +41,31 @@ namespace FASTER
         {
             InitializeComponent();
             dgProcess.ItemsSource = processes;
-            Updating = true;
-
-            //Start Performance counters
-            cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
-            ramCounter = new PerformanceCounter("Memory", "Available KBytes");
             
-            //Get Total System Ram
-            GetPhysicallyInstalledSystemMemory(out totalRamBytes);
-            gaugeRam.To = Convert.ToInt32(totalRamBytes / 1024);
-
+            //Start Performance counters
+            try
+            {
+                cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
+                ramCounter = new PerformanceCounter("Memory",    "Available KBytes");
+                Updating = true;
+            }
+            catch
+            {
+                IFlyoutMessage.Content = "Could not start the performance counters.";
+                IFlyout.IsOpen = true;
+            }
+            
+            try
+            {
+                //Get Total System Ram
+                GetPhysicallyInstalledSystemMemory(out totalRamBytes);
+                gaugeRam.To = Convert.ToInt32(totalRamBytes / 1024);
+            }
+            catch
+            {
+                IFlyoutMessage.Content = "Could not get the RAM amount.";
+                IFlyout.IsOpen         = true;
+            }
             //Format gauges labels
             gaugeRam.LabelFormatter = value => $"{value / 1024:0.00} Gb";
             gaugeCpu.LabelFormatter = value => $"{value:0.00} %";

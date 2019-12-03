@@ -25,23 +25,18 @@ namespace FASTER
     public partial class MainWindow
     {
         private static MainWindow _instance;
-        public  bool    InstallSteamCmd = false;
+        internal bool    InstallSteamCmd { get; set; } = false;
         private bool    _cancelled;
         private Process _oProcess = new Process();
 
         public MainWindow()
         {
-            //Initialized += MainWindow_Initialized;
             Properties.Options.Default.Reload();
             InitializeComponent();
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
-            //IWindowDragBar.MouseDown += WindowDragBar_MouseDown;
+
             Properties.Options.Default.PropertyChanged += Default_PropertyChanged;
             
-            //this.Loaded += MainWindow_Initialized;
-            //Loaded += MainWindow_Loaded;
-            //Closing += MainWindow_Closing;
-
             IMessageDialogClose.Click += IMessageDialogClose_Click;
             ISteamUserBox.LostFocus += ISteamSettings_Changed;
             ISteamPassBox.LostFocus += ISteamSettings_Changed;
@@ -128,11 +123,8 @@ namespace FASTER
 
         private void MetroWindow_Closing(object sender, EventArgs e)
         {
-            //UpdateSteamUpdaterSettings();
             Properties.Options.Default.Save();
             Application.Current.Shutdown();
-            //if(Properties.Options.Default.clearSettings)
-            //{ Properties.Options.Default.Reset(); }
         }
         #endregion
 
@@ -414,13 +406,13 @@ namespace FASTER
                 }
                 return true;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 MessageBox.Show("Unable to determine administrator status",
                                 "Error",
                                 MessageBoxButton.OK,
                                 MessageBoxImage.Error);
-                throw new ApplicationException("Unable to determine administrator status", e);
+                throw;
             }
         }
 
@@ -547,7 +539,7 @@ namespace FASTER
                 const string url      = "https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip";
                 string       fileName = Properties.Options.Default.steamCMDPath + "\\steamcmd.zip";
                 if (!Directory.Exists(Properties.Options.Default.steamCMDPath)) Directory.CreateDirectory(Properties.Options.Default.steamCMDPath);
-                WebClient client = new WebClient();
+                using WebClient client = new WebClient();
                 client.DownloadFileCompleted += SteamDownloadCompleted;
                 client.DownloadFileAsync(new Uri(url), fileName);
             }
@@ -672,55 +664,6 @@ namespace FASTER
             }
         }
 
-        //private void ProcessOutputCharacters(StreamReader streamReader)
-        //{
-        //    int    outputCharInt;
-        //    char   outputChar;
-        //    string line = String.Empty;
-
-        //    while (!streamReader.EndOfStream)
-        //    {
-        //        outputCharInt = streamReader.Read();
-        //        if ((outputCharInt != -1))
-        //        {
-        //            outputChar = ((char)(outputCharInt));
-        //            if (((outputCharInt == 10)
-        //              || (outputCharInt == 13)))
-        //            {
-        //                if (!string.IsNullOrEmpty(line))
-        //                {
-        //                    if (!line.Contains("\\src\\common\\contentmanifest.cpp (650) : Assertion Failed: !m_bIsFinalized*"))
-        //                    { UpdateTextBox(line); } 
-        //                }
-        //                line = String.Empty;
-        //            }
-        //            else if ((line.Length > 7))
-        //            {
-        //                if ((line.Substring((line.Length - 3)) == " .."))
-        //                {
-        //                    line = (Environment.NewLine + line);
-        //                    UpdateTextBox(line);
-        //                    line = String.Empty;
-        //                }
-        //                else if ((line.Substring((line.Length - 6)) == "bytes)"))
-        //                {
-        //                    line = (Environment.NewLine + line);
-        //                    UpdateTextBox(line);
-        //                    line = String.Empty;
-        //                }
-        //                else
-        //                {
-        //                    line = (line + outputChar);
-        //                }
-        //            }
-        //            else
-        //            {
-        //                line = (line + outputChar);
-        //            }
-        //        }
-        //    }
-        //}
-
         public async void RunSteamCommand(string steamCmd, string steamCommand, string type, List<string> modIds = null)
         {
             if (ReadyToUpdate())
@@ -767,11 +710,7 @@ namespace FASTER
                     _oProcess.StartInfo.RedirectStandardError  = true;
                     _oProcess.StartInfo.RedirectStandardInput  = true;
                     _oProcess.EnableRaisingEvents              = true;
-
-                    //Not realtime for some reason
-                    //_oProcess.OutputDataReceived += ProcessOutputEvent;
-                    //_oProcess.ErrorDataReceived += ProcessOutputEvent;
-
+                    
                     _oProcess.Start();
 
                     //NOTES
@@ -781,11 +720,7 @@ namespace FASTER
 
                     ProcessOutputCharacters(_oProcess.StandardError);
                     ProcessOutputCharacters(_oProcess.StandardOutput);
-
-                    //TO USE WITH _oProcess.DataReceived ONLY
-                    //_oProcess.BeginErrorReadLine();
-                    //_oProcess.BeginOutputReadLine();
-
+                    
                     _oProcess.WaitForExit();
                 }));
 
@@ -851,15 +786,6 @@ namespace FASTER
                 { UpdateTextBox(line); }
             }
         }
-
-        //private void ProcessOutputEvent(object sender, DataReceivedEventArgs e)
-        //{
-        //    if (!string.IsNullOrEmpty(e.Data))
-        //    {
-        //        if (!e.Data.Contains("\\src\\common\\contentmanifest.cpp (650) : Assertion Failed: !m_bIsFinalized*"))
-        //        { UpdateTextBox(e.Data); }
-        //    }
-        //}
         
         private static void CheckModUpdatesComplete(IReadOnlyCollection<string> modIds)
         {

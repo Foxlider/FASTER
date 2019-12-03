@@ -158,12 +158,10 @@ namespace FASTER
             IAdditionalParams.Text = profile.additionalParams;
             IEnableAdditionalParams.IsChecked = profile.enableAdditionalParams;
 
-            //IServerActionButtons.SelectionChanged += IServerActionButtons_SelectionChanged;
             Loaded += ServerProfile_Loaded;
             Initialized += ServerProfile_Initialized;
             
             ToggleUi(IHeadlessClientEnabled);
-            // ToggleUi(IAutoRestartEnabled)
             ToggleUi(IVonEnabled);
             ToggleUi(IVotingEnabled);
             ToggleUi(IServerConsoleLogEnabled);
@@ -723,8 +721,8 @@ namespace FASTER
             profile.ServerMods = "";
             foreach (CheckBox addon in IServerModsList.Items)
             {
-                if (!profile.ServerMods.Contains((string)addon.Content) && (addon.IsChecked ?? false) )
-                { profile.ServerMods += addon.Content + ";"; }
+                if (!profile.ServerMods.Contains((string) addon.Content) && (addon.IsChecked ?? false))
+                { profile.ServerMods += $"{addon.Content};"; }
             }
             profile.ClientMods = "";
             foreach (CheckBox addon in IClientModsList.Items)
@@ -1077,7 +1075,6 @@ namespace FASTER
                 //Cleanup localmodfolders
                 foreach (var folder in targetForDeletion)
                 { Properties.Options.Default.localModFolders.Remove(folder); }
-                targetForDeletion = null; //mark for GC cleanup
                 
                 foreach (var addon in newMods.ToList())
                 {

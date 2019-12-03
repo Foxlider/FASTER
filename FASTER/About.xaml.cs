@@ -11,16 +11,16 @@ namespace FASTER
     /// </summary>
     public partial class About : UserControl
     {
+
         public About()
         {
             InitializeComponent();
             Loaded += About_Loaded;
         }
 
-
         private void IDiscordButton_Click(object sender, RoutedEventArgs e)
-        { OpenBrowser("https://discord.gg/uPjgqHU"); }
 
+        { OpenBrowser("https://discord.gg/uPjgqHU"); }
 
         private void IGitHubButton_Click(object sender, RoutedEventArgs e)
         {
@@ -34,6 +34,7 @@ namespace FASTER
         {
             OpenBrowser("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=49H6MZNFUJYWA&source=url");
         }
+        
         private void OpenBrowser(string url)
         {
             try
@@ -64,7 +65,6 @@ namespace FASTER
             string version = $"{Assembly.GetExecutingAssembly().GetName().Version.Major}."
                  + $"{Assembly.GetExecutingAssembly().GetName().Version.Minor}"
                  + $"{rev}";
-            //string version =  $"{Assembly.GetExecutingAssembly().GetName().Version.Major}.{Assembly.GetExecutingAssembly().GetName().Version.Minor}{rev}";
             IVersionLabel.Text = $"Version: {version}";
         }
     }

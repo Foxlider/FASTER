@@ -27,34 +27,13 @@ namespace FASTER
 
         }
 
-        // OLD CODE
-        //private void UpdateDialog_Closing(object sender, DialogClosingEventArgs e)
-        //{
-        //    if (!Equals(e.Parameter, true)) return;
-        //    try
-        //    {
-        //        if (AutoUpdater.DownloadUpdate())
-        //        {
-        //            if (Application.Current.MainWindow != null) Application.Current.MainWindow.Close();
-        //        }
-        //    }
-        //    catch (Exception exception)
-        //    {
-        //        IMessageText.Text     = exception.Message + " " + exception.GetType();
-        //        IMessageDialog.IsOpen = true;
-        //        //MessageBox.Show(exception.Message, exception.GetType().ToString(), MessageBoxButton.OK,
-        //        //                MessageBoxImage.Error);
-        //    }
-        //} OLD CODE
-
         private void IUpdateBtnOK_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                if (AutoUpdater.DownloadUpdate())
+                if (AutoUpdater.DownloadUpdate() && Application.Current.MainWindow != null)
                 {
-                    if (Application.Current.MainWindow != null) 
-                        Application.Current.MainWindow.Close();
+                    Application.Current.MainWindow.Close();
                 }
             }
             catch (Exception exception)
@@ -112,11 +91,7 @@ namespace FASTER
             if (e.Key == Key.Escape)
             { IResetDialog.IsOpen = false; }
         }
-
-        //private void IBaseThemeButton_Click(object sender, RoutedEventArgs e)
-        //{ MainWindow.Instance.IWindowCloseButton.Background = (Brush)FindResource("MaterialDesignPaper"); }
-
-
+        
         //private void PrimaryColor_Click(object sender, RoutedEventArgs e)
         //{
         //    /*TODO : WORK ON THIS*/
