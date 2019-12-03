@@ -26,19 +26,18 @@ steps:
     command: 'restore'
     feedsToUse: 'select'
 
-- task: SonarQubePrepare@4
+- task: SonarCloudPrepare@1
   inputs:
-    SonarQube: 'SonarQube Home'
+    SonarCloud: 'SonarCloud'
+    organization: 'foxlicorp'
     scannerMode: 'MSBuild'
-    projectKey: 'FASTER'
-    projectName: 'FASTER'
+    projectKey: 'FASTER_App'
+    projectName: 'FASTER_App'
     
 - script: dotnet build --configuration $(buildConfiguration)
   displayName: 'Dotnet Build $(buildConfiguration)'
 
-
-
-- task: SonarQubeAnalyze@4
+- task: SonarCloudAnalyze@1
 
 - task: DotNetCoreCLI@2
   displayName: 'Dotnet Publish $(buildConfiguration) x64'
