@@ -18,7 +18,7 @@ steps:
   inputs:
     packageType: 'sdk'
     version: '3.x'
-    includePreviewVersions: true
+    includePreviewVersions: false
 
 - task: DotNetCoreCLI@2
   displayName: 'Dotnet Restore'
@@ -26,15 +26,17 @@ steps:
     command: 'restore'
     feedsToUse: 'select'
 
-- script: dotnet build --configuration $(buildConfiguration)
-  displayName: 'Dotnet Build $(buildConfiguration)'
-
 - task: SonarQubePrepare@4
   inputs:
     SonarQube: 'SonarQube Home'
     scannerMode: 'MSBuild'
     projectKey: 'FASTER'
     projectName: 'FASTER'
+    
+- script: dotnet build --configuration $(buildConfiguration)
+  displayName: 'Dotnet Build $(buildConfiguration)'
+
+
 
 - task: SonarQubeAnalyze@4
 
