@@ -29,6 +29,15 @@ steps:
 - script: dotnet build --configuration $(buildConfiguration)
   displayName: 'Dotnet Build $(buildConfiguration)'
 
+- task: SonarQubePrepare@4
+  inputs:
+    SonarQube: 'SonarQube Home'
+    scannerMode: 'MSBuild'
+    projectKey: 'FASTER'
+    projectName: 'FASTER'
+
+- task: SonarQubeAnalyze@4
+
 - task: DotNetCoreCLI@2
   displayName: 'Dotnet Publish $(buildConfiguration) x64'
   inputs:
