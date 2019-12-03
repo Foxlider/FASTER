@@ -35,9 +35,7 @@ namespace FASTER
                 Properties.Options.Default.localModFolders = new List<string>();
                 Properties.Options.Default.Save();
             }
-            //if (Properties.Settings.Default.Servers == null)
-            //{ Properties.Settings.Default.Servers = new ServerCollection(); }
-
+            
             if (Properties.Options.Default.firstRun) return;
             try
             { MainWindow.Instance.Show(); }
@@ -73,7 +71,7 @@ namespace FASTER
             settings.steamPassword = encryption.EncryptData(ISteamPassBox.Password);
             settings.firstRun = false;
             settings.Save();
-            //TODO THIS
+
             if (IInstallSteamCheck.IsChecked != null && (bool)IInstallSteamCheck.IsChecked)
             { MainWindow.Instance.InstallSteamCmd = true; }
 

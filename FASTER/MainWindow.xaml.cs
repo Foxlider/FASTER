@@ -25,23 +25,18 @@ namespace FASTER
     public partial class MainWindow
     {
         private static MainWindow _instance;
-        public  bool    InstallSteamCmd = false;
+        internal bool    InstallSteamCmd { get; set; } = false;
         private bool    _cancelled;
         private Process _oProcess = new Process();
 
         public MainWindow()
         {
-            //Initialized += MainWindow_Initialized;
             Properties.Options.Default.Reload();
             InitializeComponent();
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
-            //IWindowDragBar.MouseDown += WindowDragBar_MouseDown;
+
             Properties.Options.Default.PropertyChanged += Default_PropertyChanged;
             
-            //this.Loaded += MainWindow_Initialized;
-            //Loaded += MainWindow_Loaded;
-            //Closing += MainWindow_Closing;
-
             IMessageDialogClose.Click += IMessageDialogClose_Click;
             ISteamUserBox.LostFocus += ISteamSettings_Changed;
             ISteamPassBox.LostFocus += ISteamSettings_Changed;
@@ -414,13 +409,13 @@ namespace FASTER
                 }
                 return true;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 MessageBox.Show("Unable to determine administrator status",
                                 "Error",
                                 MessageBoxButton.OK,
                                 MessageBoxImage.Error);
-                throw new ApplicationException("Unable to determine administrator status", e);
+                throw;
             }
         }
 
@@ -547,7 +542,7 @@ namespace FASTER
                 const string url      = "https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip";
                 string       fileName = Properties.Options.Default.steamCMDPath + "\\steamcmd.zip";
                 if (!Directory.Exists(Properties.Options.Default.steamCMDPath)) Directory.CreateDirectory(Properties.Options.Default.steamCMDPath);
-                WebClient client = new WebClient();
+                using WebClient client = new WebClient();
                 client.DownloadFileCompleted += SteamDownloadCompleted;
                 client.DownloadFileAsync(new Uri(url), fileName);
             }

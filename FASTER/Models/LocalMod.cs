@@ -34,20 +34,16 @@ namespace FASTER.Models
 
             List<string> foldersToSearch = new List<string>();
 
-            if (serverPathOnly)
+            if (serverPathOnly && Properties.Options.Default.serverPath != string.Empty)
             {
-                if (Properties.Options.Default.serverPath != string.Empty)
-                    foldersToSearch.Add(Properties.Options.Default.serverPath);
+                foldersToSearch.Add(Properties.Options.Default.serverPath);
             }
 
-            if (!serverPathOnly)
+            if (!serverPathOnly && Properties.Options.Default.localModFolders != null)
             {
-                if (Properties.Options.Default.localModFolders != null)
+                foreach (var folder in Properties.Options.Default.localModFolders)
                 {
-                    foreach (var folder in Properties.Options.Default.localModFolders)
-                    {
-                        if (folder != null && folder != Properties.Options.Default.serverPath) foldersToSearch.Add(folder);
-                    }
+                    if (folder != null && folder != Properties.Options.Default.serverPath) foldersToSearch.Add(folder);
                 }
             }
 

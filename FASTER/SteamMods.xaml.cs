@@ -256,7 +256,7 @@ namespace FASTER
                     string steamCommand = "+login " + MainWindow.Instance.ISteamUserBox.Text + " " + MainWindow.Instance.ISteamPassBox.Password;
 
                     foreach (var steamMod in modsToUpdate)
-                    { steamCommand = steamCommand + " +workshop_download_item 107410 " + steamMod; }
+                    { steamCommand = $"{steamCommand} +workshop_download_item 107410 {steamMod}"; }
 
                     string steamCmd = MainWindow.Instance.ISteamDirBox.Text + @"\steamcmd.exe";
                     steamCommand += " validate +quit";
@@ -273,6 +273,11 @@ namespace FASTER
                 MainWindow.Instance.IMessageDialog.IsOpen   = true;
                 MainWindow.Instance.IMessageDialogText.Text = "Check all fields are correctly filled out on Steam Updater";
             }
+        }
+        private void UpdateMod(object sender, RoutedEventArgs e)
+        {
+            var steamMod = (SteamMod)((Button)e.Source).DataContext;
+            UpdateMod(steamMod.WorkshopId, steamMod.Name);
         }
 
         private static void UpdateMod(int modId, string modName, bool singleMod = true)
@@ -379,12 +384,6 @@ namespace FASTER
 
             SteamMod.DeleteSteamMod(steamMod.WorkshopId);
             UpdateModsView();
-        }
-
-        private void UpdateMod(object sender, RoutedEventArgs e)
-        {
-            var steamMod = (SteamMod)((Button)e.Source).DataContext;
-            UpdateMod(steamMod.WorkshopId, steamMod.Name);
         }
 
         private void OpenModPage(object sender, RoutedEventArgs e)

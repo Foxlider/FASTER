@@ -235,7 +235,7 @@ namespace FASTER.Models
                             updateMod.Author           = modInfo.Item2;
                             updateMod.SteamLastUpdated = modInfo.Item3;
 
-                            if (updateMod.SteamLastUpdated > updateMod.LocalLastUpdated & updateMod.Status != "Download Not Complete")
+                            if (updateMod.SteamLastUpdated > updateMod.LocalLastUpdated && updateMod.Status != "Download Not Complete")
                                 updateMod.Status                                                   = "Update Required";
                             else if (updateMod.Status != "Download Not Complete") updateMod.Status = "Up to Date";
                         }

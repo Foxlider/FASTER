@@ -723,8 +723,8 @@ namespace FASTER
             profile.ServerMods = "";
             foreach (CheckBox addon in IServerModsList.Items)
             {
-                if (!profile.ServerMods.Contains((string)addon.Content) && (addon.IsChecked ?? false) )
-                { profile.ServerMods += addon.Content + ";"; }
+                if (!profile.ServerMods.Contains((string) addon.Content) && (addon.IsChecked ?? false))
+                { profile.ServerMods += $"{addon.Content};"; }
             }
             profile.ClientMods = "";
             foreach (CheckBox addon in IClientModsList.Items)
