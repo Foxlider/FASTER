@@ -65,7 +65,6 @@ namespace FASTER
             string version = $"{Assembly.GetExecutingAssembly().GetName().Version.Major}."
                  + $"{Assembly.GetExecutingAssembly().GetName().Version.Minor}"
                  + $"{rev}";
-            //string version =  $"{Assembly.GetExecutingAssembly().GetName().Version.Major}.{Assembly.GetExecutingAssembly().GetName().Version.Minor}{rev}";
             IVersionLabel.Text = $"Version: {version}";
         }
     }

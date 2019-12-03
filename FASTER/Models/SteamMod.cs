@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml.Serialization;
 
@@ -139,11 +140,8 @@ namespace FASTER.Models
                 
                 if (currentMods.Count > 0)
                 {
-                    foreach (var steamMod in currentMods)
-                    {
-                        if (steamMod.WorkshopId == modId)
-                            duplicate = true;
-                    }
+                    foreach (var steamMod in currentMods.Where(steamMod => steamMod.WorkshopId == modId)) 
+                    { duplicate = true; }
                 }
 
                 if (!duplicate)
@@ -217,45 +215,39 @@ namespace FASTER.Models
 
         public static void UpdateInfoFromSteam()
         {
-            if (Properties.Options.Default.steamMods.SteamMods.Count > 0)
+            if (Properties.Options.Default.steamMods.SteamMods.Count <= 0) return;
+            var currentMods = Properties.Options.Default.steamMods.SteamMods;
+            var failnum     = 0;
+            foreach (var steamMod in Properties.Options.Default.steamMods.SteamMods)
             {
-                var currentMods = Properties.Options.Default.steamMods.SteamMods;
-                var failnum = 0;
-                foreach (var steamMod in Properties.Options.Default.steamMods.SteamMods)
+                if (steamMod.PrivateMod) continue;
+                var modInfo = GetModInfo(steamMod.WorkshopId);
+
+                if (modInfo != null)
                 {
-                    if (!steamMod.PrivateMod)
-                    {
-                        var modInfo = GetModInfo(steamMod.WorkshopId);
+                    var updateMod = currentMods.Find(c => c.WorkshopId == steamMod.WorkshopId);
 
-                        if (modInfo != null)
-                        {
-                            var updateMod = currentMods.Find(c => c.WorkshopId == steamMod.WorkshopId);
+                    updateMod.Name             = modInfo.Item1;
+                    updateMod.Author           = modInfo.Item2;
+                    updateMod.SteamLastUpdated = modInfo.Item3;
 
-                            updateMod.Name             = modInfo.Item1;
-                            updateMod.Author           = modInfo.Item2;
-                            updateMod.SteamLastUpdated = modInfo.Item3;
-
-                            if (updateMod.SteamLastUpdated > updateMod.LocalLastUpdated && updateMod.Status != "Download Not Complete")
-                                updateMod.Status                                                   = "Update Required";
-                            else if (updateMod.Status != "Download Not Complete") updateMod.Status = "Up to Date";
-                        }
-                        else
-                            failnum++;
-                        if (failnum >= 3)
-                        {
-                            MainWindow.Instance.Dispatcher?.InvokeAsync(() =>
-                            {
-                                MainWindow.Instance.IMessageDialogText.Text = "Could not reach stream after 3 attempts.\n\nPlease check the event logs.";
-                                MainWindow.Instance.IMessageDialog.IsOpen   = true;
-                            });
-                            break;
-                        }
-                    }
+                    if (updateMod.SteamLastUpdated > updateMod.LocalLastUpdated && updateMod.Status != "Download Not Complete")
+                        updateMod.Status                                                   = "Update Required";
+                    else if (updateMod.Status != "Download Not Complete") updateMod.Status = "Up to Date";
                 }
-
-                Properties.Options.Default.steamMods.SteamMods = currentMods;
-                Properties.Options.Default.Save();
+                else
+                    failnum++;
+                if (failnum < 3) continue;
+                MainWindow.Instance.Dispatcher?.InvokeAsync(() =>
+                {
+                    MainWindow.Instance.IMessageDialogText.Text = "Could not reach stream after 3 attempts.\n\nPlease check the event logs.";
+                    MainWindow.Instance.IMessageDialog.IsOpen   = true;
+                });
+                break;
             }
+
+            Properties.Options.Default.steamMods.SteamMods = currentMods;
+            Properties.Options.Default.Save();
         }
     }
 }

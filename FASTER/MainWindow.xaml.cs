@@ -123,11 +123,8 @@ namespace FASTER
 
         private void MetroWindow_Closing(object sender, EventArgs e)
         {
-            //UpdateSteamUpdaterSettings();
             Properties.Options.Default.Save();
             Application.Current.Shutdown();
-            //if(Properties.Options.Default.clearSettings)
-            //{ Properties.Options.Default.Reset(); }
         }
         #endregion
 
@@ -667,55 +664,6 @@ namespace FASTER
             }
         }
 
-        //private void ProcessOutputCharacters(StreamReader streamReader)
-        //{
-        //    int    outputCharInt;
-        //    char   outputChar;
-        //    string line = String.Empty;
-
-        //    while (!streamReader.EndOfStream)
-        //    {
-        //        outputCharInt = streamReader.Read();
-        //        if ((outputCharInt != -1))
-        //        {
-        //            outputChar = ((char)(outputCharInt));
-        //            if (((outputCharInt == 10)
-        //              || (outputCharInt == 13)))
-        //            {
-        //                if (!string.IsNullOrEmpty(line))
-        //                {
-        //                    if (!line.Contains("\\src\\common\\contentmanifest.cpp (650) : Assertion Failed: !m_bIsFinalized*"))
-        //                    { UpdateTextBox(line); } 
-        //                }
-        //                line = String.Empty;
-        //            }
-        //            else if ((line.Length > 7))
-        //            {
-        //                if ((line.Substring((line.Length - 3)) == " .."))
-        //                {
-        //                    line = (Environment.NewLine + line);
-        //                    UpdateTextBox(line);
-        //                    line = String.Empty;
-        //                }
-        //                else if ((line.Substring((line.Length - 6)) == "bytes)"))
-        //                {
-        //                    line = (Environment.NewLine + line);
-        //                    UpdateTextBox(line);
-        //                    line = String.Empty;
-        //                }
-        //                else
-        //                {
-        //                    line = (line + outputChar);
-        //                }
-        //            }
-        //            else
-        //            {
-        //                line = (line + outputChar);
-        //            }
-        //        }
-        //    }
-        //}
-
         public async void RunSteamCommand(string steamCmd, string steamCommand, string type, List<string> modIds = null)
         {
             if (ReadyToUpdate())
@@ -762,11 +710,7 @@ namespace FASTER
                     _oProcess.StartInfo.RedirectStandardError  = true;
                     _oProcess.StartInfo.RedirectStandardInput  = true;
                     _oProcess.EnableRaisingEvents              = true;
-
-                    //Not realtime for some reason
-                    //_oProcess.OutputDataReceived += ProcessOutputEvent;
-                    //_oProcess.ErrorDataReceived += ProcessOutputEvent;
-
+                    
                     _oProcess.Start();
 
                     //NOTES
@@ -776,11 +720,7 @@ namespace FASTER
 
                     ProcessOutputCharacters(_oProcess.StandardError);
                     ProcessOutputCharacters(_oProcess.StandardOutput);
-
-                    //TO USE WITH _oProcess.DataReceived ONLY
-                    //_oProcess.BeginErrorReadLine();
-                    //_oProcess.BeginOutputReadLine();
-
+                    
                     _oProcess.WaitForExit();
                 }));
 
@@ -846,15 +786,6 @@ namespace FASTER
                 { UpdateTextBox(line); }
             }
         }
-
-        //private void ProcessOutputEvent(object sender, DataReceivedEventArgs e)
-        //{
-        //    if (!string.IsNullOrEmpty(e.Data))
-        //    {
-        //        if (!e.Data.Contains("\\src\\common\\contentmanifest.cpp (650) : Assertion Failed: !m_bIsFinalized*"))
-        //        { UpdateTextBox(e.Data); }
-        //    }
-        //}
         
         private static void CheckModUpdatesComplete(IReadOnlyCollection<string> modIds)
         {

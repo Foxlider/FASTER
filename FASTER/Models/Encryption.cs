@@ -87,8 +87,6 @@ namespace FASTER.Models
 
         private static string SystemSerialNumber()
         {
-            //var sn = Windows.System.Profile.SystemManufacturers.SmbiosInformation.SerialNumber;
-
             try
             {
                 var powershell = Process.Start(new ProcessStartInfo
@@ -104,15 +102,6 @@ namespace FASTER.Models
                 powershell?.WaitForExit();
                 var output = powershell?.StandardOutput.ReadToEnd();
                 return output?.Replace("\r", "").Split('\n')[3];
-                //ManagementObjectSearcher searcher =
-                //    new ManagementObjectSearcher("root\\CIMV2",
-                //                                 "SELECT * FROM Win32_BaseBoard");
-
-                //foreach (var o in searcher.Get())
-                //{
-                //    var queryObj = (ManagementObject) o;
-                //    return $"{queryObj["SerialNumber"]}";
-                //}
             }
             catch (Exception) { return "EXCEPTION_ON_QUERY"; }
             
