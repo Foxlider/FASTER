@@ -410,5 +410,8 @@
                 <Button Grid.Row="2" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" HorizontalAlignment="Stretch" Click="OpenArmaServerLocation_Click" Name="OpenArmaServerLocation" Content="Open Arma 3 Server Folder" Margin="10"/>
             </Grid>
         </simpleChildWindow:ChildWindow>
+        <mah:Flyout x:Name="IFlyout" Grid.Column="1" IsOpen="False" Position="Bottom" Theme="Light" AutoCloseInterval="3000" IsAutoCloseEnabled="True" Opacity="0.9">
+            <Label Name="IFlyoutMessage" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Content="TEXT"/>
+        </mah:Flyout>
     </Grid>
 </mah:MetroWindow>
