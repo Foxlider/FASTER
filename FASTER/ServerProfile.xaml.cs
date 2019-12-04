@@ -414,19 +414,24 @@ namespace FASTER
             if (IHeadlessClientEnabled.IsChecked ?? false)
             {
                 headlessClientLaunched = true;
-                for (int hc = 1; hc <= INoOfHeadlessClients.Value; hc++)
-                {
-                    string hcCommandLine = "-client -connect=127.0.0.1 -password=" + IPassword.Text + " -profiles=" + profilePath + " -nosound -port=" + IPort.Text;
-                    string hcMods = IHeadlessModsList.Items.Cast<CheckBox>()
-                                                     .Where(addon => addon.IsChecked ?? false)
-                                                     .Aggregate<CheckBox, string>(null, (current, addon) => current + (addon.Content + ";"));
+                LaunchHCs(profilePath);
+            }
+        }
 
-                    hcCommandLine = hcCommandLine + " \"-mod=" + hcMods + "\"";
-                    Clipboard.SetText(hcCommandLine);
-                    ProcessStartInfo hcStartInfo = new ProcessStartInfo(IExecutable.Text, hcCommandLine);
-                    Process          hcProcess   = new Process { StartInfo = hcStartInfo };
-                    hcProcess.Start();
-                }
+        private void LaunchHCs(string profilePath)
+        {
+            for (int hc = 1; hc <= INoOfHeadlessClients.Value; hc++)
+            {
+                string hcCommandLine = "-client -connect=127.0.0.1 -password=" + IPassword.Text + " -profiles=" + profilePath + " -nosound -port=" + IPort.Text;
+                string hcMods = IHeadlessModsList.Items.Cast<CheckBox>()
+                                                 .Where(addon => addon.IsChecked ?? false)
+                                                 .Aggregate<CheckBox, string>(null, (current, addon) => current + (addon.Content + ";"));
+
+                hcCommandLine = hcCommandLine + " \"-mod=" + hcMods + "\"";
+                Clipboard.SetText(hcCommandLine);
+                ProcessStartInfo hcStartInfo = new ProcessStartInfo(IExecutable.Text, hcCommandLine);
+                Process          hcProcess   = new Process { StartInfo = hcStartInfo };
+                hcProcess.Start();
             }
         }
 
@@ -1173,19 +1178,7 @@ namespace FASTER
                 sProcess.Start();
                 if (!headlessClientLaunched && (IHeadlessClientEnabled.IsChecked ?? false))
                 {
-                    for (int hc = 1; hc <= INoOfHeadlessClients.Value; hc++)
-                    {
-                        string hcCommandLine = "-client -connect=127.0.0.1 -password=" + IPassword.Text + " -profiles=" + profilePath + " -nosound -port=" + IPort.Text;
-                        string hcMods = IHeadlessModsList.Items.Cast<CheckBox>()
-                                                         .Where(addon => addon.IsChecked ?? false)
-                                                         .Aggregate<CheckBox, string>(null, (current, addon) => current + (addon.Content + ";"));
-
-                        hcCommandLine = hcCommandLine + " \"-mod=" + hcMods + "\"";
-                        Clipboard.SetText(hcCommandLine);
-                        ProcessStartInfo hcStartInfo = new ProcessStartInfo(IExecutable.Text, hcCommandLine);
-                        Process hcProcess = new Process { StartInfo = hcStartInfo };
-                        hcProcess.Start();
-                    }
+                    LaunchHCs(profilePath);
                 }
                 headlessClientLaunched = false;
             }
