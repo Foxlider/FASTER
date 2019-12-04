@@ -133,59 +133,59 @@ namespace FASTER.Models
             { modId = SteamIdFromUrl(modUrl); }
             else { invalid = true; }
 
-            if (!invalid)
-            {
-                var duplicate = false;
-                var currentMods = GetSteamMods();
-                
-                if (currentMods.Count > 0)
-                {
-                    foreach (var steamMod in currentMods.Where(steamMod => steamMod.WorkshopId == modId)) 
-                    { duplicate = true; }
-                }
-
-                if (!duplicate)
-                {
-                    try
-                    {
-                        var modInfo = GetModInfo(modId);
-
-                        if (modInfo != null)
-                        {
-                            var modName = modInfo.Item1;
-                            var steamUpdateTime = modInfo.Item3;
-                            var author = modInfo.Item2;
-
-                            currentMods.Add(new SteamMod(modId, modName, author, steamUpdateTime));
-
-                            var modCollection = new SteamModCollection
-                            {
-                                CollectionName = "Steam",
-                                SteamMods = currentMods
-                            };
-
-                            Properties.Options.Default.steamMods = modCollection;
-                            Properties.Options.Default.Save();
-                        }
-                        else
-                        {
-                            MainWindow.Instance.IMessageDialog.IsOpen = true;
-                            MainWindow.Instance.IMessageDialogText.Text = "This is a workshop Item for a different game.";
-                        }
-                    }
-                    catch (Exception)
-                    { /*ignored*/ }
-                }
-                else if (!multiple)
-                {
-                    MainWindow.Instance.IMessageDialog.IsOpen = true;
-                    MainWindow.Instance.IMessageDialogText.Text = "Mod already imported.";
-                }
-            }
+            if (!invalid) { AddMod(multiple, modId); }
             else
             {
                 MainWindow.Instance.IMessageDialog.IsOpen = true;
                 MainWindow.Instance.IMessageDialogText.Text = "Please use format: https://steamcommunity.com/sharedfiles/filedetails/?id=*********";
+            }
+        }
+
+        private static void AddMod(bool multiple, int modId)
+        {
+            var duplicate   = false;
+            var currentMods = GetSteamMods();
+
+            if (currentMods.Count > 0)
+            {
+                foreach (var steamMod in currentMods.Where(steamMod => steamMod.WorkshopId == modId)) 
+                { duplicate = true; }
+            }
+
+            if (!duplicate)
+            {
+                try
+                {
+                    var modInfo = GetModInfo(modId);
+
+                    if (modInfo != null)
+                    {
+                        var modName         = modInfo.Item1;
+                        var steamUpdateTime = modInfo.Item3;
+                        var author          = modInfo.Item2;
+
+                        currentMods.Add(new SteamMod(modId, modName, author, steamUpdateTime));
+
+                        var modCollection = new SteamModCollection { CollectionName = "Steam", SteamMods = currentMods };
+
+                        Properties.Options.Default.steamMods = modCollection;
+                        Properties.Options.Default.Save();
+                    }
+                    else
+                    {
+                        MainWindow.Instance.IMessageDialog.IsOpen   = true;
+                        MainWindow.Instance.IMessageDialogText.Text = "This is a workshop Item for a different game.";
+                    }
+                }
+                catch (Exception)
+                {
+                    /*ignored*/
+                }
+            }
+            else if (!multiple)
+            {
+                MainWindow.Instance.IMessageDialog.IsOpen   = true;
+                MainWindow.Instance.IMessageDialogText.Text = "Mod already imported.";
             }
         }
 

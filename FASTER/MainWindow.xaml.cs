@@ -664,7 +664,7 @@ namespace FASTER
             }
         }
 
-        public async void RunSteamCommand(string steamCmd, string steamCommand, string type, List<string> modIds = null)
+        public async Task RunSteamCommand(string steamCmd, string steamCommand, string type, List<string> modIds = null)
         {
             if (ReadyToUpdate())
             {
