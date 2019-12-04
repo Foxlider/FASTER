@@ -1,0 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RuleSet Name="SonarQube - FASTER_App Sonar way" ToolsVersion="16.0">
+  <Include Path="..\.sonarlint\faster_appcsharp.ruleset" Action="Default" />
+</RuleSet>

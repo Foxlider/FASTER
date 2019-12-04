@@ -171,7 +171,7 @@ namespace FASTER
             UpdateModsView();
         }
 
-        private async void ImportLauncherFile()
+        private async Task ImportLauncherFile()
         {
             IUpdateProgress.IsIndeterminate = true;
             IModView.IsEnabled              = true;
@@ -195,44 +195,43 @@ namespace FASTER
         {
             string modsFile = Functions.SelectFile("Arma 3 Launcher File|*.html");
 
-            if (!string.IsNullOrEmpty(modsFile))
+            if (string.IsNullOrEmpty(modsFile)) return;
+            using StreamReader dataReader = new StreamReader(modsFile);
+            do
             {
-                using StreamReader dataReader = new StreamReader(modsFile);
-                do
+                try
                 {
-                    try
-                    {
-                        var modLine = dataReader.ReadLine();
-                        if (string.IsNullOrEmpty(modLine)) continue;
-                        if (modLine.Contains("data-type=\"Link\">http://steam") && modLine.Contains("/?id="))
-                        {
-                            var link = modLine.Substring(modLine.IndexOf("http://steam", StringComparison.Ordinal));
-                            link = Reverse(link);
-                            link = link.Substring(link.IndexOf("epyt-atad", StringComparison.Ordinal) + 11);
-                            link = Reverse(link);
-                            try
-                            { SteamMod.AddSteamMod(link, true); }
-                            catch
-                            {
-                                using EventLog eventLog = new EventLog("Application")
-                                { Source = "FASTER" };
-                                eventLog.WriteEntry($"Could not import mod {link}", EventLogEntryType.Error);
-                                Dispatcher?.Invoke(() =>
-                                {
-                                    IMessageText.Text = $"Could not import mod {link}";
-                                    IMessageDialog.IsOpen = true;
-                                });
-                            }
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        using EventLog eventLog = new EventLog("Application")
-                        { Source = "FASTER" };
-                        eventLog.WriteEntry($"Error occured while importing mod file : [{e.GetType()}] {e.Message}", EventLogEntryType.Warning);
-                    }
+                    ModLineHandler(dataReader);
                 }
-                while (true);
+                catch (Exception e)
+                {
+                    using EventLog eventLog = new EventLog("Application")
+                        { Source = "FASTER" };
+                    eventLog.WriteEntry($"Error occured while importing mod file : [{e.GetType()}] {e.Message}", EventLogEntryType.Warning);
+                }
+            }
+            while (true);
+        }
+
+        private void ModLineHandler(StreamReader dataReader)
+        {
+            var modLine = dataReader.ReadLine();
+            if (string.IsNullOrEmpty(modLine) || !modLine.Contains("data-type=\"Link\">http://steam") || !modLine.Contains("/?id=")) return;
+
+            var link = modLine.Substring(modLine.IndexOf("http://steam", StringComparison.Ordinal));
+            link = Reverse(link);
+            link = link.Substring(link.IndexOf("epyt-atad", StringComparison.Ordinal) + 11);
+            link = Reverse(link);
+            try { SteamMod.AddSteamMod(link, true); }
+            catch
+            {
+                using EventLog eventLog = new EventLog("Application") { Source = "FASTER" };
+                eventLog.WriteEntry($"Could not import mod {link}", EventLogEntryType.Error);
+                Dispatcher?.Invoke(() =>
+                {
+                    IMessageText.Text     = $"Could not import mod {link}";
+                    IMessageDialog.IsOpen = true;
+                });
             }
         }
 
@@ -333,7 +332,7 @@ namespace FASTER
             }
         }
 
-        private async void CheckForUpdates()
+        private async Task CheckForUpdates()
         {
             if (Properties.Options.Default.steamMods.SteamMods.Count > 0)
             {
