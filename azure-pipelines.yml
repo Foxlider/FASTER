@@ -33,6 +33,7 @@ steps:
     scannerMode: 'MSBuild'
     projectKey: 'FASTER_App'
     projectName: 'FASTER_App'
+    projectVersion: '$(Build.BuildNumber)'
     
 - script: dotnet build --configuration $(buildConfiguration)
   displayName: 'Dotnet Build $(buildConfiguration)'
