@@ -9,8 +9,7 @@
     mc:Ignorable="d"
     
     GlowBrush="Black"
-    BorderThickness="0" 
-    ResizeMode="NoResize"
+    BorderThickness="0"
     
     Title="FASTER - Initial Setup" 
     Height="400" 

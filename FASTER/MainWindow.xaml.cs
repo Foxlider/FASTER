@@ -621,13 +621,13 @@ namespace FASTER
                     });
                 }
 
-                if (text.Contains("Two-factor code") )
-                {
-                    Dispatcher?.Invoke(() =>
-                    {
-                        ISteamGuardDialog.IsOpen = true;
-                    });
-                }
+                //if (text.Contains("Two-factor code") )
+                //{
+                //    Dispatcher?.Invoke(() =>
+                //    {
+                //        ISteamGuardDialog.IsOpen = true;
+                //    });
+                //}
 
                 if (text.Contains("Update state"))
                 {
