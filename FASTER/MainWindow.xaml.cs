@@ -621,13 +621,13 @@ namespace FASTER
                     });
                 }
 
-                if (text.Contains("Two-factor code") )
-                {
-                    Dispatcher?.Invoke(() =>
-                    {
-                        ISteamGuardDialog.IsOpen = true;
-                    });
-                }
+                //if (text.Contains("Two-factor code") )
+                //{
+                //    Dispatcher?.Invoke(() =>
+                //    {
+                //        ISteamGuardDialog.IsOpen = true;
+                //    });
+                //}
 
                 if (text.Contains("Update state"))
                 {
@@ -664,7 +664,7 @@ namespace FASTER
             }
         }
 
-        public async void RunSteamCommand(string steamCmd, string steamCommand, string type, List<string> modIds = null)
+        public async Task RunSteamCommand(string steamCmd, string steamCommand, string type, List<string> modIds = null)
         {
             if (ReadyToUpdate())
             {

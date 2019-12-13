@@ -1,0 +1,15 @@
+{
+  "ServerUri": "https://sonarcloud.io/",
+  "Organization": {
+    "Key": "foxlicorp",
+    "Name": "FoxliCorp."
+  },
+  "ProjectKey": "FASTER_App",
+  "ProjectName": "Fox-s-Arma-Server-Tool-Extended-Rewrite",
+  "Profiles": {
+    "CSharp": {
+      "ProfileKey": "AW7Rfkrd6A1-kc3fchk2",
+      "ProfileTimestamp": "2019-12-04T16:19:48+01:00"
+    }
+  }
+}
