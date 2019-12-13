@@ -23,7 +23,7 @@ namespace FASTER.Models
             try {
                 string mods = string.Empty;
                 foreach (var modId in modIds)
-                    mods = mods + V + modIds.IndexOf(modId) + V1 + modId;
+                    mods = $"{mods}{V}{modIds.IndexOf(modId)}{V1}{modId}";
 
                 var response = ApiCall("https://api.steampowered.com/IPublishedFileService/GetDetails/v1?key=" + SteamApiKey + mods);
 

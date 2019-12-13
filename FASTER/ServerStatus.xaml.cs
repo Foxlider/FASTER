@@ -209,7 +209,7 @@ namespace FASTER
             set
             {
                 _isReading = value;
-                OnPropertyChanged("IsReading");
+                OnPropertyChanged(nameof(IsReading));
             }
         }
 
@@ -279,7 +279,7 @@ namespace FASTER
             set
             {
                 _axisMax = value;
-                OnPropertyChanged("AxisMax");
+                OnPropertyChanged(nameof(AxisMax));
             }
         }
 
@@ -289,7 +289,7 @@ namespace FASTER
             set
             {
                 _axisMin = value;
-                OnPropertyChanged("AxisMin");
+                OnPropertyChanged(nameof(AxisMin));
             }
         }
         
@@ -382,7 +382,7 @@ namespace FASTER
             set
             {
                 _isReading = value;
-                OnPropertyChanged("IsReading");
+                OnPropertyChanged(nameof(IsReading));
             }
         }
 
@@ -474,7 +474,7 @@ namespace FASTER
             set
             {
                 _axisMax = value;
-                OnPropertyChanged("AxisXMax");
+                OnPropertyChanged(nameof(AxisXMax));
             }
         }
 
@@ -484,7 +484,7 @@ namespace FASTER
             set
             {
                 _axisMin = value;
-                OnPropertyChanged("AxisXMin");
+                OnPropertyChanged(nameof(AxisXMin));
             }
         }
 
@@ -494,7 +494,7 @@ namespace FASTER
             set
             {
                 _axisYMax = value;
-                OnPropertyChanged("AxisYMax");
+                OnPropertyChanged(nameof(AxisYMax));
             }
         }
 
@@ -504,7 +504,7 @@ namespace FASTER
             set
             {
                 _axisYMin = value;
-                OnPropertyChanged("AxisYMin");
+                OnPropertyChanged(nameof(AxisYMin));
             }
         }
 

@@ -414,19 +414,24 @@ namespace FASTER
             if (IHeadlessClientEnabled.IsChecked ?? false)
             {
                 headlessClientLaunched = true;
-                for (int hc = 1; hc <= INoOfHeadlessClients.Value; hc++)
-                {
-                    string hcCommandLine = "-client -connect=127.0.0.1 -password=" + IPassword.Text + " -profiles=" + profilePath + " -nosound -port=" + IPort.Text;
-                    string hcMods = IHeadlessModsList.Items.Cast<CheckBox>()
-                                                     .Where(addon => addon.IsChecked ?? false)
-                                                     .Aggregate<CheckBox, string>(null, (current, addon) => current + (addon.Content + ";"));
+                LaunchHCs(profilePath);
+            }
+        }
 
-                    hcCommandLine = hcCommandLine + " \"-mod=" + hcMods + "\"";
-                    Clipboard.SetText(hcCommandLine);
-                    ProcessStartInfo hcStartInfo = new ProcessStartInfo(IExecutable.Text, hcCommandLine);
-                    Process          hcProcess   = new Process { StartInfo = hcStartInfo };
-                    hcProcess.Start();
-                }
+        private void LaunchHCs(string profilePath)
+        {
+            for (int hc = 1; hc <= INoOfHeadlessClients.Value; hc++)
+            {
+                string hcCommandLine = "-client -connect=127.0.0.1 -password=" + IPassword.Text + " -profiles=" + profilePath + " -nosound -port=" + IPort.Text;
+                string hcMods = IHeadlessModsList.Items.Cast<CheckBox>()
+                                                 .Where(addon => addon.IsChecked ?? false)
+                                                 .Aggregate<CheckBox, string>(null, (current, addon) => current + (addon.Content + ";"));
+
+                hcCommandLine = hcCommandLine + " \"-mod=" + hcMods + "\"";
+                Clipboard.SetText(hcCommandLine);
+                ProcessStartInfo hcStartInfo = new ProcessStartInfo(IExecutable.Text, hcCommandLine);
+                Process          hcProcess   = new Process { StartInfo = hcStartInfo };
+                hcProcess.Start();
             }
         }
 
@@ -580,33 +585,7 @@ namespace FASTER
 
         private void UpdateProfile()
         {
-            try
-            {
-                object profileName = Functions.SafeName(IDisplayName.Content.ToString());
-                string path = _profilesPath;
-                string profilePath = path
-                                   + (profileName + "\\");
-                if (!Directory.Exists(path))
-                { Directory.CreateDirectory(path); }
-
-                if (!Directory.Exists(profilePath))
-                { Directory.CreateDirectory(profilePath); }
-
-                if (!File.Exists(profilePath + (profileName + "_config.cfg")))
-                {
-                    var cfg = File.Create(profilePath + (profileName + "_config.cfg"));
-                    cfg.Close();
-                }
-
-                if (!File.Exists(profilePath + (profileName + "_basic.cfg")))
-                {
-                    var cfg = File.Create(profilePath + (profileName + "_basic.cfg"));
-                    cfg.Close();
-                }
-
-            }
-            catch (Exception)
-            { /*ignored*/}
+            CreateProfileFiles();
 
             NumberFormatInfo provider = CultureInfo.CurrentCulture.NumberFormat;
 
@@ -626,15 +605,6 @@ namespace FASTER
             profile.Loopback = ILoopback.IsChecked ?? false;
             profile.Upnp = IUpnp.IsChecked ?? false;
             profile.Netlog = INetlog.IsChecked ?? false;
-            // profile.AutoRestartEnabled = IAutoRestartEnabled.IsChecked
-            // profile.DailyRestartAEnabled = IDailyRestartAEnabled.IsChecked
-            // If IDailyRestartA.SelectedTime IsNot Nothing Then
-            //     profile.DailyRestartA = IDailyRestartA.SelectedTime
-            // End If
-            // profile.DailyRestartBEnabled = IDailyRestartBEnabled.IsChecked
-            // If IDailyRestartB.SelectedTime IsNot Nothing Then
-            //     profile.DailyRestartB = IDailyRestartB.SelectedTime
-            // End If
             profile.VotingEnabled = IVotingEnabled.IsChecked ?? false;
             profile.VotingMinPlayers = Convert.ToInt32(Convert.ToDouble(IVotingMinPlayers.Text), provider);
             profile.VotingThreshold = decimal.Parse(IVotingThreshold.Text, provider);
@@ -728,25 +698,55 @@ namespace FASTER
             foreach (CheckBox addon in IClientModsList.Items)
             {
                 if (!profile.ClientMods.Contains((string)addon.Content) && (addon.IsChecked ?? false))
-                { profile.ClientMods += addon.Content + ";"; }
+                { profile.ClientMods += $"{addon.Content};"; }
             }
             profile.HeadlessMods = "";
             foreach (CheckBox addon in IHeadlessModsList.Items)
             {
                 if (!profile.HeadlessMods.Contains((string)addon.Content) && (addon.IsChecked ?? false))
-                { profile.HeadlessMods += addon.Content + ";"; }
+                { profile.HeadlessMods += $"{addon.Content};"; }
             }
             profile.Missions = "";
             foreach (CheckBox addon in IMissionCheckList.Items)
             {
                 if (!profile.Missions.Contains((string)addon.Content) && (addon.IsChecked ?? false))
-                { profile.Missions += addon.Content + ";"; }
+                { profile.Missions += $"{addon.Content};"; }
             }
             profile.BattleEye = IBattleEye.IsChecked ?? false;
             profile.additionalParams = IAdditionalParams.Text;
             profile.enableAdditionalParams = IEnableAdditionalParams.IsChecked ?? false;
 
             Properties.Options.Default.Save();
+        }
+
+        private void CreateProfileFiles()
+        {
+            try
+            {
+                object profileName = Functions.SafeName(IDisplayName.Content.ToString());
+                string path        = _profilesPath;
+                string profilePath = path
+                                   + (profileName + "\\");
+                if (!Directory.Exists(path)) { Directory.CreateDirectory(path); }
+
+                if (!Directory.Exists(profilePath)) { Directory.CreateDirectory(profilePath); }
+
+                if (!File.Exists(profilePath + (profileName + "_config.cfg")))
+                {
+                    var cfg = File.Create(profilePath + (profileName + "_config.cfg"));
+                    cfg.Close();
+                }
+
+                if (!File.Exists(profilePath + (profileName + "_basic.cfg")))
+                {
+                    var cfg = File.Create(profilePath + (profileName + "_basic.cfg"));
+                    cfg.Close();
+                }
+            }
+            catch (Exception)
+            {
+                /*ignored*/
+            }
         }
 
         private void WriteConfigFiles(string profile)
@@ -1027,27 +1027,8 @@ namespace FASTER
             var checkedHcMods = new List<CheckBox>();
             var checkedClientMods = new List<CheckBox>();
             
-            if (profile != null)
-            { 
-                foreach (var mod in profile.ServerMods.Split(';'))
-                {
-                    if (checkedServerMods.FirstOrDefault(c => (string) c.Content == mod.Replace(";", "")) == null && !string.IsNullOrWhiteSpace(mod))
-                        checkedServerMods.Add(new CheckBox { Content = mod.Replace(";", ""), IsChecked = true });
-                }
-                IServerModsCount.Content = IServerModsList.Items.Cast<object>().Count(i => ((CheckBox) i).IsChecked == true);
-                foreach (var mod in profile.HeadlessMods.Split(';'))
-                {
-                    if (checkedHcMods.FirstOrDefault(c => (string)c.Content == mod.Replace(";", "")) == null && !string.IsNullOrWhiteSpace(mod))
-                        checkedHcMods.Add(new CheckBox { Content = mod.Replace(";",             ""), IsChecked = true });
-                }
-                IClientModsCount.Content = IClientModsList.Items.Cast<object>().Count(i => ((CheckBox) i).IsChecked == true);
-                foreach (var mod in profile.ClientMods.Split(';'))
-                {
-                    if (checkedClientMods.FirstOrDefault(c => (string)c.Content == mod.Replace(";", "")) == null && !string.IsNullOrWhiteSpace(mod))
-                        checkedClientMods.Add(new CheckBox { Content = mod.Replace(";",             ""), IsChecked = true });
-                }
-                IHeadlessModsCount.Content = IHeadlessModsList.Items.Cast<object>().Count(i => ((CheckBox) i).IsChecked == true);
-            }
+            if (profile != null) 
+            { SetUpModlists(profile, checkedServerMods, checkedHcMods, checkedClientMods); }
 
             IServerModsList.Items.Clear();
             IClientModsList.Items.Clear();
@@ -1099,7 +1080,26 @@ namespace FASTER
             else
             { MessageBox.Show("Please install game before continuing."); }
         }
-        
+
+        private void SetUpModlists(Models.ServerProfile profile, List<CheckBox> checkedServerMods, List<CheckBox> checkedHcMods, List<CheckBox> checkedClientMods)
+        {
+            foreach (var mod in profile.ServerMods.Split(';'))
+            {
+                if (checkedServerMods.FirstOrDefault(c => (string) c.Content == mod.Replace(";", "")) == null && !string.IsNullOrWhiteSpace(mod)) checkedServerMods.Add(new CheckBox { Content = mod.Replace(";", ""), IsChecked = true });
+            }
+            IServerModsCount.Content = IServerModsList.Items.Cast<object>().Count(i => ((CheckBox) i).IsChecked == true);
+            foreach (var mod in profile.HeadlessMods.Split(';'))
+            {
+                if (checkedHcMods.FirstOrDefault(c => (string) c.Content == mod.Replace(";", "")) == null && !string.IsNullOrWhiteSpace(mod)) checkedHcMods.Add(new CheckBox { Content = mod.Replace(";", ""), IsChecked = true });
+            }
+            IClientModsCount.Content = IClientModsList.Items.Cast<object>().Count(i => ((CheckBox) i).IsChecked == true);
+            foreach (var mod in profile.ClientMods.Split(';'))
+            {
+                if (checkedClientMods.FirstOrDefault(c => (string) c.Content == mod.Replace(";", "")) == null && !string.IsNullOrWhiteSpace(mod)) checkedClientMods.Add(new CheckBox { Content = mod.Replace(";", ""), IsChecked = true });
+            }
+            IHeadlessModsCount.Content = IHeadlessModsList.Items.Cast<object>().Count(i => ((CheckBox) i).IsChecked == true);
+        }
+
         private static void OpenLastFile(string path, string filter)
         {
             try
@@ -1170,39 +1170,7 @@ namespace FASTER
 
             if (start)
             {
-                var commandLine = "-port=" + IPort.Text;
-                commandLine = commandLine + " \"-config=" + configs + "_config.cfg\"";
-                commandLine = commandLine + " \"-cfg=" + configs + "_basic.cfg\"";
-                commandLine = commandLine + " \"-profiles=" + profilePath + "\"";
-                commandLine = commandLine + " -name=" + profileName;
-                commandLine = commandLine + " \"-mod=" + playerMods + "\"";
-                commandLine = commandLine + " \"-serverMod=" + serverMods + "\"";
-                if (IEnableHyperThreading.IsChecked ?? false)
-                { commandLine += " -enableHT"; }
-
-                if (IFilePatching.IsChecked ?? false)
-                { commandLine += " -filePatching"; }
-
-                if (INetlog.IsChecked ?? false)
-                { commandLine += " -netlog"; }
-
-                if (IRankingEnabled.IsChecked ?? false)
-                { commandLine = commandLine + " -ranking=Servers\\" + Functions.SafeName(IDisplayName.Content.ToString()) + "\\" + "ranking.log"; }
-
-                if (IPidEnabled.IsChecked ?? false)
-                { commandLine = commandLine + " -pid=Servers\\" + Functions.SafeName(IDisplayName.Content.ToString()) + "\\" + "pid.log"; }
-
-                if (IAutoInit.IsChecked ?? false)
-                { commandLine += " -autoInit"; }
-
-                if (!string.IsNullOrEmpty(IMaxMem.Text))
-                { commandLine = commandLine + " \"-maxMem=" + IMaxMem.Text + "\""; }
-
-                if (!string.IsNullOrEmpty(ICpuCount.Text))
-                { commandLine = commandLine + " \"-cpuCount=" + ICpuCount.Text + "\""; }
-
-                if (!string.IsNullOrEmpty(IExtraParams.Text))
-                { commandLine = commandLine + " " + IExtraParams.Text; }
+                var commandLine = SetCommandLine(configs, profilePath, profileName, playerMods, serverMods);
 
                 Clipboard.SetText(commandLine);
                 ProcessStartInfo sStartInfo = new ProcessStartInfo(IExecutable.Text, commandLine);
@@ -1210,22 +1178,50 @@ namespace FASTER
                 sProcess.Start();
                 if (!headlessClientLaunched && (IHeadlessClientEnabled.IsChecked ?? false))
                 {
-                    for (int hc = 1; hc <= INoOfHeadlessClients.Value; hc++)
-                    {
-                        string hcCommandLine = "-client -connect=127.0.0.1 -password=" + IPassword.Text + " -profiles=" + profilePath + " -nosound -port=" + IPort.Text;
-                        string hcMods = IHeadlessModsList.Items.Cast<CheckBox>()
-                                                         .Where(addon => addon.IsChecked ?? false)
-                                                         .Aggregate<CheckBox, string>(null, (current, addon) => current + (addon.Content + ";"));
-
-                        hcCommandLine = hcCommandLine + " \"-mod=" + hcMods + "\"";
-                        Clipboard.SetText(hcCommandLine);
-                        ProcessStartInfo hcStartInfo = new ProcessStartInfo(IExecutable.Text, hcCommandLine);
-                        Process hcProcess = new Process { StartInfo = hcStartInfo };
-                        hcProcess.Start();
-                    }
+                    LaunchHCs(profilePath);
                 }
                 headlessClientLaunched = false;
             }
+        }
+
+        private string SetCommandLine(string configs, string profilePath, string profileName, string playerMods, string serverMods)
+        {
+            var commandLine = "-port=" + IPort.Text;
+            commandLine = commandLine + " \"-config=" + configs       + "_config.cfg\"";
+            commandLine = commandLine + " \"-cfg=" + configs          + "_basic.cfg\"";
+            commandLine = commandLine + " \"-profiles=" + profilePath + "\"";
+            commandLine = commandLine + " -name="                     + profileName;
+            commandLine = commandLine + " \"-mod=" + playerMods       + "\"";
+            commandLine = commandLine + " \"-serverMod=" + serverMods + "\"";
+
+            if (IEnableHyperThreading.IsChecked ?? false) 
+            { commandLine += " -enableHT"; }
+
+            if (IFilePatching.IsChecked ?? false) 
+            { commandLine += " -filePatching"; }
+
+            if (INetlog.IsChecked ?? false) 
+            { commandLine += " -netlog"; }
+
+            if (IRankingEnabled.IsChecked ?? false) 
+            { commandLine = commandLine + " -ranking=Servers\\" + Functions.SafeName(IDisplayName.Content.ToString()) + "\\" + "ranking.log"; }
+
+            if (IPidEnabled.IsChecked ?? false) 
+            { commandLine = commandLine + " -pid=Servers\\" + Functions.SafeName(IDisplayName.Content.ToString()) + "\\" + "pid.log"; }
+
+            if (IAutoInit.IsChecked ?? false) 
+            { commandLine += " -autoInit"; }
+
+            if (!string.IsNullOrEmpty(IMaxMem.Text)) 
+            { commandLine = commandLine + " \"-maxMem=" + IMaxMem.Text + "\""; }
+
+            if (!string.IsNullOrEmpty(ICpuCount.Text)) 
+            { commandLine = commandLine + " \"-cpuCount=" + ICpuCount.Text + "\""; }
+
+            if (!string.IsNullOrEmpty(IExtraParams.Text)) 
+            { commandLine = commandLine + " " + IExtraParams.Text; }
+
+            return commandLine;
         }
 
         private bool ReadyToLaunch(string profile)

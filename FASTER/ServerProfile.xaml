@@ -215,8 +215,8 @@
 
                                 <Button Name="IOpenRpt" Content="{iconPacks:Material Kind=FolderOpen}" Click="IOpenRpt_Click" Grid.Row="1" Grid.Column="0" Height="30" Width="30" Padding="0" Margin="5" VerticalAlignment="Bottom" FontSize="10" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" ToolTip="Open Last RPT"/>
                                 <Button Name="IDeleteRpt" Content="{iconPacks:Material Kind=Delete}" Click="IDeleteRpt_Click" Grid.Row="1" Grid.Column="1" Height="30" Width="30" Padding="0" Margin="5" VerticalAlignment="Bottom" FontSize="10" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" ToolTip="Delete All RPTs"/>
-                                <ComboBox Grid.Row="1" Grid.Column="2" Name="IRptTimestamp" mah:TextBoxHelper.Watermark="TimeStamp" IsEditable="False"  Width="80" Margin="2">
-                                    <ComboBoxItem IsSelected="True">none</ComboBoxItem>
+                                <ComboBox Grid.Row="1" Grid.Column="2" Name="IRptTimestamp" mah:TextBoxHelper.Watermark="TimeStamp" mah:TextBoxHelper.UseFloatingWatermark="True" IsEditable="False" Width="80" Margin="2">
+                                    <ComboBoxItem  IsSelected="True">none</ComboBoxItem>
                                     <ComboBoxItem>short</ComboBoxItem>
                                     <ComboBoxItem>full</ComboBoxItem>
                                 </ComboBox>
