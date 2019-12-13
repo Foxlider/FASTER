@@ -139,7 +139,7 @@ namespace FASTER
                     var sModId = steamMod.Replace(Path.Combine(Properties.Options.Default.steamCMDPath, "steamapps", "workshop", "content", "107410"), "").Replace("\\", "");
                     var modId = int.Parse(sModId);
                     var info  = SteamMod.GetModInfo(modId);
-                    var temp  = currentMods?.Where(m => m.WorkshopId == modId);
+                    var temp  = currentMods?.FirstOrDefault(m => m.WorkshopId == modId);
                     if (info != null && temp == null)
                     {
                         var modName         = info.Item1;
