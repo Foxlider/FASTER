@@ -698,19 +698,19 @@ namespace FASTER
             foreach (CheckBox addon in IClientModsList.Items)
             {
                 if (!profile.ClientMods.Contains((string)addon.Content) && (addon.IsChecked ?? false))
-                { profile.ClientMods += addon.Content + ";"; }
+                { profile.ClientMods += $"{addon.Content};"; }
             }
             profile.HeadlessMods = "";
             foreach (CheckBox addon in IHeadlessModsList.Items)
             {
                 if (!profile.HeadlessMods.Contains((string)addon.Content) && (addon.IsChecked ?? false))
-                { profile.HeadlessMods += addon.Content + ";"; }
+                { profile.HeadlessMods += $"{addon.Content};"; }
             }
             profile.Missions = "";
             foreach (CheckBox addon in IMissionCheckList.Items)
             {
                 if (!profile.Missions.Contains((string)addon.Content) && (addon.IsChecked ?? false))
-                { profile.Missions += addon.Content + ";"; }
+                { profile.Missions += $"{addon.Content};"; }
             }
             profile.BattleEye = IBattleEye.IsChecked ?? false;
             profile.additionalParams = IAdditionalParams.Text;
