@@ -91,18 +91,6 @@ namespace FASTER
             if (e.Key == Key.Escape)
             { IResetDialog.IsOpen = false; }
         }
-        
-        //private void PrimaryColor_Click(object sender, RoutedEventArgs e)
-        //{
-        //    /*TODO : WORK ON THIS*/
-        //}
-
-
-        //private void AccentColor_Click(object sender, RoutedEventArgs e)
-        //{
-        //    /*TODO : AND THIS*/
-        //}
-
 
         private void IClearSettings_Click(object sender, RoutedEventArgs e)
         { IResetDialog.IsOpen = true; }
@@ -122,8 +110,6 @@ namespace FASTER
         
         private void Settings_Initialized(object sender, EventArgs e)
         {
-            //TODO : WHEN THEME HANDLING DONE GET VALUE FROM SETTINGS FILE
-            //IBaseThemeToggle.IsChecked = true;
             IModUpdatesOnLaunch.IsChecked = Properties.Options.Default?.checkForModUpdates;
             IAppUpdatesOnLaunch.IsChecked = Properties.Options.Default?.checkForAppUpdates;
             UpdateLocalModFolders();

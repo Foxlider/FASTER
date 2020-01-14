@@ -16,6 +16,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using Microsoft.AppCenter.Analytics;
 
 namespace FASTER
 {
@@ -180,7 +181,7 @@ namespace FASTER
 
             var steamCommand = "+login " + ISteamUserBox.Text + " " + ISteamPassBox.Password + " +force_install_dir \"" + IServerDirBox.Text + "\" +app_update " + branch + " validate +quit";
             
-            RunSteamCommand(steamCmd, steamCommand, "server");
+            _ = RunSteamCommand(steamCmd, steamCommand, "server");
         }
 
         private void ISteamCancelButton_Click(object sender, RoutedEventArgs e)
@@ -268,6 +269,7 @@ namespace FASTER
 
         private void ICreateProfileButton_Click(object sender, RoutedEventArgs e)
         {
+            Analytics.TrackEvent("Creating new profile");
             INewProfileName.Text = INewProfileName.Text.Trim();
             if (string.IsNullOrEmpty(INewProfileName.Text))
             {
@@ -560,7 +562,7 @@ namespace FASTER
             ISteamOutputBox.AppendText("\nUnzipping...");
             ZipFile.ExtractToDirectory(zip, steamPath);
             ISteamOutputBox.AppendText("\nInstalling...");
-            RunSteamCommand(steamPath + "\\steamcmd.exe", "+login anonymous +quit", "install");
+            _ = RunSteamCommand(steamPath + "\\steamcmd.exe", "+login anonymous +quit", "install");
 
             File.Delete(zip);
         }
@@ -570,97 +572,87 @@ namespace FASTER
         private static int threadSlept;
         private void UpdateTextBox(string text)
         {
-            if (_oProcess != null)
+            if (_oProcess == null) return;
+
+            Dispatcher?.Invoke(() =>
+            {
+                ISteamOutputBox.AppendText(text + "\n");
+                ISteamOutputBox.ScrollToEnd();
+            });
+
+            if (text.StartsWith("Logging in user") && text.Contains("to Steam"))
+            {
+                _runLog = true;
+                Thread t = new Thread(() =>
+                {
+                    threadSlept = 0;
+                    bool _localRunThread;
+                    do
+                    {
+                        Thread.Sleep(500);
+                        threadSlept += 500;
+                        lock (_runLogLock)
+                        { _localRunThread = _runLog; }
+                    }
+                    while (_localRunThread && threadSlept < 10000);
+                    if (_localRunThread)
+                    {
+                        Dispatcher?.Invoke(() =>
+                        {
+                            ISteamGuardDialog.IsOpen = true;
+                        });
+                    }
+                });
+                t.Start();
+            }
+
+            if (text.Contains("Logged in OK"))
+            {
+                lock (_runLogLock)
+                { _runLog = false; }
+            }
+
+            if (text.StartsWith("Retrying..."))
+            { threadSlept = 0; }
+
+            if (text.EndsWith("..."))
             {
                 Dispatcher?.Invoke(() =>
                 {
-                    ISteamOutputBox.AppendText(text + "\n");
-                    ISteamOutputBox.ScrollToEnd();
+                    ISteamOutputBox.AppendText(Environment.NewLine);
                 });
+            }
 
-                if (text.StartsWith("Logging in user") && text.Contains("to Steam"))
+            if (text.Contains("Update state"))
+            {
+                int    counter  = text.IndexOf(":", StringComparison.Ordinal);
+                string progress = text.Substring(counter + 2, 2);
+                int    progressValue;
+                if (progress.Contains(".")) { int.TryParse(progress.Substring(0, 1), out progressValue); }
+                else { int.TryParse(progress,                                        out progressValue); }
+
+                Dispatcher?.Invoke(() =>
                 {
-                    _runLog = true;
-                    Thread t = new Thread(() =>
-                    {
-                        threadSlept = 0;
-                        bool _localRunThread;
-                        do
-                        {
-                            Thread.Sleep(500);
-                            threadSlept += 500;
-                            lock (_runLogLock)
-                            { _localRunThread = _runLog; }
-                        }
-                        while (_localRunThread && threadSlept < 10000);
-                        if (_localRunThread)
-                        {
-                            Dispatcher?.Invoke(() =>
-                            {
-                                ISteamGuardDialog.IsOpen = true;
-                            });
-                        }
-                    });
-                    t.Start();
-                }
+                    ISteamProgressBar.IsIndeterminate = false;
+                    ISteamProgressBar.Value           = progressValue;
+                });
+            }
 
-                if (text.Contains("Logged in OK"))
+            if (text.Contains("Success"))
+            {
+                Dispatcher?.Invoke(() =>
                 {
-                    lock (_runLogLock)
-                    { _runLog = false; }
-                }
+                    ISteamProgressBar.Value = 100;
+                });
+            }
 
-                if (text.StartsWith("Retrying..."))
-                { threadSlept = 0; }
-
-                if (text.EndsWith("..."))
+            if (text.Contains("Timeout"))
+            {
+                Dispatcher?.Invoke(() =>
                 {
-                    Dispatcher?.Invoke(() =>
-                    {
-                        ISteamOutputBox.AppendText(Environment.NewLine);
-                    });
-                }
-
-                //if (text.Contains("Two-factor code") )
-                //{
-                //    Dispatcher?.Invoke(() =>
-                //    {
-                //        ISteamGuardDialog.IsOpen = true;
-                //    });
-                //}
-
-                if (text.Contains("Update state"))
-                {
-                    int    counter  = text.IndexOf(":", StringComparison.Ordinal);
-                    string progress = text.Substring(counter + 2, 2);
-                    int    progressValue;
-                    if (progress.Contains(".")) { int.TryParse(progress.Substring(0, 1), out progressValue); }
-                    else { int.TryParse(progress,                                        out progressValue); }
-
-                    Dispatcher?.Invoke(() =>
-                    {
-                        ISteamProgressBar.IsIndeterminate = false;
-                        ISteamProgressBar.Value = progressValue;
-                    });
-                }
-
-                if (text.Contains("Success"))
-                {
-                    Dispatcher?.Invoke(() =>
-                    {
-                        ISteamProgressBar.Value = 100;
-                    });
-                }
-
-                if (text.Contains("Timeout"))
-                {
-                    Dispatcher?.Invoke(() =>
-                    {
-                        Instance.IMessageDialog.IsOpen = true;
-                        Instance.IMessageDialogText.Text = "A Steam Download timed out. You may have to download again when task is complete.";
-                    });
-                }
-
+                    Instance.IMessageDialog.IsOpen   = true;
+                    Instance.IMessageDialogText.Text = "A Steam Download timed out. You may have to download again when task is complete.";
+                });
             }
         }
 
