@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -16,6 +17,7 @@ using LiveCharts;
 using LiveCharts.Configurations;
 
 using MahApps.Metro;
+using Microsoft.AppCenter.Analytics;
 
 namespace FASTER
 {
@@ -169,9 +171,9 @@ namespace FASTER
         { RefreshServers(); }
         #endregion
 
-
         private void RefreshServers()
         {
+            Analytics.TrackEvent("ServerStatus - Refreshed servers");
             processes.Clear();
             foreach (var proc in Process.GetProcesses().Where(p => p.ProcessName.Contains("arma3server")))
             {
@@ -184,6 +186,7 @@ namespace FASTER
         {
             if (GaugeExpander.IsExpanded)
             {
+                Analytics.TrackEvent("ServerStatus - Displayed server temp");
                 GaugeRow.Height = new GridLength(2, GridUnitType.Star);
                 DataRow.Height = new GridLength(0.5, GridUnitType.Star);
                 td.StartStop(true);

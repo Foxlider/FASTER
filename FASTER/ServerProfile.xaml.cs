@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using Microsoft.AppCenter.Analytics;
 using Path = System.IO.Path;
 // ReSharper disable SpecifyACultureInStringConversionExplicitly
 
@@ -210,6 +211,10 @@ namespace FASTER
         {
             if (ReadyToLaunch(IDisplayName.Content.ToString()))
             {
+                Analytics.TrackEvent("Server launched", new Dictionary<string, string> {
+                    { "DisplayName", IDisplayName.Content.ToString() },
+                    { "ServerName", IServerName.Text}
+                });
                 UpdateProfile();
                 LaunchServer();
             }
@@ -420,6 +425,9 @@ namespace FASTER
 
         private void LaunchHCs(string profilePath)
         {
+            Analytics.TrackEvent("HC Clients launched", new Dictionary<string, string> {
+                { "HC Number", INoOfHeadlessClients.Value.ToString()}
+            });
             for (int hc = 1; hc <= INoOfHeadlessClients.Value; hc++)
             {
                 string hcCommandLine = "-client -connect=127.0.0.1 -password=" + IPassword.Text + " -profiles=" + profilePath + " -nosound -port=" + IPort.Text;
