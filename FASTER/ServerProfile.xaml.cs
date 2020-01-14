@@ -341,17 +341,6 @@ namespace FASTER
                         IVotingThreshold.IsEnabled  = false;
                         IVotingEnabled.ToolTip      = "Enable Voting";
                     }
-
-                    // Case "IAutoRestartEnabled"
-                    //     If IAutoRestartEnabled.IsChecked Then
-                    //         IDailyRestartAEnabled.IsEnabled = True
-                    //         IDailyRestartBEnabled.IsEnabled = True
-                    //         IAutoRestartEnabled.ToolTip = "Disable Auto Restart"
-                    //     Else
-                    //         IDailyRestartAEnabled.IsEnabled = False
-                    //         IDailyRestartBEnabled.IsEnabled = False
-                    //         IAutoRestartEnabled.ToolTip = "Enable Auto Restart"
-                    //     End If
                     break;
                 case "IServerConsoleLogEnabled":
                     if (IServerConsoleLogEnabled.IsChecked ?? false)
@@ -393,21 +382,10 @@ namespace FASTER
 
                     break;
                 case "IRequiredBuildEnabled":
-                    if (IRequiredBuildEnabled.IsChecked ?? false) { IRequiredBuild.IsEnabled = true; }
-                    else { IRequiredBuild.IsEnabled                                          = false; }
-
-                    // Case "IDailyRestartAEnabled"
-                    //     If IDailyRestartAEnabled.IsChecked Then
-                    //         IDailyRestartA.IsEnabled = True
-                    //     Else
-                    //         IDailyRestartA.IsEnabled = False
-                    //     End If
-                    // Case "IDailyRestartBEnabled"
-                    //     If IDailyRestartBEnabled.IsChecked Then
-                    //         IDailyRestartB.IsEnabled = True
-                    //     Else
-                    //         IDailyRestartB.IsEnabled = False
-                    //     End If
+                    if (IRequiredBuildEnabled.IsChecked ?? false) 
+                    { IRequiredBuild.IsEnabled = true; }
+                    else 
+                    { IRequiredBuild.IsEnabled = false; }
                     break;
             }
         }
@@ -619,8 +597,6 @@ namespace FASTER
             profile.AllowFilePatching = Convert.ToInt32(Convert.ToDouble(IAllowFilePatching.Text), provider);
             profile.VerifySignatures = Convert.ToInt32(Convert.ToDouble(IVerifySignatures.Text), provider);
             profile.RequiredBuildEnabled = IRequiredBuildEnabled.IsChecked ?? false;
-            //TODO Check this
-            //profile.RequiredBuild = IRequiredBuild.Text;
             profile.KickDuplicates = IKickDuplicates.IsChecked ?? false;
             profile.VonEnabled = IVonEnabled.IsChecked ?? false;
             profile.CodecQuality = Convert.ToInt32(Convert.ToDouble(ICodecQuality.Value.ToString(provider), provider), provider);
