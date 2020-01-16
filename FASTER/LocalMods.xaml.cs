@@ -57,11 +57,9 @@ namespace FASTER
 
             localMods.AddRange(serverPathMods);
 
-            if (localMods.Count > 0)
-            {
-                foreach (var localMod in localMods)
-                    ILocalModsView.Items.Add(localMod);
-            }
+            if (localMods.Count <= 0) return;
+            foreach (var localMod in localMods)
+                ILocalModsView.Items.Add(localMod);
         }
 
 
@@ -70,8 +68,14 @@ namespace FASTER
             var localMod = (LocalMod)((Button)e.Source).DataContext;
 
             if (Directory.Exists(localMod.Path))
-                Directory.Delete(localMod.Path, true);
-
+            {
+                try { Directory.Delete(localMod.Path, true); }
+                catch
+                {
+                    MainWindow.Instance.IFlyoutMessage.Content = $"Could not delete mod \"{localMod.Name}\"";
+                    MainWindow.Instance.IFlyout.IsOpen         = true;
+                }
+            }
             UpdateModsView();
         }
 

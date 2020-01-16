@@ -67,7 +67,6 @@ namespace FASTER
             IProgressInfo.Visibility        = Visibility.Visible;
         }
 
-
         private void ICheckForUpdates_Click(object sender, RoutedEventArgs e)
         { CheckForUpdates(); }
 
@@ -171,7 +170,7 @@ namespace FASTER
             UpdateModsView();
         }
 
-        private async Task ImportLauncherFile()
+        private async void ImportLauncherFile()
         {
             IUpdateProgress.IsIndeterminate = true;
             IModView.IsEnabled              = true;
@@ -259,7 +258,7 @@ namespace FASTER
 
                     string steamCmd = MainWindow.Instance.ISteamDirBox.Text + @"\steamcmd.exe";
                     steamCommand += " validate +quit";
-                    MainWindow.Instance.RunSteamCommand(steamCmd, steamCommand, "addon", modsToUpdate);
+                    _ = MainWindow.Instance.RunSteamCommand(steamCmd, steamCommand, "addon", modsToUpdate);
                 }
                 else
                 {
@@ -322,7 +321,7 @@ namespace FASTER
                         modId.ToString()
                     };
 
-                    MainWindow.Instance.RunSteamCommand(steamCmd, steamCommand, "addon", modIDs);
+                    _ = MainWindow.Instance.RunSteamCommand(steamCmd, steamCommand, "addon", modIDs);
                 }
             }
             else
@@ -332,7 +331,7 @@ namespace FASTER
             }
         }
 
-        private async Task CheckForUpdates()
+        private async void CheckForUpdates()
         {
             if (Properties.Options.Default.steamMods.SteamMods.Count > 0)
             {
@@ -342,9 +341,7 @@ namespace FASTER
                 IProgressInfo.Content           = "Checking for updates...";
 
                 List<Task> tasks = new List<Task>
-                {
-                    Task.Run(SteamMod.UpdateInfoFromSteam)
-                };
+                { Task.Run(SteamMod.UpdateInfoFromSteam) };
 
                 await Task.WhenAll(tasks);
 
@@ -376,10 +373,24 @@ namespace FASTER
             var steamMod = (SteamMod)((Button)e.Source).DataContext;
 
             if (Directory.Exists(Properties.Options.Default.steamCMDPath + @"\steamapps\workshop\content\107410\" + steamMod.WorkshopId))
-            { Directory.Delete(Properties.Options.Default.steamCMDPath + @"\steamapps\workshop\content\107410\" + steamMod.WorkshopId, true); }
+            { 
+                try{ Directory.Delete(Properties.Options.Default.steamCMDPath + @"\steamapps\workshop\content\107410\" + steamMod.WorkshopId, true); }
+                catch
+                {
+                    MainWindow.Instance.IFlyoutMessage.Content = $"Could not delete mod \"{steamMod.Name}\"";
+                    MainWindow.Instance.IFlyout.IsOpen         = true;
+                }
+            }
 
             if (Directory.Exists(Properties.Options.Default.serverPath + @"\@" + Functions.SafeName(steamMod.Name)))
-            { Directory.Delete(Properties.Options.Default.serverPath + @"\@" + Functions.SafeName(steamMod.Name), true); }
+            {
+                try { Directory.Delete(Properties.Options.Default.serverPath + @"\@" + Functions.SafeName(steamMod.Name), true); }
+                catch
+                {
+                    MainWindow.Instance.IFlyoutMessage.Content = $"Could not delete mod \"{steamMod.Name}\"";
+                    MainWindow.Instance.IFlyout.IsOpen = true;
+                }
+            }
 
             SteamMod.DeleteSteamMod(steamMod.WorkshopId);
             UpdateModsView();
