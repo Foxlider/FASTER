@@ -3,6 +3,7 @@ using FASTER.Models;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows;
+using Microsoft.AppCenter.Analytics;
 
 namespace FASTER
 {
@@ -38,7 +39,12 @@ namespace FASTER
             
             if (Properties.Options.Default.firstRun) return;
             try
-            { MainWindow.Instance.Show(); }
+            {
+                Analytics.TrackEvent("Setup - Launching", new Dictionary<string, string> {
+                    { "Name", ISteamUserBox.Text }
+                });
+                MainWindow.Instance.Show();
+            }
             catch (Exception e)
             {
                 using EventLog eventLog = new EventLog("Application")

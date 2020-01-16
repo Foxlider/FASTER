@@ -15,3 +15,5 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Major Code Smell", "S3010:Static fields should not be updated in constructors", Justification = "Needed", Scope = "member", Target = "~M:FASTER.MainWindow.#ctor")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Wontfix : instance data is used")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2235:Mark all non-serializable fields", Justification = "Serialization handled manually")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Blocker Bug", "S2930:\"IDisposables\" should be disposed", Justification = "False Positive : client is in using statement", Scope = "member", Target = "~M:FASTER.MainWindow.InstallSteam")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Major Bug", "S3168:\"async\" methods should not return \"void\"", Justification = "Call is not awaited. Task is not used")]

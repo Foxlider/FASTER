@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml.Serialization;
+using Microsoft.AppCenter.Analytics;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
@@ -124,6 +125,10 @@ namespace FASTER.Models
 
         public static void AddSteamMod(string modUrl, bool multiple = false)
         {
+            Analytics.TrackEvent("SteamMod - Adding Mod", new Dictionary<string, string> {
+                { "Name", MainWindow.Instance.ISteamUserBox.Text },
+                { "ModUrl", modUrl },
+            });
             int modId = 0;
             var invalid = false;
 
@@ -218,7 +223,7 @@ namespace FASTER.Models
             if (Properties.Options.Default.steamMods.SteamMods.Count <= 0) return;
             var currentMods = Properties.Options.Default.steamMods.SteamMods;
             var failnum     = 0;
-            foreach (var steamMod in Properties.Options.Default.steamMods.SteamMods)
+            foreach (var steamMod in currentMods)
             {
                 if (steamMod.PrivateMod) continue;
                 var modInfo = GetModInfo(steamMod.WorkshopId);
@@ -232,8 +237,9 @@ namespace FASTER.Models
                     updateMod.SteamLastUpdated = modInfo.Item3;
 
                     if (updateMod.SteamLastUpdated > updateMod.LocalLastUpdated && updateMod.Status != "Download Not Complete")
-                        updateMod.Status                                                   = "Update Required";
-                    else if (updateMod.Status != "Download Not Complete") updateMod.Status = "Up to Date";
+                    { updateMod.Status = "Update Required";}
+                    else if (updateMod.Status != "Download Not Complete") 
+                    { updateMod.Status = "Up to Date"; }
                 }
                 else
                     failnum++;

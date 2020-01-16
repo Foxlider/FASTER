@@ -142,21 +142,18 @@ namespace FASTER
             }
             UpdateLocalModFolders();
         }
-
-
+        
         private void IModUpdatesOnLaunch_Checked(object sender, RoutedEventArgs e)
         {
             Properties.Options.Default.checkForModUpdates = IModUpdatesOnLaunch.IsChecked ?? true;
             Properties.Options.Default.Save();
         }
-
-
+        
         private void IAppUpdatesOnLaunch_Checked(object sender, RoutedEventArgs e)
         {
             Properties.Options.Default.checkForAppUpdates = IAppUpdatesOnLaunch.IsChecked ?? true;
             Properties.Options.Default.Save();
         }
-
 
         private void UpdateLocalModFolders()
         {
