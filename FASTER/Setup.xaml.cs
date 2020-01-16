@@ -2,6 +2,7 @@
 using FASTER.Models;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Reflection;
 using System.Windows;
 using Microsoft.AppCenter.Analytics;
 
@@ -40,8 +41,16 @@ namespace FASTER
             if (Properties.Options.Default.firstRun) return;
             try
             {
+                string rev = $"{(char)(Assembly.GetExecutingAssembly().GetName().Version.Build + 96)}";
+#if DEBUG
+                rev += "-DEV";
+#endif
+                MainWindow.Instance.Version = $"{Assembly.GetExecutingAssembly().GetName().Version.Major}."
+                               + $"{Assembly.GetExecutingAssembly().GetName().Version.Minor}"
+                               + $"{rev}";
                 Analytics.TrackEvent("Setup - Launching", new Dictionary<string, string> {
-                    { "Name", ISteamUserBox.Text }
+                    { "Name", MainWindow.Instance.ISteamUserBox.Text },
+                    { "Version", MainWindow.Instance.Version }
                 });
                 MainWindow.Instance.Show();
             }

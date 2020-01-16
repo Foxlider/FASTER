@@ -29,6 +29,7 @@ namespace FASTER
         internal bool    InstallSteamCmd { get; set; } = false;
         private bool    _cancelled;
         private Process _oProcess = new Process();
+        internal string Version;
 
         public MainWindow()
         {
