@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -167,12 +168,16 @@ namespace FASTER
         }
 
         private void IRescanAll_Click(object sender, RoutedEventArgs e)
-        { RefreshServers(); }
+        {
+            Analytics.TrackEvent("ServerStatus - Rescanning Servers", new Dictionary<string, string> {
+                { "Name", MainWindow.Instance.ISteamUserBox.Text }
+            });
+            RefreshServers();
+        }
         #endregion
 
         private void RefreshServers()
         {
-            Analytics.TrackEvent("ServerStatus - Refreshed servers");
             processes.Clear();
             foreach (var proc in Process.GetProcesses().Where(p => p.ProcessName.Contains("arma3server")))
             {
@@ -239,7 +244,7 @@ namespace FASTER
             //Process Data
             ProcessId   = p.Id;
             ProcessName = p.ProcessName;
-            ProcessCmd  = p.ProcessName; //TODO use real command line parameters 
+            ProcessCmd  = p.ProcessName;
             proc        = p;
             proc.EnableRaisingEvents = true;
             proc.OutputDataReceived += DataToString;

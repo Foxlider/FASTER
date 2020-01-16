@@ -2,6 +2,7 @@
 using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -162,13 +163,13 @@ namespace FASTER
             Loaded += ServerProfile_Loaded;
             Initialized += ServerProfile_Initialized;
             
-            ToggleUi(IHeadlessClientEnabled);
-            ToggleUi(IVonEnabled);
-            ToggleUi(IVotingEnabled);
-            ToggleUi(IServerConsoleLogEnabled);
-            ToggleUi(IPidEnabled);
-            ToggleUi(IRankingEnabled);
-            ToggleUi(IManualMissions);
+            ToggleUi_HeadleddClientEnabled(IHeadlessClientEnabled);
+            ToggleUi_VonEnabled(IVonEnabled);
+            ToggleUi_VotingEnabled(IVotingEnabled);
+            ToggleUi_ServerConsoleLogEnabled(IServerConsoleLogEnabled);
+            ToggleUi_PidEnabled(IPidEnabled);
+            ToggleUi_RankingEnabled(IRankingEnabled);
+            ToggleUi_ManualMisisons(IManualMissions);
 
         }
 
@@ -251,143 +252,156 @@ namespace FASTER
             IConfirmDeleteBtn.Click -= DeleteProfile;
         }
 
-        private void ToggleUi(object uiElement, RoutedEventArgs e = null)
+        private void ToggleUi_ManualMisisons(object uiElement, RoutedEventArgs e = null)
         {
-            switch ((uiElement as Control)?.Name)
+            if (IManualMissions.IsChecked ?? false)
             {
-                case "IManualMissions":
-                    if (IManualMissions.IsChecked ?? false)
-                    {
-                        IMissionAutoGrid.Visibility   = Visibility.Collapsed;
-                        IMissionManualGrid.Visibility = Visibility.Visible;
-                    }
-                    else
-                    {
-                        IMissionAutoGrid.Visibility   = Visibility.Visible;
-                        IMissionManualGrid.Visibility = Visibility.Collapsed;
-                    }
-
-                    break;
-                case "IMaxDesyncEnabled":
-                    if (IMaxDesyncEnabled.IsChecked ?? false) { IMaxDesync.IsEnabled = true; }
-                    else { IMaxDesync.IsEnabled                                      = false; }
-
-                    break;
-                case "IMaxPingEnabled":
-                    if (IMaxPingEnabled.IsChecked ?? false) { IMaxPing.IsEnabled = true; }
-                    else { IMaxPing.IsEnabled                                    = false; }
-
-                    break;
-                case "IKickOnSlowNetworkEnabled":
-                    if (IKickOnSlowNetworkEnabled.IsChecked ?? false) { IKickOnSlowNetwork.IsEnabled = true; }
-                    else { IKickOnSlowNetwork.IsEnabled                                              = false; }
-
-                    break;
-                case "IDisconnectTimeOutEnabled":
-                    if (IDisconnectTimeOutEnabled.IsChecked ?? false) { IDisconnectTimeOut.IsEnabled = true; }
-                    else { IDisconnectTimeOut.IsEnabled                                              = false; }
-
-                    break;
-                case "IMaxPacketLossEnabled":
-                    if (IMaxPacketLossEnabled.IsChecked ?? false) { IMaxPacketLoss.IsEnabled = true; }
-                    else { IMaxPacketLoss.IsEnabled                                          = false; }
-
-                    break;
-                case "IPersistentBattlefield":
-                    if (IPersistentBattlefield.IsChecked ?? false) { IAutoInit.IsEnabled = true; }
-                    else { IAutoInit.IsEnabled                                           = false; }
-
-                    break;
-                case "IHeadlessClientEnabled":
-                    if (IHeadlessClientEnabled.IsChecked ?? false)
-                    {
-                        ILaunchHCs.Visibility          = Visibility.Visible;
-                        IHcIpGroup.IsEnabled           = true;
-                        IHcSliderGroup.IsEnabled       = true;
-                        IHeadlessClientEnabled.ToolTip = "Disable HC";
-                    }
-                    else
-                    {
-                        ILaunchHCs.Visibility          = Visibility.Collapsed;
-                        IHcIpGroup.IsEnabled           = false;
-                        IHcSliderGroup.IsEnabled       = false;
-                        IHeadlessClientEnabled.ToolTip = "Enable HC";
-                    }
-
-                    break;
-                case "IVonEnabled":
-                    if (IVonEnabled.IsChecked ?? false)
-                    {
-                        IVonGroup.IsEnabled = true;
-                        IVonEnabled.ToolTip = "Disable VON";
-                    }
-                    else
-                    {
-                        IVonGroup.IsEnabled = false;
-                        IVonEnabled.ToolTip = "Enable VON";
-                    }
-
-                    break;
-                case "IVotingEnabled":
-                    if (IVotingEnabled.IsChecked ?? false)
-                    {
-                        IVotingMinPlayers.IsEnabled = true;
-                        IVotingThreshold.IsEnabled  = true;
-                        IVotingEnabled.ToolTip      = "Disable Voting";
-                    }
-                    else
-                    {
-                        IVotingMinPlayers.IsEnabled = false;
-                        IVotingThreshold.IsEnabled  = false;
-                        IVotingEnabled.ToolTip      = "Enable Voting";
-                    }
-                    break;
-                case "IServerConsoleLogEnabled":
-                    if (IServerConsoleLogEnabled.IsChecked ?? false)
-                    {
-                        IServerConsoleLog.IsEnabled = true;
-                        IConsoleLogButton.IsEnabled = true;
-                    }
-                    else
-                    {
-                        IServerConsoleLog.IsEnabled = false;
-                        IConsoleLogButton.IsEnabled = false;
-                    }
-
-                    break;
-                case "IPidEnabled":
-                    if (IPidEnabled.IsChecked ?? false)
-                    {
-                        IPidLog.IsEnabled    = true;
-                        IPidButton.IsEnabled = true;
-                    }
-                    else
-                    {
-                        IPidLog.IsEnabled    = false;
-                        IPidButton.IsEnabled = false;
-                    }
-
-                    break;
-                case "IRankingEnabled":
-                    if (IRankingEnabled.IsChecked ?? false)
-                    {
-                        IRankingLog.IsEnabled    = true;
-                        IRankingButton.IsEnabled = true;
-                    }
-                    else
-                    {
-                        IRankingLog.IsEnabled    = false;
-                        IRankingButton.IsEnabled = false;
-                    }
-
-                    break;
-                case "IRequiredBuildEnabled":
-                    if (IRequiredBuildEnabled.IsChecked ?? false) 
-                    { IRequiredBuild.IsEnabled = true; }
-                    else 
-                    { IRequiredBuild.IsEnabled = false; }
-                    break;
+                IMissionAutoGrid.Visibility   = Visibility.Collapsed;
+                IMissionManualGrid.Visibility = Visibility.Visible;
             }
+            else
+            {
+                IMissionAutoGrid.Visibility   = Visibility.Visible;
+                IMissionManualGrid.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void ToggleUi_MaxDesyncEnabled(object uiElement, RoutedEventArgs e = null)
+        {
+            if (IMaxDesyncEnabled.IsChecked ?? false) 
+            { IMaxDesync.IsEnabled = true; }
+            else 
+            { IMaxDesync.IsEnabled = false; }
+        }
+
+        private void ToggleUi_MaxPingEnabled(object uiElement, RoutedEventArgs e = null)
+        {
+            if (IMaxPingEnabled.IsChecked ?? false) 
+            { IMaxPing.IsEnabled = true; }
+            else 
+            { IMaxPing.IsEnabled = false; }
+        }
+
+        private void ToggleUi_KickOnSlowNetworkEnabled(object uiElement, RoutedEventArgs e = null)
+        {
+            if (IKickOnSlowNetworkEnabled.IsChecked ?? false) { IKickOnSlowNetwork.IsEnabled = true; }
+            else { IKickOnSlowNetwork.IsEnabled                                              = false; }
+        }
+
+        private void ToggleUi_DisconnectTimeOutEnabled(object uiElement, RoutedEventArgs e = null)
+        {
+            if (IDisconnectTimeOutEnabled.IsChecked ?? false) { IDisconnectTimeOut.IsEnabled = true; }
+            else { IDisconnectTimeOut.IsEnabled                                              = false; }
+        }
+
+        private void ToggleUi_MaxPacketLoss(object uiElement, RoutedEventArgs e = null)
+        {
+            if (IMaxPacketLossEnabled.IsChecked ?? false) { IMaxPacketLoss.IsEnabled = true; }
+            else { IMaxPacketLoss.IsEnabled                                          = false; }
+        }
+
+        private void ToggleUi_PersistantBattlefield(object uiElement, RoutedEventArgs e = null)
+        {
+            if (IPersistentBattlefield.IsChecked ?? false) { IAutoInit.IsEnabled = true; }
+            else { IAutoInit.IsEnabled                                           = false; }
+        }
+
+        private void ToggleUi_HeadleddClientEnabled(object uiElement, RoutedEventArgs e = null)
+        {
+            if (IHeadlessClientEnabled.IsChecked ?? false)
+            {
+                ILaunchHCs.Visibility          = Visibility.Visible;
+                IHcIpGroup.IsEnabled           = true;
+                IHcSliderGroup.IsEnabled       = true;
+                IHeadlessClientEnabled.ToolTip = "Disable HC";
+            }
+            else
+            {
+                ILaunchHCs.Visibility          = Visibility.Collapsed;
+                IHcIpGroup.IsEnabled           = false;
+                IHcSliderGroup.IsEnabled       = false;
+                IHeadlessClientEnabled.ToolTip = "Enable HC";
+            }
+        }
+
+        private void ToggleUi_VonEnabled(object uiElement, RoutedEventArgs e = null)
+        {
+            if (IVonEnabled.IsChecked ?? false)
+            {
+                IVonGroup.IsEnabled = true;
+                IVonEnabled.ToolTip = "Disable VON";
+            }
+            else
+            {
+                IVonGroup.IsEnabled = false;
+                IVonEnabled.ToolTip = "Enable VON";
+            }
+        }
+
+        private void ToggleUi_VotingEnabled(object uiElement, RoutedEventArgs e = null)
+        {
+            if (IVotingEnabled.IsChecked ?? false)
+            {
+                IVotingMinPlayers.IsEnabled = true;
+                IVotingThreshold.IsEnabled  = true;
+                IVotingEnabled.ToolTip      = "Disable Voting";
+            }
+            else
+            {
+                IVotingMinPlayers.IsEnabled = false;
+                IVotingThreshold.IsEnabled  = false;
+                IVotingEnabled.ToolTip      = "Enable Voting";
+            }
+        }
+
+        private void ToggleUi_ServerConsoleLogEnabled(object uiElement, RoutedEventArgs e = null)
+        {
+            if (IServerConsoleLogEnabled.IsChecked ?? false)
+            {
+                IServerConsoleLog.IsEnabled = true;
+                IConsoleLogButton.IsEnabled = true;
+            }
+            else
+            {
+                IServerConsoleLog.IsEnabled = false;
+                IConsoleLogButton.IsEnabled = false;
+            }
+        }
+
+        private void ToggleUi_PidEnabled(object uiElement, RoutedEventArgs e = null)
+        {
+            if (IPidEnabled.IsChecked ?? false)
+            {
+                IPidLog.IsEnabled    = true;
+                IPidButton.IsEnabled = true;
+            }
+            else
+            {
+                IPidLog.IsEnabled    = false;
+                IPidButton.IsEnabled = false;
+            }
+        }
+
+        private void ToggleUi_RankingEnabled(object uiElement, RoutedEventArgs e = null)
+        {
+            if (IRankingEnabled.IsChecked ?? false)
+            {
+                IRankingLog.IsEnabled    = true;
+                IRankingButton.IsEnabled = true;
+            }
+            else
+            {
+                IRankingLog.IsEnabled    = false;
+                IRankingButton.IsEnabled = false;
+            }
+        }
+
+        private void ToggleUi_RequiredBuildEnabled(object uiElement, RoutedEventArgs e = null)
+        {
+            if (IRequiredBuildEnabled.IsChecked ?? false)
+            { IRequiredBuild.IsEnabled = true; }
+            else
+            { IRequiredBuild.IsEnabled = false; }
         }
 
         private void ILaunchHCs_Click(object sender, RoutedEventArgs e)
@@ -745,144 +759,7 @@ namespace FASTER
             Directory.CreateDirectory(Path.Combine(profilePath, "Servers", profile, "users", profile));
 
             #region CONFIG FILE CREATION
-            var von = !IVonEnabled.IsChecked ?? true;
-            List<string> configLines = new List<string>
-            {
-                $"passwordAdmin = \"{IAdminPassword.Text}\";",
-                $"password = \"{IPassword.Text}\";",
-                $"serverCommandPassword = \"{IServerCommandPassword.Text}\";",
-                $"hostname = \"{IServerName.Text}\";",
-                $"maxPlayers = {IMaxPlayers.Text};",
-                $"kickduplicate = {(IKickDuplicates.IsChecked != null && (bool) IKickDuplicates.IsChecked ? "1" : "0")};",
-                $"upnp = {(IUpnp.IsChecked                    != null && (bool) IUpnp.IsChecked ? "1" : "0")};",
-                $"allowedFilePatching = {IAllowFilePatching.Text};",
-                $"verifySignatures = {IVerifySignatures.Text};",
-                $"disableVoN = {(von ? "1" : "0")};",
-                $"vonCodecQuality = {(int) ICodecQuality.Value};",
-                "vonCodec = 1;",
-                $"BattlEye = {(IBattleEye.IsChecked               != null && (bool) IBattleEye.IsChecked ? "1" : "0")};",
-                $"persistent = {(IPersistentBattlefield.IsChecked != null && (bool) IPersistentBattlefield.IsChecked ? "1" : "0")};",
-                "motd[]= {"
-            };
-
-
-            var lines = Functions.GetLinesCollectionFromTextBox(IMotd);
-            foreach (var line in lines)
-            {
-                _replace = line;
-                _replace = _replace.Replace("\r", "").Replace("\n", "");
-
-                configLines.Add(lines.IndexOf(_replace) == lines.Count - 1 ? $"\t\"{_replace}\"" : $"\t\"{_replace}\",");
-            }
-
-            configLines.Add("};");
-            configLines.Add($"motdInterval = {IMotdDelay.Text};");
-            var headless = IHeadlessIps.Text.Replace(",", "\",\"");
-            var local    = ILocalClients.Text.Replace(",", "\",\"");
-
-            if (IHeadlessClientEnabled.IsChecked ?? false)
-            {
-                configLines.Add("headlessClients[] = {\"" + headless + "\"};");
-                configLines.Add("localClient[] = {\"" + local        + "\"};");
-            }
-
-            if (IVotingEnabled.IsChecked ?? false)
-            {
-                configLines.Add($"voteMissionPlayers = {IVotingMinPlayers.Text};");
-                configLines.Add($"voteThreshold = {double.Parse(IVotingThreshold.Text)/100.0};");
-            }
-            else
-            {
-                configLines.Add("allowedVoteCmds[] = {};");
-                configLines.Add("allowedVotedAdminCmds[] = {};");
-                configLines.Add("voteMissionPlayers = 1;");
-                configLines.Add("voteThreshold = 0;");
-            }
-
-            if (ILoopback.IsChecked ?? false) { configLines.Add("loopback = True;"); }
-
-            if (IDisconnectTimeOutEnabled.IsChecked ?? false) { configLines.Add($"disconnectTimeout = {IDisconnectTimeOut.Text};"); }
-
-            if (IMaxDesyncEnabled.IsChecked ?? false) { configLines.Add($"maxdesync = {IMaxDesync.Text};"); }
-
-            if (IMaxPingEnabled.IsChecked ?? false) { configLines.Add($"maxping = {IMaxPing.Text};"); }
-
-            if (IMaxPacketLossEnabled.IsChecked ?? false) { configLines.Add($"maxpacketloss = {IMaxPacketLoss.Text};"); }
-
-            if (IKickOnSlowNetworkEnabled.IsChecked ?? false)
-            {
-                switch (IKickOnSlowNetwork.Text)
-                {
-                    case "Log":
-                        configLines.Add("kickClientsOnSlowNetwork[] = { 0, 0, 0, 0 };");
-                        break;
-                    case "Log & Kick":
-                        configLines.Add("kickClientsOnSlowNetwork[] = { 1, 1, 1, 1 };");
-                        break;
-                }
-            }
-
-            if (IServerConsoleLogEnabled.IsChecked ?? false) { configLines.Add("logFile = \"server_console.log\";"); }
-
-            if (IRequiredBuildEnabled.IsChecked ?? false) { configLines.Add($"requiredBuild = {IRequiredBuild.Text};"); }
-
-            configLines.Add($"doubleIdDetected = \"{IDoubleIdDetected.Text}\";");
-            configLines.Add($"onUserConnected = \"{IOnUserConnected.Text}\";");
-            configLines.Add($"onUserDisconnected = \"{IOnUserDisconnected.Text}\";");
-            configLines.Add($"onHackedData = \"{IOnHackedData.Text}\";");
-            configLines.Add($"onDifferentData = \"{IOnDifferentData.Text}\";");
-            configLines.Add($"onUnsignedData = \"{IOnUnsignedData.Text}\";");
-            configLines.Add($"regularCheck = \"{IRegularCheck.Text}\";");
-            configLines.Add("admins[]= {");
-            var admins = IAdminUids.Text.Split('\n');
-            foreach (var line in admins)
-            {
-                _replace = line;
-                _replace = _replace.Replace("\r", "").Replace("\n", "");
-                configLines.Add(lines.IndexOf(_replace) == lines.Count - 1 ? $"\t\"{_replace}\"" : $"\t\"{_replace}\",");
-            }
-
-            configLines.Add("};");
-            configLines.Add($"timeStampFormat = \"{IRptTimestamp.Text}\";");
-            if (IManualMissions.IsChecked ?? false)
-            {
-                var missionLines = Functions.GetLinesCollectionFromTextBox(IMissionConfig);
-                foreach (var line in missionLines)
-                { configLines.Add(line); }
-            }
-            else
-            {
-                configLines.Add("class Missions {");
-                var difficulty = IDifficultyPreset.Text;
-                if (string.IsNullOrEmpty(difficulty))
-                { difficulty = "Regular"; }
-
-                foreach (CheckBox mission in IMissionCheckList.Items)
-                {
-                    if (mission.IsChecked ?? false)
-                    {
-                        configLines.Add($"\tclass Mission_{IMissionCheckList.Items.IndexOf(mission) + 1} " + "{");
-                        configLines.Add($"\t\ttemplate = \"{mission.Content}\";");
-                        configLines.Add($"\t\tdifficulty = \"{difficulty}\";");
-                        configLines.Add("\t};");
-                    }
-                }
-                configLines.Add("};");
-            }
-
-            if (IEnableAdditionalParams.IsChecked ?? false)
-            {
-                var moreParams = Functions.GetLinesCollectionFromTextBox(IAdditionalParams);
-                foreach (var line in moreParams)
-                { configLines.Add(line); }
-            }
-
-            // "drawingInMap = 0;"
-            // "forceRotorLibSimulation = 0;"
-            // "forcedDifficulty = ""regular"";"
-            // "missionWhitelist[] = {""intro.altis""};"
-
-            File.WriteAllLines(config, configLines);
+            ConfFileCreation(config);
             #endregion
 
             #region BASIC FILE CREATION
@@ -958,6 +835,158 @@ namespace FASTER
             var profileFalse   = profileTrue.Select(s => s.Replace("False", "0")).ToList();
             File.WriteAllLines(serverProfile, profileFalse);
             #endregion  
+        }
+
+        private void ConfFileCreation(string config)
+        {
+            var von = !IVonEnabled.IsChecked ?? true;
+
+            //Creating first part of the config lines
+            var configLines = ConfigLinesPartOne(von, out var lines);
+
+            configLines.Add("};");
+            configLines.Add($"motdInterval = {IMotdDelay.Text};");
+            var headless = IHeadlessIps.Text.Replace(",", "\",\"");
+            var local    = ILocalClients.Text.Replace(",", "\",\"");
+
+            //Adding a lot of checkbox values
+            ConfigFileChecks(configLines, headless, local);
+
+            configLines.Add($"doubleIdDetected = \"{IDoubleIdDetected.Text}\";");
+            configLines.Add($"onUserConnected = \"{IOnUserConnected.Text}\";");
+            configLines.Add($"onUserDisconnected = \"{IOnUserDisconnected.Text}\";");
+            configLines.Add($"onHackedData = \"{IOnHackedData.Text}\";");
+            configLines.Add($"onDifferentData = \"{IOnDifferentData.Text}\";");
+            configLines.Add($"onUnsignedData = \"{IOnUnsignedData.Text}\";");
+            configLines.Add($"regularCheck = \"{IRegularCheck.Text}\";");
+            configLines.Add("admins[]= {");
+            var admins = IAdminUids.Text.Split('\n');
+            foreach (var line in admins)
+            {
+                _replace = line;
+                _replace = _replace.Replace("\r", "").Replace("\n", "");
+                configLines.Add(lines.IndexOf(_replace) == lines.Count - 1 ? $"\t\"{_replace}\"" : $"\t\"{_replace}\",");
+            }
+
+            configLines.Add("};");
+            configLines.Add($"timeStampFormat = \"{IRptTimestamp.Text}\";");
+            if (IManualMissions.IsChecked ?? false)
+            {
+                var missionLines = Functions.GetLinesCollectionFromTextBox(IMissionConfig);
+                foreach (var line in missionLines) { configLines.Add(line); }
+            }
+            else
+            {
+                configLines.Add("class Missions {");
+                var difficulty = IDifficultyPreset.Text;
+                if (string.IsNullOrEmpty(difficulty)) { difficulty = "Regular"; }
+
+                foreach (CheckBox mission in IMissionCheckList.Items)
+                {
+                    if (mission.IsChecked ?? false)
+                    {
+                        configLines.Add($"\tclass Mission_{IMissionCheckList.Items.IndexOf(mission) + 1} " + "{");
+                        configLines.Add($"\t\ttemplate = \"{mission.Content}\";");
+                        configLines.Add($"\t\tdifficulty = \"{difficulty}\";");
+                        configLines.Add("\t};");
+                    }
+                }
+                configLines.Add("};");
+            }
+
+            if (IEnableAdditionalParams.IsChecked ?? false)
+            {
+                var moreParams = Functions.GetLinesCollectionFromTextBox(IAdditionalParams);
+                foreach (var line in moreParams) { configLines.Add(line); }
+            }
+
+            // "drawingInMap = 0;"
+            // "forceRotorLibSimulation = 0;"
+            // "forcedDifficulty = ""regular"";"
+            // "missionWhitelist[] = {""intro.altis""};"
+
+            File.WriteAllLines(config, configLines);
+        }
+
+        private List<string> ConfigLinesPartOne(bool von, out StringCollection lines)
+        {
+            List<string> configLines = new List<string>
+            {
+                $"passwordAdmin = \"{IAdminPassword.Text}\";",
+                $"password = \"{IPassword.Text}\";",
+                $"serverCommandPassword = \"{IServerCommandPassword.Text}\";",
+                $"hostname = \"{IServerName.Text}\";",
+                $"maxPlayers = {IMaxPlayers.Text};",
+                $"kickduplicate = {(IKickDuplicates.IsChecked != null && (bool) IKickDuplicates.IsChecked ? "1" : "0")};",
+                $"upnp = {(IUpnp.IsChecked                    != null && (bool) IUpnp.IsChecked ? "1" : "0")};",
+                $"allowedFilePatching = {IAllowFilePatching.Text};",
+                $"verifySignatures = {IVerifySignatures.Text};",
+                $"disableVoN = {(von ? "1" : "0")};",
+                $"vonCodecQuality = {(int) ICodecQuality.Value};",
+                "vonCodec = 1;",
+                $"BattlEye = {(IBattleEye.IsChecked               != null && (bool) IBattleEye.IsChecked ? "1" : "0")};",
+                $"persistent = {(IPersistentBattlefield.IsChecked != null && (bool) IPersistentBattlefield.IsChecked ? "1" : "0")};",
+                "motd[]= {"
+            };
+
+            lines = Functions.GetLinesCollectionFromTextBox(IMotd);
+            foreach (var line in lines)
+            {
+                _replace = line;
+                _replace = _replace.Replace("\r", "").Replace("\n", "");
+
+                configLines.Add(lines.IndexOf(_replace) == lines.Count - 1 ? $"\t\"{_replace}\"" : $"\t\"{_replace}\",");
+            }
+            return configLines;
+        }
+
+        private void ConfigFileChecks(List<string> configLines, string headless, string local)
+        {
+            if (IHeadlessClientEnabled.IsChecked ?? false)
+            {
+                configLines.Add("headlessClients[] = {\"" + headless + "\"};");
+                configLines.Add("localClient[] = {\"" + local        + "\"};");
+            }
+
+            if (IVotingEnabled.IsChecked ?? false)
+            {
+                configLines.Add($"voteMissionPlayers = {IVotingMinPlayers.Text};");
+                configLines.Add($"voteThreshold = {double.Parse(IVotingThreshold.Text) / 100.0};");
+            }
+            else
+            {
+                configLines.Add("allowedVoteCmds[] = {};");
+                configLines.Add("allowedVotedAdminCmds[] = {};");
+                configLines.Add("voteMissionPlayers = 1;");
+                configLines.Add("voteThreshold = 0;");
+            }
+
+            if (ILoopback.IsChecked ?? false) { configLines.Add("loopback = True;"); }
+
+            if (IDisconnectTimeOutEnabled.IsChecked ?? false) { configLines.Add($"disconnectTimeout = {IDisconnectTimeOut.Text};"); }
+
+            if (IMaxDesyncEnabled.IsChecked ?? false) { configLines.Add($"maxdesync = {IMaxDesync.Text};"); }
+
+            if (IMaxPingEnabled.IsChecked ?? false) { configLines.Add($"maxping = {IMaxPing.Text};"); }
+
+            if (IMaxPacketLossEnabled.IsChecked ?? false) { configLines.Add($"maxpacketloss = {IMaxPacketLoss.Text};"); }
+
+            if (IKickOnSlowNetworkEnabled.IsChecked ?? false)
+            {
+                switch (IKickOnSlowNetwork.Text)
+                {
+                    case "Log":
+                        configLines.Add("kickClientsOnSlowNetwork[] = { 0, 0, 0, 0 };");
+                        break;
+                    case "Log & Kick":
+                        configLines.Add("kickClientsOnSlowNetwork[] = { 1, 1, 1, 1 };");
+                        break;
+                }
+            }
+
+            if (IServerConsoleLogEnabled.IsChecked ?? false) { configLines.Add("logFile = \"server_console.log\";"); }
+
+            if (IRequiredBuildEnabled.IsChecked ?? false) { configLines.Add($"requiredBuild = {IRequiredBuild.Text};"); }
         }
 
         private void UpdateMissionsList()

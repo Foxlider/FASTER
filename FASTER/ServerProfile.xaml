@@ -110,7 +110,7 @@
                                 <Grid>
                                     <Label Margin="2" Content="Headless Client" HorizontalAlignment="Left" />
                                     <Button Name="ILaunchHCs" Click="ILaunchHCs_Click" ToolTip="Use with Caution : Might crash" Content="Launch HCs" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" HorizontalAlignment="Right" Margin="65,3" Visibility="Collapsed" />
-                                    <mah:ToggleSwitchButton Name="IHeadlessClientEnabled" Click="ToggleUi" Style="{StaticResource MahApps.Styles.ToggleSwitchButton.Win10}" IsChecked="False" HorizontalAlignment="Right" Margin="10,0" ToolTip="Enable HC"/>
+                                    <mah:ToggleSwitchButton Name="IHeadlessClientEnabled" Click="ToggleUi_HeadleddClientEnabled" Style="{StaticResource MahApps.Styles.ToggleSwitchButton.Win10}" IsChecked="False" HorizontalAlignment="Right" Margin="10,0" ToolTip="Enable HC"/>
                                 </Grid>
                                 <Separator />
                             </StackPanel>
@@ -179,15 +179,15 @@
                                     <Separator/>
                                 </StackPanel>
 
-                                <CheckBox Grid.Row="1" Grid.Column="0" Name="IServerConsoleLogEnabled" Click="ToggleUi" Margin="5"/>
+                                <CheckBox Grid.Row="1" Grid.Column="0" Name="IServerConsoleLogEnabled" Click="ToggleUi_ServerConsoleLogEnabled" Margin="5"/>
                                 <Label Grid.Row="1" Grid.Column="1" Name="IServerConsoleLog" Content="Server Console" Margin="5" IsEnabled="False"/>
                                 <Button Grid.Row="1" Grid.Column="2" Name="IConsoleLogButton" Click="IOpenConsoleLog_Click" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Content="Open" Height="20" Width="60" FontSize="11" Margin="5" ToolTip="Open server console logs" IsEnabled="False"/>
 
-                                <CheckBox Grid.Row="2" Grid.Column="0" Name="IPidEnabled" Click="ToggleUi" Margin="5"/>
+                                <CheckBox Grid.Row="2" Grid.Column="0" Name="IPidEnabled" Click="ToggleUi_PidEnabled" Margin="5"/>
                                 <Label Grid.Row="2" Grid.Column="1" Name="IPidLog" Content="PID" Margin="5" IsEnabled="False"/>
                                 <Button Grid.Row="2" Grid.Column="2" Name="IPidButton" Content="Open" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Height="20" Width="60" FontSize="11" Margin="5" ToolTip="Open PID file" IsEnabled="False"/>
 
-                                <CheckBox Grid.Row="3" Grid.Column="0" Name="IRankingEnabled" Click="ToggleUi" Margin="5"/>
+                                <CheckBox Grid.Row="3" Grid.Column="0" Name="IRankingEnabled" Click="ToggleUi_RankingEnabled" Margin="5"/>
                                 <Label Grid.Row="3" Grid.Column="1" Name="IRankingLog" Content="Ranking" Margin="5" IsEnabled="False"/>
                                 <Button Grid.Row="3" Grid.Column="2" Name="IRankingButton" Click="IOpenRanking_Click" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Content="Open" Height="20" Width="60" FontSize="11" Margin="5" ToolTip="Open ranking file" IsEnabled="False"/>
                             </Grid>
@@ -261,7 +261,7 @@
                                 <ComboBoxItem>2</ComboBoxItem>
                             </ComboBox>
                             <CheckBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Name="IKickDuplicates" Content="Kick Duplicates" Margin="5,10,5,5"/>
-                            <CheckBox Grid.Row="3" Grid.Column="1" Name="IRequiredBuildEnabled" Click="ToggleUi" Margin="5"/>
+                            <CheckBox Grid.Row="3" Grid.Column="1" Name="IRequiredBuildEnabled" Click="ToggleUi_RequiredBuildEnabled" Margin="5"/>
                             <TextBox Grid.Row="3" Grid.Column="0" Name="IRequiredBuild" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Required Build" Margin="5" VerticalAlignment="Center" IsEnabled="False"/>
                         </Grid>
                     </Grid>
@@ -307,7 +307,7 @@
                             <StackPanel Grid.ColumnSpan="2">
                                 <Grid>
                                     <Label Content="Voting" Margin="2" HorizontalAlignment="Left"/>
-                                    <mah:ToggleSwitchButton x:Name="IVotingEnabled" Click="ToggleUi" Style="{StaticResource MahApps.Styles.ToggleSwitchButton.Win10}" IsChecked="False" HorizontalAlignment="Right" Margin="10,0" ToolTip="Enable Voting"/>
+                                    <mah:ToggleSwitchButton x:Name="IVotingEnabled" Click="ToggleUi_VotingEnabled" Style="{StaticResource MahApps.Styles.ToggleSwitchButton.Win10}" IsChecked="False" HorizontalAlignment="Right" Margin="10,0" ToolTip="Enable Voting"/>
                                 </Grid>
                                 <Separator VerticalAlignment="Bottom"/>
                             </StackPanel>
@@ -332,7 +332,7 @@
                             <StackPanel>
                                 <Grid>
                                     <Label Content="VON Settings" Margin="2" HorizontalAlignment="Left"/>
-                                    <mah:ToggleSwitchButton x:Name="IVonEnabled" Click="ToggleUi" Style="{StaticResource MahApps.Styles.ToggleSwitchButton.Win10}" IsChecked="True" HorizontalAlignment="Right" Margin="10,0" ToolTip="Enable VON"/>
+                                    <mah:ToggleSwitchButton x:Name="IVonEnabled" Click="ToggleUi_VonEnabled" Style="{StaticResource MahApps.Styles.ToggleSwitchButton.Win10}" IsChecked="True" HorizontalAlignment="Right" Margin="10,0" ToolTip="Enable VON"/>
                                 </Grid>
                                 <Separator VerticalAlignment="Bottom"/>
                             </StackPanel>
@@ -521,7 +521,7 @@
                             <StackPanel Grid.ColumnSpan="4">
                                 <Grid>
                                     <Label Content="Missions" Margin="2" HorizontalAlignment="Left"/>
-                                    <mah:ToggleSwitchButton x:Name="IManualMissions" Click="ToggleUi" Style="{StaticResource MahApps.Styles.ToggleSwitchButton.Win10}" IsChecked="false" HorizontalAlignment="Right" Margin="10,0" ToolTip="Manual Mission Config"/>
+                                    <mah:ToggleSwitchButton x:Name="IManualMissions" Click="ToggleUi_ManualMisisons" Style="{StaticResource MahApps.Styles.ToggleSwitchButton.Win10}" IsChecked="false" HorizontalAlignment="Right" Margin="10,0" ToolTip="Manual Mission Config"/>
                                 </Grid>
                                 <Separator/>
                             </StackPanel>
@@ -561,7 +561,7 @@
                                 </ComboBox>
                             </Grid>
                             <StackPanel Grid.Row="2" Grid.Column="0" Orientation="Horizontal" Margin="5,0,5,10">
-                                <CheckBox Name="IPersistentBattlefield" Click="ToggleUi" Content="Persistent Battlefield" Margin="5,0"/>
+                                <CheckBox Name="IPersistentBattlefield" Click="ToggleUi_PersistantBattlefield" Content="Persistent Battlefield" Margin="5,0"/>
                                 <CheckBox Name="IAutoInit" Content="Auto Init" Margin="5,0" IsEnabled="False"/>
                             </StackPanel>
 
@@ -709,16 +709,16 @@
                                 <Label Margin="2" Content="Client Performance"/>
                                 <Separator/>
                             </StackPanel>
-                            <CheckBox Name="IMaxPingEnabled" Click="ToggleUi" Grid.Row="1" Grid.Column="2" Margin="5" Content="Max Ping (ms)"/>
+                            <CheckBox Name="IMaxPingEnabled" Click="ToggleUi_MaxPingEnabled" Grid.Row="1" Grid.Column="2" Margin="5" Content="Max Ping (ms)"/>
                             <TextBox Name="IMaxPing" Grid.Row="1" Grid.Column="3" Margin="5" IsEnabled="False" Width="60"/>
-                            <CheckBox Name="IMaxDesyncEnabled" Click="ToggleUi" Grid.Row="2" Grid.Column="2" Margin="5" Content="Max Desync"/>
+                            <CheckBox Name="IMaxDesyncEnabled" Click="ToggleUi_MaxDesyncEnabled" Grid.Row="2" Grid.Column="2" Margin="5" Content="Max Desync"/>
                             <TextBox Name="IMaxDesync" Grid.Row="2" Grid.Column="3" Margin="5" IsEnabled="False" Width="60"/>
-                            <CheckBox Name="IMaxPacketLossEnabled" Click="ToggleUi" Grid.Row="1" Grid.Column="0" Margin="5" Content="Max Packet Loss (%)"/>
+                            <CheckBox Name="IMaxPacketLossEnabled" Click="ToggleUi_MaxPacketLoss" Grid.Row="1" Grid.Column="0" Margin="5" Content="Max Packet Loss (%)"/>
                             <TextBox Name="IMaxPacketLoss" Grid.Row="1" Grid.Column="1"  Margin="5" IsEnabled="False" Width="60"/>
 
-                            <CheckBox Name="IDisconnectTimeOutEnabled" Click="ToggleUi" Grid.Row="2" Grid.Column="0" Margin="5" Content="Disconnect Timeout (s)"/>
+                            <CheckBox Name="IDisconnectTimeOutEnabled" Click="ToggleUi_DisconnectTimeOutEnabled" Grid.Row="2" Grid.Column="0" Margin="5" Content="Disconnect Timeout (s)"/>
                             <TextBox Name="IDisconnectTimeOut" Grid.Row="2" Grid.Column="1" Margin="5" IsEnabled="False" Width="60"/>
-                            <CheckBox Name="IKickOnSlowNetworkEnabled" Click="ToggleUi" Grid.Row="3" Grid.Column="0" Margin="5" Content="Kick On Slow Network"/>
+                            <CheckBox Name="IKickOnSlowNetworkEnabled" Click="ToggleUi_KickOnSlowNetworkEnabled" Grid.Row="3" Grid.Column="0" Margin="5" Content="Kick On Slow Network"/>
                             <ComboBox Grid.Row="3" Grid.Column="1" Name="IKickOnSlowNetwork" IsEditable="False" Margin="5,0,5,5" Width="60" IsEnabled="False">
                                 <ComboBoxItem IsSelected="True">Log</ComboBoxItem>
                                 <ComboBoxItem>Log and Kick</ComboBoxItem>

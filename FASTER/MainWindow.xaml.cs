@@ -114,8 +114,6 @@ namespace FASTER
         private void MetroWindow_Loaded(object sender, EventArgs e)
         {
             //FIX for issue #22 : not necessary
-            
-
             LoadSteamUpdaterSettings();
 
             if (InstallSteamCmd)
@@ -132,7 +130,6 @@ namespace FASTER
         // Opens folder select dialog when clicking certain buttons
         private void DirButton_Click(object sender, RoutedEventArgs e)
         {
-            
             if (Equals(sender, ISteamDirButton))
             {
                 string path = SelectFolder(Properties.Options.Default.steamCMDPath);

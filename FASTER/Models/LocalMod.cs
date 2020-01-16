@@ -34,7 +34,7 @@ namespace FASTER.Models
 
             List<string> foldersToSearch = new List<string>();
 
-            if (serverPathOnly && Properties.Options.Default.serverPath != string.Empty)
+            if (serverPathOnly && !string.IsNullOrEmpty(Properties.Options.Default.serverPath))
             {
                 foldersToSearch.Add(Properties.Options.Default.serverPath);
             }

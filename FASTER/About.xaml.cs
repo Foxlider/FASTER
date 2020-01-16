@@ -1,8 +1,10 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
+using Microsoft.AppCenter.Analytics;
 
 namespace FASTER
 {
@@ -19,19 +21,34 @@ namespace FASTER
         }
 
         private void IDiscordButton_Click(object sender, RoutedEventArgs e)
-
-        { OpenBrowser("https://discord.gg/uPjgqHU"); }
+        {
+            Analytics.TrackEvent("About - Clicked Discord", new Dictionary<string, string> {
+                { "Name", MainWindow.Instance.ISteamUserBox.Text }
+            });
+            OpenBrowser("https://discord.gg/uPjgqHU");
+        }
 
         private void IGitHubButton_Click(object sender, RoutedEventArgs e)
         {
+            Analytics.TrackEvent("About - Clicked Git", new Dictionary<string, string> {
+                { "Name", MainWindow.Instance.ISteamUserBox.Text }
+            });
             OpenBrowser("https://github.com/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite");
         }
 
         private void IForumsButton_Click(object sender, RoutedEventArgs e)
-        { OpenBrowser("https://forums.bohemia.net/forums/topic/224359-foxs-arma-server-tool-extended-rewrite-faster/"); }
+        {
+            Analytics.TrackEvent("About - Clicked Forums", new Dictionary<string, string> {
+                { "Name", MainWindow.Instance.ISteamUserBox.Text }
+            });
+            OpenBrowser("https://forums.bohemia.net/forums/topic/224359-foxs-arma-server-tool-extended-rewrite-faster/");
+        }
 
         private void IDonateButton_Click(object sender, RoutedEventArgs e)
         {
+            Analytics.TrackEvent("About - Clicked Donate", new Dictionary<string, string> {
+                { "Name", MainWindow.Instance.ISteamUserBox.Text }
+            });
             OpenBrowser("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=49H6MZNFUJYWA&source=url");
         }
         
