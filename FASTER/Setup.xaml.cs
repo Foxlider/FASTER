@@ -2,6 +2,7 @@
 using FASTER.Models;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Reflection;
 using System.Windows;
 using Microsoft.AppCenter.Analytics;
@@ -50,7 +51,11 @@ namespace FASTER
                                + $"{rev}";
                 Analytics.TrackEvent("Setup - Launching", new Dictionary<string, string> {
                     { "Name", MainWindow.Instance.ISteamUserBox.Text },
-                    { "Version", MainWindow.Instance.Version }
+                    { "Version", MainWindow.Instance.Version },
+                    { "Region", RegionInfo.CurrentRegion.TwoLetterISORegionName},
+                    { "CPU Architecture", Environment.Is64BitOperatingSystem ? "x64" : "x86" },
+                    { "OS Version", Environment.OSVersion.VersionString },
+                    { "Machine Name", Environment.MachineName }
                 });
                 MainWindow.Instance.Show();
             }
