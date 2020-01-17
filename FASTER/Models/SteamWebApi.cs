@@ -11,7 +11,7 @@ namespace FASTER.Models
 {
     internal static class SteamWebApi
     {
-        private const string SteamApiKey = "1669DCBF5FD494B07B85358D12FFB85B";
+        private const string SteamApiKey = "89B74BCDEF2493AB2774D8A02D9CED0D";
         private const string V = "&publishedfileids[";
         private const string V1 = "]=";
         private const string V2 = "&steamids=";

@@ -212,7 +212,7 @@ namespace FASTER
         {
             if (ReadyToLaunch(IDisplayName.Content.ToString()))
             {
-                Analytics.TrackEvent("Server launched", new Dictionary<string, string> {
+                Analytics.TrackEvent("ServerProfile - Server launched", new Dictionary<string, string> {
                     { "DisplayName", IDisplayName.Content.ToString() },
                     { "ServerName", IServerName.Text}
                 });
@@ -417,7 +417,7 @@ namespace FASTER
 
         private void LaunchHCs(string profilePath)
         {
-            Analytics.TrackEvent("HC Clients launched", new Dictionary<string, string> {
+            Analytics.TrackEvent("ServerProfile - HC Clients launched", new Dictionary<string, string> {
                 { "HC Number", INoOfHeadlessClients.Value.ToString()}
             });
             for (int hc = 1; hc <= INoOfHeadlessClients.Value; hc++)
