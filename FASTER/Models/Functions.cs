@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -16,11 +18,11 @@ namespace FASTER.Models
     {
         public static void CheckSettings()
         {
-            if (!Directory.Exists(Properties.Options.Default.serverPath))
-                Properties.Options.Default.serverPath = string.Empty;
+            if (!Directory.Exists(Properties.Settings.Default.serverPath))
+                Properties.Settings.Default.serverPath = string.Empty;
 
-            if (!Directory.Exists(Properties.Options.Default.steamCMDPath))
-                Properties.Options.Default.steamCMDPath = string.Empty;
+            if (!Directory.Exists(Properties.Settings.Default.steamCMDPath))
+                Properties.Settings.Default.steamCMDPath = string.Empty;
         }
 
         public static T CloneObjectSerializable < T > (this T obj) where T: class {  
@@ -118,6 +120,28 @@ namespace FASTER.Models
             input = Regex.Replace(input, "[^a-zA-Z0-9_]", replacement);
             input = input.Replace(replacement + replacement, replacement);
             return input;
+        }
+
+        //Opens a browser url
+        public static void OpenBrowser(string url)
+        {
+            try
+            { Process.Start(url); }
+            catch
+            {
+                // hack because of this: https://github.com/dotnet/corefx/issues/10361
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    url = url.Replace("&", "^&");
+                    Process.Start(new ProcessStartInfo("cmd", $"/c start {url}") { CreateNoWindow = true });
+                }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                { Process.Start("xdg-open", url); }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                { Process.Start("open", url); }
+                else
+                { throw; }
+            }
         }
     }
 }

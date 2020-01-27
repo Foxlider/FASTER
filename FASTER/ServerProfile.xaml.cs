@@ -23,7 +23,7 @@ namespace FASTER
     public partial class ServerProfile : UserControl
     {
         private readonly string _safeName;
-        private readonly string _profilesPath = Properties.Options.Default.serverPath + "\\Servers\\";
+        private readonly string _profilesPath = Properties.Settings.Default.serverPath + "\\Servers\\";
         private string _replace;
         private bool headlessClientLaunched;
 
@@ -442,8 +442,8 @@ namespace FASTER
                 Title                     = "Select the arma server executable",
                 IsFolderPicker            = false,
                 AddToMostRecentlyUsedList = false,
-                InitialDirectory          = Properties.Options.Default.serverPath,
-                DefaultDirectory          = Properties.Options.Default.serverPath,
+                InitialDirectory          = Properties.Settings.Default.serverPath,
+                DefaultDirectory          = Properties.Settings.Default.serverPath,
                 AllowNonFileSystemItems   = false,
                 EnsureFileExists          = true,
                 EnsurePathExists          = true,
@@ -590,7 +590,7 @@ namespace FASTER
             NumberFormatInfo provider = CultureInfo.CurrentCulture.NumberFormat;
 
 
-            var profile = Properties.Options.Default.Servers.ServerProfiles.Find(p => p.SafeName == _safeName);
+            var profile = Properties.Settings.Default.Servers.ServerProfiles.Find(p => p.SafeName == _safeName);
             profile.DisplayName = IDisplayName.Content.ToString();
             profile.ServerName = IServerName.Text;
             profile.Executable = IExecutable.Text;
@@ -714,7 +714,7 @@ namespace FASTER
             profile.additionalParams = IAdditionalParams.Text;
             profile.enableAdditionalParams = IEnableAdditionalParams.IsChecked ?? false;
 
-            Properties.Options.Default.Save();
+            Properties.Settings.Default.Save();
         }
 
         private void CreateProfileFiles()
@@ -749,7 +749,7 @@ namespace FASTER
 
         private void WriteConfigFiles(string profile)
         {
-            string profilePath = Properties.Options.Default.serverPath;
+            string profilePath = Properties.Settings.Default.serverPath;
             profile = Functions.SafeName(profile);
 
             string config        = Path.Combine(profilePath, "Servers", profile, $"{profile}_config.cfg");
@@ -994,7 +994,7 @@ namespace FASTER
             var          currentMissions = IMissionCheckList.Items;
             List<string> newMissions     = new List<string>();
             var          checkedMissions = new List<CheckBox>();
-            var          profile         = Properties.Options.Default.Servers.ServerProfiles.Find(p => p.SafeName == _safeName);
+            var          profile         = Properties.Settings.Default.Servers.ServerProfiles.Find(p => p.SafeName == _safeName);
 
             if (profile != null)
             {
@@ -1007,10 +1007,10 @@ namespace FASTER
 
             IMissionCheckList.Items.Clear();
 
-            if (Directory.Exists(Path.Combine(Properties.Options.Default.serverPath, "mpmissions")))
+            if (Directory.Exists(Path.Combine(Properties.Settings.Default.serverPath, "mpmissions")))
             {
-                newMissions.AddRange(Directory.GetFiles(Path.Combine(Properties.Options.Default.serverPath, "mpmissions"), "*.pbo")
-                                              .Select(mission => mission.Replace(Path.Combine(Properties.Options.Default.serverPath, "mpmissions") + "\\", "")));
+                newMissions.AddRange(Directory.GetFiles(Path.Combine(Properties.Settings.Default.serverPath, "mpmissions"), "*.pbo")
+                                              .Select(mission => mission.Replace(Path.Combine(Properties.Settings.Default.serverPath, "mpmissions") + "\\", "")));
 
                 foreach (var mission in newMissions.ToList())
                 {
@@ -1035,7 +1035,7 @@ namespace FASTER
             var          currentMods = IServerModsList.Items;
             List<string> newMods     = new List<string>();
 
-            var profile           = Properties.Options.Default.Servers.ServerProfiles.Find(p => p.SafeName == _safeName);
+            var profile           = Properties.Settings.Default.Servers.ServerProfiles.Find(p => p.SafeName == _safeName);
             var checkedServerMods = new List<CheckBox>();
             var checkedHcMods = new List<CheckBox>();
             var checkedClientMods = new List<CheckBox>();
@@ -1047,12 +1047,12 @@ namespace FASTER
             IClientModsList.Items.Clear();
             IHeadlessModsList.Items.Clear();
 
-            if (Directory.Exists(Properties.Options.Default.serverPath))
+            if (Directory.Exists(Properties.Settings.Default.serverPath))
             {
-                newMods.AddRange(Directory.GetDirectories(Properties.Options.Default.serverPath, "@*")
-                                          .Select(addon => addon.Replace(Properties.Options.Default.serverPath + @"\", "")));
+                newMods.AddRange(Directory.GetDirectories(Properties.Settings.Default.serverPath, "@*")
+                                          .Select(addon => addon.Replace(Properties.Settings.Default.serverPath + @"\", "")));
                 List<string> targetForDeletion = new List<string>();
-                foreach (var folder in Properties.Options.Default.localModFolders)
+                foreach (var folder in Properties.Settings.Default.localModFolders)
                 {
                     if (Directory.Exists(folder))
                         newMods.AddRange(Directory.GetDirectories(folder, "@*"));
@@ -1068,7 +1068,7 @@ namespace FASTER
                 }
                 //Cleanup localmodfolders
                 foreach (var folder in targetForDeletion)
-                { Properties.Options.Default.localModFolders.Remove(folder); }
+                { Properties.Settings.Default.localModFolders.Remove(folder); }
                 
                 foreach (var addon in newMods.ToList())
                 {
@@ -1265,7 +1265,7 @@ namespace FASTER
 
         private static bool ProfileFilesExist(string profile)
         {
-            string path = Properties.Options.Default.serverPath;
+            string path = Properties.Settings.Default.serverPath;
             if (!Directory.Exists(Path.Combine(path, "Servers", profile)))
             { return false; }
 
@@ -1299,7 +1299,7 @@ namespace FASTER
         private static async Task CopyModsKeysToKeyFolder()
         {
             var mods      = new List<string>();
-            var steamMods = Directory.GetDirectories(Path.Combine(Properties.Options.Default.steamCMDPath, "steamapps", "workshop", "content", "107410"));
+            var steamMods = Directory.GetDirectories(Path.Combine(Properties.Settings.Default.steamCMDPath, "steamapps", "workshop", "content", "107410"));
 
             foreach (var line in steamMods)
             {
@@ -1309,7 +1309,7 @@ namespace FASTER
                 { /*there was no directory*/ }
             }
 
-            foreach (var folder in Properties.Options.Default.localModFolders)
+            foreach (var folder in Properties.Settings.Default.localModFolders)
             {
                 try 
                 { mods.AddRange(Directory.GetFiles(Path.Combine(folder, "keys"))); }
@@ -1317,9 +1317,9 @@ namespace FASTER
                 { /*there was no directory*/ }
             }
 
-            if (!Directory.Exists(Path.Combine(Properties.Options.Default.serverPath, "keys"))) { Directory.CreateDirectory(Path.Combine(Properties.Options.Default.serverPath, "keys")); }
+            if (!Directory.Exists(Path.Combine(Properties.Settings.Default.serverPath, "keys"))) { Directory.CreateDirectory(Path.Combine(Properties.Settings.Default.serverPath, "keys")); }
 
-            foreach (var link in mods) { File.Copy(link, Path.Combine(Properties.Options.Default.serverPath, "keys", Path.GetFileName(link)), true); }
+            foreach (var link in mods) { File.Copy(link, Path.Combine(Properties.Settings.Default.serverPath, "keys", Path.GetFileName(link)), true); }
             await Task.Delay(1000);
         }
     }

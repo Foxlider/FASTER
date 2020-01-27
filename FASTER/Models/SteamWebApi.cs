@@ -25,7 +25,7 @@ namespace FASTER.Models
                 foreach (var modId in modIds)
                     mods = $"{mods}{V}{modIds.IndexOf(modId)}{V1}{modId}";
 
-                var response = ApiCall("https://api.steampowered.com/IPublishedFileService/GetDetails/v1?key=" + SteamApiKey + mods);
+                var response = ApiCall("https://api.steampowered.com/IPublishedFileService/GetDetails/v1?key=" + GetApiKey() + mods);
 
                 return response.SelectTokens("response.publishedfiledetails[*]").Cast<JObject>().ToList();
             }
@@ -38,7 +38,7 @@ namespace FASTER.Models
         {
             try
             {
-                var response = ApiCall("https://api.steampowered.com/IPublishedFileService/GetDetails/v1?key=" + SteamApiKey + V3 + modId);
+                var response = ApiCall("https://api.steampowered.com/IPublishedFileService/GetDetails/v1?key=" + GetApiKey() + V3 + modId);
                 return (JObject) response?.SelectToken("response.publishedfiledetails[0]");
             }
             catch
@@ -51,7 +51,7 @@ namespace FASTER.Models
         {
             try
             {
-                var response = ApiCall("https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v1?key=" + SteamApiKey + V2 + playerId);
+                var response = ApiCall("https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v1?key=" + GetApiKey() + V2 + playerId);
                 return (JObject) response.SelectToken("response.players.player[0]");
             }
             catch
@@ -102,6 +102,13 @@ namespace FASTER.Models
                 return JObject.Parse(responseFromServer);
             }
             return null;
+        }
+
+        private static string GetApiKey()
+        {
+            return !string.IsNullOrEmpty(Properties.Settings.Default.SteamAPIKey) 
+                ? Properties.Settings.Default.SteamAPIKey 
+                : SteamApiKey;
         }
     }
 }

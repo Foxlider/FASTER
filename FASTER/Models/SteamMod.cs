@@ -23,8 +23,8 @@ namespace FASTER.Models
         {
             SteamModCollection currentMods = new SteamModCollection();
 
-            if (Properties.Options.Default.steamMods != null)
-                currentMods = Properties.Options.Default.steamMods;
+            if (Properties.Settings.Default.steamMods != null)
+                currentMods = Properties.Settings.Default.steamMods;
 
             return currentMods;
         }
@@ -46,14 +46,14 @@ namespace FASTER.Models
             if (!duplicate)
             {
                 currentMods.SteamMods.Add(newMod);
-                Properties.Options.Default.steamMods = currentMods;
+                Properties.Settings.Default.steamMods = currentMods;
             }
             else
             {
                 MainWindow.Instance.IMessageDialog.IsOpen   = true;
                 MainWindow.Instance.IMessageDialogText.Text = "Mod Already Exists";
             }
-            Properties.Options.Default.Save();
+            Properties.Settings.Default.Save();
         }
 
         public static void DeleteSteamMod(int workshopId)
@@ -62,7 +62,7 @@ namespace FASTER.Models
 
             currentProfiles.SteamMods.RemoveAll(x => x.WorkshopId == workshopId);
 
-            Properties.Options.Default.Save();
+            Properties.Settings.Default.Save();
         }
     }
 
@@ -96,17 +96,17 @@ namespace FASTER.Models
 
             currentMods.RemoveAll(x => x.WorkshopId == workshopId);
 
-            Properties.Options.Default.Save();
+            Properties.Settings.Default.Save();
         }
 
         public static List<SteamMod> GetSteamMods()
         {
             List<SteamMod> currentSteamMods = new List<SteamMod>();
 
-            if (Properties.Options.Default.steamMods != null)
+            if (Properties.Settings.Default.steamMods != null)
             {
-                Properties.Options.Default.Reload();
-                currentSteamMods = Properties.Options.Default.steamMods?.SteamMods;
+                Properties.Settings.Default.Reload();
+                currentSteamMods = Properties.Settings.Default.steamMods?.SteamMods;
             }
 
             return currentSteamMods;
@@ -173,8 +173,8 @@ namespace FASTER.Models
 
                         var modCollection = new SteamModCollection { CollectionName = "Steam", SteamMods = currentMods };
 
-                        Properties.Options.Default.steamMods = modCollection;
-                        Properties.Options.Default.Save();
+                        Properties.Settings.Default.steamMods = modCollection;
+                        Properties.Settings.Default.Save();
                     }
                     else
                     {
@@ -220,8 +220,8 @@ namespace FASTER.Models
 
         public static void UpdateInfoFromSteam()
         {
-            if (Properties.Options.Default.steamMods.SteamMods.Count <= 0) return;
-            var currentMods = Properties.Options.Default.steamMods.SteamMods;
+            if (Properties.Settings.Default.steamMods.SteamMods.Count <= 0) return;
+            var currentMods = Properties.Settings.Default.steamMods.SteamMods;
             var failnum     = 0;
             foreach (var steamMod in currentMods)
             {
@@ -252,8 +252,8 @@ namespace FASTER.Models
                 break;
             }
 
-            Properties.Options.Default.steamMods.SteamMods = currentMods;
-            Properties.Options.Default.Save();
+            Properties.Settings.Default.steamMods.SteamMods = currentMods;
+            Properties.Settings.Default.Save();
         }
     }
 }
