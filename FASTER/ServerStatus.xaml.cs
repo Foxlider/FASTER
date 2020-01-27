@@ -181,8 +181,13 @@ namespace FASTER
             processes.Clear();
             foreach (var proc in Process.GetProcesses().Where(p => p.ProcessName.Contains("arma3server")))
             {
-                var p = new ProcessSpy(proc);
-                processes.Add(p);
+                try
+                {
+                    var p = new ProcessSpy(proc);
+                    processes.Add(p);
+                }
+                catch(InvalidOperationException)
+                { /*The process exited. Cannot add it back*/ }
             }
         }
 
