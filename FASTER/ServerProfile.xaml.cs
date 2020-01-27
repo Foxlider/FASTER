@@ -1319,7 +1319,15 @@ namespace FASTER
 
             if (!Directory.Exists(Path.Combine(Properties.Settings.Default.serverPath, "keys"))) { Directory.CreateDirectory(Path.Combine(Properties.Settings.Default.serverPath, "keys")); }
 
-            foreach (var link in mods) { File.Copy(link, Path.Combine(Properties.Settings.Default.serverPath, "keys", Path.GetFileName(link)), true); }
+            foreach (var link in mods)
+            {
+                try { File.Copy(link, Path.Combine(Properties.Settings.Default.serverPath, "keys", Path.GetFileName(link)), true); }
+                catch (IOException)
+                {
+                    MainWindow.Instance.IFlyout.IsOpen = true;
+                    MainWindow.Instance.IFlyoutMessage.Content = $"Some keys could not be copied : {Path.GetFileName(link)}";
+                }
+            }
             await Task.Delay(1000);
         }
     }
