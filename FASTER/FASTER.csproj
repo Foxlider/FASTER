@@ -6,7 +6,7 @@
     <PublishSingleFile>true</PublishSingleFile>
     <RuntimeIdentifier>win-x86</RuntimeIdentifier>
     <UseWPF>true</UseWPF>
-    <Version>1.5.3</Version>
+    <Version>1.5.4</Version>
     <Authors>Keelah Fox</Authors>
     <Company>FoxliCorp.</Company>
     <Description>Fox's Arma Server Tool Extended Rewrite</Description>
@@ -17,6 +17,9 @@
     <StartupObject>FASTER.App</StartupObject>
     <ApplicationManifest>Properties\FASTER.manifest</ApplicationManifest>
     <LangVersion>8.0</LangVersion>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>FASTERKey.pfx</AssemblyOriginatorKeyFile>
+    <DelaySign>false</DelaySign>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

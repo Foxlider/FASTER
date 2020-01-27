@@ -11,12 +11,12 @@
     GlowBrush="Black"
     BorderThickness="0"
     
-    Title="FASTER - Initial Setup" 
-    Height="400" 
+    Title="FASTER - Initial Setup"
     Width="300"
+    SizeToContent="Height"
     
     WindowStartupLocation="CenterScreen">
-    <Grid>
+    <StackPanel>
         <StackPanel Orientation="Vertical">
             <TextBlock TextWrapping="Wrap" TextAlignment="Center" Margin="10,10,10,0" Height="50" VerticalAlignment="Top">
                Welcome to FASTER - an unoffical Arma 3 server updater. Use the form below to setup a few options.
@@ -43,8 +43,8 @@
             <Separator Margin="10"/>
         </StackPanel>
         <Grid HorizontalAlignment="Stretch" VerticalAlignment="Bottom">
-            <mah:ToggleSwitch Style="{StaticResource MahApps.Styles.ToggleSwitch.Win10}" Header="Install SteamCMD" Name="IInstallSteamCheck" IsChecked="False" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,20"/>
+            <mah:ToggleSwitch Style="{StaticResource MahApps.Styles.ToggleSwitch.Win10}" Header="Install SteamCMD" Name="IInstallSteamCheck" IsChecked="False" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10"/>
             <Button x:Name="IContinueButton" Content="Continue" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" HorizontalAlignment="Right" Margin="10" VerticalAlignment="Bottom" Click="IContinueButton_Click" />
         </Grid>
-    </Grid>
+    </StackPanel>
 </mah:MetroWindow>
