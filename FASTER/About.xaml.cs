@@ -24,7 +24,7 @@ namespace FASTER
         private void IDiscordButton_Click(object sender, RoutedEventArgs e)
         {
             Analytics.TrackEvent("About - Clicked Discord", new Dictionary<string, string> {
-                { "Name", MainWindow.Instance.ISteamUserBox.Text }
+                { "Name", Properties.Settings.Default.steamUserName }
             });
             Functions.OpenBrowser("https://discord.gg/uPjgqHU");
         }
@@ -32,7 +32,7 @@ namespace FASTER
         private void IGitHubButton_Click(object sender, RoutedEventArgs e)
         {
             Analytics.TrackEvent("About - Clicked Git", new Dictionary<string, string> {
-                { "Name", MainWindow.Instance.ISteamUserBox.Text }
+                { "Name", Properties.Settings.Default.steamUserName }
             });
             Functions.OpenBrowser("https://github.com/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite");
         }
@@ -40,7 +40,7 @@ namespace FASTER
         private void IForumsButton_Click(object sender, RoutedEventArgs e)
         {
             Analytics.TrackEvent("About - Clicked Forums", new Dictionary<string, string> {
-                { "Name", MainWindow.Instance.ISteamUserBox.Text }
+                { "Name", Properties.Settings.Default.steamUserName }
             });
             Functions.OpenBrowser("https://forums.bohemia.net/forums/topic/224359-foxs-arma-server-tool-extended-rewrite-faster/");
         }
@@ -48,7 +48,7 @@ namespace FASTER
         private void IDonateButton_Click(object sender, RoutedEventArgs e)
         {
             Analytics.TrackEvent("About - Clicked Donate", new Dictionary<string, string> {
-                { "Name", MainWindow.Instance.ISteamUserBox.Text }
+                { "Name", Properties.Settings.Default.steamUserName }
             });
             Functions.OpenBrowser("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=49H6MZNFUJYWA&source=url");
         }

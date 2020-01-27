@@ -126,7 +126,7 @@ namespace FASTER.Models
         public static void AddSteamMod(string modUrl, bool multiple = false)
         {
             Analytics.TrackEvent("SteamMod - Adding Mod", new Dictionary<string, string> {
-                { "Name", MainWindow.Instance.ISteamUserBox.Text },
+                { "Name", Properties.Settings.Default.steamUserName },
                 { "ModUrl", modUrl },
             });
             int modId = 0;

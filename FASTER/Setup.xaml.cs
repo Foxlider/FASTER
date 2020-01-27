@@ -61,7 +61,7 @@ namespace FASTER
                                + $"{Assembly.GetExecutingAssembly().GetName().Version.Minor}"
                                + $"{rev}";
                 Analytics.TrackEvent("Setup - Launching", new Dictionary<string, string> {
-                    { "Name", MainWindow.Instance.ISteamUserBox.Text },
+                    { "Name", Properties.Settings.Default.steamUserName },
                     { "Version", MainWindow.Instance.Version },
                     { "Region", RegionInfo.CurrentRegion.TwoLetterISORegionName},
                     { "CPU Architecture", Environment.Is64BitOperatingSystem ? "x64" : "x86" },

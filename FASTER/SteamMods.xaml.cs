@@ -209,7 +209,7 @@ namespace FASTER
                     eventLog.WriteEntry($"Error occured while importing mod file : [{e.GetType()}] {e.Message}", EventLogEntryType.Warning);
                 }
             }
-            while (true);
+            while (!dataReader.EndOfStream);
         }
 
         private void ModLineHandler(StreamReader dataReader)
