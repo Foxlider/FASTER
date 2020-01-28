@@ -223,7 +223,7 @@ namespace FASTER.Models
             if (Properties.Settings.Default.steamMods.SteamMods.Count <= 0) return;
             var currentMods = Properties.Settings.Default.steamMods.SteamMods;
             var failnum     = 0;
-            foreach (var steamMod in currentMods)
+            foreach (var steamMod in currentMods.ToList())
             {
                 if (steamMod.PrivateMod) continue;
                 var modInfo = GetModInfo(steamMod.WorkshopId);
