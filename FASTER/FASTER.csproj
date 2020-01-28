@@ -18,7 +18,7 @@
     <ApplicationManifest>Properties\FASTER.manifest</ApplicationManifest>
     <LangVersion>8.0</LangVersion>
     <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>FASTERKey.pfx</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>FASTERKey.snk</AssemblyOriginatorKeyFile>
     <DelaySign>false</DelaySign>
   </PropertyGroup>
 
