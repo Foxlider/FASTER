@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Input;
 using AutoUpdaterDotNET;
+using FASTER.Models;
+using Microsoft.AppCenter.Crashes;
 using Application = System.Windows.Application;
 using CheckBox = System.Windows.Controls.CheckBox;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
@@ -103,15 +105,16 @@ namespace FASTER
 
         private void IResetButton_Click(object sender, RoutedEventArgs e)
         {
-            Properties.Options.Default.clearSettings = true;
-            Properties.Options.Default.Save();
+            Properties.Settings.Default.clearSettings = true;
+            Properties.Settings.Default.Save();
             Application.Current.Shutdown();
         }
         
         private void Settings_Initialized(object sender, EventArgs e)
         {
-            IModUpdatesOnLaunch.IsChecked = Properties.Options.Default?.checkForModUpdates;
-            IAppUpdatesOnLaunch.IsChecked = Properties.Options.Default?.checkForAppUpdates;
+            IModUpdatesOnLaunch.IsChecked = Properties.Settings.Default?.checkForModUpdates;
+            IAppUpdatesOnLaunch.IsChecked = Properties.Settings.Default?.checkForAppUpdates;
+            IAPIKeyBox.Text = Properties.Settings.Default?.SteamAPIKey ?? string.Empty;
             UpdateLocalModFolders();
         }
         
@@ -121,10 +124,10 @@ namespace FASTER
 
             if (!string.IsNullOrEmpty(newModFolder))
             {
-                if (Properties.Options.Default.localModFolders == null)
-                { Properties.Options.Default.localModFolders = new List<string>(); }
-                Properties.Options.Default.localModFolders.Add(newModFolder);
-                Properties.Options.Default.Save();
+                if (Properties.Settings.Default.localModFolders == null)
+                { Properties.Settings.Default.localModFolders = new List<string>(); }
+                Properties.Settings.Default.localModFolders.Add(newModFolder);
+                Properties.Settings.Default.Save();
             }
             UpdateLocalModFolders();
         }
@@ -136,8 +139,8 @@ namespace FASTER
                 var cb = item as CheckBox;
                 if (cb?.IsChecked ?? false)
                 {
-                    Properties.Options.Default.localModFolders.Remove(cb.Content.ToString());
-                    Properties.Options.Default.Save();
+                    Properties.Settings.Default.localModFolders.Remove(cb.Content.ToString());
+                    Properties.Settings.Default.Save();
                 }
             }
             UpdateLocalModFolders();
@@ -145,14 +148,14 @@ namespace FASTER
         
         private void IModUpdatesOnLaunch_Checked(object sender, RoutedEventArgs e)
         {
-            Properties.Options.Default.checkForModUpdates = IModUpdatesOnLaunch.IsChecked ?? true;
-            Properties.Options.Default.Save();
+            Properties.Settings.Default.checkForModUpdates = IModUpdatesOnLaunch.IsChecked ?? true;
+            Properties.Settings.Default.Save();
         }
         
         private void IAppUpdatesOnLaunch_Checked(object sender, RoutedEventArgs e)
         {
-            Properties.Options.Default.checkForAppUpdates = IAppUpdatesOnLaunch.IsChecked ?? true;
-            Properties.Options.Default.Save();
+            Properties.Settings.Default.checkForAppUpdates = IAppUpdatesOnLaunch.IsChecked ?? true;
+            Properties.Settings.Default.Save();
         }
 
         private void UpdateLocalModFolders()
@@ -161,22 +164,31 @@ namespace FASTER
             {
                 ILocalModFolders.Items.Clear();
 
-                if (Properties.Options.Default?.localModFolders.Count > 0)
+                if (!(Properties.Settings.Default?.localModFolders.Count > 0)) return;
+
+                foreach (var folder in Properties.Settings.Default?.localModFolders)
                 {
-                    foreach (var folder in Properties.Options.Default?.localModFolders)
-                    {
-                        var cb = new CheckBox { Content = folder, IsChecked = false };
-                        ILocalModFolders.Items.Add(cb);
-                    }
+                    var cb = new CheckBox { Content = folder, IsChecked = false };
+                    ILocalModFolders.Items.Add(cb);
                 }
             }
-            catch
-            { /*ignored*/ }
+            catch (Exception e)
+            { Crashes.TrackError(e, new Dictionary<string, string> { { "Name", Properties.Settings.Default.steamUserName } }); }
         }
 
         private void IUpdateApp_OnClick(object sender, RoutedEventArgs e)
         { AutoUpdater.Start("https://raw.githubusercontent.com/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite/master/FASTER_Version.xml"); }
 
-        
+        private void APIKeyButton_Click(object sender, RoutedEventArgs e)
+        { Functions.OpenBrowser("https://forums.bohemia.net/forums/topic/224359-foxs-arma-server-tool-extended-rewrite-faster/"); }
+
+        private void ISaveSettings_Click(object sender, RoutedEventArgs e)
+        {
+            if (!string.IsNullOrEmpty(IAPIKeyBox.Text)) 
+                Properties.Settings.Default.SteamAPIKey = IAPIKeyBox.Text;
+            Properties.Settings.Default.checkForAppUpdates = IAppUpdatesOnLaunch.IsChecked ?? true;
+            Properties.Settings.Default.checkForModUpdates = IModUpdatesOnLaunch.IsChecked ?? true;
+            Properties.Settings.Default.Save();
+        }
     }
 }

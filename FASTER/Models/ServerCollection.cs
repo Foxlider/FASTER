@@ -18,8 +18,8 @@ namespace FASTER.Models
         {
             ServerCollection currentProfiles = new ServerCollection();
 
-            if (Properties.Options.Default.Servers != null)
-                currentProfiles = Properties.Options.Default.Servers;
+            if (Properties.Settings.Default.Servers != null)
+                currentProfiles = Properties.Settings.Default.Servers;
 
             return currentProfiles;
         }
@@ -41,10 +41,10 @@ namespace FASTER.Models
             if (!duplicate)
             {
                 currentProfiles.ServerProfiles.Add(new ServerProfile(name, safeName));
-                Properties.Options.Default.Servers = currentProfiles;
-                ServerProfile profile = Properties.Options.Default.Servers.ServerProfiles.Find(newProfile => newProfile.SafeName == safeName);
+                Properties.Settings.Default.Servers = currentProfiles;
+                ServerProfile profile = Properties.Settings.Default.Servers.ServerProfiles.Find(newProfile => newProfile.SafeName == safeName);
                 profile.ServerName = name;
-                profile.Executable = Properties.Options.Default.serverPath + @"\arma3server_x64.exe";
+                profile.Executable = Properties.Settings.Default.serverPath + @"\arma3server_x64.exe";
             }
             else
             {
@@ -52,7 +52,7 @@ namespace FASTER.Models
                 MainWindow.Instance.IMessageDialogText.Text = "Profile Already Exists";
             }
 
-            Properties.Options.Default.Save();
+            Properties.Settings.Default.Save();
             MainWindow.Instance.LoadServerProfiles();
         }
 
@@ -73,10 +73,10 @@ namespace FASTER.Models
             if (!duplicate)
             {
                 currentProfiles.ServerProfiles.Add(newProfile);
-                Properties.Options.Default.Servers = currentProfiles;
-                ServerProfile profile = Properties.Options.Default.Servers.ServerProfiles.Find(findProfile => findProfile.SafeName == newProfile.SafeName);
+                Properties.Settings.Default.Servers = currentProfiles;
+                ServerProfile profile = Properties.Settings.Default.Servers.ServerProfiles.Find(findProfile => findProfile.SafeName == newProfile.SafeName);
                 profile.ServerName = newProfile.ServerName;
-                profile.Executable = Properties.Options.Default.serverPath + @"\arma3server_x64.exe";
+                profile.Executable = Properties.Settings.Default.serverPath + @"\arma3server_x64.exe";
             }
             else
             {
@@ -84,7 +84,7 @@ namespace FASTER.Models
                 MainWindow.Instance.IMessageDialogText.Text = "Profile Already Exists";
             }
 
-            Properties.Options.Default.Save();
+            Properties.Settings.Default.Save();
             MainWindow.Instance.LoadServerProfiles();
         }
 
@@ -92,7 +92,7 @@ namespace FASTER.Models
         {
             try
             {
-                var currentProfiles = Properties.Options.Default.Servers.ServerProfiles;
+                var currentProfiles = Properties.Settings.Default.Servers.ServerProfiles;
 
                 ServerProfile currentProfile = currentProfiles.Find(profile => profile.DisplayName == oldName);
 
@@ -113,7 +113,7 @@ namespace FASTER.Models
 
             currentProfiles.ServerProfiles.RemoveAll(x => x.SafeName == safeName);
 
-            Properties.Options.Default.Save();
+            Properties.Settings.Default.Save();
         }
     }
 

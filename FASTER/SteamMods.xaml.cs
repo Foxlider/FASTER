@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Microsoft.AppCenter.Crashes;
 
 namespace FASTER
 {
@@ -29,7 +30,7 @@ namespace FASTER
 
         private void SteamMods_Loaded(object sender, RoutedEventArgs e)
         {
-            if (Properties.Options.Default.steamMods?.SteamMods?.Count > 0 && Properties.Options.Default.checkForModUpdates && firstLoad)
+            if (Properties.Settings.Default.steamMods?.SteamMods?.Count > 0 && Properties.Settings.Default.checkForModUpdates && firstLoad)
             {
                 firstLoad = false;
                 IUpdateProgress.IsIndeterminate = true;
@@ -61,7 +62,7 @@ namespace FASTER
 
         private void SteamMods_Initialized(object sender, EventArgs e)
         {
-            if (!(Properties.Options.Default.steamMods?.SteamMods?.Count > 0) || !Properties.Options.Default.checkForModUpdates) return;
+            if (!(Properties.Settings.Default.steamMods?.SteamMods?.Count > 0) || !Properties.Settings.Default.checkForModUpdates) return;
             IUpdateProgress.IsIndeterminate = true;
             IModView.IsEnabled              = false;
             IProgressInfo.Visibility        = Visibility.Visible;
@@ -113,7 +114,7 @@ namespace FASTER
 
         private void ImportModsFromSteam()
         {
-            if (!Directory.Exists(Path.Combine(Properties.Options.Default.steamCMDPath, "steamapps", "workshop", "content", "107410")))
+            if (!Directory.Exists(Path.Combine(Properties.Settings.Default.steamCMDPath, "steamapps", "workshop", "content", "107410")))
             {
                 Dispatcher?.Invoke(() =>
                 {
@@ -122,39 +123,39 @@ namespace FASTER
                 });
                 return;
             }
-            var            steamMods   = Directory.GetDirectories(Path.Combine(Properties.Options.Default.steamCMDPath, "steamapps", "workshop", "content", "107410"));
+            var            steamMods   = Directory.GetDirectories(Path.Combine(Properties.Settings.Default.steamCMDPath, "steamapps", "workshop", "content", "107410"));
             List<SteamMod> currentMods = new List<SteamMod>();
 
-            if (Properties.Options.Default.steamMods != null)
+            if (Properties.Settings.Default.steamMods != null)
             {
-                Properties.Options.Default.Reload();
-                currentMods = Properties.Options.Default.steamMods?.SteamMods;
+                Properties.Settings.Default.Reload();
+                currentMods = Properties.Settings.Default.steamMods?.SteamMods;
             }
 
             foreach (var steamMod in steamMods)
             {
                 try
                 {
-                    var sModId = steamMod.Replace(Path.Combine(Properties.Options.Default.steamCMDPath, "steamapps", "workshop", "content", "107410"), "").Replace("\\", "");
+                    var sModId = steamMod.Replace(Path.Combine(Properties.Settings.Default.steamCMDPath, "steamapps", "workshop", "content", "107410"), "").Replace("\\", "");
                     var modId = int.Parse(sModId);
                     var info  = SteamMod.GetModInfo(modId);
                     var temp  = currentMods?.FirstOrDefault(m => m.WorkshopId == modId);
-                    if (info != null && temp == null)
-                    {
-                        var modName         = info.Item1;
-                        var steamUpdateTime = info.Item3;
-                        var author          = info.Item2;
 
-                        currentMods?.Add(new SteamMod(modId, modName, author, steamUpdateTime));
+                    if (info == null || temp != null) continue;
 
-                        var modCollection = new SteamModCollection { CollectionName = "Steam", SteamMods = currentMods };
+                    var modName         = info.Item1;
+                    var steamUpdateTime = info.Item3;
+                    var author          = info.Item2;
 
-                        Properties.Options.Default.steamMods = modCollection;
-                        Properties.Options.Default.Save();
-                    }
+                    currentMods?.Add(new SteamMod(modId, modName, author, steamUpdateTime));
+
+                    var modCollection = new SteamModCollection { CollectionName = "Steam", SteamMods = currentMods };
+
+                    Properties.Settings.Default.steamMods = modCollection;
+                    Properties.Settings.Default.Save();
                 }
-                catch
-                { /*ignored*/ }
+                catch (Exception e)
+                { Crashes.TrackError(e, new Dictionary<string, string> { { "Name", Properties.Settings.Default.steamUserName } }); }
             }
             UpdateModsView();
         }
@@ -209,7 +210,7 @@ namespace FASTER
                     eventLog.WriteEntry($"Error occured while importing mod file : [{e.GetType()}] {e.Message}", EventLogEntryType.Warning);
                 }
             }
-            while (true);
+            while (!dataReader.EndOfStream);
         }
 
         private void ModLineHandler(StreamReader dataReader)
@@ -240,7 +241,7 @@ namespace FASTER
             {
                 var modsToUpdate = new List<string>();
 
-                foreach (var steamMod in Properties.Options.Default.steamMods.SteamMods)
+                foreach (var steamMod in Properties.Settings.Default.steamMods.SteamMods)
                 {
                     if (steamMod.SteamLastUpdated > steamMod.LocalLastUpdated)
                     {
@@ -282,7 +283,7 @@ namespace FASTER
         {
             if (MainWindow.Instance.ReadyToUpdate())
             {
-                string modPath = Path.Combine(Properties.Options.Default.steamCMDPath, "steamapps", "workshop", "content", "107410", modId.ToString());
+                string modPath = Path.Combine(Properties.Settings.Default.steamCMDPath, "steamapps", "workshop", "content", "107410", modId.ToString());
 
                 if (!Directory.Exists(modPath))
                 { Directory.CreateDirectory(modPath); }
@@ -290,7 +291,7 @@ namespace FASTER
                 try
                 {
                     Directory.CreateDirectory(modPath);
-                    var linkPath = Path.Combine(Properties.Options.Default.serverPath, $"@{Functions.SafeName(modName)}");
+                    var linkPath = Path.Combine(Properties.Settings.Default.serverPath, $"@{Functions.SafeName(modName)}");
                     var linkCommand = "/c mklink /D \"" + linkPath + "\" \"" + modPath + "\"";
                     
                     ProcessStartInfo startInfo = new ProcessStartInfo("cmd.exe")
@@ -333,7 +334,7 @@ namespace FASTER
 
         private async void CheckForUpdates()
         {
-            if (Properties.Options.Default.steamMods.SteamMods.Count > 0)
+            if (Properties.Settings.Default.steamMods.SteamMods.Count > 0)
             {
                 IUpdateProgress.IsIndeterminate = true;
                 IModView.IsEnabled              = false;
@@ -361,9 +362,9 @@ namespace FASTER
         {
             Dispatcher?.Invoke(() => IModView.Items.Clear());
 
-            if (Properties.Options.Default.steamMods != null)
+            if (Properties.Settings.Default.steamMods != null)
             {
-                foreach (var steamMod in Properties.Options.Default.steamMods.SteamMods)
+                foreach (var steamMod in Properties.Settings.Default.steamMods.SteamMods)
                 { Dispatcher?.Invoke(() => IModView.Items.Add(steamMod)); }
             }
         }
@@ -372,9 +373,9 @@ namespace FASTER
         {
             var steamMod = (SteamMod)((Button)e.Source).DataContext;
 
-            if (Directory.Exists(Properties.Options.Default.steamCMDPath + @"\steamapps\workshop\content\107410\" + steamMod.WorkshopId))
+            if (Directory.Exists(Properties.Settings.Default.steamCMDPath + @"\steamapps\workshop\content\107410\" + steamMod.WorkshopId))
             { 
-                try{ Directory.Delete(Properties.Options.Default.steamCMDPath + @"\steamapps\workshop\content\107410\" + steamMod.WorkshopId, true); }
+                try{ Directory.Delete(Properties.Settings.Default.steamCMDPath + @"\steamapps\workshop\content\107410\" + steamMod.WorkshopId, true); }
                 catch
                 {
                     MainWindow.Instance.IFlyoutMessage.Content = $"Could not delete mod \"{steamMod.Name}\"";
@@ -382,9 +383,9 @@ namespace FASTER
                 }
             }
 
-            if (Directory.Exists(Properties.Options.Default.serverPath + @"\@" + Functions.SafeName(steamMod.Name)))
+            if (Directory.Exists(Properties.Settings.Default.serverPath + @"\@" + Functions.SafeName(steamMod.Name)))
             {
-                try { Directory.Delete(Properties.Options.Default.serverPath + @"\@" + Functions.SafeName(steamMod.Name), true); }
+                try { Directory.Delete(Properties.Settings.Default.serverPath + @"\@" + Functions.SafeName(steamMod.Name), true); }
                 catch
                 {
                     MainWindow.Instance.IFlyoutMessage.Content = $"Could not delete mod \"{steamMod.Name}\"";

@@ -18,28 +18,39 @@ namespace FASTER
         public Setup()
         {
             InitializeComponent();
-            if (Properties.Options.Default.firstRun)
-            { Properties.Options.Default.Upgrade(); }
-            if (Properties.Options.Default.clearSettings)
-                Properties.Options.Default.Reset();
+            bool wasFirstRun = Properties.Settings.Default.firstRun;
+            if (wasFirstRun)
+            {
+                Properties.Settings.Default.Upgrade();
+                Properties.Settings.Default.firstRun = false;
+                Properties.Settings.Default.Save();
+            }
+            if (Properties.Settings.Default.clearSettings)
+                Properties.Settings.Default.Reset();
 
-            if (Properties.Options.Default.steamMods == null)
+            if (Properties.Settings.Default.steamMods == null)
             {
-                Properties.Options.Default.steamMods = new SteamModCollection();
-                Properties.Options.Default.Save();
+                Properties.Settings.Default.steamMods = new SteamModCollection();
+                Properties.Settings.Default.Save();
             }
-            if (Properties.Options.Default.localMods == null)
+            if (Properties.Settings.Default.localMods == null)
             {
-                Properties.Options.Default.localMods = new List<LocalMod>();
-                Properties.Options.Default.Save();
+                Properties.Settings.Default.localMods = new List<LocalMod>();
+                Properties.Settings.Default.Save();
             }
-            if (Properties.Options.Default.localModFolders == null)
+            if (Properties.Settings.Default.localModFolders == null)
             {
-                Properties.Options.Default.localModFolders = new List<string>();
-                Properties.Options.Default.Save();
+                Properties.Settings.Default.localModFolders = new List<string>();
+                Properties.Settings.Default.Save();
             }
-            
-            if (Properties.Options.Default.firstRun) return;
+
+            ISteamUserBox.Text = Properties.Settings.Default.steamUserName;
+            ISteamPassBox.Password = Encryption.Instance.DecryptData(Properties.Settings.Default.steamPassword);
+            ISteamDirBox.Text = Properties.Settings.Default.steamCMDPath;
+            IServerDirBox.Text = Properties.Settings.Default.serverPath;
+
+            if (wasFirstRun) return;
+
             try
             {
                 string rev = $"{(char)(Assembly.GetExecutingAssembly().GetName().Version.Build + 96)}";
@@ -50,7 +61,7 @@ namespace FASTER
                                + $"{Assembly.GetExecutingAssembly().GetName().Version.Minor}"
                                + $"{rev}";
                 Analytics.TrackEvent("Setup - Launching", new Dictionary<string, string> {
-                    { "Name", MainWindow.Instance.ISteamUserBox.Text },
+                    { "Name", Properties.Settings.Default.steamUserName },
                     { "Version", MainWindow.Instance.Version },
                     { "Region", RegionInfo.CurrentRegion.TwoLetterISORegionName},
                     { "CPU Architecture", Environment.Is64BitOperatingSystem ? "x64" : "x86" },
@@ -84,7 +95,7 @@ namespace FASTER
         {
             var encryption = Encryption.Instance;
 
-            var settings = Properties.Options.Default;
+            var settings = Properties.Settings.Default;
             settings.serverPath = IServerDirBox.Text;
             settings.steamCMDPath = ISteamDirBox.Text;
             settings.steamUserName = ISteamUserBox.Text;
@@ -98,7 +109,5 @@ namespace FASTER
             MainWindow.Instance.Show();
             Close();
         }
-
-        
     }
 }

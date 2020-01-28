@@ -33,11 +33,11 @@ namespace FASTER
 
         public MainWindow()
         {
-            Properties.Options.Default.Reload();
+            Properties.Settings.Default.Reload();
             InitializeComponent();
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
 
-            Properties.Options.Default.PropertyChanged += Default_PropertyChanged;
+            Properties.Settings.Default.PropertyChanged += Default_PropertyChanged;
             
             IMessageDialogClose.Click += IMessageDialogClose_Click;
             ISteamUserBox.LostFocus += ISteamSettings_Changed;
@@ -62,7 +62,7 @@ namespace FASTER
 
             try
             {
-                if (Properties.Options.Default.checkForAppUpdates)
+                if (Properties.Settings.Default.checkForAppUpdates)
                 {
                     AutoUpdater.ReportErrors = true;
                     AutoUpdater.LetUserSelectRemindLater = false;
@@ -82,7 +82,7 @@ namespace FASTER
 
         private void Default_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            Properties.Options.Default.Save();
+            Properties.Settings.Default.Save();
         }
 
         /// <summary>
@@ -123,7 +123,7 @@ namespace FASTER
 
         private void MetroWindow_Closing(object sender, EventArgs e)
         {
-            Properties.Options.Default.Save();
+            Properties.Settings.Default.Save();
             Application.Current.Shutdown();
         }
         #endregion
@@ -133,7 +133,7 @@ namespace FASTER
         {
             if (Equals(sender, ISteamDirButton))
             {
-                string path = SelectFolder(Properties.Options.Default.steamCMDPath);
+                string path = SelectFolder(Properties.Settings.Default.steamCMDPath);
                 if (path != null)
                 {
                     ISteamDirBox.Text = path;
@@ -142,7 +142,7 @@ namespace FASTER
             }
             else if (Equals(sender, IServerDirButton))
             {
-                string path = SelectFolder(Properties.Options.Default.serverPath);
+                string path = SelectFolder(Properties.Settings.Default.serverPath);
                 if (path != null)
                 {
                     IServerDirBox.Text = path;
@@ -290,7 +290,7 @@ namespace FASTER
         {
             if (IServerProfilesMenu.SelectedIndex == -1) 
             { return; }
-            var temp = Properties.Options.Default.Servers.ServerProfiles.FirstOrDefault(s => s.SafeName == ((ListBoxItem) IServerProfilesMenu.SelectedItem).Name);
+            var temp = Properties.Settings.Default.Servers.ServerProfiles.FirstOrDefault(s => s.SafeName == ((ListBoxItem) IServerProfilesMenu.SelectedItem).Name);
             if (temp == null)
             {
                 Instance.IMessageDialog.IsOpen   = true;
@@ -374,7 +374,7 @@ namespace FASTER
         }
 
         private void IServerDirBox_TextChanged(object sender, RoutedEventArgs e)
-        { Properties.Options.Default.serverPath = IServerDirBox.Text; }
+        { Properties.Settings.Default.serverPath = IServerDirBox.Text; }
 
         private void ISubmitCode_Click(object sender, RoutedEventArgs e)
         {
@@ -418,9 +418,9 @@ namespace FASTER
 
         public void LoadServerProfiles()
         {
-            if (Properties.Options.Default.Servers != null)
+            if (Properties.Settings.Default.Servers != null)
             {
-                var currentProfiles = Properties.Options.Default.Servers;
+                var currentProfiles = Properties.Settings.Default.Servers;
                 Dispatcher?.Invoke(() =>
                 {
                     IServerProfilesMenu.Items.Clear();
@@ -476,7 +476,7 @@ namespace FASTER
                 && !string.IsNullOrEmpty(ISteamUserBox.Text) 
                 && !string.IsNullOrEmpty(ISteamPassBox.Password) 
                 && !string.IsNullOrEmpty(IServerDirBox.Text) 
-                && File.Exists(Properties.Options.Default.steamCMDPath + "\\steamcmd.exe");
+                && File.Exists(Properties.Settings.Default.steamCMDPath + "\\steamcmd.exe");
         }
 
         // Opens Folder select dialog and returns selected path
@@ -505,20 +505,20 @@ namespace FASTER
 
         private void UpdateSteamUpdaterSettings()
         {
-            Properties.Options.Default.steamCMDPath  = ISteamDirBox.Text;
-            Properties.Options.Default.steamUserName = ISteamUserBox.Text;
-            Properties.Options.Default.steamPassword = Encryption.Instance.EncryptData(ISteamPassBox.Password);
-            Properties.Options.Default.serverPath    = IServerDirBox.Text;
-            Properties.Options.Default.serverBranch  = IServerBranch.Text;
+            Properties.Settings.Default.steamCMDPath  = ISteamDirBox.Text;
+            Properties.Settings.Default.steamUserName = ISteamUserBox.Text;
+            Properties.Settings.Default.steamPassword = Encryption.Instance.EncryptData(ISteamPassBox.Password);
+            Properties.Settings.Default.serverPath    = IServerDirBox.Text;
+            Properties.Settings.Default.serverBranch  = IServerBranch.Text;
         }
 
         private void LoadSteamUpdaterSettings()
         {
-            ISteamDirBox.Text      = Properties.Options.Default.steamCMDPath;
-            ISteamUserBox.Text     = Properties.Options.Default.steamUserName;
-            ISteamPassBox.Password = Encryption.Instance.DecryptData(Properties.Options.Default.steamPassword);
-            IServerDirBox.Text     = Properties.Options.Default.serverPath;
-            IServerBranch.Text     = Properties.Options.Default.serverBranch;
+            ISteamDirBox.Text      = Properties.Settings.Default.steamCMDPath;
+            ISteamUserBox.Text     = Properties.Settings.Default.steamUserName;
+            ISteamPassBox.Password = Encryption.Instance.DecryptData(Properties.Settings.Default.steamPassword);
+            IServerDirBox.Text     = Properties.Settings.Default.serverPath;
+            IServerBranch.Text     = Properties.Settings.Default.serverBranch;
         }
 
         private void InstallSteam()
@@ -528,7 +528,7 @@ namespace FASTER
                 Instance.IMessageDialog.IsOpen   = true;
                 Instance.IMessageDialogText.Text = "Please make sure you have set a valid path for SteamCMD.";
             }
-            else if (!File.Exists(Properties.Options.Default.steamCMDPath + "\\steamcmd.exe"))
+            else if (!File.Exists(Properties.Settings.Default.steamCMDPath + "\\steamcmd.exe"))
             {
                 IMessageDialog.IsOpen = true;
                 IMessageDialogText.Text = "Steam CMD will now download and start the install process. If prompted please enter your Steam Guard " +
@@ -537,8 +537,8 @@ namespace FASTER
                 ISteamOutputBox.AppendText("Installing SteamCMD");
                 ISteamOutputBox.AppendText("\nFile Downloading...");
                 const string url      = "https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip";
-                string       fileName = Properties.Options.Default.steamCMDPath + "\\steamcmd.zip";
-                if (!Directory.Exists(Properties.Options.Default.steamCMDPath)) Directory.CreateDirectory(Properties.Options.Default.steamCMDPath);
+                string       fileName = Properties.Settings.Default.steamCMDPath + "\\steamcmd.zip";
+                if (!Directory.Exists(Properties.Settings.Default.steamCMDPath)) Directory.CreateDirectory(Properties.Settings.Default.steamCMDPath);
                 using WebClient client = new WebClient();
                 client.DownloadFileCompleted += SteamDownloadCompleted;
                 client.DownloadFileAsync(new Uri(url), fileName);
@@ -554,7 +554,7 @@ namespace FASTER
         {
             ISteamOutputBox.AppendText(Environment.NewLine + "Download Finished");
 
-            var steamPath = Properties.Options.Default.steamCMDPath;
+            var steamPath = Properties.Settings.Default.steamCMDPath;
             string zip = steamPath + "\\steamcmd.zip";
 
             ISteamOutputBox.AppendText("\nUnzipping...");
@@ -783,15 +783,15 @@ namespace FASTER
             {
                 foreach (var modID in modIds)
                 {
-                    var modToUpdate = Properties.Options.Default.steamMods.SteamMods.Find(m => m.WorkshopId.ToString() == modID);
+                    var modToUpdate = Properties.Settings.Default.steamMods.SteamMods.Find(m => m.WorkshopId.ToString() == modID);
                     var steamCmdOutputText = Functions.StringFromRichTextBox(Instance.ISteamOutputBox);
 
                     if (steamCmdOutputText.Contains("ERROR! Timeout downloading"))
                     { modToUpdate.Status = "Download Not Complete"; }
                     else
                     {
-                        string modTempPath = Properties.Options.Default.steamCMDPath + @"\steamapps\workshop\downloads\107410\" + modID;
-                        string modPath = Properties.Options.Default.steamCMDPath + @"\steamapps\workshop\content\107410\" + modID;
+                        string modTempPath = Properties.Settings.Default.steamCMDPath + @"\steamapps\workshop\downloads\107410\" + modID;
+                        string modPath = Properties.Settings.Default.steamCMDPath + @"\steamapps\workshop\content\107410\" + modID;
 
                         if (Directory.Exists(modTempPath))
                             modToUpdate.Status = "Download Not Complete";
@@ -805,7 +805,7 @@ namespace FASTER
                         }
                     }
                 }
-                Properties.Options.Default.Save();
+                Properties.Settings.Default.Save();
             }
         }
 

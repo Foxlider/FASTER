@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Microsoft.AppCenter.Crashes;
+
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
 namespace FASTER.Models
@@ -34,13 +36,13 @@ namespace FASTER.Models
 
             List<string> foldersToSearch = new List<string>();
 
-            if (serverPathOnly && !string.IsNullOrEmpty(Properties.Options.Default.serverPath))
+            if (serverPathOnly && !string.IsNullOrEmpty(Properties.Settings.Default.serverPath))
             {
-                foldersToSearch.Add(Properties.Options.Default.serverPath);
+                foldersToSearch.Add(Properties.Settings.Default.serverPath);
             }
 
-            if (!serverPathOnly && Properties.Options.Default.localModFolders != null) 
-            { foldersToSearch.AddRange(Properties.Options.Default.localModFolders.Where(folder => folder != null && folder != Properties.Options.Default.serverPath)); }
+            if (!serverPathOnly && Properties.Settings.Default.localModFolders != null) 
+            { foldersToSearch.AddRange(Properties.Settings.Default.localModFolders.Where(folder => folder != null && folder != Properties.Settings.Default.serverPath)); }
 
             if (foldersToSearch.Count <= 0) return localMods;
             foreach (var localModFolder in foldersToSearch)
@@ -55,7 +57,7 @@ namespace FASTER.Models
                                        let website = "Unknown"
                                        select new LocalMod(name, modFolder, author, website));
                 }
-                catch (Exception) { /* ignored */ }
+                catch (Exception e) { Crashes.TrackError(e, new Dictionary<string, string> { { "Name", Properties.Settings.Default.steamUserName } }); }
             }
 
             return localMods;
