@@ -18,6 +18,7 @@ using LiveCharts.Configurations;
 
 using MahApps.Metro;
 using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 
 namespace FASTER
 {
@@ -186,8 +187,11 @@ namespace FASTER
                     var p = new ProcessSpy(proc);
                     processes.Add(p);
                 }
-                catch(InvalidOperationException)
-                { /*The process exited. Cannot add it back*/ }
+                catch (InvalidOperationException e)
+                {
+                    /*The process exited. Cannot add it back*/
+                    Crashes.TrackError(e, new Dictionary<string, string> { { "Name", Properties.Settings.Default.steamUserName } });
+                }
             }
         }
 

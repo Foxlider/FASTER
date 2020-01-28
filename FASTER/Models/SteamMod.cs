@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml.Serialization;
 using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
@@ -182,10 +183,7 @@ namespace FASTER.Models
                         MainWindow.Instance.IMessageDialogText.Text = "This is a workshop Item for a different game.";
                     }
                 }
-                catch (Exception)
-                {
-                    /*ignored*/
-                }
+                catch (Exception e) { Crashes.TrackError(e, new Dictionary<string, string> { { "Name", Properties.Settings.Default.steamUserName } }); }
             }
             else if (!multiple)
             {

@@ -13,6 +13,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 using Path = System.IO.Path;
 // ReSharper disable SpecifyACultureInStringConversionExplicitly
 
@@ -742,10 +743,7 @@ namespace FASTER
                     cfg.Close();
                 }
             }
-            catch (Exception)
-            {
-                /*ignored*/
-            }
+            catch (Exception e) { Crashes.TrackError(e, new Dictionary<string, string> { { "Name", Properties.Settings.Default.steamUserName } }); }
         }
 
         private void WriteConfigFiles(string profile)
@@ -1124,8 +1122,8 @@ namespace FASTER
                 {
                     try
                     { Process.Start(file.FullName); }
-                    catch (Exception)
-                    { /*ignored*/}
+                    catch (Exception e)
+                    { Crashes.TrackError(e, new Dictionary<string, string> { { "Name", Properties.Settings.Default.steamUserName } }); }
                 }
                 else
                 {
@@ -1147,12 +1145,8 @@ namespace FASTER
             var i = 0;
             foreach (var file in files)
             {
-                try
-                {
-                    file.Delete();
-                }
-                catch (Exception )
-                { /* ignored */}
+                try { file.Delete(); }
+                catch (Exception e) { Crashes.TrackError(e, new Dictionary<string, string> {{ "Name", Properties.Settings.Default.steamUserName }}); }
                 i += 1;
             }
             MainWindow.Instance.IMessageDialog.IsOpen = true;
@@ -1186,18 +1180,18 @@ namespace FASTER
             {
                 var commandLine = SetCommandLine(configs, profilePath, profileName, playerMods, serverMods);
                 try { Clipboard.SetText(commandLine); }
-                catch (COMException)
+                catch (COMException e)
                 {
                     try
                     {
-                        Analytics.TrackEvent("ServerProfile - Clipboard error", new Dictionary<string, string>
+                        Crashes.TrackError(e, new Dictionary<string, string>
                                                  {{ "Name", Properties.Settings.Default.steamUserName }});
                         Clipboard.SetDataObject(commandLine);
                     }
-                    catch (COMException)
+                    catch (COMException ex)
                     {
-                        Analytics.TrackEvent("ServerProfile - Clipboard error AGAIN", new Dictionary<string, string>
-                                                 {{ "Name", Properties.Settings.Default.steamUserName }});
+                        Crashes.TrackError(ex, new Dictionary<string, string>
+                                               {{ "Name", Properties.Settings.Default.steamUserName }});
                     }
                 }
                 

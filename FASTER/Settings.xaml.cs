@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Input;
 using AutoUpdaterDotNET;
 using FASTER.Models;
+using Microsoft.AppCenter.Crashes;
 using Application = System.Windows.Application;
 using CheckBox = System.Windows.Controls.CheckBox;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
@@ -163,17 +164,16 @@ namespace FASTER
             {
                 ILocalModFolders.Items.Clear();
 
-                if (Properties.Settings.Default?.localModFolders.Count > 0)
+                if (!(Properties.Settings.Default?.localModFolders.Count > 0)) return;
+
+                foreach (var folder in Properties.Settings.Default?.localModFolders)
                 {
-                    foreach (var folder in Properties.Settings.Default?.localModFolders)
-                    {
-                        var cb = new CheckBox { Content = folder, IsChecked = false };
-                        ILocalModFolders.Items.Add(cb);
-                    }
+                    var cb = new CheckBox { Content = folder, IsChecked = false };
+                    ILocalModFolders.Items.Add(cb);
                 }
             }
-            catch
-            { /*ignored*/ }
+            catch (Exception e)
+            { Crashes.TrackError(e, new Dictionary<string, string> { { "Name", Properties.Settings.Default.steamUserName } }); }
         }
 
         private void IUpdateApp_OnClick(object sender, RoutedEventArgs e)

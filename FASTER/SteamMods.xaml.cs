@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Microsoft.AppCenter.Crashes;
 
 namespace FASTER
 {
@@ -139,22 +140,22 @@ namespace FASTER
                     var modId = int.Parse(sModId);
                     var info  = SteamMod.GetModInfo(modId);
                     var temp  = currentMods?.FirstOrDefault(m => m.WorkshopId == modId);
-                    if (info != null && temp == null)
-                    {
-                        var modName         = info.Item1;
-                        var steamUpdateTime = info.Item3;
-                        var author          = info.Item2;
 
-                        currentMods?.Add(new SteamMod(modId, modName, author, steamUpdateTime));
+                    if (info == null || temp != null) continue;
 
-                        var modCollection = new SteamModCollection { CollectionName = "Steam", SteamMods = currentMods };
+                    var modName         = info.Item1;
+                    var steamUpdateTime = info.Item3;
+                    var author          = info.Item2;
 
-                        Properties.Settings.Default.steamMods = modCollection;
-                        Properties.Settings.Default.Save();
-                    }
+                    currentMods?.Add(new SteamMod(modId, modName, author, steamUpdateTime));
+
+                    var modCollection = new SteamModCollection { CollectionName = "Steam", SteamMods = currentMods };
+
+                    Properties.Settings.Default.steamMods = modCollection;
+                    Properties.Settings.Default.Save();
                 }
-                catch
-                { /*ignored*/ }
+                catch (Exception e)
+                { Crashes.TrackError(e, new Dictionary<string, string> { { "Name", Properties.Settings.Default.steamUserName } }); }
             }
             UpdateModsView();
         }

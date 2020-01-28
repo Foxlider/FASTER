@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Microsoft.AppCenter.Crashes;
+
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
 namespace FASTER.Models
@@ -55,7 +57,7 @@ namespace FASTER.Models
                                        let website = "Unknown"
                                        select new LocalMod(name, modFolder, author, website));
                 }
-                catch (Exception) { /* ignored */ }
+                catch (Exception e) { Crashes.TrackError(e, new Dictionary<string, string> { { "Name", Properties.Settings.Default.steamUserName } }); }
             }
 
             return localMods;
