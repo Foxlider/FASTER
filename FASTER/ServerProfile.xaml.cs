@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -1184,8 +1185,22 @@ namespace FASTER
             if (start)
             {
                 var commandLine = SetCommandLine(configs, profilePath, profileName, playerMods, serverMods);
-
-                Clipboard.SetText(commandLine);
+                try { Clipboard.SetText(commandLine); }
+                catch (COMException)
+                {
+                    try
+                    {
+                        Analytics.TrackEvent("ServerProfile - Clipboard error", new Dictionary<string, string>
+                                                 {{ "Name", Properties.Settings.Default.steamUserName }});
+                        Clipboard.SetDataObject(commandLine);
+                    }
+                    catch (COMException)
+                    {
+                        Analytics.TrackEvent("ServerProfile - Clipboard error AGAIN", new Dictionary<string, string>
+                                                 {{ "Name", Properties.Settings.Default.steamUserName }});
+                    }
+                }
+                
                 ProcessStartInfo sStartInfo = new ProcessStartInfo(IExecutable.Text, commandLine);
                 Process sProcess = new Process { StartInfo = sStartInfo };
                 sProcess.Start();
