@@ -32,7 +32,7 @@ namespace FASTER.Models
 
             if (currentProfiles.ServerProfiles.Count > 0)
             {
-                foreach (var profile in currentProfiles.ServerProfiles
+                foreach (var _ in currentProfiles.ServerProfiles
                                                        .Where(profile => profile.DisplayName == name)) 
                 { duplicate = true; }
             }
@@ -62,7 +62,7 @@ namespace FASTER.Models
 
             if (currentProfiles.ServerProfiles.Count > 0)
             {
-                foreach (var profile in currentProfiles.ServerProfiles
+                foreach (var _ in currentProfiles.ServerProfiles
                                                        .Where(profile => profile.DisplayName == newProfile.DisplayName)) 
                 { duplicate = true; }
             }
@@ -240,7 +240,7 @@ namespace FASTER.Models
         public string OnUnsignedData           { get; set; } = string.Empty;
         public string RegularCheck             { get; set; } = string.Empty;
         public bool   BattleEye                { get; set; } = true;
-        public bool   enableAdditionalParams   { get; set; } = false;
+        public bool   enableAdditionalParams   { get; set; }
         public string additionalParams         { get; set; } = string.Empty;
     }
 }

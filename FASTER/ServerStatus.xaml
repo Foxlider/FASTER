@@ -211,7 +211,7 @@
                 </ToggleButton.Style>
             </ToggleButton>
         </Grid>
-        <controls:Flyout x:Name="IFlyout" Grid.RowSpan="3" IsOpen="False" Position="Bottom" Theme="Light" AutoCloseInterval="3000" IsAutoCloseEnabled="True" Opacity="0.9">
+        <controls:Flyout x:Name="IFlyout" Grid.Row="0" Grid.RowSpan="3" IsOpen="False" Position="Bottom" Theme="Light" AutoCloseInterval="3000" IsAutoCloseEnabled="True" Opacity="0.9">
             <Label Name="IFlyoutMessage" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Content="TEXT"/>
         </controls:Flyout>
         <mah:ChildWindow x:Name="IConsoleViewer" 

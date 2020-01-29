@@ -174,7 +174,7 @@ namespace FASTER
                 { ILocalModFolders.Items.Add(cb); }
             }
             catch (Exception e)
-            { Crashes.TrackError(e, new Dictionary<string, string> { { "Name", Properties.Settings.Default.steamUserName } }); }
+            { Crashes.TrackError(e, new Dictionary<string, string> { { "Name", Properties.Settings.Default?.steamUserName } }); }
         }
 
         private void IUpdateApp_OnClick(object sender, RoutedEventArgs e)

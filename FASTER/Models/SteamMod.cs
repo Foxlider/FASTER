@@ -38,7 +38,7 @@ namespace FASTER.Models
 
             if (currentMods.SteamMods.Count > 0)
             {
-                foreach (var mod in currentMods.SteamMods
+                foreach (var _ in currentMods.SteamMods
                                                .Where(mod => mod.WorkshopId == newMod.WorkshopId)) 
                 { duplicate = true; }
             }
@@ -151,7 +151,7 @@ namespace FASTER.Models
 
             if (currentMods.Count > 0)
             {
-                foreach (var steamMod in currentMods.Where(steamMod => steamMod.WorkshopId == modId)) 
+                foreach (var _ in currentMods.Where(steamMod => steamMod.WorkshopId == modId)) 
                 { duplicate = true; }
             }
 

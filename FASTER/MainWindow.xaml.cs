@@ -29,7 +29,7 @@ namespace FASTER
     public partial class MainWindow
     {
         private static MainWindow _instance;
-        internal bool    InstallSteamCmd { get; set; } = false;
+        internal bool    InstallSteamCmd { get; set; }
         private bool    _cancelled;
         private Process _oProcess = new Process();
         internal string Version;
@@ -176,7 +176,7 @@ namespace FASTER
             }
 
             var steamCommand = "+login " + ISteamUserBox.Text + " " + ISteamPassBox.Password + " +force_install_dir \"" + IServerDirBox.Text + "\" +app_update " + branch + " validate +quit";
-            
+
             _ = RunSteamCommand(steamCmd, steamCommand, "server");
         }
 
@@ -573,9 +573,7 @@ namespace FASTER
                     }
                     while (_localRunThread && threadSlept < 10000);
                     if (_localRunThread)
-                    {
-                        Dispatcher?.Invoke(() => { ISteamGuardDialog.IsOpen = true; });
-                    }
+                    { Dispatcher?.Invoke(() => { ISteamGuardDialog.IsOpen = true; }); }
                 });
                 t.Start();
             }
@@ -590,17 +588,17 @@ namespace FASTER
             { threadSlept = 0; }
 
             if (text.EndsWith("..."))
-            {
-                Dispatcher?.Invoke(() => { ISteamOutputBox.AppendText(Environment.NewLine); });
-            }
+            { Dispatcher?.Invoke(() => { ISteamOutputBox.AppendText(Environment.NewLine); }); }
 
             if (text.Contains("Update state"))
             {
                 int    counter  = text.IndexOf(":", StringComparison.Ordinal);
                 string progress = text.Substring(counter + 2, 2);
                 int    progressValue;
-                if (progress.Contains(".")) { int.TryParse(progress.Substring(0, 1), out progressValue); }
-                else { int.TryParse(progress,                                        out progressValue); }
+                if (progress.Contains(".")) 
+                { int.TryParse(progress.Substring(0, 1), out progressValue); }
+                else 
+                { int.TryParse(progress, out progressValue); }
 
                 Dispatcher?.Invoke(() =>
                 {

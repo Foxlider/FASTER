@@ -862,7 +862,7 @@
             <Button Name="IDeleteProfile" ToolTip="Delete Profile" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Padding="7,5" Content="{iconPacks:Material Kind=Delete}" Click="IDeleteProfile_Click"/>
             <Button Name="ILaunchServer" ToolTip="Launch Server" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Padding="7,5" Content="{iconPacks:Material Kind=Play}" Click="ILaunchServer_Click"/>
         </StackPanel>
-        <mah:Flyout x:Name="IFlyout" Grid.RowSpan="2" IsOpen="False" Position="Bottom" Theme="Light" AutoCloseInterval="3000" IsAutoCloseEnabled="True" Opacity="0.9">
+        <mah:Flyout x:Name="IFlyout" Grid.Row="0" Grid.RowSpan="2" IsOpen="False" Position="Bottom" Theme="Light" AutoCloseInterval="3000" IsAutoCloseEnabled="True" Opacity="0.9">
             <Label Name="IFlyoutMessage" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Content="TEXT"/>
         </mah:Flyout>
         <simpleChildWindow:ChildWindow
