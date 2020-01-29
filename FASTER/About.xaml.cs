@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics;
+﻿using FASTER.Models;
+
+using Microsoft.AppCenter.Analytics;
+
+using System.Collections.Generic;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
-using FASTER.Models;
-using Microsoft.AppCenter.Analytics;
 
 namespace FASTER
 {
@@ -14,7 +14,6 @@ namespace FASTER
     /// </summary>
     public partial class About : UserControl
     {
-
         public About()
         {
             InitializeComponent();

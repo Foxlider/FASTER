@@ -1,10 +1,15 @@
-﻿using System;
+﻿using AutoUpdaterDotNET;
+
+using FASTER.Models;
+
+using Microsoft.AppCenter.Crashes;
+
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using AutoUpdaterDotNET;
-using FASTER.Models;
-using Microsoft.AppCenter.Crashes;
+
 using Application = System.Windows.Application;
 using CheckBox = System.Windows.Controls.CheckBox;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
@@ -34,9 +39,7 @@ namespace FASTER
             try
             {
                 if (AutoUpdater.DownloadUpdate() && Application.Current.MainWindow != null)
-                {
-                    Application.Current.MainWindow.Close();
-                }
+                { Application.Current.MainWindow.Close(); }
             }
             catch (Exception exception)
             {
@@ -126,6 +129,7 @@ namespace FASTER
             {
                 if (Properties.Settings.Default.localModFolders == null)
                 { Properties.Settings.Default.localModFolders = new List<string>(); }
+
                 Properties.Settings.Default.localModFolders.Add(newModFolder);
                 Properties.Settings.Default.Save();
             }
@@ -137,11 +141,10 @@ namespace FASTER
             foreach (var item in ILocalModFolders.Items)
             {
                 var cb = item as CheckBox;
-                if (cb?.IsChecked ?? false)
-                {
-                    Properties.Settings.Default.localModFolders.Remove(cb.Content.ToString());
-                    Properties.Settings.Default.Save();
-                }
+                if (!(cb?.IsChecked ?? false)) continue;
+
+                Properties.Settings.Default.localModFolders.Remove(cb.Content.ToString());
+                Properties.Settings.Default.Save();
             }
             UpdateLocalModFolders();
         }
@@ -166,11 +169,9 @@ namespace FASTER
 
                 if (!(Properties.Settings.Default?.localModFolders.Count > 0)) return;
 
-                foreach (var folder in Properties.Settings.Default?.localModFolders)
-                {
-                    var cb = new CheckBox { Content = folder, IsChecked = false };
-                    ILocalModFolders.Items.Add(cb);
-                }
+                foreach (var cb in from folder in Properties.Settings.Default?.localModFolders 
+                                   select new CheckBox { Content = folder, IsChecked = false }) 
+                { ILocalModFolders.Items.Add(cb); }
             }
             catch (Exception e)
             { Crashes.TrackError(e, new Dictionary<string, string> { { "Name", Properties.Settings.Default.steamUserName } }); }

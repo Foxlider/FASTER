@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml.Serialization;
-using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
@@ -37,11 +38,9 @@ namespace FASTER.Models
 
             if (currentMods.SteamMods.Count > 0)
             {
-                foreach (var mod in currentMods.SteamMods)
-                {
-                    if (mod.WorkshopId == newMod.WorkshopId)
-                        duplicate = true;
-                }
+                foreach (var mod in currentMods.SteamMods
+                                               .Where(mod => mod.WorkshopId == newMod.WorkshopId)) 
+                { duplicate = true; }
             }
 
             if (!duplicate)
@@ -71,9 +70,8 @@ namespace FASTER.Models
     public class SteamMod
     {
         private SteamMod()
-        {
-            
-        }
+        {}
+
         public SteamMod(int workshopId, string name, string author, int steamLastUpdated, bool privateMod = false)
         {
             WorkshopId = workshopId;
@@ -104,11 +102,10 @@ namespace FASTER.Models
         {
             List<SteamMod> currentSteamMods = new List<SteamMod>();
 
-            if (Properties.Settings.Default.steamMods != null)
-            {
-                Properties.Settings.Default.Reload();
-                currentSteamMods = Properties.Settings.Default.steamMods?.SteamMods;
-            }
+            if (Properties.Settings.Default.steamMods == null) return currentSteamMods;
+
+            Properties.Settings.Default.Reload();
+            currentSteamMods = Properties.Settings.Default.steamMods?.SteamMods;
 
             return currentSteamMods;
         }
@@ -183,7 +180,8 @@ namespace FASTER.Models
                         MainWindow.Instance.IMessageDialogText.Text = "This is a workshop Item for a different game.";
                     }
                 }
-                catch (Exception e) { Crashes.TrackError(e, new Dictionary<string, string> { { "Name", Properties.Settings.Default.steamUserName } }); }
+                catch (Exception e) 
+                { Crashes.TrackError(e, new Dictionary<string, string> { { "Name", Properties.Settings.Default.steamUserName } }); }
             }
             else if (!multiple)
             {
@@ -202,14 +200,16 @@ namespace FASTER.Models
                 if (modInfo != null) 
                 { author = SteamWebApi.GetPlayerSummaries(modInfo.SelectToken("creator").ToString())?.SelectToken("personaname")?.ToString(); }
             }
-            catch { author = "Unknown"; }
+            catch 
+            { author = "Unknown"; }
 
             try
             {
                 if (modInfo?.SelectToken("time_updated") != null) 
                 { steamUpdateTime = int.Parse(modInfo.SelectToken("time_updated").ToString()); }
             }
-            catch { steamUpdateTime = 0; }
+            catch 
+            { steamUpdateTime = 0; }
 
             var modName = modInfo?.SelectToken("title").ToString();
             

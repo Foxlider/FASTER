@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -20,10 +21,9 @@ namespace FASTER.Models
         // Gets mod info for multiple mods
         public static List<JObject> GetFileDetails(List<int> modIds)
         {
-            try {
-                string mods = string.Empty;
-                foreach (var modId in modIds)
-                    mods = $"{mods}{V}{modIds.IndexOf(modId)}{V1}{modId}";
+            try 
+            {
+                string mods = modIds.Aggregate(string.Empty, (current, modId) => $"{current}{V}{modIds.IndexOf(modId)}{V1}{modId}");
 
                 var response = ApiCall("https://api.steampowered.com/IPublishedFileService/GetDetails/v1?key=" + GetApiKey() + mods);
 
@@ -88,20 +88,20 @@ namespace FASTER.Models
             }
             // Display the status.
             Console.WriteLine(((HttpWebResponse)response)?.StatusDescription);
+            
+            if (response == null) return null;
+            
             // Get the stream containing content returned by the server.
-            if (response != null) {
-                Stream dataStream = response.GetResponseStream();
-                // Open the stream using a StreamReader for easy access.
-                StreamReader reader = new StreamReader(dataStream ?? throw new InvalidOperationException());
-                // Read the content.
-                var responseFromServer = reader.ReadToEnd();
-                // Clean up the streams and the response.
-                reader.Close();
-                response.Close();
-                // Return the response
-                return JObject.Parse(responseFromServer);
-            }
-            return null;
+            Stream dataStream = response.GetResponseStream();
+            // Open the stream using a StreamReader for easy access.
+            StreamReader reader = new StreamReader(dataStream ?? throw new InvalidOperationException());
+            // Read the content.
+            var responseFromServer = reader.ReadToEnd();
+            // Clean up the streams and the response.
+            reader.Close();
+            response.Close();
+            // Return the response
+            return JObject.Parse(responseFromServer);
         }
 
         private static string GetApiKey()

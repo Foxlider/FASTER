@@ -1,8 +1,9 @@
-﻿using System.Globalization;
-using System.Windows;
-using Microsoft.AppCenter;
+﻿using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
+
+using System.Globalization;
+using System.Windows;
 
 namespace FASTER
 {
@@ -19,7 +20,6 @@ namespace FASTER
             AppCenter.SetCountryCode(countryCode);
 
             AppCenter.Start("257a7dac-e53c-4bec-b672-b6b939ed5d1e", typeof(Analytics), typeof(Crashes));
-            
         }
     }
 }

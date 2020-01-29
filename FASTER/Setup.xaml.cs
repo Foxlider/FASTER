@@ -1,11 +1,13 @@
-﻿using System;
-using FASTER.Models;
+﻿using FASTER.Models;
+
+using Microsoft.AppCenter.Analytics;
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
 using System.Windows;
-using Microsoft.AppCenter.Analytics;
 
 namespace FASTER
 {
@@ -19,12 +21,14 @@ namespace FASTER
         {
             InitializeComponent();
             bool wasFirstRun = Properties.Settings.Default.firstRun;
+
             if (wasFirstRun)
             {
                 Properties.Settings.Default.Upgrade();
                 Properties.Settings.Default.firstRun = false;
                 Properties.Settings.Default.Save();
             }
+
             if (Properties.Settings.Default.clearSettings)
                 Properties.Settings.Default.Reset();
 
@@ -33,11 +37,13 @@ namespace FASTER
                 Properties.Settings.Default.steamMods = new SteamModCollection();
                 Properties.Settings.Default.Save();
             }
+
             if (Properties.Settings.Default.localMods == null)
             {
                 Properties.Settings.Default.localMods = new List<LocalMod>();
                 Properties.Settings.Default.Save();
             }
+
             if (Properties.Settings.Default.localModFolders == null)
             {
                 Properties.Settings.Default.localModFolders = new List<string>();
@@ -84,7 +90,9 @@ namespace FASTER
         private void DirButton_Click(object sender, RoutedEventArgs e)
         {
             string path = MainWindow.Instance.SelectFolder();
+
             if (string.IsNullOrEmpty(path)) return;
+
             if (Equals(sender, ISteamDirButton))
             { ISteamDirBox.Text = path; }
             else if (Equals(sender, IServerDirButton))

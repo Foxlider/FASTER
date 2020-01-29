@@ -1,6 +1,10 @@
 ﻿using AutoUpdaterDotNET;
+
 using FASTER.Models;
+
+using Microsoft.AppCenter.Analytics;
 using Microsoft.WindowsAPICodePack.Dialogs;
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -16,7 +20,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using Microsoft.AppCenter.Analytics;
 
 namespace FASTER
 {
@@ -38,39 +41,38 @@ namespace FASTER
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
 
             Properties.Settings.Default.PropertyChanged += Default_PropertyChanged;
-            
-            IMessageDialogClose.Click += IMessageDialogClose_Click;
-            ISteamUserBox.LostFocus += ISteamSettings_Changed;
-            ISteamPassBox.LostFocus += ISteamSettings_Changed;
-            IServerDirBox.LostFocus += ISteamSettings_Changed;
-            ISteamDirBox.LostFocus += ISteamSettings_Changed;
-            IServerBranch.LostFocus += ISteamSettings_Changed;
-            IServerDirBox.TextChanged += IServerDirBox_TextChanged;
-            IToolsDialog.MouseLeftButtonUp += IToolsDialog_MouseLeftButtonUp;
-            ISteamUpdaterTabSelect.Selected += MenuItem_Selected;
-            ISteamModsTabSelect.Selected += MenuItem_Selected;
-            ISettingsTabSelect.Selected += MenuItem_Selected;
-            IAboutTabSelect.Selected += MenuItem_Selected;
-            ILocalModsTabSelect.Selected += MenuItem_Selected;
-            IServerStatusTabSelect.Selected += MenuItem_Selected;
-            IToolsDialog.KeyUp += IToolsDialog_KeyUp;
-            IMessageDialog.KeyUp += IMessageDialog_KeyUp;
-            ISteamGuardDialog.KeyUp += ISteamGuardDialog_KeyUp;
-            INewServerProfileDialog.KeyUp += INewServerProfileDialog_KeyUp;
-            MouseDown += IDialog_LostFocus;
-            ISteamOutputBox.MouseLeftButtonDown  += IDialog_LostFocus;
+
+            IMessageDialogClose.Click           += IMessageDialogClose_Click;
+            ISteamUserBox.LostFocus             += ISteamSettings_Changed;
+            ISteamPassBox.LostFocus             += ISteamSettings_Changed;
+            IServerDirBox.LostFocus             += ISteamSettings_Changed;
+            ISteamDirBox.LostFocus              += ISteamSettings_Changed;
+            IServerBranch.LostFocus             += ISteamSettings_Changed;
+            IServerDirBox.TextChanged           += IServerDirBox_TextChanged;
+            IToolsDialog.MouseLeftButtonUp      += IToolsDialog_MouseLeftButtonUp;
+            ISteamUpdaterTabSelect.Selected     += MenuItem_Selected;
+            ISteamModsTabSelect.Selected        += MenuItem_Selected;
+            ISettingsTabSelect.Selected         += MenuItem_Selected;
+            IAboutTabSelect.Selected            += MenuItem_Selected;
+            ILocalModsTabSelect.Selected        += MenuItem_Selected;
+            IServerStatusTabSelect.Selected     += MenuItem_Selected;
+            IToolsDialog.KeyUp                  += IToolsDialog_KeyUp;
+            IMessageDialog.KeyUp                += IMessageDialog_KeyUp;
+            ISteamGuardDialog.KeyUp             += ISteamGuardDialog_KeyUp;
+            INewServerProfileDialog.KeyUp       += INewServerProfileDialog_KeyUp;
+            MouseDown                           += IDialog_LostFocus;
+            ISteamOutputBox.MouseLeftButtonDown += IDialog_LostFocus;
 
             try
             {
-                if (Properties.Settings.Default.checkForAppUpdates)
-                {
-                    AutoUpdater.ReportErrors = true;
-                    AutoUpdater.LetUserSelectRemindLater = false;
-                    AutoUpdater.RemindLaterTimeSpan = RemindLaterFormat.Minutes;
-                    AutoUpdater.RemindLaterAt = 1;
-                    AutoUpdater.RunUpdateAsAdmin = true;
-                    AutoUpdater.Start("https://raw.githubusercontent.com/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite/master/FASTER_Version.xml");
-                }
+                if (!Properties.Settings.Default.checkForAppUpdates) return;
+
+                AutoUpdater.ReportErrors             = true;
+                AutoUpdater.LetUserSelectRemindLater = false;
+                AutoUpdater.RemindLaterTimeSpan      = RemindLaterFormat.Minutes;
+                AutoUpdater.RemindLaterAt            = 1;
+                AutoUpdater.RunUpdateAsAdmin         = true;
+                AutoUpdater.Start("https://raw.githubusercontent.com/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite/master/FASTER_Version.xml");
             }
             catch
             {
@@ -80,10 +82,8 @@ namespace FASTER
             }
         }
 
-        private void Default_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            Properties.Settings.Default.Save();
-        }
+        private void Default_PropertyChanged(object sender, PropertyChangedEventArgs e) 
+        { Properties.Settings.Default.Save(); }
 
         /// <summary>
         ///     Gets the one and only instance.
@@ -94,9 +94,7 @@ namespace FASTER
         
         #region Custom Window Bar Click events
         private void ToolsButton_Click(object sender, RoutedEventArgs e)
-        {
-            IToolsDialog.IsOpen = true;
-        }
+        { IToolsDialog.IsOpen = true; }
         #endregion
         
         #region WindowEvents
@@ -134,20 +132,20 @@ namespace FASTER
             if (Equals(sender, ISteamDirButton))
             {
                 string path = SelectFolder(Properties.Settings.Default.steamCMDPath);
-                if (path != null)
-                {
-                    ISteamDirBox.Text = path;
-                    ISteamDirBox.Focus();
-                }
+
+                if (path == null) return;
+
+                ISteamDirBox.Text = path;
+                ISteamDirBox.Focus();
             }
             else if (Equals(sender, IServerDirButton))
             {
                 string path = SelectFolder(Properties.Settings.Default.serverPath);
-                if (path != null)
-                {
-                    IServerDirBox.Text = path;
-                    IServerDirBox.Focus();
-                }
+
+                if (path == null) return;
+
+                IServerDirBox.Text = path;
+                IServerDirBox.Focus();
             }
         }
         // Handles when a user presses the cancel button
@@ -194,18 +192,15 @@ namespace FASTER
         }
 
         private void NewServerProfileButton_Click(object sender, RoutedEventArgs e)
-        {
-            INewServerProfileDialog.IsOpen = true;
-        }
+        { INewServerProfileDialog.IsOpen = true; }
 
         private void INewServerProfileDialog_KeyUp(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Escape)
-            {
-                INewServerProfileDialog.IsOpen = false;
-                MainGrid.Effect = null;
-                INewProfileName.Text = string.Empty;
-            }
+            if (e.Key != Key.Escape) return;
+
+            INewServerProfileDialog.IsOpen = false;
+            MainGrid.Effect                = null;
+            INewProfileName.Text           = string.Empty;
         }
 
         private void IDialog_LostFocus(object sender, MouseButtonEventArgs e)
@@ -235,34 +230,28 @@ namespace FASTER
 
         private void ISteamGuardDialog_KeyUp(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Escape)
-            {
-                ISteamGuardDialog.IsOpen = false;
-                MainGrid.Effect = null;
-                ISteamGuardCode.Text     = string.Empty;
-            }
+            if (e.Key != Key.Escape) return;
+
+            ISteamGuardDialog.IsOpen = false;
+            MainGrid.Effect          = null;
+            ISteamGuardCode.Text     = string.Empty;
         }
 
         private void IMessageDialog_KeyUp(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Escape)
-            {
-                IMessageDialog.IsOpen = false;
-                MainGrid.Effect = null;
-            }
+            if (e.Key != Key.Escape) return;
+
+            IMessageDialog.IsOpen = false;
+            MainGrid.Effect       = null;
         }
 
         private void IMessageDialogClose_Click(object sender, RoutedEventArgs e)
-        {
-            IMessageDialog.IsOpen = false;
-        }
+        { IMessageDialog.IsOpen = false; }
 
         private void IToolsDialog_KeyUp(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Escape)
-            {
-                IToolsDialog.IsOpen = false;
-            }
+            { IToolsDialog.IsOpen = false; }
         }
 
         private void ICreateProfileButton_Click(object sender, RoutedEventArgs e)
@@ -290,6 +279,7 @@ namespace FASTER
         {
             if (IServerProfilesMenu.SelectedIndex == -1) 
             { return; }
+
             var temp = Properties.Settings.Default.Servers.ServerProfiles.FirstOrDefault(s => s.SafeName == ((ListBoxItem) IServerProfilesMenu.SelectedItem).Name);
             if (temp == null)
             {
@@ -297,7 +287,8 @@ namespace FASTER
                 Instance.IMessageDialogText.Text = "Could not find the selected profile.";
                 return;
             }
-            Models.ServerProfile serverProfile             =  temp.CloneObjectSerializable();
+
+            Models.ServerProfile serverProfile = temp.CloneObjectSerializable();
             serverProfile.DisplayName += " 2";
             serverProfile.SafeName    =  "_" + Functions.SafeName(serverProfile.DisplayName);
             ServerCollection.AddServerProfile(serverProfile);
@@ -308,14 +299,11 @@ namespace FASTER
         {
             var menus = new List<ListBox> { IMainMenuItems, IServerProfilesMenu, IOtherMenuItems };
             ListBoxItem lbItem = sender as ListBoxItem;
-            foreach (var list in menus)
-            {
-                foreach (ListBoxItem item in list.Items)
-                {
-                    if (item.Name != lbItem?.Name)
-                    { item.IsSelected = false; } 
-                } 
-            }
+            foreach (var item in from list in menus 
+                                 from ListBoxItem item in list.Items 
+                                 where item.Name != lbItem?.Name 
+                                 select item) 
+            { item.IsSelected = false; }
 
             foreach (TabItem item in IMainContent.Items)
             {
@@ -379,8 +367,7 @@ namespace FASTER
         private void ISubmitCode_Click(object sender, RoutedEventArgs e)
         {
             var oStreamWriter = _oProcess.StandardInput;
-            Dispatcher?.Invoke(() =>
-            { oStreamWriter.Write(ISteamGuardCode.Text + "\n"); });
+            Dispatcher?.Invoke(() => { oStreamWriter.Write(ISteamGuardCode.Text + "\n"); });
             ISteamGuardDialog.IsOpen = false;
             MainGrid.Effect = null;
         }
@@ -396,15 +383,14 @@ namespace FASTER
             {
                 using WindowsIdentity identity  = WindowsIdentity.GetCurrent();
                 WindowsPrincipal      principal = new WindowsPrincipal(identity);
-                if (!principal.IsInRole(WindowsBuiltInRole.Administrator))
-                {
-                    MessageBox.Show("Application must be run as administrator",
-                                    "Error",
-                                    MessageBoxButton.OK,
-                                    MessageBoxImage.Error);
-                    return false;
-                }
-                return true;
+
+                if (principal.IsInRole(WindowsBuiltInRole.Administrator)) return true;
+
+                MessageBox.Show("Application must be run as administrator",
+                                "Error",
+                                MessageBoxButton.OK,
+                                MessageBoxImage.Error);
+                return false;
             }
             catch (Exception)
             {
@@ -418,55 +404,44 @@ namespace FASTER
 
         public void LoadServerProfiles()
         {
-            if (Properties.Settings.Default.Servers != null)
+            if (Properties.Settings.Default.Servers == null) return;
+
+            var currentProfiles = Properties.Settings.Default.Servers;
+            Dispatcher?.Invoke(() => { IServerProfilesMenu.Items.Clear(); });
+
+            for (int i = IMainContent.Items.Count - 4; i <= 0; i++)
+                IMainContent.Items.RemoveAt(i);
+
+            foreach (var profile in currentProfiles.ServerProfiles)
             {
-                var currentProfiles = Properties.Settings.Default.Servers;
-                Dispatcher?.Invoke(() =>
+                ListBoxItem newItem = new ListBoxItem
                 {
-                    IServerProfilesMenu.Items.Clear();
-                });
+                    Name    = profile.SafeName,
+                    Content = profile.DisplayName
+                };
+                Dispatcher?.Invoke(() => { IServerProfilesMenu.Items.Add(newItem); });
 
-                for (int i = IMainContent.Items.Count - 4; i <= 0; i++)
-                    IMainContent.Items.RemoveAt(i);
+                newItem.Selected += MenuItem_Selected;
 
-                foreach (var profile in currentProfiles.ServerProfiles)
+                var duplicate = false;
+
+                foreach (TabItem tab in IMainContent.Items)
                 {
-                    ListBoxItem newItem = new ListBoxItem
-                    {
-                        Name    = profile.SafeName,
-                        Content = profile.DisplayName
-                    };
-                    Dispatcher?.Invoke(() =>
-                    {
-                        IServerProfilesMenu.Items.Add(newItem);
-                    });
-
-                    newItem.Selected += MenuItem_Selected;
-
-                    var duplicate = false;
-
-                    foreach (TabItem tab in IMainContent.Items)
-                    {
-                        if (profile.SafeName == tab.Name)
-                            duplicate = true;
-                    }
-
-                    if (!duplicate)
-                    {
-                        var tabControls = new ServerProfile(profile);
-
-                        TabItem newTab = new TabItem
-                        {
-                            Name    = profile.SafeName,
-                            Content = tabControls,
-                            Header  = profile.SafeName
-                        };
-                        Dispatcher?.Invoke(() =>
-                        {
-                            IMainContent.Items.Add(newTab);
-                        });
-                    }
+                    if (profile.SafeName == tab.Name)
+                        duplicate = true;
                 }
+
+                if (duplicate) continue;
+
+                var tabControls = new ServerProfile(profile);
+
+                TabItem newTab = new TabItem
+                {
+                    Name    = profile.SafeName,
+                    Content = tabControls,
+                    Header  = profile.SafeName
+                };
+                Dispatcher?.Invoke(() => { IMainContent.Items.Add(newTab); });
             }
         }
 
@@ -538,7 +513,10 @@ namespace FASTER
                 ISteamOutputBox.AppendText("\nFile Downloading...");
                 const string url      = "https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip";
                 string       fileName = Properties.Settings.Default.steamCMDPath + "\\steamcmd.zip";
-                if (!Directory.Exists(Properties.Settings.Default.steamCMDPath)) Directory.CreateDirectory(Properties.Settings.Default.steamCMDPath);
+
+                if (!Directory.Exists(Properties.Settings.Default.steamCMDPath)) 
+                    Directory.CreateDirectory(Properties.Settings.Default.steamCMDPath);
+
                 using WebClient client = new WebClient();
                 client.DownloadFileCompleted += SteamDownloadCompleted;
                 client.DownloadFileAsync(new Uri(url), fileName);
@@ -565,9 +543,9 @@ namespace FASTER
             File.Delete(zip);
         }
 
-        private static bool   _runLog;
-        private static object _runLogLock = new object();
-        private static int threadSlept;
+        private static          bool   _runLog;
+        private static readonly object _runLogLock = new object();
+        private static          int    threadSlept;
         private void UpdateTextBox(string text)
         {
             if (_oProcess == null) return;
@@ -580,7 +558,8 @@ namespace FASTER
 
             if (text.StartsWith("Logging in user") && text.Contains("to Steam"))
             {
-                _runLog = true;
+                lock (_runLogLock)
+                { _runLog = true; }
                 Thread t = new Thread(() =>
                 {
                     threadSlept = 0;
@@ -595,10 +574,7 @@ namespace FASTER
                     while (_localRunThread && threadSlept < 10000);
                     if (_localRunThread)
                     {
-                        Dispatcher?.Invoke(() =>
-                        {
-                            ISteamGuardDialog.IsOpen = true;
-                        });
+                        Dispatcher?.Invoke(() => { ISteamGuardDialog.IsOpen = true; });
                     }
                 });
                 t.Start();
@@ -615,10 +591,7 @@ namespace FASTER
 
             if (text.EndsWith("..."))
             {
-                Dispatcher?.Invoke(() =>
-                {
-                    ISteamOutputBox.AppendText(Environment.NewLine);
-                });
+                Dispatcher?.Invoke(() => { ISteamOutputBox.AppendText(Environment.NewLine); });
             }
 
             if (text.Contains("Update state"))
@@ -637,12 +610,7 @@ namespace FASTER
             }
 
             if (text.Contains("Success"))
-            {
-                Dispatcher?.Invoke(() =>
-                {
-                    ISteamProgressBar.Value = 100;
-                });
-            }
+            { Dispatcher?.Invoke(() => { ISteamProgressBar.Value = 100; }); }
 
             if (text.Contains("Timeout"))
             {
@@ -755,7 +723,6 @@ namespace FASTER
 
                 foreach (Control control in enumerable)
                 { control.IsEnabled = true; }
-
             }
             else
             {
@@ -779,54 +746,48 @@ namespace FASTER
         
         private static void CheckModUpdatesComplete(IReadOnlyCollection<string> modIds)
         {
-            if (modIds != null)
+            if (modIds == null) return;
+
+            foreach (var modID in modIds)
             {
-                foreach (var modID in modIds)
+                var modToUpdate        = Properties.Settings.Default.steamMods.SteamMods.Find(m => m.WorkshopId.ToString() == modID);
+                var steamCmdOutputText = Functions.StringFromRichTextBox(Instance.ISteamOutputBox);
+
+                if (steamCmdOutputText.Contains("ERROR! Timeout downloading"))
+                { modToUpdate.Status = "Download Not Complete"; }
+                else
                 {
-                    var modToUpdate = Properties.Settings.Default.steamMods.SteamMods.Find(m => m.WorkshopId.ToString() == modID);
-                    var steamCmdOutputText = Functions.StringFromRichTextBox(Instance.ISteamOutputBox);
+                    string modTempPath = Properties.Settings.Default.steamCMDPath + @"\steamapps\workshop\downloads\107410\" + modID;
+                    string modPath     = Properties.Settings.Default.steamCMDPath + @"\steamapps\workshop\content\107410\"   + modID;
 
-                    if (steamCmdOutputText.Contains("ERROR! Timeout downloading"))
-                    { modToUpdate.Status = "Download Not Complete"; }
-                    else
+                    if (Directory.Exists(modTempPath))
+                        modToUpdate.Status = "Download Not Complete";
+                    else if (Directory.GetFiles(modPath).Length != 0)
                     {
-                        string modTempPath = Properties.Settings.Default.steamCMDPath + @"\steamapps\workshop\downloads\107410\" + modID;
-                        string modPath = Properties.Settings.Default.steamCMDPath + @"\steamapps\workshop\content\107410\" + modID;
+                        modToUpdate.Status = "Up to Date";
+                        var nx = new DateTime(1970, 1, 1);
+                        var ts = DateTime.UtcNow - nx;
 
-                        if (Directory.Exists(modTempPath))
-                            modToUpdate.Status = "Download Not Complete";
-                        else if (Directory.GetFiles(modPath).Length != 0)
-                        {
-                            modToUpdate.Status = "Up to Date";
-                            var nx = new DateTime(1970, 1, 1);
-                            var ts = DateTime.UtcNow - nx;
-
-                            modToUpdate.LocalLastUpdated = (int)ts.TotalSeconds;
-                        }
+                        modToUpdate.LocalLastUpdated = (int)ts.TotalSeconds;
                     }
                 }
-                Properties.Settings.Default.Save();
             }
+            Properties.Settings.Default.Save();
         }
 
 
         private static IEnumerable<T> FindVisualChildren<T>(DependencyObject depObj) where T : DependencyObject
         {
-            if (depObj != null)
-            {
-                for (int i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++)
-                {
-                    DependencyObject child = VisualTreeHelper.GetChild(depObj, i);
-                    if (child is T dependencyObject)
-                    {
-                        yield return dependencyObject;
-                    }
+            if (depObj == null) yield break;
 
-                    foreach (T childOfChild in FindVisualChildren<T>(child))
-                    {
-                        yield return childOfChild;
-                    }
-                }
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++)
+            {
+                DependencyObject child = VisualTreeHelper.GetChild(depObj, i);
+                if (child is T dependencyObject)
+                { yield return dependencyObject; }
+
+                foreach (T childOfChild in FindVisualChildren<T>(child))
+                { yield return childOfChild; }
             }
         }
     }

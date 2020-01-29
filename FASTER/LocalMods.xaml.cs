@@ -1,8 +1,9 @@
-﻿using System;
-using FASTER.Models;
-using System.Collections.Generic;
+﻿using FASTER.Models;
+
+using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -18,7 +19,6 @@ namespace FASTER
             InitializeComponent();
             Loaded += LocalMods_Loaded;
         }
-
 
         private void LocalMods_Loaded(object sender, RoutedEventArgs e)
         { UpdateModsView(); }
@@ -41,16 +41,11 @@ namespace FASTER
             var localMods      = LocalMod.GetLocalMods();
             var serverPathMods = LocalMod.GetLocalMods(true);
             var steamMods      = SteamMod.GetSteamMods();
-            var modsToRemove   = new List<LocalMod>();
 
-            foreach (LocalMod localMod in serverPathMods)
-            {
-                foreach (SteamMod steamMod in steamMods)
-                {
-                    if (localMod.Name == Functions.SafeName(steamMod.Name))
-                        modsToRemove.Add(localMod);
-                }
-            }
+            var modsToRemove   = (from localMod in serverPathMods 
+                                  from steamMod in steamMods 
+                                  where localMod.Name == Functions.SafeName(steamMod.Name) 
+                                  select localMod).ToList();
 
             foreach (var remove in modsToRemove)
                 serverPathMods.RemoveAt(serverPathMods.IndexOf(serverPathMods.Find(m => m.Name == remove.Name)));
@@ -58,10 +53,10 @@ namespace FASTER
             localMods.AddRange(serverPathMods);
 
             if (localMods.Count <= 0) return;
+
             foreach (var localMod in localMods)
                 ILocalModsView.Items.Add(localMod);
         }
-
 
         private void DeleteMod(object sender, RoutedEventArgs e)
         {
@@ -69,7 +64,8 @@ namespace FASTER
 
             if (Directory.Exists(localMod.Path))
             {
-                try { Directory.Delete(localMod.Path, true); }
+                try 
+                { Directory.Delete(localMod.Path, true); }
                 catch
                 {
                     MainWindow.Instance.IFlyoutMessage.Content = $"Could not delete mod \"{localMod.Name}\"";
@@ -79,19 +75,16 @@ namespace FASTER
             UpdateModsView();
         }
 
-
         private void OpenMod(object sender, RoutedEventArgs e)
         {
             var localMod = (LocalMod)((Button)e.Source).DataContext;
 
-            if (Directory.Exists(localMod.Path))
-            {
-                try
-                { Process.Start(localMod.Path); }
-                catch (Exception ex)
-                { MessageBox.Show("Impossible to open the mod : " + ex.Message); }
-            }
-        }
+            if (!Directory.Exists(localMod.Path)) return;
 
+            try
+            { Process.Start(localMod.Path); }
+            catch (Exception ex)
+            { MessageBox.Show("Impossible to open the mod : " + ex.Message); }
+        }
     }
 }

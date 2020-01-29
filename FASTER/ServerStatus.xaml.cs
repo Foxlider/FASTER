@@ -1,4 +1,12 @@
-﻿using System;
+﻿using LiveCharts;
+using LiveCharts.Configurations;
+
+using MahApps.Metro;
+
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
+
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -12,13 +20,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-
-using LiveCharts;
-using LiveCharts.Configurations;
-
-using MahApps.Metro;
-using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
 
 namespace FASTER
 {

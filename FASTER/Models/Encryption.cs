@@ -8,8 +8,7 @@ namespace FASTER.Models
     {
         private static readonly TripleDESCryptoServiceProvider TripleDes = new TripleDESCryptoServiceProvider();
         private static Encryption _instance;
-
-
+        
         public static Encryption Instance => _instance ??= new Encryption();
 
         private static byte[] TruncateHash(string key, int length)
@@ -55,9 +54,7 @@ namespace FASTER.Models
                 return Convert.ToBase64String(ms.ToArray());
             }
             catch
-            {
-                return null;
-            }
+            { return null; }
         }
 
         public string DecryptData(string encryptedtext)
@@ -80,9 +77,7 @@ namespace FASTER.Models
                 return System.Text.Encoding.Unicode.GetString(ms.ToArray());
             }
             catch
-            {
-                return null;
-            }
+            { return null; }
         }
 
         private static string SystemSerialNumber()
@@ -104,7 +99,6 @@ namespace FASTER.Models
                 return output?.Replace("\r", "").Split('\n')[3];
             }
             catch (Exception) { return "EXCEPTION_ON_QUERY"; }
-            
         }
     }
 }
