@@ -543,9 +543,9 @@ namespace FASTER
             File.Delete(zip);
         }
 
-        private static          bool   _runLog;
-        private static readonly object _runLogLock = new object();
-        private static          int    threadSlept;
+        private           bool   _runLog;
+        private  readonly object _runLogLock = new object();
+        private           int    threadSlept;
         private void UpdateTextBox(string text)
         {
             if (_oProcess == null) return;

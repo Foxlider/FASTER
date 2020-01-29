@@ -5,7 +5,7 @@
         /// <summary>
         /// List of FASTER's supporters
         /// </summary>
-        public static string[] Supporters =
+        public static readonly string[] Supporters =
         {
             "SirGhosty22",
         };
