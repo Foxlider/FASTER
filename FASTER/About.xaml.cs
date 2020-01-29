@@ -1,4 +1,5 @@
-﻿using FASTER.Models;
+﻿using System;
+using FASTER.Models;
 
 using Microsoft.AppCenter.Analytics;
 
@@ -14,6 +15,23 @@ namespace FASTER
     /// </summary>
     public partial class About : UserControl
     {
+        private static readonly string[] StartThanks =
+        {
+            "Big up to",
+            "Thanks to",
+            "Can't thank enough"
+        };
+
+        private static readonly string[] EndThanks =
+        {
+            " !",
+            ", FASTER supporter !",
+            "for supporting this application !",
+            "for supporting FASTER !"
+        };
+
+        private readonly Random r = new Random();
+
         public About()
         {
             InitializeComponent();
@@ -63,5 +81,8 @@ namespace FASTER
                  + $"{rev}";
             IVersionLabel.Text = $"Version: {version}";
         }
+
+        private void IDonateButton_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        { IDonateButton.ToolTip = $"{StartThanks[r.Next(StartThanks.Length)]} {StaticData.Supporters[r.Next(StaticData.Supporters.Length)]} {EndThanks[r.Next(EndThanks.Length)]}"; }
     }
 }

@@ -98,7 +98,7 @@
                     <TextBlock TextWrapping="Wrap" Style="{DynamicResource MahApps.Styles.TextBlock.Watermark}" Margin="16 0 16 8" VerticalAlignment="Top">This project is completely open source. If you like it and want to say thanks you could hit the GitHub Star button, or contribute if you can!</TextBlock>
                 </StackPanel>
                 <Border Grid.Row="1" Grid.ColumnSpan="2" Grid.Column="0" BorderThickness="0 1 0 0" Padding="8">
-                    <Button HorizontalAlignment="Center" Style="{DynamicResource MahApps.Styles.Button.Chromeless}" Name="IDonateButton" Click="IDonateButton_Click">
+                    <Button HorizontalAlignment="Center" Style="{DynamicResource MahApps.Styles.Button.Chromeless}" Name="IDonateButton" Click="IDonateButton_Click" MouseEnter="IDonateButton_MouseEnter" ToolTip="Big thanks to all the supporters !">
                         <StackPanel Orientation="Horizontal">
                             <iconPacks:PackIconModern Kind="Gift" Margin="10"/>
                             <TextBlock Margin="10" VerticalAlignment="Center" TextWrapping="WrapWithOverflow">Liking the app ? Consider supporting me !</TextBlock>
