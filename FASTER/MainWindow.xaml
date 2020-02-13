@@ -9,6 +9,7 @@
     xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
     xmlns:local="clr-namespace:FASTER"
     xmlns:simpleChildWindow="http://metro.mahapps.com/winfx/xaml/simplechildwindow"
+    xmlns:views="clr-namespace:FASTER.Views"
     mc:Ignorable="d"
     
     GlowBrush="Black"
@@ -240,27 +241,27 @@
 
             <!--Main Content - Steam Mods Tab-->
             <TabItem Name="ISteamModsTab" Header="ISteamModsTab">
-                <local:SteamMods/>
+                <views:SteamMods/>
             </TabItem>
 
             <!--Main Content - Local Mods Tab-->
             <TabItem Name="ILocalModsTab" Header="ILocalModsTab">
-                <local:LocalMods/>
+                <views:LocalMods/>
             </TabItem>
 
             <!--Main Content - Steam Mods Tab-->
             <TabItem Name="IServerStatusTab" Header="IServerStatusTab">
-                <local:ServerStatus/>
+                <views:ServerStatus/>
             </TabItem>
 
             <!--Main Content - Settings Tab-->
             <TabItem Name="ISettingsTab" Header="ISettingsTab">
-                <local:Settings/>
+                <views:Settings/>
             </TabItem>
 
             <!--Main Content - About Tab-->
             <TabItem Name="IAboutTab" Header="IAboutTab">
-                <local:About/>
+                <views:About/>
             </TabItem>
         </TabControl>
         

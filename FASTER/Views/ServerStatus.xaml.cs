@@ -21,7 +21,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
-namespace FASTER
+namespace FASTER.Views
 {
     /// <summary>
     /// Interaction logic for ServerStatus.xaml

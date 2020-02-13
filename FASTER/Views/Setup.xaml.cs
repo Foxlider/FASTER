@@ -9,7 +9,7 @@ using System.Globalization;
 using System.Reflection;
 using System.Windows;
 
-namespace FASTER
+namespace FASTER.Views
 {
     /// <summary>
     /// Interaction logic for Setup.xaml

@@ -8,7 +8,7 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace FASTER
+namespace FASTER.Views
 {
     /// <summary>
     /// Interaction logic for About.xaml

@@ -1,6 +1,7 @@
 ﻿using AutoUpdaterDotNET;
 
 using FASTER.Models;
+using FASTER.Views;
 
 using Microsoft.AppCenter.Analytics;
 using Microsoft.WindowsAPICodePack.Dialogs;
@@ -433,7 +434,7 @@ namespace FASTER
 
                 if (duplicate) continue;
 
-                var tabControls = new ServerProfile(profile);
+                var tabControls = new Views.ServerProfile(profile);
 
                 TabItem newTab = new TabItem
                 {

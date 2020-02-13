@@ -45,6 +45,7 @@
     <PackageReference Include="MahApps.Metro.IconPacks" Version="3.2.0" />
     <PackageReference Include="MahApps.Metro.SimpleChildWindow" Version="2.0.0-alpha0032" />
     <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.3.3" />
+    <PackageReference Include="Microsoft.AppCenter" Version="2.6.4" />
     <PackageReference Include="Microsoft.AppCenter.Analytics" Version="2.6.4" />
     <PackageReference Include="Microsoft.AppCenter.Crashes" Version="2.6.4" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />

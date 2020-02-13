@@ -20,7 +20,7 @@ using System.Windows.Media;
 using Path = System.IO.Path;
 // ReSharper disable SpecifyACultureInStringConversionExplicitly
 
-namespace FASTER
+namespace FASTER.Views
 {
     /// <summary>
     /// Interaction logic for ServerProfile.xaml
