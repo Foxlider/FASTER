@@ -10,7 +10,7 @@ using System.Windows;
 
 namespace FASTER.Models
 {
-    internal static class SteamWebApi
+    public static class SteamWebApi
     {
         private const string V = "&publishedfileids[";
         private const string V1 = "]=";
