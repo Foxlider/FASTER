@@ -1,4 +1,4 @@
-﻿using LiveCharts;
+using LiveCharts;
 using LiveCharts.Configurations;
 
 using MahApps.Metro;
@@ -101,7 +101,7 @@ namespace FASTER.Views
         private void IToggleGauges_Click(object sender, RoutedEventArgs e)
         {
             Updating = !Updating;
-            if(Updating)
+            if (Updating)
             { Task.Factory.StartNew(Updater, TaskCreationOptions.LongRunning); }
         }
         #endregion

@@ -1,4 +1,4 @@
-﻿using FASTER.Models;
+using FASTER.Models;
 
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
@@ -1152,8 +1152,8 @@ namespace FASTER.Views
         private void LaunchServer()
         {
             string profileName = Functions.SafeName(IDisplayName.Content.ToString());
-            string profilePath = Path.Combine(_profilesPath ,profileName);
-            string configs = Path.Combine(profilePath ,profileName);
+            string profilePath = Path.Combine(_profilesPath, profileName);
+            string configs = Path.Combine(profilePath, profileName);
             bool start = true;
             string serverMods = IServerModsList.Items.Cast<CheckBox>()
                                                .Where(addon => addon.IsChecked ?? false)

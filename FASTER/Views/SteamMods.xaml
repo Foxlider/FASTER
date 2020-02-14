@@ -3,13 +3,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/simplechildwindow"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
-             xmlns:simpleChildWindow="http://metro.mahapps.com/winfx/xaml/simplechildwindow"
-
-             mc:Ignorable="d"
-             d:DesignHeight="570.4"
-             d:DesignWidth="796.8">
+             xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+             mc:Ignorable="d" 
+             d:DesignHeight="570" d:DesignWidth="800">
     <Grid Background="{StaticResource MahApps.Brushes.Gray9}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
@@ -63,7 +61,7 @@
             </DataGrid.Columns>
         </DataGrid>
 
-        <simpleChildWindow:ChildWindow
+        <mah:ChildWindow
             Name="IImportSteamModDialog"
             Grid.RowSpan="2" Grid.Row="0" Grid.ColumnSpan="2" Grid.Column="0"
             IsOpen="False"
@@ -75,28 +73,28 @@
             GlowBrush="Black"
             BorderThickness="0"
             Title="Add Steam Mod">
-            <simpleChildWindow:ChildWindow.Icon>
+            <mah:ChildWindow.Icon>
                 <iconPacks:PackIconModern
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     Foreground="White"
                     Kind="Steam" />
-            </simpleChildWindow:ChildWindow.Icon>
-            <simpleChildWindow:ChildWindow.OverlayBrush>
+            </mah:ChildWindow.Icon>
+            <mah:ChildWindow.OverlayBrush>
                 <SolidColorBrush Opacity="0.7" Color="{StaticResource MahApps.Colors.Gray10}"/>
-            </simpleChildWindow:ChildWindow.OverlayBrush>
+            </mah:ChildWindow.OverlayBrush>
             <StackPanel Margin="15">
                 <TextBlock TextWrapping="Wrap" TextAlignment="Left" Margin="0,0,0,5" Text="Please enter the steam workshop ID of the mod or its URL">
                 </TextBlock>
-                <TextBox Name="ISteamItemBox" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Steam ID / URL" BorderBrush="{DynamicResource PrimaryHueDarkBrush}"/>
+                <TextBox Name="ISteamItemBox" controls:TextBoxHelper.UseFloatingWatermark="True" controls:TextBoxHelper.Watermark="Steam ID / URL" BorderBrush="{DynamicResource PrimaryHueDarkBrush}"/>
                 <DockPanel Margin="0,10">
                     <CheckBox Name="IPrivateModCheck" Content="Private Mod"/>
                     <Button Name="IImportModButton" Click="IImportModButton_Click" Content="Import" Width="90" HorizontalAlignment="Right" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0"/>
                 </DockPanel>
             </StackPanel>
-        </simpleChildWindow:ChildWindow>
+        </mah:ChildWindow>
 
-        <simpleChildWindow:ChildWindow
+        <mah:ChildWindow
             Name="IMessageDialog"
             Grid.RowSpan="2"
             Grid.Row="0"
@@ -111,22 +109,22 @@
             GlowBrush="Black"
             BorderThickness="0"
             Title="Message">
-            <simpleChildWindow:ChildWindow.Icon>
+            <mah:ChildWindow.Icon>
                 <iconPacks:PackIconModern
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     Foreground="White"
                     Kind="Information" />
-            </simpleChildWindow:ChildWindow.Icon>
-            <simpleChildWindow:ChildWindow.OverlayBrush>
+            </mah:ChildWindow.Icon>
+            <mah:ChildWindow.OverlayBrush>
                 <SolidColorBrush Opacity="0.7" Color="{StaticResource MahApps.Colors.Gray10}"/>
-            </simpleChildWindow:ChildWindow.OverlayBrush>
+            </mah:ChildWindow.OverlayBrush>
             <StackPanel Margin="16">
                 <TextBlock Name="IMessageText" Margin="10"/>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" >
                     <Button IsDefault="True" Margin="0 8 8 0" Name="IMessageButton" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" Click="IMessageButton_Click"  BorderThickness="0" Content="OK"/>
                 </StackPanel>
             </StackPanel>
-        </simpleChildWindow:ChildWindow>
+        </mah:ChildWindow>
     </Grid>
 </UserControl>

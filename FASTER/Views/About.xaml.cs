@@ -35,7 +35,6 @@ namespace FASTER.Views
         public About()
         {
             InitializeComponent();
-            Loaded += About_Loaded;
         }
 
         private void IDiscordButton_Click(object sender, RoutedEventArgs e)
@@ -73,9 +72,9 @@ namespace FASTER.Views
         private void About_Loaded(object sender, RoutedEventArgs e)
         {
             string rev = $"{(char)(Assembly.GetExecutingAssembly().GetName().Version.Build + 96)}";
-            #if DEBUG
-                rev += "-DEV";
-            #endif
+#if DEBUG
+            rev += "-DEV";
+#endif
             string version = $"{Assembly.GetExecutingAssembly().GetName().Version.Major}."
                  + $"{Assembly.GetExecutingAssembly().GetName().Version.Minor}"
                  + $"{rev}";

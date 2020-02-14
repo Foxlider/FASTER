@@ -164,13 +164,13 @@
                     </Grid>
 
                     <Grid Grid.Row="1" Grid.Column="0" Margin="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-                            <Grid.Style>
-                                <Style TargetType="Grid">
-                                    <Setter Property="Margin" Value="5"/>
+                        <Grid.Style>
+                            <Style TargetType="Grid">
+                                <Setter Property="Margin" Value="5"/>
                                 <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Window.Background}"></Setter>
-                                </Style>
-                            </Grid.Style>
-                            <Grid>
+                            </Style>
+                        </Grid.Style>
+                        <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
@@ -193,7 +193,7 @@
                                 <TextBox Grid.Column="0" Name="IServerDirBox" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Install Directory" Margin="5"/>
                                 <Button Grid.Column="1" Name="IServerDirButton" Content="{iconPacks:Material Kind=Folder}" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" VerticalAlignment="Stretch" Height="auto" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" Margin="5" Padding="2" Click="DirButton_Click"/>
                             </Grid>
-                                <ComboBox Name="IServerBranch" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Version" Margin="10,20,10,15">
+                            <ComboBox Name="IServerBranch" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Version" Margin="10,20,10,15">
                                 <ComboBoxItem Content="Stable" IsSelected="True"/>
                                 <ComboBoxItem Content="Contact"/>
                                 <ComboBoxItem Content="Creator DLC"/>
@@ -264,7 +264,7 @@
                 <views:About/>
             </TabItem>
         </TabControl>
-        
+
         <!--Popup Dialogs-->
         <simpleChildWindow:ChildWindow
             Name="IMessageDialog"
@@ -331,7 +331,7 @@
                     <TextBlock TextWrapping="Wrap" TextAlignment="Left" Margin="0,0,0,5">
                         Enter a name for the Server Profile.
                     </TextBlock>
-                <TextBox Name="INewProfileName" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Profile Name" />
+                    <TextBox Name="INewProfileName" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Profile Name" />
                     <DockPanel Margin="0,10">
                         <Button Name="ICreateProfileButton" Click="ICreateProfileButton_Click" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Content="Create" Width="90" HorizontalAlignment="Right"/>
                     </DockPanel>

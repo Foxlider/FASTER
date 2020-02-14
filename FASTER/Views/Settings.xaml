@@ -3,13 +3,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/simplechildwindow"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
-             xmlns:simpleChildWindow="http://metro.mahapps.com/winfx/xaml/simplechildwindow"
-             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
-
-             mc:Ignorable="d"
-             d:DesignHeight="570.4"
-             d:DesignWidth="796.8">
+             xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+             mc:Ignorable="d" 
+             d:DesignHeight="570" d:DesignWidth="800">
     <Grid Background="{StaticResource MahApps.Brushes.Gray9}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
@@ -55,13 +53,13 @@
                 </ListBox>
                 <CheckBox Name="IModUpdatesOnLaunch" Grid.ColumnSpan="2" Grid.Row="4" Grid.Column="0" Content="Check for Steam Mod Updates on Launch" IsChecked="True" Margin="10,0,10,10"/>
                 <CheckBox Name="IAppUpdatesOnLaunch" Grid.ColumnSpan="2" Grid.Row="5" Grid.Column="0" Content="Auto Update FASTER on Launch" IsChecked="False" Margin="10,0,10,10"/>
-                
+
                 <Grid Grid.Row="6" Grid.ColumnSpan="4" Grid.Column="0" Margin="5,10">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
                         <ColumnDefinition Width="auto"/>
                     </Grid.ColumnDefinitions>
-                    <TextBox x:Name="IAPIKeyBox" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Steam API Key" Margin="5"/>
+                    <TextBox x:Name="IAPIKeyBox" controls:TextBoxHelper.UseFloatingWatermark="True" controls:TextBoxHelper.Watermark="Steam API Key" Margin="5"/>
                     <Button Grid.Column="1" Name="IAPIKeyButton" Content="{iconPacks:Material Kind=Web}" Style="{DynamicResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" VerticalAlignment="Stretch" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" Margin="5" Padding="2" Click="APIKeyButton_Click"/>
                 </Grid>
 
@@ -75,7 +73,7 @@
                     <Button Grid.Column="1" VerticalAlignment="Bottom" Name="IUpdateApp" Content="Update FASTER" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Margin="10" Click="IUpdateApp_OnClick" HorizontalAlignment="Stretch"/>
                     <Button Grid.Column="2" VerticalAlignment="Bottom" Name="ISaveSettings" Content="Save Settings" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Margin="10" Click="ISaveSettings_Click" HorizontalAlignment="Stretch"/>
                 </Grid>
-                
+
             </Grid>
         </Grid>
 
@@ -88,7 +86,7 @@
             </Grid.Style>
         </Grid>
 
-        <simpleChildWindow:ChildWindow
+        <mah:ChildWindow
             Name="IResetDialog"
             Grid.ColumnSpan="2" Grid.Row="0" Grid.Column="0"
             IsOpen="False"
@@ -100,16 +98,16 @@
             GlowBrush="Black"
             BorderThickness="0"
             Title="Are you sure ?">
-            <simpleChildWindow:ChildWindow.Icon>
+            <mah:ChildWindow.Icon>
                 <iconPacks:PackIconModern
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     Foreground="White"
                     Kind="Warning" />
-            </simpleChildWindow:ChildWindow.Icon>
-            <simpleChildWindow:ChildWindow.OverlayBrush>
+            </mah:ChildWindow.Icon>
+            <mah:ChildWindow.OverlayBrush>
                 <SolidColorBrush Opacity="0.7" Color="{StaticResource MahApps.Colors.Gray10}"/>
-            </simpleChildWindow:ChildWindow.OverlayBrush>
+            </mah:ChildWindow.OverlayBrush>
             <StackPanel Name="IResetDialogContent" Margin="15">
                 <TextBlock TextWrapping="Wrap" TextAlignment="Left" Margin="5" Text="This will reset FASTER and remove all server profiles and imported mods."/>
                 <StackPanel Margin="10" Orientation="Horizontal" HorizontalAlignment="Center">
@@ -117,9 +115,9 @@
                     <Button Name="ICancelButton" Click="ICancelButton_Click" Content="Cancel" Width="90" Margin="5" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0"/>
                 </StackPanel>
             </StackPanel>
-        </simpleChildWindow:ChildWindow>
+        </mah:ChildWindow>
 
-        <simpleChildWindow:ChildWindow
+        <mah:ChildWindow
             Name="IUpdateDialog"
             Grid.Column="0"
             Grid.ColumnSpan="2"
@@ -132,16 +130,16 @@
             GlowBrush="Black"
             BorderThickness="0"
             Title="FASTER Update">
-            <simpleChildWindow:ChildWindow.Icon>
+            <mah:ChildWindow.Icon>
                 <iconPacks:PackIconMaterial
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     Foreground="White"
                     Kind="Update" />
-            </simpleChildWindow:ChildWindow.Icon>
-            <simpleChildWindow:ChildWindow.OverlayBrush>
+            </mah:ChildWindow.Icon>
+            <mah:ChildWindow.OverlayBrush>
                 <SolidColorBrush Opacity="0.7" Color="{StaticResource MahApps.Colors.Gray10}"/>
-            </simpleChildWindow:ChildWindow.OverlayBrush>
+            </mah:ChildWindow.OverlayBrush>
             <StackPanel Margin="16">
                 <TextBlock Name="IUpdateText" Margin="15"/>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" >
@@ -159,9 +157,9 @@
                     </Button>
                 </StackPanel>
             </StackPanel>
-        </simpleChildWindow:ChildWindow>
+        </mah:ChildWindow>
 
-        <simpleChildWindow:ChildWindow
+        <mah:ChildWindow
             Name="IMessageDialog"
             Grid.Column="0"
             Grid.ColumnSpan="2"
@@ -174,16 +172,16 @@
             GlowBrush="Black"
             BorderThickness="0"
             Title="Message">
-            <simpleChildWindow:ChildWindow.Icon>
+            <mah:ChildWindow.Icon>
                 <iconPacks:PackIconModern
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     Foreground="White"
                     Kind="Information" />
-            </simpleChildWindow:ChildWindow.Icon>
-            <simpleChildWindow:ChildWindow.OverlayBrush>
+            </mah:ChildWindow.Icon>
+            <mah:ChildWindow.OverlayBrush>
                 <SolidColorBrush Opacity="0.7" Color="{StaticResource MahApps.Colors.Gray10}"/>
-            </simpleChildWindow:ChildWindow.OverlayBrush>
+            </mah:ChildWindow.OverlayBrush>
             <StackPanel Margin="16">
                 <TextBlock Name="IMessageText" Margin="10"/>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" >
@@ -195,6 +193,6 @@
                     </Button>
                 </StackPanel>
             </StackPanel>
-        </simpleChildWindow:ChildWindow>
+        </mah:ChildWindow>
     </Grid>
 </UserControl>

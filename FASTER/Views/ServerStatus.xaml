@@ -3,13 +3,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:wpf="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
-             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              xmlns:mah="http://metro.mahapps.com/winfx/xaml/simplechildwindow"
              xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              xmlns:views="clr-namespace:FASTER.Views"
-             mc:Ignorable="d"
-             d:DesignHeight="550" d:DesignWidth="800">
+             xmlns:wpf="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+             mc:Ignorable="d" 
+             d:DesignHeight="570" d:DesignWidth="800">
     <Grid Background="{StaticResource MahApps.Brushes.Gray9}">
         <Grid.RowDefinitions>
             <RowDefinition Height="1*"/>
@@ -172,12 +172,12 @@
                                         <Style BasedOn="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" TargetType="{x:Type ToggleButton}">
                                             <Setter Property="Content" Value="{iconPacks:Material Kind=Play}" />
                                             <Setter Property="ToolTip" Value="Run performance analysis" />
-                                    <Style.Triggers>
-                                        <Trigger Property="IsChecked" Value="true">
-                                            <Setter Property="Content" Value="{iconPacks:Material Kind=Pause}" />
-                                            <Setter Property="ToolTip" Value="Stop performance analysis" />
-                                        </Trigger>
-                                    </Style.Triggers>
+                                            <Style.Triggers>
+                                                <Trigger Property="IsChecked" Value="true">
+                                                    <Setter Property="Content" Value="{iconPacks:Material Kind=Pause}" />
+                                                    <Setter Property="ToolTip" Value="Stop performance analysis" />
+                                                </Trigger>
+                                            </Style.Triggers>
                                         </Style>
                                     </ToggleButton.Style>
                                 </ToggleButton>
