@@ -50,8 +50,7 @@ namespace FASTER.Models
             }
             else
             {
-                MainWindow.Instance.IMessageDialog.IsOpen   = true;
-                MainWindow.Instance.IMessageDialogText.Text = "Mod Already Exists";
+                MainWindow.Instance.DisplayMessage("Mod Already Exists");
             }
             Properties.Settings.Default.Save();
         }
@@ -139,8 +138,7 @@ namespace FASTER.Models
             if (!invalid) { AddMod(multiple, modId); }
             else
             {
-                MainWindow.Instance.IMessageDialog.IsOpen = true;
-                MainWindow.Instance.IMessageDialogText.Text = "Please use format: https://steamcommunity.com/sharedfiles/filedetails/?id=*********";
+                MainWindow.Instance.DisplayMessage("Please use format: https://steamcommunity.com/sharedfiles/filedetails/?id=*********");
             }
         }
 
@@ -176,8 +174,7 @@ namespace FASTER.Models
                     }
                     else
                     {
-                        MainWindow.Instance.IMessageDialog.IsOpen   = true;
-                        MainWindow.Instance.IMessageDialogText.Text = "This is a workshop Item for a different game.";
+                        MainWindow.Instance.DisplayMessage("This is a workshop Item for a different game.");
                     }
                 }
                 catch (Exception e) 
@@ -185,8 +182,7 @@ namespace FASTER.Models
             }
             else if (!multiple)
             {
-                MainWindow.Instance.IMessageDialog.IsOpen   = true;
-                MainWindow.Instance.IMessageDialogText.Text = "Mod already imported.";
+                MainWindow.Instance.DisplayMessage("Mod already imported.");
             }
         }
 
@@ -224,7 +220,15 @@ namespace FASTER.Models
             foreach (var steamMod in currentMods.ToList())
             {
                 if (steamMod.PrivateMod) continue;
-                var modInfo = GetModInfo(steamMod.WorkshopId);
+
+                Tuple<string, string, int> modInfo = null;
+                try
+                { modInfo = GetModInfo(steamMod.WorkshopId); }
+                catch (NullReferenceException)
+                {
+                    MainWindow.Instance.Dispatcher?.InvokeAsync(() =>
+                    { MainWindow.Instance.DisplayMessage($"The mod '{steamMod.Name}' could not be updated."); });
+                }
 
                 if (modInfo != null)
                 {
@@ -243,10 +247,7 @@ namespace FASTER.Models
                     failnum++;
                 if (failnum < 3) continue;
                 MainWindow.Instance.Dispatcher?.InvokeAsync(() =>
-                {
-                    MainWindow.Instance.IMessageDialogText.Text = "Could not reach stream after 3 attempts.\n\nPlease check the event logs.";
-                    MainWindow.Instance.IMessageDialog.IsOpen   = true;
-                });
+                { MainWindow.Instance.DisplayMessage("Could not reach stream after 3 attempts.\n\nPlease check the event logs."); });
                 break;
             }
 

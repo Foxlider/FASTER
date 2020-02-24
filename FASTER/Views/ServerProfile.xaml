@@ -8,17 +8,17 @@
              xmlns:simpleChildWindow="http://metro.mahapps.com/winfx/xaml/simplechildwindow"
              mc:Ignorable="d" 
              d:DesignHeight="570" d:DesignWidth="800">
-    <Grid Background="{StaticResource MahApps.Brushes.Gray9}">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition Height="50" />
         </Grid.RowDefinitions>
         <TabControl Margin="0" Grid.Row="0" BorderThickness="0" Background="{x:Null}">
-            <!--<dragablz:TabablzControl.InterTabController>
-                <dragablz:InterTabController />
-            </dragablz:TabablzControl.InterTabController>-->
+            <TabControl.Effect>
+                <DropShadowEffect BlurRadius="5" RenderingBias="Performance" ShadowDepth="0"/>
+            </TabControl.Effect>
             <TabItem Header="Settings">
-                <Grid Margin="5,0,5,0" >
+                <Grid Margin="5,0" >
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="78*" />
                         <ColumnDefinition Width="78*" />
@@ -32,13 +32,13 @@
                         <ColumnDefinition Width="78*" />
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="153*" />
-                        <RowDefinition Height="83*" />
-                        <RowDefinition Height="111*" />
-                        <RowDefinition Height="126*" />
+                        <RowDefinition Height="110*" />
+                        <RowDefinition Height="130*" />
+                        <RowDefinition Height="110*" />
+                        <RowDefinition Height="130*" />
                     </Grid.RowDefinitions>
 
-                    <Grid Grid.ColumnSpan="4" Grid.RowSpan="2" Margin="5,5,2.719,6.735">
+                    <Grid Grid.ColumnSpan="4" Grid.RowSpan="2" Margin="5,5,3,5">
                         <Grid.Style>
                             <Style TargetType="Grid">
                                 <Setter Property="Margin" Value="5"/>
@@ -90,7 +90,7 @@
                         </Grid>
                     </Grid>
 
-                    <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" Margin="5,3.265,2.719,5.504">
+                    <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" Margin="5,3,3,5">
                         <Grid.Style>
                             <Style TargetType="Grid">
                                 <Setter Property="Margin" Value="5"/>
@@ -127,7 +127,7 @@
                         </Grid>
                     </Grid>
 
-                    <Grid Grid.Row="03" Grid.Column="0" Grid.ColumnSpan="4" Margin="5,4.496,2.719,5.979">
+                    <Grid Grid.Row="03" Grid.Column="0" Grid.ColumnSpan="4" Margin="5,5,3,5">
                         <Grid.Style>
                             <Style TargetType="Grid">
                                 <Setter Property="Margin" Value="5"/>
@@ -153,7 +153,7 @@
                         </Grid>
                     </Grid>
 
-                    <Grid Grid.Row="0" Grid.Column="6" Grid.RowSpan="2" Grid.ColumnSpan="4" Margin="4.362,5,5.212,6.735">
+                    <Grid Grid.Row="0" Grid.Column="6" Grid.RowSpan="2" Grid.ColumnSpan="4" Margin="5,5,5,5">
                         <Grid.Style>
                             <Style TargetType="Grid">
                                 <Setter Property="Margin" Value="5"/>
@@ -226,7 +226,7 @@
                         </DockPanel>
                     </Grid>
 
-                    <Grid Grid.Row="1" Grid.Column="4" Grid.ColumnSpan="2" Grid.RowSpan="2" Margin="7.281,3.229,5.638,5.504">
+                    <Grid Grid.Row="1" Grid.Column="4" Grid.ColumnSpan="2" Grid.RowSpan="2" Margin="5,3,5,5">
                         <Grid.Style>
                             <Style TargetType="Grid">
                                 <Setter Property="Margin" Value="5"/>
@@ -266,7 +266,7 @@
                         </Grid>
                     </Grid>
 
-                    <Grid Grid.Row="2" Grid.Column="6" Grid.ColumnSpan="4" Grid.RowSpan="2" Margin="4.362,3.265,5.212,5.979">
+                    <Grid Grid.Row="2" Grid.Column="6" Grid.ColumnSpan="4" Grid.RowSpan="2" Margin="5,3,5,5">
                         <Grid.Style>
                             <Style TargetType="Grid">
                                 <Setter Property="Margin" Value="5"/>
@@ -288,7 +288,7 @@
                         </Grid>
                     </Grid>
 
-                    <Grid Grid.Row="0" Grid.Column="4" Grid.ColumnSpan="2" Margin="7.281,5,5.638,6.771">
+                    <Grid Grid.Row="0" Grid.Column="4" Grid.ColumnSpan="2" Margin="5,5,5,5">
                         <Grid.Style>
                             <Style TargetType="Grid">
                                 <Setter Property="Margin" Value="5"/>
@@ -317,7 +317,7 @@
                         </Grid>
                     </Grid>
 
-                    <Grid Grid.Row="3" Grid.Column="4" Grid.ColumnSpan="2" Margin="7.281,4.496,5.638,5.979">
+                    <Grid Grid.Row="3" Grid.Column="4" Grid.ColumnSpan="2" Margin="5,5,5,5">
                         <Grid.Style>
                             <Style TargetType="Grid">
                                 <Setter Property="Margin" Value="5"/>
@@ -863,6 +863,9 @@
             <Button Name="ILaunchServer" ToolTip="Launch Server" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Padding="7,5" Content="{iconPacks:Material Kind=Play}" Click="ILaunchServer_Click"/>
         </StackPanel>
         <mah:Flyout x:Name="IFlyout" Grid.Row="0" Grid.RowSpan="2" IsOpen="False" Position="Bottom" Theme="Light" AutoCloseInterval="3000" IsAutoCloseEnabled="True" Opacity="0.9">
+            <mah:Flyout.Effect>
+                <DropShadowEffect BlurRadius="5" Direction="90" RenderingBias="Performance" ShadowDepth="0"/>
+            </mah:Flyout.Effect>
             <Label Name="IFlyoutMessage" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Content="TEXT"/>
         </mah:Flyout>
         <simpleChildWindow:ChildWindow

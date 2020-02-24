@@ -73,8 +73,7 @@ namespace FASTER.Models
                 {
                     MainWindow.Instance.Dispatcher?.InvokeAsync(() =>
                     {
-                        MainWindow.Instance.IMessageDialogText.Text = "Cannot reach Steam API \n\nCheck https://steamstat.us/ \n\nPlease check the Windows Event Logs for more informations";
-                        MainWindow.Instance.IMessageDialog.IsOpen = true;
+                        MainWindow.Instance.DisplayMessage("Cannot reach Steam API \n\nCheck https://steamstat.us/ \n\nPlease check the Windows Event Logs for more informations");
                     });
 
                     // Create an EventLog instance and assign its source.

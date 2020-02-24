@@ -16,7 +16,6 @@ namespace FASTER.Views
     /// </summary>
     public partial class Setup
     {
-
         public Setup()
         {
             InitializeComponent();

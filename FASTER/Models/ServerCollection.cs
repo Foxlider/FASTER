@@ -46,10 +46,7 @@ namespace FASTER.Models
                 profile.Executable = Properties.Settings.Default.serverPath + @"\arma3server_x64.exe";
             }
             else
-            {
-                MainWindow.Instance.IMessageDialog.IsOpen = true;
-                MainWindow.Instance.IMessageDialogText.Text = "Profile Already Exists";
-            }
+            { MainWindow.Instance.DisplayMessage("Profile Already Exists"); }
 
             Properties.Settings.Default.Save();
             MainWindow.Instance.LoadServerProfiles();
@@ -77,8 +74,7 @@ namespace FASTER.Models
             }
             else
             {
-                MainWindow.Instance.IMessageDialog.IsOpen   = true;
-                MainWindow.Instance.IMessageDialogText.Text = "Profile Already Exists";
+                MainWindow.Instance.DisplayMessage("Profile Already Exists");
             }
 
             Properties.Settings.Default.Save();

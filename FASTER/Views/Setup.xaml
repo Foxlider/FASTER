@@ -29,7 +29,7 @@
                     <ColumnDefinition Width="auto"/>
                 </Grid.ColumnDefinitions>
                 <TextBox x:Name="ISteamDirBox" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Steam Install Directory" Margin="5"/>
-                <Button Grid.Column="1" Name="ISteamDirButton" Content="{iconPacks:Material Kind=Folder}" Style="{DynamicResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" VerticalAlignment="Stretch" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" Margin="5" Padding="0" Click="DirButton_Click"/>
+                <Button Grid.Column="1" Name="ISteamDirButton" Content="{iconPacks:Modern Kind=Folder}" Style="{DynamicResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" VerticalAlignment="Stretch" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" Margin="5" Padding="0" Click="DirButton_Click"/>
             </Grid>
             <Grid Margin="5,10">
                 <Grid.ColumnDefinitions>
@@ -37,7 +37,7 @@
                     <ColumnDefinition Width="auto"/>
                 </Grid.ColumnDefinitions>
                 <TextBox x:Name="IServerDirBox" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Arma Install Directory" Margin="5"/>
-                <Button Grid.Column="1" Name="IServerDirButton" Content="{iconPacks:Material Kind=Folder}" Style="{DynamicResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" VerticalAlignment="Stretch" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" Margin="5" Padding="2" Click="DirButton_Click"/>
+                <Button Grid.Column="1" Name="IServerDirButton" Content="{iconPacks:Modern Kind=Folder}" Style="{DynamicResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" VerticalAlignment="Stretch" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" Margin="5" Padding="2" Click="DirButton_Click"/>
             </Grid>
             <Separator Margin="10"/>
         </StackPanel>

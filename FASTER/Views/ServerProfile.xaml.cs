@@ -15,6 +15,7 @@ using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 
 using Path = System.IO.Path;
@@ -176,6 +177,8 @@ namespace FASTER.Views
             ToggleUi_ManualMisisons(IManualMissions);
         }
 
+        public MainWindow MetroWindow
+        { get { return (MainWindow)Window.GetWindow(this); } }
 
         private void IProfileNameEditSave_Click(object sender, RoutedEventArgs e)
         {
@@ -184,9 +187,9 @@ namespace FASTER.Views
 
             if (ServerCollection.RenameServerProfile(oldName, newName))
             {
-                MainWindow.Instance.IMainContent.Items.RemoveAt(MainWindow.Instance.IMainContent.SelectedIndex);
+                MetroWindow.MainContent.Navigate(MetroWindow.ContentSteamUpdater);
                 MainWindow.Instance.LoadServerProfiles();
-                MainWindow.Instance.IMainContent.SelectedIndex = MainWindow.Instance.IMainContent.Items.Count - 1;
+                MetroWindow.MainContent.Navigate(MetroWindow.ContentProfiles.FirstOrDefault(p => p.Name == newName));
             }
             else
             { MessageBox.Show("Could not rename Server Profile. \nPlease try again."); }
@@ -220,31 +223,19 @@ namespace FASTER.Views
         private void DeleteProfile(object sender, RoutedEventArgs e)
         {
             ServerCollection.DeleteServerProfile(_safeName);
-            MainWindow.Instance.IMainContent.SelectedIndex = 0;
+            MetroWindow.MainContent.Navigate(MetroWindow.ContentSteamUpdater);
 
-
-            var tabs  = MainWindow.Instance.IMainContent.Items;
-            var menus = MainWindow.Instance.IServerProfilesMenu.Items;
-            var menu  = new ListBoxItem();
-            var tab   = new TabItem();
-
-            foreach (ListBoxItem m in menus)
+            foreach (ToggleButton m in MetroWindow.IServerProfilesMenu.Items)
             {
                 if (m.Name == _safeName)
-                { menu = m; }
+                { MetroWindow.IServerProfilesMenu.Items.Remove(m); }
             }
 
-            foreach (TabItem t in tabs)
+            foreach (ServerProfile t in MetroWindow.ContentProfiles)
             {
                 if (t.Name == _safeName)
-                { tab = t; }
+                { MetroWindow.ContentProfiles.Remove(t); }
             }
-
-            MainWindow.Instance.IMainContent.Items.Remove(tab);
-            MainWindow.Instance.IServerProfilesMenu.Items.Remove(menu);
-
-            MainWindow.Instance.IServerProfilesMenu.SelectedIndex = -1;
-            MainWindow.Instance.IMainMenuItems.SelectedIndex      = 0;
             IConfirmDeleteBtn.Click -= DeleteProfile;
         }
 
@@ -1108,7 +1099,7 @@ namespace FASTER.Views
             IHeadlessModsCount.Content = IHeadlessModsList.Items.Cast<object>().Count(i => ((CheckBox) i).IsChecked == true);
         }
 
-        private static void OpenLastFile(string path, string filter)
+        private void OpenLastFile(string path, string filter)
         {
             try
             {
@@ -1123,18 +1114,16 @@ namespace FASTER.Views
                 }
                 else
                 {
-                    MainWindow.Instance.IMessageDialog.IsOpen = true;
-                    MainWindow.Instance.IMessageDialogText.Text = "Cannot Open - File Not Found \n\nIf Opening PID file make sure Server is running.";
+                    MetroWindow.DisplayMessage("Cannot Open - File Not Found \n\nIf Opening PID file make sure Server is running.");
                 }
             }
             catch (Exception)
             {
-                MainWindow.Instance.IMessageDialog.IsOpen = true;
-                MainWindow.Instance.IMessageDialogText.Text = "Cannot Open - File Not Found \n\nIf Opening PID file make sure Server is running.";
+                MetroWindow.DisplayMessage("Cannot Open - File Not Found \n\nIf Opening PID file make sure Server is running.");
             }
         }
 
-        private static void DeleteAllFiles(string path, string filter)
+        private void DeleteAllFiles(string path, string filter)
         {
             var dir = new DirectoryInfo(path);
             var files = dir.EnumerateFiles(filter);
@@ -1145,8 +1134,7 @@ namespace FASTER.Views
                 catch (Exception e) { Crashes.TrackError(e, new Dictionary<string, string> {{ "Name", Properties.Settings.Default.steamUserName }}); }
                 i += 1;
             }
-            MainWindow.Instance.IMessageDialog.IsOpen = true;
-            MainWindow.Instance.IMessageDialogText.Text = $"Deleted {i} files.";
+            MetroWindow.DisplayMessage($"Deleted {i} files.");
         }
 
         private void LaunchServer()
@@ -1167,8 +1155,7 @@ namespace FASTER.Views
             { WriteConfigFiles(profileName); }
             catch (Exception)
             {
-                MainWindow.Instance.IMessageDialog.IsOpen = true;
-                MainWindow.Instance.IMessageDialogText.Text = "Config files in use elsewhere - make sure server is not running.";
+                MetroWindow.DisplayMessage("Config files in use elsewhere - make sure server is not running.");
                 start = false;
             }
 
@@ -1246,22 +1233,19 @@ namespace FASTER.Views
             profile = Functions.SafeName(profile);
             if (!ProfileFilesExist(profile))
             {
-                MainWindow.Instance.IMessageDialog.IsOpen   = true;
-                MainWindow.Instance.IMessageDialogText.Text = "The profile does not exist in the game files.";
+                MetroWindow.DisplayMessage("The profile does not exist in the game files.");
                 return false;
             }
 
             if (!IExecutable.Text.Contains("arma3server") && !IExecutable.Text.EndsWith(".exe"))
             {
-                MainWindow.Instance.IMessageDialog.IsOpen   = true;
-                MainWindow.Instance.IMessageDialogText.Text = "Please select a valid Arma 3 Sever Executable.";
+                MetroWindow.DisplayMessage("Please select a valid Arma 3 Sever Executable.");
                 return false;
             }
 
             if (File.Exists(IExecutable.Text)) return true;
 
-            MainWindow.Instance.IMessageDialog.IsOpen   = true;
-            MainWindow.Instance.IMessageDialogText.Text = "Arma 3 Server Executable does not exist. Please reselect correct file.";
+            MetroWindow.DisplayMessage("Arma 3 Server Executable does not exist. Please reselect correct file.");
             return false;
         }
 

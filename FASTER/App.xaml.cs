@@ -15,7 +15,7 @@ namespace FASTER
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-            
+
             var countryCode = RegionInfo.CurrentRegion.TwoLetterISORegionName;
             AppCenter.SetCountryCode(countryCode);
 

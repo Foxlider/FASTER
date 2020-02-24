@@ -8,6 +8,7 @@
         public static readonly string[] Supporters =
         {
             "SirGhosty22",
+            "Mildly_Interested"
         };
 
         /// <summary>

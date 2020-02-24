@@ -7,16 +7,19 @@
              mc:Ignorable="d" 
              d:DesignHeight="570" d:DesignWidth="800"
              Loaded="About_Loaded">
-    <Grid Background="{StaticResource MahApps.Brushes.Gray9}">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition />
-            <RowDefinition />
+            <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*" />
             <ColumnDefinition Width="1*"/>
         </Grid.ColumnDefinitions>
         <GroupBox Grid.Column="0" Margin="10" Width="Auto" Padding="0" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Header="About FASTER">
+            <GroupBox.Effect>
+                <DropShadowEffect BlurRadius="5" RenderingBias="Performance" ShadowDepth="0"/>
+            </GroupBox.Effect>
             <Grid Background="{StaticResource MahApps.Brushes.Window.Background}" Height="Auto" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -37,19 +40,22 @@
             </Grid>
         </GroupBox>
 
-        <GroupBox Grid.Row="1" Grid.Column="0" Margin="5" Height="270" Padding="0">
+        <GroupBox Grid.Row="1" Grid.Column="0" Margin="10,5,5,10" Padding="0">
+            <GroupBox.Effect>
+                <DropShadowEffect BlurRadius="5" RenderingBias="Performance" ShadowDepth="0"/>
+            </GroupBox.Effect>
             <Grid VerticalAlignment="Stretch" Background="{StaticResource MahApps.Brushes.Window.Background}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="200" />
+                    <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <iconPacks:PackIconMaterial Kind="FaceAgent" Width="172" Height="172" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                <iconPacks:PackIconModern Kind="HardwareHeadset" Width="150" Height="150" Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center" />
                 <StackPanel Grid.Row="0" Grid.Column="1">
-                    <TextBlock  Margin="16 16 16 8">Support</TextBlock>
+                    <TextBlock Margin="16 16 16 8">Support</TextBlock>
                     <TextBlock TextWrapping="Wrap" Margin="16 0 16 8" Style="{DynamicResource MahApps.Styles.TextBlock.Watermark}" VerticalAlignment="Top">Come and discuss the tool, make suggestions or report issues using one of these channels:</TextBlock>
                 </StackPanel>
                 <Border Grid.Row="1" Grid.ColumnSpan="2" Grid.Column="0" BorderThickness="0 1 0 0" Padding="8">
@@ -59,19 +65,19 @@
                             <ColumnDefinition />
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
-                        <Button Grid.Column="0"  HorizontalAlignment="Center" Style="{DynamicResource MahApps.Styles.Button.Chromeless}" Name="IGitHubButton" Click="IGitHubButton_Click">
+                        <Button Grid.Column="0"  HorizontalAlignment="Center" Style="{DynamicResource MahApps.Styles.Button.Split}" Name="IGitHubButton" Click="IGitHubButton_Click">
                             <StackPanel Orientation="Horizontal">
                                 <iconPacks:PackIconMaterial  Kind="GithubCircle" />
                                 <TextBlock Margin="8 0 0 0" VerticalAlignment="Center">GitHub</TextBlock>
                             </StackPanel>
                         </Button>
-                        <Button Grid.Column="1" HorizontalAlignment="Center" Style="{DynamicResource MahApps.Styles.Button.Chromeless}" Name="IForumsButton" Click="IForumsButton_Click">
+                        <Button Grid.Column="1" HorizontalAlignment="Center" Style="{DynamicResource MahApps.Styles.Button.Split}" Name="IForumsButton" Click="IForumsButton_Click">
                             <StackPanel Orientation="Horizontal">
                                 <iconPacks:PackIconMaterial Kind="Forum" />
                                 <TextBlock Margin="8 0 0 0" VerticalAlignment="Center">Forums</TextBlock>
                             </StackPanel>
                         </Button>
-                        <Button Grid.Column="2" HorizontalAlignment="Center" Style="{DynamicResource MahApps.Styles.Button.Chromeless}" Name="IDiscordButton" Click="IDiscordButton_Click">
+                        <Button Grid.Column="2" HorizontalAlignment="Center" Style="{DynamicResource MahApps.Styles.Button.Split}" Name="IDiscordButton" Click="IDiscordButton_Click">
                             <StackPanel Orientation="Horizontal">
                                 <iconPacks:PackIconMaterial Kind="Discord" />
                                 <TextBlock Margin="8 0 0 0" VerticalAlignment="Center">Discord</TextBlock>
@@ -82,23 +88,26 @@
             </Grid>
         </GroupBox>
 
-        <GroupBox Grid.Row="1" Grid.Column="1" Margin="5" Height="270" Padding="0">
+        <GroupBox Grid.Row="1" Grid.Column="1" Margin="5,5,10,10" Padding="0">
+            <GroupBox.Effect>
+                <DropShadowEffect BlurRadius="5" RenderingBias="Performance" ShadowDepth="0"/>
+            </GroupBox.Effect>
             <Grid VerticalAlignment="Stretch" Background="{StaticResource MahApps.Brushes.Window.Background}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="200" />
+                    <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <iconPacks:PackIconMaterial  Kind="GithubCircle" Width="172" Height="172" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                <iconPacks:PackIconMaterial  Kind="GithubCircle" Width="150" Height="150" Margin="10" HorizontalAlignment="Stretch" VerticalAlignment="Center" />
                 <StackPanel Grid.Row="0" Grid.Column="1">
                     <TextBlock Margin="16 16 16 8" >Open Source</TextBlock>
                     <TextBlock TextWrapping="Wrap" Style="{DynamicResource MahApps.Styles.TextBlock.Watermark}" Margin="16 0 16 8" VerticalAlignment="Top">This project is completely open source. If you like it and want to say thanks you could hit the GitHub Star button, or contribute if you can!</TextBlock>
                 </StackPanel>
                 <Border Grid.Row="1" Grid.ColumnSpan="2" Grid.Column="0" BorderThickness="0 1 0 0" Padding="8">
-                    <Button HorizontalAlignment="Center" Style="{DynamicResource MahApps.Styles.Button.Chromeless}" Name="IDonateButton" Click="IDonateButton_Click" MouseEnter="IDonateButton_MouseEnter" ToolTip="Big thanks to all the supporters !">
+                    <Button HorizontalAlignment="Center" Style="{DynamicResource MahApps.Styles.Button.Split}" Name="IDonateButton" Click="IDonateButton_Click" MouseEnter="IDonateButton_MouseEnter" ToolTip="Big thanks to all the supporters !">
                         <StackPanel Orientation="Horizontal">
                             <iconPacks:PackIconModern Kind="Gift" Margin="10"/>
                             <TextBlock Margin="10" VerticalAlignment="Center" TextWrapping="WrapWithOverflow">Liking the app ? Consider supporting me !</TextBlock>

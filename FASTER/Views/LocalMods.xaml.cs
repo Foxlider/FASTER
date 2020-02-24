@@ -1,10 +1,11 @@
-﻿using System;
+﻿using FASTER.Models;
+
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using FASTER.Models;
 
 namespace FASTER.Views
 {
@@ -19,6 +20,9 @@ namespace FASTER.Views
             Loaded += LocalMods_Loaded;
         }
 
+        public MainWindow MetroWindow
+        { get { return (MainWindow)Window.GetWindow(this); } }
+
         private void LocalMods_Loaded(object sender, RoutedEventArgs e)
         { UpdateModsView(); }
         
@@ -28,9 +32,7 @@ namespace FASTER.Views
 
         private void IEditFolders_Click(object sender, RoutedEventArgs e)
         {
-            MainWindow.Instance.IMainContent.SelectedIndex     = 3;
-            MainWindow.Instance.ILocalModsTabSelect.IsSelected = false;
-            MainWindow.Instance.ISettingsTabSelect.IsSelected  = true;
+            MetroWindow.MainContent.Navigate(MetroWindow.ContentSettings);
         }
 
         private void UpdateModsView()
@@ -47,7 +49,10 @@ namespace FASTER.Views
                                   select localMod).ToList();
 
             foreach (var remove in modsToRemove)
-                serverPathMods.RemoveAt(serverPathMods.IndexOf(serverPathMods.Find(m => m.Name == remove.Name)));
+            {
+                try { serverPathMods.RemoveAt(serverPathMods.IndexOf(serverPathMods.Find(m => m.Name == remove.Name))); }
+                catch (ArgumentOutOfRangeException) { /*IGNORED*/ }
+            }
 
             localMods.AddRange(serverPathMods);
 

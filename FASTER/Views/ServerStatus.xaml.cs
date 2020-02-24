@@ -81,6 +81,9 @@ namespace FASTER.Views
             Task.Factory.StartNew(Updater, TaskCreationOptions.LongRunning);
         }
 
+        public MainWindow MetroWindow
+        { get { return (MainWindow)Window.GetWindow(this); } }
+
         private void Updater()
         {
             while (Updating)
@@ -172,7 +175,7 @@ namespace FASTER.Views
         private void IRescanAll_Click(object sender, RoutedEventArgs e)
         {
             Analytics.TrackEvent("ServerStatus - Rescanning Servers", new Dictionary<string, string> {
-                { "Name", MainWindow.Instance.ISteamUserBox.Text }
+                { "Name", MetroWindow.ContentSteamUpdater.ISteamUserBox.Text }
             });
             RefreshServers();
         }

@@ -10,7 +10,7 @@
              xmlns:wpf="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
              mc:Ignorable="d" 
              d:DesignHeight="570" d:DesignWidth="800">
-    <Grid Background="{StaticResource MahApps.Brushes.Gray9}">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="1*"/>
             <RowDefinition Name="GaugeRow" Height="auto"/>
@@ -33,6 +33,9 @@
         </Grid>
         <Expander Name="GaugeExpander" Header="Additional Gauges" Expanded="Expander_Expanded" Collapsed="Expander_Expanded" Grid.Row="1" >
             <Grid>
+                <Grid.Effect>
+                    <DropShadowEffect BlurRadius="5" RenderingBias="Performance" ShadowDepth="0"/>
+                </Grid.Effect>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="2*"/>
                     <ColumnDefinition Width="auto"/>
@@ -80,6 +83,9 @@
                   Margin="5" 
                   ScrollViewer.CanContentScroll="False" 
                   SelectedCellsChanged="DgProcess_SelectedCellsChanged">
+            <DataGrid.Effect>
+                <DropShadowEffect BlurRadius="5" RenderingBias="Performance" ShadowDepth="0"/>
+            </DataGrid.Effect>
             <DataGrid.Columns>
                 <DataGridTemplateColumn Width="5" CanUserResize="False">
                     <DataGridTemplateColumn.HeaderStyle>
@@ -190,6 +196,9 @@
             </DataGrid.Columns>
         </DataGrid>
         <Grid Grid.Row="3">
+            <Grid.Effect>
+                <DropShadowEffect BlurRadius="5" RenderingBias="Performance" ShadowDepth="0"/>
+            </Grid.Effect>
             <DockPanel  VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="2,2,5,5">
                 <Button DockPanel.Dock="Left" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Content="{iconPacks:Modern Kind=ControlPlay}" Name="IStartPerfs" ToolTip="Start Performance counters" Click="IStartPerfs_Click"/>
                 <Button DockPanel.Dock="Left" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Content="{iconPacks:Modern Kind=ControlPause}" Name="IStopPerfs" ToolTip="Stop Performance Counters" Click="IStopPerfs_Click"/>
@@ -212,6 +221,9 @@
             </ToggleButton>
         </Grid>
         <controls:Flyout x:Name="IFlyout" Grid.Row="0" Grid.RowSpan="3" IsOpen="False" Position="Bottom" Theme="Light" AutoCloseInterval="3000" IsAutoCloseEnabled="True" Opacity="0.9">
+            <controls:Flyout.Effect>
+                <DropShadowEffect BlurRadius="5" Direction="90" RenderingBias="Performance" ShadowDepth="0"/>
+            </controls:Flyout.Effect>
             <Label Name="IFlyoutMessage" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Content="TEXT"/>
         </controls:Flyout>
         <mah:ChildWindow x:Name="IConsoleViewer" 
