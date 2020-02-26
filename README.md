@@ -4,7 +4,7 @@
 ***GitHub***  
 [![Azure DevOps builds](https://img.shields.io/azure-devops/build/keelah/4b51eb35-4363-4038-8d99-543c01a3578f/8.svg?logo=azuredevops&style=flat-square)](https://dev.azure.com/keelah/FASTER/_build/latest?definitionId=8&branchName=master)
 [![Azure DevOps releases](https://img.shields.io/azure-devops/release/keelah/4b51eb35-4363-4038-8d99-543c01a3578f/2/2?logo=azuredevops&style=flat-square)](https://dev.azure.com/keelah/FASTER/_release)
-[![Discord](https://img.shields.io/discord/366955806777671681.svg?label=discord&logo=discord&logoColor=white&style=flat-square)](https://discord.gg/uPjgqHU)
+[![Discord](https://img.shields.io/discord/366955806777671681.svg?label=discord&logo=discord&logoColor=white&style=flat-square)](https://discord.gg/2BUuZa3)
 [![GitHub issues](https://img.shields.io/github/issues/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite.svg?logo=github&style=flat-square)](https://github.com/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite/issues)
 ![GitHub](https://img.shields.io/github/license/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite.svg?style=flat-square)
 [![GitHub release](https://img.shields.io/github/release/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite.svg?logo=github&style=flat-square)](https://GitHub.com/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite/releases/)  
@@ -22,7 +22,7 @@
 
 **CURRENTLY IN OPEN BETA TESTING**
 
-[![Discord](https://img.shields.io/discord/366955806777671681?label=Discord&logo=discord&logoColor=white&style=for-the-badge)](https://discord.gg/uPjgqHU)
+[![Discord](https://img.shields.io/discord/366955806777671681?label=Discord&logo=discord&logoColor=white&style=for-the-badge)](https://discord.gg/2BUuZa3)
 
 #### **INTRO**
 
@@ -68,7 +68,7 @@ Thanks go out to all the guys who helped the developpment and those who will tes
 
 ##### **_ISSUES and FEEDBACK_**
 
-As always best place to report issues is on the [GitHub Repo](https://github.com/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite/issues), as for general discussion I'll always keep an eye on the BI forum thread or come and join us in [Discord](https://discord.gg/uPjgqHU).
+As always best place to report issues is on the [GitHub Repo](https://github.com/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite/issues), as for general discussion I'll always keep an eye on the BI forum thread or come and join us in [Discord](https://discord.gg/2BUuZa3).
 
 ##### **_DOCUMENTATION_**
   
