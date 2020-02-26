@@ -103,6 +103,9 @@
                     <ListBox.ItemContainerStyle>
                         <Style TargetType="ListBoxItem">
                             <!--<Setter Property="Margin" Value="10,5,0,5" />-->
+                            <!--<Setter Property="TextOptions.TextRenderingMode" Value="ClearType"/>-->
+                            <Setter Property="TextOptions.TextFormattingMode" Value="Display"/>
+                            <Setter Property="FontSize" Value="12"/>
                             <Setter Property="ContextMenu" Value="{StaticResource ProfileContextMenu}"/>
                         </Style>
                     </ListBox.ItemContainerStyle>

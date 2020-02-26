@@ -18,6 +18,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace FASTER
 {
@@ -367,10 +368,13 @@ namespace FASTER
                     Name = profile.SafeName,
                     Content = profile.DisplayName,
                     Style = (Style)FindResource("MahApps.Styles.ToggleButton.WindowCommands"),
-                    Padding = new Thickness(10, 5, 0, 5),
+                    Padding = new Thickness(10, 2, 0, 2),
+                    FontSize = 14,
                     HorizontalAlignment = HorizontalAlignment.Stretch,
-                    HorizontalContentAlignment = HorizontalAlignment.Left
+                    HorizontalContentAlignment = HorizontalAlignment.Left,
+                    Foreground = new SolidColorBrush(Colors.White)
                 };
+                newItem.SetValue(TextOptions.TextFormattingModeProperty, TextFormattingMode.Display);
                 Dispatcher?.Invoke(() => { IServerProfilesMenu.Items.Add(newItem); });
 
                 newItem.Click += ToggleButton_Click;
