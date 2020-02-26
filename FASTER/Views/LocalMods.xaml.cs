@@ -17,7 +17,6 @@ namespace FASTER.Views
         public LocalMods()
         {
             InitializeComponent();
-            Loaded += LocalMods_Loaded;
         }
 
         public MainWindow MetroWindow

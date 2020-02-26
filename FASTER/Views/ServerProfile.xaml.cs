@@ -37,6 +37,14 @@ namespace FASTER.Views
         {
             UpdateModsList();
             UpdateMissionsList();
+            RefreshPasswords();
+        }
+
+        private void RefreshPasswords()
+        {
+            var profile = Properties.Settings.Default.Servers.ServerProfiles.Find(p => p.SafeName == _safeName);
+            IPassword.Password = profile.Password;
+            IAdminPassword.Password = profile.AdminPassword;
         }
 
         private void ServerProfile_Initialized(object sender, EventArgs e)
@@ -44,6 +52,9 @@ namespace FASTER.Views
             UpdateModsList();
             UpdateMissionsList();
         }
+
+        private void ServerProfile_Unloaded(object sender, RoutedEventArgs e)
+        { UpdateProfile(false); }
 
         public ServerProfile(Models.ServerProfile profile)
         {
@@ -59,8 +70,8 @@ namespace FASTER.Views
             IDisplayName.Content             = profile.DisplayName;
             IServerName.Text                 = profile.ServerName;
             IExecutable.Text                 = profile.Executable;
-            IPassword.Text                   = profile.Password;
-            IAdminPassword.Text              = profile.AdminPassword;
+            IPassword.Password               = profile.Password;
+            IAdminPassword.Password          = profile.AdminPassword;
             IMaxPlayers.Text                 = profile.MaxPlayers.ToString();
             IPort.Text                       = profile.Port.ToString();
             IHeadlessClientEnabled.IsChecked = profile.HeadlessClientEnabled;
@@ -164,9 +175,6 @@ namespace FASTER.Views
             IBattleEye.IsChecked                = profile.BattleEye;
             IAdditionalParams.Text              = profile.additionalParams;
             IEnableAdditionalParams.IsChecked   = profile.enableAdditionalParams;
-
-            Loaded += ServerProfile_Loaded;
-            Initialized += ServerProfile_Initialized;
             
             ToggleUi_HeadleddClientEnabled(IHeadlessClientEnabled);
             ToggleUi_VonEnabled(IVonEnabled);
@@ -417,7 +425,7 @@ namespace FASTER.Views
             });
             for (int hc = 1; hc <= INoOfHeadlessClients.Value; hc++)
             {
-                string hcCommandLine = "-client -connect=127.0.0.1 -password=" + IPassword.Text + " -profiles=" + profilePath + " -nosound -port=" + IPort.Text;
+                string hcCommandLine = "-client -connect=127.0.0.1 -password=" + IPassword.Password + " -profiles=" + profilePath + " -nosound -port=" + IPort.Text;
                 string hcMods = IHeadlessModsList.Items
                                                  .Cast<CheckBox>()
                                                  .Where(addon => addon.IsChecked ?? false)
@@ -574,7 +582,7 @@ namespace FASTER.Views
             }
         }
 
-        private void UpdateProfile()
+        private void UpdateProfile(bool updatePasswords = true)
         {
             CreateProfileFiles();
 
@@ -584,8 +592,13 @@ namespace FASTER.Views
             profile.DisplayName              = IDisplayName.Content.ToString();
             profile.ServerName               = IServerName.Text;
             profile.Executable               = IExecutable.Text;
-            profile.Password                 = IPassword.Text;
-            profile.AdminPassword            = IAdminPassword.Text;
+
+            //Don't update passwords if unloading => Passwordbox don't keep their data when unloaded
+            if(updatePasswords)
+            {
+                profile.Password      = IPassword.Password;
+                profile.AdminPassword = IAdminPassword.Password;
+            }
             profile.MaxPlayers               = Convert.ToInt32(Convert.ToDouble(IMaxPlayers.Text), provider);
             profile.Port                     = Convert.ToInt32(Convert.ToDouble(IPort.Text),       provider);
             profile.HeadlessClientEnabled    = IHeadlessClientEnabled.IsChecked ?? false;
@@ -895,8 +908,8 @@ namespace FASTER.Views
         {
             List<string> configLines = new List<string>
             {
-                $"passwordAdmin = \"{IAdminPassword.Text}\";",
-                $"password = \"{IPassword.Text}\";",
+                $"passwordAdmin = \"{IAdminPassword.Password}\";",
+                $"password = \"{IPassword.Password}\";",
                 $"serverCommandPassword = \"{IServerCommandPassword.Text}\";",
                 $"hostname = \"{IServerName.Text}\";",
                 $"maxPlayers = {IMaxPlayers.Text};",
@@ -1312,6 +1325,6 @@ namespace FASTER.Views
                 }
             }
             await Task.Delay(1000);
-        }
+        }        
     }
 }

@@ -21,7 +21,7 @@
                Welcome to FASTER - an unoffical Arma 3 server updater. Use the form below to setup a few options.
             </TextBlock>
             <TextBox x:Name="ISteamUserBox" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Steam Username" Margin="10"/>
-            <PasswordBox x:Name="ISteamPassBox" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Steam Password" Margin="10"/>
+            <PasswordBox x:Name="ISteamPassBox" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Steam Password" Style="{StaticResource MahApps.Styles.PasswordBox.ButtonRevealed}" Margin="10"/>
             <Separator Margin="10"/>
             <Grid Margin="5,10">
                 <Grid.ColumnDefinitions>

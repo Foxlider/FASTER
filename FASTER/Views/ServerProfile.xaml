@@ -7,7 +7,11 @@
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              xmlns:simpleChildWindow="http://metro.mahapps.com/winfx/xaml/simplechildwindow"
              mc:Ignorable="d" 
-             d:DesignHeight="570" d:DesignWidth="800">
+             d:DesignHeight="570" d:DesignWidth="800"
+             
+             Loaded="ServerProfile_Loaded"
+             Initialized="ServerProfile_Initialized"
+             Unloaded="ServerProfile_Unloaded">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition />
@@ -80,13 +84,13 @@
                                 <TextBox Name="IExecutable" Grid.Column="0" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Server File" Margin="5,5,5,5"/>
                                 <Button Content="{iconPacks:Material Kind=FolderOpen}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="1" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" Height="auto" Margin="5" Name="IServerFileButton" Click="IServerFileButton_Click" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Padding="3"/>
                             </Grid>
-                            <TextBox Name="IPassword" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="5" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Password" ToolTip="Password for users" Margin="5"/>
-                            <TextBox Name="IAdminPassword" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="5" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Admin Password" ToolTip="Password for admins" Margin="5"/>
+                            <PasswordBox Name="IPassword" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="5" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Password" ToolTip="Password for users" Style="{StaticResource MahApps.Styles.PasswordBox.ButtonRevealed}" Margin="5"/>
+                            <PasswordBox Name="IAdminPassword" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="5" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Admin Password" ToolTip="Password for admins" Margin="5" Style="{StaticResource MahApps.Styles.PasswordBox.ButtonRevealed}"/>
 
                             <TextBox Name="IMaxPlayers" Grid.Row="3" Grid.Column="7" Grid.ColumnSpan="3" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Max Players" ToolTip="Maximum players allowed" Margin="5"/>
                             <TextBox Name="IPort" Grid.Row="4" Grid.Column="7" Grid.ColumnSpan="3" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Port" ToolTip="Port for ArmaServer" Margin="5"/>
 
-                            <CheckBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="5" Name="IBattleEye" Content="BattleEye" ToolTip="Use BattleEye" Margin="5,4.797,4.56,15.7"/>
+                            <CheckBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="5" Name="IBattleEye" Content="BattleEye" ToolTip="Use BattleEye" Margin="5,0,0,0"/>
                         </Grid>
                     </Grid>
 
@@ -106,7 +110,7 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
-                            <StackPanel Grid.ColumnSpan="2" Margin="0,0,0.12,3.892">
+                            <StackPanel Grid.ColumnSpan="2" Margin="0,0,0,5">
                                 <Grid>
                                     <Label Margin="2" Content="Headless Client" HorizontalAlignment="Left" />
                                     <Button Name="ILaunchHCs" Click="ILaunchHCs_Click" ToolTip="Use with Caution : Might crash" Content="Launch HCs" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" HorizontalAlignment="Right" Margin="65,3" Visibility="Collapsed" />
@@ -115,12 +119,12 @@
                                 <Separator />
                             </StackPanel>
 
-                            <StackPanel Name="IHcIpGroup" Grid.Row="0" Grid.Column="0" IsEnabled="False" Margin="0,30,0.08,2.891" Grid.RowSpan="2">
+                            <StackPanel Name="IHcIpGroup" Grid.Row="0" Grid.Column="0" IsEnabled="False" Margin="0,30,0,2" Grid.RowSpan="2">
                                 <TextBox Name="IHeadlessIps" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Headless IPs (comma separated)" Margin="5"/>
                                 <TextBox Name="ILocalClients" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Local Clients (comma separated)" Margin="5,-2,5,5"/>
                             </StackPanel>
 
-                            <StackPanel Name="IHcSliderGroup" Grid.Row="0" IsEnabled="False" Grid.Column="1" Margin="4.92,30,0.12,2.891" Grid.RowSpan="2">
+                            <StackPanel Name="IHcSliderGroup" Grid.Row="0" IsEnabled="False" Grid.Column="1" Margin="5,30,0,2" Grid.RowSpan="2">
                                 <Slider Name="INoOfHeadlessClients" Style="{StaticResource MahApps.Styles.Slider.Flat}" AutoToolTipPlacement="TopLeft" AutoToolTipPrecision="0" Minimum="0" Maximum="5" IsSnapToTickEnabled="True" TickFrequency="1" Width="100" ToolTip="Number of Headless Clients" Margin="5,7"/>
                                 <Label Content="No of HCs" ToolTip="Number of Headless Clients" HorizontalAlignment="Center" Margin="5"/>
                             </StackPanel>

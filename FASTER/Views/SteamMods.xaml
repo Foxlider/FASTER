@@ -7,7 +7,10 @@
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
              mc:Ignorable="d" 
-             d:DesignHeight="570" d:DesignWidth="800">
+             d:DesignHeight="570" d:DesignWidth="800"
+             
+             Initialized="SteamMods_Initialized"
+             Loaded="SteamMods_Loaded">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
@@ -79,10 +82,12 @@
             VerticalContentAlignment="Center"
             Foreground="White"
             Padding="15"
+            CloseByEscape="True"
             CloseOnOverlay="True"
             GlowBrush="Black"
             BorderThickness="0"
-            Title="Add Steam Mod">
+            Title="Add Steam Mod"
+            KeyUp="IImportSteamModDialog_KeyUp">
             <mah:ChildWindow.Icon>
                 <iconPacks:PackIconModern
                     HorizontalAlignment="Center"

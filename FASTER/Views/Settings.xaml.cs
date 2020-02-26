@@ -24,12 +24,7 @@ namespace FASTER.Views
     {
         public Settings()
         {
-            Initialized += Settings_Initialized;
             InitializeComponent();
-            IModUpdatesOnLaunch.Click += IModUpdatesOnLaunch_Checked;
-            IAppUpdatesOnLaunch.Click += IAppUpdatesOnLaunch_Checked;
-            IResetDialog.KeyUp += IResetDialog_KeyUp;
-            MouseDown          += IResetDialog_LostFocus;
             AutoUpdater.CheckForUpdateEvent += AutoUpdaterOnCheckForUpdateEvent;
 
         }

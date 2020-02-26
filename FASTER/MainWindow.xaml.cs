@@ -30,6 +30,8 @@ namespace FASTER
         internal string Version;
         internal bool NavEnabled = true;
 
+        internal ToggleButton lastNavButton;
+
         #region INSTANCES
         private static MainWindow _instance;
         public static MainWindow Instance => _instance ??= new MainWindow();
@@ -125,7 +127,7 @@ namespace FASTER
             _instance = this;
             Version = GetVersion();
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
-            MainContent.Navigate(ContentSteamUpdater);
+            NavigateToConsole();
         }
 
         #region EVENTS
@@ -161,6 +163,9 @@ namespace FASTER
             
             if (sender is ToggleButton nav && NavEnabled)
             {
+                //Don't navigate if same menu is clicked
+                if (nav == lastNavButton) return;
+
                 //Clear selected Buttons
                 IServerProfilesMenu.SelectedItem = null;
                 foreach (ToggleButton item in list)
@@ -168,6 +173,9 @@ namespace FASTER
                     if (item.Name != nav?.Name)
                     { item.IsChecked = false; }
                 }
+                
+                nav.IsChecked = true;
+                lastNavButton = nav;
 
                 //Get loading screen
                 switch (nav.Name)
@@ -309,6 +317,14 @@ namespace FASTER
             { MessageBox.Show($"{steamDirBox} Directory does not exist!"); }
         }
         #endregion
+
+        
+        internal void NavigateToConsole()
+        {
+            navSteamUpdater.IsChecked = true;
+            lastNavButton = navSteamUpdater;
+            MainContent.Navigate(ContentSteamUpdater);
+        }
 
         private bool CheckAdmin()
         {

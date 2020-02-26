@@ -13,7 +13,7 @@ using System.Windows.Input;
 namespace FASTER.Views
 {
     /// <summary>
-    /// Interaction logic for Test1.xaml
+    /// Interaction logic for SteamUpdater.xaml
     /// </summary>
     public partial class SteamUpdater : UserControl
     {
@@ -26,7 +26,10 @@ namespace FASTER.Views
         }
         
         public MainWindow MetroWindow
-        { get { return (MainWindow)Window.GetWindow(this); } }
+        { 
+            get { return (MainWindow)Window.GetWindow(this); }
+            set { MetroWindow = value; }
+        }
 
 
         private void UserControl_Initialized(object sender, EventArgs e)
@@ -91,9 +94,9 @@ namespace FASTER.Views
                     break;
             }
 
-            var steamCommand = "+login " + ISteamUserBox.Text + " " + ISteamPassBox.Password + " +force_install_dir \"" + IServerDirBox.Text + "\" +app_update " + branch + " validate +quit";
+            var steamCommand = "+login " + ISteamUserBox.Text + " " + Encryption.Instance.DecryptData(Properties.Settings.Default.steamPassword) + " +force_install_dir \"" + IServerDirBox.Text + "\" +app_update " + branch + " validate +quit";
 
-            _ = RunSteamCommand(steamCmd, steamCommand, "server");
+            _ = RunSteamCommand(steamCmd, steamCommand, "server", null, true);
         }
 
         private void ISteamCancelButton_Click(object sender, RoutedEventArgs e)
@@ -126,7 +129,7 @@ namespace FASTER.Views
         {
             return !string.IsNullOrEmpty(ISteamDirBox.Text)
                 && !string.IsNullOrEmpty(ISteamUserBox.Text)
-                && !string.IsNullOrEmpty(ISteamPassBox.Password)
+                && !string.IsNullOrEmpty(Properties.Settings.Default.steamPassword)
                 && !string.IsNullOrEmpty(IServerDirBox.Text)
                 && File.Exists(Properties.Settings.Default.steamCMDPath + "\\steamcmd.exe");
         }
@@ -150,8 +153,9 @@ namespace FASTER.Views
         }
 
 
-        public async Task RunSteamCommand(string steamCmd, string steamCommand, string type, List<string> modIds = null)
+        public async Task RunSteamCommand(string steamCmd, string steamCommand, string type, List<string> modIds = null, bool localLaunch = false)
         {
+
             if (ReadyToUpdate())
             {
                 _oProcess = new Process();
@@ -159,9 +163,12 @@ namespace FASTER.Views
                 ISteamCancelButton.IsEnabled = true;
                 ISteamUpdateButton.IsEnabled = false;
 
-                MetroWindow.NavEnabled = false;
-
-                MetroWindow.MainContent.Navigate(MetroWindow.ContentSteamUpdater);
+                if(!localLaunch)
+                {
+                    MainWindow.Instance.NavEnabled = false;
+                    MainWindow.Instance?.NavigateToConsole();
+                }
+                
                 var tasks = new List<Task>();
 
                 ISteamProgressBar.IsIndeterminate = true;
@@ -242,11 +249,13 @@ namespace FASTER.Views
                 }
                 ISteamCancelButton.IsEnabled = false;
                 ISteamUpdateButton.IsEnabled = true;
-                MetroWindow.NavEnabled = true;
+
+                if(!localLaunch)
+                    MainWindow.Instance.NavEnabled = true;
             }
             else
             {
-                MetroWindow.DisplayMessage("Please check that SteamCMD is installed and that all fields are correct: \n\n\n"
+                MainWindow.Instance?.DisplayMessage("Please check that SteamCMD is installed and that all fields are correct: \n\n\n"
                                         + "   -  Steam Dir\n\n"
                                         + "   -  User Name & Pass\n\n"
                                         + "   -  Server Dir");

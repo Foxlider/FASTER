@@ -54,7 +54,7 @@
                     <Button Grid.Column="1" Name="ISteamDirButton" Content="{iconPacks:Modern Kind=Folder}" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" VerticalAlignment="Stretch" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" Margin="5" Padding="2" Click="ISteamDirButton_Click"/>
                 </Grid>
                 <TextBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Name="ISteamUserBox" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="User Name" LostFocus="ISteamSettings_LostFocus" Margin="10,30,10,10"/>
-                <PasswordBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Name="ISteamPassBox" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Password" LostFocus="ISteamSettings_LostFocus" Margin="10,10,10,30"/>
+                <PasswordBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Name="ISteamPassBox" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Password" LostFocus="ISteamSettings_LostFocus" Style="{StaticResource MahApps.Styles.PasswordBox.ButtonRevealed}" Margin="10,10,10,30"/>
             </Grid>
         </Grid>
 
@@ -145,6 +145,7 @@
             Name="ISteamGuardDialog"
             Grid.Column="0"
             Grid.ColumnSpan="2"
+            Grid.RowSpan="2"
             IsOpen="False"
             HorizontalContentAlignment="Center"
             VerticalContentAlignment="Center"

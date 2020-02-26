@@ -23,11 +23,7 @@ namespace FASTER.Views
         bool firstLoad = true;
         public SteamMods()
         {
-            Initialized += SteamMods_Initialized;
             InitializeComponent();
-            Loaded                      += SteamMods_Loaded;
-            IImportSteamModDialog.KeyUp += IImportSteamModDialog_KeyUp;
-            MouseDown                   += IImportSteamModDialog_LostFocus;
         }
 
         public MainWindow MetroWindow
@@ -37,6 +33,7 @@ namespace FASTER.Views
         {
             if (Properties.Settings.Default.steamMods?.SteamMods?.Count > 0 && Properties.Settings.Default.checkForModUpdates && firstLoad)
             {
+                UpdateModsView();
                 firstLoad = false;
                 IUpdateProgress.IsIndeterminate = true;
                 IProgressInfo.Visibility        = Visibility.Visible;
@@ -80,8 +77,8 @@ namespace FASTER.Views
         private void IMessageButton_Click(object sender, RoutedEventArgs e)
         { IMessageDialog.IsOpen = false; }
 
-        private void IUpdateAll_Click(object sender, RoutedEventArgs e)
-        { UpdateAllMods(); }
+        private async void IUpdateAll_Click(object sender, RoutedEventArgs e)
+        { await UpdateAllModsAsync(); }
 
 
         private void IImportLauncherFile_Click(object sender, RoutedEventArgs e)
@@ -235,7 +232,7 @@ namespace FASTER.Views
             }
         }
 
-        private void UpdateAllMods()
+        private async Task UpdateAllModsAsync()
         {
             if (MetroWindow.ContentSteamUpdater.ReadyToUpdate())
             {
@@ -244,12 +241,12 @@ namespace FASTER.Views
                 foreach (var steamMod in Properties.Settings.Default.steamMods.SteamMods.Where(steamMod => steamMod.SteamLastUpdated > steamMod.LocalLastUpdated))
                 {
                     modsToUpdate.Add(steamMod.WorkshopId.ToString());
-                    UpdateMod(steamMod.WorkshopId, steamMod.Name, false);
+                    await UpdateMod(steamMod.WorkshopId, steamMod.Name, false);
                 }
 
                 if (modsToUpdate.Count > 0)
                 {
-                    string steamCommand = "+login " + MetroWindow.ContentSteamUpdater.ISteamUserBox.Text + " " + MetroWindow.ContentSteamUpdater.ISteamPassBox.Password;
+                    string steamCommand = "+login " + MetroWindow.ContentSteamUpdater.ISteamUserBox.Text + " " + Encryption.Instance.DecryptData(Properties.Settings.Default.steamPassword);
 
                     steamCommand = modsToUpdate.Aggregate(steamCommand, (current, steamMod) => $"{current} +workshop_download_item 107410 {steamMod}");
 
@@ -263,13 +260,13 @@ namespace FASTER.Views
             else
             { MetroWindow.DisplayMessage("Check all fields are correctly filled out on Steam Updater"); }
         }
-        private void UpdateMod(object sender, RoutedEventArgs e)
+        private async void UpdateMod(object sender, RoutedEventArgs e)
         {
             var steamMod = (SteamMod)((Button)e.Source).DataContext;
-            UpdateMod(steamMod.WorkshopId, steamMod.Name);
+            await UpdateMod(steamMod.WorkshopId, steamMod.Name);
         }
 
-        private void UpdateMod(int modId, string modName, bool singleMod = true)
+        private async Task UpdateMod(int modId, string modName, bool singleMod = true)
         {
             if (MetroWindow.ContentSteamUpdater.ReadyToUpdate())
             {
@@ -300,12 +297,16 @@ namespace FASTER.Views
                 if (!singleMod) return;
 
                 string steamCmd     = MetroWindow.ContentSteamUpdater.ISteamDirBox.Text                                                                                                              + @"\steamcmd.exe";
-                string steamCommand = "+login " + MetroWindow.ContentSteamUpdater.ISteamUserBox.Text + " " + MetroWindow.ContentSteamUpdater.ISteamPassBox.Password + " +workshop_download_item 107410 " + modId + " validate +quit";
+                string steamCommand = "+login " + MetroWindow.ContentSteamUpdater.ISteamUserBox.Text + " " + Encryption.Instance.DecryptData(Properties.Settings.Default.steamPassword) + " +workshop_download_item 107410 " + modId + " validate +quit";
 
                 List<string> modIDs = new List<string>
                 { modId.ToString() };
 
-                _ = MetroWindow.ContentSteamUpdater.RunSteamCommand(steamCmd, steamCommand, "addon", modIDs);
+                MetroWindow.NavigateToConsole();
+                try
+                { await MetroWindow.ContentSteamUpdater.RunSteamCommand(steamCmd, steamCommand, "addon", modIDs); }
+                catch (Exception e)
+                { MetroWindow.DisplayMessage($"An error occured : {e.Message}"); }
             }
             else
             { MetroWindow.DisplayMessage("Check all fields are correctly filled out on Steam Updater"); }
