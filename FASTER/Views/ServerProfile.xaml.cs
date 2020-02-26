@@ -49,7 +49,6 @@ namespace FASTER.Views
 
         private void ServerProfile_Initialized(object sender, EventArgs e)
         {
-            UpdateModsList();
             UpdateMissionsList();
         }
 
