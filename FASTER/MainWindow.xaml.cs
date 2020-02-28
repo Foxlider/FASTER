@@ -372,7 +372,7 @@ namespace FASTER
                     FontSize = 14,
                     HorizontalAlignment = HorizontalAlignment.Stretch,
                     HorizontalContentAlignment = HorizontalAlignment.Left,
-                    Foreground = new SolidColorBrush(Colors.White)
+                    //Foreground = new SolidColorBrush(Colors.White)
                 };
                 newItem.SetValue(TextOptions.TextFormattingModeProperty, TextFormattingMode.Display);
                 Dispatcher?.Invoke(() => { IServerProfilesMenu.Items.Add(newItem); });
