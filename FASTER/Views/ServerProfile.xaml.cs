@@ -28,7 +28,7 @@ namespace FASTER.Views
     /// </summary>
     public partial class ServerProfile : UserControl
     {
-        private readonly string _safeName;
+        private string _safeName;
         private readonly string _profilesPath = Properties.Settings.Default.serverPath + "\\Servers\\";
         private string _replace;
         private bool headlessClientLaunched;
@@ -191,9 +191,10 @@ namespace FASTER.Views
         {
             var oldName = IDisplayName.Content.ToString();
             var newName = IProfileDisplayNameEdit.Text;
-
-            if (ServerCollection.RenameServerProfile(oldName, newName))
+            var res = ServerCollection.RenameServerProfile(oldName, newName);
+            if (!string.IsNullOrEmpty(res))
             {
+                _safeName = res;
                 MetroWindow.MainContent.Navigate(MetroWindow.ContentSteamUpdater);
                 MainWindow.Instance.LoadServerProfiles();
                 MetroWindow.MainContent.Navigate(MetroWindow.ContentProfiles.FirstOrDefault(p => p.Name == newName));

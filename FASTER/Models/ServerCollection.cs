@@ -81,7 +81,7 @@ namespace FASTER.Models
             MainWindow.Instance.LoadServerProfiles();
         }
 
-        public static bool RenameServerProfile(string oldName, string newName)
+        public static string RenameServerProfile(string oldName, string newName)
         {
             try
             {
@@ -91,12 +91,13 @@ namespace FASTER.Models
 
                 currentProfile.DisplayName = newName;
                 currentProfile.SafeName = Functions.SafeName(newName);
-                return true;
+                Properties.Settings.Default.Save();
+                return currentProfile.SafeName;
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"ServerConfig - An exception occurred:\n{ex.Message}", "Error");
-                return false;
+                return "";
             }
         }
 
