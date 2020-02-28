@@ -23,7 +23,7 @@
 
         <StackPanel x:Name="IModActionButtons" Orientation="Horizontal" HorizontalAlignment="Left" Margin="5">
             <StackPanel.Effect>
-                <DropShadowEffect BlurRadius="5" RenderingBias="Performance" ShadowDepth="0"/>
+                <DropShadowEffect BlurRadius="5" RenderingBias="Performance" ShadowDepth="1"/>
             </StackPanel.Effect>
             <Button Name="IAddSteamMod" ToolTip="Add Steam Mod"  Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Padding="7,5" Content="{iconPacks:Material Kind=Plus}" Click="IAddSteamMod_Click"/>
             <Button Name="IImportLauncherFile" ToolTip="Import from Arma 3 Launcher File"  Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Padding="7,5" Content="{iconPacks:Material Kind=FileDocument}" Click="IImportLauncherFile_Click"/>
@@ -33,14 +33,14 @@
         </StackPanel>
         <Grid Grid.Row="0" Grid.Column="1">
             <Grid.Effect>
-                <DropShadowEffect BlurRadius="5" RenderingBias="Performance" ShadowDepth="0"/>
+                <DropShadowEffect BlurRadius="5" RenderingBias="Performance" ShadowDepth="1"/>
             </Grid.Effect>
             <ProgressBar Name="IUpdateProgress" Height="Auto" Width="Auto" Margin="5"/>
         </Grid>
         <Label Name="IProgressInfo" Grid.Row="0" Grid.Column="1" Content="Checking for updates..." HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{DynamicResource MaterialDesignBackground}" Visibility="Collapsed"/>
         <DataGrid Name="IModView" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="5" CanUserReorderColumns="False" CanUserResizeRows="False" GridLinesVisibility="All" IsReadOnly="True" CanUserAddRows="False" AutoGenerateColumns="False" ItemsSource="{Binding NotifyOnSourceUpdated=True}">
             <DataGrid.Effect>
-                <DropShadowEffect BlurRadius="5" RenderingBias="Performance" ShadowDepth="0"/>
+                <DropShadowEffect BlurRadius="5" RenderingBias="Performance" ShadowDepth="1"/>
             </DataGrid.Effect>
             <DataGrid.Columns>
                 <DataGridTextColumn Header="ID" Binding="{Binding Path=WorkshopId}"/>

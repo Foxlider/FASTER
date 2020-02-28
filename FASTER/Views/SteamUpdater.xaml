@@ -22,7 +22,7 @@
 
         <Grid Grid.ColumnSpan="1" Margin="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
             <Grid.Effect>
-                <DropShadowEffect BlurRadius="5" RenderingBias="Performance" ShadowDepth="0"/>
+                <DropShadowEffect BlurRadius="5" RenderingBias="Performance" ShadowDepth="1"/>
             </Grid.Effect>
             <Grid.Style>
                 <Style TargetType="Grid">
@@ -60,7 +60,7 @@
 
         <Grid Grid.Row="1" Grid.Column="0" Margin="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
             <Grid.Effect>
-                <DropShadowEffect BlurRadius="5" RenderingBias="Performance" ShadowDepth="0"/>
+                <DropShadowEffect BlurRadius="5" RenderingBias="Performance" ShadowDepth="1"/>
             </Grid.Effect>
             <Grid.Style>
                 <Style TargetType="Grid">
@@ -104,7 +104,7 @@
 
         <Grid Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" Margin="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
             <Grid.Effect>
-                <DropShadowEffect BlurRadius="5" RenderingBias="Performance" ShadowDepth="0"/>
+                <DropShadowEffect BlurRadius="5" RenderingBias="Performance" ShadowDepth="1"/>
             </Grid.Effect>
             <Grid.Style>
                 <Style TargetType="Grid">
@@ -128,7 +128,7 @@
                 </StackPanel>
                 <RichTextBox Name="ISteamOutputBox" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" IsReadOnly="True" IsEnabled="True" Background="{StaticResource MahApps.Brushes.Gray10}" Margin="10,10,10,0" VerticalScrollBarVisibility="Visible">
                     <RichTextBox.Effect>
-                        <DropShadowEffect BlurRadius="5" RenderingBias="Performance" ShadowDepth="0"/>
+                        <DropShadowEffect BlurRadius="5" RenderingBias="Performance" ShadowDepth="1"/>
                     </RichTextBox.Effect>
                     <RichTextBox.Resources>
                         <Style TargetType="{x:Type Paragraph}">

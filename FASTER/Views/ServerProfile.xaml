@@ -19,7 +19,7 @@
         </Grid.RowDefinitions>
         <TabControl Margin="0" Grid.Row="0" BorderThickness="0" Background="{x:Null}">
             <TabControl.Effect>
-                <DropShadowEffect BlurRadius="5" RenderingBias="Performance" ShadowDepth="0"/>
+                <DropShadowEffect BlurRadius="5" RenderingBias="Performance" ShadowDepth="1"/>
             </TabControl.Effect>
             <TabItem Header="Settings">
                 <Grid Margin="5,0" >
