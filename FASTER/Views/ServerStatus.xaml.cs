@@ -447,7 +447,7 @@ namespace FASTER.Views
             {
                 var now = DateTime.Now;
                 using(ManagementObjectSearcher searcher = new ManagementObjectSearcher(@"root\WMI", "SELECT * FROM MSAcpi_ThermalZoneTemperature"))
-                { 
+                {
                     foreach (var o in searcher.Get())
                     {
                         var obj = (ManagementObject) o;
@@ -456,23 +456,13 @@ namespace FASTER.Views
                         temperature  = (temperature - (float)2732.0) / (float)10.0;
                         if (temperature >= AxisYMax) AxisYMax = temperature + 1;
                         if (temperature <= AxisYMin) AxisYMin = temperature - 1;
-                        try
-                        { 
-                            ChartValues.Add(new MeasureModel
-                            {
-                                DateTime = now,
-                                Value    = temperature
-                            });
-                        }
+                        try { ChartValues.Add(new MeasureModel { DateTime = now, Value = temperature }); }
                         catch
-                        { 
+                        {
                             //If the performance counter fails somehow, fill data with 0
-                            ChartValues.Add(new MeasureModel
-                            {
-                                DateTime = now,
-                                Value    = 0
-                            });
+                            ChartValues.Add(new MeasureModel { DateTime = now, Value = 0 });
                         }
+                        break;
                     }
                 }
 
