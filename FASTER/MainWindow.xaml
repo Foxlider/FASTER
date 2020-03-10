@@ -29,7 +29,7 @@
     Closing="MetroWindow_Closing">
     <mah:MetroWindow.RightWindowCommands>
         <mah:WindowCommands>
-            <Button Content="{iconPacks:Modern Kind=Tools}"/>
+            <Button Content="{iconPacks:Modern Kind=Tools}" Click="ToolsButton_Click"/>
             <!--<Button Content="{iconPacks:Material Kind=WindowMinimize}" Click="WindowMinimizeButton_Click"/>
             <Button Content="{iconPacks:Material Kind=WindowMaximize}" Click="IWindowMaximizeButton_Click"/>-->
         </mah:WindowCommands>

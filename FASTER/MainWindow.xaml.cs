@@ -317,9 +317,15 @@ namespace FASTER
             else
             { MessageBox.Show($"{steamDirBox} Directory does not exist!"); }
         }
+
+        private void ToolsButton_Click(object sender, RoutedEventArgs e)
+        {
+            IToolsDialog.Visibility = Visibility.Visible;
+            IToolsDialog.IsOpen = true;
+        }
         #endregion
 
-        
+
         internal void NavigateToConsole()
         {
             navSteamUpdater.IsChecked = true;
