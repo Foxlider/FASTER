@@ -110,13 +110,6 @@ namespace FASTER.Views
             { MessageBox.Show($"CancelUpdateButton - An exception occurred:\n{ex.Message}", "Error"); }
         }
 
-        private void ISteamGuardDialog_KeyUp(object sender, KeyEventArgs e)
-        {
-            if (e.Key != Key.Escape) return;
-
-            ISteamGuardDialog.IsOpen = false;
-            ISteamGuardCode.Text = string.Empty;
-        }
 
         private void ISubmitCode_Click(object sender, RoutedEventArgs e)
         {

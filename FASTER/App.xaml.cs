@@ -28,11 +28,11 @@ namespace FASTER
 
         private void AprilFoolsCheck()
         {
-            if (DateTime.Today == new DateTime(DateTime.Today.Year, 4, 1))
-            {
-                var ThemeThread = new Thread(() =>
+            if (DateTime.Today != new DateTime(DateTime.Today.Year, 4, 1)) return;
+
+            var ThemeThread = new Thread(() =>
                 {
-                    var r = new Random();
+                    var r      = new Random();
                     var themes = ThemeManager.Themes;
                     while (true)
                     {
@@ -42,8 +42,7 @@ namespace FASTER
                 })
                 { IsBackground = true };
 
-                ThemeThread.Start();
-            }
+            ThemeThread.Start();
         }
     }
 }

@@ -87,15 +87,6 @@ namespace FASTER.Views
         private void IAddSteamMod_Click(object sender, RoutedEventArgs e)
         { IImportSteamModDialog.IsOpen = true; }
         
-        private void IImportSteamModDialog_LostFocus(object sender, RoutedEventArgs e)
-        {
-            if (IImportSteamModDialog.IsMouseOver) return;
-
-            IImportSteamModDialog.IsOpen = false;
-            IPrivateModCheck.IsChecked   = false;
-            ISteamItemBox.Text           = "";
-        }   
-
         private void IImportSteamModDialog_KeyUp(object sender, KeyEventArgs e)
         {
             if (e.Key != Key.Escape) return;

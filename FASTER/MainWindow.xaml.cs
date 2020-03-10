@@ -149,7 +149,7 @@ namespace FASTER
             { InstallSteam(); }
         }
 
-        private void MetroWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void MetroWindow_Closing(object sender, CancelEventArgs e)
         {
             Properties.Settings.Default.Save();
             Application.Current.Shutdown();
@@ -171,7 +171,7 @@ namespace FASTER
                 IServerProfilesMenu.SelectedItem = null;
                 foreach (ToggleButton item in list)
                 {
-                    if (item.Name != nav?.Name)
+                    if (item.Name != nav.Name)
                     { item.IsChecked = false; }
                 }
                 
@@ -209,21 +209,6 @@ namespace FASTER
 
         private void MainContent_Navigated(object sender, System.Windows.Navigation.NavigationEventArgs e)
         { MainContent.NavigationService.RemoveBackEntry(); }
-
-        private void NewServerProfileButton_Click(object sender, RoutedEventArgs e)
-        {
-            INewServerProfileDialog.Visibility = Visibility.Visible;
-            INewServerProfileDialog.IsOpen = true; 
-        }
-
-        private void INewServerProfileDialog_KeyUp(object sender, KeyEventArgs e)
-        {
-            if (e.Key != Key.Escape) return;
-
-            INewServerProfileDialog.IsOpen = false;
-            MainGrid.Effect = null;
-            INewProfileName.Text = string.Empty;
-        }
 
         private void INewServerProfileButton_Click(object sender, RoutedEventArgs e)
         {
