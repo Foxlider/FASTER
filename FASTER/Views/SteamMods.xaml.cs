@@ -18,7 +18,7 @@ namespace FASTER.Views
     /// <summary>
     /// Interaction logic for SteamMods.xaml
     /// </summary>
-    public partial class SteamMods : UserControl
+    public partial class SteamMods
     {
         bool firstLoad = true;
         public SteamMods()
@@ -26,8 +26,7 @@ namespace FASTER.Views
             InitializeComponent();
         }
 
-        public MainWindow MetroWindow
-        { get { return (MainWindow)Window.GetWindow(this); } }
+        public MainWindow MetroWindow => (MainWindow)Window.GetWindow(this);
 
         private void SteamMods_Loaded(object sender, RoutedEventArgs e)
         {

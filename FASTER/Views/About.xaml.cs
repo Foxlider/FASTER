@@ -5,14 +5,13 @@ using Microsoft.AppCenter.Analytics;
 using System;
 using System.Collections.Generic;
 using System.Windows;
-using System.Windows.Controls;
 
 namespace FASTER.Views
 {
     /// <summary>
     /// Interaction logic for About.xaml
     /// </summary>
-    public partial class About : UserControl
+    public partial class About
     {
         private static readonly string[] StartThanks =
         {
@@ -36,8 +35,7 @@ namespace FASTER.Views
             InitializeComponent();
         }
 
-        public MainWindow MetroWindow
-        { get { return (MainWindow)Window.GetWindow(this); } }
+        public MainWindow MetroWindow => (MainWindow)Window.GetWindow(this);
 
         private void IDiscordButton_Click(object sender, RoutedEventArgs e)
         {

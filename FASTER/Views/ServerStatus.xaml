@@ -80,7 +80,7 @@
                   AutoGenerateColumns="False" 
                   CanUserAddRows="False"
                   CanUserDeleteRows="False"
-                  Margin="5" 
+                  Margin="10, 5" 
                   ScrollViewer.CanContentScroll="False" 
                   SelectedCellsChanged="DgProcess_SelectedCellsChanged">
             <DataGrid.Effect>
@@ -195,7 +195,7 @@
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
-        <Grid Grid.Row="3">
+        <Grid Grid.Row="3" Margin="5">
             <Grid.Effect>
                 <DropShadowEffect BlurRadius="5" RenderingBias="Performance" ShadowDepth="0"/>
             </Grid.Effect>

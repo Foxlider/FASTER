@@ -31,7 +31,7 @@ namespace FASTER
         internal string Version;
         internal bool NavEnabled = true;
 
-        internal ToggleButton lastNavButton;
+        private ToggleButton lastNavButton;
 
         #region INSTANCES
         private static MainWindow _instance;
@@ -40,85 +40,50 @@ namespace FASTER
         SteamUpdater _steamUpdater;
         public SteamUpdater ContentSteamUpdater
         {
-            get 
-            {
-                if (_steamUpdater == null)
-                    _steamUpdater = new SteamUpdater();
-                return _steamUpdater; 
-            }
-            set { _steamUpdater = value; }
+            get => _steamUpdater ??= new SteamUpdater();
+            set => _steamUpdater = value;
         }
 
         SteamMods _steamMods;
         public SteamMods ContentSteamMods
         {
-            get
-            {
-                if (_steamMods == null)
-                    _steamMods = new SteamMods();
-                return _steamMods;
-            }
-            set { _steamMods = value; }
+            get => _steamMods ??= new SteamMods();
+            set => _steamMods = value;
         }
 
         LocalMods _localMods;
         public LocalMods ContentLocalMods
         {
-            get
-            {
-                if (_localMods == null)
-                    _localMods = new LocalMods();
-                return _localMods;
-            }
-            set { _localMods = value; }
+            get => _localMods ??= new LocalMods();
+            set => _localMods = value;
         }
 
         ServerStatus _serverStatus;
         public ServerStatus ContentServerStatus
         {
-            get
-            {
-                if (_serverStatus == null)
-                    _serverStatus = new ServerStatus();
-                return _serverStatus;
-            }
-            set { _serverStatus = value; }
+            get => _serverStatus ??= new ServerStatus();
+            set => _serverStatus = value;
         }
 
         List<Views.ServerProfile> _profiles;
         public List<Views.ServerProfile> ContentProfiles
         {
-            get
-            {
-                if (_profiles == null)
-                    _profiles = new List<Views.ServerProfile>();
-                return _profiles;
-            }
-            set { _profiles = value; }
+            get => _profiles ??= new List<Views.ServerProfile>();
+            set => _profiles = value;
         }
 
         Settings _settings;
         public Settings ContentSettings
         {
-            get
-            {
-                if (_settings == null)
-                    _settings = new Settings();
-                return _settings;
-            }
-            set { _settings = value; }
+            get => _settings ??= new Settings();
+            set => _settings = value;
         }
 
         About _about;
         public About ContentAbout
         {
-            get
-            {
-                if (_about == null)
-                    _about = new About();
-                return _about;
-            }
-            set { _about = value; }
+            get => _about ??= new About();
+            set => _about = value;
         }
         #endregion
 
@@ -370,15 +335,8 @@ namespace FASTER
 
                 newItem.Click += ToggleButton_Click;
 
-                var duplicate = false;
-
-                foreach (Views.ServerProfile tab in ContentProfiles)
-                {
-                    if (profile.SafeName == tab.Name)
-                        duplicate = true;
-                }
-
-                if (duplicate) continue;
+                if (ContentProfiles.Any(tab => profile.SafeName == tab.Name)) 
+                    continue;
 
                 ContentProfiles.Add(new Views.ServerProfile(profile) { Name = profile.SafeName});
             }
@@ -436,9 +394,7 @@ namespace FASTER
                 client.DownloadFileAsync(new Uri(url), fileName);
             }
             else
-            {
-                DisplayMessage("SteamCMD already appears to be installed.\n\nPlease delete all files in the selected folder to reinstall.");
-            }
+            { DisplayMessage("SteamCMD already appears to be installed.\n\nPlease delete all files in the selected folder to reinstall."); }
         }
         private void SteamDownloadCompleted(object sender, AsyncCompletedEventArgs e)
         {

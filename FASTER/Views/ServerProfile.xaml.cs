@@ -26,7 +26,7 @@ namespace FASTER.Views
     /// <summary>
     /// Interaction logic for ServerProfile.xaml
     /// </summary>
-    public partial class ServerProfile : UserControl
+    public partial class ServerProfile
     {
         private string _safeName;
         private readonly string _profilesPath = Properties.Settings.Default.serverPath + "\\Servers\\";
@@ -184,8 +184,7 @@ namespace FASTER.Views
             ToggleUi_ManualMisisons(IManualMissions);
         }
 
-        public MainWindow MetroWindow
-        { get { return (MainWindow)Window.GetWindow(this); } }
+        public MainWindow MetroWindow => (MainWindow)Window.GetWindow(this);
 
         private void IProfileNameEditSave_Click(object sender, RoutedEventArgs e)
         {

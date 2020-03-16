@@ -10,7 +10,7 @@
              d:DesignHeight="450" d:DesignWidth="800"
              Initialized="UserControl_Initialized"
              Loaded="UserControl_Loaded">
-    <Grid VerticalAlignment="Stretch">
+    <Grid VerticalAlignment="Stretch" Margin="5">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*"/>
             <ColumnDefinition Width="2*"/>

@@ -12,15 +12,14 @@ namespace FASTER.Views
     /// <summary>
     /// Interaction logic for LocalMods.xaml
     /// </summary>
-    public partial class LocalMods : UserControl
+    public partial class LocalMods
     {
         public LocalMods()
         {
             InitializeComponent();
         }
 
-        public MainWindow MetroWindow
-        { get { return (MainWindow)Window.GetWindow(this); } }
+        public MainWindow MetroWindow => (MainWindow)Window.GetWindow(this);
 
         private void LocalMods_Loaded(object sender, RoutedEventArgs e)
         { UpdateModsView(); }

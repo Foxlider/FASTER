@@ -12,7 +12,7 @@ namespace FASTER
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
-    public partial class App : Application
+    public partial class App
     {
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -30,7 +30,7 @@ namespace FASTER
         {
             if (DateTime.Today != new DateTime(DateTime.Today.Year, 4, 1)) return;
 
-            var ThemeThread = new Thread(() =>
+            var themeThread = new Thread(() =>
                 {
                     var r      = new Random();
                     var themes = ThemeManager.Themes;
@@ -42,7 +42,7 @@ namespace FASTER
                 })
                 { IsBackground = true };
 
-            ThemeThread.Start();
+            themeThread.Start();
         }
     }
 }

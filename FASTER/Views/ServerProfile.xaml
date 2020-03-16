@@ -22,7 +22,7 @@
                 <DropShadowEffect BlurRadius="5" RenderingBias="Performance" ShadowDepth="1"/>
             </TabControl.Effect>
             <TabItem Header="Settings">
-                <Grid Margin="5,0" >
+                <Grid Margin="0,0" >
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="78*" />
                         <ColumnDefinition Width="78*" />
@@ -854,7 +854,7 @@
             </TabItem>
         </TabControl>
         <StackPanel Grid.Row="1" Orientation="Horizontal">
-            <Label Name="IDisplayName" VerticalAlignment="Center" Content="Profile Display Name" FontWeight="Bold" FontSize="16" Margin="5"/>
+            <Label Name="IDisplayName" VerticalAlignment="Center" Content="Profile Display Name" FontWeight="Bold" FontSize="16" Margin="10"/>
         </StackPanel>
         <StackPanel Name="IProfileNameEdit" Grid.Row="1" Orientation="Horizontal" Margin="10,0" Width="310" HorizontalAlignment="Left" Visibility="Collapsed" VerticalAlignment="Center">
             <TextBox Name="IProfileDisplayNameEdit" FontWeight="Bold" FontSize="16" Width="250"/>

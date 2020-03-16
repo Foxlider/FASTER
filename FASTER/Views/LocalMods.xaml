@@ -8,7 +8,7 @@
              d:DesignHeight="570" d:DesignWidth="800"
              
              Loaded="LocalMods_Loaded">
-    <Grid>
+    <Grid Margin="5">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition />

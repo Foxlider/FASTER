@@ -8,14 +8,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 
 namespace FASTER.Views
 {
     /// <summary>
     /// Interaction logic for SteamUpdater.xaml
     /// </summary>
-    public partial class SteamUpdater : UserControl
+    public partial class SteamUpdater
     {
         private bool _cancelled;
         private Process _oProcess = new Process();
@@ -27,8 +26,8 @@ namespace FASTER.Views
         
         public MainWindow MetroWindow
         { 
-            get { return (MainWindow)Window.GetWindow(this); }
-            set { MetroWindow = value; }
+            get => (MainWindow)Window.GetWindow(this);
+            set => MetroWindow = value;
         }
 
 

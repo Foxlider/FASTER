@@ -26,7 +26,7 @@ namespace FASTER.Views
     /// <summary>
     /// Interaction logic for ServerStatus.xaml
     /// </summary>
-    public partial class ServerStatus : UserControl
+    public partial class ServerStatus
     {
         public bool Updating {get; set; }
 
@@ -81,8 +81,7 @@ namespace FASTER.Views
             Task.Factory.StartNew(Updater, TaskCreationOptions.LongRunning);
         }
 
-        public MainWindow MetroWindow
-        { get { return (MainWindow)Window.GetWindow(this); } }
+        public MainWindow MetroWindow => (MainWindow)Window.GetWindow(this);
 
         private void Updater()
         {
