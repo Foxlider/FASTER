@@ -233,17 +233,22 @@ namespace FASTER.Views
             ServerCollection.DeleteServerProfile(_safeName);
             MetroWindow.MainContent.Navigate(MetroWindow.ContentSteamUpdater);
 
-            foreach (ToggleButton m in MetroWindow.IServerProfilesMenu.Items)
+            for (int i = MetroWindow.IServerProfilesMenu.Items.Count - 1; i >= 0; --i)
             {
-                if (m.Name == _safeName)
-                { MetroWindow.IServerProfilesMenu.Items.Remove(m); }
+                if ((MetroWindow.IServerProfilesMenu.Items[i] as ToggleButton)?.Name != _safeName) continue;
+
+                MetroWindow.IServerProfilesMenu.Items.RemoveAt(i);
+                break;
             }
 
-            foreach (ServerProfile t in MetroWindow.ContentProfiles)
+            for (int i = MetroWindow.ContentProfiles.Count - 1; i >= 0; --i)
             {
-                if (t.Name == _safeName)
-                { MetroWindow.ContentProfiles.Remove(t); }
+                if (MetroWindow.ContentProfiles[i].Name != _safeName) continue;
+
+                MetroWindow.ContentProfiles.RemoveAt(i);
+                break;
             }
+
             IConfirmDeleteBtn.Click -= DeleteProfile;
         }
 
@@ -589,6 +594,8 @@ namespace FASTER.Views
             NumberFormatInfo provider = CultureInfo.CurrentCulture.NumberFormat;
 
             var profile = Properties.Settings.Default.Servers.ServerProfiles.Find(p => p.SafeName == _safeName);
+            if (profile == null) return;
+
             profile.DisplayName              = IDisplayName.Content.ToString();
             profile.ServerName               = IServerName.Text;
             profile.Executable               = IExecutable.Text;
