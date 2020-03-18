@@ -90,7 +90,7 @@ namespace FASTER.Models
                 ServerProfile currentProfile = currentProfiles.Find(profile => profile.DisplayName == oldName);
 
                 currentProfile.DisplayName = newName;
-                currentProfile.SafeName = Functions.SafeName(newName);
+                currentProfile.SafeName = Functions.SafeName($"_{newName}");
                 Properties.Settings.Default.Save();
                 return currentProfile.SafeName;
             }
