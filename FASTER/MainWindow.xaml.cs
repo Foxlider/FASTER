@@ -1,4 +1,4 @@
-﻿using FASTER.Models;
+using FASTER.Models;
 using FASTER.Views;
 
 using Microsoft.AppCenter.Analytics;
@@ -126,49 +126,48 @@ namespace FASTER
             list.AddRange(IMainMenuItems.Items.Cast<ToggleButton>().Where(i => i.IsChecked == true));
             list.AddRange(IServerProfilesMenu.Items.Cast<ToggleButton>().Where(i => i.IsChecked == true));
             list.AddRange(IOtherMenuItems.Items.Cast<ToggleButton>().Where(i => i.IsChecked == true));
+
+            if (!(sender is ToggleButton nav) || !NavEnabled) return;
+
+            //Don't navigate if same menu is clicked
+            if (nav == lastNavButton) return;
+
             
-            if (sender is ToggleButton nav && NavEnabled)
-            {
-                //Don't navigate if same menu is clicked
-                if (nav == lastNavButton) return;
 
-                //Clear selected Buttons
-                IServerProfilesMenu.SelectedItem = null;
-                foreach (ToggleButton item in list)
-                {
-                    if (item.Name != nav.Name)
-                    { item.IsChecked = false; }
-                }
+            //Clear selected Buttons
+            IServerProfilesMenu.SelectedItem = null;
+            foreach (var item in list.Where(item => item.Name != nav.Name))
+            { item.IsChecked = false; }
                 
-                nav.IsChecked = true;
-                lastNavButton = nav;
+            nav.IsChecked = true;
+            lastNavButton = nav;
 
-                //Get loading screen
-                switch (nav.Name)
-                {
-                    case "navSteamUpdater":
-                        MainContent.Navigate(ContentSteamUpdater);
-                        break;
-                    case "navSteamMods":
-                        MainContent.Navigate(ContentSteamMods);
-                        break;
-                    case "navLocalMods":
-                        MainContent.Navigate(ContentLocalMods);
-                        break;
-                    case "navServerStatus":
-                        MainContent.Navigate(ContentServerStatus);
-                        break;
-                    case "navSettings":
-                        MainContent.Navigate(ContentSettings);
-                        break;
-                    case "navAbout":
-                        MainContent.Navigate(ContentAbout);
-                        break;
-                    default:
-                        if (IServerProfilesMenu.Items.Cast<ToggleButton>().FirstOrDefault(p => p.Name == nav.Name) != null)
-                        { MainContent.Navigate(ContentProfiles.First(p => p.Name == nav.Name)); }
-                        break;
-                }
+            
+            //Get loading screen
+            switch (nav.Name)
+            {
+                case "navSteamUpdater":
+                    MainContent.Navigate(ContentSteamUpdater);
+                    break;
+                case "navSteamMods":
+                    MainContent.Navigate(ContentSteamMods);
+                    break;
+                case "navLocalMods":
+                    MainContent.Navigate(ContentLocalMods);
+                    break;
+                case "navServerStatus":
+                    MainContent.Navigate(ContentServerStatus);
+                    break;
+                case "navSettings":
+                    MainContent.Navigate(ContentSettings);
+                    break;
+                case "navAbout":
+                    MainContent.Navigate(ContentAbout);
+                    break;
+                default:
+                    if (IServerProfilesMenu.Items.Cast<ToggleButton>().FirstOrDefault(p => p.Name == nav.Name) != null)
+                    { MainContent.Navigate(ContentProfiles.First(p => p.Name == nav.Name)); }
+                    break;
             }
         }
 
@@ -190,6 +189,7 @@ namespace FASTER
         private void ICreateProfileButton_Click(object sender, RoutedEventArgs e)
         {
             Analytics.TrackEvent("Main - Creating new profile");
+            AppInsights.Client.TrackEvent("Main - Creating new profile");
             INewProfileName.Text = INewProfileName.Text.Trim();
             if (string.IsNullOrEmpty(INewProfileName.Text))
             {
@@ -412,15 +412,6 @@ namespace FASTER
         }
 
         internal string GetVersion()
-        {
-            string rev = $"{(char)(Assembly.GetExecutingAssembly().GetName().Version.Build + 96)}";
-#if DEBUG
-            rev += "-DEV";
-#endif
-            string version = $"{Assembly.GetExecutingAssembly().GetName().Version.Major}."
-                 + $"{Assembly.GetExecutingAssembly().GetName().Version.Minor}"
-                 + $"{rev}";
-            return version;
-        }
+        { return Functions.GetVersion(); }
     }
 }
