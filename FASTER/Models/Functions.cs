@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
@@ -136,6 +137,18 @@ namespace FASTER.Models
                 else
                 { throw; }
             }
+        }
+
+        internal static string GetVersion()
+        {
+            string rev = $"{(char)(Assembly.GetExecutingAssembly().GetName().Version.Build + 96)}";
+#if DEBUG
+            rev += "-DEV";
+#endif
+            string version = $"{Assembly.GetExecutingAssembly().GetName().Version.Major}."
+                             + $"{Assembly.GetExecutingAssembly().GetName().Version.Minor}"
+                             + $"{rev}";
+            return version;
         }
     }
 }

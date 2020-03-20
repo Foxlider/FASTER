@@ -1,4 +1,4 @@
-using FASTER.Models;
+﻿using FASTER.Models;
 using FASTER.Views;
 
 using Microsoft.AppCenter.Analytics;
@@ -142,6 +142,7 @@ namespace FASTER
             nav.IsChecked = true;
             lastNavButton = nav;
 
+            AppInsights.Client.TrackPageView(nav.Name);
             
             //Get loading screen
             switch (nav.Name)

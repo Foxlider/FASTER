@@ -223,6 +223,10 @@ namespace FASTER.Views
                 { "DisplayName", IDisplayName.Content.ToString() },
                 { "ServerName", IServerName.Text}
             });
+            AppInsights.Client.TrackEvent("ServerProfile - Server launched", new Dictionary<string, string> {
+                { "DisplayName", IDisplayName.Content.ToString() },
+                { "ServerName", IServerName.Text}
+            });
             UpdateProfile();
             LaunchServer();
         }
@@ -425,6 +429,9 @@ namespace FASTER.Views
         private void LaunchHCs(string profilePath)
         {
             Analytics.TrackEvent("ServerProfile - HC Clients launched", new Dictionary<string, string> {
+                { "HC Number", INoOfHeadlessClients.Value.ToString()}
+            });
+            AppInsights.Client.TrackEvent("ServerProfile - HC Clients launched", new Dictionary<string, string> {
                 { "HC Number", INoOfHeadlessClients.Value.ToString()}
             });
             for (int hc = 1; hc <= INoOfHeadlessClients.Value; hc++)

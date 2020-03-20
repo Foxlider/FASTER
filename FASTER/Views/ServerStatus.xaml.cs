@@ -20,6 +20,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using FASTER.Models;
 
 namespace FASTER.Views
 {
@@ -176,6 +177,9 @@ namespace FASTER.Views
             Analytics.TrackEvent("ServerStatus - Rescanning Servers", new Dictionary<string, string> {
                 { "Name", MetroWindow.ContentSteamUpdater.ISteamUserBox.Text }
             });
+            AppInsights.Client.TrackEvent("ServerStatus - Rescanning Servers", new Dictionary<string, string> {
+                { "Name", MetroWindow.ContentSteamUpdater.ISteamUserBox.Text }
+            });
             RefreshServers();
         }
         #endregion
@@ -202,7 +206,6 @@ namespace FASTER.Views
         {
             if (GaugeExpander.IsExpanded)
             {
-                Analytics.TrackEvent("ServerStatus - Displayed server temp");
                 GaugeRow.Height = new GridLength(2, GridUnitType.Star);
                 DataRow.Height = new GridLength(0.5, GridUnitType.Star);
                 td.StartStop(true);

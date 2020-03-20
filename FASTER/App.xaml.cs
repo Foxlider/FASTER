@@ -6,6 +6,9 @@ using System;
 using System.Globalization;
 using System.Threading;
 using System.Windows;
+using FASTER.Models;
+using Microsoft.ApplicationInsights;
+using Microsoft.ApplicationInsights.Extensibility;
 
 namespace FASTER
 {
@@ -24,6 +27,30 @@ namespace FASTER
             AppCenter.SetCountryCode(countryCode);
 
             AppCenter.Start("257a7dac-e53c-4bec-b672-b6b939ed5d1e", typeof(Analytics), typeof(Crashes));
+
+            TelemetryConfiguration configuration = TelemetryConfiguration.CreateDefault();
+            configuration.InstrumentationKey = AppInsights.AzureInsightsKey;
+            configuration.TelemetryInitializers.Add(new OperationCorrelationTelemetryInitializer());
+
+            AppInsights.Client = new TelemetryClient(configuration);
+            AppInsights.Client.Context.Component.Version = Functions.GetVersion();
+            AppInsights.Client.Context.Device.Type = "PC";
+            AppInsights.Client.Context.Device.Id = Environment.MachineName + Environment.UserDomainName;
+            AppInsights.Client.Context.User.Id = Environment.MachineName + Environment.UserDomainName;
+            try
+            {
+                using System.Management.ManagementObjectSearcher searcher =
+                    new System.Management.ManagementObjectSearcher(
+                        new System.Management.SelectQuery(@"Select * from Win32_ComputerSystem"));
+                //execute the query
+                foreach (System.Management.ManagementObject process in searcher.Get())
+                {
+                    process.Get();
+                    AppInsights.Client.Context.Device.Model = process["Model"].ToString();
+                }
+            }
+            catch
+            { AppInsights.Client.Context.Device.Model = "Unknown"; }
         }
 
         private void AprilFoolsCheck()

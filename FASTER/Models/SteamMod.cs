@@ -126,6 +126,10 @@ namespace FASTER.Models
                 { "Name", Properties.Settings.Default.steamUserName },
                 { "ModUrl", modUrl },
             });
+            AppInsights.Client.TrackEvent("SteamMod - Adding Mod", new Dictionary<string, string> {
+                { "Name", Properties.Settings.Default.steamUserName },
+                { "ModUrl", modUrl },
+            });
             int modId = 0;
             var invalid = false;
 
