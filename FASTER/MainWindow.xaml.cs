@@ -211,7 +211,7 @@ namespace FASTER
             if (IServerProfilesMenu.SelectedIndex == -1)
             { return; }
 
-            var temp = Properties.Settings.Default.Servers.ServerProfiles.FirstOrDefault(s => s.SafeName == ((ListBoxItem)IServerProfilesMenu.SelectedItem).Name);
+            var temp = Properties.Settings.Default.Servers.ServerProfiles.FirstOrDefault(s => s.SafeName == ((ToggleButton)IServerProfilesMenu.SelectedItem).Name);
             if (temp == null)
             {
                 DisplayMessage("Could not find the selected profile.");
