@@ -51,7 +51,7 @@ namespace FASTER.Models
             try
             {
                 var response = ApiCall("https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v1?key=" + GetApiKey() + V2 + playerId);
-                return (JObject) response.SelectToken("response.players.player[0]");
+                return (JObject) response?.SelectToken("response.players.player[0]");
             }
             catch
             { return null; }
