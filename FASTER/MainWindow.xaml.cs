@@ -12,10 +12,8 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
-using System.Reflection;
 using System.Security.Principal;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -350,15 +348,15 @@ namespace FASTER
         }
 
         // Opens Folder select dialog and returns selected path
-        public string SelectFolder(string default_folder = "")
+        public string SelectFolder(string defaultFolder = "")
         {
             var dlg = new CommonOpenFileDialog
             {
                 Title = "Select the folder",
                 IsFolderPicker = true,
                 AddToMostRecentlyUsedList = false,
-                InitialDirectory = default_folder,
-                DefaultDirectory = default_folder,
+                InitialDirectory = defaultFolder,
+                DefaultDirectory = defaultFolder,
                 AllowNonFileSystemItems = false,
                 EnsureFileExists = true,
                 EnsurePathExists = true,
