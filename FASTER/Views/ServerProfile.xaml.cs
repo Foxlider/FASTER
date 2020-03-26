@@ -1139,14 +1139,10 @@ namespace FASTER.Views
                     { Crashes.TrackError(e, new Dictionary<string, string> { { "Name", Properties.Settings.Default.steamUserName } }); }
                 }
                 else
-                {
-                    MetroWindow.DisplayMessage("Cannot Open - File Not Found \n\nIf Opening PID file make sure Server is running.");
-                }
+                { MetroWindow.DisplayMessage("Cannot Open - File Not Found \n\nIf Opening PID file make sure Server is running."); }
             }
-            catch (Exception)
-            {
-                MetroWindow.DisplayMessage("Cannot Open - File Not Found \n\nIf Opening PID file make sure Server is running.");
-            }
+            catch (Exception e)
+            { MetroWindow.DisplayMessage($"Cannot Open - {e.Message} \n\nIf Opening PID file make sure Server is running."); }
         }
 
         private void DeleteAllFiles(string path, string filter)
