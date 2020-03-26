@@ -92,7 +92,6 @@ namespace FASTER.Models
             double fullSize = GetDirectorySize(modFolder);
 
             string[] sizes = { " B", "KB", "MB", "GB", "TB" };
-            //double len = new FileInfo(filename).Length;
             var order = 0;
             while (fullSize >= 1024 && order < sizes.Length - 1)
             {

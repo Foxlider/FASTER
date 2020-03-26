@@ -4,6 +4,7 @@ using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using System;
 using System.Globalization;
+using System.Management;
 using System.Threading;
 using System.Windows;
 using FASTER.Models;
@@ -43,8 +44,9 @@ namespace FASTER
                     new System.Management.ManagementObjectSearcher(
                         new System.Management.SelectQuery(@"Select * from Win32_ComputerSystem"));
                 //execute the query
-                foreach (System.Management.ManagementObject process in searcher.Get())
+                foreach (var o in searcher.Get())
                 {
+                    var process = (ManagementObject) o;
                     process.Get();
                     AppInsights.Client.Context.Device.Model = process["Model"].ToString();
                 }
