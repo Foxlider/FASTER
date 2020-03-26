@@ -29,10 +29,11 @@ namespace FASTER.Views
     /// </summary>
     public partial class ServerStatus
     {
-        public bool Updating {get; set; }
+        public bool Updating
+        { get; set; }
 
-        private readonly PerformanceCounter cpuCounter;
-        private readonly PerformanceCounter ramCounter;
+        private PerformanceCounter _cpuCounter;
+        private PerformanceCounter _ramCounter;
         
         private ObservableCollection<ProcessSpy> processes = new ObservableCollection<ProcessSpy>();
         readonly long totalRamBytes;
@@ -40,25 +41,14 @@ namespace FASTER.Views
 
         [DllImport("kernel32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool GetPhysicallyInstalledSystemMemory(out long TotalMemoryInKilobytes);
+        static extern bool GetPhysicallyInstalledSystemMemory(out long totalMemoryInKilobytes);
         
         public ServerStatus()
         {
             InitializeComponent();
             dgProcess.ItemsSource = processes;
-            
-            //Start Performance counters
-            try
-            {
-                cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
-                ramCounter = new PerformanceCounter("Memory",    "Available KBytes");
-                Updating = true;
-            }
-            catch
-            {
-                IFlyoutMessage.Content = "Could not start the performance counters.";
-                IFlyout.IsOpen = true;
-            }
+
+            Task.Factory.StartNew(StartPerfsCounters);
             
             try
             {
@@ -79,6 +69,22 @@ namespace FASTER.Views
             ICPUChart.DataContext = td;
 
             RefreshServers();
+        }
+
+        private void StartPerfsCounters()
+        {
+            //Start Performance counters
+            try
+            {
+                _cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
+                _ramCounter = new PerformanceCounter("Memory", "Available KBytes");
+                Updating = true;
+            }
+            catch
+            {
+                IFlyoutMessage.Content = "Could not start the performance counters.";
+                IFlyout.IsOpen = true;
+            }
             Task.Factory.StartNew(Updater, TaskCreationOptions.LongRunning);
         }
 
@@ -88,10 +94,10 @@ namespace FASTER.Views
         {
             while (Updating)
             {
-                var ram = ramCounter.NextValue();
+                var ram = _ramCounter.NextValue();
                 Dispatcher?.BeginInvoke(new Action(() =>
                 {
-                    gaugeCpu.Value = cpuCounter.NextValue();
+                    gaugeCpu.Value = _cpuCounter.NextValue();
                     gaugeRam.Value = totalRamBytes > ram 
                         ? Convert.ToInt64((totalRamBytes - ram) / 1024)
                         : Convert.ToInt64(totalRamBytes         / 1024);
