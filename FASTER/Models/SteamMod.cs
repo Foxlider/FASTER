@@ -3,8 +3,10 @@ using Microsoft.AppCenter.Crashes;
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Xml.Serialization;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Global
@@ -78,6 +80,37 @@ namespace FASTER.Models
             Author = author;
             SteamLastUpdated = steamLastUpdated;
             PrivateMod = privateMod;
+
+            Task.Factory.StartNew(InitModSize);
+        }
+
+        private static string GetModSize(int workshopId)
+        {
+            var modFolder = Path.Combine(Properties.Settings.Default.steamCMDPath, "steamapps", "workshop", "content", "107410", workshopId.ToString());
+            if (!Directory.Exists(modFolder)) return "Unknown";
+
+            double fullSize = GetDirectorySize(modFolder);
+
+            string[] sizes = { " B", "KB", "MB", "GB", "TB" };
+            //double len = new FileInfo(filename).Length;
+            var order = 0;
+            while (fullSize >= 1024 && order < sizes.Length - 1)
+            {
+                order++;
+                fullSize /= 1024.0;
+            }
+            // Adjust the format string to your preferences. For example "{0:0.#}{1}" would
+            // show a single decimal place, and no space.
+            return $"{fullSize:0.0#} {sizes[order]}";
+        }
+
+        private void InitModSize()
+        { Size = GetModSize(WorkshopId); }
+
+        static long GetDirectorySize(string p)
+        {
+            string[] a = Directory.GetFiles(p, "*.*");
+            return a.Select(name => new FileInfo(name)).Select(info => info.Length).Sum();
         }
 
         public int WorkshopId { get; set; }
@@ -87,6 +120,7 @@ namespace FASTER.Models
         public int LocalLastUpdated { get; set; }
         public bool PrivateMod { get; set; }
         public string Status { get; set; } = "Not Installed";
+        public string Size { get; set; } = "Unknown";
 
         public static void DeleteSteamMod(int workshopId)
         {
@@ -177,9 +211,7 @@ namespace FASTER.Models
                         Properties.Settings.Default.Save();
                     }
                     else
-                    {
-                        MainWindow.Instance.DisplayMessage("This is a workshop Item for a different game.");
-                    }
+                    { MainWindow.Instance.DisplayMessage("This is a workshop Item for a different game."); }
                 }
                 catch (Exception e) 
                 { Crashes.TrackError(e, new Dictionary<string, string> { { "Name", Properties.Settings.Default.steamUserName } }); }
@@ -246,6 +278,8 @@ namespace FASTER.Models
                     { updateMod.Status = "Update Required";}
                     else if (updateMod.Status != "Download Not Complete") 
                     { updateMod.Status = "Up to Date"; }
+
+                    Task.Factory.StartNew(() => { updateMod.Size = GetModSize(updateMod.WorkshopId); });
                 }
                 else
                     failnum++;
