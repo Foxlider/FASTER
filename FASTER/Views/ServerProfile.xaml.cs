@@ -1212,13 +1212,18 @@ namespace FASTER.Views
 
         private string SetCommandLine(string configs, string profilePath, string profileName, string playerMods, string serverMods)
         {
+            var armaBranch = (Properties.Settings.Default.serverBranch == "Contact") 
+                ? "contact;" 
+                : ((Properties.Settings.Default.serverBranch == "Creator DLC") 
+                    ? "GM;" 
+                    : null);
             var commandLine = "-port=" + IPort.Text;
-            commandLine = commandLine + " \"-config=" + configs       + "_config.cfg\"";
-            commandLine = commandLine + " \"-cfg=" + configs          + "_basic.cfg\"";
-            commandLine = commandLine + " \"-profiles=" + profilePath + "\"";
-            commandLine = commandLine + " -name="                     + profileName;
-            commandLine = commandLine + " \"-mod=" + playerMods       + "\"";
-            commandLine = commandLine + " \"-serverMod=" + serverMods + "\"";
+            commandLine += " \"-config=" + configs + "_config.cfg\"";
+            commandLine += " \"-cfg=" + configs          + "_basic.cfg\"";
+            commandLine += " \"-profiles=" + profilePath + "\"";
+            commandLine += " -name="                     + profileName;
+            commandLine += " \"-mod=" + armaBranch + playerMods + "\"";
+            commandLine += " \"-serverMod=" + serverMods + "\"";
 
             if (IEnableHyperThreading.IsChecked ?? false) 
             { commandLine += " -enableHT"; }
@@ -1230,22 +1235,22 @@ namespace FASTER.Views
             { commandLine += " -netlog"; }
 
             if (IRankingEnabled.IsChecked ?? false) 
-            { commandLine = commandLine + " -ranking=Servers\\" + Functions.SafeName(IDisplayName.Content.ToString()) + "\\" + "ranking.log"; }
+            { commandLine += " -ranking=Servers\\" + Functions.SafeName(IDisplayName.Content.ToString()) + "\\" + "ranking.log"; }
 
             if (IPidEnabled.IsChecked ?? false) 
-            { commandLine = commandLine + " -pid=Servers\\" + Functions.SafeName(IDisplayName.Content.ToString()) + "\\" + "pid.log"; }
+            { commandLine += " -pid=Servers\\" + Functions.SafeName(IDisplayName.Content.ToString()) + "\\" + "pid.log"; }
 
             if (IAutoInit.IsChecked ?? false) 
             { commandLine += " -autoInit"; }
 
             if (!string.IsNullOrEmpty(IMaxMem.Text)) 
-            { commandLine = commandLine + " \"-maxMem=" + IMaxMem.Text + "\""; }
+            { commandLine += " \"-maxMem=" + IMaxMem.Text + "\""; }
 
             if (!string.IsNullOrEmpty(ICpuCount.Text)) 
-            { commandLine = commandLine + " \"-cpuCount=" + ICpuCount.Text + "\""; }
+            { commandLine += " \"-cpuCount=" + ICpuCount.Text + "\""; }
 
             if (!string.IsNullOrEmpty(IExtraParams.Text)) 
-            { commandLine = commandLine + " " + IExtraParams.Text; }
+            { commandLine += " " + IExtraParams.Text; }
 
             return commandLine;
         }
