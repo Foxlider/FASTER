@@ -1,25 +1,30 @@
-﻿<UserControl x:Class="FASTER.LocalMods"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+﻿<UserControl x:Class="FASTER.Views.LocalMods"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             mc:Ignorable="d" 
+             d:DesignHeight="570" d:DesignWidth="800"
              
-        mc:Ignorable="d"
-        d:DesignHeight="570.4"
-        d:DesignWidth="796.8">
-
-    <Grid Background="{StaticResource MahApps.Brushes.Gray9}">
+             Loaded="LocalMods_Loaded">
+    <Grid Margin="5">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition />
         </Grid.RowDefinitions>
 
         <StackPanel Orientation="Horizontal" Margin="5">
+            <StackPanel.Effect>
+                <DropShadowEffect BlurRadius="5" RenderingBias="Performance" ShadowDepth="1"/>
+            </StackPanel.Effect>
             <Button Name="IRefreshList" ToolTip="Refresh List"  Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Padding="7,5" Content="{iconPacks:Material Kind=Refresh}" Click="IRefreshList_Click"/>
             <Button Name="IEditFolders" ToolTip="Edit Folders To Search" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Padding="7,5" Content="{iconPacks:Material Kind=Pencil}" Click="IEditFolders_Click"/>
         </StackPanel>
         <DataGrid Name="ILocalModsView" Grid.Row="1" Grid.Column="0" Margin="5" CanUserReorderColumns="False" CanUserResizeRows="False" GridLinesVisibility="All" IsReadOnly="True" CanUserAddRows="False" AutoGenerateColumns="False" ItemsSource="{Binding NotifyOnSourceUpdated=True}">
+            <DataGrid.Effect>
+                <DropShadowEffect BlurRadius="5" RenderingBias="Performance" ShadowDepth="1"/>
+            </DataGrid.Effect>
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Name" Binding="{Binding Path=Name}" Width="Auto"/>
                 <DataGridTextColumn Header="Author" Binding="{Binding Path=Author}" Width="Auto"/>

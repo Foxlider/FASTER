@@ -1,24 +1,28 @@
-﻿<UserControl x:Class="FASTER.ServerProfile"
+﻿<UserControl x:Class="FASTER.Views.ServerProfile"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              xmlns:simpleChildWindow="http://metro.mahapps.com/winfx/xaml/simplechildwindow"
-
-             mc:Ignorable="d">
-    <Grid Background="{StaticResource MahApps.Brushes.Gray9}">
+             mc:Ignorable="d" 
+             d:DesignHeight="570" d:DesignWidth="800"
+             
+             Loaded="ServerProfile_Loaded"
+             Initialized="ServerProfile_Initialized"
+             Unloaded="ServerProfile_Unloaded">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition Height="50" />
         </Grid.RowDefinitions>
         <TabControl Margin="0" Grid.Row="0" BorderThickness="0" Background="{x:Null}">
-            <!--<dragablz:TabablzControl.InterTabController>
-                <dragablz:InterTabController />
-            </dragablz:TabablzControl.InterTabController>-->
+            <TabControl.Effect>
+                <DropShadowEffect BlurRadius="5" RenderingBias="Performance" ShadowDepth="1"/>
+            </TabControl.Effect>
             <TabItem Header="Settings">
-                <Grid Margin="5,0,5,0" >
+                <Grid Margin="0,0" >
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="78*" />
                         <ColumnDefinition Width="78*" />
@@ -32,13 +36,13 @@
                         <ColumnDefinition Width="78*" />
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="153*" />
-                        <RowDefinition Height="83*" />
-                        <RowDefinition Height="111*" />
-                        <RowDefinition Height="126*" />
+                        <RowDefinition Height="110*" />
+                        <RowDefinition Height="130*" />
+                        <RowDefinition Height="110*" />
+                        <RowDefinition Height="130*" />
                     </Grid.RowDefinitions>
 
-                    <Grid Grid.ColumnSpan="4" Grid.RowSpan="2" Margin="5,5,2.719,6.735">
+                    <Grid Grid.ColumnSpan="4" Grid.RowSpan="2" Margin="5,5,3,5">
                         <Grid.Style>
                             <Style TargetType="Grid">
                                 <Setter Property="Margin" Value="5"/>
@@ -80,17 +84,17 @@
                                 <TextBox Name="IExecutable" Grid.Column="0" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Server File" Margin="5,5,5,5"/>
                                 <Button Content="{iconPacks:Material Kind=FolderOpen}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="1" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" Height="auto" Margin="5" Name="IServerFileButton" Click="IServerFileButton_Click" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Padding="3"/>
                             </Grid>
-                            <TextBox Name="IPassword" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="5" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Password" ToolTip="Password for users" Margin="5"/>
-                            <TextBox Name="IAdminPassword" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="5" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Admin Password" ToolTip="Password for admins" Margin="5"/>
+                            <PasswordBox Name="IPassword" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="5" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Password" ToolTip="Password for users" Style="{StaticResource MahApps.Styles.PasswordBox.ButtonRevealed}" Margin="5"/>
+                            <PasswordBox Name="IAdminPassword" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="5" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Admin Password" ToolTip="Password for admins" Margin="5" Style="{StaticResource MahApps.Styles.PasswordBox.ButtonRevealed}"/>
 
                             <TextBox Name="IMaxPlayers" Grid.Row="3" Grid.Column="7" Grid.ColumnSpan="3" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Max Players" ToolTip="Maximum players allowed" Margin="5"/>
                             <TextBox Name="IPort" Grid.Row="4" Grid.Column="7" Grid.ColumnSpan="3" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Port" ToolTip="Port for ArmaServer" Margin="5"/>
 
-                            <CheckBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="5" Name="IBattleEye" Content="BattleEye" ToolTip="Use BattleEye" Margin="5,4.797,4.56,15.7"/>
+                            <CheckBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="5" Name="IBattleEye" Content="BattleEye" ToolTip="Use BattleEye" Margin="5,0,0,0"/>
                         </Grid>
                     </Grid>
 
-                    <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" Margin="5,3.265,2.719,5.504">
+                    <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" Margin="5,3,3,5">
                         <Grid.Style>
                             <Style TargetType="Grid">
                                 <Setter Property="Margin" Value="5"/>
@@ -106,7 +110,7 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
-                            <StackPanel Grid.ColumnSpan="2" Margin="0,0,0.12,3.892">
+                            <StackPanel Grid.ColumnSpan="2" Margin="0,0,0,5">
                                 <Grid>
                                     <Label Margin="2" Content="Headless Client" HorizontalAlignment="Left" />
                                     <Button Name="ILaunchHCs" Click="ILaunchHCs_Click" ToolTip="Use with Caution : Might crash" Content="Launch HCs" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" HorizontalAlignment="Right" Margin="65,3" Visibility="Collapsed" />
@@ -115,19 +119,19 @@
                                 <Separator />
                             </StackPanel>
 
-                            <StackPanel Name="IHcIpGroup" Grid.Row="0" Grid.Column="0" IsEnabled="False" Margin="0,30,0.08,2.891" Grid.RowSpan="2">
+                            <StackPanel Name="IHcIpGroup" Grid.Row="0" Grid.Column="0" IsEnabled="False" Margin="0,30,0,2" Grid.RowSpan="2">
                                 <TextBox Name="IHeadlessIps" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Headless IPs (comma separated)" Margin="5"/>
                                 <TextBox Name="ILocalClients" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Local Clients (comma separated)" Margin="5,-2,5,5"/>
                             </StackPanel>
 
-                            <StackPanel Name="IHcSliderGroup" Grid.Row="0" IsEnabled="False" Grid.Column="1" Margin="4.92,30,0.12,2.891" Grid.RowSpan="2">
+                            <StackPanel Name="IHcSliderGroup" Grid.Row="0" IsEnabled="False" Grid.Column="1" Margin="5,30,0,2" Grid.RowSpan="2">
                                 <Slider Name="INoOfHeadlessClients" Style="{StaticResource MahApps.Styles.Slider.Flat}" AutoToolTipPlacement="TopLeft" AutoToolTipPrecision="0" Minimum="0" Maximum="5" IsSnapToTickEnabled="True" TickFrequency="1" Width="100" ToolTip="Number of Headless Clients" Margin="5,7"/>
                                 <Label Content="No of HCs" ToolTip="Number of Headless Clients" HorizontalAlignment="Center" Margin="5"/>
                             </StackPanel>
                         </Grid>
                     </Grid>
 
-                    <Grid Grid.Row="03" Grid.Column="0" Grid.ColumnSpan="4" Margin="5,4.496,2.719,5.979">
+                    <Grid Grid.Row="03" Grid.Column="0" Grid.ColumnSpan="4" Margin="5,5,3,5">
                         <Grid.Style>
                             <Style TargetType="Grid">
                                 <Setter Property="Margin" Value="5"/>
@@ -153,7 +157,7 @@
                         </Grid>
                     </Grid>
 
-                    <Grid Grid.Row="0" Grid.Column="6" Grid.RowSpan="2" Grid.ColumnSpan="4" Margin="4.362,5,5.212,6.735">
+                    <Grid Grid.Row="0" Grid.Column="6" Grid.RowSpan="2" Grid.ColumnSpan="4" Margin="5,5,5,5">
                         <Grid.Style>
                             <Style TargetType="Grid">
                                 <Setter Property="Margin" Value="5"/>
@@ -226,7 +230,7 @@
                         </DockPanel>
                     </Grid>
 
-                    <Grid Grid.Row="1" Grid.Column="4" Grid.ColumnSpan="2" Grid.RowSpan="2" Margin="7.281,3.229,5.638,5.504">
+                    <Grid Grid.Row="1" Grid.Column="4" Grid.ColumnSpan="2" Grid.RowSpan="2" Margin="5,3,5,5">
                         <Grid.Style>
                             <Style TargetType="Grid">
                                 <Setter Property="Margin" Value="5"/>
@@ -266,7 +270,7 @@
                         </Grid>
                     </Grid>
 
-                    <Grid Grid.Row="2" Grid.Column="6" Grid.ColumnSpan="4" Grid.RowSpan="2" Margin="4.362,3.265,5.212,5.979">
+                    <Grid Grid.Row="2" Grid.Column="6" Grid.ColumnSpan="4" Grid.RowSpan="2" Margin="5,3,5,5">
                         <Grid.Style>
                             <Style TargetType="Grid">
                                 <Setter Property="Margin" Value="5"/>
@@ -288,7 +292,7 @@
                         </Grid>
                     </Grid>
 
-                    <Grid Grid.Row="0" Grid.Column="4" Grid.ColumnSpan="2" Margin="7.281,5,5.638,6.771">
+                    <Grid Grid.Row="0" Grid.Column="4" Grid.ColumnSpan="2" Margin="5,5,5,5">
                         <Grid.Style>
                             <Style TargetType="Grid">
                                 <Setter Property="Margin" Value="5"/>
@@ -317,7 +321,7 @@
                         </Grid>
                     </Grid>
 
-                    <Grid Grid.Row="3" Grid.Column="4" Grid.ColumnSpan="2" Margin="7.281,4.496,5.638,5.979">
+                    <Grid Grid.Row="3" Grid.Column="4" Grid.ColumnSpan="2" Margin="5,5,5,5">
                         <Grid.Style>
                             <Style TargetType="Grid">
                                 <Setter Property="Margin" Value="5"/>
@@ -850,7 +854,7 @@
             </TabItem>
         </TabControl>
         <StackPanel Grid.Row="1" Orientation="Horizontal">
-            <Label Name="IDisplayName" VerticalAlignment="Center" Content="Profile Display Name" FontWeight="Bold" FontSize="16" Margin="5"/>
+            <Label Name="IDisplayName" VerticalAlignment="Center" Content="Profile Display Name" FontWeight="Bold" FontSize="16" Margin="10"/>
         </StackPanel>
         <StackPanel Name="IProfileNameEdit" Grid.Row="1" Orientation="Horizontal" Margin="10,0" Width="310" HorizontalAlignment="Left" Visibility="Collapsed" VerticalAlignment="Center">
             <TextBox Name="IProfileDisplayNameEdit" FontWeight="Bold" FontSize="16" Width="250"/>
@@ -862,7 +866,10 @@
             <Button Name="IDeleteProfile" ToolTip="Delete Profile" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Padding="7,5" Content="{iconPacks:Material Kind=Delete}" Click="IDeleteProfile_Click"/>
             <Button Name="ILaunchServer" ToolTip="Launch Server" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Padding="7,5" Content="{iconPacks:Material Kind=Play}" Click="ILaunchServer_Click"/>
         </StackPanel>
-        <mah:Flyout x:Name="IFlyout" Grid.RowSpan="2" IsOpen="False" Position="Bottom" Theme="Light" AutoCloseInterval="3000" IsAutoCloseEnabled="True" Opacity="0.9">
+        <mah:Flyout x:Name="IFlyout" Grid.Row="0" Grid.RowSpan="2" IsOpen="False" Position="Bottom" Theme="Light" AutoCloseInterval="3000" IsAutoCloseEnabled="True" Opacity="0.9">
+            <mah:Flyout.Effect>
+                <DropShadowEffect BlurRadius="5" Direction="90" RenderingBias="Performance" ShadowDepth="0"/>
+            </mah:Flyout.Effect>
             <Label Name="IFlyoutMessage" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Content="TEXT"/>
         </mah:Flyout>
         <simpleChildWindow:ChildWindow

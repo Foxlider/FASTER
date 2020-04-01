@@ -1,28 +1,27 @@
-﻿<mah:MetroWindow
-    xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
-    x:Class="FASTER.Setup"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
-    mc:Ignorable="d"
+﻿<mah:MetroWindow x:Class="FASTER.Views.Setup"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+                 xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+                 mc:Ignorable="d" 
+
+                 GlowBrush="Black"
+                 BorderThickness="0"
+
+                 Title="FASTER - Initial Setup"
+                 Width="300"
+                 SizeToContent="Height"
     
-    GlowBrush="Black"
-    BorderThickness="0"
-    
-    Title="FASTER - Initial Setup"
-    Width="300"
-    SizeToContent="Height"
-    
-    WindowStartupLocation="CenterScreen">
+                 WindowStartupLocation="CenterScreen">
     <StackPanel>
         <StackPanel Orientation="Vertical">
             <TextBlock TextWrapping="Wrap" TextAlignment="Center" Margin="10,10,10,0" Height="50" VerticalAlignment="Top">
                Welcome to FASTER - an unoffical Arma 3 server updater. Use the form below to setup a few options.
             </TextBlock>
             <TextBox x:Name="ISteamUserBox" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Steam Username" Margin="10"/>
-            <PasswordBox x:Name="ISteamPassBox" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Steam Password" Margin="10"/>
+            <PasswordBox x:Name="ISteamPassBox" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Steam Password" Style="{StaticResource MahApps.Styles.PasswordBox.ButtonRevealed}" Margin="10"/>
             <Separator Margin="10"/>
             <Grid Margin="5,10">
                 <Grid.ColumnDefinitions>
@@ -30,7 +29,7 @@
                     <ColumnDefinition Width="auto"/>
                 </Grid.ColumnDefinitions>
                 <TextBox x:Name="ISteamDirBox" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Steam Install Directory" Margin="5"/>
-                <Button Grid.Column="1" Name="ISteamDirButton" Content="{iconPacks:Material Kind=Folder}" Style="{DynamicResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" VerticalAlignment="Stretch" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" Margin="5" Padding="0" Click="DirButton_Click"/>
+                <Button Grid.Column="1" Name="ISteamDirButton" Content="{iconPacks:Modern Kind=Folder}" Style="{DynamicResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" VerticalAlignment="Stretch" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" Margin="5" Padding="0" Click="DirButton_Click"/>
             </Grid>
             <Grid Margin="5,10">
                 <Grid.ColumnDefinitions>
@@ -38,7 +37,7 @@
                     <ColumnDefinition Width="auto"/>
                 </Grid.ColumnDefinitions>
                 <TextBox x:Name="IServerDirBox" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Arma Install Directory" Margin="5"/>
-                <Button Grid.Column="1" Name="IServerDirButton" Content="{iconPacks:Material Kind=Folder}" Style="{DynamicResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" VerticalAlignment="Stretch" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" Margin="5" Padding="2" Click="DirButton_Click"/>
+                <Button Grid.Column="1" Name="IServerDirButton" Content="{iconPacks:Modern Kind=Folder}" Style="{DynamicResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" VerticalAlignment="Stretch" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" Margin="5" Padding="2" Click="DirButton_Click"/>
             </Grid>
             <Separator Margin="10"/>
         </StackPanel>

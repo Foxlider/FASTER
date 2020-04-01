@@ -1,4 +1,12 @@
-﻿using System;
+using LiveCharts;
+using LiveCharts.Configurations;
+
+using MahApps.Metro;
+
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
+
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -12,25 +20,20 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using FASTER.Models;
 
-using LiveCharts;
-using LiveCharts.Configurations;
-
-using MahApps.Metro;
-using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
-
-namespace FASTER
+namespace FASTER.Views
 {
     /// <summary>
     /// Interaction logic for ServerStatus.xaml
     /// </summary>
-    public partial class ServerStatus : UserControl
+    public partial class ServerStatus
     {
-        public bool Updating {get; set; }
+        public bool Updating
+        { get; set; }
 
-        private readonly PerformanceCounter cpuCounter;
-        private readonly PerformanceCounter ramCounter;
+        private PerformanceCounter _cpuCounter;
+        private PerformanceCounter _ramCounter;
         
         private ObservableCollection<ProcessSpy> processes = new ObservableCollection<ProcessSpy>();
         readonly long totalRamBytes;
@@ -38,25 +41,14 @@ namespace FASTER
 
         [DllImport("kernel32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool GetPhysicallyInstalledSystemMemory(out long TotalMemoryInKilobytes);
+        static extern bool GetPhysicallyInstalledSystemMemory(out long totalMemoryInKilobytes);
         
         public ServerStatus()
         {
             InitializeComponent();
             dgProcess.ItemsSource = processes;
-            
-            //Start Performance counters
-            try
-            {
-                cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
-                ramCounter = new PerformanceCounter("Memory",    "Available KBytes");
-                Updating = true;
-            }
-            catch
-            {
-                IFlyoutMessage.Content = "Could not start the performance counters.";
-                IFlyout.IsOpen = true;
-            }
+
+            Task.Factory.StartNew(StartPerfsCounters);
             
             try
             {
@@ -77,17 +69,35 @@ namespace FASTER
             ICPUChart.DataContext = td;
 
             RefreshServers();
+        }
+
+        private void StartPerfsCounters()
+        {
+            //Start Performance counters
+            try
+            {
+                _cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
+                _ramCounter = new PerformanceCounter("Memory", "Available KBytes");
+                Updating = true;
+            }
+            catch
+            {
+                IFlyoutMessage.Content = "Could not start the performance counters.";
+                IFlyout.IsOpen = true;
+            }
             Task.Factory.StartNew(Updater, TaskCreationOptions.LongRunning);
         }
+
+        public MainWindow MetroWindow => (MainWindow)Window.GetWindow(this);
 
         private void Updater()
         {
             while (Updating)
             {
-                var ram = ramCounter.NextValue();
+                var ram = _ramCounter.NextValue();
                 Dispatcher?.BeginInvoke(new Action(() =>
                 {
-                    gaugeCpu.Value = cpuCounter.NextValue();
+                    gaugeCpu.Value = _cpuCounter.NextValue();
                     gaugeRam.Value = totalRamBytes > ram 
                         ? Convert.ToInt64((totalRamBytes - ram) / 1024)
                         : Convert.ToInt64(totalRamBytes         / 1024);
@@ -100,7 +110,7 @@ namespace FASTER
         private void IToggleGauges_Click(object sender, RoutedEventArgs e)
         {
             Updating = !Updating;
-            if(Updating)
+            if (Updating)
             { Task.Factory.StartNew(Updater, TaskCreationOptions.LongRunning); }
         }
         #endregion
@@ -171,7 +181,10 @@ namespace FASTER
         private void IRescanAll_Click(object sender, RoutedEventArgs e)
         {
             Analytics.TrackEvent("ServerStatus - Rescanning Servers", new Dictionary<string, string> {
-                { "Name", MainWindow.Instance.ISteamUserBox.Text }
+                { "Name", MetroWindow.ContentSteamUpdater.ISteamUserBox.Text }
+            });
+            AppInsights.Client.TrackEvent("ServerStatus - Rescanning Servers", new Dictionary<string, string> {
+                { "Name", MetroWindow.ContentSteamUpdater.ISteamUserBox.Text }
             });
             RefreshServers();
         }
@@ -199,7 +212,6 @@ namespace FASTER
         {
             if (GaugeExpander.IsExpanded)
             {
-                Analytics.TrackEvent("ServerStatus - Displayed server temp");
                 GaugeRow.Height = new GridLength(2, GridUnitType.Star);
                 DataRow.Height = new GridLength(0.5, GridUnitType.Star);
                 td.StartStop(true);
@@ -443,32 +455,20 @@ namespace FASTER
             {
                 var now = DateTime.Now;
                 using(ManagementObjectSearcher searcher = new ManagementObjectSearcher(@"root\WMI", "SELECT * FROM MSAcpi_ThermalZoneTemperature"))
-                { 
-                    foreach (var o in searcher.Get())
+                {
+                    var obj = searcher.Get().OfType<ManagementObject>().FirstOrDefault();
+                    if (obj == null)
+                        return;
+                    var temperature = float.Parse(obj["CurrentTemperature"].ToString());
+                    // Convert the value to celsius degrees
+                    temperature = (temperature - (float)2732.0) / (float)10.0;
+                    if (temperature >= AxisYMax) AxisYMax = temperature + 1;
+                    if (temperature <= AxisYMin) AxisYMin = temperature - 1;
+                    try { ChartValues.Add(new MeasureModel { DateTime = now, Value = temperature }); }
+                    catch
                     {
-                        var obj = (ManagementObject) o;
-                        var temperature = float.Parse(obj["CurrentTemperature"].ToString());
-                        // Convert the value to celsius degrees
-                        temperature  = (temperature - (float)2732.0) / (float)10.0;
-                        if (temperature >= AxisYMax) AxisYMax = temperature + 1;
-                        if (temperature <= AxisYMin) AxisYMin = temperature - 1;
-                        try
-                        { 
-                            ChartValues.Add(new MeasureModel
-                            {
-                                DateTime = now,
-                                Value    = temperature
-                            });
-                        }
-                        catch
-                        { 
-                            //If the performance counter fails somehow, fill data with 0
-                            ChartValues.Add(new MeasureModel
-                            {
-                                DateTime = now,
-                                Value    = 0
-                            });
-                        }
+                        //If the performance counter fails somehow, fill data with 0
+                        ChartValues.Add(new MeasureModel { DateTime = now, Value = 0 });
                     }
                 }
 

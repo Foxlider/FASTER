@@ -1,7 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.Win32;
+
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
@@ -9,8 +12,6 @@ using System.Text.RegularExpressions;
 using System.Windows.Documents;
 using System.Xml;
 using System.Xml.Serialization;
-
-using Microsoft.Win32;
 
 namespace FASTER.Models
 {
@@ -56,9 +57,7 @@ namespace FASTER.Models
         }
 
         public static void ExportModsToXml(string filename, List<SteamMod> mods)
-        {
-            File.WriteAllText(filename, Serialize(mods));
-        }
+        { File.WriteAllText(filename, Serialize(mods)); }
 
         // Serialise a class
         private static string Serialize<T>(T value)
@@ -76,9 +75,7 @@ namespace FASTER.Models
 
             using var textWriter = new StringWriter();
             using (XmlWriter xmlWriter = XmlWriter.Create(textWriter, settings))
-            {
-                serializer.Serialize(xmlWriter, value);
-            }
+            { serializer.Serialize(xmlWriter, value); }
 
             return textWriter.ToString();
         }
@@ -100,9 +97,7 @@ namespace FASTER.Models
         public static string SelectFile(string filter)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog
-            {
-                Filter = filter
-            };
+            { Filter = filter };
             return openFileDialog.ShowDialog() == true ? openFileDialog.FileName : null;
         }
 
@@ -142,6 +137,18 @@ namespace FASTER.Models
                 else
                 { throw; }
             }
+        }
+
+        internal static string GetVersion()
+        {
+            string rev = $"{(char)(Assembly.GetExecutingAssembly().GetName().Version.Build + 96)}";
+#if DEBUG
+            rev += "-DEV";
+#endif
+            string version = $"{Assembly.GetExecutingAssembly().GetName().Version.Major}."
+                             + $"{Assembly.GetExecutingAssembly().GetName().Version.Minor}"
+                             + $"{rev}";
+            return version;
         }
     }
 }

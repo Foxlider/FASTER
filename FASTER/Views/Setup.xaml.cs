@@ -1,30 +1,33 @@
-﻿using System;
-using FASTER.Models;
+﻿using FASTER.Models;
+
+using Microsoft.AppCenter.Analytics;
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
 using System.Windows;
-using Microsoft.AppCenter.Analytics;
 
-namespace FASTER
+namespace FASTER.Views
 {
     /// <summary>
     /// Interaction logic for Setup.xaml
     /// </summary>
     public partial class Setup
     {
-
         public Setup()
         {
             InitializeComponent();
             bool wasFirstRun = Properties.Settings.Default.firstRun;
+
             if (wasFirstRun)
             {
                 Properties.Settings.Default.Upgrade();
                 Properties.Settings.Default.firstRun = false;
                 Properties.Settings.Default.Save();
             }
+
             if (Properties.Settings.Default.clearSettings)
                 Properties.Settings.Default.Reset();
 
@@ -33,11 +36,13 @@ namespace FASTER
                 Properties.Settings.Default.steamMods = new SteamModCollection();
                 Properties.Settings.Default.Save();
             }
+
             if (Properties.Settings.Default.localMods == null)
             {
                 Properties.Settings.Default.localMods = new List<LocalMod>();
                 Properties.Settings.Default.Save();
             }
+
             if (Properties.Settings.Default.localModFolders == null)
             {
                 Properties.Settings.Default.localModFolders = new List<string>();
@@ -68,12 +73,20 @@ namespace FASTER
                     { "OS Version", Environment.OSVersion.VersionString },
                     { "Machine Name", Environment.MachineName }
                 });
+                AppInsights.Client.TrackEvent("Setup - Launching", new Dictionary<string, string> {
+                    { "Name", Properties.Settings.Default.steamUserName },
+                    { "Version", MainWindow.Instance.Version },
+                    { "Region", RegionInfo.CurrentRegion.TwoLetterISORegionName},
+                    { "CPU Architecture", Environment.Is64BitOperatingSystem ? "x64" : "x86" },
+                    { "OS Version", Environment.OSVersion.VersionString },
+                    { "Machine Name", Environment.MachineName }
+                });
                 MainWindow.Instance.Show();
             }
             catch (Exception e)
             {
                 using EventLog eventLog = new EventLog("Application")
-                    { Source = "FASTER" };
+                { Source = "FASTER" };
                 eventLog.WriteEntry($"Could not start FASTER : \n[{e.GetType()}] {e.Message}\n\n{e.StackTrace}", EventLogEntryType.Error);
             }
 
@@ -84,7 +97,9 @@ namespace FASTER
         private void DirButton_Click(object sender, RoutedEventArgs e)
         {
             string path = MainWindow.Instance.SelectFolder();
+
             if (string.IsNullOrEmpty(path)) return;
+
             if (Equals(sender, ISteamDirButton))
             { ISteamDirBox.Text = path; }
             else if (Equals(sender, IServerDirButton))

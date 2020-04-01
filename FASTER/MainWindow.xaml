@@ -7,7 +7,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
     xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
-    xmlns:local="clr-namespace:FASTER"
     xmlns:simpleChildWindow="http://metro.mahapps.com/winfx/xaml/simplechildwindow"
     mc:Ignorable="d"
     
@@ -18,25 +17,26 @@
     Title="FASTER" 
     Height="700" Width="1100"
     MinHeight="700" MinWidth="1000"
-    
-    Initialized="MetroWindow_Initialized"
-    Loaded="MetroWindow_Loaded"
-    Closing="MetroWindow_Closing"
-    
+        
     ShowTitleBar="True"
     ShowIconOnTitleBar="True"
     Icon="Resources\FASTER.ico"
-    ShowMaxRestoreButton="True">
+    ShowMaxRestoreButton="True"
+    Background="{StaticResource MahApps.Brushes.Menu.Background}"
+    
+    Initialized="MetroWindow_Initialized"
+    Loaded="MetroWindow_Loaded"
+    Closing="MetroWindow_Closing">
     <mah:MetroWindow.RightWindowCommands>
         <mah:WindowCommands>
-            <Button Content="{iconPacks:Material Kind=Wrench}" Click="ToolsButton_Click"/>
+            <Button Content="{iconPacks:Modern Kind=Tools}" Click="ToolsButton_Click"/>
             <!--<Button Content="{iconPacks:Material Kind=WindowMinimize}" Click="WindowMinimizeButton_Click"/>
             <Button Content="{iconPacks:Material Kind=WindowMaximize}" Click="IWindowMaximizeButton_Click"/>-->
         </mah:WindowCommands>
     </mah:MetroWindow.RightWindowCommands>
     <Grid x:Name="MainGrid">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Name="IMenuColumn" Width="1*" MinWidth="150" MaxWidth="200"/>
+            <ColumnDefinition Name="IMenuColumn" Width="auto" MinWidth="150" MaxWidth="250"/>
             <ColumnDefinition Width="4*" MinWidth="540"/>
         </Grid.ColumnDefinitions>
         <Grid Grid.Column="0">
@@ -47,35 +47,50 @@
             </Grid.RowDefinitions>
 
             <!--Menu Column - Main Items-->
-            <StackPanel Grid.Column="0" Grid.Row="0" TextElement.FontSize="13" Margin="0">
+            <StackPanel Grid.Row="0" TextElement.FontSize="13">
+                <StackPanel.Effect>
+                    <DropShadowEffect BlurRadius="5" RenderingBias="Performance" ShadowDepth="0"/>
+                </StackPanel.Effect>
                 <Label  Content="Main" Margin="10,10,0,0" FontWeight="Bold" FontStyle="Italic"/>
-                <ListBox Name="IMainMenuItems" HorizontalAlignment="Stretch" Margin="0,0,0,10">
-                    <ListBoxItem Name="ISteamUpdaterTabSelect" Content="Steam Updater"/>
-                    <ListBoxItem Name="ISteamModsTabSelect" Content="Steam Mods"/>
-                    <ListBoxItem Name="ILocalModsTabSelect" Content="Local Mods"/>
-                    <ListBoxItem Name="IServerStatusTabSelect" Content="Server Status"/>
+                <ListBox Name="IMainMenuItems" HorizontalAlignment="Stretch">
+                    <ToggleButton Name="navSteamUpdater" Style="{StaticResource MahApps.Styles.ToggleButton.WindowCommands}" Click="ToggleButton_Click">
+                        <DockPanel Width="180">
+                            <iconPacks:PackIconModern Kind="Console" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                            <Label Content="Steam Updater" FontWeight="DemiBold" FontSize="13" Name="lbl_Updater" Margin="15,0,0,0" />
+                        </DockPanel>
+                    </ToggleButton>
+                    <ToggleButton Name="navSteamMods" Style="{StaticResource MahApps.Styles.ToggleButton.WindowCommands}" Click="ToggleButton_Click">
+                        <DockPanel Width="180">
+                            <iconPacks:PackIconModern Kind="Steam" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                            <Label Content="Steam Mods" FontWeight="DemiBold" FontSize="13" Name="lbl_SteamMods" Margin="15,0,0,0" />
+                        </DockPanel>
+                    </ToggleButton>
+                    <ToggleButton Name="navLocalMods" Style="{StaticResource MahApps.Styles.ToggleButton.WindowCommands}" Click="ToggleButton_Click">
+                        <DockPanel Width="180">
+                            <iconPacks:PackIconModern Kind="Folder" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                            <Label Content="Local Mods" FontWeight="DemiBold" FontSize="13" Name="lbl_LocalMods" Margin="15,0,0,0" />
+                        </DockPanel>
+                    </ToggleButton>
+                    <ToggleButton Name="navServerStatus" Style="{StaticResource MahApps.Styles.ToggleButton.WindowCommands}" Click="ToggleButton_Click">
+                        <DockPanel Width="180">
+                            <iconPacks:PackIconModern Kind="Gauge75" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                            <Label Content="Server Status" FontWeight="DemiBold" FontSize="13" Name="lbl_ServerStatus" Margin="15,0,0,0" />
+                        </DockPanel>
+                    </ToggleButton>
                 </ListBox>
             </StackPanel>
 
             <!--Menu Column - Server Profiles-->
-            <Grid Grid.Column="0" Grid.Row="1" TextElement.FontSize="13" Margin="0,2,0,5">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition/>
-                </Grid.RowDefinitions>
-                <Rectangle Grid.Row="0" Fill="Black" Height="2"/>
-
-                <Grid Grid.Row="1">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition Width="40"/>
-                    </Grid.ColumnDefinitions>
-                    <Label Content="Server Profiles" Margin="5" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center" FontStyle="Italic"/>
-                    <Button Grid.Column="1" Content="{iconPacks:Material Kind=Plus}" Name="INewServerProfileButton" Click="NewServerProfileButton_Click" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Height="25" Width="25" VerticalAlignment="Center" Padding="0">
-                    </Button>
-                </Grid>
-                <ListBox Grid.Row="2" Name="IServerProfilesMenu" HorizontalAlignment="Stretch" Margin="0,0,0,2" ScrollViewer.VerticalScrollBarVisibility="Auto" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch">
+            <StackPanel Grid.Row="1">
+                <StackPanel.Effect>
+                    <DropShadowEffect BlurRadius="5" RenderingBias="Performance" ShadowDepth="0"/>
+                </StackPanel.Effect>
+                <ListBoxItem Margin="2,5" Style="{StaticResource MahApps.Styles.ListBoxItem.HamburgerMenuSeparator}"/>
+                <DockPanel>
+                    <Label Content="Server Profiles" DockPanel.Dock="Left" Margin="10,5" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center" FontStyle="Italic"/>
+                    <Button HorizontalAlignment="Right" Margin="10,0" Click="INewServerProfileButton_Click" Content="{iconPacks:Modern Kind=Add}" Name="INewServerProfileButton" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Height="25" Width="25" VerticalAlignment="Center" Padding="0"/>
+                </DockPanel>
+                <ListBox Name="IServerProfilesMenu" HorizontalAlignment="Stretch" Margin="0,0,0,2" ScrollViewer.VerticalScrollBarVisibility="Auto" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch">
                     <ListBox.Resources>
                         <ContextMenu x:Key="ProfileContextMenu">
                             <MenuItem Header="Clone" Click="MenuItemClone_Click">
@@ -87,216 +102,52 @@
                     </ListBox.Resources>
                     <ListBox.ItemContainerStyle>
                         <Style TargetType="ListBoxItem">
-                            <Setter Property="Padding" Value="10,5,0,5" />
+                            <Setter Property="TextOptions.TextFormattingMode" Value="Display"/>
+                            <Setter Property="FontSize" Value="12"/>
                             <Setter Property="ContextMenu" Value="{StaticResource ProfileContextMenu}"/>
                         </Style>
                     </ListBox.ItemContainerStyle>
                 </ListBox>
-            </Grid>
+            </StackPanel>
 
             <!--Menu Column - Other Items-->
-            <StackPanel Grid.Column="0" Grid.Row="2" TextElement.FontSize="13" Margin="1,0,0,0.04">
-                <Separator/>
-                <Label Content="Other" Margin="10,10,0,0" FontWeight="Bold" FontStyle="Italic" />
-                <ListBox Name="IOtherMenuItems" HorizontalAlignment="Stretch" Margin="0,0,0,10">
-                    <ListBoxItem Name="ISettingsTabSelect" Content="Settings"/>
-                    <ListBoxItem Name="IAboutTabSelect" Content="About"/>
+            <StackPanel Grid.Row="2" TextElement.FontSize="13">
+                <StackPanel.Effect>
+                    <DropShadowEffect BlurRadius="5" RenderingBias="Performance" ShadowDepth="0"/>
+                </StackPanel.Effect>
+                <ListBoxItem Margin="2,5" Style="{StaticResource MahApps.Styles.ListBoxItem.HamburgerMenuSeparator}"/>
+                <Label Content="Other" Margin="10,5" FontWeight="Bold" FontStyle="Italic" />
+                <ListBox Name="IOtherMenuItems" HorizontalAlignment="Stretch" Margin="0,1">
+                    <ToggleButton Name="navSettings" Style="{StaticResource MahApps.Styles.ToggleButton.WindowCommands}" Click="ToggleButton_Click">
+                        <DockPanel Width="180">
+                            <iconPacks:PackIconModern Kind="Tools" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                            <Label Content="Settings" FontWeight="DemiBold" FontSize="13" Name="lbl_Settings" Margin="15,0,0,0" />
+                        </DockPanel>
+                    </ToggleButton>
+                    <ToggleButton Name="navAbout" Style="{StaticResource MahApps.Styles.ToggleButton.WindowCommands}" Click="ToggleButton_Click">
+                        <DockPanel Width="180">
+                            <iconPacks:PackIconModern Kind="Information" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                            <Label Content="About" FontWeight="DemiBold" FontSize="13" Name="lbl_About" Margin="15,0,0,0" />
+                        </DockPanel>
+                    </ToggleButton>
                 </ListBox>
             </StackPanel>
-
-
         </Grid>
-        <!--Content Column - Main Content-->
-        <TabControl Grid.Column="1" Name="IMainContent" Margin="10" BorderBrush="{x:Null}" >
-            <!--Removes Visible Tab Controls-->
-            <TabControl.ItemContainerStyle>
-                <Style TargetType="{x:Type TabItem}">
-                    <Setter Property="Visibility" Value="Collapsed"/>
-                </Style>
-            </TabControl.ItemContainerStyle>
 
-            <!--Tab Item - Steam Updater-->
-            <TabItem Name="ISteamUpdaterTab" Header="ISteamUpdaterTab">
-                <Grid VerticalAlignment="Stretch" Background="{StaticResource MahApps.Brushes.Gray9}">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*"/>
-                        <ColumnDefinition Width="2*"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-
-                    <Grid Grid.ColumnSpan="1" Margin="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-                        <Grid.Style>
-                            <Style TargetType="Grid">
-                                <Setter Property="Margin" Value="5"/>
-                                <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Window.Background}"></Setter>
-                            </Style>
-                        </Grid.Style>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
-                            <StackPanel Grid.ColumnSpan="2">
-                                <Label Margin="2" Content="Steam CMD Settings"/>
-                                <Separator/>
-                            </StackPanel>
-                            <Grid  Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="5,10">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition />
-                                    <ColumnDefinition Width="auto"/>
-                                </Grid.ColumnDefinitions>
-                                <TextBox Grid.Column="0" Name="ISteamDirBox" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Install Directory" Margin="5"/>
-                                <Button Grid.Column="1" Name="ISteamDirButton" Content="{iconPacks:Material Kind=Folder}" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" VerticalAlignment="Stretch" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" Margin="5" Padding="2" Click="DirButton_Click"/>
-                            </Grid>
-                            <TextBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Name="ISteamUserBox" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="User Name" Margin="10,30,10,10"/>
-                            <PasswordBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Name="ISteamPassBox" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Password" Margin="10,10,10,30"/>
-                        </Grid>
-                    </Grid>
-
-                    <Grid Grid.Row="1" Grid.Column="0" Margin="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-                            <Grid.Style>
-                                <Style TargetType="Grid">
-                                    <Setter Property="Margin" Value="5"/>
-                                <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Window.Background}"></Setter>
-                                </Style>
-                            </Grid.Style>
-                            <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition />
-                            </Grid.RowDefinitions>
-                            <StackPanel Grid.ColumnSpan="2">
-                                <Label Margin="2" Content="Arma 3 Settings"/>
-                                <Separator/>
-                            </StackPanel>
-                            <Grid  Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="5,10">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition />
-                                    <ColumnDefinition Width="auto"/>
-                                </Grid.ColumnDefinitions>
-                                <TextBox Grid.Column="0" Name="IServerDirBox" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Install Directory" Margin="5"/>
-                                <Button Grid.Column="1" Name="IServerDirButton" Content="{iconPacks:Material Kind=Folder}" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" VerticalAlignment="Stretch" Height="auto" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" Margin="5" Padding="2" Click="DirButton_Click"/>
-                            </Grid>
-                                <ComboBox Name="IServerBranch" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Version" Margin="10,20,10,15">
-                                <ComboBoxItem Content="Stable" IsSelected="True"/>
-                                <ComboBoxItem Content="Contact"/>
-                                <ComboBoxItem Content="Creator DLC"/>
-                                <ComboBoxItem Content="LegacyPorts"/>
-                                <ComboBoxItem Content="Development"/>
-                            </ComboBox>
-                            <Button Name="ISteamUpdateButton" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="3" Content="Update" Margin="10,5,10,10" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Click="ISteamUpdateButton_Click"/>
-                        </Grid>
-                    </Grid>
-
-                    <Grid Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" Margin="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-                        <Grid.Style>
-                            <Style TargetType="Grid">
-                                <Setter Property="Margin" Value="5"/>
-                                <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Window.Background}"></Setter>
-                            </Style>
-                        </Grid.Style>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="*"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
-                            <StackPanel Grid.ColumnSpan="2">
-                                <Label Margin="2" Content="Steam CMD Output"/>
-                                <Separator/>
-                            </StackPanel>
-                            <RichTextBox Name="ISteamOutputBox" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" IsReadOnly="True" IsEnabled="True" Background="{StaticResource MahApps.Brushes.Gray10}" Margin="10,10,10,0" VerticalScrollBarVisibility="Visible">
-                                <RichTextBox.Resources>
-                                    <Style TargetType="{x:Type Paragraph}">
-                                        <Setter Property="Margin" Value="0"/>
-                                    </Style>
-                                </RichTextBox.Resources>
-                            </RichTextBox>
-                            <ProgressBar Name="ISteamProgressBar" Grid.Row="2" Grid.Column="0" Margin="10,10,10,10" Height="32"/>
-                            <Button Name="ISteamCancelButton" Grid.Row="2" VerticalAlignment="Stretch" Grid.Column="1" Content="Cancel" Margin="0,10,10,10" IsEnabled="False" Click="ISteamCancelButton_Click" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0"/>
-                        </Grid>
-                    </Grid>
-                </Grid>
-            </TabItem>
-
-            <!--Main Content - Steam Mods Tab-->
-            <TabItem Name="ISteamModsTab" Header="ISteamModsTab">
-                <local:SteamMods/>
-            </TabItem>
-
-            <!--Main Content - Local Mods Tab-->
-            <TabItem Name="ILocalModsTab" Header="ILocalModsTab">
-                <local:LocalMods/>
-            </TabItem>
-
-            <!--Main Content - Steam Mods Tab-->
-            <TabItem Name="IServerStatusTab" Header="IServerStatusTab">
-                <local:ServerStatus/>
-            </TabItem>
-
-            <!--Main Content - Settings Tab-->
-            <TabItem Name="ISettingsTab" Header="ISettingsTab">
-                <local:Settings/>
-            </TabItem>
-
-            <!--Main Content - About Tab-->
-            <TabItem Name="IAboutTab" Header="IAboutTab">
-                <local:About/>
-            </TabItem>
-        </TabControl>
-        
-        <!--Popup Dialogs-->
-        <simpleChildWindow:ChildWindow
-            Name="IMessageDialog"
-            Grid.Column="0"
-            Grid.ColumnSpan="2"
-            IsOpen="False"
-            HorizontalContentAlignment="Center"
-            VerticalContentAlignment="Center"
-            Foreground="White"
-            Padding="15"
-            CloseOnOverlay="True"
-            GlowBrush="Black"
-            BorderThickness="0"
-            Title="MESSAGE">
-            <simpleChildWindow:ChildWindow.Icon>
-                <iconPacks:PackIconModern
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Foreground="White"
-                    Kind="Information" />
-            </simpleChildWindow:ChildWindow.Icon>
-            <simpleChildWindow:ChildWindow.OverlayBrush>
-                <SolidColorBrush Opacity="0.7" Color="{StaticResource MahApps.Colors.Gray10}"/>
-            </simpleChildWindow:ChildWindow.OverlayBrush>
-            <StackPanel Margin="15" Name="IMessageDialogContent">
-                <TextBlock Name="IMessageDialogText" TextWrapping="Wrap" TextAlignment="Center" Margin="10">
-                    MESSAGE GOES HERE
-                </TextBlock>
-                <Button Name="IMessageDialogClose" Content="OK" HorizontalAlignment="Center" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Margin="5"/>
-            </StackPanel>
-        </simpleChildWindow:ChildWindow>
+        <Grid Grid.Column="1" Margin="10">
+            <!--<Grid.Effect>
+                <DropShadowEffect BlurRadius="15" Direction="-90" RenderingBias="Performance" ShadowDepth="2"/>
+            </Grid.Effect>
+            Background="{StaticResource MahApps.Brushes.Badged.DisabledBackground}"-->
+            <Frame Name="MainContent" Background="{StaticResource MahApps.Brushes.Badged.DisabledBackground}" NavigationUIVisibility="Hidden" Navigated="MainContent_Navigated">
+                <Frame.Effect>
+                    <DropShadowEffect BlurRadius="15" Direction="-90" RenderingBias="Performance" ShadowDepth="2"/>
+                </Frame.Effect>
+            </Frame>
+        </Grid>
 
         <simpleChildWindow:ChildWindow
+            Visibility="Collapsed"
             Name="INewServerProfileDialog"
             Grid.Column="0"
             Grid.ColumnSpan="2"
@@ -310,11 +161,11 @@
             BorderThickness="0"
             Title="New Profile">
             <simpleChildWindow:ChildWindow.Icon>
-                <iconPacks:PackIconMaterial
+                <iconPacks:PackIconModern
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     Foreground="White"
-                    Kind="FolderPlus" />
+                    Kind="PageAdd" />
             </simpleChildWindow:ChildWindow.Icon>
             <simpleChildWindow:ChildWindow.OverlayBrush>
                 <SolidColorBrush Opacity="0.7" Color="{StaticResource MahApps.Colors.Gray10}"/>
@@ -330,58 +181,18 @@
                     <TextBlock TextWrapping="Wrap" TextAlignment="Left" Margin="0,0,0,5">
                         Enter a name for the Server Profile.
                     </TextBlock>
-                <TextBox Name="INewProfileName" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Profile Name" />
+                    <TextBox Name="INewProfileName" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Profile Name" />
                     <DockPanel Margin="0,10">
                         <Button Name="ICreateProfileButton" Click="ICreateProfileButton_Click" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Content="Create" Width="90" HorizontalAlignment="Right"/>
                     </DockPanel>
                 </StackPanel>
             </Grid>
         </simpleChildWindow:ChildWindow>
-
+        
         <simpleChildWindow:ChildWindow
-            Name="ISteamGuardDialog"
-            Grid.Column="0"
-            Grid.ColumnSpan="2"
-            IsOpen="False"
-            HorizontalContentAlignment="Center"
-            VerticalContentAlignment="Center"
-            Foreground="White"
-            Padding="15"
-            CloseOnOverlay="True"
-            GlowBrush="Black"
-            BorderThickness="0"
-            Title="Steam Guard">
-            <simpleChildWindow:ChildWindow.Icon>
-                <iconPacks:PackIconModern
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Foreground="White"
-                    Kind="Steam" />
-            </simpleChildWindow:ChildWindow.Icon>
-            <simpleChildWindow:ChildWindow.OverlayBrush>
-                <SolidColorBrush Opacity="0.7" Color="{StaticResource MahApps.Colors.Gray10}"/>
-            </simpleChildWindow:ChildWindow.OverlayBrush>
-            <Grid Name="ISteamGuardDialogContent">
-                <!--Grid Definitions-->
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="30"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-
-                <StackPanel Grid.Row="1" Margin="20,10">
-                    <TextBlock TextWrapping="Wrap" TextAlignment="Left" Margin="0,0,0,5">
-                        Enter Steam Guard code from email or mobile app.
-                    </TextBlock>
-                    <TextBox Name="ISteamGuardCode" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Steam Guard Code"/>
-                    <DockPanel Margin="0,10">
-                        <Button Name="ISubmitCode" Click="ISubmitCode_Click" Content="Submit" HorizontalAlignment="Right" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0"/>
-                    </DockPanel>
-                </StackPanel>
-            </Grid>
-        </simpleChildWindow:ChildWindow>
-
-        <simpleChildWindow:ChildWindow
+            Visibility="Collapsed"
             Name="IToolsDialog"
+            KeyUp="IToolsDialog_KeyUp"
             Grid.Column="0"
             Grid.ColumnSpan="2"
             IsOpen="False"
@@ -410,7 +221,11 @@
                 <Button Grid.Row="2" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" HorizontalAlignment="Stretch" Click="OpenArmaServerLocation_Click" Name="OpenArmaServerLocation" Content="Open Arma 3 Server Folder" Margin="10"/>
             </Grid>
         </simpleChildWindow:ChildWindow>
+
         <mah:Flyout x:Name="IFlyout" Grid.Column="1" IsOpen="False" Position="Bottom" Theme="Light" AutoCloseInterval="3000" IsAutoCloseEnabled="True" Opacity="0.9">
+            <mah:Flyout.Effect>
+                <DropShadowEffect BlurRadius="10" RenderingBias="Performance" ShadowDepth="0"/>
+            </mah:Flyout.Effect>
             <Label Name="IFlyoutMessage" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Content="TEXT"/>
         </mah:Flyout>
     </Grid>
