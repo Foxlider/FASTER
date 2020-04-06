@@ -1,4 +1,4 @@
-using FASTER.Models;
+﻿using FASTER.Models;
 
 using Microsoft.AppCenter.Crashes;
 
@@ -127,22 +127,34 @@ namespace FASTER.Views
                 try
                 {
                     var sModId = steamMod.Replace(Path.Combine(Properties.Settings.Default.steamCMDPath, "steamapps", "workshop", "content", "107410"), "").Replace("\\", "");
-                    var modId = int.Parse(sModId);
-                    var info  = SteamMod.GetModInfo(modId);
-                    var temp  = currentMods?.FirstOrDefault(m => m.WorkshopId == modId);
+                    //var modId = int.Parse(sModId);
+                    if (int.TryParse(sModId, out var modId))
+                    {
+                        var info  = SteamMod.GetModInfo(modId);
+                        var temp  = currentMods?.FirstOrDefault(m => m.WorkshopId == modId);
 
-                    if (info == null || temp != null) continue;
+                        if (info == null || temp != null) continue;
 
-                    var modName         = info.Item1;
-                    var steamUpdateTime = info.Item3;
-                    var author          = info.Item2;
+                        var modName         = info.Item1;
+                        var steamUpdateTime = info.Item3;
+                        var author          = info.Item2;
 
-                    currentMods?.Add(new SteamMod(modId, modName, author, steamUpdateTime));
+                        currentMods?.Add(new SteamMod(modId, modName, author, steamUpdateTime));
 
-                    var modCollection = new SteamModCollection { CollectionName = "Steam", SteamMods = currentMods };
+                        var modCollection = new SteamModCollection { CollectionName = "Steam", SteamMods = currentMods };
 
-                    Properties.Settings.Default.steamMods = modCollection;
-                    Properties.Settings.Default.Save();
+                        Properties.Settings.Default.steamMods = modCollection;
+                        Properties.Settings.Default.Save();
+                    }
+                    else
+                    {
+                        Crashes.TrackError(null, new Dictionary<string, string>
+                        {
+                            { "Name", Properties.Settings.Default.steamUserName },
+                            { "Reason", "Could not parse modID"},
+                            { "sModID", sModId}
+                        });
+                    }
                 }
                 catch (Exception e)
                 { Crashes.TrackError(e, new Dictionary<string, string> { { "Name", Properties.Settings.Default.steamUserName } }); }
