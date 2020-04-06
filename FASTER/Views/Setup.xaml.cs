@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
 using System.Windows;
+using Microsoft.AppCenter.Crashes;
 
 namespace FASTER.Views
 {
@@ -121,7 +122,11 @@ namespace FASTER.Views
             if (IInstallSteamCheck.IsChecked != null && (bool)IInstallSteamCheck.IsChecked)
             { MainWindow.Instance.InstallSteamCmd = true; }
 
-            MainWindow.Instance.Show();
+            try
+            { MainWindow.Instance.Show(); }
+            catch (Exception exception)
+            { Crashes.TrackError(exception); }
+            
             Close();
         }
     }
