@@ -195,8 +195,9 @@ namespace FASTER.Views
             {
                 _safeName = res;
                 MetroWindow.MainContent.Navigate(MetroWindow.ContentSteamUpdater);
+                Properties.Settings.Default.Save();
                 MainWindow.Instance.LoadServerProfiles();
-                MetroWindow.MainContent.Navigate(MetroWindow.ContentProfiles.FirstOrDefault(p => p.Name == newName));
+                MetroWindow.MainContent.Navigate(MetroWindow.ContentProfiles.FirstOrDefault(p => p.Name == _safeName));
             }
             else
             { MessageBox.Show("Could not rename Server Profile. \nPlease try again."); }
