@@ -1309,7 +1309,14 @@ namespace FASTER.Views
         private static async Task CopyModsKeysToKeyFolder()
         {
             var mods      = new List<string>();
-            var steamMods = Directory.GetDirectories(Path.Combine(Properties.Settings.Default.steamCMDPath, "steamapps", "workshop", "content", "107410"));
+            var path = Path.Combine(Properties.Settings.Default.steamCMDPath, "steamapps", "workshop", "content", "107410");
+            if (!Directory.Exists(path))
+            {
+                MainWindow.Instance.IFlyout.IsOpen = true;
+                MainWindow.Instance.IFlyoutMessage.Content = $"The SteamCMD path does not exist :\n{path}";
+                return;
+            }
+            var steamMods = Directory.GetDirectories(path);
 
             foreach (var line in steamMods)
             {
@@ -1327,7 +1334,8 @@ namespace FASTER.Views
                 { /*there was no directory*/ }
             }
 
-            if (!Directory.Exists(Path.Combine(Properties.Settings.Default.serverPath, "keys"))) { Directory.CreateDirectory(Path.Combine(Properties.Settings.Default.serverPath, "keys")); }
+            if (!Directory.Exists(Path.Combine(Properties.Settings.Default.serverPath, "keys"))) 
+            { Directory.CreateDirectory(Path.Combine(Properties.Settings.Default.serverPath, "keys")); }
 
             foreach (var link in mods)
             {
