@@ -62,18 +62,26 @@ namespace FASTER.Views
 
         private void DeleteMod(object sender, RoutedEventArgs e)
         {
-            var localMod = (LocalMod)((Button)e.Source).DataContext;
-
-            if (Directory.Exists(localMod.Path))
+            try
             {
-                try 
-                { Directory.Delete(localMod.Path, true); }
-                catch
+                var localMod = (LocalMod) ((Button) e.Source).DataContext;
+
+                if (Directory.Exists(localMod.Path))
                 {
-                    MainWindow.Instance.IFlyoutMessage.Content = $"Could not delete mod \"{localMod.Name}\"";
-                    MainWindow.Instance.IFlyout.IsOpen         = true;
+                    try
+                    {
+                        Directory.Delete(localMod.Path, true);
+                    }
+                    catch
+                    {
+                        MainWindow.Instance.IFlyoutMessage.Content = $"Could not delete mod \"{localMod.Name}\"";
+                        MainWindow.Instance.IFlyout.IsOpen = true;
+                    }
                 }
             }
+            catch
+            { MetroWindow.DisplayMessage("Could not delete that mod. Retry again of delete it manually"); }
+            
             UpdateModsView();
         }
 
