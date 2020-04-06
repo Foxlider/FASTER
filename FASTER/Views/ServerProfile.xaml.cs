@@ -1136,7 +1136,7 @@ namespace FASTER.Views
                     try
                     { Process.Start(file.FullName); }
                     catch (Exception e)
-                    { Crashes.TrackError(e, new Dictionary<string, string> { { "Name", Properties.Settings.Default.steamUserName } }); }
+                    { MetroWindow.DisplayMessage("Cannot Open - Maybe the file is still being used"); }
                 }
                 else
                 { MetroWindow.DisplayMessage("Cannot Open - File Not Found \n\nIf Opening PID file make sure Server is running."); }
