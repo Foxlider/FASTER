@@ -86,6 +86,7 @@ namespace FASTER.Views
             }
             catch (Exception e)
             {
+                Crashes.TrackError(e, new Dictionary<string, string> { {"Message", $"Could not start FASTER: \n[{ e.GetType()}] { e.Message}\n\n{ e.StackTrace}"}});
                 using EventLog eventLog = new EventLog("Application")
                 { Source = "FASTER" };
                 eventLog.WriteEntry($"Could not start FASTER : \n[{e.GetType()}] {e.Message}\n\n{e.StackTrace}", EventLogEntryType.Error);
