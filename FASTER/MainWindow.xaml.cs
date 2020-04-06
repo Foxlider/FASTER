@@ -17,6 +17,7 @@ using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
+using Microsoft.AppCenter.Crashes;
 
 namespace FASTER
 {
@@ -209,17 +210,26 @@ namespace FASTER
             if (IServerProfilesMenu.SelectedIndex == -1)
             { return; }
 
-            var temp = Properties.Settings.Default.Servers.ServerProfiles.FirstOrDefault(s => s.SafeName == ((ToggleButton)IServerProfilesMenu.SelectedItem).Name);
-            if (temp == null)
+            try
             {
-                DisplayMessage("Could not find the selected profile.");
-                return;
-            }
+                var temp = Properties.Settings.Default.Servers.ServerProfiles.FirstOrDefault(s =>
+                    s.SafeName == ((ToggleButton) IServerProfilesMenu.SelectedItem).Name);
+                if (temp == null)
+                {
+                    DisplayMessage("Could not find the selected profile.");
+                    return;
+                }
 
-            Models.ServerProfile serverProfile = temp.CloneObjectSerializable();
-            serverProfile.DisplayName += " 2";
-            serverProfile.SafeName = "_" + Functions.SafeName(serverProfile.DisplayName);
-            ServerCollection.AddServerProfile(serverProfile);
+                Models.ServerProfile serverProfile = temp.CloneObjectSerializable();
+                serverProfile.DisplayName += " 2";
+                serverProfile.SafeName = "_" + Functions.SafeName(serverProfile.DisplayName);
+                ServerCollection.AddServerProfile(serverProfile);
+            }
+            catch (Exception err)
+            {
+                DisplayMessage("An error occured while cloning your profile");
+                Crashes.TrackError(err, new Dictionary<string, string> { { "Name", Properties.Settings.Default.steamUserName } });
+            }
         }
 
         private void InstallSteamCmd_Click(object sender, RoutedEventArgs e)
