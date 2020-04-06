@@ -1147,13 +1147,16 @@ namespace FASTER.Views
 
         private void DeleteAllFiles(string path, string filter)
         {
+            if (!Directory.Exists(path))
+            { MetroWindow.DisplayMessage($"Could not find path {path}"); }
             var dir = new DirectoryInfo(path);
             var files = dir.EnumerateFiles(filter);
             var i = 0;
             foreach (var file in files)
             {
                 try { file.Delete(); }
-                catch (Exception e) { Crashes.TrackError(e, new Dictionary<string, string> {{ "Name", Properties.Settings.Default.steamUserName }}); }
+                catch (Exception e) 
+                { Crashes.TrackError(e, new Dictionary<string, string> {{ "Name", Properties.Settings.Default.steamUserName }}); }
                 i += 1;
             }
             MetroWindow.DisplayMessage($"Deleted {i} files.");
