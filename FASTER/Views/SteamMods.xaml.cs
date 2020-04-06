@@ -1,4 +1,4 @@
-﻿using FASTER.Models;
+using FASTER.Models;
 
 using Microsoft.AppCenter.Crashes;
 
@@ -253,6 +253,11 @@ namespace FASTER.Views
         private async void UpdateMod(object sender, RoutedEventArgs e)
         {
             var steamMod = (SteamMod)((Button)e.Source).DataContext;
+            if (steamMod == null)
+            {
+                MetroWindow.DisplayMessage("Could not update selected mod");
+                return;
+            }  
             await UpdateMod(steamMod.WorkshopId, steamMod.Name);
         }
 
