@@ -40,7 +40,11 @@ namespace FASTER.Views
 
                 Thread thread = new Thread(() =>
                 {
-                    SteamMod.UpdateInfoFromSteam();
+                    try
+                    { SteamMod.UpdateInfoFromSteam(); }
+                    catch (NullReferenceException)
+                    { MetroWindow.DisplayMessage("Could not update mods"); }
+                    
                     try
                     {
                         Dispatcher?.Invoke(() =>
@@ -130,21 +134,33 @@ namespace FASTER.Views
                     //var modId = int.Parse(sModId);
                     if (int.TryParse(sModId, out var modId))
                     {
-                        var info  = SteamMod.GetModInfo(modId);
-                        var temp  = currentMods?.FirstOrDefault(m => m.WorkshopId == modId);
+                        try
+                        {
+                            var info = SteamMod.GetModInfo(modId);
+                            var temp = currentMods?.FirstOrDefault(m => m.WorkshopId == modId);
 
-                        if (info == null || temp != null) continue;
+                            if (info == null || temp != null) continue;
 
-                        var modName         = info.Item1;
-                        var steamUpdateTime = info.Item3;
-                        var author          = info.Item2;
+                            var modName = info.Item1;
+                            var steamUpdateTime = info.Item3;
+                            var author = info.Item2;
 
-                        currentMods?.Add(new SteamMod(modId, modName, author, steamUpdateTime));
+                            currentMods?.Add(new SteamMod(modId, modName, author, steamUpdateTime));
 
-                        var modCollection = new SteamModCollection { CollectionName = "Steam", SteamMods = currentMods };
+                            var modCollection = new SteamModCollection { CollectionName = "Steam", SteamMods = currentMods };
 
-                        Properties.Settings.Default.steamMods = modCollection;
-                        Properties.Settings.Default.Save();
+                            Properties.Settings.Default.steamMods = modCollection;
+                            Properties.Settings.Default.Save();
+                        }
+                        catch (Exception e)
+                        {
+                            Crashes.TrackError(e, new Dictionary<string, string>
+                            {
+                                { "Name", Properties.Settings.Default.steamUserName },
+                                { "Reason", "Something went wrong"},
+                                { "sModID", sModId}
+                            });
+                        }
                     }
                     else
                     {
@@ -329,8 +345,7 @@ namespace FASTER.Views
                 IProgressInfo.Content           = "Checking for updates...";
 
                 List<Task> tasks = new List<Task>
-                { Task.Run(SteamMod.UpdateInfoFromSteam) };
-
+                { Task.Run(SafeUpdateFromSteam) };
                 await Task.WhenAll(tasks);
 
                 IModView.IsEnabled              = true;
@@ -340,6 +355,14 @@ namespace FASTER.Views
             }
             else
             { MetroWindow.DisplayMessage("No Mods To Check"); }
+        }
+
+        private void SafeUpdateFromSteam()
+        {
+            try
+            { SteamMod.UpdateInfoFromSteam(); }
+            catch (NullReferenceException)
+            { MetroWindow.DisplayMessage("Could not update mods"); }
         }
 
         private void UpdateModsView()
