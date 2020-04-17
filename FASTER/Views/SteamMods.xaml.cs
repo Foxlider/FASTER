@@ -131,7 +131,6 @@ namespace FASTER.Views
                 try
                 {
                     var sModId = steamMod.Replace(Path.Combine(Properties.Settings.Default.steamCMDPath, "steamapps", "workshop", "content", "107410"), "").Replace("\\", "");
-                    //var modId = int.Parse(sModId);
                     if (int.TryParse(sModId, out var modId))
                     {
                         try

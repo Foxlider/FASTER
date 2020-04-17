@@ -1136,7 +1136,7 @@ namespace FASTER.Views
                 {
                     try
                     { Process.Start(file.FullName); }
-                    catch (Exception e)
+                    catch (Exception)
                     { MetroWindow.DisplayMessage("Cannot Open - Maybe the file is still being used"); }
                 }
                 else
