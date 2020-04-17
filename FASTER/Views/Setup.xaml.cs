@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
 using System.Windows;
+using Microsoft.AppCenter;
 using Microsoft.AppCenter.Crashes;
 
 namespace FASTER.Views
@@ -60,6 +61,8 @@ namespace FASTER.Views
             }
 
             ISteamUserBox.Text = Properties.Settings.Default.steamUserName;
+            var installId = AppCenter.GetInstallIdAsync().Result;
+            AppCenter.SetUserId($"{installId}_{Properties.Settings.Default.steamUserName}");
             ISteamPassBox.Password = Encryption.Instance.DecryptData(Properties.Settings.Default.steamPassword);
             ISteamDirBox.Text = Properties.Settings.Default.steamCMDPath;
             IServerDirBox.Text = Properties.Settings.Default.serverPath;
