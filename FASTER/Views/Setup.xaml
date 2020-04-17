@@ -44,6 +44,13 @@
         <Grid HorizontalAlignment="Stretch" VerticalAlignment="Bottom">
             <mah:ToggleSwitch Style="{StaticResource MahApps.Styles.ToggleSwitch.Win10}" Header="Install SteamCMD" Name="IInstallSteamCheck" IsChecked="False" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10"/>
             <Button x:Name="IContinueButton" Content="Continue" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" HorizontalAlignment="Right" Margin="10" VerticalAlignment="Bottom" Click="IContinueButton_Click" />
+            <mah:Flyout x:Name="IFlyoutSetup" IsOpen="False" Position="Bottom" Theme="Dark" AutoCloseInterval="5000" IsAutoCloseEnabled="True" Opacity="0.8">
+                <mah:Flyout.Effect>
+                    <DropShadowEffect BlurRadius="10" RenderingBias="Performance" ShadowDepth="0"/>
+                </mah:Flyout.Effect>
+                <TextBlock Name="IFlyoutSetupMessage" HorizontalAlignment="Center"  VerticalAlignment="Center" TextWrapping="WrapWithOverflow" Text="TEXT" TextAlignment="Center"/>
+            </mah:Flyout>
         </Grid>
+        
     </StackPanel>
 </mah:MetroWindow>

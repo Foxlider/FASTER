@@ -20,8 +20,17 @@ namespace FASTER.Views
         public Setup()
         {
             InitializeComponent();
-            bool wasFirstRun = Properties.Settings.Default.firstRun;
+            bool wasFirstRun;
 
+            //Check if configuration can be read. Else, display error message and don't continue
+            try
+            { wasFirstRun = Properties.Settings.Default.firstRun; }
+            catch (Exception)
+            {
+                DisplaySetupMessage("Could not read your configuration file. Check file before continuing");
+                return;
+            }
+            
             if (wasFirstRun)
             {
                 Properties.Settings.Default.Upgrade();
@@ -55,7 +64,8 @@ namespace FASTER.Views
             ISteamDirBox.Text = Properties.Settings.Default.steamCMDPath;
             IServerDirBox.Text = Properties.Settings.Default.serverPath;
 
-            if (wasFirstRun) return;
+            //Do not skip to mainwindow if it was FirstRun
+            if (wasFirstRun ) return;
 
             try
             {
@@ -93,6 +103,13 @@ namespace FASTER.Views
             }
 
             Close();
+        }
+
+        //Display Error messages
+        public void DisplaySetupMessage(string message)
+        {
+            IFlyoutSetupMessage.Text = message;
+            IFlyoutSetup.IsOpen = true;
         }
 
         // Opens folder select dialog when clicking certain buttons
