@@ -100,7 +100,7 @@ namespace FASTER.Models
             }
             // Adjust the format string to your preferences. For example "{0:0.#}{1}" would
             // show a single decimal place, and no space.
-            return $"{fullSize:0.0#} {sizes[order]}";
+            return $"{fullSize,7:F} {sizes[order],-2}";
         }
 
         private void InitModSize()
@@ -108,7 +108,7 @@ namespace FASTER.Models
 
         static long GetDirectorySize(string p)
         {
-            string[] a = Directory.GetFiles(p, "*.*");
+            string[] a = Directory.GetFiles(p, "*.*", SearchOption.AllDirectories);
             return a.Select(name => new FileInfo(name)).Select(info => info.Length).Sum();
         }
 
