@@ -67,7 +67,7 @@
                         </Grid.ColumnDefinitions>
                         <Button Grid.Column="0"  HorizontalAlignment="Center" Style="{DynamicResource MahApps.Styles.Button.Split}" Name="IGitHubButton" Click="IGitHubButton_Click">
                             <StackPanel Orientation="Horizontal">
-                                <iconPacks:PackIconMaterial  Kind="GithubCircle" />
+                                <iconPacks:PackIconMaterial  Kind="Github" />
                                 <TextBlock Margin="8 0 0 0" VerticalAlignment="Center">GitHub</TextBlock>
                             </StackPanel>
                         </Button>
@@ -101,7 +101,7 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <iconPacks:PackIconMaterial  Kind="GithubCircle" Width="150" Height="150" Margin="10" HorizontalAlignment="Stretch" VerticalAlignment="Center" />
+                <iconPacks:PackIconMaterial  Kind="Github" Width="150" Height="150" Margin="10" HorizontalAlignment="Stretch" VerticalAlignment="Center" />
                 <StackPanel Grid.Row="0" Grid.Column="1">
                     <TextBlock Margin="16 16 16 8" >Open Source</TextBlock>
                     <TextBlock TextWrapping="Wrap" Style="{DynamicResource MahApps.Styles.TextBlock.Watermark}" Margin="16 0 16 8" VerticalAlignment="Top">This project is completely open source. If you like it and want to say thanks you could hit the GitHub Star button, or contribute if you can!</TextBlock>

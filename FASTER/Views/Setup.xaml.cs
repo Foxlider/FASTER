@@ -140,7 +140,7 @@ namespace FASTER.Views
             settings.firstRun = false;
             settings.Save();
 
-            if (IInstallSteamCheck.IsChecked != null && (bool)IInstallSteamCheck.IsChecked)
+            if (IInstallSteamCheck.IsOn)
             { MainWindow.Instance.InstallSteamCmd = true; }
 
             try

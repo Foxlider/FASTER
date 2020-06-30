@@ -142,6 +142,7 @@ namespace FASTER.Models
         internal static string GetVersion()
         {
             string rev = $"{(char)(Assembly.GetExecutingAssembly().GetName().Version.Build + 96)}";
+            if (Assembly.GetExecutingAssembly().GetName().Version.Build == 0) rev = "ALPHA";
 #if DEBUG
             rev += "-DEV";
 #endif

@@ -25,11 +25,11 @@
             <StackPanel.Effect>
                 <DropShadowEffect BlurRadius="5" RenderingBias="Performance" ShadowDepth="1"/>
             </StackPanel.Effect>
-            <Button Name="IAddSteamMod" ToolTip="Add Steam Mod"  Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Padding="7,5" Content="{iconPacks:Material Kind=Plus}" Click="IAddSteamMod_Click"/>
-            <Button Name="IImportLauncherFile" ToolTip="Import from Arma 3 Launcher File"  Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Padding="7,5" Content="{iconPacks:Material Kind=FileDocument}" Click="IImportLauncherFile_Click"/>
-            <Button Name="ICheckForUpdates" ToolTip="Check For Updates"  Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Padding="7,5" Content="{iconPacks:Material Kind=Clock}" Click="ICheckForUpdates_Click"/>
-            <Button Name="IUpdateAll" ToolTip="Update All"  Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Padding="7,5" Content="{iconPacks:Material Kind=Update}" Click="IUpdateAll_Click"/>
-            <Button Name="IScanSteam" ToolTip="Scan Mods from Steam"  Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Padding="7,5" Content="{iconPacks:Modern Kind=Steam}" Click="IScanSteam_Click"/>
+            <Button Name="IAddSteamMod" ToolTip="Add Steam Mod"  Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Padding="7,5" Content="{iconPacks:Material Kind=Plus}" Click="IAddSteamMod_Click"/>
+            <Button Name="IImportLauncherFile" ToolTip="Import from Arma 3 Launcher File"  Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Padding="7,5" Content="{iconPacks:Material Kind=FileDocument}" Click="IImportLauncherFile_Click"/>
+            <Button Name="ICheckForUpdates" ToolTip="Check For Updates"  Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Padding="7,5" Content="{iconPacks:Material Kind=Clock}" Click="ICheckForUpdates_Click"/>
+            <Button Name="IUpdateAll" ToolTip="Update All"  Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Padding="7,5" Content="{iconPacks:Material Kind=Update}" Click="IUpdateAll_Click"/>
+            <Button Name="IScanSteam" ToolTip="Scan Mods from Steam"  Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Padding="7,5" Content="{iconPacks:Modern Kind=Steam}" Click="IScanSteam_Click"/>
         </StackPanel>
         <Grid Grid.Row="0" Grid.Column="1">
             <Grid.Effect>
@@ -50,21 +50,21 @@
                 <DataGridTemplateColumn Header="Update" CanUserResize="False">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Height="25" Width="25" Padding="0" Click="UpdateMod" Content="{iconPacks:Material Kind=Update}"  Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" HorizontalAlignment="Center"/>
+                            <Button Height="25" Width="25" Padding="0" Click="UpdateMod" Content="{iconPacks:Material Kind=Update}"  Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" HorizontalAlignment="Center"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTemplateColumn Header="Delete" CanUserResize="False">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Height="25" Width="25" Padding="0" Click="DeleteMod" Content="{iconPacks:Material Kind=Delete}" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" HorizontalAlignment="Center"/>
+                            <Button Height="25" Width="25" Padding="0" Click="DeleteMod" Content="{iconPacks:Material Kind=Delete}" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" HorizontalAlignment="Center"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTemplateColumn Header="Info" CanUserResize="False">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Height="25" Width="25" Padding="0" Click="OpenModPage" Content="{iconPacks:Material Kind=Web}" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" HorizontalAlignment="Center"/>
+                            <Button Height="25" Width="25" Padding="0" Click="OpenModPage" Content="{iconPacks:Material Kind=Web}" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" HorizontalAlignment="Center"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -112,7 +112,7 @@
                 <TextBox Name="ISteamItemBox" controls:TextBoxHelper.UseFloatingWatermark="True" controls:TextBoxHelper.Watermark="Steam ID / URL" BorderBrush="{DynamicResource PrimaryHueDarkBrush}"/>
                 <DockPanel Margin="0,10">
                     <CheckBox Name="IPrivateModCheck" Content="Private Mod"/>
-                    <Button Name="IImportModButton" Click="IImportModButton_Click" Content="Import" Width="90" HorizontalAlignment="Right" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0"/>
+                    <Button Name="IImportModButton" Click="IImportModButton_Click" Content="Import" Width="90" HorizontalAlignment="Right" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0"/>
                 </DockPanel>
             </StackPanel>
         </mah:ChildWindow>
@@ -145,7 +145,7 @@
             <StackPanel Margin="16">
                 <TextBlock Name="IMessageText" Margin="10"/>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" >
-                    <Button IsDefault="True" Margin="0 8 8 0" Name="IMessageButton" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" Click="IMessageButton_Click"  BorderThickness="0" Content="OK"/>
+                    <Button IsDefault="True" Margin="0 8 8 0" Name="IMessageButton" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" Click="IMessageButton_Click"  BorderThickness="0" Content="OK"/>
                 </StackPanel>
             </StackPanel>
         </mah:ChildWindow>

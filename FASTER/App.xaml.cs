@@ -1,15 +1,18 @@
-﻿using MahApps.Metro;
+﻿using ControlzEx.Theming;
+
+using FASTER.Models;
+
 using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
+using Microsoft.ApplicationInsights;
+using Microsoft.ApplicationInsights.Extensibility;
+
 using System;
 using System.Globalization;
 using System.Management;
 using System.Threading;
 using System.Windows;
-using FASTER.Models;
-using Microsoft.ApplicationInsights;
-using Microsoft.ApplicationInsights.Extensibility;
 
 namespace FASTER
 {
@@ -62,10 +65,10 @@ namespace FASTER
             var themeThread = new Thread(() =>
                 {
                     var r      = new Random();
-                    var themes = ThemeManager.Themes;
+                    var themes = ThemeManager.Current.ColorSchemes;
                     while (true)
                     {
-                        Dispatcher.BeginInvoke(new Action(() => ThemeManager.ChangeTheme(Current, themes[r.Next(themes.Count)])));
+                        Dispatcher.BeginInvoke(new Action(() => ThemeManager.Current.ChangeTheme(Current, themes[r.Next(themes.Count)])));
                         Thread.Sleep(5000);
                     }
                 })

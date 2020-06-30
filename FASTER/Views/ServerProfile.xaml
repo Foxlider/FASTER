@@ -82,10 +82,10 @@
                                     <ColumnDefinition Width="auto"/>
                                 </Grid.ColumnDefinitions>
                                 <TextBox Name="IExecutable" Grid.Column="0" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Server File" Margin="5,5,5,5"/>
-                                <Button Content="{iconPacks:Material Kind=FolderOpen}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="1" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" Height="auto" Margin="5" Name="IServerFileButton" Click="IServerFileButton_Click" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Padding="3"/>
+                                <Button Content="{iconPacks:Material Kind=FolderOpen}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="1" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" Height="auto" Margin="5" Name="IServerFileButton" Click="IServerFileButton_Click" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Padding="3"/>
                             </Grid>
-                            <PasswordBox Name="IPassword" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="5" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Password" ToolTip="Password for users" Style="{StaticResource MahApps.Styles.PasswordBox.ButtonRevealed}" Margin="5"/>
-                            <PasswordBox Name="IAdminPassword" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="5" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Admin Password" ToolTip="Password for admins" Margin="5" Style="{StaticResource MahApps.Styles.PasswordBox.ButtonRevealed}"/>
+                            <PasswordBox Name="IPassword" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="5" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Password" ToolTip="Password for users" Style="{StaticResource MahApps.Styles.PasswordBox.Button.Revealed}" Margin="5"/>
+                            <PasswordBox Name="IAdminPassword" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="5" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Admin Password" ToolTip="Password for admins" Margin="5" Style="{StaticResource MahApps.Styles.PasswordBox.Button.Revealed}"/>
 
                             <TextBox Name="IMaxPlayers" Grid.Row="3" Grid.Column="7" Grid.ColumnSpan="3" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Max Players" ToolTip="Maximum players allowed" Margin="5"/>
                             <TextBox Name="IPort" Grid.Row="4" Grid.Column="7" Grid.ColumnSpan="3" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Port" ToolTip="Port for ArmaServer" Margin="5"/>
@@ -113,8 +113,8 @@
                             <StackPanel Grid.ColumnSpan="2" Margin="0,0,0,5">
                                 <Grid>
                                     <Label Margin="2" Content="Headless Client" HorizontalAlignment="Left" />
-                                    <Button Name="ILaunchHCs" Click="ILaunchHCs_Click" ToolTip="Use with Caution : Might crash" Content="Launch HCs" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" HorizontalAlignment="Right" Margin="65,3" Visibility="Collapsed" />
-                                    <mah:ToggleSwitchButton Name="IHeadlessClientEnabled" Click="ToggleUi_HeadleddClientEnabled" Style="{StaticResource MahApps.Styles.ToggleSwitchButton.Win10}" IsChecked="False" HorizontalAlignment="Right" Margin="10,0" ToolTip="Enable HC"/>
+                                    <Button Name="ILaunchHCs" Click="ILaunchHCs_Click" ToolTip="Use with Caution : Might crash" Content="Launch HCs" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" HorizontalAlignment="Right" Margin="65,3" Visibility="Collapsed" />
+                                    <mah:ToggleSwitch Name="IHeadlessClientEnabled" Toggled="ToggleUi_HeadleddClientEnabled" Style="{StaticResource MahApps.Styles.ToggleSwitch}" IsOn="False" HorizontalAlignment="Right" Margin="-50,0" ToolTip="Enable HC"/>
                                 </Grid>
                                 <Separator />
                             </StackPanel>
@@ -185,15 +185,15 @@
 
                                 <CheckBox Grid.Row="1" Grid.Column="0" Name="IServerConsoleLogEnabled" Click="ToggleUi_ServerConsoleLogEnabled" Margin="5"/>
                                 <Label Grid.Row="1" Grid.Column="1" Name="IServerConsoleLog" Content="Server Console" Margin="5" IsEnabled="False"/>
-                                <Button Grid.Row="1" Grid.Column="2" Name="IConsoleLogButton" Click="IOpenConsoleLog_Click" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Content="Open" Height="20" Width="60" FontSize="11" Margin="5" ToolTip="Open server console logs" IsEnabled="False"/>
+                                <Button Grid.Row="1" Grid.Column="2" Name="IConsoleLogButton" Click="IOpenConsoleLog_Click" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Content="Open" Height="20" Width="60" FontSize="11" Margin="5" ToolTip="Open server console logs" IsEnabled="False"/>
 
                                 <CheckBox Grid.Row="2" Grid.Column="0" Name="IPidEnabled" Click="ToggleUi_PidEnabled" Margin="5"/>
                                 <Label Grid.Row="2" Grid.Column="1" Name="IPidLog" Content="PID" Margin="5" IsEnabled="False"/>
-                                <Button Grid.Row="2" Grid.Column="2" Name="IPidButton" Content="Open" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Height="20" Width="60" FontSize="11" Margin="5" ToolTip="Open PID file" IsEnabled="False"/>
+                                <Button Grid.Row="2" Grid.Column="2" Name="IPidButton" Content="Open" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Height="20" Width="60" FontSize="11" Margin="5" ToolTip="Open PID file" IsEnabled="False"/>
 
                                 <CheckBox Grid.Row="3" Grid.Column="0" Name="IRankingEnabled" Click="ToggleUi_RankingEnabled" Margin="5"/>
                                 <Label Grid.Row="3" Grid.Column="1" Name="IRankingLog" Content="Ranking" Margin="5" IsEnabled="False"/>
-                                <Button Grid.Row="3" Grid.Column="2" Name="IRankingButton" Click="IOpenRanking_Click" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Content="Open" Height="20" Width="60" FontSize="11" Margin="5" ToolTip="Open ranking file" IsEnabled="False"/>
+                                <Button Grid.Row="3" Grid.Column="2" Name="IRankingButton" Click="IOpenRanking_Click" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Content="Open" Height="20" Width="60" FontSize="11" Margin="5" ToolTip="Open ranking file" IsEnabled="False"/>
                             </Grid>
 
                             <Grid DockPanel.Dock="Bottom">
@@ -217,15 +217,15 @@
                                     <Separator VerticalAlignment="Bottom"/>
                                 </Grid>
 
-                                <Button Name="IOpenRpt" Content="{iconPacks:Material Kind=FolderOpen}" Click="IOpenRpt_Click" Grid.Row="1" Grid.Column="0" Height="30" Width="30" Padding="0" Margin="5" VerticalAlignment="Bottom" FontSize="10" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" ToolTip="Open Last RPT"/>
-                                <Button Name="IDeleteRpt" Content="{iconPacks:Material Kind=Delete}" Click="IDeleteRpt_Click" Grid.Row="1" Grid.Column="1" Height="30" Width="30" Padding="0" Margin="5" VerticalAlignment="Bottom" FontSize="10" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" ToolTip="Delete All RPTs"/>
+                                <Button Name="IOpenRpt" Content="{iconPacks:Material Kind=FolderOpen}" Click="IOpenRpt_Click" Grid.Row="1" Grid.Column="0" Height="30" Width="30" Padding="0" Margin="5" VerticalAlignment="Bottom" FontSize="10" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" ToolTip="Open Last RPT"/>
+                                <Button Name="IDeleteRpt" Content="{iconPacks:Material Kind=Delete}" Click="IDeleteRpt_Click" Grid.Row="1" Grid.Column="1" Height="30" Width="30" Padding="0" Margin="5" VerticalAlignment="Bottom" FontSize="10" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" ToolTip="Delete All RPTs"/>
                                 <ComboBox Grid.Row="1" Grid.Column="2" Name="IRptTimestamp" mah:TextBoxHelper.Watermark="TimeStamp" mah:TextBoxHelper.UseFloatingWatermark="True" IsEditable="False" Width="80" Margin="2">
                                     <ComboBoxItem  IsSelected="True">none</ComboBoxItem>
                                     <ComboBoxItem>short</ComboBoxItem>
                                     <ComboBoxItem>full</ComboBoxItem>
                                 </ComboBox>
-                                <Button Name="IOpenNetlog" Click="IOpenNetLog_Click" Content="{iconPacks:Material Kind=FolderOpen}" Grid.Row="1" Grid.Column="5" Height="30" Width="30" Padding="0" Margin="5" VerticalAlignment="Bottom" FontSize="10" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" ToolTip="Open Last Netlog"/>
-                                <Button Name="IDeleteNetlog" Click="IDeleteNetLog_Click" Content="{iconPacks:Material Kind=Delete}" Grid.Row="1" Grid.Column="6" Height="30" Width="30" Padding="0" Margin="5" VerticalAlignment="Bottom" FontSize="10" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" ToolTip="Delete All Netlogs"/>
+                                <Button Name="IOpenNetlog" Click="IOpenNetLog_Click" Content="{iconPacks:Material Kind=FolderOpen}" Grid.Row="1" Grid.Column="5" Height="30" Width="30" Padding="0" Margin="5" VerticalAlignment="Bottom" FontSize="10" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" ToolTip="Open Last Netlog"/>
+                                <Button Name="IDeleteNetlog" Click="IDeleteNetLog_Click" Content="{iconPacks:Material Kind=Delete}" Grid.Row="1" Grid.Column="6" Height="30" Width="30" Padding="0" Margin="5" VerticalAlignment="Bottom" FontSize="10" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" ToolTip="Delete All Netlogs"/>
                             </Grid>
                         </DockPanel>
                     </Grid>
@@ -311,7 +311,7 @@
                             <StackPanel Grid.ColumnSpan="2">
                                 <Grid>
                                     <Label Content="Voting" Margin="2" HorizontalAlignment="Left"/>
-                                    <mah:ToggleSwitchButton x:Name="IVotingEnabled" Click="ToggleUi_VotingEnabled" Style="{StaticResource MahApps.Styles.ToggleSwitchButton.Win10}" IsChecked="False" HorizontalAlignment="Right" Margin="10,0" ToolTip="Enable Voting"/>
+                                    <mah:ToggleSwitch x:Name="IVotingEnabled" Toggled="ToggleUi_VotingEnabled" Style="{StaticResource MahApps.Styles.ToggleSwitch}" IsOn="False" HorizontalAlignment="Right" Margin="-50,0" ToolTip="Enable Voting"/>
                                 </Grid>
                                 <Separator VerticalAlignment="Bottom"/>
                             </StackPanel>
@@ -336,7 +336,7 @@
                             <StackPanel>
                                 <Grid>
                                     <Label Content="VON Settings" Margin="2" HorizontalAlignment="Left"/>
-                                    <mah:ToggleSwitchButton x:Name="IVonEnabled" Click="ToggleUi_VonEnabled" Style="{StaticResource MahApps.Styles.ToggleSwitchButton.Win10}" IsChecked="True" HorizontalAlignment="Right" Margin="10,0" ToolTip="Enable VON"/>
+                                    <mah:ToggleSwitch x:Name="IVonEnabled" Toggled="ToggleUi_VonEnabled" Style="{StaticResource MahApps.Styles.ToggleSwitch}" IsOn="True" HorizontalAlignment="Right" Margin="-50,0" ToolTip="Enable VON"/>
                                 </Grid>
                                 <Separator VerticalAlignment="Bottom"/>
                             </StackPanel>
@@ -375,7 +375,7 @@
                             <StackPanel Grid.ColumnSpan="5">
                                 <Grid>
                                     <Label Margin="2" Content="Server Only Mods" Height="26" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                                    <Button Name="IServerModsRefresh" Content="{iconPacks:Material Kind=Refresh}" Padding="2" Click="IModsRefresh_Click" HorizontalAlignment="Right" Margin="5" ToolTip="Refresh Mods" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0"/>
+                                    <Button Name="IServerModsRefresh" Content="{iconPacks:Material Kind=Refresh}" Padding="2" Click="IModsRefresh_Click" HorizontalAlignment="Right" Margin="5" ToolTip="Refresh Mods" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0"/>
                                 </Grid>
                                 <Separator/>
                             </StackPanel>
@@ -392,9 +392,9 @@
                                 </ListBox.ItemContainerStyle>
                             </ListBox>
                             <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,10">
-                                <Button Name="IServerModsAll" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Click="ModsAll_Click" Margin="5" Content="All" FontSize="10" Height="20" />
+                                <Button Name="IServerModsAll" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Click="ModsAll_Click" Margin="5" Content="All" FontSize="10" Height="20" />
                                 <Label Name="IServerModsCount" Margin="5" HorizontalContentAlignment="Center" Foreground="Gray"/>
-                                <Button Name="IServerModsNone" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Click="ModsNone_Click" Margin="5" Content="None" FontSize="10" Height="20"/>
+                                <Button Name="IServerModsNone" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Click="ModsNone_Click" Margin="5" Content="None" FontSize="10" Height="20"/>
                                 <!--<Button Name="IServerModsUp" Margin="5" Content="▲" FontSize="10" Height="20" Width="20" Padding="0"/>
                                 <Button Name="IServerModsDown" Margin="5" Content="▼" FontSize="10" Height="20" Width="20" Padding="0"/>
                                 <Button Name="IServerModsAz" Margin="5" Content="A-Z" FontSize="10" Height="20"/>-->
@@ -418,7 +418,7 @@
                             <StackPanel Grid.ColumnSpan="5">
                                 <Grid>
                                     <Label Content="Player Required Mods" HorizontalAlignment="Left" Height="26" VerticalAlignment="Center"/>
-                                    <Button Name="IClientModsRefresh" Click="IModsRefresh_Click" Content="{iconPacks:Material Kind=Refresh}" Padding="2" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="5" ToolTip="Refresh Mods" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0"/>
+                                    <Button Name="IClientModsRefresh" Click="IModsRefresh_Click" Content="{iconPacks:Material Kind=Refresh}" Padding="2" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="5" ToolTip="Refresh Mods" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0"/>
                                 </Grid>
                                 <Separator/>
                             </StackPanel>
@@ -435,9 +435,9 @@
                                 </ListBox.ItemContainerStyle>
                             </ListBox>
                             <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,10">
-                                <Button Name="IClientModsAll" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Click="ModsAll_Click" Margin="5" Content="All" FontSize="10" Height="20" />
+                                <Button Name="IClientModsAll" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Click="ModsAll_Click" Margin="5" Content="All" FontSize="10" Height="20" />
                                 <Label Name="IClientModsCount" Margin="5" HorizontalContentAlignment="Center" Foreground="Gray"/>
-                                <Button Name="IClientModsNone" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Click="ModsNone_Click" Margin="5" Content="None" FontSize="10" Height="20"/>
+                                <Button Name="IClientModsNone" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Click="ModsNone_Click" Margin="5" Content="None" FontSize="10" Height="20"/>
                                 <!--<Button Name="IClientModsUp" Margin="5" Content="▲" FontSize="10" Height="20" Width="20" Padding="0"/>
                                 <Button Name="IClientModsDown" Margin="5" Content="▼" FontSize="10" Height="20" Width="20" Padding="0"/>
                                 <Button Name="IClientModsAz" Margin="5" Content="A-Z" FontSize="10" Height="20"/>-->
@@ -461,8 +461,8 @@
                             <StackPanel Grid.ColumnSpan="5">
                                 <Grid>
                                     <Label Content="Headless Client Mods" HorizontalAlignment="Left" Height="26" VerticalAlignment="Center"/>
-                                    <Button Name="ICopyFromPlayerMods" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" VerticalAlignment="Center" HorizontalAlignment="Right" BorderThickness="0" Click="ICopyFromPlayerMods_Click"  Content="{iconPacks:Modern Kind=PageCopy}" Padding="2" Margin="5,5,30,5" ToolTip="Copy from Player Mods"/>
-                                    <Button Name="IHeadlessModsRefresh" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" VerticalAlignment="Center" HorizontalAlignment="Right" BorderThickness="0" Click="IModsRefresh_Click" Content="{iconPacks:Material Kind=Refresh}" Padding="2" Margin="5" ToolTip="Refresh Mods"/>
+                                    <Button Name="ICopyFromPlayerMods" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" VerticalAlignment="Center" HorizontalAlignment="Right" BorderThickness="0" Click="ICopyFromPlayerMods_Click"  Content="{iconPacks:Modern Kind=PageCopy}" Padding="2" Margin="5,5,30,5" ToolTip="Copy from Player Mods"/>
+                                    <Button Name="IHeadlessModsRefresh" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" VerticalAlignment="Center" HorizontalAlignment="Right" BorderThickness="0" Click="IModsRefresh_Click" Content="{iconPacks:Material Kind=Refresh}" Padding="2" Margin="5" ToolTip="Refresh Mods"/>
                                 </Grid>
                                 <Separator/>
                             </StackPanel>
@@ -479,16 +479,16 @@
                                 </ListBox.ItemContainerStyle>
                             </ListBox>
                             <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,10">
-                                <Button Name="IHeadlessModsAll" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Click="ModsAll_Click" Margin="5" Content="All" FontSize="10" Height="20" />
+                                <Button Name="IHeadlessModsAll" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Click="ModsAll_Click" Margin="5" Content="All" FontSize="10" Height="20" />
                                 <Label Name="IHeadlessModsCount" Margin="5" HorizontalContentAlignment="Center" Foreground="Gray"/>
-                                <Button Name="IHeadlessModsNone" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Click="ModsNone_Click" Margin="5" Content="None" FontSize="10" Height="20"/>
+                                <Button Name="IHeadlessModsNone" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Click="ModsNone_Click" Margin="5" Content="None" FontSize="10" Height="20"/>
                                 <!--<Button Name="IHeadlessModsUp" Margin="5" Content="▲" FontSize="10" Height="20" Width="20" Padding="0"/>
                                 <Button Name="IHeadlessModsDown" Margin="5" Content="▼" FontSize="10" Height="20" Width="20" Padding="0"/>
                                 <Button Name="IHeadlessModsAz" Margin="5" Content="A-Z" FontSize="10" Height="20"/>-->
                             </StackPanel>
                         </Grid>
                     </Grid>
-                    <Button Name="ICopyModsKeys" Grid.ColumnSpan="3" Grid.Column="0" Grid.Row="1" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" HorizontalAlignment="Right" Click="ICopyModsKeys_Click"  VerticalAlignment="Bottom" Margin="5,2">
+                    <Button Name="ICopyModsKeys" Grid.ColumnSpan="3" Grid.Column="0" Grid.Row="1" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" HorizontalAlignment="Right" Click="ICopyModsKeys_Click"  VerticalAlignment="Bottom" Margin="5,2">
                         <StackPanel Orientation="Horizontal">
                             <iconPacks:PackIconModern Name="ICopyModIco" Kind="PageCopy"/>
                             <TextBlock Text="Copy Mods Keys" Margin="10,0"/>
@@ -525,7 +525,7 @@
                             <StackPanel Grid.ColumnSpan="4">
                                 <Grid>
                                     <Label Content="Missions" Margin="2" HorizontalAlignment="Left"/>
-                                    <mah:ToggleSwitchButton x:Name="IManualMissions" Click="ToggleUi_ManualMisisons" Style="{StaticResource MahApps.Styles.ToggleSwitchButton.Win10}" IsChecked="false" HorizontalAlignment="Right" Margin="10,0" ToolTip="Manual Mission Config"/>
+                                    <mah:ToggleSwitch x:Name="IManualMissions" Toggled="ToggleUi_ManualMisisons" Style="{StaticResource MahApps.Styles.ToggleSwitch}" IsOn="false" HorizontalAlignment="Right" Margin="-50,0" ToolTip="Manual Mission Config"/>
                                 </Grid>
                                 <Separator/>
                             </StackPanel>
@@ -554,9 +554,9 @@
                                 </Grid.RowDefinitions>
                                 <ListBox Grid.Row="1" Grid.Column="0" Name="IMissionCheckList" Margin="10" Grid.ColumnSpan="4"/>
 
-                                <Button Grid.Row="3" Grid.Column="0" Name="IAllMissionsButton" Click="ModsAll_Click" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Margin="10,10,5,10" Content="All" FontSize="10" Height="25" />
-                                <Button Grid.Row="3" Grid.Column="1" Name="INoMissionsButton" Click="ModsNone_Click" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Margin="5,10" Content="None" FontSize="10" Height="25"/>
-                                <Button Grid.Row="3" Grid.Column="2" Name="IRefreshMissionsButton" Click="IMissionsRefresh_Click" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Margin="5,10" Content="{iconPacks:Material Kind=Refresh}" FontSize="10" Height="25" Width="25" Padding="0"/>
+                                <Button Grid.Row="3" Grid.Column="0" Name="IAllMissionsButton" Click="ModsAll_Click" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Margin="10,10,5,10" Content="All" FontSize="10" Height="25" />
+                                <Button Grid.Row="3" Grid.Column="1" Name="INoMissionsButton" Click="ModsNone_Click" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Margin="5,10" Content="None" FontSize="10" Height="25"/>
+                                <Button Grid.Row="3" Grid.Column="2" Name="IRefreshMissionsButton" Click="IMissionsRefresh_Click" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Margin="5,10" Content="{iconPacks:Material Kind=Refresh}" FontSize="10" Height="25" Width="25" Padding="0"/>
                                 <ComboBox Grid.Row="3" Grid.Column="3" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Difficulty Preset" Name="IDifficultyPreset" IsEditable="False" Margin="10" VerticalAlignment="Center" HorizontalAlignment="Right">
                                     <ComboBoxItem IsSelected="True">Recruit</ComboBoxItem>
                                     <ComboBoxItem>Regular</ComboBoxItem>
@@ -770,7 +770,7 @@
                                 <Label Margin="2" Content="Server Performance"/>
                                 <Separator/>
                             </StackPanel>
-                            <Button Name="IResetPerf" Click="IResetPerf_Click" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Grid.Row="1" Grid.Column="0" Content="Reset To Default" FontSize="11" Height="25" Margin="5"/>
+                            <Button Name="IResetPerf" Click="IResetPerf_Click" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Grid.Row="1" Grid.Column="0" Content="Reset To Default" FontSize="11" Height="25" Margin="5"/>
                             <TextBox Name="IMaxCustomFileSize" Grid.Row="2" Grid.Column="0" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Max Custom File Size (Bits)"  Margin="5"/>
                             <TextBox Name="IMaxPacketSize" Grid.Row="3" Grid.Column="0" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Max Packet Size"  Margin="5"/>
                             <TextBox Name="IMinBandwidth" Grid.Row="4" Grid.Column="0" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Min Bandwidth (bps)"  Margin="5"/>
@@ -858,13 +858,13 @@
         </StackPanel>
         <StackPanel Name="IProfileNameEdit" Grid.Row="1" Orientation="Horizontal" Margin="10,0" Width="310" HorizontalAlignment="Left" Visibility="Collapsed" VerticalAlignment="Center">
             <TextBox Name="IProfileDisplayNameEdit" FontWeight="Bold" FontSize="16" Width="250"/>
-            <Button Name="IProfileNameEditSave" Click="IProfileNameEditSave_Click" Content="{iconPacks:Material Kind=Check}" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Height="30" Width="30" Padding="0" Margin="5,2" VerticalAlignment="Bottom" FontSize="10"/>
+            <Button Name="IProfileNameEditSave" Click="IProfileNameEditSave_Click" Content="{iconPacks:Material Kind=Check}" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Height="30" Width="30" Padding="0" Margin="5,2" VerticalAlignment="Bottom" FontSize="10"/>
         </StackPanel>
         <StackPanel Name="IServerActionButtons" Grid.Row="1" HorizontalAlignment="Right" Margin="5,10" Orientation="Horizontal">
-            <Button Name="ISaveProfile" ToolTip="Save Profile" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Padding="7,5" Content="{iconPacks:Material Kind=ContentSave}" Click="ISaveProfile_Click"/>
-            <Button Name="IRenameProfile" ToolTip="Rename Profile" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Padding="7,5" Content="{iconPacks:Material Kind=Pencil}" Click="IRenameProfile_Click"/>
-            <Button Name="IDeleteProfile" ToolTip="Delete Profile" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Padding="7,5" Content="{iconPacks:Material Kind=Delete}" Click="IDeleteProfile_Click"/>
-            <Button Name="ILaunchServer" ToolTip="Launch Server" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Padding="7,5" Content="{iconPacks:Material Kind=Play}" Click="ILaunchServer_Click"/>
+            <Button Name="ISaveProfile" ToolTip="Save Profile" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Padding="7,5" Content="{iconPacks:Material Kind=ContentSave}" Click="ISaveProfile_Click"/>
+            <Button Name="IRenameProfile" ToolTip="Rename Profile" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Padding="7,5" Content="{iconPacks:Material Kind=Pencil}" Click="IRenameProfile_Click"/>
+            <Button Name="IDeleteProfile" ToolTip="Delete Profile" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Padding="7,5" Content="{iconPacks:Material Kind=Delete}" Click="IDeleteProfile_Click"/>
+            <Button Name="ILaunchServer" ToolTip="Launch Server" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Padding="7,5" Content="{iconPacks:Material Kind=Play}" Click="ILaunchServer_Click"/>
         </StackPanel>
         <mah:Flyout x:Name="IFlyout" Grid.Row="0" Grid.RowSpan="2" IsOpen="False" Position="Bottom" Theme="Light" AutoCloseInterval="3000" IsAutoCloseEnabled="True" Opacity="0.9">
             <mah:Flyout.Effect>
@@ -900,13 +900,13 @@
                     <Button Name="IConfirmDeleteBtn"
                             IsDefault="True"
                             Margin="0 8 8 0"
-                            Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0">
+                            Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0">
                         ACCEPT
                     </Button>
                     <Button Name="ICancelDeleteBtn"
                             IsCancel="True"
                             Margin="0 8 8 0"
-                            Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0">
+                            Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0">
                         CANCEL
                     </Button>
                 </StackPanel>

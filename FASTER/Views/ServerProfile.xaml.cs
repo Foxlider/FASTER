@@ -73,7 +73,7 @@ namespace FASTER.Views
             IAdminPassword.Password          = profile.AdminPassword;
             IMaxPlayers.Text                 = profile.MaxPlayers.ToString();
             IPort.Text                       = profile.Port.ToString();
-            IHeadlessClientEnabled.IsChecked = profile.HeadlessClientEnabled;
+            IHeadlessClientEnabled.IsOn = profile.HeadlessClientEnabled;
             IHeadlessIps.Text                = profile.HeadlessIps;
             ILocalClients.Text               = profile.LocalClients;
             INoOfHeadlessClients.Value       = profile.NoOfHeadlessClients;
@@ -85,7 +85,7 @@ namespace FASTER.Views
             // IDailyRestartA.SelectedTime = profile.DailyRestartA
             // IDailyRestartBEnabled.IsChecked = profile.DailyRestartBEnabled
             // IDailyRestartB.Text = profile.DailyRestartB
-            IVotingEnabled.IsChecked            = profile.VotingEnabled;
+            IVotingEnabled.IsOn            = profile.VotingEnabled;
             IVotingMinPlayers.Text              = profile.VotingMinPlayers.ToString();
             IVotingThreshold.Text               = profile.VotingThreshold.ToString(provider);
             IAllowFilePatching.Text             = profile.AllowFilePatching.ToString();
@@ -93,7 +93,7 @@ namespace FASTER.Views
             IRequiredBuildEnabled.IsChecked     = profile.RequiredBuildEnabled;
             IRequiredBuild.Text                 = profile.RequiredBuild.ToString();
             IKickDuplicates.IsChecked           = profile.KickDuplicates;
-            IVonEnabled.IsChecked               = profile.VonEnabled;
+            IVonEnabled.IsOn               = profile.VonEnabled;
             ICodecQuality.Value                 = profile.CodecQuality;
             IServerConsoleLogEnabled.IsChecked  = profile.ServerConsoleLogEnabled;
             IPidEnabled.IsChecked               = profile.PidEnabled;
@@ -101,7 +101,7 @@ namespace FASTER.Views
             IRptTimestamp.Text                  = profile.RptTimestamp;
             IMotd.Text                          = profile.Motd;
             IMotdDelay.Text                     = profile.MotdDelay.ToString();
-            IManualMissions.IsChecked           = profile.ManualMissions;
+            IManualMissions.IsOn           = profile.ManualMissions;
             IMissionConfig.Text                 = profile.MissionsClass;
             IPersistentBattlefield.IsChecked    = profile.PersistentBattlefield;
             IAutoInit.IsChecked                 = profile.AutoInit;
@@ -258,7 +258,7 @@ namespace FASTER.Views
 
         private void ToggleUi_ManualMisisons(object uiElement, RoutedEventArgs e = null)
         {
-            if (IManualMissions.IsChecked ?? false)
+            if (IManualMissions.IsOn)
             {
                 IMissionAutoGrid.Visibility   = Visibility.Collapsed;
                 IMissionManualGrid.Visibility = Visibility.Visible;
@@ -320,7 +320,7 @@ namespace FASTER.Views
 
         private void ToggleUi_HeadleddClientEnabled(object uiElement, RoutedEventArgs e = null)
         {
-            if (IHeadlessClientEnabled.IsChecked ?? false)
+            if (IHeadlessClientEnabled.IsOn)
             {
                 ILaunchHCs.Visibility          = Visibility.Visible;
                 IHcIpGroup.IsEnabled           = true;
@@ -338,7 +338,9 @@ namespace FASTER.Views
 
         private void ToggleUi_VonEnabled(object uiElement, RoutedEventArgs e = null)
         {
-            if (IVonEnabled.IsChecked ?? false)
+            if (IVonGroup == null) return;
+
+            if (IVonEnabled.IsOn)
             {
                 IVonGroup.IsEnabled = true;
                 IVonEnabled.ToolTip = "Disable VON";
@@ -348,11 +350,12 @@ namespace FASTER.Views
                 IVonGroup.IsEnabled = false;
                 IVonEnabled.ToolTip = "Enable VON";
             }
+
         }
 
         private void ToggleUi_VotingEnabled(object uiElement, RoutedEventArgs e = null)
         {
-            if (IVotingEnabled.IsChecked ?? false)
+            if (IVotingEnabled.IsOn)
             {
                 IVotingMinPlayers.IsEnabled = true;
                 IVotingThreshold.IsEnabled  = true;
@@ -421,7 +424,7 @@ namespace FASTER.Views
             string profileName = Functions.SafeName(IDisplayName.Content.ToString());
             string profilePath = _profilesPath + profileName + "\\";
 
-            if (!(IHeadlessClientEnabled.IsChecked ?? false)) return;
+            if (!(IHeadlessClientEnabled.IsOn)) return;
 
             headlessClientLaunched = true;
             LaunchHCs(profilePath);
@@ -615,21 +618,21 @@ namespace FASTER.Views
             }
             profile.MaxPlayers               = Convert.ToInt32(Convert.ToDouble(IMaxPlayers.Text), provider);
             profile.Port                     = Convert.ToInt32(Convert.ToDouble(IPort.Text),       provider);
-            profile.HeadlessClientEnabled    = IHeadlessClientEnabled.IsChecked ?? false;
+            profile.HeadlessClientEnabled    = IHeadlessClientEnabled.IsOn;
             profile.HeadlessIps              = IHeadlessIps.Text;
             profile.LocalClients             = ILocalClients.Text;
             profile.NoOfHeadlessClients      = (int) INoOfHeadlessClients.Value;
             profile.Loopback                 = ILoopback.IsChecked      ?? false;
             profile.Upnp                     = IUpnp.IsChecked          ?? false;
             profile.Netlog                   = INetlog.IsChecked        ?? false;
-            profile.VotingEnabled            = IVotingEnabled.IsChecked ?? false;
+            profile.VotingEnabled            = IVotingEnabled.IsOn;
             profile.VotingMinPlayers         = Convert.ToInt32(Convert.ToDouble(IVotingMinPlayers.Text), provider);
             profile.VotingThreshold          = decimal.Parse(IVotingThreshold.Text, provider);
             profile.AllowFilePatching        = Convert.ToInt32(Convert.ToDouble(IAllowFilePatching.Text), provider);
             profile.VerifySignatures         = Convert.ToInt32(Convert.ToDouble(IVerifySignatures.Text),  provider);
             profile.RequiredBuildEnabled     = IRequiredBuildEnabled.IsChecked ?? false;
             profile.KickDuplicates           = IKickDuplicates.IsChecked       ?? false;
-            profile.VonEnabled               = IVonEnabled.IsChecked           ?? false;
+            profile.VonEnabled               = IVonEnabled.IsOn;
             profile.CodecQuality             = Convert.ToInt32(Convert.ToDouble(ICodecQuality.Value.ToString(provider), provider), provider);
             profile.ServerConsoleLogEnabled  = IServerConsoleLogEnabled.IsChecked ?? false;
             profile.PidEnabled               = IPidEnabled.IsChecked              ?? false;
@@ -637,7 +640,7 @@ namespace FASTER.Views
             profile.RptTimestamp             = IRptTimestamp.Text;
             profile.Motd                     = IMotd.Text;
             profile.MotdDelay                = Convert.ToInt32(Convert.ToDouble(IMotdDelay.Text), provider);
-            profile.ManualMissions           = IManualMissions.IsChecked ?? false;
+            profile.ManualMissions           = IManualMissions.IsOn;
             profile.MissionsClass            = IMissionConfig.Text;
             profile.PersistentBattlefield    = IPersistentBattlefield.IsChecked ?? false;
             profile.AutoInit                 = IAutoInit.IsChecked              ?? false;
@@ -855,7 +858,7 @@ namespace FASTER.Views
 
         private void ConfFileCreation(string config)
         {
-            var von = !IVonEnabled.IsChecked ?? true;
+            var von = !IVonEnabled.IsOn;
 
             //Creating first part of the config lines
             var configLines = ConfigLinesPartOne(von, out var lines);
@@ -886,7 +889,7 @@ namespace FASTER.Views
 
             configLines.Add("};");
             configLines.Add($"timeStampFormat = \"{IRptTimestamp.Text}\";");
-            if (IManualMissions.IsChecked ?? false)
+            if (IManualMissions.IsOn)
             {
                 var missionLines = Functions.GetLinesCollectionFromTextBox(IMissionConfig);
                 foreach (var line in missionLines) { configLines.Add(line); }
@@ -952,13 +955,13 @@ namespace FASTER.Views
 
         private void ConfigFileChecks(List<string> configLines, string headless, string local)
         {
-            if (IHeadlessClientEnabled.IsChecked ?? false)
+            if (IHeadlessClientEnabled.IsOn)
             {
                 configLines.Add("headlessClients[] = {\"" + headless + "\"};");
                 configLines.Add("localClient[] = {\"" + local        + "\"};");
             }
 
-            if (IVotingEnabled.IsChecked ?? false)
+            if (IVotingEnabled.IsOn)
             {
                 configLines.Add($"voteMissionPlayers = {IVotingMinPlayers.Text};");
                 configLines.Add($"voteThreshold = {double.Parse(IVotingThreshold.Text) / 100.0};");
@@ -1208,7 +1211,7 @@ namespace FASTER.Views
             Process          sProcess   = new Process { StartInfo = sStartInfo };
             sProcess.Start();
 
-            if (!headlessClientLaunched && (IHeadlessClientEnabled.IsChecked ?? false))
+            if (!headlessClientLaunched && (IHeadlessClientEnabled.IsOn))
             { LaunchHCs(profilePath); }
 
             headlessClientLaunched = false;

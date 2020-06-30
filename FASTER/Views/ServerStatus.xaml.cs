@@ -1,7 +1,9 @@
+using ControlzEx.Theming;
+
+using FASTER.Models;
+
 using LiveCharts;
 using LiveCharts.Configurations;
-
-using MahApps.Metro;
 
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
@@ -20,7 +22,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using FASTER.Models;
 
 namespace FASTER.Views
 {
@@ -272,8 +273,10 @@ namespace FASTER.Views
 
             token = new CancellationToken();
             var r = new Random();
-            var col = ThemeManager.ColorSchemes[r.Next(0, ThemeManager.ColorSchemes.Count)];
-            Color = col.ShowcaseBrush;
+            var col = ThemeManager.Current.ColorSchemes[r.Next(0, ThemeManager.Current.ColorSchemes.Count)];
+            ColorConverter converter = new ColorConverter();
+            Color color     = (Color)converter.ConvertFromInvariantString(col);
+            Color = new SolidColorBrush(color);
 
             //Create mapper for CPU Graph
             var mapper = Mappers.Xy<MeasureModel>()
