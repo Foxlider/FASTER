@@ -84,6 +84,13 @@ namespace FASTER
             get => _about ??= new About();
             set => _about = value;
         }
+
+        Profile _profile;
+        public Profile ContentProfile
+        {
+            get => _profile ?? new Profile();
+            set => _profile = value;
+        }
         #endregion
 
         public MainWindow()
@@ -156,7 +163,8 @@ namespace FASTER
                     MainContent.Navigate(ContentLocalMods);
                     break;
                 case "navServerStatus":
-                    MainContent.Navigate(ContentServerStatus);
+                    //MainContent.Navigate(ContentServerStatus);
+                    MainContent.Navigate(ContentProfile);
                     break;
                 case "navSettings":
                     MainContent.Navigate(ContentSettings);

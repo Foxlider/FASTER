@@ -1,0 +1,292 @@
+﻿<UserControl x:Class="FASTER.Views.Profile"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:viewModel="clr-namespace:FASTER.ViewModel"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+             mc:Ignorable="d" 
+             Loaded="UserControl_Loaded"
+             d:DesignHeight="1000" d:DesignWidth="800">
+    <UserControl.DataContext>
+        <viewModel:ProfileViewModel/>
+    </UserControl.DataContext>
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <TabControl BorderThickness="0" Background="{x:Null}">
+            <TabControl.Effect>
+                <DropShadowEffect BlurRadius="5" RenderingBias="Performance" ShadowDepth="1"/>
+            </TabControl.Effect>
+            <TabItem Header="server.cfg">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition MinHeight="200"/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+                    <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- COLUMN 1 -->
+                            <StackPanel>
+                                <!-- SERVER OPTIONS -->
+                                <GroupBox Header="Server Options">
+                                    <GroupBox.Style>
+                                        <Style TargetType="GroupBox" BasedOn="{StaticResource MahApps.Styles.GroupBox}">
+                                            <Setter Property="Margin" Value="5"/>
+                                            <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Window.Background}"></Setter>
+                                        </Style>
+                                    </GroupBox.Style>
+                                    <StackPanel>
+                                        <TextBox Text="{Binding Path=ServerCfg.Hostname}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Server Hostname" ToolTip="Name to display in the server browser" Margin="5,3,5,5"/>
+                                        <PasswordBox PasswordChar="{Binding Path=ServerCfg.Password}" Style="{StaticResource MahApps.Styles.PasswordBox.Button.Revealed}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Password" ToolTip="Password required to log in"  Margin="5,3,5,5"/>
+                                        <PasswordBox PasswordChar="{Binding Path=ServerCfg.PasswordAdmin}" Style="{StaticResource MahApps.Styles.PasswordBox.Button.Revealed}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Admin Password" ToolTip="Admin password required to log in as admin"  Margin="5,3,5,5"/>
+                                        <Grid>
+                                            <CheckBox IsChecked="{Binding Path=ServerCfg.BattlEye}" Content="BattlEye" Margin="5" HorizontalAlignment="Left"/>
+                                            <mah:NumericUpDown Value="{Binding Path=ServerCfg.MaxPlayers}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Max Players" ToolTip="Maximum number of players" HorizontalAlignment="Right" Margin="5,3" />
+                                        </Grid>
+                                    </StackPanel>
+                                </GroupBox>
+
+                                <!-- NETWORK TIEE-->
+                                <GroupBox Header="Network settings">
+                                    <GroupBox.Style>
+                                        <Style TargetType="GroupBox" BasedOn="{StaticResource MahApps.Styles.GroupBox}">
+                                            <Setter Property="Margin" Value="5"/>
+                                            <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Window.Background}"></Setter>
+                                        </Style>
+                                    </GroupBox.Style>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition/><ColumnDefinition/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                        </Grid.RowDefinitions>
+                                        <CheckBox Content="Loopback" IsChecked="{Binding Path=ServerCfg.Loopback}" Margin="5,2" Grid.Column="0" Grid.Row="0"/>
+                                        <CheckBox Content="UPNP" IsChecked="{Binding Path=ServerCfg.Upnp}" Margin="5,2" Grid.Column="1" Grid.Row="0"/>
+                                        <mah:NumericUpDown Value="{Binding Path=ServerCfg.DisconnectTimeout}" Margin="5,2" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Disconnect Timeout" Grid.Column="0" Grid.Row="1"/>
+                                        <mah:NumericUpDown Value="{Binding Path=ServerCfg.MaxDesync}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Max Desync" Grid.Row="1" Grid.Column="1" Margin="5,2"/>
+                                        <mah:NumericUpDown Value="{Binding Path=ServerCfg.MaxPing}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Max Ping" Grid.Row="2" Grid.Column="0" Margin="5,2"/>
+                                        <mah:NumericUpDown Value="{Binding Path=ServerCfg.MaxPacketLoss}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Max Packet Loss" Grid.Row="2" Grid.Column="1" Margin="5,2"/>
+                                    </Grid>
+                                </GroupBox>
+
+                                <!-- SERVER ADVANCED -->
+                                <Expander Header="Server Advanced">
+                                    <Expander.Style>
+                                        <Style TargetType="Expander" BasedOn="{StaticResource MahApps.Styles.Expander}">
+                                            <Setter Property="Margin" Value="5"/>
+                                            <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Window.Background}"></Setter>
+                                        </Style>
+                                    </Expander.Style>
+                                    <StackPanel>
+                                        <ComboBox SelectedItem="{Binding Path=ServerCfg.AllowedFilePatching}" ItemsSource="{Binding Path=FilePatching}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Allow File Patching" Margin="5"/>
+                                        <ComboBox SelectedItem="{Binding Path=ServerCfg.VerifySignatures}" ItemsSource="{Binding Path=VerifySignatures}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Verify Signatures" Margin="5"/>
+                                        <CheckBox IsChecked="{Binding Path=ServerCfg.KickDuplicates}" Content="Kick Duplicates" Margin="5,2"/>
+                                        <CheckBox IsChecked="{Binding Path=ServerCfg.KickClientOnSlowNetwork}" Content="Kick on Slow Network" Margin="5,2"/>
+
+                                        <mah:NumericUpDown Value="{Binding Path=ServerCfg.LobbyIdleTimeout}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Lobby Idle Timeout" Margin="5"/>
+                                        <mah:NumericUpDown Value="{Binding Path=ServerCfg.SteamProtocolMaxDataSize}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Steam Protocol Max Data Size" Margin="5,0,5,5"/>
+
+                                        <StackPanel Orientation="Horizontal">
+                                            
+                                        </StackPanel>
+                                        <TextBox MinHeight="50" Margin="5" Text="{Binding Path=ServerCfg.Admins}" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Admins IDs (one per line)"/>
+
+                                    </StackPanel>
+                                </Expander>
+                            </StackPanel>
+
+                            <!-- COLUMN 2 -->
+                            <StackPanel Grid.Column="1">
+                                <!--VON TILE-->
+                                <GroupBox Header="VON Settings">
+                                    <GroupBox.Style>
+                                        <Style TargetType="GroupBox" BasedOn="{StaticResource MahApps.Styles.GroupBox}">
+                                            <Setter Property="Margin" Value="5"/>
+                                            <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Window.Background}"></Setter>
+                                        </Style>
+                                    </GroupBox.Style>
+                                    <StackPanel>
+                                        <Grid Margin="0,3">
+                                            <mah:ToggleSwitch IsOn="{Binding Path=ServerCfg.VonActivated}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="VoN Activation" ToolTip="VoN Activation" Margin="10,2,0,2" HorizontalAlignment="Left"/>
+                                            <ComboBox HorizontalAlignment="Right" Visibility="{Binding Path=ServerCfg.VonActivated, Converter={StaticResource BoolToVis}}" ItemsSource="{Binding Path=VonCodecs}" SelectedItem="{Binding ServerCfg.VonCodec}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="VoN Codec" Margin="10,5"/>
+                                        </Grid>
+                                        <Slider Maximum="30" Visibility="{Binding Path=ServerCfg.VonActivated, Converter={StaticResource BoolToVis}}" AutoToolTipPlacement="TopLeft" Value="{Binding Path=ServerCfg.VonCodecQuality}" TickPlacement="BottomRight" IsSnapToTickEnabled="True" ToolTip="Codec Quality" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Codec Quality" Margin="20,3" SmallChange="1" />
+                                    </StackPanel>
+                                </GroupBox>
+
+                                <!--VOTING TILE-->
+                                <GroupBox Header="Voting Settings">
+                                    <GroupBox.Style>
+                                        <Style TargetType="GroupBox" BasedOn="{StaticResource MahApps.Styles.GroupBox}">
+                                            <Setter Property="Margin" Value="5"/>
+                                            <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Window.Background}"></Setter>
+                                        </Style>
+                                    </GroupBox.Style>
+                                    <StackPanel>
+                                        <mah:ToggleSwitch IsOn="{Binding Path=ServerCfg.VotingEnabled}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="VoN Activation" ToolTip="VoN Activation" Margin="10,2,0,2" HorizontalAlignment="Left"/>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition/><ColumnDefinition/>
+                                            </Grid.ColumnDefinitions>
+                                            <mah:NumericUpDown Value="{Binding Path=ServerCfg.VoteMissionPlayers}" Visibility="{Binding Path=ServerCfg.VotingEnabled, Converter={StaticResource BoolToVis}}" Grid.Column="0" Margin="5"  mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Min Players"/>
+                                            <Slider Value="{Binding Path=ServerCfg.VoteThreshold}" AutoToolTipPlacement="TopLeft" AutoToolTipPrecision="2" IsSnapToTickEnabled="True" Visibility="{Binding Path=ServerCfg.VotingEnabled, Converter={StaticResource BoolToVis}}" Minimum="0" Maximum="1"  Grid.Column="1" Margin="5" TickFrequency="0.01" TickPlacement="BottomRight" ToolTip="Voting threshold" SmallChange="0.01"/>
+                                        </Grid>
+                                    </StackPanel>
+                                </GroupBox>
+
+                                <!--HEADLESS TILE-->
+                                <Expander Header="Headless Clients">
+                                    <Expander.Style>
+                                        <Style TargetType="Expander" BasedOn="{StaticResource MahApps.Styles.Expander}">
+                                            <Setter Property="Margin" Value="5"/>
+                                            <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Window.Background}"></Setter>
+                                        </Style>
+                                    </Expander.Style>
+                                    <StackPanel>
+                                        <mah:ToggleSwitch IsOn="{Binding Path=ServerCfg.HeadlessClientEnabled}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="VoN Activation" ToolTip="VoN Activation" Margin="10,2,0,2" HorizontalAlignment="Left"/>
+                                        <TextBox MinHeight="50" Margin="10,3" Text="{Binding Path=ServerCfg.HeadlessClients}" Visibility="{Binding Path=ServerCfg.HeadlessClientEnabled, Converter={StaticResource BoolToVis}}" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Headless IPs (one per line)"/>
+                                        <TextBox MinHeight="50" Margin="10,3" Text="{Binding Path=ServerCfg.LocalClient}" Visibility="{Binding Path=ServerCfg.HeadlessClientEnabled, Converter={StaticResource BoolToVis}}" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Local Clients (one per line)"/>
+                                    </StackPanel>
+                                </Expander>
+                            </StackPanel>
+
+                            <!-- Column 3 -->
+                            <StackPanel Grid.Column="2">
+                                <!--PERMISSIONS TILE-->
+                                <GroupBox Header="Permissions Settings">
+                                    <GroupBox.Style>
+                                        <Style TargetType="GroupBox" BasedOn="{StaticResource MahApps.Styles.GroupBox}">
+                                            <Setter Property="Margin" Value="5"/>
+                                            <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Window.Background}"></Setter>
+                                        </Style>
+                                    </GroupBox.Style>
+                                    <StackPanel>
+                                        <CheckBox IsChecked="{Binding Path=ServerCfg.DrawingInMap}" Content="Enable drawing in Map" Margin="5,3"/>
+                                        <CheckBox IsChecked="{Binding Path=ServerCfg.SkipLobby}" Content="Skip lobby" Margin="5,2"/>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="auto"/><ColumnDefinition/>
+                                            </Grid.ColumnDefinitions>
+                                            <CheckBox IsChecked="{Binding Path=ServerCfg.RequiredBuildChecked}" Margin="5,3"/>
+                                            <mah:NumericUpDown Grid.Column="1" Value="{Binding Path=ServerCfg.RequiredBuild}" IsEnabled="{Binding Path=ServerCfg.RequiredBuildChecked}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Required Build" Margin="5,2"/>
+                                        </Grid>
+                                    </StackPanel>
+                                </GroupBox>
+
+                                <!--LOGGING TILE-->
+                                <GroupBox Header="Logging Settings">
+                                    <GroupBox.Style>
+                                        <Style TargetType="GroupBox" BasedOn="{StaticResource MahApps.Styles.GroupBox}">
+                                            <Setter Property="Margin" Value="5"/>
+                                            <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Window.Background}"></Setter>
+                                        </Style>
+                                    </GroupBox.Style>
+                                    <StackPanel>
+                                        <TextBox Text="{Binding Path=ServerCfg.LogFile}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Logfile Name" Margin="5,3"/>
+                                        <ComboBox ItemsSource="{Binding Path=TimestampFormats}" SelectedItem="{Binding Path=ServerCfg.TimeStampFormat}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Timestamp Format" Margin="5,2"/>
+                                    </StackPanel>
+                                </GroupBox>
+
+                                <!--SCRIPTING TILE-->
+                                <Expander Header="Scripting Settings">
+                                    <Expander.Style>
+                                        <Style TargetType="Expander" BasedOn="{StaticResource MahApps.Styles.Expander}">
+                                            <Setter Property="Margin" Value="5"/>
+                                            <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Window.Background}"></Setter>
+                                        </Style>
+                                    </Expander.Style>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition/><ColumnDefinition/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                        </Grid.RowDefinitions>
+                                        <PasswordBox PasswordChar="{Binding Path=ServerCfg.ServerCommandPassword}" Style="{StaticResource MahApps.Styles.PasswordBox.Button.Revealed}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Server Command Password" Grid.ColumnSpan="2" Margin="5"/>
+                                        <TextBox Text="{Binding Path=ServerCfg.OnUserConnected}" Grid.Row="1" Grid.Column="0" mah:TextBoxHelper.Watermark="onUserConnected" mah:TextBoxHelper.UseFloatingWatermark="True"  Margin="5,2"/>
+                                        <TextBox Text="{Binding Path=ServerCfg.OnUserDisconnected}" Grid.Row="1" Grid.Column="1" mah:TextBoxHelper.Watermark="onUserDisconnected" mah:TextBoxHelper.UseFloatingWatermark="True"  Margin="5,2"/>
+                                        <TextBox Text="{Binding Path=ServerCfg.OnHackedData}" Grid.Row="2" Grid.Column="0" mah:TextBoxHelper.Watermark="onHackedData" mah:TextBoxHelper.UseFloatingWatermark="True"  Margin="5,2"/>
+                                        <TextBox Text="{Binding Path=ServerCfg.OnDifferentData}" Grid.Row="2" Grid.Column="1" mah:TextBoxHelper.Watermark="onDifferentData" mah:TextBoxHelper.UseFloatingWatermark="True"  Margin="5,2"/>
+                                        <TextBox Text="{Binding Path=ServerCfg.OnUnsignedData}" Grid.Row="3" Grid.Column="0" mah:TextBoxHelper.Watermark="onUnsignedData" mah:TextBoxHelper.UseFloatingWatermark="True"  Margin="5,2"/>
+                                        <TextBox Text="{Binding Path=ServerCfg.OnUserKicked}" Grid.Row="3" Grid.Column="1" mah:TextBoxHelper.Watermark="onUserKicked" mah:TextBoxHelper.UseFloatingWatermark="True"  Margin="5,2"/>
+
+                                    </Grid>
+                                </Expander>
+
+                                <!--MOTD TILE-->
+                                <GroupBox Header="MOTD">
+                                    <GroupBox.Style>
+                                        <Style TargetType="GroupBox" BasedOn="{StaticResource MahApps.Styles.GroupBox}">
+                                            <Setter Property="Margin" Value="5"/>
+                                            <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Window.Background}"></Setter>
+                                        </Style>
+                                    </GroupBox.Style>
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition />
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+                                        <TextBox Grid.Row="1" MinHeight="50" Margin="10" Text="{Binding Path=ServerCfg.Motd}" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"/>
+                                        <mah:NumericUpDown Grid.Row="2" Value="{Binding Path=ServerCfg.MotdInterval}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Delay Between Messages" Margin="10,0,10,5" HorizontalAlignment="Left"/>
+                                    </Grid>
+                                </GroupBox>
+                            </StackPanel>
+                        </Grid>
+                    </ScrollViewer>
+                    
+                    <Grid Grid.Row="1">
+                        <Grid.Style>
+                            <Style TargetType="Grid">
+                                <Setter Property="Margin" Value="5"/>
+                                <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Window.Background}"></Setter>
+                            </Style>
+                        </Grid.Style>
+                        <Expander Header="Server.cfg output" MaxHeight="400">
+                            <ScrollViewer HorizontalScrollBarVisibility="Visible" >
+                                <TextBlock Text="{Binding Path=ServerCfg.ServerCfgContent}" FontFamily="GenericMonospace"/>
+                            </ScrollViewer>
+                        </Expander>
+                    </Grid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Arma3Profile">
+
+            </TabItem>
+        </TabControl>
+
+        <!-- Bottom Controls -->
+        <StackPanel Grid.Row="1" Orientation="Horizontal">
+            <Label VerticalAlignment="Center" Content="Profile Display Name" FontWeight="Bold" FontSize="16" Margin="10"/>
+        </StackPanel>
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="10,0" Width="310" HorizontalAlignment="Left" Visibility="Collapsed" VerticalAlignment="Center">
+            <TextBox FontWeight="Bold" FontSize="16" Width="250"/>
+            <Button Content="{iconPacks:Material Kind=Check}" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Height="30" Width="30" Padding="0" Margin="5,2" VerticalAlignment="Bottom" FontSize="10"/>
+        </StackPanel>
+        <StackPanel Grid.Row="1" HorizontalAlignment="Right" Margin="5,10" Orientation="Horizontal">
+            <Button Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Padding="7,5" ToolTip="Save Profile" Content="{iconPacks:Material Kind=ContentSave}"/>
+            <Button Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Padding="7,5" ToolTip="Rename Profile" Content="{iconPacks:Material Kind=Pencil}"/>
+            <Button Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Padding="7,5" ToolTip="Delete Profile" Content="{iconPacks:Material Kind=Delete}"/>
+            <Button Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Padding="7,5" ToolTip="Launch Server" Content="{iconPacks:Material Kind=Play}"/>
+        </StackPanel>
+    </Grid>
+</UserControl>
