@@ -88,6 +88,9 @@ namespace FASTER.Views
                 case "Developpment": //Arma 3 Developpment branch, only for developpment clients
                     branch = "107410 -beta development";
                     break;
+                case "Performance / Profiling":
+                    branch = "233780 -beta profiling CautionSpecialProfilingAndTestingBranchArma3";
+                    break;
                 default:
                     Console.WriteLine("Nothing to see here");
                     break;

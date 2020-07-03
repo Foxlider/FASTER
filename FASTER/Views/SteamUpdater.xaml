@@ -97,6 +97,7 @@
                     <ComboBoxItem Content="Creator DLC"/>
                     <ComboBoxItem Content="LegacyPorts"/>
                     <ComboBoxItem Content="Development"/>
+                    <ComboBoxItem Content="Performance / Profiling"/>
                 </ComboBox>
                 <Button Name="ISteamUpdateButton" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="3" Content="Update" Margin="10,5,10,10" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Click="ISteamUpdateButton_Click"/>
             </Grid>
