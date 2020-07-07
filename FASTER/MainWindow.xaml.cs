@@ -17,6 +17,7 @@ using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
+using FASTER.ViewModel;
 using Microsoft.AppCenter.Crashes;
 
 namespace FASTER
@@ -88,8 +89,16 @@ namespace FASTER
         Profile _profile;
         public Profile ContentProfile
         {
-            get => _profile ?? new Profile();
+            get => _profile ??= new Profile();
             set => _profile = value;
+        }
+
+        private List<ProfileViewModel> _profileViews;
+
+        internal List<ProfileViewModel> ContentProfileViews
+        {
+            get => _profileViews ??= new List<ProfileViewModel>();
+            set => _profileViews = value;
         }
         #endregion
 
@@ -163,8 +172,7 @@ namespace FASTER
                     MainContent.Navigate(ContentLocalMods);
                     break;
                 case "navServerStatus":
-                    //MainContent.Navigate(ContentServerStatus);
-                    MainContent.Navigate(ContentProfile);
+                    MainContent.Navigate(ContentServerStatus);
                     break;
                 case "navSettings":
                     MainContent.Navigate(ContentSettings);
@@ -174,7 +182,10 @@ namespace FASTER
                     break;
                 default:
                     if (IServerProfilesMenu.Items.Cast<ToggleButton>().FirstOrDefault(p => p.Name == nav.Name) != null)
-                    { MainContent.Navigate(ContentProfiles.First(p => p.Name == nav.Name)); }
+                    {
+                        ContentProfile.DataContext = ContentProfileViews.First(p => p.Profile.Id == nav.Name);
+                        MainContent.Navigate(ContentProfile);
+                    }
                     break;
             }
         }
@@ -332,13 +343,14 @@ namespace FASTER
             var currentProfiles = Properties.Settings.Default.Servers;
             Dispatcher?.Invoke(() => { IServerProfilesMenu.Items.Clear(); });
 
-            ContentProfiles.Clear();
+            ContentProfileViews.Clear();
 
             foreach (var profile in currentProfiles.ServerProfiles)
             {
+                Guid id = Guid.NewGuid();
                 ToggleButton newItem = new ToggleButton
                 {
-                    Name = profile.SafeName,
+                    Name = $"_{id:N}",
                     Content = profile.DisplayName,
                     Style = (Style)FindResource("MahApps.Styles.ToggleButton.WindowCommands"),
                     Padding = new Thickness(10, 2, 0, 2),
@@ -352,10 +364,13 @@ namespace FASTER
 
                 newItem.Click += ToggleButton_Click;
 
-                if (ContentProfiles.Any(tab => profile.SafeName == tab.Name)) 
+                if (ContentProfileViews.Any(tab => profile.SafeName == tab.ServerCfg.Hostname)) 
                     continue;
 
-                ContentProfiles.Add(new Views.ServerProfile(profile) { Name = profile.SafeName});
+                //TODO change this later on to load Profiles
+                var p = new ProfileViewModel(profile.DisplayName, id);
+
+                ContentProfileViews.Add(p);
             }
         }
 

@@ -6,8 +6,7 @@
              xmlns:viewModel="clr-namespace:FASTER.ViewModel"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
-             mc:Ignorable="d" 
-             Loaded="UserControl_Loaded"
+             mc:Ignorable="d"
              d:DesignHeight="1000" d:DesignWidth="800">
     <UserControl.DataContext>
         <viewModel:ProfileViewModel/>
@@ -276,11 +275,11 @@
 
         <!-- Bottom Controls -->
         <StackPanel Grid.Row="1" Orientation="Horizontal">
-            <Label VerticalAlignment="Center" Content="Profile Display Name" FontWeight="Bold" FontSize="16" Margin="10"/>
+            <Label VerticalAlignment="Center" Content="{Binding Path=Profile.Name}" ToolTip="{Binding Path=Profile.Id}" FontWeight="Bold" FontSize="16" Margin="10"/>
         </StackPanel>
         <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="10,0" Width="310" HorizontalAlignment="Left" Visibility="Collapsed" VerticalAlignment="Center">
-            <TextBox FontWeight="Bold" FontSize="16" Width="250"/>
-            <Button Content="{iconPacks:Material Kind=Check}" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Height="30" Width="30" Padding="0" Margin="5,2" VerticalAlignment="Bottom" FontSize="10"/>
+            <TextBox FontWeight="Bold" FontSize="16" Text="{Binding Path=Profile.Name}" Width="250"/>
+            <Button Content="{iconPacks:Material Kind=Check}" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" Command="{Binding Path=ToggleNameEditMode}" BorderThickness="0" Height="30" Width="30" Padding="0" Margin="5,2" VerticalAlignment="Bottom" FontSize="10"/>
         </StackPanel>
         <StackPanel Grid.Row="1" HorizontalAlignment="Right" Margin="5,10" Orientation="Horizontal">
             <Button Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Padding="7,5" ToolTip="Save Profile" Content="{iconPacks:Material Kind=ContentSave}"/>

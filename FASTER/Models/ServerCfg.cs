@@ -32,11 +32,11 @@ namespace FASTER.Models
         //Server Behavior
         private double voteThreshold       = 0.33;
         private int    voteMissionPlayers  = 3;
-        private short  kickduplicate       = 1; //    1 = active ; 0=disabled
-        private bool   loopback            = false;
+        private short  kickduplicate       = 1;     // 1 = active ; 0=disabled
+        private bool   loopback;
         private bool   upnp                = true;
-        private short  allowedFilePatching = 0; // 0 = no clients; 1= HC only; 2= All Clients
-        private int    disconnectTimeout   = 5; //timeout in seconds
+        private short  allowedFilePatching;         // 0 = no clients; 1= HC only; 2= All Clients
+        private int    disconnectTimeout   = 5;     //timeout in seconds
         private int    maxdesync           = 150;
         private int    maxping             = 200;
         private int    maxpacketloss       = 50;
@@ -46,17 +46,17 @@ namespace FASTER.Models
         private bool   randomMissionOrder = true;
 
         //Arma server only 
-        private short  verifySignatures         = 2; // 0 = Disabled ; 1 = Deprecated Activated ; 2 = Activated (Default)
+        private short  verifySignatures         = 2;        // 0 = Disabled ; 1 = Deprecated Activated ; 2 = Activated (Default)
         private bool   drawingInMap             = true;
-        private short  disableVoN               = 0;     // 0 = VoN activated ; 1 = VoN Disabled
-        private int    vonCodecQuality          = 3;     // 8kHz is 0-10, 16kHz is 11-20, 32kHz is 21-30 (and 48kHz with OPUS enabled)
-        private short  vonCodec                 = 0;     // 0 = SPEEX ; 1 = OPUS
-        private bool   skipLobby                = false; //Overritten by mission parameters
+        private short  disableVoN;                          // 0 = VoN activated ; 1 = VoN Disabled
+        private int    vonCodecQuality          = 3;        // 8kHz is 0-10, 16kHz is 11-20, 32kHz is 21-30 (and 48kHz with OPUS enabled)
+        private short  vonCodec;                            // 0 = SPEEX ; 1 = OPUS
+        private bool   skipLobby;                           //Overritten by mission parameters
         private string logFile                  = "server_console.log";
-        private short  battlEye                 = 1;       // 0 = Disabled ; 1 = Enabled
-        private string timeStampFormat          = "short"; // Possible values = "none", "short", "full"
-        private short  persistent               = 0;
-        private bool   requiredBuildChecked     = false;
+        private short  battlEye                 = 1;        // 0 = Disabled ; 1 = Enabled
+        private string timeStampFormat          = "short";  // Possible values = "none", "short", "full"
+        private short  persistent;
+        private bool   requiredBuildChecked;
         private int    requiredBuild            = 999999999;
         private int    steamProtocolMaxDataSize = 1024;
 

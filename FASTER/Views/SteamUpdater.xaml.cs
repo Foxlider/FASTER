@@ -24,11 +24,7 @@ namespace FASTER.Views
             InitializeComponent();
         }
         
-        public MainWindow MetroWindow
-        { 
-            get => (MainWindow)Window.GetWindow(this);
-            set => MetroWindow = value;
-        }
+        public MainWindow MetroWindow => (MainWindow)Window.GetWindow(this);
 
 
         private void UserControl_Initialized(object sender, EventArgs e)
