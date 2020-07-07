@@ -184,6 +184,7 @@ namespace FASTER
                     if (IServerProfilesMenu.Items.Cast<ToggleButton>().FirstOrDefault(p => p.Name == nav.Name) != null)
                     {
                         ContentProfile.DataContext = ContentProfileViews.First(p => p.Profile.Id == nav.Name);
+                        ContentProfile.Refresh();
                         MainContent.Navigate(ContentProfile);
                     }
                     break;

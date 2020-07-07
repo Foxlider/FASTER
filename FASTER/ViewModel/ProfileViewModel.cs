@@ -1,7 +1,12 @@
 ﻿using FASTER.Models;
+using MahApps.Metro.Controls;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
+using System.Linq;
 using System.Text;
+using System.Windows;
 using System.Windows.Data;
 
 namespace FASTER.ViewModel
@@ -39,9 +44,20 @@ namespace FASTER.ViewModel
         public bool ProfileNameEditMode { get; set; }
 
 
-        public void LoadServerCfg()
+        public void LoadData()
         {
-            //ServerCfg = new ServerCfg { Hostname = name };
+            var modlist = new List<ProfileMod>();
+            foreach(var mod in Properties.Settings.Default.steamMods.SteamMods)
+            {
+                ProfileMod existingMod = Profile.ProfileMods.FirstOrDefault(m => m.Id == mod.WorkshopId);
+                if (existingMod == null)
+                {
+                    modlist.Add(new ProfileMod { Name = mod.Name, Id = mod.WorkshopId });
+                    continue;
+                }
+                modlist.Add(existingMod);
+            }
+            Profile.ProfileMods = modlist;
             ServerCfg.ServerCfgContent = ServerCfg.ProcessFile();
         }
     }
