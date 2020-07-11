@@ -24,5 +24,35 @@ namespace FASTER.Views
             if (DataContext == null) return;
             ((ProfileViewModel)DataContext).LoadData();
         }
+
+        private void CopyFromClient(object sender, RoutedEventArgs e)
+        {
+            if (DataContext == null) return;
+            ((ProfileViewModel)DataContext).ModsCopyFrom(((MenuItem)sender).Tag, "Client");
+        }
+
+        private void CopyFromServer(object sender, RoutedEventArgs e)
+        {
+            if (DataContext == null) return;
+            ((ProfileViewModel)DataContext).ModsCopyFrom(((MenuItem)sender).Tag, "Server");
+        }
+
+        private void CopyFromHeadless(object sender, RoutedEventArgs e)
+        {
+            if (DataContext == null) return;
+            ((ProfileViewModel)DataContext).ModsCopyFrom(((MenuItem)sender).Tag, "Headless");
+        }
+
+        private void ModsSelectAll(object sender, RoutedEventArgs e)
+        {
+            if (DataContext == null) return;
+            ((ProfileViewModel)DataContext).ModsSelectAll(((MenuItem)sender).Tag, true);
+        }
+
+        private void ModsSelectNone(object sender, RoutedEventArgs e)
+        {
+            if (DataContext == null) return;
+            ((ProfileViewModel)DataContext).ModsSelectAll(((MenuItem)sender).Tag, false);
+        }
     }
 }

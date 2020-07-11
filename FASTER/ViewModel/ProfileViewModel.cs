@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Data;
+using System.Windows.Input;
 
 namespace FASTER.ViewModel
 {
@@ -52,13 +53,65 @@ namespace FASTER.ViewModel
                 ProfileMod existingMod = Profile.ProfileMods.FirstOrDefault(m => m.Id == mod.WorkshopId);
                 if (existingMod == null)
                 {
-                    modlist.Add(new ProfileMod { Name = mod.Name, Id = mod.WorkshopId });
+                    var newProfile = new ProfileMod { Name = mod.Name, Id = mod.WorkshopId };
+                    modlist.Add(newProfile);
                     continue;
                 }
                 modlist.Add(existingMod);
             }
             Profile.ProfileMods = modlist;
             ServerCfg.ServerCfgContent = ServerCfg.ProcessFile();
+        }
+
+        internal void ModsCopyFrom(object to, string from)
+        {
+            foreach (var mod in Profile.ProfileMods)
+            {
+                switch (to.ToString())
+                {
+                    case "Server":
+                        {
+                            if (from == "Client") mod.ServerSideChecked = mod.ClientSideChecked;
+                            if (from == "Headless") mod.ServerSideChecked = mod.HeadlessChecked;
+                            break;
+                        }
+                    case "Client":
+                        {
+                            if (from == "Server") mod.ClientSideChecked = mod.ServerSideChecked;
+                            if (from == "Headless") mod.ClientSideChecked = mod.HeadlessChecked;
+                            break;
+                        }
+                    case "Headless":
+                        {
+                            if (from == "Client") mod.HeadlessChecked = mod.ClientSideChecked;
+                            if (from == "Server") mod.HeadlessChecked = mod.ServerSideChecked;
+                            break;
+                        }
+                    default:
+                        break;
+                }
+            }
+        }
+
+        internal void ModsSelectAll(object to, bool select)
+        {
+            foreach (var mod in Profile.ProfileMods)
+            {
+                switch (to.ToString())
+                {
+                    case "Server":
+                        mod.ServerSideChecked = select;
+                        break;
+                    case "Client":
+                        mod.ClientSideChecked = select;
+                        break;
+                    case "Headless":
+                        mod.HeadlessChecked = select;
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
     }
 }

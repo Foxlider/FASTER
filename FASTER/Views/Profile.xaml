@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:viewModel="clr-namespace:FASTER.ViewModel"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
@@ -30,37 +31,136 @@
                         <ColumnDefinition Width="2*"/>
                         <ColumnDefinition Width="5*"/>
                     </Grid.ColumnDefinitions>
-                    <StackPanel>
-                        <TextBox Text="{Binding Path=Profile.Name}"/>
-
+                    <StackPanel Margin="5">
+                        <GroupBox Header="Profile Settings">
+                            <StackPanel>
+                                <TextBox Text="{Binding Path=Profile.Name}"/>
+                            </StackPanel>
+                        </GroupBox>
                     </StackPanel>
-                    <Grid Grid.Column="1">
-                        <DataGrid ItemsSource="{Binding Path=Profile.ProfileMods, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False">
+                    <Grid Grid.Column="1" Margin="5">
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition Height="auto"/>
+                        </Grid.RowDefinitions>
+                        <DataGrid ItemsSource="{Binding Path=Profile.ProfileMods, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" CanUserReorderColumns="False" CanUserSortColumns="False" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True">
+                            <DataGrid.Resources>
+                                <ContextMenu x:Key="ServerContextMenu">
+                                    <MenuItem Tag="Server" Header="Select All" Click="ModsSelectAll">
+                                        <MenuItem.Icon>
+                                            <iconPacks:PackIconModern Kind="CheckmarkThick"/>
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem Tag="Server" Header="Select None" Click="ModsSelectNone">
+                                        <MenuItem.Icon>
+                                            <iconPacks:PackIconModern Kind="CheckmarkUncrossed"/>
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem Tag="Server" Header="Copy From Client" Click="CopyFromClient">
+                                        <MenuItem.Icon>
+                                            <iconPacks:PackIconModern Kind="PageCopy"/>
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem Tag="Server" Header="Copy From Headless" Click="CopyFromHeadless">
+                                        <MenuItem.Icon>
+                                            <iconPacks:PackIconModern Kind="PageCopy"/>
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                </ContextMenu>
+                                <ContextMenu x:Key="ClientContextMenu">
+                                    <MenuItem Tag="Client" Header="Select All" Click="ModsSelectAll">
+                                        <MenuItem.Icon>
+                                            <iconPacks:PackIconModern Kind="CheckmarkThick"/>
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem Tag="Client" Header="Select None" Click="ModsSelectNone">
+                                        <MenuItem.Icon>
+                                            <iconPacks:PackIconModern Kind="CheckmarkUncrossed"/>
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem Tag="Client" Header="Copy From Server" Click="CopyFromServer">
+                                        <MenuItem.Icon>
+                                            <iconPacks:PackIconModern Kind="PageCopy"/>
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem Tag="Client" Header="Copy From Headless" Click="CopyFromHeadless">
+                                        <MenuItem.Icon>
+                                            <iconPacks:PackIconModern Kind="PageCopy"/>
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                </ContextMenu>
+                                <ContextMenu x:Key="HeadlessContextMenu">
+                                    <MenuItem Tag="Headless" Header="Select All" Click="ModsSelectAll">
+                                        <MenuItem.Icon>
+                                            <iconPacks:PackIconModern Kind="CheckmarkThick"/>
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem Tag="Headless" Header="Select None" Click="ModsSelectNone">
+                                        <MenuItem.Icon>
+                                            <iconPacks:PackIconModern Kind="CheckmarkUncrossed"/>
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem Tag="Headless" Header="Copy From Server" Click="CopyFromServer">
+                                        <MenuItem.Icon>
+                                            <iconPacks:PackIconModern Kind="PageCopy"/>
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem Tag="Headless" Header="Copy From Client" Click="CopyFromClient">
+                                        <MenuItem.Icon>
+                                            <iconPacks:PackIconModern Kind="PageCopy"/>
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                </ContextMenu>
+
+                                <Style TargetType="{x:Type DataGridColumnHeader}" BasedOn="{StaticResource MahApps.Styles.DataGridColumnHeader.Azure}">
+                                    <Style.Triggers>
+                                        <Trigger Property="Content" Value="Server">
+                                            <Setter Property="ContextMenu" Value="{StaticResource ServerContextMenu}" />
+                                        </Trigger>
+                                        <Trigger Property="Content" Value="Client">
+                                            <Setter Property="ContextMenu" Value="{StaticResource ClientContextMenu}" />
+                                        </Trigger>
+                                        <Trigger Property="Content" Value="Headless">
+                                            <Setter Property="ContextMenu" Value="{StaticResource HeadlessContextMenu}" />
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </DataGrid.Resources>
                             <DataGrid.Columns>
                                 <DataGridTemplateColumn Header="Server" Width="auto">
                                     <DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate >
+                                        <DataTemplate>
                                             <CheckBox IsChecked="{Binding ServerSideChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center"/>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
-                                <DataGridTemplateColumn Header="Client">
+                                <DataGridTemplateColumn Header="Client" Width="auto">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <CheckBox IsChecked="{Binding ClientSideChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center"/>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
-                                <DataGridTemplateColumn Header="Server">
+                                <DataGridTemplateColumn Header="Headless" Width="auto">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <CheckBox IsChecked="{Binding HeadlessChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center"/>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
-                                <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="1*" ToolTipService.ToolTip="{Binding Id}"/>
+                                <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="1*" IsReadOnly="True" ToolTipService.ToolTip="{Binding Id}"/>
                             </DataGrid.Columns>
                         </DataGrid>
+                        <Grid Grid.Row="1" Margin="5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="{Binding Path=Profile.ServerModsChecked}" Grid.Column="0"/>
+                            <TextBlock Text="{Binding Path=Profile.ClientModsChecked}" Grid.Column="1"/>
+                            <TextBlock Text="{Binding Path=Profile.HeadlessModsChecked}" Grid.Column="2"/>
+                        </Grid>
                     </Grid>
                 </Grid>
                 

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Security.AccessControl;
 using System.Text;
@@ -14,9 +15,7 @@ namespace FASTER.Models
         private string _id;
         private string _name;
 
-
         private List<ProfileMod> _profileMods = new List<ProfileMod>();
-        
         private ServerCfg _serverCfg;
 
 
@@ -32,15 +31,29 @@ namespace FASTER.Models
                 RaisePropertyChanged("Name");
             }
         }
+        
+        //Current logit to count the checked mods
+        public int ServerModsChecked { get => ProfileMods.Where(m => m.ServerSideChecked == true).Count(); }
+        public int ClientModsChecked { get => ProfileMods.Where(m => m.ClientSideChecked == true).Count(); }
+        public int HeadlessModsChecked { get => ProfileMods.Where(m => m.HeadlessChecked == true).Count(); }
+
         public List<ProfileMod> ProfileMods
         {
             get => _profileMods;
             set
             {
+                //Removing previous triggers
+                _profileMods.ForEach(m => m.PropertyChanged -= Item_PropertyChanged);
+
                 _profileMods = value;
+
+                //Adding the trigger to count checked mods
+                _profileMods.ForEach(m => m.PropertyChanged += Item_PropertyChanged);
+
                 RaisePropertyChanged("ProfileMods");
             }
         }
+
         public ServerCfg ServerCfg { 
             get => _serverCfg;
             set
@@ -65,6 +78,14 @@ namespace FASTER.Models
             ServerCfg = new ServerCfg() { Hostname = name };
         }
 
+        //This is used to trigger PropertyChanged to count each checked mod
+        private void Item_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            RaisePropertyChanged("ServerModsChecked");
+            RaisePropertyChanged("ClientModsChecked");
+            RaisePropertyChanged("HeadlessModsChecked");
+        }
+
 
         //INOTIFYPROPERTYCHANGED
         public event PropertyChangedEventHandler PropertyChanged;
@@ -87,6 +108,7 @@ namespace FASTER.Models
             {
                 serverSideChecked = value;
                 RaisePropertyChanged("ServerSideChecked");
+                RaisePropertyChanged("HeadlessModsChecked");
             }
         }
         public bool ClientSideChecked
@@ -96,6 +118,7 @@ namespace FASTER.Models
             {
                 clientSideChecked = value;
                 RaisePropertyChanged("ClientSideChecked");
+                RaisePropertyChanged("ClientModsChecked");
             }
         }
         public bool HeadlessChecked
@@ -105,6 +128,7 @@ namespace FASTER.Models
             {
                 headlessChecked = value;
                 RaisePropertyChanged("HeadlessChecked");
+                RaisePropertyChanged("HeadlessModsChecked");
             }
         }
 
