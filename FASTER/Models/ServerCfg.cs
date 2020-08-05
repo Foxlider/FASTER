@@ -72,6 +72,9 @@ namespace FASTER.Models
 
         private string serverCfgContent;
 
+        private string missionOverrideContent;
+        private List<ProfileMission> _missions = new List<ProfileMission>();
+
         #region Server Options
         public string PasswordAdmin
         {
@@ -190,6 +193,33 @@ namespace FASTER.Models
             {
                 votingEnabled = value;
                 RaisePropertyChanged("VotingEnabled");
+            }
+        }
+
+        public string MissionOverrideContent
+        {
+            get => missionOverrideContent;
+            set
+            {
+                missionOverrideContent = value;
+                RaisePropertyChanged("MissionOverrideContent");
+            }
+        }
+
+        public List<ProfileMission> Missions
+        {
+            get => _missions;
+            set
+            {
+                //Removing previous triggers
+                _missions.ForEach(m => m.PropertyChanged -= Item_PropertyChanged);
+
+                _missions = value;
+
+                //Adding the trigger to count checked mods
+                _missions.ForEach(m => m.PropertyChanged += Item_PropertyChanged);
+
+                RaisePropertyChanged("Missions");
             }
         }
         #endregion
@@ -553,6 +583,11 @@ namespace FASTER.Models
 
         public ServerCfg() { ServerCfgContent = ProcessFile(); }
 
+        private void Item_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            RaisePropertyChanged("MissionChecked");
+        }
+
         public string ProcessFile()
         {
             string output = "//\r\n"
@@ -646,6 +681,51 @@ namespace FASTER.Models
             if (PropertyChanged == null) return;
             PropertyChanged(this, new PropertyChangedEventArgs(property));
             if(property != "ServerCfgContent") ServerCfgContent = ProcessFile();
+        }
+    }
+
+    internal class ProfileMission : INotifyPropertyChanged
+    {
+        private bool missionChecked;
+        private string name;
+        private string path;
+
+        public bool MissionChecked
+        {
+            get => missionChecked;
+            set
+            {
+                missionChecked = value;
+                RaisePropertyChanged("MissionChecked");
+            }
+        }
+
+        public string Name
+        {
+            get => name;
+            set
+            {
+                name = value;
+                RaisePropertyChanged("Name");
+            }
+        }
+
+        public string Path
+        {
+            get => path;
+            set
+            {
+                path = value;
+                RaisePropertyChanged("Path");
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void RaisePropertyChanged(string property)
+        {
+            if (PropertyChanged == null) return;
+            PropertyChanged(this, new PropertyChangedEventArgs(property));
         }
     }
 }

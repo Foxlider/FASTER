@@ -2,6 +2,7 @@
 using MahApps.Metro.Controls;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -19,6 +20,8 @@ namespace FASTER.ViewModel
             Profile = new ServerProfileNew("Server");
             ServerCfg = Profile.ServerCfg;
             ServerCfg.ServerCfgContent = ServerCfg.ProcessFile();
+            ArmaProfile                    = Profile.ArmaProfile;
+            ArmaProfile.ArmaProfileContent = ArmaProfile.ProcessFile();
         }
         public ProfileViewModel(string name)
         {
@@ -32,15 +35,23 @@ namespace FASTER.ViewModel
             Profile = new ServerProfileNew(name, id);
             ServerCfg = Profile.ServerCfg;
             ServerCfg.ServerCfgContent = ServerCfg.ProcessFile();
+            ArmaProfile = Profile.ArmaProfile;
+            ArmaProfile.ArmaProfileContent = ArmaProfile.ProcessFile();
         }
 
         public ServerCfg ServerCfg { get; set; }
+        public Arma3Profile ArmaProfile { get; set; }
         public ServerProfileNew Profile { get; set; }
 
-        public CollectionView VonCodecs { get; } = new CollectionView(ServerCfgArrays.VonCodecStrings);
-        public CollectionView FilePatching { get; } = new CollectionView(ServerCfgArrays.AllowFilePatchingStrings);
-        public CollectionView VerifySignatures { get; } = new CollectionView(ServerCfgArrays.VerifySignaturesStrings);
-        public CollectionView TimestampFormats { get; } = new CollectionView(ServerCfgArrays.TimeStampStrings);
+        public ObservableCollection<string> VonCodecs              { get; } = new ObservableCollection<string>(ServerCfgArrays.VonCodecStrings);
+        public ObservableCollection<string> FilePatching           { get; } = new ObservableCollection<string>(ServerCfgArrays.AllowFilePatchingStrings);
+        public ObservableCollection<string> VerifySignatures       { get; } = new ObservableCollection<string>(ServerCfgArrays.VerifySignaturesStrings);
+        public ObservableCollection<string> TimestampFormats       { get; } = new ObservableCollection<string>(ServerCfgArrays.TimeStampStrings);
+        public ObservableCollection<string> EnabledStrings         { get; } = new ObservableCollection<string>(ProfileCfgArrays.EnabledStrings);
+        public ObservableCollection<string> FadeOutStrings         { get; } = new ObservableCollection<string>(ProfileCfgArrays.FadeOutStrings);
+        public ObservableCollection<string> LimitedDistanceStrings { get; } = new ObservableCollection<string>(ProfileCfgArrays.LimitedDistanceStrings);
+        public ObservableCollection<string> AiPresetStrings        { get; } = new ObservableCollection<string>(ProfileCfgArrays.AiPresetStrings);
+        public ObservableCollection<string> ThirdPersonStrings     { get; } = new ObservableCollection<string>(ProfileCfgArrays.ThirdPersonStrings);
 
         public bool ProfileNameEditMode { get; set; }
 
@@ -60,7 +71,31 @@ namespace FASTER.ViewModel
                 modlist.Add(existingMod);
             }
             Profile.ProfileMods = modlist;
+
             ServerCfg.ServerCfgContent = ServerCfg.ProcessFile();
+        }
+
+        internal void LoadMissions()
+        {
+            if (!Directory.Exists(Path.Combine(Properties.Settings.Default.serverPath, "mpmissions"))) return;
+
+            var missionList = new List<ProfileMission>();
+            List<string> newMissions = new List<string>();
+            newMissions.AddRange(Directory.GetFiles(Path.Combine(Properties.Settings.Default.serverPath, "mpmissions"), "*.pbo")
+                                        .Select(mission => mission.Replace(Path.Combine(Properties.Settings.Default.serverPath, "mpmissions") + "\\", "")));
+            foreach (var mission in newMissions)
+            {
+                ProfileMission existingMission = Profile.ServerCfg.Missions.FirstOrDefault(m => m.Path == mission);
+                if (existingMission == null)
+                {
+                    var newMission = new ProfileMission { Name = mission.Replace(".pbo", ""), Path = mission };
+                    missionList.Add(newMission);
+                    continue;
+                }
+                missionList.Add(existingMission);
+            }
+
+            Profile.ServerCfg.Missions = missionList;
         }
 
         internal void ModsCopyFrom(object to, string from)
@@ -113,5 +148,13 @@ namespace FASTER.ViewModel
                 }
             }
         }
+
+        internal void MissionSelectAll(bool select)
+        {
+            foreach (var mission in Profile.ServerCfg.Missions)
+            { mission.MissionChecked = select; }
+        }
+
+
     }
 }

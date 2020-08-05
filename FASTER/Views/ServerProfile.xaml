@@ -883,7 +883,8 @@
             CloseOnOverlay="True"
             GlowBrush="Black"
             BorderThickness="0"
-            Title="Deleting Profile">
+            Title="Deleting Profile"
+            Visibility="Collapsed">
             <simpleChildWindow:ChildWindow.Icon>
                 <iconPacks:PackIconMaterial
                     HorizontalAlignment="Center"

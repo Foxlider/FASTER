@@ -14,9 +14,14 @@ namespace FASTER.Models
         //PRIVATE VARS DECLARATION
         private string _id;
         private string _name;
+        private string _executable;
+        private int _port = 2302;
+        private int _headlessNum;
+        private bool _missionOverride;
 
         private List<ProfileMod> _profileMods = new List<ProfileMod>();
         private ServerCfg _serverCfg;
+        private Arma3Profile _armaProfile;
 
 
         //PUBLIC VAR DECLARATIONS
@@ -31,11 +36,50 @@ namespace FASTER.Models
                 RaisePropertyChanged("Name");
             }
         }
+        public string Executable
+        {
+            get => _executable;
+            set
+            {
+                _executable = value;
+                RaisePropertyChanged("Executable");
+            }
+        }
         
+        public int Port 
+        { 
+            get => _port; 
+            set 
+            { 
+                _port = value;
+                RaisePropertyChanged("Port");
+            } 
+        }
+
+        public int HeadlessNumber
+        {
+            get => _headlessNum;
+            set
+            {
+                _headlessNum = value;
+                RaisePropertyChanged("HeadlessNumber");
+            }
+        }
+
+        public bool MissionSelectorOverride
+        {
+            get => _missionOverride;
+            set
+            {
+                _missionOverride = value;
+                RaisePropertyChanged("MissionSelectorOverride");
+            }
+        }
+
         //Current logit to count the checked mods
-        public int ServerModsChecked { get => ProfileMods.Where(m => m.ServerSideChecked == true).Count(); }
-        public int ClientModsChecked { get => ProfileMods.Where(m => m.ClientSideChecked == true).Count(); }
-        public int HeadlessModsChecked { get => ProfileMods.Where(m => m.HeadlessChecked == true).Count(); }
+        public int ServerModsChecked => ProfileMods.Count(m => m.ServerSideChecked);
+        public int ClientModsChecked => ProfileMods.Count(m => m.ClientSideChecked);
+        public int HeadlessModsChecked => ProfileMods.Count(m => m.HeadlessChecked);
 
         public List<ProfileMod> ProfileMods
         {
@@ -54,12 +98,23 @@ namespace FASTER.Models
             }
         }
 
-        public ServerCfg ServerCfg { 
+        public ServerCfg ServerCfg 
+        { 
             get => _serverCfg;
             set
             {
                 _serverCfg = value;
                 RaisePropertyChanged("ServerCfg");
+            }
+        }
+
+        public Arma3Profile ArmaProfile
+        {
+            get => _armaProfile;
+            set
+            {
+                _armaProfile = value;
+                RaisePropertyChanged("ArmaProfile");
             }
         }
 
@@ -69,6 +124,7 @@ namespace FASTER.Models
             _id = $"_{Guid.NewGuid():N}";
             Name = name;
             ServerCfg = new ServerCfg(){ Hostname = name};
+            ArmaProfile = new Arma3Profile();
         }
 
         public ServerProfileNew(string name, Guid guid)
@@ -76,6 +132,7 @@ namespace FASTER.Models
             _id = $"_{guid:N}";
             Name = name;
             ServerCfg = new ServerCfg() { Hostname = name };
+            ArmaProfile = new Arma3Profile();
         }
 
         //This is used to trigger PropertyChanged to count each checked mod

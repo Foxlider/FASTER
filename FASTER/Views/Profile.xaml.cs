@@ -54,5 +54,23 @@ namespace FASTER.Views
             if (DataContext == null) return;
             ((ProfileViewModel)DataContext).ModsSelectAll(((MenuItem)sender).Tag, false);
         }
+
+        private void MissionSelectAll(object sender, RoutedEventArgs e)
+        {
+            if (DataContext == null) return;
+            ((ProfileViewModel)DataContext).MissionSelectAll(true);
+        }
+
+        private void MissionSelectNone(object sender, RoutedEventArgs e)
+        {
+            if (DataContext == null) return;
+            ((ProfileViewModel)DataContext).MissionSelectAll(false);
+        }
+
+        private void MissionRefresh(object sender, RoutedEventArgs e)
+        {
+            if (DataContext == null) return;
+            ((ProfileViewModel)DataContext).LoadMissions();
+        }
     }
 }
