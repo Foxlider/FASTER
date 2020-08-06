@@ -155,7 +155,7 @@ namespace FASTER.Models
         private bool serverSideChecked;
         private bool clientSideChecked;
         private bool headlessChecked;
-        private int _id;
+        private uint _id;
         private string name;
 
         public bool ServerSideChecked
@@ -189,7 +189,7 @@ namespace FASTER.Models
             }
         }
 
-        public int Id
+        public uint Id
         {
             get => _id;
             set

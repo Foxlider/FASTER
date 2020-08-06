@@ -131,7 +131,7 @@ namespace FASTER.Views
                 try
                 {
                     var sModId = steamMod.Replace(Path.Combine(Properties.Settings.Default.steamCMDPath, "steamapps", "workshop", "content", "107410"), "").Replace("\\", "");
-                    if (int.TryParse(sModId, out var modId))
+                    if (uint.TryParse(sModId, out var modId))
                     {
                         try
                         {
@@ -288,7 +288,7 @@ namespace FASTER.Views
             await UpdateMod(steamMod.WorkshopId, steamMod.Name);
         }
 
-        private async Task UpdateMod(int modId, string modName, bool singleMod = true)
+        private async Task UpdateMod(uint modId, string modName, bool singleMod = true)
         {
             if (MetroWindow.ContentSteamUpdater.ReadyToUpdate())
             {
