@@ -321,6 +321,7 @@ namespace FASTER.Models
 
         public Arma3Profile()
         { ArmaProfileContent = ProcessFile(); }
+
         public string ProcessFile()
         {
             string output = 

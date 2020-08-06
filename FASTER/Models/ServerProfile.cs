@@ -22,7 +22,7 @@ namespace FASTER.Models
         private List<ProfileMod> _profileMods = new List<ProfileMod>();
         private ServerCfg _serverCfg;
         private Arma3Profile _armaProfile;
-
+        private BasicCfg _basicCfg;
 
         //PUBLIC VAR DECLARATIONS
         public string Id => _id;
@@ -118,6 +118,16 @@ namespace FASTER.Models
             }
         }
 
+        public BasicCfg BasicCfg
+        {
+            get => _basicCfg;
+            set
+            {
+                _basicCfg = value;
+                RaisePropertyChanged("BasicCfg");
+            }
+        }
+
         //CTORS
         public ServerProfileNew(string name)
         {
@@ -125,6 +135,7 @@ namespace FASTER.Models
             Name = name;
             ServerCfg = new ServerCfg(){ Hostname = name};
             ArmaProfile = new Arma3Profile();
+            BasicCfg = new BasicCfg();
         }
 
         public ServerProfileNew(string name, Guid guid)
@@ -133,6 +144,7 @@ namespace FASTER.Models
             Name = name;
             ServerCfg = new ServerCfg() { Hostname = name };
             ArmaProfile = new Arma3Profile();
+            BasicCfg = new BasicCfg();
         }
 
         //This is used to trigger PropertyChanged to count each checked mod

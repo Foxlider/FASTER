@@ -72,5 +72,20 @@ namespace FASTER.Views
             if (DataContext == null) return;
             ((ProfileViewModel)DataContext).LoadMissions();
         }
+
+        private void LoadFromFile_Click(object sender, RoutedEventArgs e)
+        {
+            ((ProfileViewModel) DataContext)?.LoadModsFromFile();
+        }
+
+        private void CopyModKeys_Click(object sender, RoutedEventArgs e)
+        {
+            ((ProfileViewModel) DataContext)?.CopyModKeys();
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            ((ProfileViewModel) DataContext)?.SelectServerFile();
+        }
     }
 }
