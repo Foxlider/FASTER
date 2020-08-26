@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Security.AccessControl;
@@ -18,6 +19,10 @@ namespace FASTER.Models
         private int _port = 2302;
         private int _headlessNum;
         private bool _missionOverride;
+        private bool _contactDlcChecked;
+        private bool _gmDlcChecked;
+        private bool _enableHT;
+        private bool _enableRanking;
 
         private List<ProfileMod> _profileMods = new List<ProfileMod>();
         private ServerCfg _serverCfg;
@@ -73,6 +78,46 @@ namespace FASTER.Models
             {
                 _missionOverride = value;
                 RaisePropertyChanged("MissionSelectorOverride");
+            }
+        }
+
+        public bool ContactDLCChecked
+        {
+            get => _contactDlcChecked;
+            set
+            {
+                _contactDlcChecked = value;
+                RaisePropertyChanged("ContactDLCChecked");
+            }
+        }
+
+        public bool GMDLCChecked
+        {
+            get => _gmDlcChecked;
+            set
+            {
+                _gmDlcChecked = value;
+                RaisePropertyChanged("GMDLCChecked");
+            }
+        }
+
+        public bool EnableHyperThreading
+        {
+            get => _enableHT;
+            set
+            {
+                _enableHT = value;
+                RaisePropertyChanged("EnableHyperThreading");
+            }
+        }
+
+        public bool RankingChecked
+        {
+            get => _enableRanking;
+            set
+            {
+                _enableRanking = value;
+                RaisePropertyChanged("RankingChecked");
             }
         }
 
@@ -142,6 +187,7 @@ namespace FASTER.Models
         {
             _id = $"_{guid:N}";
             Name = name;
+            Executable = Path.Combine(Properties.Settings.Default.serverPath, "arma3server_64.exe");
             ServerCfg = new ServerCfg() { Hostname = name };
             ArmaProfile = new Arma3Profile();
             BasicCfg = new BasicCfg();

@@ -4,13 +4,17 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
+using Microsoft.AppCenter.Crashes;
 using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace FASTER.ViewModel
@@ -27,6 +31,7 @@ namespace FASTER.ViewModel
             BasicCfg              = Profile.BasicCfg;
             BasicCfg.BasicContent = BasicCfg.ProcessFile();
         }
+
         public ProfileViewModel(string name)
         {
             Profile = new ServerProfileNew(name);
@@ -52,16 +57,261 @@ namespace FASTER.ViewModel
         public ServerProfileNew Profile { get; set; }
         public BasicCfg BasicCfg { get; set; }
 
-        public ObservableCollection<string> VonCodecs              { get; } = new ObservableCollection<string>(ServerCfgArrays.VonCodecStrings);
-        public ObservableCollection<string> FilePatching           { get; } = new ObservableCollection<string>(ServerCfgArrays.AllowFilePatchingStrings);
-        public ObservableCollection<string> VerifySignatures       { get; } = new ObservableCollection<string>(ServerCfgArrays.VerifySignaturesStrings);
-        public ObservableCollection<string> TimestampFormats       { get; } = new ObservableCollection<string>(ServerCfgArrays.TimeStampStrings);
-        public ObservableCollection<string> EnabledStrings         { get; } = new ObservableCollection<string>(ProfileCfgArrays.EnabledStrings);
+        public ObservableCollection<string> VonCodecs           { get; } = new ObservableCollection<string>(ServerCfgArrays.VonCodecStrings);
+        public ObservableCollection<string> FilePatching        { get; } = new ObservableCollection<string>(ServerCfgArrays.AllowFilePatchingStrings);
+        public ObservableCollection<string> VerifySignatures    { get; } = new ObservableCollection<string>(ServerCfgArrays.VerifySignaturesStrings);
+        public ObservableCollection<string> TimestampFormats    { get; } = new ObservableCollection<string>(ServerCfgArrays.TimeStampStrings);
+        public ObservableCollection<string> EnabledStrings      { get; } = new ObservableCollection<string>(ProfileCfgArrays.EnabledStrings);
+        public ObservableCollection<string> MissionDifficulties { get; } = new ObservableCollection<string> { "Recruit", "Regular", "Veteran", "Custom" };
+
+        internal void DisplayMessage(string msg)
+        {
+            MainWindow.Instance.IFlyout.IsOpen         = true;
+            MainWindow.Instance.IFlyoutMessage.Content = msg;
+        }
+
+
+        internal void OpenProfileLocation()
+        {
+            string folderPath = Path.Combine(Properties.Settings.Default.serverPath, "Servers", Profile.Id);
+            if (Directory.Exists(folderPath))
+            {
+                ProcessStartInfo startInfo = new ProcessStartInfo
+                {
+                    Arguments = folderPath,
+                    FileName  = "explorer.exe"
+                };
+
+                Process.Start(startInfo);
+            }
+            else
+            { DisplayMessage("Could not open profile location..."); }
+        }
+
+        internal void LaunchHCs()
+        {
+            if (!VerifyBeforeLaunch()) return;
+            //Launching... 
+            DisplayMessage($"Launching Headless Clients for {Profile.Name}...");
+
+            for (int hc = 1; hc <= Profile.HeadlessNumber; hc++)
+            {
+                string headlessMods = string.Join(";", Profile.ProfileMods.Where(m => m.HeadlessChecked).Select(m => $"@{Functions.SafeName(m.Name)}"));
+                List<string> arguments = new List<string>
+                {
+                    "-client",
+                    "-connect=127.0.0.1",
+                    $"-password={Profile.ServerCfg.Password}",
+                    $"\"-profiles={Path.Combine(Properties.Settings.Default.serverPath, "Servers")}\"",
+                    "-nosound",
+                    $"-port={Profile.Port}",
+                    $"{(!string.IsNullOrWhiteSpace(headlessMods) || Profile.ContactDLCChecked || Profile.GMDLCChecked ? $"\"-mod={(Profile.ContactDLCChecked ? "contact;" : "")}{(Profile.GMDLCChecked ? "GM;" : "")}{(!string.IsNullOrWhiteSpace(headlessMods) ? headlessMods + ";" : "")}\"" : "")}",
+                    $"{(Profile.ServerCfg.MaxMemOverride ? $"-maxMem={Profile.ServerCfg.MaxMem}" : "")}",
+                    $"{(Profile.ServerCfg.CpuCountOverride ? $"-cpuCount={Profile.ServerCfg.CpuCount}" : "")}",
+                    $"{(Profile.EnableHyperThreading ? "-enableHT" : "")}"
+                };
+
+                string commandLine = string.Join(" ", arguments);
+
+                try { Clipboard.SetText(commandLine); }
+                catch (COMException e)
+                {
+                    try
+                    {
+                        Crashes.TrackError(e, new Dictionary<string, string>
+                                               {{ "Name", Properties.Settings.Default.steamUserName }});
+                        Clipboard.SetDataObject(commandLine);
+                    }
+                    catch (COMException ex)
+                    {
+                        Crashes.TrackError(ex, new Dictionary<string, string>
+                                               {{ "Name", Properties.Settings.Default.steamUserName }});
+                    }
+                }
+                #if DEBUG
+                DisplayMessage($"{Profile.HeadlessNumber} Headless Clients launched !\n{commandLine}");
+                return;
+                #else
+                ProcessStartInfo hcStartInfo = new ProcessStartInfo(Profile.Executable, commandLine);
+                Process          hcProcess   = new Process { StartInfo = hcStartInfo };
+                hcProcess.Start();
+                #endif
+            }
+        }
+
+        internal void LaunchServer()
+        {
+            if (!VerifyBeforeLaunch()) return;
+
+            //Launching... 
+            DisplayMessage($"Launching Profile {Profile.Name}...");
+
+            var commandLine = SetCommandLine();
+            try { Clipboard.SetText(commandLine); }
+            catch (COMException e)
+            {
+                try
+                {
+                    Crashes.TrackError(e, new Dictionary<string, string>
+                                           {{ "Name", Properties.Settings.Default.steamUserName }});
+                    Clipboard.SetDataObject(commandLine);
+                }
+                catch (COMException ex)
+                {
+                    Crashes.TrackError(ex, new Dictionary<string, string>
+                                           {{ "Name", Properties.Settings.Default.steamUserName }});
+                }
+            }
+            #if DEBUG
+            DisplayMessage($"Launching Arma3Server with commandline : \n{commandLine}");
+            #else
+            DisplayMessage($"Profile {Profile.Name}'s server launched !\nCommand line copied to clipboard.");
+            ProcessStartInfo sStartInfo = new ProcessStartInfo(Profile.Executable, commandLine);
+            Process          sProcess   = new Process { StartInfo = sStartInfo };
+            sProcess.Start();
+            #endif
+            
+        }
+
+        /// <summary>
+        /// Check if the server can be launched
+        /// </summary>
+        /// <returns></returns>
+        private bool VerifyBeforeLaunch()
+        {
+            if (!ProfileFilesExist(Profile.Id))
+            {
+                DisplayMessage("The profile does not exist in the game files.\nYou might need to save it first.");
+                return false;
+            }
+
+            if (!(Profile.Executable != null && Profile.Executable.Contains("arma3server") && Profile.Executable.EndsWith(".exe")))
+            {
+                DisplayMessage("Please select a valid Arma 3 Sever Executable.");
+                return false;
+            }
+
+            if (File.Exists(Profile.Executable)) return true;
+            DisplayMessage("Arma 3 Server Executable does not exist. Please reselect correct file.");
+            return false;
+        }
+
+        //Process the command line arguments for the Server
+        private string SetCommandLine()
+        {
+            string config        = Path.Combine(Properties.Settings.Default.serverPath, "Servers", Profile.Id, "server_config.cfg");
+            string basic         = Path.Combine(Properties.Settings.Default.serverPath, "Servers", Profile.Id, "server_basic.cfg");
+            string serverProfile = Path.Combine(Properties.Settings.Default.serverPath, "Servers", Profile.Id, "users", Profile.Id, $"{Profile.Id}.Arma3Profile");
+
+            string playerMods = string.Join(";", Profile.ProfileMods.Where(m => m.ClientSideChecked).Select(m => $"@{Functions.SafeName(m.Name)}"));
+            string serverMods = string.Join(";", Profile.ProfileMods.Where(m => m.ServerSideChecked).Select(m => $"@{Functions.SafeName(m.Name)}"));
+            List<string> arguments = new List<string>
+            {
+                $"-port={Profile.Port}",
+                $"\"-config={config}\"",
+                $"\"-cfg={basic}\"",
+                $"\"-profiles={Path.Combine(Properties.Settings.Default.serverPath, "Servers")}\"",
+                $"-name={Profile.Id}",
+                $"{(!string.IsNullOrWhiteSpace(playerMods) || Profile.ContactDLCChecked || Profile.GMDLCChecked ? $"\"-mod={(Profile.ContactDLCChecked ? "contact;" : "")}{(Profile.GMDLCChecked ? "GM;" : "")}{(!string.IsNullOrWhiteSpace(playerMods) ? playerMods + ";" : "" )}\"" : "")}",
+                $"{(!string.IsNullOrWhiteSpace(serverMods) ? $"\"-serverMod={serverMods};\"" : "")}",
+                $"{(Profile.EnableHyperThreading ? "-enableHT" : "")}",
+                $"{(Profile.ServerCfg.AllowedFilePatching != ServerCfgArrays.AllowFilePatchingStrings[0] ? "-filePatching" : "")}",
+                $"{(Profile.ServerCfg.NetLogEnabled ? "-netlog" : "")}",
+                $"{(Profile.RankingChecked ? $"-ranking={Path.Combine(Properties.Settings.Default.serverPath, "Servers", Profile.Id, "ranking.log")}" : "")}",
+                $"{(Profile.ServerCfg.AutoInit ? "-autoInit" : "")}",
+                $"{(Profile.ServerCfg.MaxMemOverride ? $"-maxMem={Profile.ServerCfg.MaxMem}" : "")}",
+                $"{(Profile.ServerCfg.CpuCountOverride ? $"-cpuCount={Profile.ServerCfg.CpuCount}" : "")}",
+                $"{(!string.IsNullOrWhiteSpace(Profile.ServerCfg.CommandLineParameters) ? Profile.ServerCfg.CommandLineParameters : "")}"
+            };
+
+            string commandLine = string.Join(" ", arguments);
+            return commandLine;
+        }
+
+        private static bool ProfileFilesExist(string profile)
+        {
+            string path = Properties.Settings.Default.serverPath;
+
+            if (!Directory.Exists(Path.Combine(path, "Servers", profile)))
+            { return false; }
+
+            return File.Exists(Path.Combine(path, "Servers", profile, "server_config.cfg")) 
+                && File.Exists(Path.Combine(path, "Servers", profile, "server_basic.cfg"));
+        }
+
+        internal void DeleteProfile()
+        {
+            if (Directory.Exists(Path.Combine(Properties.Settings.Default.serverPath, "Servers", Profile.Id)))
+            { Directory.Delete(Path.Combine(Properties.Settings.Default.serverPath, "Servers", Profile.Id), true); }
+            
+            MainWindow.Instance.ContentProfileViews.Remove(MainWindow.Instance.ContentProfileViews.FirstOrDefault(p => p.Profile.Id == Profile.Id));
+            var menuItem = MainWindow.Instance.IServerProfilesMenu.Items.Cast<ToggleButton>().FirstOrDefault(p => p.Name == Profile.Id);
+            if(menuItem != null)
+                MainWindow.Instance.IServerProfilesMenu.Items.Remove(menuItem);
+            MainWindow.Instance.NavigateToConsole();
+        }
+
+        internal void SaveProfile()
+        {
+            string config        = Path.Combine(Properties.Settings.Default.serverPath, "Servers", Profile.Id, "server_config.cfg");
+            string basic         = Path.Combine(Properties.Settings.Default.serverPath, "Servers", Profile.Id, "server_basic.cfg");
+            string serverProfile = Path.Combine(Properties.Settings.Default.serverPath, "Servers", Profile.Id, "users", Profile.Id, $"{Profile.Id}.Arma3Profile");
+
+            //Creating profile directory
+            Directory.CreateDirectory(Path.Combine(Properties.Settings.Default.serverPath, "Servers", Profile.Id, "users", Profile.Id));
+
+            //Writing files
+            try
+            {
+                File.WriteAllText(config,        Profile.ServerCfg.ServerCfgContent);
+                File.WriteAllText(basic,         Profile.BasicCfg.BasicContent);
+                File.WriteAllText(serverProfile, Profile.ArmaProfile.ArmaProfileContent);
+            }
+            catch
+            { DisplayMessage("Could not write the config files. Please ensure the server is not running and retry."); }
+            
+        }
+
         public ObservableCollection<string> FadeOutStrings         { get; } = new ObservableCollection<string>(ProfileCfgArrays.FadeOutStrings);
 
         internal void LoadModsFromFile()
         {
-            throw new NotImplementedException();
+            foreach (var mod in Profile.ProfileMods)
+            { mod.ClientSideChecked = false; }
+
+            var dialog = new CommonOpenFileDialog
+            {
+                Title                     = "Select the Arma3 mod preset",
+                IsFolderPicker            = false,
+                AddToMostRecentlyUsedList = false,
+                AllowNonFileSystemItems   = false,
+                EnsureFileExists          = true,
+                EnsurePathExists          = true,
+                EnsureReadOnly            = false,
+                EnsureValidNames          = true,
+                Multiselect               = false,
+                ShowPlacesList            = true
+            };
+            dialog.Filters.Add(new CommonFileDialogFilter("Arma 3 Mod Preset", ".html"));
+
+            if (dialog.ShowDialog() != CommonFileDialogResult.Ok) return;
+
+            if (dialog.FileName == null)
+            {
+                MessageBox.Show("Please enter a valid arma3server executable location");
+                return;
+            }
+
+            var lines = File.ReadAllLines(dialog.FileName).ToList();
+            foreach (var modIdS in from line in lines where line.Contains("steamcommunity.com/sharedfiles/filedetails") select line.Split("?id=") into extract select extract[1].Split('"')[0])
+            {
+                if (!uint.TryParse(modIdS, out uint modId)) continue;
+                var mod = Profile.ProfileMods.FirstOrDefault(m => m.Id == modId);
+                if (mod != null)
+                { mod.ClientSideChecked = true; }
+                else
+                { DisplayMessage("Some mods in the preset were not downloaded yet. Import the preset and retry later."); }
+            }
         }
 
         internal void SelectServerFile()
@@ -156,7 +406,43 @@ namespace FASTER.ViewModel
                 }
                 modlist.Add(existingMod);
             }
+
+            List<string> localMods = Directory.GetDirectories(Properties.Settings.Default.serverPath, "@*")
+                                .Select(addon => addon.Replace(Properties.Settings.Default.serverPath + @"\", ""))
+                                .ToList();
+            List<string> targetForDeletion = new List<string>();
+            foreach (var folder in Properties.Settings.Default.localModFolders)
+            {
+                if (Directory.Exists(folder))
+                    localMods.AddRange(Directory.GetDirectories(folder, "@*"));
+                else
+                {
+                    DisplayMessage("A folder could not be found and have been deleted");
+                    targetForDeletion.Add(folder);
+                }
+            }
+            foreach (var folder in targetForDeletion)
+            { Properties.Settings.Default.localModFolders.Remove(folder); }
+
+            foreach (var addon in localMods.ToList()
+                                         .Where(addon => modlist.FirstOrDefault(m => addon.Contains($"@{Functions.SafeName(m.Name)}")) != null)) 
+            { localMods.Remove(addon); }
+
+            foreach(var mod in localMods)
+            {
+                ProfileMod existingMod = Profile.ProfileMods.FirstOrDefault(m => m.Id == uint.MaxValue - Convert.ToUInt32(Math.Abs(mod.GetHashCode())));
+                
+                if (existingMod == null)
+                {
+                    var newProfile = new ProfileMod { Name = mod, Id = uint.MaxValue - Convert.ToUInt32(Math.Abs(mod.GetHashCode())) };
+                    modlist.Add(newProfile);
+                    continue;
+                }
+                modlist.Add(existingMod);
+            }
             Profile.ProfileMods = modlist;
+
+            LoadMissions();
 
             ServerCfg.ServerCfgContent = ServerCfg.ProcessFile();
         }

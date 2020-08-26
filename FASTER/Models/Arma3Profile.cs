@@ -330,7 +330,7 @@ namespace FASTER.Models
                 "//\r\n" +
                 "class DifficultyPresets\r\n" +
                 "{\r\n" +
-                "	class CustomDifficulty\r\n" +
+                "	class Custom\r\n" +
                 "	{\r\n" +
                 "		class Options\r\n" +
                 "		{\r\n" +

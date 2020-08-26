@@ -28,18 +28,19 @@ namespace FASTER.Models
         private List<string> localClient     = new List<string>();
         private bool         headlessClientEnabled;
         private bool         votingEnabled;
+        private bool         netlogEnabled;
 
         //Server Behavior
-        private double voteThreshold       = 0.33;
-        private int    voteMissionPlayers  = 3;
-        private short  kickduplicate       = 1;     // 1 = active ; 0=disabled
+        private double voteThreshold      = 0.33;
+        private int    voteMissionPlayers = 3;
+        private short  kickduplicate      = 1; // 1 = active ; 0=disabled
         private bool   loopback;
-        private bool   upnp                = true;
-        private short  allowedFilePatching;         // 0 = no clients; 1= HC only; 2= All Clients
-        private int    disconnectTimeout   = 5;     //timeout in seconds
-        private int    maxdesync           = 150;
-        private int    maxping             = 200;
-        private int    maxpacketloss       = 50;
+        private bool   upnp = true;
+        private short  allowedFilePatching;   // 0 = no clients; 1= HC only; 2= All Clients
+        private int    disconnectTimeout = 5; //timeout in seconds
+        private int    maxdesync         = 150;
+        private int    maxping           = 200;
+        private int    maxpacketloss     = 50;
         private bool   kickClientOnSlowNetwork;
         private int    lobbyIdleTimeout   = 300;
         private bool   autoSelectMission  = true;
@@ -70,10 +71,22 @@ namespace FASTER.Models
         private string onUnsignedData = "kick (_this select 0)";
         private string onUserKicked;
 
+        private bool                 missionSelectorChecked;
+        private string               missionContentOverride;
+        private List<ProfileMission> _missions = new List<ProfileMission>();
+        private bool                 autoInit;
+        private bool                 persistantBattlefield;
+        private string               difficulty = "Custom";
+
+        private bool   maxMemOverride;
+        private uint   maxMem = 1024;
+        private bool   cpuCountOverride;
+        private ushort cpuCount;
+        private string commandLineParams;
+
         private string serverCfgContent;
 
-        private string missionOverrideContent;
-        private List<ProfileMission> _missions = new List<ProfileMission>();
+        
 
         #region Server Options
         public string PasswordAdmin
@@ -196,30 +209,13 @@ namespace FASTER.Models
             }
         }
 
-        public string MissionOverrideContent
+        public bool NetLogEnabled
         {
-            get => missionOverrideContent;
+            get => netlogEnabled;
             set
             {
-                missionOverrideContent = value;
-                RaisePropertyChanged("MissionOverrideContent");
-            }
-        }
-
-        public List<ProfileMission> Missions
-        {
-            get => _missions;
-            set
-            {
-                //Removing previous triggers
-                _missions.ForEach(m => m.PropertyChanged -= Item_PropertyChanged);
-
-                _missions = value;
-
-                //Adding the trigger to count checked mods
-                _missions.ForEach(m => m.PropertyChanged += Item_PropertyChanged);
-
-                RaisePropertyChanged("Missions");
+                netlogEnabled = value;
+                RaisePropertyChanged("NetLogEnabled");
             }
         }
         #endregion
@@ -571,6 +567,128 @@ namespace FASTER.Models
         }
         #endregion
 
+        #region Mission
+        public bool MissionChecked
+        {
+            get => missionSelectorChecked;
+            set
+            {
+                missionSelectorChecked = value;
+                RaisePropertyChanged("MissionChecked");
+            }
+        }
+
+        public string MissionContentOverride
+        {
+            get => missionContentOverride;
+            set
+            {
+                missionContentOverride = value;
+                RaisePropertyChanged("MissionContentOverride");
+            }
+        }
+
+        public bool AutoInit
+        {
+            get => autoInit;
+            set
+            {
+                autoInit = value;
+                RaisePropertyChanged("AutoInit");
+            }
+        }
+
+        public bool PersistantBattlefield
+        {
+            get => persistantBattlefield;
+            set
+            {
+                persistantBattlefield = value;
+                RaisePropertyChanged("PersistantBattlefield");
+            }
+        }
+
+        public string Difficulty
+        {
+            get => difficulty;
+            set
+            {
+                difficulty = value;
+                RaisePropertyChanged("Difficulty");
+            }
+        }
+        
+        public List<ProfileMission> Missions
+        {
+            get => _missions;
+            set
+            {
+                //Removing previous triggers
+                _missions.ForEach(m => m.PropertyChanged -= Item_PropertyChanged);
+
+                _missions = value;
+
+                //Adding the trigger to count checked mods
+                _missions.ForEach(m => m.PropertyChanged += Item_PropertyChanged);
+
+                RaisePropertyChanged("Missions");
+            }
+        }
+        #endregion
+        
+        #region Performances
+        public bool MaxMemOverride
+        {
+            get => maxMemOverride;
+            set
+            {
+                maxMemOverride = value;
+                RaisePropertyChanged("MaxMemOverride");
+            }
+        }
+
+        public bool CpuCountOverride
+        {
+            get => cpuCountOverride;
+            set
+            {
+                cpuCountOverride = value;
+                RaisePropertyChanged("CpuCountOverride");
+            }
+        }
+
+        public uint MaxMem
+        {
+            get => maxMem;
+            set
+            {
+                maxMem = value;
+                RaisePropertyChanged("MaxMem");
+            }
+        }
+
+        public ushort CpuCount
+        {
+            get => cpuCount;
+            set
+            {
+                cpuCount = value;
+                RaisePropertyChanged("CpuCount");
+            }
+        }
+
+        public string CommandLineParameters
+        {
+            get => commandLineParams;
+            set
+            {
+                commandLineParams = value;
+                RaisePropertyChanged("CommandLineParameters");
+            }
+        }
+
+        #endregion
+
         public string ServerCfgContent
         {
             get => serverCfgContent;
@@ -586,10 +704,28 @@ namespace FASTER.Models
         private void Item_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             RaisePropertyChanged("MissionChecked");
+            RaisePropertyChanged("MissionContentOverride");
         }
 
         public string ProcessFile()
         {
+            if (!missionSelectorChecked)
+            {
+                List<string> lines = new List<string> { "class Missions {" };
+                foreach (var mission in Missions.Where(m => m.MissionChecked))
+                {
+                    lines.AddRange(new List<string>
+                    {
+                        $"\tclass Mission_{Functions.SafeName(mission.Name)} {{",
+                        $"\t\ttemplate = \"{mission.Name}\";",
+                        $"\t\tdifficulty = \"{Difficulty}\";",
+                        "\t};"
+                    });
+                }
+                lines.Add("};");
+                missionContentOverride = string.Join("\r\n", lines);
+            }
+
             string output = "//\r\n"
                           + "// server.cfg\r\n"
                           + "//\r\n"
@@ -663,7 +799,7 @@ namespace FASTER.Models
                           + $"randomMissionOrder = {randomMissionOrder}; // Randomly iterate through Missions list\r\n"
                           + $"autoSelectMission = {autoSelectMission}; // Server auto selects next mission in cycle\r\n"
                           + "\r\n"
-                          + "class Missions {{}};\t\t\t\t// An empty Missions class means there will be no mission rotation\r\n"
+                          + $"{MissionContentOverride}\t\t\t\t// An empty Missions class means there will be no mission rotation\r\n"
                           + "\r\n"
                           + "missionWhitelist[] = {}; // An empty whitelist means there is no restriction on what missions' available"
                           + "\r\n"

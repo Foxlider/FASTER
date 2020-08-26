@@ -37,7 +37,7 @@
                         <GroupBox Header="Profile Settings">
                             <StackPanel>
                                 <TextBox Text="{Binding Path=Profile.Name}" mah:TextBoxHelper.Watermark="Profile Name" mah:TextBoxHelper.UseFloatingWatermark="True" />
-                                <Grid Grid.Row="2" Grid.ColumnSpan="10" Grid.Column="0">
+                                <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition />
                                         <ColumnDefinition Width="auto"/>
@@ -51,7 +51,7 @@
                                             </Binding>
                                         </TextBox.Text>
                                     </TextBox>
-                                    <Button Content="{iconPacks:Material Kind=FolderOpen}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="1" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" Height="auto" Margin="5,5,0,5" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Padding="3" Click="Button_Click"/>
+                                    <Button Content="{iconPacks:Material Kind=FolderOpen}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="1" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" Height="auto" Margin="5,5,0,5" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Padding="3" Click="SelectServerFile"/>
                                 </Grid>
                                 <mah:NumericUpDown Value="{Binding Profile.Port}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Port" ToolTip="Port for ArmaServer"/>
                             </StackPanel>
@@ -77,28 +77,32 @@
                                         <TextBlock Text="Copy Mods Keys" Margin="10,0"/>
                                     </StackPanel>
                                 </Button>
+                                <StackPanel Orientation="Horizontal">
+                                    <CheckBox IsChecked="{Binding Profile.ContactDLCChecked}" Content="Contact DLC" Margin="10,3"/>
+                                    <CheckBox IsChecked="{Binding Profile.GMDLCChecked}" Content="GM DLC" Margin="10,3"/>
+                                </StackPanel>
                             </StackPanel>
                             <DataGrid Grid.Row="1" ItemsSource="{Binding Path=Profile.ProfileMods, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" CanUserReorderColumns="False" CanUserSortColumns="False" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True">
                                 <DataGrid.Resources>
                                     <ContextMenu x:Key="ServerContextMenu">
                                         <MenuItem Tag="Server" Header="Select All" Click="ModsSelectAll">
                                             <MenuItem.Icon>
-                                                <iconPacks:PackIconModern Kind="CheckmarkThick"/>
+                                                <iconPacks:PackIconModern Kind="CheckmarkThick" Margin="5"/>
                                             </MenuItem.Icon>
                                         </MenuItem>
                                         <MenuItem Tag="Server" Header="Select None" Click="ModsSelectNone">
                                             <MenuItem.Icon>
-                                                <iconPacks:PackIconModern Kind="CheckmarkUncrossed"/>
+                                                <iconPacks:PackIconModern Kind="CheckmarkUncrossed" Margin="5"/>
                                             </MenuItem.Icon>
                                         </MenuItem>
                                         <MenuItem Tag="Server" Header="Copy From Client" Click="CopyFromClient">
                                             <MenuItem.Icon>
-                                                <iconPacks:PackIconModern Kind="PageCopy"/>
+                                                <iconPacks:PackIconModern Kind="PageCopy" Margin="5"/>
                                             </MenuItem.Icon>
                                         </MenuItem>
                                         <MenuItem Tag="Server" Header="Copy From Headless" Click="CopyFromHeadless">
                                             <MenuItem.Icon>
-                                                <iconPacks:PackIconModern Kind="PageCopy"/>
+                                                <iconPacks:PackIconModern Kind="PageCopy" Margin="5"/>
                                             </MenuItem.Icon>
                                         </MenuItem>
                                     </ContextMenu>
@@ -183,7 +187,7 @@
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
                                     </DataGridTemplateColumn>
-                                    <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="1*" IsReadOnly="True" ToolTipService.ToolTip="{Binding Id}"/>
+                                    <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="1*" IsReadOnly="True"/>
                                 </DataGrid.Columns>
                             </DataGrid>
                             <Grid Grid.Row="2" Margin="5">
@@ -221,11 +225,12 @@
                                 <RowDefinition Height="auto"/>
                                 <RowDefinition/>
                                 <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
                             </Grid.RowDefinitions>
 
-                            <mah:ToggleSwitch Content="Mission selector override" IsOn="{Binding Path=Profile.MissionSelectorOverride}" Margin="5,0"/>
-                            <TextBox Grid.Row="1" MinHeight="50" Margin="0,5" Text="{Binding Path=ServerCfg.MissionOverrideContent}" Visibility="{Binding Path=Profile.MissionSelectorOverride, Converter={StaticResource BoolToVis}}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Mission Override" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"/>
-                            <DataGrid Grid.Row="1" ItemsSource="{Binding Path=ServerCfg.Missions, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding Path=Profile.MissionSelectorOverride, Converter={StaticResource BoolToHide}}" Margin="0,5" CanUserReorderColumns="False" CanUserSortColumns="False" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True">
+                            <mah:ToggleSwitch Content="Mission selector override" IsOn="{Binding Path=Profile.ServerCfg.MissionChecked}" Margin="5,0"/>
+                            <TextBox Grid.Row="1" MinHeight="50" Margin="0,5" Text="{Binding Path=ServerCfg.MissionContentOverride}" Visibility="{Binding Path=Profile.ServerCfg.MissionChecked, Converter={StaticResource BoolToVis}}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Mission Override" AcceptsTab="True" AcceptsReturn="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"/>
+                            <DataGrid Grid.Row="1" ItemsSource="{Binding Path=ServerCfg.Missions, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding Path=Profile.ServerCfg.MissionChecked, Converter={StaticResource BoolToHide}}" Margin="0,5" CanUserReorderColumns="False" CanUserSortColumns="False" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True">
                                 <DataGrid.Resources>
                                     <ContextMenu x:Key="MissionContextMenu">
                                         <MenuItem Tag="Mission" Header="Select All" Click="MissionSelectAll">
@@ -259,6 +264,11 @@
                                 </DataGrid.Columns>
                             </DataGrid>
                             <Button Content="{iconPacks:Material Kind=Refresh}" Grid.Row="2" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" Click="MissionRefresh" BorderThickness="0" Margin="0,5"/>
+                            <ComboBox Grid.Row="2" SelectedItem="{Binding Path=Profile.ServerCfg.Difficulty}" ItemsSource="{Binding Path=MissionDifficulties}"  mah:TextBoxHelper.UseFloatingWatermark="True"  mah:TextBoxHelper.Watermark="Difficulty Preset" IsEditable="False" Margin="5,0" HorizontalAlignment="Right"/>
+                            <Grid Grid.Row="3">
+                                <CheckBox Content="AutoInit" IsChecked="{Binding Path=ServerCfg.AutoInit}" Margin="5" HorizontalAlignment="Left"/>
+                                <CheckBox Content="Persistant Battlefield" IsChecked="{Binding Path=ServerCfg.PersistantBattlefield}" Margin="5" HorizontalAlignment="Right"/>
+                            </Grid>
                         </Grid>
                     </GroupBox>
                     <GroupBox Grid.Column="1" Grid.Row="0" Header="Difficulty Settings" Margin="4, 0, 0, 0">
@@ -335,7 +345,7 @@
                         </Grid.Style>
                         <Expander Header="Arma3Profile output" MaxHeight="400">
                             <ScrollViewer HorizontalScrollBarVisibility="Visible" >
-                                <TextBlock Text="{Binding Path=ArmaProfile.ArmaProfileContent}" FontFamily="GenericMonospace"/>
+                                <TextBox Text="{Binding Path=ArmaProfile.ArmaProfileContent}" FontFamily="GenericMonospace" AcceptsTab="True" AcceptsReturn="True" IsManipulationEnabled="True"/>
                             </ScrollViewer>
                         </Expander>
                     </Grid>
@@ -375,10 +385,11 @@
                                             <CheckBox IsChecked="{Binding Path=ServerCfg.BattlEye}" Content="BattlEye" Margin="5" HorizontalAlignment="Left"/>
                                             <mah:NumericUpDown Value="{Binding Path=ServerCfg.MaxPlayers}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Max Players" ToolTip="Maximum number of players" HorizontalAlignment="Right" Margin="5,3" />
                                         </Grid>
+                                        <CheckBox IsChecked="{Binding Path=Profile.RankingChecked}" Content="Server Ranking" Margin="5" />
                                     </StackPanel>
                                 </GroupBox>
 
-                                <!-- NETWORK TIEE-->
+                                <!-- NETWORK TILE-->
                                 <GroupBox Header="Network settings">
                                     <GroupBox.Style>
                                         <Style TargetType="GroupBox" BasedOn="{StaticResource MahApps.Styles.GroupBox}">
@@ -479,9 +490,10 @@
                                     </Expander.Style>
                                     <StackPanel>
                                         <mah:ToggleSwitch IsOn="{Binding Path=ServerCfg.HeadlessClientEnabled}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="VoN Activation" ToolTip="VoN Activation" Margin="10,2,0,2" HorizontalAlignment="Left"/>
+                                        <Button Content="Launch HCs" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" Click="LaunchHCs" BorderThickness="0" HorizontalAlignment="Stretch" Margin="10,5" Visibility="{Binding Path=ServerCfg.HeadlessClientEnabled, Converter={StaticResource BoolToVis}}"/>
                                         <TextBox MinHeight="50" Margin="10,3" Text="{Binding Path=ServerCfg.HeadlessClients}" Visibility="{Binding Path=ServerCfg.HeadlessClientEnabled, Converter={StaticResource BoolToVis}}" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Headless IPs (one per line)"/>
                                         <TextBox MinHeight="50" Margin="10,3" Text="{Binding Path=ServerCfg.LocalClient}" Visibility="{Binding Path=ServerCfg.HeadlessClientEnabled, Converter={StaticResource BoolToVis}}" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Local Clients (one per line)"/>
-                                        <StackPanel Name="IHcSliderGroup" Grid.Row="0" Grid.Column="1" Margin="5" Grid.RowSpan="2" Visibility="{Binding Path=ServerCfg.HeadlessClientEnabled, Converter={StaticResource BoolToVis}}">
+                                        <StackPanel Visibility="{Binding Path=ServerCfg.HeadlessClientEnabled, Converter={StaticResource BoolToVis}}">
                                             <Slider Value="{Binding Path=Profile.HeadlessNumber}" Style="{StaticResource MahApps.Styles.Slider.Flat}" AutoToolTipPlacement="TopLeft" AutoToolTipPrecision="0" Minimum="0" Maximum="5" IsSnapToTickEnabled="True" TickFrequency="1" ToolTip="Number of Headless Clients" Margin="10,5"/>
                                             <Label Content="Number of HCs" ToolTip="Number of Headless Clients" HorizontalAlignment="Center" Margin="1"/>
                                         </StackPanel>
@@ -522,8 +534,9 @@
                                         </Style>
                                     </GroupBox.Style>
                                     <StackPanel>
-                                        <TextBox Text="{Binding Path=ServerCfg.LogFile}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Logfile Name" Margin="5,3"/>
-                                        <ComboBox ItemsSource="{Binding Path=TimestampFormats}" SelectedItem="{Binding Path=ServerCfg.TimeStampFormat}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Timestamp Format" Margin="5,2"/>
+                                        <mah:ToggleSwitch IsOn="{Binding Path=ServerCfg.NetLogEnabled}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="NetLog Activation" ToolTip="NetLog Activation" Margin="10,2,0,2" HorizontalAlignment="Left"/>
+                                        <TextBox Text="{Binding Path=ServerCfg.LogFile}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Logfile Name" Margin="5,3" Visibility="{Binding Path=ServerCfg.NetLogEnabled, Converter={StaticResource BoolToVis}}"/>
+                                        <ComboBox ItemsSource="{Binding Path=TimestampFormats}" SelectedItem="{Binding Path=ServerCfg.TimeStampFormat}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Timestamp Format" Margin="5,2" Visibility="{Binding Path=ServerCfg.NetLogEnabled, Converter={StaticResource BoolToVis}}"/>
                                     </StackPanel>
                                 </GroupBox>
 
@@ -586,9 +599,9 @@
                             </Style>
                         </Grid.Style>
                         <Expander Header="Server.cfg output" MaxHeight="400">
-                            <ScrollViewer HorizontalScrollBarVisibility="Visible" >
-                                <TextBlock Text="{Binding Path=ServerCfg.ServerCfgContent}" FontFamily="GenericMonospace"/>
-                            </ScrollViewer>
+                            <!--<ScrollViewer HorizontalScrollBarVisibility="Visible" >-->
+                                <TextBox Text="{Binding Path=ServerCfg.ServerCfgContent}" FontFamily="GenericMonospace" AcceptsTab="True" AcceptsReturn="True" IsManipulationEnabled="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"/>
+                            <!--</ScrollViewer>-->
                         </Expander>
                     </Grid>
                 </Grid>
@@ -614,6 +627,10 @@
                                 <RowDefinition Height="auto"/>
                                 <RowDefinition Height="10"/>
                                 <RowDefinition Height="auto"/>
+                                <RowDefinition Height="40"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
                             </Grid.RowDefinitions>
                             <mah:NumericUpDown Grid.Row="0" Grid.Column="0" Value="{Binding BasicCfg.MinBandwidth}" mah:TextBoxHelper.Watermark="MinBandwidth" mah:TextBoxHelper.UseFloatingWatermark="True" Minimum="0" Maximum="4294967295" Interval="1" Margin="3"/>
                             <mah:NumericUpDown Grid.Row="0" Grid.Column="2" Value="{Binding BasicCfg.MaxBandwidth}" mah:TextBoxHelper.Watermark="MaxBandwidth" mah:TextBoxHelper.UseFloatingWatermark="True" Minimum="0" Maximum="4294967295" Interval="1" Margin="3"/>
@@ -625,6 +642,13 @@
                             <mah:NumericUpDown Grid.Row="4" Grid.Column="0" Value="{Binding BasicCfg.MinErrorToSend}" mah:TextBoxHelper.Watermark="MinErrorToSend" mah:TextBoxHelper.UseFloatingWatermark="True" Minimum="0" Maximum="1" Margin="3" Interval="0.001"/>
                             <mah:NumericUpDown Grid.Row="4" Grid.Column="1" Value="{Binding BasicCfg.MinErrorToSendNear}" mah:TextBoxHelper.Watermark="MinErrorToSendNear" mah:TextBoxHelper.UseFloatingWatermark="True" Minimum="0" Maximum="1" Margin="3" Interval="0.001"/>
                             <mah:NumericUpDown Grid.Row="4" Grid.Column="2" Value="{Binding BasicCfg.MaxCustomFileSize}" mah:TextBoxHelper.Watermark="MaxCustomFileSize" mah:TextBoxHelper.UseFloatingWatermark="True" Minimum="0" Maximum="65535" Interval="1" Margin="3"/>
+
+
+                            <CheckBox Grid.Row="6" Grid.Column="0" Margin="3,5" IsChecked="{Binding Path=ServerCfg.MaxMemOverride}" Content="Force Maximum Memory"/>
+                            <CheckBox Grid.Row="6" Grid.Column="2" Margin="3,5" IsChecked="{Binding Path=ServerCfg.CpuCountOverride}" Content="Force CPU Count"/>
+                            <mah:NumericUpDown Grid.Row="7" Grid.Column="0" Value="{Binding ServerCfg.MaxMem}" Visibility="{Binding Path=ServerCfg.MaxMemOverride, Converter={StaticResource BoolToVis}}" mah:TextBoxHelper.Watermark="Maximum Memory (MB)" mah:TextBoxHelper.UseFloatingWatermark="True" Minimum="1024" Maximum="128000" Interval="1" Margin="3"/>
+                            <mah:NumericUpDown Grid.Row="7" Grid.Column="2" Value="{Binding ServerCfg.CpuCount}" Visibility="{Binding Path=ServerCfg.CpuCountOverride, Converter={StaticResource BoolToVis}}" mah:TextBoxHelper.Watermark="CPU Core Count" mah:TextBoxHelper.UseFloatingWatermark="True" Minimum="1" Maximum="34" Interval="1" Margin="3"/>
+                            <TextBox Text="{Binding ServerCfg.CommandLineParameters}" Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="3" Margin="3,5" mah:TextBoxHelper.Watermark="Command Line Arguments" mah:TextBoxHelper.UseFloatingWatermark="True"/>
                         </Grid>
                     </GroupBox>
                     <Grid Grid.Row="1">
@@ -636,7 +660,7 @@
                         </Grid.Style>
                         <Expander Header="Basic.cfg output" MaxHeight="400">
                             <ScrollViewer HorizontalScrollBarVisibility="Visible" >
-                                <TextBlock Text="{Binding Path=BasicCfg.BasicContent}" FontFamily="GenericMonospace"/>
+                                <TextBox Text="{Binding Path=BasicCfg.BasicContent}" FontFamily="GenericMonospace" AcceptsTab="True" AcceptsReturn="True" IsManipulationEnabled="True"/>
                             </ScrollViewer>
                         </Expander>
                     </Grid>
@@ -645,11 +669,21 @@
         </TabControl>
 
         <!-- Bottom Controls -->            
-        <Label VerticalAlignment="Center" HorizontalAlignment="Left" Grid.Row="1" Content="{Binding Path=Profile.Name}" ToolTip="{Binding Path=Profile.Id}" FontWeight="Bold" FontSize="16" Margin="10"/>
+        <Label VerticalAlignment="Center" HorizontalAlignment="Left" Grid.Row="1" Content="{Binding Path=Profile.Name}" ToolTip="{Binding Path=Profile.Id}" FontWeight="Bold" FontSize="16" Margin="10">
+            <Label.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Tag="Open" Header="Open File Location" Click="OpenProfileLocation">
+                        <MenuItem.Icon>
+                            <iconPacks:PackIconModern Kind="Folder" Margin="5"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </ContextMenu>
+            </Label.ContextMenu>
+        </Label>
         <StackPanel Grid.Row="1" HorizontalAlignment="Right" Margin="5,10" Orientation="Horizontal">
-            <Button Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Padding="7,5" ToolTip="Save Profile" Content="{iconPacks:Material Kind=ContentSave}"/>
-            <Button Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Padding="7,5" ToolTip="Delete Profile" Content="{iconPacks:Material Kind=Delete}"/>
-            <Button Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Padding="7,5" ToolTip="Launch Server" Content="{iconPacks:Material Kind=Play}"/>
+            <Button Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Padding="7,5" ToolTip="Save Profile" Click="SaveProfile" Content="{iconPacks:Material Kind=ContentSave}"/>
+            <Button Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Padding="7,5" ToolTip="Delete Profile" Click="DeleteProfile" Content="{iconPacks:Material Kind=Delete}"/>
+            <Button Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Padding="7,5" ToolTip="Launch Server" Click="LaunchServer" Content="{iconPacks:Material Kind=Play}"/>
         </StackPanel>
     </Grid>
 </UserControl>

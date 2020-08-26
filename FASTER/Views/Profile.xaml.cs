@@ -21,56 +21,47 @@ namespace FASTER.Views
 
         internal void Refresh()
         {
-            if (DataContext == null) return;
-            ((ProfileViewModel)DataContext).LoadData();
+            ((ProfileViewModel) DataContext)?.LoadData();
         }
 
         private void CopyFromClient(object sender, RoutedEventArgs e)
         {
-            if (DataContext == null) return;
-            ((ProfileViewModel)DataContext).ModsCopyFrom(((MenuItem)sender).Tag, "Client");
+            ((ProfileViewModel) DataContext)?.ModsCopyFrom(((MenuItem)sender).Tag, "Client");
         }
 
         private void CopyFromServer(object sender, RoutedEventArgs e)
         {
-            if (DataContext == null) return;
-            ((ProfileViewModel)DataContext).ModsCopyFrom(((MenuItem)sender).Tag, "Server");
+            ((ProfileViewModel) DataContext)?.ModsCopyFrom(((MenuItem)sender).Tag, "Server");
         }
 
         private void CopyFromHeadless(object sender, RoutedEventArgs e)
         {
-            if (DataContext == null) return;
-            ((ProfileViewModel)DataContext).ModsCopyFrom(((MenuItem)sender).Tag, "Headless");
+            ((ProfileViewModel) DataContext)?.ModsCopyFrom(((MenuItem)sender).Tag, "Headless");
         }
 
         private void ModsSelectAll(object sender, RoutedEventArgs e)
         {
-            if (DataContext == null) return;
-            ((ProfileViewModel)DataContext).ModsSelectAll(((MenuItem)sender).Tag, true);
+            ((ProfileViewModel) DataContext)?.ModsSelectAll(((MenuItem)sender).Tag, true);
         }
 
         private void ModsSelectNone(object sender, RoutedEventArgs e)
         {
-            if (DataContext == null) return;
-            ((ProfileViewModel)DataContext).ModsSelectAll(((MenuItem)sender).Tag, false);
+            ((ProfileViewModel) DataContext)?.ModsSelectAll(((MenuItem)sender).Tag, false);
         }
 
         private void MissionSelectAll(object sender, RoutedEventArgs e)
         {
-            if (DataContext == null) return;
-            ((ProfileViewModel)DataContext).MissionSelectAll(true);
+            ((ProfileViewModel) DataContext)?.MissionSelectAll(true);
         }
 
         private void MissionSelectNone(object sender, RoutedEventArgs e)
         {
-            if (DataContext == null) return;
-            ((ProfileViewModel)DataContext).MissionSelectAll(false);
+            ((ProfileViewModel) DataContext)?.MissionSelectAll(false);
         }
 
         private void MissionRefresh(object sender, RoutedEventArgs e)
         {
-            if (DataContext == null) return;
-            ((ProfileViewModel)DataContext).LoadMissions();
+            ((ProfileViewModel) DataContext)?.LoadMissions();
         }
 
         private void LoadFromFile_Click(object sender, RoutedEventArgs e)
@@ -83,9 +74,34 @@ namespace FASTER.Views
             ((ProfileViewModel) DataContext)?.CopyModKeys();
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void SelectServerFile(object sender, RoutedEventArgs e)
         {
             ((ProfileViewModel) DataContext)?.SelectServerFile();
+        }
+
+        private void OpenProfileLocation(object sender, RoutedEventArgs e)
+        {
+            ((ProfileViewModel) DataContext)?.OpenProfileLocation();
+        }
+
+        private void SaveProfile(object sender, RoutedEventArgs e)
+        {
+            ((ProfileViewModel) DataContext)?.SaveProfile();
+        }
+
+        private void DeleteProfile(object sender, RoutedEventArgs e)
+        {
+            ((ProfileViewModel) DataContext)?.DeleteProfile();
+        }
+
+        private void LaunchServer(object sender, RoutedEventArgs e)
+        {
+            ((ProfileViewModel) DataContext)?.LaunchServer();
+        }
+
+        private void LaunchHCs(object sender, RoutedEventArgs e)
+        {
+            ((ProfileViewModel) DataContext)?.LaunchHCs();
         }
     }
 }
