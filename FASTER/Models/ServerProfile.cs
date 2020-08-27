@@ -5,10 +5,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Security.AccessControl;
-using System.Text;
-using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Xml.Serialization;
 
@@ -18,7 +14,7 @@ namespace FASTER.Models
     public class ServerProfileCollection : ICollection
     {
         [XmlElement(Order = 1)]
-        public string CollectionName { get; set; } = "Main";
+        public string CollectionName { get; set; }
 
         [XmlElement(Order = 2, ElementName = "ServerProfile")]
         public List<ServerProfileNew> ServerProfiles = new List<ServerProfileNew>();
@@ -35,13 +31,6 @@ namespace FASTER.Models
             p.ArmaProfile.ArmaProfileContent = p.ArmaProfile.ProcessFile();
             currentProfiles.ServerProfiles.Add(p);
             Properties.Settings.Default.Profiles = currentProfiles;
-            XmlSerializer x = new XmlSerializer(typeof(ServerProfileCollection));
-            string output;
-            using(StringWriter textWriter = new StringWriter())
-            {
-                x.Serialize(textWriter, currentProfiles);
-                output = textWriter.ToString();
-            }
             Properties.Settings.Default.Save();
             MainWindow.Instance.LoadServerProfiles();
         }
@@ -107,7 +96,7 @@ namespace FASTER.Models
             set
             {
                 _name = value;
-                if (MainWindow.IsLoaded())
+                if (MainWindow.HasLoaded())
                 {
                     var menuItem = MainWindow.Instance.IServerProfilesMenu.Items.Cast<ToggleButton>().FirstOrDefault(p => p.Name == _id);
                     if (menuItem != null)
@@ -275,7 +264,7 @@ namespace FASTER.Models
         {
             ServerProfileNew p = (ServerProfileNew) MemberwiseClone();
             p.GenerateNewId();
-            if (p.Name.EndsWith(")") && p.Name.Contains('(') && int.TryParse(p.Name.Substring(p.Name.Length - 2, 1), out int n))
+            if (p.Name.EndsWith(")") && p.Name.Contains('(') && int.TryParse(p.Name.Substring(p.Name.Length - 2, 1), out _))
             {
                 var i   = p.Name.IndexOf('(');
                 var j   = p.Name.Length;

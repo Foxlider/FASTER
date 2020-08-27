@@ -1,20 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Text;
+﻿using System.Globalization;
 using System.Windows.Controls;
 
 namespace FASTER.Models
 {
     public class ExeLocationRule : ValidationRule
     {
-        public int Min { get; set; }
-        public int Max { get; set; }
-
-        public ExeLocationRule()
-        {
-        }
-
         public override ValidationResult Validate(object value, CultureInfo cultureInfo)
         {
             string exe = (string)value;

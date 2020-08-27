@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Globalization;
-using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Data;
-using System.Windows.Markup;
 
 namespace FASTER.Models
 {
@@ -38,20 +33,20 @@ namespace FASTER.Models
     {
         #region IValueConverter Members
 
-        public object Convert(object value, System.Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             bool? isVisible = value as bool?;
             if (parameter != null && isVisible.HasValue)
                 isVisible = !isVisible;
-            if (isVisible.HasValue && isVisible.Value == true)
+            if (isVisible.HasValue && isVisible.Value)
                 return Visibility.Collapsed;
             else
                 return Visibility.Visible;
         }
 
-        public object ConvertBack(object value, System.Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         #endregion

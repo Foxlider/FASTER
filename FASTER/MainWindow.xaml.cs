@@ -62,14 +62,7 @@ namespace FASTER
             get => _serverStatus ??= new ServerStatus();
             set => _serverStatus = value;
         }
-
-        List<Views.ServerProfile> _profiles;
-        public List<Views.ServerProfile> ContentProfiles
-        {
-            get => _profiles ??= new List<Views.ServerProfile>();
-            set => _profiles = value;
-        }
-
+        
         Settings _settings;
         public Settings ContentSettings
         {
@@ -109,7 +102,7 @@ namespace FASTER
             NavigateToConsole();
         }
 
-        public static bool IsLoaded()
+        public static bool HasLoaded()
         { return _instance != null; }
 
         #region EVENTS
