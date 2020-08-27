@@ -7,7 +7,7 @@
     <PublishReadyToRun>true</PublishReadyToRun>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <UseWPF>true</UseWPF>
-    <Version>1.7.0</Version>
+    <Version>1.7.1</Version>
     <Authors>Keelah Fox</Authors>
     <Company>FoxliCorp.</Company>
     <Description>Fox's Arma Server Tool Extended Rewrite</Description>
@@ -47,12 +47,12 @@
   <ItemGroup>
     <PackageReference Include="Autoupdater.NET.Official" Version="1.6.0" />
     <PackageReference Include="LiveCharts.Wpf" Version="0.9.7" />
-    <PackageReference Include="MahApps.Metro" Version="2.1.0" />
-    <PackageReference Include="MahApps.Metro.IconPacks.Material" Version="4.2.0" />
-    <PackageReference Include="MahApps.Metro.IconPacks.Modern" Version="4.2.0" />
+    <PackageReference Include="MahApps.Metro" Version="2.2.0" />
+    <PackageReference Include="MahApps.Metro.IconPacks.Material" Version="4.4.0" />
+    <PackageReference Include="MahApps.Metro.IconPacks.Modern" Version="4.4.0" />
     <PackageReference Include="MahApps.Metro.SimpleChildWindow" Version="2.0.0-alpha0032" />
-    <PackageReference Include="Microsoft.AppCenter.Analytics" Version="3.2.2" />
-    <PackageReference Include="Microsoft.AppCenter.Crashes" Version="3.2.2" />
+    <PackageReference Include="Microsoft.AppCenter.Analytics" Version="3.4.1" />
+    <PackageReference Include="Microsoft.AppCenter.Crashes" Version="3.4.1" />
     <PackageReference Include="Microsoft.ApplicationInsights" Version="2.14.0" />
     <PackageReference Include="Microsoft.ApplicationInsights.DependencyCollector" Version="2.14.0" />
     <PackageReference Include="Microsoft.ApplicationInsights.PerfCounterCollector" Version="2.14.0" />
