@@ -1,9 +1,9 @@
 ﻿using FASTER.Models;
-using MahApps.Metro.Controls;
+using Microsoft.AppCenter.Crashes;
+using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -12,10 +12,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Input;
-using Microsoft.AppCenter.Crashes;
-using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace FASTER.ViewModel
 {
@@ -32,25 +28,19 @@ namespace FASTER.ViewModel
             BasicCfg.BasicContent = BasicCfg.ProcessFile();
         }
 
-        public ProfileViewModel(string name)
+        public ProfileViewModel(ServerProfileNew p)
         {
-            Profile = new ServerProfileNew(name);
-            ServerCfg = Profile.ServerCfg;
-            ServerCfg.ServerCfgContent = ServerCfg.ProcessFile();
-            BasicCfg              = Profile.BasicCfg;
-            BasicCfg.BasicContent = BasicCfg.ProcessFile();
+            Profile                        = p;
+            ServerCfg                      = Profile.ServerCfg;
+            ServerCfg.ServerCfgContent     = ServerCfg.ProcessFile();
+            BasicCfg                       = Profile.BasicCfg;
+            BasicCfg.BasicContent          = BasicCfg.ProcessFile();
+            ArmaProfile                    = Profile.ArmaProfile;
+            ArmaProfile.ArmaProfileContent = ArmaProfile.ProcessFile();
         }
 
-        public ProfileViewModel(string name, Guid id)
-        {
-            Profile = new ServerProfileNew(name, id);
-            ServerCfg = Profile.ServerCfg;
-            ServerCfg.ServerCfgContent = ServerCfg.ProcessFile();
-            ArmaProfile = Profile.ArmaProfile;
-            ArmaProfile.ArmaProfileContent = ArmaProfile.ProcessFile();
-            BasicCfg = Profile.BasicCfg;
-            BasicCfg.BasicContent = BasicCfg.ProcessFile();
-        }
+        //Hash for ID generation
+        private readonly System.Security.Cryptography.SHA1 hash = new System.Security.Cryptography.SHA1CryptoServiceProvider();
 
         public ServerCfg ServerCfg { get; set; }
         public Arma3Profile ArmaProfile { get; set; }
@@ -94,7 +84,7 @@ namespace FASTER.ViewModel
             //Launching... 
             DisplayMessage($"Launching Headless Clients for {Profile.Name}...");
 
-            for (int hc = 1; hc <= Profile.HeadlessNumber; hc++)
+            for (int hc = 1; hc <= Profile.HeadlessNumber; )
             {
                 string headlessMods = string.Join(";", Profile.ProfileMods.Where(m => m.HeadlessChecked).Select(m => $"@{Functions.SafeName(m.Name)}"));
                 List<string> arguments = new List<string>
@@ -243,11 +233,13 @@ namespace FASTER.ViewModel
         {
             if (Directory.Exists(Path.Combine(Properties.Settings.Default.serverPath, "Servers", Profile.Id)))
             { Directory.Delete(Path.Combine(Properties.Settings.Default.serverPath, "Servers", Profile.Id), true); }
-            
+            Properties.Settings.Default.Profiles.Delete(Profile);
+            Properties.Settings.Default.Save();
             MainWindow.Instance.ContentProfileViews.Remove(MainWindow.Instance.ContentProfileViews.FirstOrDefault(p => p.Profile.Id == Profile.Id));
             var menuItem = MainWindow.Instance.IServerProfilesMenu.Items.Cast<ToggleButton>().FirstOrDefault(p => p.Name == Profile.Id);
             if(menuItem != null)
                 MainWindow.Instance.IServerProfilesMenu.Items.Remove(menuItem);
+            
             MainWindow.Instance.NavigateToConsole();
         }
 
@@ -269,7 +261,8 @@ namespace FASTER.ViewModel
             }
             catch
             { DisplayMessage("Could not write the config files. Please ensure the server is not running and retry."); }
-            
+
+            Properties.Settings.Default.Save();
         }
 
         public ObservableCollection<string> FadeOutStrings         { get; } = new ObservableCollection<string>(ProfileCfgArrays.FadeOutStrings);
@@ -430,11 +423,12 @@ namespace FASTER.ViewModel
 
             foreach(var mod in localMods)
             {
-                ProfileMod existingMod = Profile.ProfileMods.FirstOrDefault(m => m.Id == uint.MaxValue - Convert.ToUInt32(Math.Abs(mod.GetHashCode())));
+                var newId = GetUInt32HashCode(mod);
+                ProfileMod existingMod = Profile.ProfileMods.FirstOrDefault(m => m.Id == newId);
                 
                 if (existingMod == null)
                 {
-                    var newProfile = new ProfileMod { Name = mod, Id = uint.MaxValue - Convert.ToUInt32(Math.Abs(mod.GetHashCode())) };
+                    var newProfile = new ProfileMod { Name = mod, Id = newId };
                     modlist.Add(newProfile);
                     continue;
                 }
@@ -446,6 +440,21 @@ namespace FASTER.ViewModel
 
             ServerCfg.ServerCfgContent = ServerCfg.ProcessFile();
         }
+
+
+        private uint GetUInt32HashCode(string strText)
+        {
+            if (string.IsNullOrEmpty(strText)) return 0;
+
+            //Unicode Encode Covering all characterset
+            byte[] byteContents   = Encoding.Unicode.GetBytes(strText);
+            byte[] hashText       = hash.ComputeHash(byteContents);
+            uint   hashCodeStart  = BitConverter.ToUInt32(hashText, 0);
+            uint   hashCodeMedium = BitConverter.ToUInt32(hashText, 8);
+            uint   hashCodeEnd    = BitConverter.ToUInt32(hashText, 16);
+            var    hashCode       = hashCodeStart ^ hashCodeMedium ^ hashCodeEnd;
+            return uint.MaxValue - hashCode;
+        } 
 
         internal void LoadMissions()
         {

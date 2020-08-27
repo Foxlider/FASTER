@@ -1,5 +1,6 @@
 ﻿
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -7,10 +8,78 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Security.AccessControl;
 using System.Text;
+using System.Windows;
+using System.Windows.Controls.Primitives;
+using System.Xml.Serialization;
 
 namespace FASTER.Models
 {
-    class ServerProfileNew : INotifyPropertyChanged
+    [Serializable]
+    public class ServerProfileCollection : ICollection
+    {
+        [XmlElement(Order = 1)]
+        public string CollectionName { get; set; } = "Main";
+
+        [XmlElement(Order = 2, ElementName = "ServerProfile")]
+        public List<ServerProfileNew> ServerProfiles = new List<ServerProfileNew>();
+
+        public ServerProfileCollection()
+        { CollectionName = "Main"; }
+
+        internal static void AddServerProfile(string profileName)
+        {
+            var currentProfiles = Properties.Settings.Default.Profiles;
+            var p = new ServerProfileNew(profileName);
+            p.ServerCfg.ServerCfgContent     = p.ServerCfg.ProcessFile();
+            p.BasicCfg.BasicContent          = p.BasicCfg.ProcessFile();
+            p.ArmaProfile.ArmaProfileContent = p.ArmaProfile.ProcessFile();
+            currentProfiles.ServerProfiles.Add(p);
+            Properties.Settings.Default.Profiles = currentProfiles;
+            XmlSerializer x = new XmlSerializer(typeof(ServerProfileCollection));
+            string output;
+            using(StringWriter textWriter = new StringWriter())
+            {
+                x.Serialize(textWriter, currentProfiles);
+                output = textWriter.ToString();
+            }
+            Properties.Settings.Default.Save();
+            MainWindow.Instance.LoadServerProfiles();
+        }
+
+        internal static void AddServerProfile(ServerProfileNew profile)
+        {
+            var currentProfiles = Properties.Settings.Default.Profiles;
+            profile.GenerateNewId();
+            currentProfiles.ServerProfiles.Add(profile);
+            Properties.Settings.Default.Profiles = currentProfiles;
+            Properties.Settings.Default.Save();
+            MainWindow.Instance.LoadServerProfiles();
+        }
+
+        public void Add(ServerProfileNew profile) 
+        { ServerProfiles.Add(profile); }
+
+        public void Delete(ServerProfileNew profile)
+        { ServerProfiles.Remove(profile); }
+
+        public IEnumerator GetEnumerator() { return ServerProfiles.GetEnumerator(); }
+
+        // Default Accessor Implementation
+        public ServerProfileNew this[int index] => ServerProfiles[index];
+
+        public void CopyTo(Array array, int index)
+        {
+            var a = ServerProfiles.ToArray();
+            a.CopyTo(array, index);
+        }
+
+        public int Count => ServerProfiles.Count;
+        public bool IsSynchronized => false;
+        public object SyncRoot => this;
+    }
+
+    [Serializable]
+    public class ServerProfileNew : INotifyPropertyChanged
     {
         //PRIVATE VARS DECLARATION
         private string _id;
@@ -38,6 +107,12 @@ namespace FASTER.Models
             set
             {
                 _name = value;
+                if (MainWindow.IsLoaded())
+                {
+                    var menuItem = MainWindow.Instance.IServerProfilesMenu.Items.Cast<ToggleButton>().FirstOrDefault(p => p.Name == _id);
+                    if (menuItem != null)
+                    { menuItem.Content = _name; }
+                }
                 RaisePropertyChanged("Name");
             }
         }
@@ -178,19 +253,38 @@ namespace FASTER.Models
         {
             _id = $"_{Guid.NewGuid():N}";
             Name = name;
+            Executable = Path.Combine(Properties.Settings.Default.serverPath, "arma3server_64.exe");
             ServerCfg = new ServerCfg(){ Hostname = name};
             ArmaProfile = new Arma3Profile();
             BasicCfg = new BasicCfg();
         }
 
-        public ServerProfileNew(string name, Guid guid)
+        public ServerProfileNew()
         {
-            _id = $"_{guid:N}";
-            Name = name;
-            Executable = Path.Combine(Properties.Settings.Default.serverPath, "arma3server_64.exe");
-            ServerCfg = new ServerCfg() { Hostname = name };
+            _id  = $"_{Guid.NewGuid():N}";
+            Name = _id;
+            ServerCfg   = new ServerCfg(){ Hostname = Name};
             ArmaProfile = new Arma3Profile();
-            BasicCfg = new BasicCfg();
+            BasicCfg    = new BasicCfg();
+        }
+
+        public void GenerateNewId()
+        { _id = $"_{Guid.NewGuid():N}"; }
+
+        public ServerProfileNew Clone()
+        {
+            ServerProfileNew p = (ServerProfileNew) MemberwiseClone();
+            p.GenerateNewId();
+            if (p.Name.EndsWith(")") && p.Name.Contains('(') && int.TryParse(p.Name.Substring(p.Name.Length - 2, 1), out int n))
+            {
+                var i   = p.Name.IndexOf('(');
+                var j   = p.Name.Length;
+                var num = p.Name.Substring(i+1,   j -1 - i-1);
+                p.Name = $"{p.Name.Substring(0, p.Name.Length - i+1)} ({int.Parse(num) + 1})";
+            }
+            else
+            { p.Name = $"{p.Name} (2)"; }
+            return p;
         }
 
         //This is used to trigger PropertyChanged to count each checked mod
@@ -208,7 +302,8 @@ namespace FASTER.Models
         { PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property)); }
     }
 
-    internal class ProfileMod : INotifyPropertyChanged
+    [Serializable]
+    public class ProfileMod : INotifyPropertyChanged
     {
         private bool serverSideChecked;
         private bool clientSideChecked;

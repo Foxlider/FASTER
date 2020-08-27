@@ -1,9 +1,9 @@
 ﻿using FASTER.Models;
+using FASTER.ViewModel;
 using FASTER.Views;
-
 using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 using Microsoft.WindowsAPICodePack.Dialogs;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -17,8 +17,6 @@ using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
-using FASTER.ViewModel;
-using Microsoft.AppCenter.Crashes;
 
 namespace FASTER
 {
@@ -110,6 +108,9 @@ namespace FASTER
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
             NavigateToConsole();
         }
+
+        public static bool IsLoaded()
+        { return _instance != null; }
 
         #region EVENTS
         private void MetroWindow_Initialized(object sender, EventArgs e)
@@ -220,7 +221,7 @@ namespace FASTER
             {
                 var profileName = INewProfileName.Text;
                 INewServerProfileDialog.IsOpen = false;
-                ServerCollection.AddServerProfile(profileName, "_" + Functions.SafeName(profileName));
+                ServerProfileCollection.AddServerProfile(profileName);
                 INewProfileName.Text = string.Empty;
             }
         }
@@ -232,18 +233,17 @@ namespace FASTER
 
             try
             {
-                var temp = Properties.Settings.Default.Servers.ServerProfiles.FirstOrDefault(s =>
-                    s.SafeName == ((ToggleButton) IServerProfilesMenu.SelectedItem).Name);
+                var temp = Properties.Settings.Default.Profiles.ServerProfiles.FirstOrDefault(s =>
+                    s.Id == ((ToggleButton) IServerProfilesMenu.SelectedItem).Name);
                 if (temp == null)
                 {
                     DisplayMessage("Could not find the selected profile.");
                     return;
                 }
 
-                Models.ServerProfile serverProfile = temp.CloneObjectSerializable();
-                serverProfile.DisplayName += " 2";
-                serverProfile.SafeName = "_" + Functions.SafeName(serverProfile.DisplayName);
-                ServerCollection.AddServerProfile(serverProfile);
+                //ServerProfileNew serverProfile = temp.CloneObjectSerializable();
+                ServerProfileNew serverProfile = temp.Clone(); 
+                ServerProfileCollection.AddServerProfile(serverProfile);
             }
             catch (Exception err)
             {
@@ -339,20 +339,23 @@ namespace FASTER
 
         public void LoadServerProfiles()
         {
-            if (Properties.Settings.Default.Servers == null) return;
+            if (Properties.Settings.Default.Profiles == null)
+            {
+                Properties.Settings.Default.Profiles = new ServerProfileCollection();
+                Properties.Settings.Default.Save();
+            }
+            var currentProfilesNew = Properties.Settings.Default.Profiles;
 
-            var currentProfiles = Properties.Settings.Default.Servers;
             Dispatcher?.Invoke(() => { IServerProfilesMenu.Items.Clear(); });
 
             ContentProfileViews.Clear();
 
-            foreach (var profile in currentProfiles.ServerProfiles)
+            foreach (var profile in currentProfilesNew.ServerProfiles)
             {
-                Guid id = Guid.NewGuid();
                 ToggleButton newItem = new ToggleButton
                 {
-                    Name = $"_{id:N}",
-                    Content = profile.DisplayName,
+                    Name = profile.Id,
+                    Content = profile.Name,
                     Style = (Style)FindResource("MahApps.Styles.ToggleButton.WindowCommands"),
                     Padding = new Thickness(10, 2, 0, 2),
                     FontSize = 14,
@@ -365,12 +368,11 @@ namespace FASTER
 
                 newItem.Click += ToggleButton_Click;
 
-                if (ContentProfileViews.Any(tab => profile.SafeName == tab.ServerCfg.Hostname)) 
+                if (ContentProfileViews.Any(tab => profile.Id == tab.Profile.Id)) 
                     continue;
 
                 //TODO change this later on to load Profiles
-                var p = new ProfileViewModel(profile.DisplayName, id);
-
+                var p = new ProfileViewModel(profile);
                 ContentProfileViews.Add(p);
             }
         }

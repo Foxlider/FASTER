@@ -159,7 +159,8 @@
             CloseOnOverlay="True"
             GlowBrush="Black"
             BorderThickness="0"
-            Title="New Profile">
+            Title="New Profile" 
+            Background="{StaticResource MahApps.Brushes.Flyout.Background}">
             <simpleChildWindow:ChildWindow.Icon>
                 <iconPacks:PackIconModern
                     HorizontalAlignment="Center"
@@ -199,6 +200,7 @@
             HorizontalContentAlignment="Center"
             VerticalContentAlignment="Center"
             Foreground="White"
+            Background="{StaticResource MahApps.Brushes.Flyout.Background}"
             Padding="15"
             CloseOnOverlay="True"
             GlowBrush="Black"

@@ -42,9 +42,9 @@ namespace FASTER.Views
 
         private void RefreshPasswords()
         {
-            var profile = Properties.Settings.Default.Servers.ServerProfiles.Find(p => p.SafeName == _safeName);
-            IPassword.Password = profile.Password;
-            IAdminPassword.Password = profile.AdminPassword;
+            var profile = Properties.Settings.Default.Profiles.ServerProfiles.Find(p => p.Name == _safeName);
+            IPassword.Password = profile.ServerCfg.Password;
+            IAdminPassword.Password = profile.ServerCfg.PasswordAdmin;
         }
 
         private void ServerProfile_Initialized(object sender, EventArgs e)
@@ -190,17 +190,6 @@ namespace FASTER.Views
         {
             var oldName = IDisplayName.Content.ToString();
             var newName = IProfileDisplayNameEdit.Text;
-            var res = ServerCollection.RenameServerProfile(oldName, newName);
-            if (!string.IsNullOrEmpty(res))
-            {
-                _safeName = res;
-                MetroWindow.MainContent.Navigate(MetroWindow.ContentSteamUpdater);
-                Properties.Settings.Default.Save();
-                MainWindow.Instance.LoadServerProfiles();
-                MetroWindow.MainContent.Navigate(MetroWindow.ContentProfiles.FirstOrDefault(p => p.Name == _safeName));
-            }
-            else
-            { MessageBox.Show("Could not rename Server Profile. \nPlease try again."); }
         }
 
         private void ISaveProfile_Click(object sender, RoutedEventArgs e)
@@ -234,7 +223,6 @@ namespace FASTER.Views
 
         private void DeleteProfile(object sender, RoutedEventArgs e)
         {
-            ServerCollection.DeleteServerProfile(_safeName);
             MetroWindow.MainContent.Navigate(MetroWindow.ContentSteamUpdater);
 
             for (int i = MetroWindow.IServerProfilesMenu.Items.Count - 1; i >= 0; --i)
@@ -603,136 +591,10 @@ namespace FASTER.Views
 
             NumberFormatInfo provider = CultureInfo.CurrentCulture.NumberFormat;
 
-            var profile = Properties.Settings.Default.Servers.ServerProfiles.Find(p => p.SafeName == _safeName);
+            var profile = Properties.Settings.Default.Profiles.ServerProfiles.Find(p => p.Id == _safeName);
             if (profile == null) return;
 
-            profile.DisplayName              = IDisplayName.Content.ToString();
-            profile.ServerName               = IServerName.Text;
-            profile.Executable               = IExecutable.Text;
-
-            //Don't update passwords if unloading => Passwordbox don't keep their data when unloaded
-            if(updatePasswords)
-            {
-                profile.Password      = IPassword.Password;
-                profile.AdminPassword = IAdminPassword.Password;
-            }
-            profile.MaxPlayers               = Convert.ToInt32(Convert.ToDouble(IMaxPlayers.Text), provider);
-            profile.Port                     = Convert.ToInt32(Convert.ToDouble(IPort.Text),       provider);
-            profile.HeadlessClientEnabled    = IHeadlessClientEnabled.IsOn;
-            profile.HeadlessIps              = IHeadlessIps.Text;
-            profile.LocalClients             = ILocalClients.Text;
-            profile.NoOfHeadlessClients      = (int) INoOfHeadlessClients.Value;
-            profile.Loopback                 = ILoopback.IsChecked      ?? false;
-            profile.Upnp                     = IUpnp.IsChecked          ?? false;
-            profile.Netlog                   = INetlog.IsChecked        ?? false;
-            profile.VotingEnabled            = IVotingEnabled.IsOn;
-            profile.VotingMinPlayers         = Convert.ToInt32(Convert.ToDouble(IVotingMinPlayers.Text), provider);
-            profile.VotingThreshold          = decimal.Parse(IVotingThreshold.Text, provider);
-            profile.AllowFilePatching        = Convert.ToInt32(Convert.ToDouble(IAllowFilePatching.Text), provider);
-            profile.VerifySignatures         = Convert.ToInt32(Convert.ToDouble(IVerifySignatures.Text),  provider);
-            profile.RequiredBuildEnabled     = IRequiredBuildEnabled.IsChecked ?? false;
-            profile.KickDuplicates           = IKickDuplicates.IsChecked       ?? false;
-            profile.VonEnabled               = IVonEnabled.IsOn;
-            profile.CodecQuality             = Convert.ToInt32(Convert.ToDouble(ICodecQuality.Value.ToString(provider), provider), provider);
-            profile.ServerConsoleLogEnabled  = IServerConsoleLogEnabled.IsChecked ?? false;
-            profile.PidEnabled               = IPidEnabled.IsChecked              ?? false;
-            profile.RankingEnabled           = IRankingEnabled.IsChecked          ?? false;
-            profile.RptTimestamp             = IRptTimestamp.Text;
-            profile.Motd                     = IMotd.Text;
-            profile.MotdDelay                = Convert.ToInt32(Convert.ToDouble(IMotdDelay.Text), provider);
-            profile.ManualMissions           = IManualMissions.IsOn;
-            profile.MissionsClass            = IMissionConfig.Text;
-            profile.PersistentBattlefield    = IPersistentBattlefield.IsChecked ?? false;
-            profile.AutoInit                 = IAutoInit.IsChecked              ?? false;
-            profile.DifficultyPreset         = IDifficultyPreset.Text;
-            profile.ReducedDamage            = IReducedDamage.IsChecked ?? false;
-            profile.GroupIndicators          = IGroupIndicators.Text;
-            profile.FriendlyNameTags         = IFriendlyNameTags.Text;
-            profile.EnemyNameTags            = IEnemyNameTags.Text;
-            profile.DetectedMines            = IDetectedMines.Text;
-            profile.MultipleSaves            = IMultipleSaves.IsChecked ?? false;
-            profile.ThirdPerson              = IThirdPerson.IsChecked   ?? false;
-            profile.WeaponInfo               = IWeaponInfo.Text;
-            profile.StanceIndicator          = IStanceIndicator.Text;
-            profile.StaminaBar               = IStaminaBar.IsChecked         ?? false;
-            profile.CameraShake              = ICameraShake.IsChecked        ?? false;
-            profile.VisualAids               = IVisualAids.IsChecked         ?? false;
-            profile.MapContentFriendly       = IMapContentFriendly.IsChecked ?? false;
-            profile.MapContentEnemy          = IMapContentEnemy.IsChecked    ?? false;
-            profile.MapContentMines          = IMapContentMines.IsChecked    ?? false;
-            profile.Commands                 = ICommands.Text;
-            profile.VonId                    = IVonId.IsChecked    ?? false;
-            profile.KilledBy                 = IKilledBy.IsChecked ?? false;
-            profile.Waypoints                = IWaypoints.Text;
-            profile.Crosshair                = ICrosshair.IsChecked     ?? false;
-            profile.AutoReporting            = IAutoReporting.IsChecked ?? false;
-            profile.ScoreTable               = IScoreTable.IsChecked    ?? false;
-            profile.TacticalPing             = ITacticalPing.IsChecked  ?? false;
-            profile.AiAccuracy               = double.Parse(IAiAccuracy.Text, provider);
-            profile.AiSkill                  = double.Parse(IAiSkill.Text,    provider);
-            profile.AiPreset                 = Convert.ToInt32(Convert.ToDouble(IAiPreset.Text), provider);
-            profile.MaxPacketLossEnabled     = IMaxPacketLossEnabled.IsChecked ?? false;
-            profile.MaxPacketLoss            = Convert.ToInt32(Convert.ToDouble(IMaxPacketLoss.Text, provider), provider);
-            profile.DisconnectTimeoutEnabled = IDisconnectTimeOutEnabled.IsChecked ?? false;
-            profile.DisconnectTimeout        = Convert.ToInt32(Convert.ToDouble(IDisconnectTimeOut.Text, provider), provider);
-            profile.KickOnSlowNetworkEnabled = IKickOnSlowNetworkEnabled.IsChecked ?? false;
-            profile.KickOnSlowNetwork        = IKickOnSlowNetwork.Text;
-            profile.TerrainGrid              = Convert.ToInt32(Convert.ToDouble(ITerrainGrid.Text,  provider), provider);
-            profile.ViewDistance             = Convert.ToInt32(Convert.ToDouble(IViewDistance.Text, provider), provider);
-            profile.MaxPingEnabled           = IMaxPingEnabled.IsChecked ?? false;
-            profile.MaxPing                  = Convert.ToInt32(Convert.ToDouble(IMaxPing.Text, provider), provider);
-            profile.MaxDesyncEnabled         = IMaxDesyncEnabled.IsChecked ?? false;
-            profile.MaxDesync                = Convert.ToInt32(Convert.ToDouble(IMaxDesync.Text,         provider), provider);
-            profile.MaxCustomFileSize        = Convert.ToInt32(Convert.ToDouble(IMaxCustomFileSize.Text, provider), provider);
-            profile.MaxPacketSize            = Convert.ToInt32(Convert.ToDouble(IMaxPacketSize.Text,     provider), provider);
-            profile.MinBandwidth             = double.Parse(IMinBandwidth.Text, provider);
-            profile.MaxBandwidth             = double.Parse(IMaxBandwidth.Text, provider);
-            profile.MaxMessagesSend          = Convert.ToInt32(Convert.ToDouble(IMaxMessagesSend.Text,      provider), provider);
-            profile.MaxSizeNonguaranteed     = Convert.ToInt32(Convert.ToDouble(IMaxSizeNonguaranteed.Text, provider), provider);
-            profile.MaxSizeGuaranteed        = Convert.ToInt32(Convert.ToDouble(IMaxSizeGuaranteed.Text,    provider), provider);
-            profile.MinErrorToSend           = double.Parse(IMinErrorToSend.Text,     provider);
-            profile.MinErrorToSendNear       = double.Parse(IMinErrorToSendNear.Text, provider);
-            profile.CpuCount                 = ICpuCount.Text;
-            profile.MaxMem                   = IMaxMem.Text;
-            profile.ExtraParams              = IExtraParams.Text;
-            profile.AdminUids                = IAdminUids.Text;
-            profile.EnableHyperThreading     = IEnableHyperThreading.IsChecked ?? false;
-            profile.FilePatching             = IFilePatching.IsChecked         ?? false;
-            profile.ServerCommandPassword    = IServerCommandPassword.Text;
-            profile.DoubleIdDetected         = IDoubleIdDetected.Text;
-            profile.OnUserConnected          = IOnUserConnected.Text;
-            profile.OnUserDisconnected       = IOnUserDisconnected.Text;
-            profile.OnHackedData             = IOnHackedData.Text;
-            profile.OnDifferentData          = IOnDifferentData.Text;
-            profile.OnUnsignedData           = IOnUnsignedData.Text;
-            profile.RegularCheck             = IRegularCheck.Text;
-            profile.ServerMods               = "";
-            foreach (CheckBox addon in IServerModsList.Items)
-            {
-                if (!profile.ServerMods.Contains((string) addon.Content) && (addon.IsChecked ?? false))
-                { profile.ServerMods += $"{addon.Content};"; }
-            }
-            profile.ClientMods = "";
-            foreach (CheckBox addon in IClientModsList.Items)
-            {
-                if (!profile.ClientMods.Contains((string)addon.Content) && (addon.IsChecked ?? false))
-                { profile.ClientMods += $"{addon.Content};"; }
-            }
-            profile.HeadlessMods = "";
-            foreach (CheckBox addon in IHeadlessModsList.Items)
-            {
-                if (!profile.HeadlessMods.Contains((string)addon.Content) && (addon.IsChecked ?? false))
-                { profile.HeadlessMods += $"{addon.Content};"; }
-            }
-            profile.Missions = "";
-            foreach (CheckBox addon in IMissionCheckList.Items)
-            {
-                if (!profile.Missions.Contains((string)addon.Content) && (addon.IsChecked ?? false))
-                { profile.Missions += $"{addon.Content};"; }
-            }
-            profile.BattleEye = IBattleEye.IsChecked ?? false;
-            profile.additionalParams = IAdditionalParams.Text;
-            profile.enableAdditionalParams = IEnableAdditionalParams.IsChecked ?? false;
+            
 
             Properties.Settings.Default.Save();
         }
@@ -1014,16 +876,7 @@ namespace FASTER.Views
             var          currentMissions = IMissionCheckList.Items;
             List<string> newMissions     = new List<string>();
             var          checkedMissions = new List<CheckBox>();
-            var          profile         = Properties.Settings.Default.Servers.ServerProfiles.Find(p => p.SafeName == _safeName);
 
-            if (profile != null)
-            {
-                foreach (var mission in profile.Missions.Split(';'))
-                {
-                    if (checkedMissions.FirstOrDefault(c => (string) c.Content == mission.Replace(";", "")) == null && !string.IsNullOrWhiteSpace(mission))
-                        checkedMissions.Add(new CheckBox { Content = mission.Replace(";", ""), IsChecked = true });
-                }
-            }
 
             IMissionCheckList.Items.Clear();
 
@@ -1050,13 +903,10 @@ namespace FASTER.Views
             var          currentMods = IServerModsList.Items;
             List<string> newMods     = new List<string>();
 
-            var profile           = Properties.Settings.Default.Servers.ServerProfiles.Find(p => p.SafeName == _safeName);
             var checkedServerMods = new List<CheckBox>();
             var checkedHcMods = new List<CheckBox>();
             var checkedClientMods = new List<CheckBox>();
             
-            if (profile != null) 
-            { SetUpModlists(profile, checkedServerMods, checkedHcMods, checkedClientMods); }
 
             IServerModsList.Items.Clear();
             IClientModsList.Items.Clear();

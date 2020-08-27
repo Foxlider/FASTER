@@ -6,7 +6,8 @@ using System.Text;
 
 namespace FASTER.Models
 {
-    class BasicCfg : INotifyPropertyChanged
+    [Serializable]
+    public class BasicCfg : INotifyPropertyChanged
     {
         private ushort maxMsgSend = 256;
         private ushort maxSizeGuaranteed = 256;

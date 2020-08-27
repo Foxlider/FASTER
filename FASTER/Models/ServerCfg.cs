@@ -13,8 +13,8 @@ namespace FASTER.Models
         public static string[] TimeStampStrings { get; } = { "none", "short", "long" };
     }
 
-
-    class ServerCfg : INotifyPropertyChanged
+    [Serializable]
+    public class ServerCfg : INotifyPropertyChanged
     {
         //Server Options
         private string       passwordAdmin;
@@ -820,7 +820,8 @@ namespace FASTER.Models
         }
     }
 
-    internal class ProfileMission : INotifyPropertyChanged
+    [Serializable]
+    public class ProfileMission : INotifyPropertyChanged
     {
         private bool missionChecked;
         private string name;

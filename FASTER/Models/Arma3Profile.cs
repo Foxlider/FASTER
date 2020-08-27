@@ -15,7 +15,8 @@ namespace FASTER.Models
         public static string[] ThirdPersonStrings { get; } = { "Disabled", "Enabled", "Vehicles Only" };
     }
 
-    class Arma3Profile : INotifyPropertyChanged
+    [Serializable]
+    public class Arma3Profile : INotifyPropertyChanged
     {
         private ushort reducedDamage = 0;
         private ushort groupIndicators = 2;
