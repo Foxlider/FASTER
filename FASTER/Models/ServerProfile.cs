@@ -79,7 +79,7 @@ namespace FASTER.Models
         private bool _missionOverride;
         private bool _contactDlcChecked;
         private bool _gmDlcChecked;
-        private bool _enableHT;
+        private bool _enableHT = true;
         private bool _enableRanking;
 
         private List<ProfileMod> _profileMods = new List<ProfileMod>();
@@ -88,7 +88,15 @@ namespace FASTER.Models
         private BasicCfg _basicCfg;
 
         //PUBLIC VAR DECLARATIONS
-        public string Id => _id;
+        public string Id
+        {
+            get => _id;
+            set
+            {
+                _id = value;
+                RaisePropertyChanged("Id");
+            }
+        }
 
         public string Name
         {
@@ -246,6 +254,8 @@ namespace FASTER.Models
             ServerCfg = new ServerCfg(){ Hostname = name};
             ArmaProfile = new Arma3Profile();
             BasicCfg = new BasicCfg();
+
+            Directory.CreateDirectory(Path.Combine(Properties.Settings.Default.serverPath, "Servers", Id));
         }
 
         public ServerProfileNew()

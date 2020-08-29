@@ -175,7 +175,7 @@ namespace FASTER.Views
         }
 
         private void IUpdateApp_OnClick(object sender, RoutedEventArgs e)
-        { AutoUpdater.Start("https://raw.githubusercontent.com/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite/master/FASTER_Version.xml"); }
+        { AutoUpdater.Start("https://raw.githubusercontent.com/Foxlider/FASTER/master/FASTER_Version.xml"); }
 
         private void APIKeyButton_Click(object sender, RoutedEventArgs e)
         { Functions.OpenBrowser("https://forums.bohemia.net/forums/topic/224359-foxs-arma-server-tool-extended-rewrite-faster/"); }

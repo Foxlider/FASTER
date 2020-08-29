@@ -584,7 +584,7 @@
                                             <RowDefinition Height="Auto"/>
                                         </Grid.RowDefinitions>
                                         <TextBox Grid.Row="1" MinHeight="50" Margin="10" Text="{Binding Path=ServerCfg.Motd}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Message of the Day" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"/>
-                                        <mah:NumericUpDown Grid.Row="2" Value="{Binding Path=ServerCfg.MotdInterval}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Delay Between Messages" Margin="10,0,10,5" HorizontalAlignment="Left"/>
+                                        <mah:NumericUpDown Grid.Row="2" Value="{Binding Path=ServerCfg.MotdInterval}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Delay Between Messages" Margin="10,0,10,5" Minimum="0" HorizontalAlignment="Left"/>
                                     </Grid>
                                 </GroupBox>
                             </StackPanel>
@@ -645,6 +645,7 @@
 
 
                             <CheckBox Grid.Row="6" Grid.Column="0" Margin="3,5" IsChecked="{Binding Path=ServerCfg.MaxMemOverride}" Content="Force Maximum Memory"/>
+                            <CheckBox Grid.Row="6" Grid.Column="1" Margin="3,5" IsChecked="{Binding Path=Profile.EnableHyperThreading}" Content="Enable Hyper Threading"/>
                             <CheckBox Grid.Row="6" Grid.Column="2" Margin="3,5" IsChecked="{Binding Path=ServerCfg.CpuCountOverride}" Content="Force CPU Count"/>
                             <mah:NumericUpDown Grid.Row="7" Grid.Column="0" Value="{Binding ServerCfg.MaxMem}" Visibility="{Binding Path=ServerCfg.MaxMemOverride, Converter={StaticResource BoolToVis}}" mah:TextBoxHelper.Watermark="Maximum Memory (MB)" mah:TextBoxHelper.UseFloatingWatermark="True" Minimum="1024" Maximum="128000" Interval="1" Margin="3"/>
                             <mah:NumericUpDown Grid.Row="7" Grid.Column="2" Value="{Binding ServerCfg.CpuCount}" Visibility="{Binding Path=ServerCfg.CpuCountOverride, Converter={StaticResource BoolToVis}}" mah:TextBoxHelper.Watermark="CPU Core Count" mah:TextBoxHelper.UseFloatingWatermark="True" Minimum="1" Maximum="34" Interval="1" Margin="3"/>

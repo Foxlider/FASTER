@@ -56,7 +56,7 @@ namespace FASTER.Views
             AppInsights.Client.TrackEvent("About - Clicked Git", new Dictionary<string, string> {
                 { "Name", Properties.Settings.Default.steamUserName }
             });
-            Functions.OpenBrowser("https://github.com/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite");
+            Functions.OpenBrowser("https://github.com/Foxlider/FASTER");
         }
 
         private void IForumsButton_Click(object sender, RoutedEventArgs e)

@@ -13,7 +13,7 @@
     <Description>Fox's Arma Server Tool Extended Rewrite</Description>
     <Copyright>Copyright © 2019</Copyright>
     <PackageProjectUrl>https://forums.bohemia.net/forums/topic/224359-foxs-arma-server-tool-extended-rewrite-faster/</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite</RepositoryUrl>
+    <RepositoryUrl>https://github.com/Foxlider/FASTER</RepositoryUrl>
     <ApplicationIcon>Resources\FASTER.ico</ApplicationIcon>
     <StartupObject>FASTER.App</StartupObject>
     <ApplicationManifest>Properties\FASTER.manifest</ApplicationManifest>

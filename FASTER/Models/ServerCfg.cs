@@ -801,12 +801,13 @@ namespace FASTER.Models
                           + "\r\n"
                           + $"{MissionContentOverride}\t\t\t\t// An empty Missions class means there will be no mission rotation\r\n"
                           + "\r\n"
-                          + "missionWhitelist[] = {}; // An empty whitelist means there is no restriction on what missions' available"
+                          + "missionWhitelist[] = {};\r\n" 
+                          + "// An empty whitelist means there is no restriction on what missions' available"
                           + "\r\n"
                           + "\r\n"
-                          + "// HEADLESS CLIENT"
-                          + $"{(headlessClientEnabled ? "" : "//")}headlessClients[] =  { "{\n\t\"" + string.Join("\",\n\t \"", headlessClients) + "\"\n}" };\r\n"
-                          + $"{(headlessClientEnabled ? "" : "//")}localClient[] =  { "{\n\t\"" + string.Join("\",\n\t \"", localClient) + "\"\n}" };\r\n";
+                          + "// HEADLESS CLIENT\r\n"
+                          + $"{(headlessClientEnabled && !headlessClients.Any(string.IsNullOrWhiteSpace) ? $"headlessClients[] =  { "{\n\t\"" + string.Join("\",\n\t \"", headlessClients) + "\"\n}" };\r\n" : "//headlessClients[] =  {};\r\n")}"
+                          + $"{(headlessClientEnabled && !localClient.Any(string.IsNullOrWhiteSpace)? $"localClient[] =  { "{\n\t\"" + string.Join("\",\n\t \"", localClient) + "\"\n}" };" : "//localClient[] =  {};")}";
             return output;
         }
 

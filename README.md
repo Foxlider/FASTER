@@ -2,11 +2,11 @@
 
 #### Badges 
 ***GitHub***  
-[![GitHub issues](https://img.shields.io/github/issues/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite.svg?logo=github&style=flat-square)](https://github.com/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite/issues)
-![GitHub](https://img.shields.io/github/license/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite.svg?style=flat-square)
-[![GitHub release](https://img.shields.io/github/release/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite.svg?logo=github&style=flat-square)](https://GitHub.com/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite/releases/)  
-[![Github total downloads](https://img.shields.io/github/downloads/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite/total.svg?logo=github&style=flat-square)](https://GitHub.com/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite/releases/)
-[![Github latest downloads](https://img.shields.io/github/downloads/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite/latest/total.svg?logo=github&style=flat-square)](https://GitHub.com/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite/releases/)
+[![GitHub issues](https://img.shields.io/github/issues/Foxlider/FASTER.svg?logo=github&style=flat-square)](https://github.com/Foxlider/FASTER/issues)
+![GitHub](https://img.shields.io/github/license/Foxlider/FASTER.svg?style=flat-square)
+[![GitHub release](https://img.shields.io/github/release/Foxlider/FASTER.svg?logo=github&style=flat-square)](https://GitHub.com/Foxlider/FASTER/releases/)  
+[![Github total downloads](https://img.shields.io/github/downloads/Foxlider/FASTER/total.svg?logo=github&style=flat-square)](https://GitHub.com/Foxlider/FASTER/releases/)
+[![Github latest downloads](https://img.shields.io/github/downloads/Foxlider/FASTER/latest/total.svg?logo=github&style=flat-square)](https://GitHub.com/Foxlider/FASTER/releases/)
   
 ***Azure***  
 [![Build Status](https://dev.azure.com/keelah/FASTER/_apis/build/status/Faster%20Release%20Builder?branchName=master)](https://dev.azure.com/keelah/FASTER/_build/latest?definitionId=8&branchName=master)
@@ -63,7 +63,7 @@ Thanks go out to all the guys who helped the developpment and those who will tes
 
 ##### **_ISSUES and FEEDBACK_**
 
-As always best place to report issues is on the [GitHub Repo](https://github.com/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite/issues), as for general discussion I'll always keep an eye on the BI forum thread or come and join us in [Discord](https://discord.gg/2BUuZa3).
+As always best place to report issues is on the [GitHub Repo](https://github.com/Foxlider/FASTER/issues), as for general discussion I'll always keep an eye on the BI forum thread or come and join us in [Discord](https://discord.gg/2BUuZa3).
 
 ##### **_DOCUMENTATION_**
   

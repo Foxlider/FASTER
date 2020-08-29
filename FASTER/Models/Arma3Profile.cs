@@ -344,16 +344,16 @@ namespace FASTER.Models
                 $"			commands = {commands};			// Commands (0 = never, 1 = fade out, 2 = always)\r\n" +
                 $"			waypoints = {waypoints};			// Waypoints (0 = never, 1 = fade out, 2 = always)\r\n" +
                 $"			tacticalPing = {tacticalPing};		// Tactical ping (0 = disable, 1 = enable)\r\n" +
-                "			/* Personal awareness */" +
+                "			/* Personal awareness */\r\n" +
                 $"			weaponInfo = {weaponInfo};			// Weapon info (0 = never, 1 = fade out, 2 = always)\r\n" +
                 $"			stanceIndicator = {stanceIndicator};	// Stance indicator (0 = never, 1 = fade out, 2 = always)\r\n" +
                 $"			staminaBar = {staminaBar};			// Stamina bar\r\n" +
                 $"			weaponCrosshair = {weaponCrosshair};	// Weapon crosshair\r\n" +
                 $"			visionAid = {visionAid};			// Vision aid\r\n" +
-                "			/* View */" +
+                "			/* View */\r\n" +
                 $"			thirdPersonView = {thirdPersonView};	// 3rd person view\r\n" +
                 $"			cameraShake = {cameraShake};		// Camera shake\r\n" +
-                "			/* Multiplayer */" +
+                "			/* Multiplayer */\r\n" +
                 $"			scoreTable = {scoreTable};			// Score table\r\n" +
                 $"			deathMessages = {deathMessages};		// Killed by\r\n" +
                 $"			vonID = {vonID};				// VoN ID\r\n" +
