@@ -246,16 +246,17 @@ namespace FASTER.Models
         }
 
         //CTORS
-        public ServerProfileNew(string name)
+        public ServerProfileNew(string name, bool createFolder = true)
         {
             _id = $"_{Guid.NewGuid():N}";
             Name = name;
-            Executable = Path.Combine(Properties.Settings.Default.serverPath, "arma3server_64.exe");
+            Executable = Path.Combine(Properties.Settings.Default.serverPath, "arma3server_x64.exe");
             ServerCfg = new ServerCfg(){ Hostname = name};
             ArmaProfile = new Arma3Profile();
             BasicCfg = new BasicCfg();
 
-            Directory.CreateDirectory(Path.Combine(Properties.Settings.Default.serverPath, "Servers", Id));
+            if (createFolder)
+            { Directory.CreateDirectory(Path.Combine(Properties.Settings.Default.serverPath, "Servers", Id)); }
         }
 
         public ServerProfileNew()

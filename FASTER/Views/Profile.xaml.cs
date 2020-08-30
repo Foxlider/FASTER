@@ -14,7 +14,8 @@ namespace FASTER.Views
             InitializeComponent();
         }
 
-        private void UserControl_Loaded(object sender, RoutedEventArgs e) => Refresh();
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {}
 
         public MainWindow MetroWindow => (MainWindow)Window.GetWindow(this);
 

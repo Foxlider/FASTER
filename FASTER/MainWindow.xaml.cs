@@ -151,8 +151,9 @@ namespace FASTER
             nav.IsChecked = true;
             lastNavButton = nav;
 
-            AppInsights.Client.TrackPageView(nav.Name);
-            
+            //Saving just in case
+            Properties.Settings.Default.Save();
+
             //Get loading screen
             switch (nav.Name)
             {

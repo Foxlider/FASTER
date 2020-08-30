@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls.Primitives;
+using FASTER.Properties;
 
 namespace FASTER.ViewModel
 {
@@ -19,7 +20,7 @@ namespace FASTER.ViewModel
     {
         public ProfileViewModel()
         {
-            Profile = new ServerProfileNew("Server");
+            Profile = new ServerProfileNew("Server", false);
             ServerCfg = Profile.ServerCfg;
             ServerCfg.ServerCfgContent = ServerCfg.ProcessFile();
             ArmaProfile                    = Profile.ArmaProfile;
@@ -84,7 +85,7 @@ namespace FASTER.ViewModel
             //Launching... 
             DisplayMessage($"Launching Headless Clients for {Profile.Name}...");
 
-            for (int hc = 1; hc <= Profile.HeadlessNumber; )
+            for (int hc = 1; hc <= Profile.HeadlessNumber; hc++ )
             {
                 string headlessMods = string.Join(";", Profile.ProfileMods.Where(m => m.HeadlessChecked).Select(m => $"@{Functions.SafeName(m.Name)}"));
                 List<string> arguments = new List<string>
@@ -120,7 +121,6 @@ namespace FASTER.ViewModel
                 }
                 #if DEBUG
                 DisplayMessage($"{Profile.HeadlessNumber} Headless Clients launched !\n{commandLine}");
-                return;
                 #else
                 ProcessStartInfo hcStartInfo = new ProcessStartInfo(Profile.Executable, commandLine);
                 Process          hcProcess   = new Process { StartInfo = hcStartInfo };
@@ -159,6 +159,8 @@ namespace FASTER.ViewModel
             ProcessStartInfo sStartInfo = new ProcessStartInfo(Profile.Executable, commandLine);
             Process          sProcess   = new Process { StartInfo = sStartInfo };
             sProcess.Start();
+
+            LaunchHCs();
             #endif
             
         }
@@ -269,8 +271,7 @@ namespace FASTER.ViewModel
 
         internal void LoadModsFromFile()
         {
-            foreach (var mod in Profile.ProfileMods)
-            { mod.ClientSideChecked = false; }
+            
 
             var dialog = new CommonOpenFileDialog
             {
@@ -296,6 +297,12 @@ namespace FASTER.ViewModel
             }
 
             var lines = File.ReadAllLines(dialog.FileName).ToList();
+            
+            //Clear mods
+            foreach (var mod in Profile.ProfileMods)
+            { mod.ClientSideChecked = false; }
+
+            //Select new ones
             foreach (var modIdS in from line in lines where line.Contains("steamcommunity.com/sharedfiles/filedetails") select line.Split("?id=") into extract select extract[1].Split('"')[0])
             {
                 if (!uint.TryParse(modIdS, out uint modId)) continue;
@@ -365,7 +372,18 @@ namespace FASTER.ViewModel
             }
 
             if (Directory.Exists(Path.Combine(Properties.Settings.Default.serverPath, "keys"))) 
-            { Directory.Delete(Path.Combine(Properties.Settings.Default.serverPath, "keys"), true); }
+            {
+                foreach (var keyFile in Directory.GetFiles(Path.Combine(Properties.Settings.Default.serverPath, "keys")))
+                {
+                    try
+                    { File.Delete(keyFile); }
+                    catch (Exception)
+                    {
+                        MainWindow.Instance.IFlyout.IsOpen = true;
+                        MainWindow.Instance.IFlyoutMessage.Content = $"Some keys could not be cleared : {Path.GetFileName(keyFile)}";
+                    }
+                }
+            }
 
             Directory.CreateDirectory(Path.Combine(Properties.Settings.Default.serverPath, "keys"));
 

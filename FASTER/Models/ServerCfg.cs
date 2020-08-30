@@ -75,7 +75,6 @@ namespace FASTER.Models
         private string               missionContentOverride;
         private List<ProfileMission> _missions = new List<ProfileMission>();
         private bool                 autoInit;
-        private bool                 persistantBattlefield;
         private string               difficulty = "Custom";
 
         private bool   maxMemOverride;
@@ -196,6 +195,8 @@ namespace FASTER.Models
             {
                 headlessClientEnabled = value;
                 RaisePropertyChanged("HeadlessClientEnabled");
+                if (value && !headlessClients.Any(e => e.Length > 0))
+                { HeadlessClients = "127.0.0.1"; }
             }
         }
 
@@ -459,6 +460,8 @@ namespace FASTER.Models
             set
             {
                 persistent = value ? (short)1 : (short)0;
+                if (!value)
+                    AutoInit = false;
                 RaisePropertyChanged("Persistent");
             }
         }
@@ -598,16 +601,6 @@ namespace FASTER.Models
             }
         }
 
-        public bool PersistantBattlefield
-        {
-            get => persistantBattlefield;
-            set
-            {
-                persistantBattlefield = value;
-                RaisePropertyChanged("PersistantBattlefield");
-            }
-        }
-
         public string Difficulty
         {
             get => difficulty;
@@ -723,7 +716,10 @@ namespace FASTER.Models
                     });
                 }
                 lines.Add("};");
-                missionContentOverride = string.Join("\r\n", lines);
+
+                var compiledMission = string.Join("\r\n", lines);
+                if(missionContentOverride?.Length != compiledMission.Length)
+                { MissionContentOverride = compiledMission; }
             }
 
             string output = "//\r\n"

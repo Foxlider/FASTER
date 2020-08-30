@@ -226,6 +226,7 @@
                                 <RowDefinition/>
                                 <RowDefinition Height="auto"/>
                                 <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
                             </Grid.RowDefinitions>
 
                             <mah:ToggleSwitch Content="Mission selector override" IsOn="{Binding Path=Profile.ServerCfg.MissionChecked}" Margin="5,0"/>
@@ -266,8 +267,12 @@
                             <Button Content="{iconPacks:Material Kind=Refresh}" Grid.Row="2" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" Click="MissionRefresh" BorderThickness="0" Margin="0,5"/>
                             <ComboBox Grid.Row="2" SelectedItem="{Binding Path=Profile.ServerCfg.Difficulty}" ItemsSource="{Binding Path=MissionDifficulties}"  mah:TextBoxHelper.UseFloatingWatermark="True"  mah:TextBoxHelper.Watermark="Difficulty Preset" IsEditable="False" Margin="5,0" HorizontalAlignment="Right"/>
                             <Grid Grid.Row="3">
-                                <CheckBox Content="AutoInit" IsChecked="{Binding Path=ServerCfg.AutoInit}" Margin="5" HorizontalAlignment="Left"/>
-                                <CheckBox Content="Persistant Battlefield" IsChecked="{Binding Path=ServerCfg.PersistantBattlefield}" Margin="5" HorizontalAlignment="Right"/>
+                                <CheckBox Content="AutoInit" IsChecked="{Binding Path=ServerCfg.AutoInit}" Margin="5" HorizontalAlignment="Left" IsEnabled="{Binding Path=ServerCfg.Persistent}"/>
+                                <CheckBox Content="Persistant Battlefield" IsChecked="{Binding Path=ServerCfg.Persistent}" Margin="5" HorizontalAlignment="Right"/>
+                            </Grid>
+                            <Grid Grid.Row="4">
+                                <CheckBox Content="AutoSelect Mission" IsChecked="{Binding Path=ServerCfg.AutoSelectMission}" Margin="5" HorizontalAlignment="Left"/>
+                                <CheckBox Content="Random Order" IsChecked="{Binding Path=ServerCfg.RandomMissionOrder}" Margin="5" HorizontalAlignment="Right"/>
                             </Grid>
                         </Grid>
                     </GroupBox>
@@ -481,13 +486,13 @@
                                 </GroupBox>
 
                                 <!--HEADLESS TILE-->
-                                <Expander Header="Headless Clients">
-                                    <Expander.Style>
-                                        <Style TargetType="Expander" BasedOn="{StaticResource MahApps.Styles.Expander}">
+                                <GroupBox Header="Headless Clients">
+                                    <GroupBox.Style>
+                                        <Style TargetType="GroupBox" BasedOn="{StaticResource MahApps.Styles.GroupBox}">
                                             <Setter Property="Margin" Value="5"/>
                                             <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Window.Background}"></Setter>
                                         </Style>
-                                    </Expander.Style>
+                                    </GroupBox.Style>
                                     <StackPanel>
                                         <mah:ToggleSwitch IsOn="{Binding Path=ServerCfg.HeadlessClientEnabled}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="VoN Activation" ToolTip="VoN Activation" Margin="10,2,0,2" HorizontalAlignment="Left"/>
                                         <Button Content="Launch HCs" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" Click="LaunchHCs" BorderThickness="0" HorizontalAlignment="Stretch" Margin="10,5" Visibility="{Binding Path=ServerCfg.HeadlessClientEnabled, Converter={StaticResource BoolToVis}}"/>
@@ -498,7 +503,7 @@
                                             <Label Content="Number of HCs" ToolTip="Number of Headless Clients" HorizontalAlignment="Center" Margin="1"/>
                                         </StackPanel>
                                     </StackPanel>
-                                </Expander>
+                                </GroupBox>
                             </StackPanel>
 
                             <!-- Column 3 -->
