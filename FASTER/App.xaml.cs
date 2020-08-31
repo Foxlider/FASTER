@@ -71,6 +71,7 @@ namespace FASTER
                         Dispatcher.BeginInvoke(new Action(() => ThemeManager.Current.ChangeTheme(Current, themes[r.Next(themes.Count)])));
                         Thread.Sleep(5000);
                     }
+                    // ReSharper disable once FunctionNeverReturns
                 })
                 { IsBackground = true };
 

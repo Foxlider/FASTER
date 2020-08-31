@@ -7,7 +7,7 @@ namespace FASTER.Views
     /// <summary>
     /// Interaction logic for Profile.xaml
     /// </summary>
-    public partial class Profile : UserControl
+    public partial class Profile
     {
         public Profile()
         {

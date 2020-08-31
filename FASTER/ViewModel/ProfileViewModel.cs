@@ -12,7 +12,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls.Primitives;
-using FASTER.Properties;
 
 namespace FASTER.ViewModel
 {
@@ -193,7 +192,6 @@ namespace FASTER.ViewModel
         {
             string config        = Path.Combine(Properties.Settings.Default.serverPath, "Servers", Profile.Id, "server_config.cfg");
             string basic         = Path.Combine(Properties.Settings.Default.serverPath, "Servers", Profile.Id, "server_basic.cfg");
-            string serverProfile = Path.Combine(Properties.Settings.Default.serverPath, "Servers", Profile.Id, "users", Profile.Id, $"{Profile.Id}.Arma3Profile");
 
             string playerMods = string.Join(";", Profile.ProfileMods.Where(m => m.ClientSideChecked).Select(m => $"@{Functions.SafeName(m.Name)}"));
             string serverMods = string.Join(";", Profile.ProfileMods.Where(m => m.ServerSideChecked).Select(m => $"@{Functions.SafeName(m.Name)}"));
@@ -235,7 +233,7 @@ namespace FASTER.ViewModel
         {
             if (Directory.Exists(Path.Combine(Properties.Settings.Default.serverPath, "Servers", Profile.Id)))
             { Directory.Delete(Path.Combine(Properties.Settings.Default.serverPath, "Servers", Profile.Id), true); }
-            Properties.Settings.Default.Profiles.Delete(Profile);
+            Properties.Settings.Default.Profiles.Remove(Profile);
             Properties.Settings.Default.Save();
             MainWindow.Instance.ContentProfileViews.Remove(MainWindow.Instance.ContentProfileViews.FirstOrDefault(p => p.Profile.Id == Profile.Id));
             var menuItem = MainWindow.Instance.IServerProfilesMenu.Items.Cast<ToggleButton>().FirstOrDefault(p => p.Name == Profile.Id);
@@ -264,6 +262,9 @@ namespace FASTER.ViewModel
             catch
             { DisplayMessage("Could not write the config files. Please ensure the server is not running and retry."); }
 
+            var tempProfile = Properties.Settings.Default.Profiles.FirstOrDefault(p => p.Id == Profile.Id);
+            if (tempProfile != null)
+            { tempProfile = Profile; }
             Properties.Settings.Default.Save();
         }
 
@@ -418,40 +419,44 @@ namespace FASTER.ViewModel
                 modlist.Add(existingMod);
             }
 
-            List<string> localMods = Directory.GetDirectories(Properties.Settings.Default.serverPath, "@*")
-                                .Select(addon => addon.Replace(Properties.Settings.Default.serverPath + @"\", ""))
-                                .ToList();
-            List<string> targetForDeletion = new List<string>();
-            foreach (var folder in Properties.Settings.Default.localModFolders)
+            if (!string.IsNullOrWhiteSpace(Properties.Settings.Default.serverPath))
             {
-                if (Directory.Exists(folder))
-                    localMods.AddRange(Directory.GetDirectories(folder, "@*"));
-                else
+                List<string> localMods = Directory.GetDirectories(Properties.Settings.Default.serverPath, "@*")
+                                                  .Select(addon => addon.Replace(Properties.Settings.Default.serverPath + @"\", ""))
+                                                  .ToList();
+                List<string> targetForDeletion = new List<string>();
+                foreach (var folder in Properties.Settings.Default.localModFolders)
                 {
-                    DisplayMessage("A folder could not be found and have been deleted");
-                    targetForDeletion.Add(folder);
+                    if (Directory.Exists(folder))
+                        localMods.AddRange(Directory.GetDirectories(folder, "@*"));
+                    else
+                    {
+                        DisplayMessage("A folder could not be found and have been deleted");
+                        targetForDeletion.Add(folder);
+                    }
                 }
-            }
-            foreach (var folder in targetForDeletion)
-            { Properties.Settings.Default.localModFolders.Remove(folder); }
+                foreach (var folder in targetForDeletion)
+                { Properties.Settings.Default.localModFolders.Remove(folder); }
 
-            foreach (var addon in localMods.ToList()
-                                         .Where(addon => modlist.FirstOrDefault(m => addon.Contains($"@{Functions.SafeName(m.Name)}")) != null)) 
-            { localMods.Remove(addon); }
+                foreach (var addon in localMods.ToList()
+                                             .Where(addon => modlist.FirstOrDefault(m => addon.Contains($"@{Functions.SafeName(m.Name)}")) != null)) 
+                { localMods.Remove(addon); }
 
-            foreach(var mod in localMods)
-            {
-                var newId = GetUInt32HashCode(mod);
-                ProfileMod existingMod = Profile.ProfileMods.FirstOrDefault(m => m.Id == newId);
+                foreach(var mod in localMods)
+                {
+                    var newId = GetUInt32HashCode(mod);
+                    ProfileMod existingMod = Profile.ProfileMods.FirstOrDefault(m => m.Id == newId);
                 
-                if (existingMod == null)
-                {
-                    var newProfile = new ProfileMod { Name = mod, Id = newId };
-                    modlist.Add(newProfile);
-                    continue;
+                    if (existingMod == null)
+                    {
+                        var newProfile = new ProfileMod { Name = mod, Id = newId };
+                        modlist.Add(newProfile);
+                        continue;
+                    }
+                    modlist.Add(existingMod);
                 }
-                modlist.Add(existingMod);
             }
+            
             Profile.ProfileMods = modlist;
 
             LoadMissions();

@@ -227,7 +227,7 @@ namespace FASTER
 
             try
             {
-                var temp = Properties.Settings.Default.Profiles.ServerProfiles.FirstOrDefault(s =>
+                var temp = Properties.Settings.Default.Profiles.FirstOrDefault(s =>
                     s.Id == ((ToggleButton) IServerProfilesMenu.SelectedItem).Name);
                 if (temp == null)
                 {
@@ -344,7 +344,7 @@ namespace FASTER
 
             ContentProfileViews.Clear();
 
-            foreach (var profile in currentProfilesNew.ServerProfiles)
+            foreach (var profile in currentProfilesNew)
             {
                 ToggleButton newItem = new ToggleButton
                 {

@@ -11,13 +11,10 @@ using System.Xml.Serialization;
 namespace FASTER.Models
 {
     [Serializable]
-    public class ServerProfileCollection : ICollection
+    public class ServerProfileCollection : List<ServerProfileNew>
     {
         [XmlElement(Order = 1)]
         public string CollectionName { get; set; }
-
-        [XmlElement(Order = 2, ElementName = "ServerProfile")]
-        public List<ServerProfileNew> ServerProfiles = new List<ServerProfileNew>();
 
         public ServerProfileCollection()
         { CollectionName = "Main"; }
@@ -29,7 +26,7 @@ namespace FASTER.Models
             p.ServerCfg.ServerCfgContent     = p.ServerCfg.ProcessFile();
             p.BasicCfg.BasicContent          = p.BasicCfg.ProcessFile();
             p.ArmaProfile.ArmaProfileContent = p.ArmaProfile.ProcessFile();
-            currentProfiles.ServerProfiles.Add(p);
+            currentProfiles.Add(p);
             Properties.Settings.Default.Profiles = currentProfiles;
             Properties.Settings.Default.Save();
             MainWindow.Instance.LoadServerProfiles();
@@ -39,32 +36,11 @@ namespace FASTER.Models
         {
             var currentProfiles = Properties.Settings.Default.Profiles;
             profile.GenerateNewId();
-            currentProfiles.ServerProfiles.Add(profile);
+            currentProfiles.Add(profile);
             Properties.Settings.Default.Profiles = currentProfiles;
             Properties.Settings.Default.Save();
             MainWindow.Instance.LoadServerProfiles();
         }
-
-        public void Add(ServerProfileNew profile) 
-        { ServerProfiles.Add(profile); }
-
-        public void Delete(ServerProfileNew profile)
-        { ServerProfiles.Remove(profile); }
-
-        public IEnumerator GetEnumerator() { return ServerProfiles.GetEnumerator(); }
-
-        // Default Accessor Implementation
-        public ServerProfileNew this[int index] => ServerProfiles[index];
-
-        public void CopyTo(Array array, int index)
-        {
-            var a = ServerProfiles.ToArray();
-            a.CopyTo(array, index);
-        }
-
-        public int Count => ServerProfiles.Count;
-        public bool IsSynchronized => false;
-        public object SyncRoot => this;
     }
 
     [Serializable]

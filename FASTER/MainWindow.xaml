@@ -127,7 +127,7 @@
                     <ToggleButton Name="navAbout" Style="{StaticResource MahApps.Styles.ToggleButton.WindowCommands}" Click="ToggleButton_Click">
                         <DockPanel Width="180">
                             <iconPacks:PackIconModern Kind="Information" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-                            <Label Content="About" FontWeight="DemiBold" FontSize="13" Name="lbl_About" Margin="15,0,0,0" />
+                            <Label Content="About" FontWeight="DemiBold" FontSize="13" Margin="15,0,0,0" />
                         </DockPanel>
                     </ToggleButton>
                 </ListBox>

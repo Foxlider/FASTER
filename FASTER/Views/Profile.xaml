@@ -14,7 +14,6 @@
     </UserControl.DataContext>
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
-        <models:InverseBooleanConverter x:Key="NotBool"/>
         <models:NotBooleanToVisibilityConverter x:Key="BoolToHide"/>
     </UserControl.Resources>
     <Grid>
