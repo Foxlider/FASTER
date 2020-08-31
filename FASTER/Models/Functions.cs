@@ -104,6 +104,7 @@ namespace FASTER.Models
         // Takes any string and removes illegal characters
         public static string SafeName(string input, bool ignoreWhiteSpace = false, string replacement = "_")
         {
+            input = input.Replace("@", "");
             if (ignoreWhiteSpace)
             {
                 // input = Regex.Replace(input, "[^a-zA-Z0-9\-_\s]", replacement) >> "-" is allowed

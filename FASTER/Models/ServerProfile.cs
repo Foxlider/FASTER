@@ -1,6 +1,5 @@
 ﻿
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -230,6 +229,9 @@ namespace FASTER.Models
             ServerCfg = new ServerCfg(){ Hostname = name};
             ArmaProfile = new Arma3Profile();
             BasicCfg = new BasicCfg();
+            ServerCfg.ServerCfgContent = ServerCfg.ProcessFile();
+            ArmaProfile.ArmaProfileContent = ArmaProfile.ProcessFile();
+            BasicCfg.BasicContent = BasicCfg.ProcessFile();
 
             if (createFolder)
             { Directory.CreateDirectory(Path.Combine(Properties.Settings.Default.serverPath, "Servers", Id)); }
@@ -242,6 +244,9 @@ namespace FASTER.Models
             ServerCfg   = new ServerCfg(){ Hostname = Name};
             ArmaProfile = new Arma3Profile();
             BasicCfg    = new BasicCfg();
+            ServerCfg.ServerCfgContent = ServerCfg.ProcessFile();
+            ArmaProfile.ArmaProfileContent = ArmaProfile.ProcessFile();
+            BasicCfg.BasicContent = BasicCfg.ProcessFile();
         }
 
         public void GenerateNewId()

@@ -18,34 +18,15 @@ namespace FASTER.ViewModel
     internal class ProfileViewModel
     {
         public ProfileViewModel()
-        {
-            Profile = new ServerProfileNew("Server", false);
-            ServerCfg = Profile.ServerCfg;
-            ServerCfg.ServerCfgContent = ServerCfg.ProcessFile();
-            ArmaProfile                    = Profile.ArmaProfile;
-            ArmaProfile.ArmaProfileContent = ArmaProfile.ProcessFile();
-            BasicCfg              = Profile.BasicCfg;
-            BasicCfg.BasicContent = BasicCfg.ProcessFile();
-        }
+        { Profile = new ServerProfileNew("Server", false); }
 
         public ProfileViewModel(ServerProfileNew p)
-        {
-            Profile                        = p;
-            ServerCfg                      = Profile.ServerCfg;
-            ServerCfg.ServerCfgContent     = ServerCfg.ProcessFile();
-            BasicCfg                       = Profile.BasicCfg;
-            BasicCfg.BasicContent          = BasicCfg.ProcessFile();
-            ArmaProfile                    = Profile.ArmaProfile;
-            ArmaProfile.ArmaProfileContent = ArmaProfile.ProcessFile();
-        }
+        { Profile = p; }
 
         //Hash for ID generation
         private readonly System.Security.Cryptography.SHA1 hash = new System.Security.Cryptography.SHA1CryptoServiceProvider();
 
-        public ServerCfg ServerCfg { get; set; }
-        public Arma3Profile ArmaProfile { get; set; }
         public ServerProfileNew Profile { get; set; }
-        public BasicCfg BasicCfg { get; set; }
 
         public ObservableCollection<string> VonCodecs           { get; } = new ObservableCollection<string>(ServerCfgArrays.VonCodecStrings);
         public ObservableCollection<string> FilePatching        { get; } = new ObservableCollection<string>(ServerCfgArrays.AllowFilePatchingStrings);
@@ -80,7 +61,9 @@ namespace FASTER.ViewModel
 
         internal void LaunchHCs()
         {
+            if (!Profile.ServerCfg.HeadlessClientEnabled) return;
             if (!VerifyBeforeLaunch()) return;
+
             //Launching... 
             DisplayMessage($"Launching Headless Clients for {Profile.Name}...");
 
@@ -460,8 +443,6 @@ namespace FASTER.ViewModel
             Profile.ProfileMods = modlist;
 
             LoadMissions();
-
-            ServerCfg.ServerCfgContent = ServerCfg.ProcessFile();
         }
 
 
@@ -485,14 +466,15 @@ namespace FASTER.ViewModel
 
             var missionList = new List<ProfileMission>();
             List<string> newMissions = new List<string>();
-            newMissions.AddRange(Directory.GetFiles(Path.Combine(Properties.Settings.Default.serverPath, "mpmissions"), "*.pbo")
-                                        .Select(mission => mission.Replace(Path.Combine(Properties.Settings.Default.serverPath, "mpmissions") + "\\", "")));
+            newMissions.AddRange(Directory.EnumerateFiles(Path.Combine(Properties.Settings.Default.serverPath, "mpmissions"))
+                                                    .Where(s => s.EndsWith(".pbo", StringComparison.OrdinalIgnoreCase) || s.EndsWith(".sqm", StringComparison.OrdinalIgnoreCase))
+                                                    .Select(mission => mission.Replace(Path.Combine(Properties.Settings.Default.serverPath, "mpmissions") + "\\", "")));
             foreach (var mission in newMissions)
             {
                 ProfileMission existingMission = Profile.ServerCfg.Missions.FirstOrDefault(m => m.Path == mission);
                 if (existingMission == null)
                 {
-                    var newMission = new ProfileMission { Name = mission.Replace(".pbo", ""), Path = mission };
+                    var newMission = new ProfileMission { Name = mission.Replace(".pbo", "").Replace(".sqm", ""), Path = mission };
                     missionList.Add(newMission);
                     continue;
                 }
