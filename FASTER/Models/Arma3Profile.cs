@@ -330,50 +330,50 @@ namespace FASTER.Models
                 "//\r\n" +
                 "class DifficultyPresets\r\n" +
                 "{\r\n" +
-                "	class Custom\r\n" +
-                "	{\r\n" +
-                "		class Options\r\n" +
-                "		{\r\n" +
-                "			/* Simulation */\r\n" +
-                $"			reducedDamage = {reducedDamage};		// Reduced damage\r\n" +
-                "			/* Situational awareness */\r\n" +
-                $"			groupIndicators = {groupIndicators};	// Group indicators (0 = never, 1 = limited distance, 2 = always)\r\n" +
-                $"			friendlyTags = {friendlyTags};		// Friendly name tags (0 = never, 1 = limited distance, 2 = always)\r\n" +
-                $"			enemyTags = {enemyTags};			// Enemy name tags (0 = never, 1 = limited distance, 2 = always)\r\n" +
-                $"			detectedMines = {detectedMines};		// Detected mines (0 = never, 1 = limited distance, 2 = always)\r\n" +
-                $"			commands = {commands};			// Commands (0 = never, 1 = fade out, 2 = always)\r\n" +
-                $"			waypoints = {waypoints};			// Waypoints (0 = never, 1 = fade out, 2 = always)\r\n" +
-                $"			tacticalPing = {tacticalPing};		// Tactical ping (0 = disable, 1 = enable)\r\n" +
-                "			/* Personal awareness */\r\n" +
-                $"			weaponInfo = {weaponInfo};			// Weapon info (0 = never, 1 = fade out, 2 = always)\r\n" +
-                $"			stanceIndicator = {stanceIndicator};	// Stance indicator (0 = never, 1 = fade out, 2 = always)\r\n" +
-                $"			staminaBar = {staminaBar};			// Stamina bar\r\n" +
-                $"			weaponCrosshair = {weaponCrosshair};	// Weapon crosshair\r\n" +
-                $"			visionAid = {visionAid};			// Vision aid\r\n" +
-                "			/* View */\r\n" +
-                $"			thirdPersonView = {thirdPersonView};	// 3rd person view\r\n" +
-                $"			cameraShake = {cameraShake};		// Camera shake\r\n" +
-                "			/* Multiplayer */\r\n" +
-                $"			scoreTable = {scoreTable};			// Score table\r\n" +
-                $"			deathMessages = {deathMessages};		// Killed by\r\n" +
-                $"			vonID = {vonID};				// VoN ID\r\n" +
-                "			/* Misc */\r\n" +
-                $"			mapContentFriendly = {mapContentFriendly};	// Map friendlies		(0 = disabled, 1 = enabled) // since  Arma 3 v1.68\r\n" +
-                $"			mapContentEnemy = {mapContentEnemy};    // Map Enemies			(0 = disabled, 1 = enabled) // since  Arma 3 v1.68\r\n" +
-                $"			mapContentMines = {mapContentMines};    // Map Mines 			(0 = disabled, 1 = enabled) // since  Arma 3 v1.68\r\n" +
-                $"			autoReport = {autoReport};			// (former autoSpot) Automatic reporting of spotted enemied by players only. This doesn't have any effect on AIs.\r\n" +
-                $"			multipleSaves = {multipleSaves};		// Multiple saves\r\n" +
-                "		};\r\n" +
-                "		\r\n" +
-                "		// aiLevelPreset defines AI skill level and is counted from 0 and can have following values: 0 (Low), 1 (Normal), 2 (High), 3 (Custom).\r\n" +
-                "		// when 3 (Custom) is chosen, values of skill and precision are taken from the class CustomAILevel.\r\n" +
-                $"		aiLevelPreset = {aiLevelPreset};\r\n" +
-                "	};\r\n" +
-                "	class CustomAILevel\r\n" +
-                "	{\r\n" +
-                $"		skillAI = {skillAi};\r\n" +
-                $"		precisionAI = {precisionAi};\r\n" +
-                "	};\r\n" +
+                "\tclass Custom\r\n" +
+                "\t{\r\n" +
+                "\t\tclass Options\r\n" +
+                "\t\t{\r\n" +
+                "\t\t\t/* Simulation */\r\n" +
+                $"\t\t\treducedDamage = {reducedDamage};\t\t// Reduced damage\r\n" +
+                "\t\t\t/* Situational awareness */\r\n" +
+                $"\t\t\tgroupIndicators = {groupIndicators};\t// Group indicators (0 = never, 1 = limited distance, 2 = always)\r\n" +
+                $"\t\t\tfriendlyTags = {friendlyTags};\t\t// Friendly name tags (0 = never, 1 = limited distance, 2 = always)\r\n" +
+                $"\t\t\tenemyTags = {enemyTags};\t\t\t// Enemy name tags (0 = never, 1 = limited distance, 2 = always)\r\n" +
+                $"\t\t\tdetectedMines = {detectedMines};\t\t// Detected mines (0 = never, 1 = limited distance, 2 = always)\r\n" +
+                $"\t\t\tcommands = {commands};\t\t\t// Commands (0 = never, 1 = fade out, 2 = always)\r\n" +
+                $"\t\t\twaypoints = {waypoints};\t\t\t// Waypoints (0 = never, 1 = fade out, 2 = always)\r\n" +
+                $"\t\t\ttacticalPing = {tacticalPing};\t\t// Tactical ping (0 = disable, 1 = enable)\r\n" +
+                "\t\t\t/* Personal awareness */\r\n" +
+                $"\t\t\tweaponInfo = {weaponInfo};\t\t\t// Weapon info (0 = never, 1 = fade out, 2 = always)\r\n" +
+                $"\t\t\tstanceIndicator = {stanceIndicator};\t// Stance indicator (0 = never, 1 = fade out, 2 = always)\r\n" +
+                $"\t\t\tstaminaBar = {staminaBar};\t\t\t// Stamina bar\r\n" +
+                $"\t\t\tweaponCrosshair = {weaponCrosshair};\t// Weapon crosshair\r\n" +
+                $"\t\t\tvisionAid = {visionAid};\t\t\t// Vision aid\r\n" +
+                "\t\t\t/* View */\r\n" +
+                $"\t\t\tthirdPersonView = {thirdPersonView};\t// 3rd person view\r\n" +
+                $"\t\t\tcameraShake = {cameraShake};\t\t// Camera shake\r\n" +
+                "\t\t\t/* Multiplayer */\r\n" +
+                $"\t\t\tscoreTable = {scoreTable};\t\t\t// Score table\r\n" +
+                $"\t\t\tdeathMessages = {deathMessages};\t\t// Killed by\r\n" +
+                $"\t\t\tvonID = {vonID};\t\t\t\t// VoN ID\r\n" +
+                "\t\t\t/* Misc */\r\n" +
+                $"\t\t\tmapContentFriendly = {mapContentFriendly};\t// Map friendlies\t\t(0 = disabled, 1 = enabled) // since  Arma 3 v1.68\r\n" +
+                $"\t\t\tmapContentEnemy = {mapContentEnemy};    // Map Enemies\t\t\t(0 = disabled, 1 = enabled) // since  Arma 3 v1.68\r\n" +
+                $"\t\t\tmapContentMines = {mapContentMines};    // Map Mines \t\t\t(0 = disabled, 1 = enabled) // since  Arma 3 v1.68\r\n" +
+                $"\t\t\tautoReport = {autoReport};\t\t\t// (former autoSpot) Automatic reporting of spotted enemied by players only. This doesn't have any effect on AIs.\r\n" +
+                $"\t\t\tmultipleSaves = {multipleSaves};\t\t// Multiple saves\r\n" +
+                "\t\t};\r\n" +
+                "\t\t\r\n" +
+                "\t\t// aiLevelPreset defines AI skill level and is counted from 0 and can have following values: 0 (Low), 1 (Normal), 2 (High), 3 (Custom).\r\n" +
+                "\t\t// when 3 (Custom) is chosen, values of skill and precision are taken from the class CustomAILevel.\r\n" +
+                $"\t\taiLevelPreset = {aiLevelPreset};\r\n" +
+                "\t};\r\n" +
+                "\tclass CustomAILevel\r\n" +
+                "\t{\r\n" +
+                $"\t\tskillAI = {skillAi};\r\n" +
+                $"\t\tprecisionAI = {precisionAi};\r\n" +
+                "\t};\r\n" +
                 "};";
             return output;
         }

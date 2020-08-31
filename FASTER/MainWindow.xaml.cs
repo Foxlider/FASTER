@@ -235,7 +235,6 @@ namespace FASTER
                     return;
                 }
 
-                //ServerProfileNew serverProfile = temp.CloneObjectSerializable();
                 ServerProfileNew serverProfile = temp.Clone(); 
                 ServerProfileCollection.AddServerProfile(serverProfile);
             }
@@ -355,7 +354,6 @@ namespace FASTER
                     FontSize = 14,
                     HorizontalAlignment = HorizontalAlignment.Stretch,
                     HorizontalContentAlignment = HorizontalAlignment.Left,
-                    //Foreground = new SolidColorBrush(Colors.White)
                 };
                 newItem.SetValue(TextOptions.TextFormattingModeProperty, TextFormattingMode.Display);
                 Dispatcher?.Invoke(() => { IServerProfilesMenu.Items.Add(newItem); });
@@ -365,7 +363,6 @@ namespace FASTER
                 if (ContentProfileViews.Any(tab => profile.Id == tab.Profile.Id)) 
                     continue;
 
-                //TODO change this later on to load Profiles
                 var p = new ProfileViewModel(profile);
                 ContentProfileViews.Add(p);
             }

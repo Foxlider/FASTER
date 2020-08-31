@@ -15,7 +15,9 @@ namespace FASTER.Views
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
-        {}
+        {
+            //Empty to avoid double loading for now
+        }
 
         public MainWindow MetroWindow => (MainWindow)Window.GetWindow(this);
 
