@@ -1,4 +1,4 @@
-<UserControl x:Class="FASTER.Views.Profile"
+﻿<UserControl x:Class="FASTER.Views.Profile"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -456,7 +456,7 @@
                                     <StackPanel>
                                         <Grid Margin="0,3">
                                             <mah:ToggleSwitch IsOn="{Binding Path=Profile.ServerCfg.VonActivated}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="VoN Activation" ToolTip="VoN Activation" Margin="10,2,0,2" HorizontalAlignment="Left"/>
-                                            <ComboBox HorizontalAlignment="Right" Visibility="{Binding Path=Profile.ServerCfg.VonActivated, Converter={StaticResource BoolToVis}}" ItemsSource="{Binding Path=VonCodecs}" SelectedItem="{Binding ServerCfg.VonCodec}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="VoN Codec" Margin="10,5"/>
+                                            <ComboBox HorizontalAlignment="Right" Visibility="{Binding Path=Profile.ServerCfg.VonActivated, Converter={StaticResource BoolToVis}}" ItemsSource="{Binding Path=VonCodecs}" SelectedItem="{Binding Profile.ServerCfg.VonCodec}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="VoN Codec" Margin="10,5"/>
                                         </Grid>
                                         <Slider Maximum="30" Visibility="{Binding Path=Profile.ServerCfg.VonActivated, Converter={StaticResource BoolToVis}}" AutoToolTipPlacement="TopLeft" Value="{Binding Path=Profile.ServerCfg.VonCodecQuality}" TickPlacement="BottomRight" IsSnapToTickEnabled="True" ToolTip="Codec Quality" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Codec Quality" Margin="20,3" SmallChange="1" />
                                     </StackPanel>
