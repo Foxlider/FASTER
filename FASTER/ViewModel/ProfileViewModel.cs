@@ -1,4 +1,4 @@
-using FASTER.Models;
+﻿using FASTER.Models;
 using Microsoft.AppCenter.Crashes;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
@@ -478,15 +478,22 @@ namespace FASTER.ViewModel
 
             var missionList = new List<ProfileMission>();
             List<string> newMissions = new List<string>();
-            newMissions.AddRange(Directory.EnumerateFiles(Path.Combine(Properties.Settings.Default.serverPath, "mpmissions"))
-                                                    .Where(s => s.EndsWith(".pbo", StringComparison.OrdinalIgnoreCase) || s.EndsWith(".sqm", StringComparison.OrdinalIgnoreCase))
+
+            //Load PBO files
+            newMissions.AddRange(Directory.EnumerateFiles(Path.Combine(Properties.Settings.Default.serverPath, "mpmissions"), "*.pbo",  searchOption: SearchOption.TopDirectoryOnly)
                                                     .Select(mission => mission.Replace(Path.Combine(Properties.Settings.Default.serverPath, "mpmissions") + "\\", "")));
+            //Load folders
+            //Credits to Pucker and LinkIsParking
+            newMissions.AddRange(Directory.GetDirectories(Path.Combine(Properties.Settings.Default.serverPath, "mpmissions"))
+                                                .Select(mission => mission.Replace(Path.Combine(Properties.Settings.Default.serverPath, "mpmissions") + "\\", "")));
+
+
             foreach (var mission in newMissions)
             {
                 ProfileMission existingMission = Profile.ServerCfg.Missions.FirstOrDefault(m => m.Path == mission);
                 if (existingMission == null)
                 {
-                    var newMission = new ProfileMission { Name = mission.Replace(".pbo", "").Replace(".sqm", ""), Path = mission };
+                    var newMission = new ProfileMission { Name = mission.Replace(".pbo", ""), Path = mission };
                     missionList.Add(newMission);
                     continue;
                 }
