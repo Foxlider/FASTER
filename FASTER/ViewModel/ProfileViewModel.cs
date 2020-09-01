@@ -329,6 +329,9 @@ namespace FASTER.ViewModel
         {
             var mods = new List<string>();
             var path = Path.Combine(Properties.Settings.Default.steamCMDPath, "steamapps", "workshop", "content", "107410");
+            var ignoredKeys = new string[] { "a3.bikey", "a3c.bikey", "gm.bikey" };
+
+
             if (!Directory.Exists(path))
             {
                 MainWindow.Instance.IFlyout.IsOpen         = true;
@@ -359,6 +362,8 @@ namespace FASTER.ViewModel
             {
                 foreach (var keyFile in Directory.GetFiles(Path.Combine(Properties.Settings.Default.serverPath, "keys")))
                 {
+                    if (ignoredKeys.Any(keyFile.Contains))
+                        continue;
                     try
                     { File.Delete(keyFile); }
                     catch (Exception)
