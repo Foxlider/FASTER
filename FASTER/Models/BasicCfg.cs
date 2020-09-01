@@ -9,8 +9,8 @@ namespace FASTER.Models
         private ushort maxMsgSend = 256;
         private ushort maxSizeGuaranteed = 256;
         private ushort maxSizeNonguaranteed = 256;
-        private uint minBandwidth = 768000;
-        private uint maxBandwidth = 4294967295;
+        private ulong minBandwidth = 768000;
+        private ulong maxBandwidth = 10000000000;
         private double minErrorToSend = 0.001;
         private double minErrorToSendNear = 0.01;
         private ushort maxCustomFileSize = 1024;
@@ -57,7 +57,7 @@ namespace FASTER.Models
             }
         }
 
-        public uint MinBandwidth
+        public ulong MinBandwidth
         {
             get => minBandwidth;
             set
@@ -67,7 +67,7 @@ namespace FASTER.Models
             }
         }
 
-        public uint MaxBandwidth
+        public ulong MaxBandwidth
         {
             get => maxBandwidth;
             set
