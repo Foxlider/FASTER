@@ -19,6 +19,11 @@ namespace FASTER.Views
             //Empty to avoid double loading for now
         }
 
+        private void UserControl_Unloaded(object sender, RoutedEventArgs e)
+        {
+            ((ProfileViewModel)DataContext)?.UnloadData();
+        }
+
         public MainWindow MetroWindow => (MainWindow)Window.GetWindow(this);
 
         internal void Refresh()

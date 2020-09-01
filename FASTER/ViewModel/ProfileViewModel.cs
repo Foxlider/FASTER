@@ -1,4 +1,4 @@
-﻿using FASTER.Models;
+using FASTER.Models;
 using Microsoft.AppCenter.Crashes;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
@@ -443,6 +443,13 @@ namespace FASTER.ViewModel
             Profile.ProfileMods = modlist;
 
             LoadMissions();
+        }
+
+        public void UnloadData()
+        {
+            var tempProfile = Properties.Settings.Default.Profiles.FirstOrDefault(p => p.Id == Profile.Id);
+            if (tempProfile != null)
+            { tempProfile = Profile; }
         }
 
 
