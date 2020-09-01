@@ -183,7 +183,7 @@ namespace FASTER.ViewModel
                 $"-port={Profile.Port}",
                 $"\"-config={config}\"",
                 $"\"-cfg={basic}\"",
-                $"\"-profiles={Path.Combine(Properties.Settings.Default.serverPath, "Servers")}\"",
+                $"\"-profiles={Path.Combine(Properties.Settings.Default.serverPath, "Servers", Profile.Id)}\"",
                 $"-name={Profile.Id}",
                 $"{(!string.IsNullOrWhiteSpace(playerMods) || Profile.ContactDLCChecked || Profile.GMDLCChecked ? $"\"-mod={(Profile.ContactDLCChecked ? "contact;" : "")}{(Profile.GMDLCChecked ? "GM;" : "")}{(!string.IsNullOrWhiteSpace(playerMods) ? playerMods + ";" : "" )}\"" : "")}",
                 $"{(!string.IsNullOrWhiteSpace(serverMods) ? $"\"-serverMod={serverMods};\"" : "")}",
