@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace FASTER.Models
@@ -163,8 +162,6 @@ namespace FASTER.Models
                         MinErrorToSendNear   = 0.01;
                         MaxPacketSize        = 1400;
                         MaxCustomFileSize    = 160;
-                        break;
-                    default:
                         break;
                 }
                 RaisePropertyChanged("PerfPreset");

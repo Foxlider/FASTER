@@ -304,7 +304,7 @@ namespace FASTER.Models
             get => skillAi;
             set
             {
-                skillAi = Math.Round(value, 2); ;
+                skillAi = Math.Round(value, 2);
                 RaisePropertyChanged("SkillAi");
             }
         }
@@ -314,7 +314,7 @@ namespace FASTER.Models
             get => precisionAi;
             set
             {
-                precisionAi = Math.Round(value, 2); ;
+                precisionAi = Math.Round(value, 2);
                 RaisePropertyChanged("PrecisionAi");
             }
         }

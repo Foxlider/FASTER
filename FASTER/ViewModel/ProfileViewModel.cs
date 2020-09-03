@@ -12,7 +12,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls.Primitives;
-using System.Windows.Input;
 
 namespace FASTER.ViewModel
 {
@@ -67,41 +66,10 @@ namespace FASTER.ViewModel
 
             //Launching... 
             DisplayMessage($"Launching Headless Clients for {Profile.Name}...");
-
+            var commandLine = SetHCCommandLine();
             for (int hc = 1; hc <= Profile.HeadlessNumber; hc++ )
             {
-                string headlessMods = string.Join(";", Profile.ProfileMods.Where(m => m.HeadlessChecked).Select(m => $"@{Functions.SafeName(m.Name)}"));
-                List<string> arguments = new List<string>
-                {
-                    "-client",
-                    "-connect=127.0.0.1",
-                    $"-password={Profile.ServerCfg.Password}",
-                    $"\"-profiles={Path.Combine(Properties.Settings.Default.serverPath, "Servers")}\"",
-                    "-nosound",
-                    $"-port={Profile.Port}",
-                    $"{(!string.IsNullOrWhiteSpace(headlessMods) || Profile.ContactDLCChecked || Profile.GMDLCChecked ? $"\"-mod={(Profile.ContactDLCChecked ? "contact;" : "")}{(Profile.GMDLCChecked ? "GM;" : "")}{(!string.IsNullOrWhiteSpace(headlessMods) ? headlessMods + ";" : "")}\"" : "")}",
-                    $"{(Profile.ServerCfg.MaxMemOverride ? $"-maxMem={Profile.ServerCfg.MaxMem}" : "")}",
-                    $"{(Profile.ServerCfg.CpuCountOverride ? $"-cpuCount={Profile.ServerCfg.CpuCount}" : "")}",
-                    $"{(Profile.EnableHyperThreading ? "-enableHT" : "")}"
-                };
-
-                string commandLine = string.Join(" ", arguments);
-
-                try { Clipboard.SetText(commandLine); }
-                catch (COMException e)
-                {
-                    try
-                    {
-                        Crashes.TrackError(e, new Dictionary<string, string>
-                                               {{ "Name", Properties.Settings.Default.steamUserName }});
-                        Clipboard.SetDataObject(commandLine);
-                    }
-                    catch (COMException ex)
-                    {
-                        Crashes.TrackError(ex, new Dictionary<string, string>
-                                               {{ "Name", Properties.Settings.Default.steamUserName }});
-                    }
-                }
+                
                 #if DEBUG
                 DisplayMessage($"{Profile.HeadlessNumber} Headless Clients launched !\n{commandLine}");
                 #else
@@ -110,6 +78,38 @@ namespace FASTER.ViewModel
                 hcProcess.Start();
                 #endif
             }
+        }
+
+        private string SetHCCommandLine()
+        {
+            string headlessMods = string.Join(";", Profile.ProfileMods.Where(m => m.HeadlessChecked).Select(m => $"@{Functions.SafeName(m.Name)}"));
+            List<string> arguments = new List<string>
+            {
+                "-client",
+                "-connect=127.0.0.1",
+                $"-password={Profile.ServerCfg.Password}",
+                $"\"-profiles={Path.Combine(Properties.Settings.Default.serverPath, "Servers")}\"",
+                "-nosound",
+                $"-port={Profile.Port}",
+                $"{(!string.IsNullOrWhiteSpace(headlessMods) || Profile.ContactDLCChecked || Profile.GMDLCChecked ? $"\"-mod={(Profile.ContactDLCChecked ? "contact;" : "")}{(Profile.GMDLCChecked ? "GM;" : "")}{(!string.IsNullOrWhiteSpace(headlessMods) ? headlessMods + ";" : "")}\"" : "")}",
+                $"{(Profile.ServerCfg.MaxMemOverride ? $"-maxMem={Profile.ServerCfg.MaxMem}" : "")}",
+                $"{(Profile.ServerCfg.CpuCountOverride ? $"-cpuCount={Profile.ServerCfg.CpuCount}" : "")}",
+                $"{(Profile.EnableHyperThreading ? "-enableHT" : "")}"
+            };
+
+            string commandLine = string.Join(" ", arguments);
+
+            try { Clipboard.SetText(commandLine); }
+            catch (COMException e)
+            {
+                try
+                {
+                    Crashes.TrackError(e, new Dictionary<string, string> { { "Name", Properties.Settings.Default.steamUserName } });
+                    Clipboard.SetDataObject(commandLine);
+                }
+                catch (COMException ex) { Crashes.TrackError(ex, new Dictionary<string, string> { { "Name", Properties.Settings.Default.steamUserName } }); }
+            }
+            return commandLine;
         }
 
         internal void LaunchServer()
@@ -245,10 +245,11 @@ namespace FASTER.ViewModel
             }
             catch
             { DisplayMessage("Could not write the config files. Please ensure the server is not running and retry."); }
+            
+            var index = Properties.Settings.Default.Profiles.FindIndex(p => p.Id == Profile.Id);  
+            if (index != -1)
+            { Properties.Settings.Default.Profiles[index] = Profile; }
 
-            var tempProfile = Properties.Settings.Default.Profiles.FirstOrDefault(p => p.Id == Profile.Id);
-            if (tempProfile != null)
-            { tempProfile = Profile; }
             Properties.Settings.Default.Save();
         }
 
@@ -330,7 +331,7 @@ namespace FASTER.ViewModel
         {
             var mods = new List<string>();
             var path = Path.Combine(Properties.Settings.Default.steamCMDPath, "steamapps", "workshop", "content", "107410");
-            var ignoredKeys = new string[] { "a3.bikey", "a3c.bikey", "gm.bikey" };
+            var ignoredKeys = new[] { "a3.bikey", "a3c.bikey", "gm.bikey" };
 
 
             if (!Directory.Exists(path))
@@ -453,9 +454,9 @@ namespace FASTER.ViewModel
 
         public void UnloadData()
         {
-            var tempProfile = Properties.Settings.Default.Profiles.FirstOrDefault(p => p.Id == Profile.Id);
-            if (tempProfile != null)
-            { tempProfile = Profile; }
+            var index = Properties.Settings.Default.Profiles.FindIndex(p => p.Id == Profile.Id);  
+            if (index != -1)
+            { Properties.Settings.Default.Profiles[index] = Profile; }
         }
 
 
@@ -528,8 +529,6 @@ namespace FASTER.ViewModel
                             if (from == "Server") mod.HeadlessChecked = mod.ServerSideChecked;
                             break;
                         }
-                    default:
-                        break;
                 }
             }
         }
@@ -549,8 +548,6 @@ namespace FASTER.ViewModel
                     case "Headless":
                         mod.HeadlessChecked = select;
                         break;
-                    default:
-                        break;
                 }
             }
         }
@@ -560,7 +557,5 @@ namespace FASTER.ViewModel
             foreach (var mission in Profile.ServerCfg.Missions)
             { mission.MissionChecked = select; }
         }
-
-
     }
 }
