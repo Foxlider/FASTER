@@ -34,8 +34,6 @@ Thanks go out to all the guys who helped the developpment and those who will tes
 
 - General Features
   - Theming System and Metro UI
-  - Improved UI from FAST
-  - Improved stability from FAST2
   - Easy to read and share config files
   - Automated Update process
 
@@ -55,6 +53,7 @@ Thanks go out to all the guys who helped the developpment and those who will tes
   - Custom difficulty
   - Headless Client support and auto launch
   - Correctly displays mods in Server Browser
+  - Load Steam Mod Presets to profiles
 
 - Local Mod Support
   - Reads local mods from server folder
@@ -67,7 +66,7 @@ As always best place to report issues is on the [GitHub Repo](https://github.com
 
 ##### **_DOCUMENTATION_**
   
-No documentation (yet) but you can always check the original FAST2 documentation.
+A complete Documentation is being created, please stand-by.
 
 ##### **_SCREENSHOTS_**
 <details>
@@ -94,4 +93,8 @@ Twitter :
 
 Bohemia Interactive Forums :  
 [Fox's Arma Server Tool Extended Rewrite (FASTER)](https://forums.bohemia.net/forums/topic/224359-foxs-arma-server-tool-extended-rewrite-faster/)
+
+##### **_SUPPORT_**
+Support the dev by making a donation here :
+[![Donate](https://img.shields.io/badge/Donate-PayPal-blue.svg?style=for-the-badge&logo=paypal)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=49H6MZNFUJYWA)
   
