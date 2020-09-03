@@ -20,7 +20,7 @@ namespace FASTER.Models
         private string       passwordAdmin;
         private string       password;
         private string       hostname;
-        private int          maxPlayers = 10;
+        private int          maxPlayers = 32;
         private List<string> motd       = new List<string>();
         private int          motdInterval;
         private List<string> admins          = new List<string>();
@@ -37,7 +37,7 @@ namespace FASTER.Models
         private bool   loopback;
         private bool   upnp = true;
         private short  allowedFilePatching;   // 0 = no clients; 1= HC only; 2= All Clients
-        private int    disconnectTimeout = 5; //timeout in seconds
+        private int    disconnectTimeout = 90; //timeout in seconds
         private int    maxdesync         = 150;
         private int    maxping           = 200;
         private int    maxpacketloss     = 50;

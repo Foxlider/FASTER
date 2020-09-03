@@ -200,7 +200,7 @@
                         </Grid>
                     </GroupBox>
                 </Grid>
-                
+
             </TabItem>
             <!--#endregion-->
             <!--#region Maps-->
@@ -214,7 +214,7 @@
                         <RowDefinition/>
                         <RowDefinition Height="auto"/>
                     </Grid.RowDefinitions>
-                    
+
                     <!--Mission Selector-->
                     <GroupBox Header="Missions" Grid.Row="0" Grid.Column="0" Margin="0, 0, 4 ,0">
                         <Grid>
@@ -314,7 +314,7 @@
                                     <ComboBox SelectedItem="{Binding Path=Profile.ArmaProfile.MapContentFriendly}" mah:TextBoxHelper.Watermark="Map Content Friendly" Grid.Column="0" Grid.Row="4" ItemsSource="{Binding Path=EnabledStrings}" mah:TextBoxHelper.UseFloatingWatermark="True" Margin="3"/>
                                     <ComboBox SelectedItem="{Binding Path=Profile.ArmaProfile.MapContentEnemy}" mah:TextBoxHelper.Watermark="Map Content Enemy" Grid.Column="1" Grid.Row="4" ItemsSource="{Binding Path=EnabledStrings}" mah:TextBoxHelper.UseFloatingWatermark="True" Margin="3"/>
                                     <ComboBox SelectedItem="{Binding Path=Profile.ArmaProfile.MapContentMines}" mah:TextBoxHelper.Watermark="Map Content Mines" Grid.Column="2" Grid.Row="4" ItemsSource="{Binding Path=EnabledStrings}" mah:TextBoxHelper.UseFloatingWatermark="True" Margin="3"/>
-                                    
+
                                     <ComboBox SelectedItem="{Binding Path=Profile.ArmaProfile.FriendlyTags}" mah:TextBoxHelper.Watermark="Friendly Tags" Grid.Column="0" Grid.Row="6" ItemsSource="{Binding Path=LimitedDistanceStrings}" mah:TextBoxHelper.UseFloatingWatermark="True" Margin="3"/>
                                     <ComboBox SelectedItem="{Binding Path=Profile.ArmaProfile.EnemyTags}" mah:TextBoxHelper.Watermark="Enemy Tags" Grid.Column="1" Grid.Row="6" ItemsSource="{Binding Path=LimitedDistanceStrings}" mah:TextBoxHelper.UseFloatingWatermark="True" Margin="3"/>
                                     <ComboBox SelectedItem="{Binding Path=Profile.ArmaProfile.DetectedMines}" mah:TextBoxHelper.Watermark="Detected Mines" Grid.Column="2" Grid.Row="6" ItemsSource="{Binding Path=LimitedDistanceStrings}" mah:TextBoxHelper.UseFloatingWatermark="True" Margin="3"/>
@@ -323,7 +323,7 @@
                                     <ComboBox SelectedItem="{Binding Path=Profile.ArmaProfile.Waypoints}" mah:TextBoxHelper.Watermark="Waypoints" Grid.Column="2" Grid.Row="7" ItemsSource="{Binding Path=FadeOutStrings}" mah:TextBoxHelper.UseFloatingWatermark="True" Margin="3"/>
                                     <ComboBox SelectedItem="{Binding Path=Profile.ArmaProfile.WeaponInfo}" mah:TextBoxHelper.Watermark="Weapon Infos" Grid.Column="0" Grid.Row="8" ItemsSource="{Binding Path=FadeOutStrings}" mah:TextBoxHelper.UseFloatingWatermark="True" Margin="3"/>
                                     <ComboBox SelectedItem="{Binding Path=Profile.ArmaProfile.StanceIndicator}" mah:TextBoxHelper.Watermark="Stance Indicator" Grid.Column="1" Grid.Row="8" ItemsSource="{Binding Path=FadeOutStrings}" mah:TextBoxHelper.UseFloatingWatermark="True" Margin="3"/>
-                                    
+
                                     <StackPanel Grid.Column="0" Grid.Row="10" Margin="3,0" >
                                         <mah:NumericUpDown Value="{Binding Profile.ArmaProfile.SkillAi}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="AI Skill" VerticalAlignment="Center" Minimum="0" Maximum="1" Interval=".01" TextAlignment="Right"/>
                                         <Slider Maximum="1" AutoToolTipPlacement="TopLeft" Value="{Binding Profile.ArmaProfile.SkillAi}" TickPlacement="BottomRight" IsSnapToTickEnabled="True" TickFrequency=".01" ToolTip="AI Skill" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="AI Skill" Margin="0,5" SmallChange=".01" LargeChange="0.1" AutoToolTipPrecision="2" />
@@ -335,7 +335,7 @@
                                     <ComboBox SelectedItem="{Binding Profile.ArmaProfile.AiLevelPreset}" mah:TextBoxHelper.Watermark="AI Preset" Grid.Column="2" Grid.Row="10" ItemsSource="{Binding Path=AiPresetStrings}" mah:TextBoxHelper.UseFloatingWatermark="True" Margin="3,0,3,15"/>
                                 </Grid>
                             </ScrollViewer>
-                            
+
                         </Grid>
                     </GroupBox>
                     <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
@@ -401,7 +401,8 @@
                                     </GroupBox.Style>
                                     <Grid>
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition/><ColumnDefinition/>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition/>
                                         </Grid.ColumnDefinitions>
                                         <Grid.RowDefinitions>
                                             <RowDefinition/>
@@ -435,7 +436,7 @@
                                         <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.SteamProtocolMaxDataSize}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Steam Protocol Max Data Size" Margin="5,0,5,5"/>
 
                                         <StackPanel Orientation="Horizontal">
-                                            
+
                                         </StackPanel>
                                         <TextBox MinHeight="50" Margin="5" Text="{Binding Path=Profile.ServerCfg.Admins}" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Admins IDs (one per line)"/>
 
@@ -474,7 +475,8 @@
                                         <mah:ToggleSwitch IsOn="{Binding Path=Profile.ServerCfg.VotingEnabled}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="VoN Activation" ToolTip="VoN Activation" Margin="10,2,0,2" HorizontalAlignment="Left"/>
                                         <Grid>
                                             <Grid.ColumnDefinitions>
-                                                <ColumnDefinition/><ColumnDefinition/>
+                                                <ColumnDefinition/>
+                                                <ColumnDefinition/>
                                             </Grid.ColumnDefinitions>
                                             <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.VoteMissionPlayers}" Visibility="{Binding Path=Profile.ServerCfg.VotingEnabled, Converter={StaticResource BoolToVis}}" Grid.Column="0" Margin="5"  mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Min Players"/>
                                             <Slider Value="{Binding Path=Profile.ServerCfg.VoteThreshold}" AutoToolTipPlacement="TopLeft" AutoToolTipPrecision="2" IsSnapToTickEnabled="True" Visibility="{Binding Path=Profile.ServerCfg.VotingEnabled, Converter={StaticResource BoolToVis}}" Minimum="0" Maximum="1"  Grid.Column="1" Margin="5" TickFrequency="0.01" TickPlacement="BottomRight" ToolTip="Voting threshold" SmallChange="0.01"/>
@@ -518,7 +520,8 @@
                                         <CheckBox IsChecked="{Binding Path=Profile.ServerCfg.SkipLobby}" Content="Skip lobby" Margin="5,2"/>
                                         <Grid>
                                             <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="auto"/><ColumnDefinition/>
+                                                <ColumnDefinition Width="auto"/>
+                                                <ColumnDefinition/>
                                             </Grid.ColumnDefinitions>
                                             <CheckBox IsChecked="{Binding Path=Profile.ServerCfg.RequiredBuildChecked}" Margin="5,3"/>
                                             <Label Grid.Column="1" Content="Arma Required Build" Margin="-10,0" Visibility="{Binding Path=Profile.ServerCfg.RequiredBuildChecked, Converter={StaticResource BoolToHide}}"/>
@@ -552,7 +555,8 @@
                                     </Expander.Style>
                                     <Grid>
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition/><ColumnDefinition/>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition/>
                                         </Grid.ColumnDefinitions>
                                         <Grid.RowDefinitions>
                                             <RowDefinition/>
@@ -592,7 +596,7 @@
                             </StackPanel>
                         </Grid>
                     </ScrollViewer>
-                    
+
                     <Grid Grid.Row="1">
                         <Grid.Style>
                             <Style TargetType="Grid">
@@ -629,13 +633,17 @@
                                 <RowDefinition Height="auto"/>
                                 <RowDefinition Height="10"/>
                                 <RowDefinition Height="auto"/>
+                                <RowDefinition Height="10"/>
+                                <RowDefinition Height="auto"/>
                                 <RowDefinition Height="40"/>
                                 <RowDefinition Height="auto"/>
                                 <RowDefinition Height="auto"/>
+                                <RowDefinition Height="20"/>
                                 <RowDefinition Height="auto"/>
                             </Grid.RowDefinitions>
-                            <mah:NumericUpDown Grid.Row="0" Grid.Column="0" Value="{Binding Profile.BasicCfg.MinBandwidth}" mah:TextBoxHelper.Watermark="MinBandwidth" mah:TextBoxHelper.UseFloatingWatermark="True" Minimum="0" Maximum="4294967295" Interval="1" Margin="3"/>
-                            <mah:NumericUpDown Grid.Row="0" Grid.Column="2" Value="{Binding Profile.BasicCfg.MaxBandwidth}" mah:TextBoxHelper.Watermark="MaxBandwidth" mah:TextBoxHelper.UseFloatingWatermark="True" Minimum="0" Maximum="4294967295" Interval="1" Margin="3"/>
+                            <mah:NumericUpDown Grid.Row="0" Grid.Column="0" Value="{Binding Profile.BasicCfg.MinBandwidth}" mah:TextBoxHelper.Watermark="MinBandwidth" mah:TextBoxHelper.UseFloatingWatermark="True" Minimum="0" Maximum="18446744073709551615" Interval="1" Margin="3"/>
+                            <mah:NumericUpDown Grid.Row="0" Grid.Column="1" Value="{Binding Profile.BasicCfg.MaxPacketSize}" mah:TextBoxHelper.Watermark="MaxPacketSize" mah:TextBoxHelper.UseFloatingWatermark="True" Minimum="0" Maximum="4294967295" Interval="1" Margin="3"/>
+                            <mah:NumericUpDown Grid.Row="0" Grid.Column="2" Value="{Binding Profile.BasicCfg.MaxBandwidth}" mah:TextBoxHelper.Watermark="MaxBandwidth" mah:TextBoxHelper.UseFloatingWatermark="True" Minimum="0" Maximum="18446744073709551615" Interval="1" Margin="3"/>
 
                             <mah:NumericUpDown Grid.Row="2" Grid.Column="0" Value="{Binding Profile.BasicCfg.MaxMsgSend}" mah:TextBoxHelper.Watermark="MaxMsgSend" mah:TextBoxHelper.UseFloatingWatermark="True" Minimum="0" Maximum="65535" Interval="1" Margin="3"/>
                             <mah:NumericUpDown Grid.Row="2" Grid.Column="1" Value="{Binding Profile.BasicCfg.MaxSizeGuaranteed}" mah:TextBoxHelper.Watermark="MaxSizeGuaranteed" mah:TextBoxHelper.UseFloatingWatermark="True" Minimum="0" Maximum="65535" Interval="1" Margin="3"/>
@@ -645,13 +653,14 @@
                             <mah:NumericUpDown Grid.Row="4" Grid.Column="1" Value="{Binding Profile.BasicCfg.MinErrorToSendNear}" mah:TextBoxHelper.Watermark="MinErrorToSendNear" mah:TextBoxHelper.UseFloatingWatermark="True" Minimum="0" Maximum="1" Margin="3" Interval="0.001"/>
                             <mah:NumericUpDown Grid.Row="4" Grid.Column="2" Value="{Binding Profile.BasicCfg.MaxCustomFileSize}" mah:TextBoxHelper.Watermark="MaxCustomFileSize" mah:TextBoxHelper.UseFloatingWatermark="True" Minimum="0" Maximum="65535" Interval="1" Margin="3"/>
 
-
-                            <CheckBox Grid.Row="6" Grid.Column="0" Margin="3,5" IsChecked="{Binding Path=Profile.ServerCfg.MaxMemOverride}" Content="Force Maximum Memory"/>
-                            <CheckBox Grid.Row="6" Grid.Column="1" Margin="3,5" IsChecked="{Binding Path=Profile.EnableHyperThreading}" Content="Enable Hyper Threading"/>
-                            <CheckBox Grid.Row="6" Grid.Column="2" Margin="3,5" IsChecked="{Binding Path=Profile.ServerCfg.CpuCountOverride}" Content="Force CPU Count"/>
-                            <mah:NumericUpDown Grid.Row="7" Grid.Column="0" Value="{Binding Profile.ServerCfg.MaxMem}" Visibility="{Binding Path=Profile.ServerCfg.MaxMemOverride, Converter={StaticResource BoolToVis}}" mah:TextBoxHelper.Watermark="Maximum Memory (MB)" mah:TextBoxHelper.UseFloatingWatermark="True" Minimum="1024" Maximum="128000" Interval="1" Margin="3"/>
-                            <mah:NumericUpDown Grid.Row="7" Grid.Column="2" Value="{Binding Profile.ServerCfg.CpuCount}" Visibility="{Binding Path=Profile.ServerCfg.CpuCountOverride, Converter={StaticResource BoolToVis}}" mah:TextBoxHelper.Watermark="CPU Core Count" mah:TextBoxHelper.UseFloatingWatermark="True" Minimum="1" Maximum="34" Interval="1" Margin="3"/>
-                            <TextBox Text="{Binding Profile.ServerCfg.CommandLineParameters}" Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="3" Margin="3,5" mah:TextBoxHelper.Watermark="Command Line Arguments" mah:TextBoxHelper.UseFloatingWatermark="True"/>
+                            <ComboBox Grid.Row="6" Grid.Column="0" SelectedItem="{Binding Path=Profile.BasicCfg.PerfPreset}" mah:TextBoxHelper.Watermark="Load performance Preset" mah:TextBoxHelper.UseFloatingWatermark="True" ItemsSource="{Binding PerfPresets}" Margin="3"/>
+                            
+                            <CheckBox Grid.Row="8" Grid.Column="0" Margin="3,5" IsChecked="{Binding Path=Profile.ServerCfg.MaxMemOverride}" Content="Force Maximum Memory"/>
+                            <CheckBox Grid.Row="8" Grid.Column="1" Margin="3,5" IsChecked="{Binding Path=Profile.EnableHyperThreading}" Content="Enable Hyper Threading"/>
+                            <CheckBox Grid.Row="8" Grid.Column="2" Margin="3,5" IsChecked="{Binding Path=Profile.ServerCfg.CpuCountOverride}" Content="Force CPU Count"/>
+                            <mah:NumericUpDown Grid.Row="9" Grid.Column="0" Value="{Binding Profile.ServerCfg.MaxMem}" Visibility="{Binding Path=Profile.ServerCfg.MaxMemOverride, Converter={StaticResource BoolToVis}}" mah:TextBoxHelper.Watermark="Maximum Memory (MB)" mah:TextBoxHelper.UseFloatingWatermark="True" Minimum="1024" Maximum="128000" Interval="1" Margin="3,3,3,-11"/>
+                            <mah:NumericUpDown Grid.Row="9" Grid.Column="2" Value="{Binding Profile.ServerCfg.CpuCount}" Visibility="{Binding Path=Profile.ServerCfg.CpuCountOverride, Converter={StaticResource BoolToVis}}" mah:TextBoxHelper.Watermark="CPU Core Count" mah:TextBoxHelper.UseFloatingWatermark="True" Minimum="1" Maximum="34" Interval="1" Margin="3,3,3,-11"/>
+                            <TextBox Text="{Binding Profile.ServerCfg.CommandLineParameters}" Grid.Row="11" Grid.Column="0" Grid.ColumnSpan="3" Margin="3,5" mah:TextBoxHelper.Watermark="Command Line Arguments" mah:TextBoxHelper.UseFloatingWatermark="True"/>
                         </Grid>
                     </GroupBox>
                     <Grid Grid.Row="1">
@@ -671,7 +680,7 @@
             </TabItem>
         </TabControl>
 
-        <!-- Bottom Controls -->            
+        <!-- Bottom Controls -->
         <Label VerticalAlignment="Center" HorizontalAlignment="Left" Grid.Row="1" Content="{Binding Path=Profile.Name}" ToolTip="{Binding Path=Profile.Id}" FontWeight="Bold" FontSize="16" Margin="10">
             <Label.ContextMenu>
                 <ContextMenu>

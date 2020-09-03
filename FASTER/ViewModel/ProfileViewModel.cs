@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 
 namespace FASTER.ViewModel
 {
@@ -34,13 +35,13 @@ namespace FASTER.ViewModel
         public ObservableCollection<string> TimestampFormats    { get; } = new ObservableCollection<string>(ServerCfgArrays.TimeStampStrings);
         public ObservableCollection<string> EnabledStrings      { get; } = new ObservableCollection<string>(ProfileCfgArrays.EnabledStrings);
         public ObservableCollection<string> MissionDifficulties { get; } = new ObservableCollection<string> { "Recruit", "Regular", "Veteran", "Custom" };
+        public ObservableCollection<string> PerfPresets         { get; } = new ObservableCollection<string>(BasicCfgArrays.PerfPresets);
 
         internal void DisplayMessage(string msg)
         {
             MainWindow.Instance.IFlyout.IsOpen         = true;
             MainWindow.Instance.IFlyoutMessage.Content = msg;
         }
-
 
         internal void OpenProfileLocation()
         {

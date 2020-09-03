@@ -1,19 +1,26 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace FASTER.Models
 {
+    static class BasicCfgArrays
+    {
+        public static string[] PerfPresets { get; } = {"Custom", "Arma3 Defaults", "1Mb Preset", "250Mb Preset"};
+    }
+
     [Serializable]
     public class BasicCfg : INotifyPropertyChanged
     {
-        private ushort maxMsgSend = 256;
+        private ushort maxMsgSend = 128;
         private ushort maxSizeGuaranteed = 256;
-        private ushort maxSizeNonguaranteed = 256;
-        private ulong minBandwidth = 768000;
+        private ushort maxSizeNonguaranteed = 512;
+        private ulong minBandwidth = 131072;
         private ulong maxBandwidth = 10000000000;
         private double minErrorToSend = 0.001;
         private double minErrorToSendNear = 0.01;
         private ushort maxCustomFileSize = 1024;
+        private ushort maxPacketSize = 1400;
 
         private string basicContent;
 
@@ -77,6 +84,16 @@ namespace FASTER.Models
             }
         }
 
+        public ushort MaxPacketSize
+        {
+            get => maxPacketSize;
+            set
+            {
+                maxPacketSize = value;
+                RaisePropertyChanged("MaxPacketSize");
+            }
+        }
+
         public double MinErrorToSend
         {
             get => minErrorToSend;
@@ -107,6 +124,53 @@ namespace FASTER.Models
             }
         }
 
+        public string PerfPreset
+        {
+            get => "Custom";
+            set
+            {
+                switch ((short)Array.IndexOf(BasicCfgArrays.PerfPresets, value))
+                {
+                    case 2:
+                        MaxMsgSend = 128;
+                        MaxSizeGuaranteed = 512;
+                        MaxSizeNonGuaranteed = 256;
+                        MinBandwidth = 131072;
+                        MaxBandwidth = 10000000000;
+                        MinErrorToSend = 0.001;
+                        MinErrorToSendNear = 0.01;
+                        MaxPacketSize = 1400;
+                        MaxCustomFileSize = 0;
+                        break;
+                    case 3:
+                        MaxMsgSend = 256;
+                        MaxSizeGuaranteed = 512;
+                        MaxSizeNonGuaranteed = 256;
+                        MinBandwidth = 768000;
+                        MaxBandwidth = 10000000000;
+                        MinErrorToSend = 0.001;
+                        MinErrorToSendNear = 0.01;
+                        MaxPacketSize = 1400;
+                        MaxCustomFileSize = 160;
+                        break;
+                    case 4:
+                        MaxMsgSend           = 256;
+                        MaxSizeGuaranteed    = 512;
+                        MaxSizeNonGuaranteed = 256;
+                        MinBandwidth         = 2000000000;
+                        MaxBandwidth         = 10000000000;
+                        MinErrorToSend       = 0.001;
+                        MinErrorToSendNear   = 0.01;
+                        MaxPacketSize        = 1400;
+                        MaxCustomFileSize    = 160;
+                        break;
+                    default:
+                        break;
+                }
+                RaisePropertyChanged("PerfPreset");
+            }
+        }
+
         public BasicCfg()
         { BasicContent = ProcessFile(); }
 
@@ -133,7 +197,8 @@ namespace FASTER.Models
                           + $"MinErrorToSend = {minErrorToSend};\t\t\t// Minimal error to send updates across network. Using a smaller value can make units observed by binoculars or sniper rifle to move smoother. Default: 0.001\r\n"
                           + $"MinErrorToSendNear = {minErrorToSendNear};\t\t// Minimal error to send updates across network for near units. Using larger value can reduce traffic sent for near units. Used to control client to server traffic as well. Default: 0.01\r\n"
                           + "\r\n"
-                          + $"MaxCustomFileSize = {maxCustomFileSize};\t\t\t// (bytes) Users with custom face or custom sound larger than this size are kicked when trying to connect.\r\n";
+                          + $"MaxCustomFileSize = {maxCustomFileSize};\t\t\t// (bytes) Users with custom face or custom sound larger than this size are kicked when trying to connect.\r\n" 
+                          + $"class sockets{{ maxPacketSize = {maxPacketSize}}}";
             return output;
         }
 
