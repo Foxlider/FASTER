@@ -130,7 +130,7 @@ namespace FASTER.Models
             {
                 switch ((short)Array.IndexOf(BasicCfgArrays.PerfPresets, value))
                 {
-                    case 2:
+                    case 1:
                         MaxMsgSend = 128;
                         MaxSizeGuaranteed = 512;
                         MaxSizeNonGuaranteed = 256;
@@ -141,7 +141,7 @@ namespace FASTER.Models
                         MaxPacketSize = 1400;
                         MaxCustomFileSize = 0;
                         break;
-                    case 3:
+                    case 2:
                         MaxMsgSend = 256;
                         MaxSizeGuaranteed = 512;
                         MaxSizeNonGuaranteed = 256;
@@ -152,7 +152,7 @@ namespace FASTER.Models
                         MaxPacketSize = 1400;
                         MaxCustomFileSize = 160;
                         break;
-                    case 4:
+                    case 3:
                         MaxMsgSend           = 256;
                         MaxSizeGuaranteed    = 512;
                         MaxSizeNonGuaranteed = 256;
