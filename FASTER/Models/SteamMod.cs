@@ -1,4 +1,4 @@
-﻿using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 
 using System;
@@ -166,7 +166,7 @@ namespace FASTER.Models
             uint modId = 0;
             var invalid = false;
 
-            if (int.TryParse(modUrl, out _))
+            if (uint.TryParse(modUrl, out _))
             { modId = uint.Parse(modUrl);}
             else if (modUrl.Contains("://steamcommunity.com/") && modUrl.Contains("/filedetails/?id="))
             { modId = SteamIdFromUrl(modUrl); }
@@ -174,9 +174,7 @@ namespace FASTER.Models
 
             if (!invalid) { AddMod(multiple, modId); }
             else
-            {
-                MainWindow.Instance.DisplayMessage("Please use format: https://steamcommunity.com/sharedfiles/filedetails/?id=*********");
-            }
+            { MainWindow.Instance.DisplayMessage("Please use format: https://steamcommunity.com/sharedfiles/filedetails/?id=*********"); }
         }
 
         private static void AddMod(bool multiple, uint modId)
