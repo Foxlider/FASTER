@@ -94,7 +94,8 @@ namespace FASTER.ViewModel
                 $"{(!string.IsNullOrWhiteSpace(headlessMods) || Profile.ContactDLCChecked || Profile.GMDLCChecked ? $"\"-mod={(Profile.ContactDLCChecked ? "contact;" : "")}{(Profile.GMDLCChecked ? "GM;" : "")}{(!string.IsNullOrWhiteSpace(headlessMods) ? headlessMods + ";" : "")}\"" : "")}",
                 $"{(Profile.ServerCfg.MaxMemOverride ? $"-maxMem={Profile.ServerCfg.MaxMem}" : "")}",
                 $"{(Profile.ServerCfg.CpuCountOverride ? $"-cpuCount={Profile.ServerCfg.CpuCount}" : "")}",
-                $"{(Profile.EnableHyperThreading ? "-enableHT" : "")}"
+                $"{(Profile.EnableHyperThreading ? "-enableHT" : "")}",
+                $"{(!string.IsNullOrWhiteSpace(Profile.ServerCfg.CommandLineParameters) ? Profile.ServerCfg.CommandLineParameters : "")}"
             };
 
             string commandLine = string.Join(" ", arguments);
