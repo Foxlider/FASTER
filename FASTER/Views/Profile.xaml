@@ -1,4 +1,4 @@
-<UserControl x:Class="FASTER.Views.Profile"
+﻿<UserControl x:Class="FASTER.Views.Profile"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -79,7 +79,7 @@
                                     <CheckBox IsChecked="{Binding Profile.GMDLCChecked}" Content="GM DLC" Margin="10,3"/>
                                 </StackPanel>
                             </StackPanel>
-                            <DataGrid Grid.Row="1" ItemsSource="{Binding Path=Profile.ProfileMods, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" CanUserReorderColumns="False" CanUserSortColumns="False" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True">
+                            <DataGrid Grid.Row="1" ItemsSource="{Binding Path=Profile.ProfileMods, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" CanUserReorderColumns="False" CanUserSortColumns="True" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True">
                                 <DataGrid.Resources>
                                     <ContextMenu x:Key="ServerContextMenu">
                                         <MenuItem Tag="Server" Header="Select All" Click="ModsSelectAll">
@@ -163,6 +163,7 @@
                                     </Style>
                                 </DataGrid.Resources>
                                 <DataGrid.Columns>
+                                    <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="auto" CanUserSort="True" IsReadOnly="True"/>
                                     <DataGridTemplateColumn Header="Server" Width="auto">
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>
@@ -184,7 +185,7 @@
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
                                     </DataGridTemplateColumn>
-                                    <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="1*" IsReadOnly="True"/>
+                                    <DataGridTextColumn Header="Name" Binding="{Binding Name}" CanUserSort="True" Width="1*" IsReadOnly="True"/>
                                 </DataGrid.Columns>
                             </DataGrid>
                             <Grid Grid.Row="2" Margin="5">
