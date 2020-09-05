@@ -195,7 +195,7 @@ namespace FASTER.Models
                           + $"MinErrorToSendNear = {minErrorToSendNear};\t\t// Minimal error to send updates across network for near units. Using larger value can reduce traffic sent for near units. Used to control client to server traffic as well. Default: 0.01\r\n"
                           + "\r\n"
                           + $"MaxCustomFileSize = {maxCustomFileSize};\t\t\t// (bytes) Users with custom face or custom sound larger than this size are kicked when trying to connect.\r\n" 
-                          + $"class sockets{{ maxPacketSize = {maxPacketSize}}}";
+                          + $"class sockets{{ maxPacketSize = {maxPacketSize};}};";
             return output;
         }
 
