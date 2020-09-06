@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 
 namespace FASTER.Models
@@ -734,12 +735,10 @@ namespace FASTER.Models
                           + $"passwordAdmin = \"{passwordAdmin}\";\t\t\t\t// Password to become server admin. When you're in Arma MP and connected to the server, type '#login xyz'\r\n"
                           + $"serverCommandPassword = \"{serverCommandPassword}\";               // Password required by alternate syntax of [[serverCommand]] server-side scripting.\r\n"
                           + $"logFile = \"{logFile}\";\t\t\t// Tells ArmA-server where the logfile should go and what it should be called\r\n"
-                          + $"admins[] =  { "{\n\t\"" + string.Join("\",\n\t \"", admins) + "\"\n}" };\r\n"
+                          + $"admins[] =  { "{\n\t\"" + string.Join("\",\n\t\"", admins) + "\"\n}" };\r\n"
                           + "\r\n"
                           + "\r\n"
-                          + "// WELCOME MESSAGE (\"message of the day\")\r\n"
-                          + "// It can be several lines, separated by comma\r\n"
-                          + "// Empty messages \"\" will not be displayed at all but are only for increasing the interval\r\n"
+                          + "// WELCOME MESSAGE\r\n"
                           + $"motd[] = { "{\n\t\"" + string.Join("\",\n\t \"", motd) + "\"\n}" };\r\n"
                           + $"motdInterval = {motdInterval};\t\t\t\t// Time interval (in seconds) between each message\r\n"
                           + "\r\n"
@@ -748,15 +747,15 @@ namespace FASTER.Models
                           + $"maxPlayers = {maxPlayers};\t\t\t\t// Maximum amount of players. Civilians and watchers, beholder, bystanders and so on also count as player.\r\n"
                           + $"kickDuplicate = {kickduplicate};\t\t\t\t// Each ArmA version has its own ID. If kickDuplicate is set to 1, a player will be kicked when he joins a server where another player with the same ID is playing.\r\n"
                           + $"verifySignatures = {verifySignatures};\t\t\t\t// Verifies .pbos against .bisign files. Valid values 0 (disabled), 1 (prefer v2 sigs but accept v1 too) and 2 (only v2 sigs are allowed). \r\n"
-                          + $"allowedFilePatching = {allowedFilePatching};                        // Allow or prevent client using -filePatching to join the server. 0, is disallow, 1 is allow HC, 2 is allow all clients (since Arma 3 1.49+)\r\n"
-                          + $"{((requiredBuildChecked) ? "" : "//")}requiredBuild = {requiredBuild}\t\t\t\t// Require clients joining to have at least build 12345 of game, preventing obsolete clients to connect\r\n"
+                          + $"allowedFilePatching = {allowedFilePatching};\t\t\t\t// Allow or prevent client using -filePatching to join the server. 0, is disallow, 1 is allow HC, 2 is allow all clients (since Arma 3 1.49+)\r\n"
+                          + $"{(requiredBuildChecked ? $"requiredBuild = {requiredBuild}\t\t\t\t// Require clients joining to have at least build 12345 of game, preventing obsolete clients to connect\r\n" : "//")}"
                           + $"steamProtocolMaxDataSize = {steamProtocolMaxDataSize};\t\t\t\t// Increasing this value will fix the modlist length limit in Arma 3 Launcher but mignt not be supported by some routers.\r\n"
-                          + $"loopback = {loopback};\t\t\t\t// Enforces LAN only mode.\r\n"
-                          + $"upnp = {upnp};\t\t\t\t// This setting might slow up server start-up by 600s if blocked by firewall or router.\r\n"
+                          + $"loopback = {(loopback ? "1" : "0")};\t\t\t\t// Enforces LAN only mode.\r\n"
+                          + $"upnp = {(upnp ? "1" : "0")};\t\t\t\t// This setting might slow up server start-up by 600s if blocked by firewall or router.\r\n"
                           + "\r\n"
                           + "// VOTING\r\n"
                           + $"{(votingEnabled ? $"voteMissionPlayers = {voteMissionPlayers};" : "voteMissionPlayers = 1;")}\t\t\t\t// Tells the server how many people must connect so that it displays the mission selection screen.\r\n"
-                          + $"{(votingEnabled ? $"voteThreshold = {voteThreshold};" : "voteThreshold = 0;")}\t\t\t\t// 33% or more players need to vote for something, for example an admin or a new map, to become effective\r\n"
+                          + $"{(votingEnabled ? $"voteThreshold = {voteThreshold.ToString(CultureInfo.InvariantCulture)};" : "voteThreshold = 0;")}\t\t\t\t// 33% or more players need to vote for something, for example an admin or a new map, to become effective\r\n"
                           + $"{(votingEnabled ? "" : "allowedVoteCmds[] = {};")}\r\n"
                           + $"{(votingEnabled ? "" : "allowedVotedAdminCmds[] = {};")}\r\n"
                           + "\r\n"
@@ -764,7 +763,7 @@ namespace FASTER.Models
                           + "// INGAME SETTINGS\r\n"
                           + $"disableVoN = {disableVoN};\t\t\t\t\t// If set to 1, Voice over Net will not be available\r\n"
                           + $"vonCodec = {vonCodec}; \t\t\t\t\t// If set to 1 then it uses IETF standard OPUS codec, if to 0 then it uses SPEEX codec (since Arma 3 update 1.58+)  \r\n"
-                          + $"skipLobby = {skipLobby};\t\t\t\t// Overridden by mission parameters\r\n"
+                          + $"skipLobby = {(skipLobby ? "1" : "0")};\t\t\t\t// Overridden by mission parameters\r\n"
                           + $"vonCodecQuality = {vonCodecQuality};\t\t\t\t// since 1.62.95417 supports range 1-20 //since 1.63.x will supports range 1-30 //8kHz is 0-10, 16kHz is 11-20, 32kHz(48kHz) is 21-30 \r\n"
                           + $"persistent = {persistent};\t\t\t\t\t// If 1, missions still run on even after the last player disconnected.\r\n"
                           + $"timeStampFormat = \"{timeStampFormat}\";\t\t\t// Set the timestamp format used on each report line in server-side RPT file. Possible values are \"none\" (default),\"short\",\"full\".\r\n"
@@ -801,8 +800,8 @@ namespace FASTER.Models
                           + "\r\n"
                           + "\r\n"
                           + "// HEADLESS CLIENT\r\n"
-                          + $"{(headlessClientEnabled && !headlessClients.Any(string.IsNullOrWhiteSpace) ? $"headlessClients[] =  { "{\n\t\"" + string.Join("\",\n\t \"", headlessClients) + "\"\n}" };\r\n" : "//headlessClients[] =  {};\r\n")}"
-                          + $"{(headlessClientEnabled && !localClient.Any(string.IsNullOrWhiteSpace)? $"localClient[] =  { "{\n\t\"" + string.Join("\",\n\t \"", localClient) + "\"\n}" };" : "//localClient[] =  {};")}";
+                          + $"{(headlessClientEnabled && !headlessClients.Any(string.IsNullOrWhiteSpace) ? $"headlessClients[] =  { "{\n\t\"" + string.Join("\",\n\t \"", headlessClients) + "\"\n}" };\r\n" : "")}"
+                          + $"{(headlessClientEnabled && !localClient.Any(string.IsNullOrWhiteSpace)? $"localClient[] =  { "{\n\t\"" + string.Join("\",\n\t \"", localClient) + "\"\n}" };" : "")}";
             return output;
         }
 
