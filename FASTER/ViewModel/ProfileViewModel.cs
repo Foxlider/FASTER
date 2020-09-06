@@ -86,19 +86,19 @@ namespace FASTER.ViewModel
             List<string> arguments = new List<string>
             {
                 "-client",
-                "-connect=127.0.0.1",
-                $"-password={Profile.ServerCfg.Password}",
-                $"\"-profiles={Path.Combine(Properties.Settings.Default.serverPath, "Servers")}\"",
-                "-nosound",
-                $"-port={Profile.Port}",
-                $"{(!string.IsNullOrWhiteSpace(headlessMods) || Profile.ContactDLCChecked || Profile.GMDLCChecked ? $"\"-mod={(Profile.ContactDLCChecked ? "contact;" : "")}{(Profile.GMDLCChecked ? "GM;" : "")}{(!string.IsNullOrWhiteSpace(headlessMods) ? headlessMods + ";" : "")}\"" : "")}",
-                $"{(Profile.ServerCfg.MaxMemOverride ? $"-maxMem={Profile.ServerCfg.MaxMem}" : "")}",
-                $"{(Profile.ServerCfg.CpuCountOverride ? $"-cpuCount={Profile.ServerCfg.CpuCount}" : "")}",
-                $"{(Profile.EnableHyperThreading ? "-enableHT" : "")}",
-                $"{(!string.IsNullOrWhiteSpace(Profile.ServerCfg.CommandLineParameters) ? Profile.ServerCfg.CommandLineParameters : "")}"
+                " -connect=127.0.0.1",
+                $" -password={Profile.ServerCfg.Password}",
+                $" \"-profiles={Path.Combine(Properties.Settings.Default.serverPath, "Servers")}\"",
+                " -nosound",
+                $" -port={Profile.Port}",
+                $"{(!string.IsNullOrWhiteSpace(headlessMods) || Profile.ContactDLCChecked || Profile.GMDLCChecked ? $" \"-mod={(Profile.ContactDLCChecked ? "contact;" : "")}{(Profile.GMDLCChecked ? "GM;" : "")}{(!string.IsNullOrWhiteSpace(headlessMods) ? headlessMods + ";" : "")}\"" : "")}",
+                $"{(Profile.ServerCfg.MaxMemOverride ? $" -maxMem={Profile.ServerCfg.MaxMem}" : "")}",
+                $"{(Profile.ServerCfg.CpuCountOverride ? $" -cpuCount={Profile.ServerCfg.CpuCount}" : "")}",
+                $"{(Profile.EnableHyperThreading ? " -enableHT" : "")}",
+                $"{(!string.IsNullOrWhiteSpace(Profile.ServerCfg.CommandLineParameters) ? $" {Profile.ServerCfg.CommandLineParameters}" : "")}"
             };
 
-            string commandLine = string.Join(" ", arguments);
+            string commandLine = string.Join("", arguments);
 
             try { Clipboard.SetText(commandLine); }
             catch (COMException e)
@@ -183,23 +183,23 @@ namespace FASTER.ViewModel
             List<string> arguments = new List<string>
             {
                 $"-port={Profile.Port}",
-                $"\"-config={config}\"",
-                $"\"-cfg={basic}\"",
-                $"\"-profiles={Path.Combine(Properties.Settings.Default.serverPath, "Servers", Profile.Id)}\"",
-                $"-name={Profile.Id}",
-                $"{(!string.IsNullOrWhiteSpace(playerMods) || Profile.ContactDLCChecked || Profile.GMDLCChecked ? $"\"-mod={(Profile.ContactDLCChecked ? "contact;" : "")}{(Profile.GMDLCChecked ? "GM;" : "")}{(!string.IsNullOrWhiteSpace(playerMods) ? playerMods + ";" : "" )}\"" : "")}",
-                $"{(!string.IsNullOrWhiteSpace(serverMods) ? $"\"-serverMod={serverMods};\"" : "")}",
-                $"{(Profile.EnableHyperThreading ? "-enableHT" : "")}",
-                $"{(Profile.ServerCfg.AllowedFilePatching != ServerCfgArrays.AllowFilePatchingStrings[0] ? "-filePatching" : "")}",
-                $"{(Profile.ServerCfg.NetLogEnabled ? "-netlog" : "")}",
-                $"{(Profile.RankingChecked ? $"-ranking={Path.Combine(Properties.Settings.Default.serverPath, "Servers", Profile.Id, "ranking.log")}" : "")}",
-                $"{(Profile.ServerCfg.AutoInit ? "-autoInit" : "")}",
-                $"{(Profile.ServerCfg.MaxMemOverride ? $"-maxMem={Profile.ServerCfg.MaxMem}" : "")}",
-                $"{(Profile.ServerCfg.CpuCountOverride ? $"-cpuCount={Profile.ServerCfg.CpuCount}" : "")}",
-                $"{(!string.IsNullOrWhiteSpace(Profile.ServerCfg.CommandLineParameters) ? Profile.ServerCfg.CommandLineParameters : "")}"
+                $" \"-config={config}\"",
+                $" \"-cfg={basic}\"",
+                $" \"-profiles={Path.Combine(Properties.Settings.Default.serverPath, "Servers", Profile.Id)}\"",
+                $" -name={Profile.Id}",
+                $"{(!string.IsNullOrWhiteSpace(playerMods) || Profile.ContactDLCChecked || Profile.GMDLCChecked ? $" \"-mod={(Profile.ContactDLCChecked ? "contact;" : "")}{(Profile.GMDLCChecked ? "GM;" : "")}{(!string.IsNullOrWhiteSpace(playerMods) ? playerMods + ";" : "" )}\"" : "")}",
+                $"{(!string.IsNullOrWhiteSpace(serverMods) ? $" \"-serverMod={serverMods};\"" : "")}",
+                $"{(Profile.EnableHyperThreading ? " -enableHT" : "")}",
+                $"{(Profile.ServerCfg.AllowedFilePatching != ServerCfgArrays.AllowFilePatchingStrings[0] ? " -filePatching" : "")}",
+                $"{(Profile.ServerCfg.NetLogEnabled ? " -netlog" : "")}",
+                $"{(Profile.RankingChecked ? $" \"-ranking={Path.Combine(Properties.Settings.Default.serverPath, "Servers", Profile.Id, "ranking.log")}\"" : "")}",
+                $"{(Profile.ServerCfg.AutoInit ? " -autoInit" : "")}",
+                $"{(Profile.ServerCfg.MaxMemOverride ? $" -maxMem={Profile.ServerCfg.MaxMem}" : "")}",
+                $"{(Profile.ServerCfg.CpuCountOverride ? $" -cpuCount={Profile.ServerCfg.CpuCount}" : "")}",
+                $"{(!string.IsNullOrWhiteSpace(Profile.ServerCfg.CommandLineParameters) ? $" {Profile.ServerCfg.CommandLineParameters}" : "")}"
             };
 
-            string commandLine = string.Join(" ", arguments);
+            string commandLine = string.Join("", arguments);
             return commandLine;
         }
 
