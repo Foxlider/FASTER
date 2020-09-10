@@ -205,9 +205,7 @@ namespace FASTER.Views
             if (string.IsNullOrEmpty(modLine) || !modLine.Contains("data-type=\"Link\">http://steam") || !modLine.Contains("/?id=")) return;
 
             var link = modLine.Substring(modLine.IndexOf("http://steam", StringComparison.Ordinal));
-            link = Reverse(link);
-            link = link.Substring(link.IndexOf("epyt-atad", StringComparison.Ordinal) + 11);
-            link = Reverse(link);
+            link = link.Substring(0, link.Length - 4);
             try 
             { SteamMod.AddSteamMod(link, true); }
             catch
@@ -381,13 +379,6 @@ namespace FASTER.Views
                 catch
                 {  MessageBox.Show($"Could not open \"{url}\""); }
             }
-        }
-
-        private static string Reverse(string s)
-        {
-            char[] charArray = s.ToCharArray();
-            Array.Reverse(charArray);
-            return new string(charArray);
         }
     }
 }
