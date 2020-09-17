@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Globalization;
 // ReSharper disable RedundantDefaultMemberInitializer
 
 namespace FASTER.Models
@@ -371,8 +372,8 @@ namespace FASTER.Models
                 "\t};\r\n" +
                 "\tclass CustomAILevel\r\n" +
                 "\t{\r\n" +
-                $"\t\tskillAI = {skillAi};\r\n" +
-                $"\t\tprecisionAI = {precisionAi};\r\n" +
+                $"\t\tskillAI = {skillAi.ToString(CultureInfo.InvariantCulture)};\r\n" +
+                $"\t\tprecisionAI = {precisionAi.ToString(CultureInfo.InvariantCulture)};\r\n" +
                 "\t};\r\n" +
                 "};";
             return output;
