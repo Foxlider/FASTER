@@ -88,7 +88,7 @@ namespace FASTER.ViewModel
                 "-client",
                 " -connect=127.0.0.1",
                 $" -password={Profile.ServerCfg.Password}",
-                $" \"-profiles={Path.Combine(Properties.Settings.Default.serverPath, "Servers")}\"",
+                $" \"-profiles={Path.Combine(Properties.Settings.Default.serverPath, "Servers", Profile.Id)}\"",
                 " -nosound",
                 $" -port={Profile.Port}",
                 $"{(!string.IsNullOrWhiteSpace(headlessMods) || Profile.ContactDLCChecked || Profile.GMDLCChecked ? $" \"-mod={(Profile.ContactDLCChecked ? "contact;" : "")}{(Profile.GMDLCChecked ? "GM;" : "")}{(!string.IsNullOrWhiteSpace(headlessMods) ? headlessMods + ";" : "")}\"" : "")}",
@@ -252,6 +252,8 @@ namespace FASTER.ViewModel
             { Properties.Settings.Default.Profiles[index] = Profile; }
 
             Properties.Settings.Default.Save();
+
+            DisplayMessage($"Saved Profile {Profile.Name}");
         }
 
         public ObservableCollection<string> FadeOutStrings         { get; } = new ObservableCollection<string>(ProfileCfgArrays.FadeOutStrings);
