@@ -254,7 +254,8 @@ namespace FASTER.Models
 
         public ServerProfileNew Clone()
         {
-            ServerProfileNew p = (ServerProfileNew) MemberwiseClone();
+            string serialized = Newtonsoft.Json.JsonConvert.SerializeObject(this);
+            ServerProfileNew p = Newtonsoft.Json.JsonConvert.DeserializeObject<ServerProfileNew>(serialized);
             p.GenerateNewId();
             if (p.Name.EndsWith(")") && p.Name.Contains('(') && int.TryParse(p.Name.Substring(p.Name.Length - 2, 1), out _))
             {
