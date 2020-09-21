@@ -92,7 +92,7 @@ namespace FASTER.Views
             if (!Directory.Exists(localMod.Path)) return;
 
             try
-            { Process.Start(localMod.Path); }
+            { Process.Start("explorer.exe", localMod.Path); }
             catch (Exception ex)
             { MessageBox.Show("Impossible to open the mod : " + ex.Message); }
         }
