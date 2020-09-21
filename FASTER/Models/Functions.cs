@@ -104,17 +104,17 @@ namespace FASTER.Models
         // Takes any string and removes illegal characters
         public static string SafeName(string input, bool ignoreWhiteSpace = false, string replacement = "_")
         {
-            input = input.Replace("@", "");
+            //input = input.Replace("@", ""); Local mods can have full paths, this is useless and only breaks them.
             if (ignoreWhiteSpace)//I'm assuming that for "ignore whitespace" we are meant to leave it untouched
             {
                 // Theese are the only characters not allowed on windows. Anything else works fine.
                 // Replacing characters that are legal in paths causes the local mods to stop being loaded properly.
                 // Ideally this whole operation should happen only on workshop mods.
-                input = Regex.Replace(input, "[<>:\"/\\|?*]", replacement);
+                input = Regex.Replace(input, "[<>\"/\\|?*]", replacement);
                 input = input.Replace(replacement + replacement, replacement);//wtf is going on there?
                 return input;
             }
-            input = Regex.Replace(input, "[<>:\"/\\|?*\\s]", replacement);
+            input = Regex.Replace(input, "[<>\"/\\|?*\\s]", replacement);
             input = input.Replace(replacement + replacement, replacement);//wtf is going on there?
             return input;
         }
