@@ -178,8 +178,8 @@ namespace FASTER.ViewModel
             string config        = Path.Combine(Properties.Settings.Default.serverPath, "Servers", Profile.Id, "server_config.cfg");
             string basic         = Path.Combine(Properties.Settings.Default.serverPath, "Servers", Profile.Id, "server_basic.cfg");
 
-            string playerMods = string.Join(";", Profile.ProfileMods.Where(m => m.ClientSideChecked).Select(m => $"@{Functions.SafeName(m.Name)}"));
-            string serverMods = string.Join(";", Profile.ProfileMods.Where(m => m.ServerSideChecked).Select(m => $"@{Functions.SafeName(m.Name)}"));
+            string playerMods = string.Join(";", Profile.ProfileMods.Where(m => m.ClientSideChecked).Select(m => $"@{Functions.SafeName(m.Name, true)}"));
+            string serverMods = string.Join(";", Profile.ProfileMods.Where(m => m.ServerSideChecked).Select(m => $"@{Functions.SafeName(m.Name, true)}"));
             List<string> arguments = new List<string>
             {
                 $"-port={Profile.Port}",
