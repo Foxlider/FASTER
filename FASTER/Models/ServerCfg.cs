@@ -748,7 +748,7 @@ namespace FASTER.Models
                           + $"kickDuplicate = {kickduplicate};\t\t\t\t// Each ArmA version has its own ID. If kickDuplicate is set to 1, a player will be kicked when he joins a server where another player with the same ID is playing.\r\n"
                           + $"verifySignatures = {verifySignatures};\t\t\t\t// Verifies .pbos against .bisign files. Valid values 0 (disabled), 1 (prefer v2 sigs but accept v1 too) and 2 (only v2 sigs are allowed). \r\n"
                           + $"allowedFilePatching = {allowedFilePatching};\t\t\t\t// Allow or prevent client using -filePatching to join the server. 0, is disallow, 1 is allow HC, 2 is allow all clients (since Arma 3 1.49+)\r\n"
-                          + $"{(requiredBuildChecked ? $"requiredBuild = {requiredBuild}\t\t\t\t// Require clients joining to have at least build 12345 of game, preventing obsolete clients to connect\r\n" : "//")}"
+                          + $"{(requiredBuildChecked ? $"requiredBuild = {requiredBuild}\t\t\t\t// Require clients joining to have at least build 12345 of game, preventing obsolete clients to connect\r\n" : "\r\n")}"
                           + $"steamProtocolMaxDataSize = {steamProtocolMaxDataSize};\t\t\t\t// Increasing this value will fix the modlist length limit in Arma 3 Launcher but mignt not be supported by some routers.\r\n"
                           + $"loopback = {(loopback ? "1" : "0")};\t\t\t\t// Enforces LAN only mode.\r\n"
                           + $"upnp = {(upnp ? "1" : "0")};\t\t\t\t// This setting might slow up server start-up by 600s if blocked by firewall or router.\r\n"
