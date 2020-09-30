@@ -82,7 +82,7 @@ namespace FASTER.ViewModel
 
         private string SetHCCommandLine()
         {
-            string headlessMods = string.Join(";", Profile.ProfileMods.Where(m => m.HeadlessChecked).Select(m => $"@{Functions.SafeName(m.Name)}"));
+            string headlessMods = string.Join(";", Profile.ProfileMods.Where(m => m.HeadlessChecked).Select(m => m.IsLocal ? m.Name : $"@{Functions.SafeName(m.Name)}"));
             List<string> arguments = new List<string>
             {
                 "-client",
@@ -178,8 +178,8 @@ namespace FASTER.ViewModel
             string config        = Path.Combine(Properties.Settings.Default.serverPath, "Servers", Profile.Id, "server_config.cfg");
             string basic         = Path.Combine(Properties.Settings.Default.serverPath, "Servers", Profile.Id, "server_basic.cfg");
 
-            string playerMods = string.Join(";", Profile.ProfileMods.Where(m => m.ClientSideChecked).Select(m => $"@{Functions.SafeName(m.Name)}"));
-            string serverMods = string.Join(";", Profile.ProfileMods.Where(m => m.ServerSideChecked).Select(m => $"@{Functions.SafeName(m.Name)}"));
+            string playerMods = string.Join(";", Profile.ProfileMods.Where(m => m.ClientSideChecked).Select(m => m.IsLocal ? m.Name : $"@{Functions.SafeName(m.Name)}"));
+            string serverMods = string.Join(";", Profile.ProfileMods.Where(m => m.ServerSideChecked).Select(m => m.IsLocal ? m.Name : $"@{Functions.SafeName(m.Name)}"));
             List<string> arguments = new List<string>
             {
                 $"-port={Profile.Port}",
@@ -442,7 +442,7 @@ namespace FASTER.ViewModel
                 
                     if (existingMod == null)
                     {
-                        var newProfile = new ProfileMod { Name = mod, Id = newId };
+                        var newProfile = new ProfileMod { Name = mod, Id = newId, IsLocal = true };
                         modlist.Add(newProfile);
                         continue;
                     }

@@ -290,6 +290,7 @@ namespace FASTER.Models
         private bool serverSideChecked;
         private bool clientSideChecked;
         private bool headlessChecked;
+        private bool isLocal;
         private uint _id;
         private string name;
 
@@ -340,6 +341,16 @@ namespace FASTER.Models
             {
                 name = value;
                 RaisePropertyChanged("Name");
+            }
+        }
+
+        public bool IsLocal
+        {
+            get => IsLocal;
+            set
+            {
+                IsLocal = value;
+                RaisePropertyChanged("IsLocal");
             }
         }
 
