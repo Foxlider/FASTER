@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Globalization;
 
+// ReSharper disable once CheckNamespace
 namespace FASTER.Models
 {
     static class BasicCfgArrays

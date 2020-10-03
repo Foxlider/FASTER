@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 
+// ReSharper disable once CheckNamespace
 namespace FASTER.Models
 {
     static class ServerCfgArrays

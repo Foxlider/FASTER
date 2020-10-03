@@ -1,5 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
+// ReSharper disable once CheckNamespace
 namespace FASTER.Models
 {
     internal static class Functions

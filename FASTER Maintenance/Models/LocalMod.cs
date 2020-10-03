@@ -1,12 +1,8 @@
-﻿using Microsoft.AppCenter.Crashes;
-
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
+// ReSharper disable once CheckNamespace
 namespace FASTER.Models
 {
     [Serializable]

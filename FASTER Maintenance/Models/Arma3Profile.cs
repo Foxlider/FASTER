@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Globalization;
 // ReSharper disable RedundantDefaultMemberInitializer
 
+// ReSharper disable once CheckNamespace
 namespace FASTER.Models
 {
     static class ProfileCfgArrays

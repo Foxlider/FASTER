@@ -4,6 +4,7 @@ using System.Xml.Serialization;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
+// ReSharper disable once CheckNamespace
 namespace FASTER.Models
 {
     [Serializable]

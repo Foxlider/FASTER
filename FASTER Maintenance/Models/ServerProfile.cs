@@ -2,14 +2,14 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
 
+// ReSharper disable once CheckNamespace
 namespace FASTER.Models
 {
     [Serializable]
-    public class ServerProfileCollection : List<ServerProfileNew>
+    public class ServerProfileCollection : List<ServerProfile>
     {
         [XmlElement(Order = 1)]
         public string CollectionName { get; set; }
@@ -19,7 +19,7 @@ namespace FASTER.Models
     }
 
     [Serializable]
-    public class ServerProfileNew : INotifyPropertyChanged
+    public class ServerProfile : INotifyPropertyChanged
     {
         //PRIVATE VARS DECLARATION
         private string _id;

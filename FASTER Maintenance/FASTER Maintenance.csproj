@@ -49,6 +49,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\16Models.cs" />
+    <Compile Include="Models\17Models.cs" />
     <Compile Include="Models\Arma3Profile.cs" />
     <Compile Include="Models\BasicCfg.cs" />
     <Compile Include="Models\Functions.cs" />
