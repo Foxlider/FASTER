@@ -10,7 +10,7 @@ using System.Xml.Serialization;
 namespace FASTER.Models
 {
     [Serializable]
-    public class ServerProfileCollection : List<ServerProfileNew>
+    public class ServerProfileCollection : List<ServerProfile>
     {
         [XmlElement(Order = 1)]
         public string CollectionName { get; set; }
@@ -21,7 +21,7 @@ namespace FASTER.Models
         internal static void AddServerProfile(string profileName)
         {
             var currentProfiles = Properties.Settings.Default.Profiles;
-            var p = new ServerProfileNew(profileName);
+            var p = new ServerProfile(profileName);
             p.ServerCfg.ServerCfgContent     = p.ServerCfg.ProcessFile();
             p.BasicCfg.BasicContent          = p.BasicCfg.ProcessFile();
             p.ArmaProfile.ArmaProfileContent = p.ArmaProfile.ProcessFile();
@@ -31,7 +31,7 @@ namespace FASTER.Models
             MainWindow.Instance.LoadServerProfiles();
         }
 
-        internal static void AddServerProfile(ServerProfileNew profile)
+        internal static void AddServerProfile(ServerProfile profile)
         {
             var currentProfiles = Properties.Settings.Default.Profiles;
             profile.GenerateNewId();
@@ -43,7 +43,7 @@ namespace FASTER.Models
     }
 
     [Serializable]
-    public class ServerProfileNew : INotifyPropertyChanged
+    public class ServerProfile : INotifyPropertyChanged
     {
         //PRIVATE VARS DECLARATION
         private string _id;
@@ -221,7 +221,7 @@ namespace FASTER.Models
         }
 
         //CTORS
-        public ServerProfileNew(string name, bool createFolder = true)
+        public ServerProfile(string name, bool createFolder = true)
         {
             _id = $"_{Guid.NewGuid():N}";
             Name = name;
@@ -237,7 +237,7 @@ namespace FASTER.Models
             { Directory.CreateDirectory(Path.Combine(Properties.Settings.Default.serverPath, "Servers", Id)); }
         }
 
-        public ServerProfileNew()
+        public ServerProfile()
         {
             _id  = $"_{Guid.NewGuid():N}";
             Name = _id;
@@ -252,10 +252,10 @@ namespace FASTER.Models
         public void GenerateNewId()
         { _id = $"_{Guid.NewGuid():N}"; }
 
-        public ServerProfileNew Clone()
+        public ServerProfile Clone()
         {
             string serialized = Newtonsoft.Json.JsonConvert.SerializeObject(this);
-            ServerProfileNew p = Newtonsoft.Json.JsonConvert.DeserializeObject<ServerProfileNew>(serialized);
+            ServerProfile p = Newtonsoft.Json.JsonConvert.DeserializeObject<ServerProfile>(serialized);
             p.GenerateNewId();
             if (p.Name.EndsWith(")") && p.Name.Contains('(') && int.TryParse(p.Name.Substring(p.Name.Length - 2, 1), out _))
             {
@@ -346,10 +346,10 @@ namespace FASTER.Models
 
         public bool IsLocal
         {
-            get => IsLocal;
+            get => isLocal;
             set
             {
-                IsLocal = value;
+                isLocal = value;
                 RaisePropertyChanged("IsLocal");
             }
         }

@@ -18,15 +18,15 @@ namespace FASTER.ViewModel
     internal class ProfileViewModel
     {
         public ProfileViewModel()
-        { Profile = new ServerProfileNew("Server", false); }
+        { Profile = new ServerProfile("Server", false); }
 
-        public ProfileViewModel(ServerProfileNew p)
+        public ProfileViewModel(ServerProfile p)
         { Profile = p; }
 
         //Hash for ID generation
         private readonly System.Security.Cryptography.SHA1 hash = new System.Security.Cryptography.SHA1CryptoServiceProvider();
 
-        public ServerProfileNew Profile { get; set; }
+        public ServerProfile Profile { get; set; }
 
         public ObservableCollection<string> VonCodecs           { get; } = new ObservableCollection<string>(ServerCfgArrays.VonCodecStrings);
         public ObservableCollection<string> FilePatching        { get; } = new ObservableCollection<string>(ServerCfgArrays.AllowFilePatchingStrings);

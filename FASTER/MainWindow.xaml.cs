@@ -235,7 +235,7 @@ namespace FASTER
                     return;
                 }
 
-                ServerProfileNew serverProfile = temp.Clone(); 
+                ServerProfile serverProfile = temp.Clone(); 
                 ServerProfileCollection.AddServerProfile(serverProfile);
             }
             catch (Exception err)
