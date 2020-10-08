@@ -153,40 +153,29 @@ namespace FASTER.Models
             get => "Custom";
             set
             {
+                MaxMsgSend           = 256;
+                MaxSizeGuaranteed    = 512;
+                MaxSizeNonGuaranteed = 256;
+                MinErrorToSend     = 0.001;
+                MinErrorToSendNear = 0.01;
+                MaxPacketSize      = 1400;
+                MaxCustomFileSize  = 160;
+
+
                 switch ((short)Array.IndexOf(BasicCfgArrays.PerfPresets, value))
                 {
                     case 1:
                         MaxMsgSend           = 128;
-                        MaxSizeGuaranteed    = 512;
-                        MaxSizeNonGuaranteed = 256;
                         MinBandwidth         = 131072;
                         MaxBandwidth         = 10000000000;
-                        MinErrorToSend       = 0.001;
-                        MinErrorToSendNear   = 0.01;
-                        MaxPacketSize        = 1400;
-                        MaxCustomFileSize    = 0;
                         break;
                     case 2:
-                        MaxMsgSend           = 256;
-                        MaxSizeGuaranteed    = 512;
-                        MaxSizeNonGuaranteed = 256;
                         MinBandwidth         = 768000;
                         MaxBandwidth         = 10000000000;
-                        MinErrorToSend       = 0.001;
-                        MinErrorToSendNear   = 0.01;
-                        MaxPacketSize        = 1400;
-                        MaxCustomFileSize    = 160;
                         break;
                     case 3:
-                        MaxMsgSend           = 256;
-                        MaxSizeGuaranteed    = 512;
-                        MaxSizeNonGuaranteed = 256;
                         MinBandwidth         = 2000000000;
                         MaxBandwidth         = 10000000000;
-                        MinErrorToSend       = 0.001;
-                        MinErrorToSendNear   = 0.01;
-                        MaxPacketSize        = 1400;
-                        MaxCustomFileSize    = 160;
                         break;
                     case 4:
                         MaxMsgSend           = 2048;
@@ -194,10 +183,6 @@ namespace FASTER.Models
                         MaxSizeNonGuaranteed = 384;
                         MinBandwidth         = 107374182;
                         MaxBandwidth         = 1073741824;
-                        MinErrorToSend       = 0.001;
-                        MinErrorToSendNear   = 0.01;
-                        MaxPacketSize        = 1400;
-                        MaxCustomFileSize    = 160;
                         break;
                 }
                 RaisePropertyChanged("PerfPreset");
