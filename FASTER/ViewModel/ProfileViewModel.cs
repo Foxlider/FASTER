@@ -35,6 +35,7 @@ namespace FASTER.ViewModel
         public ObservableCollection<string> EnabledStrings      { get; } = new ObservableCollection<string>(ProfileCfgArrays.EnabledStrings);
         public ObservableCollection<string> MissionDifficulties { get; } = new ObservableCollection<string> { "Recruit", "Regular", "Veteran", "Custom" };
         public ObservableCollection<string> PerfPresets         { get; } = new ObservableCollection<string>(BasicCfgArrays.PerfPresets);
+        public ObservableCollection<double> TerrainGrids        { get; } = new ObservableCollection<double>(BasicCfgArrays.TerrainGrids);
 
         internal void DisplayMessage(string msg)
         {

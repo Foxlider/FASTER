@@ -6,21 +6,25 @@ namespace FASTER.Models
 {
     static class BasicCfgArrays
     {
-        public static string[] PerfPresets { get; } = {"Custom", "Arma3 Defaults", "1Mb Preset", "250Mb Preset"};
+        public static string[] PerfPresets { get; } = {"Custom", "Arma3 Defaults", "1Mb Preset", "250Mb Preset", "1Gb Preset"};
+        public static double[] TerrainGrids { get; } = { 50, 25, 12.5, 6.25, 3.125 };
     }
 
     [Serializable]
     public class BasicCfg : INotifyPropertyChanged
     {
-        private ushort maxMsgSend = 128;
-        private ushort maxSizeGuaranteed = 256;
+        private uint   viewDistance = 2000;
+        private double terrainGrid  = 25;
+
+        private ushort maxMsgSend           = 128;
+        private ushort maxSizeGuaranteed    = 256;
         private ushort maxSizeNonguaranteed = 512;
-        private ulong minBandwidth = 131072;
-        private ulong maxBandwidth = 10000000000;
-        private double minErrorToSend = 0.001;
-        private double minErrorToSendNear = 0.01;
-        private ushort maxCustomFileSize = 1024;
-        private ushort maxPacketSize = 1400;
+        private ulong  minBandwidth         = 131072;
+        private ulong  maxBandwidth         = 10000000000;
+        private double minErrorToSend       = 0.001;
+        private double minErrorToSendNear   = 0.01;
+        private ushort maxCustomFileSize    = 1024;
+        private ushort maxPacketSize        = 1400;
 
         private string basicContent;
 
@@ -31,6 +35,26 @@ namespace FASTER.Models
             {
                 basicContent = value;
                 RaisePropertyChanged("BasicContent");
+            }
+        }
+
+        public uint ViewDistance
+        {
+            get => viewDistance;
+            set
+            {
+                viewDistance = value;
+                RaisePropertyChanged("ViewDistance");
+            }
+        }
+
+        public double TerrainGrid
+        {
+            get => terrainGrid;
+            set
+            {
+                terrainGrid = value;
+                RaisePropertyChanged("TerrainGrid");
             }
         }
 
@@ -132,26 +156,26 @@ namespace FASTER.Models
                 switch ((short)Array.IndexOf(BasicCfgArrays.PerfPresets, value))
                 {
                     case 1:
-                        MaxMsgSend = 128;
-                        MaxSizeGuaranteed = 512;
+                        MaxMsgSend           = 128;
+                        MaxSizeGuaranteed    = 512;
                         MaxSizeNonGuaranteed = 256;
-                        MinBandwidth = 131072;
-                        MaxBandwidth = 10000000000;
-                        MinErrorToSend = 0.001;
-                        MinErrorToSendNear = 0.01;
-                        MaxPacketSize = 1400;
-                        MaxCustomFileSize = 0;
+                        MinBandwidth         = 131072;
+                        MaxBandwidth         = 10000000000;
+                        MinErrorToSend       = 0.001;
+                        MinErrorToSendNear   = 0.01;
+                        MaxPacketSize        = 1400;
+                        MaxCustomFileSize    = 0;
                         break;
                     case 2:
-                        MaxMsgSend = 256;
-                        MaxSizeGuaranteed = 512;
+                        MaxMsgSend           = 256;
+                        MaxSizeGuaranteed    = 512;
                         MaxSizeNonGuaranteed = 256;
-                        MinBandwidth = 768000;
-                        MaxBandwidth = 10000000000;
-                        MinErrorToSend = 0.001;
-                        MinErrorToSendNear = 0.01;
-                        MaxPacketSize = 1400;
-                        MaxCustomFileSize = 160;
+                        MinBandwidth         = 768000;
+                        MaxBandwidth         = 10000000000;
+                        MinErrorToSend       = 0.001;
+                        MinErrorToSendNear   = 0.01;
+                        MaxPacketSize        = 1400;
+                        MaxCustomFileSize    = 160;
                         break;
                     case 3:
                         MaxMsgSend           = 256;
@@ -159,6 +183,17 @@ namespace FASTER.Models
                         MaxSizeNonGuaranteed = 256;
                         MinBandwidth         = 2000000000;
                         MaxBandwidth         = 10000000000;
+                        MinErrorToSend       = 0.001;
+                        MinErrorToSendNear   = 0.01;
+                        MaxPacketSize        = 1400;
+                        MaxCustomFileSize    = 160;
+                        break;
+                    case 4:
+                        MaxMsgSend           = 2048;
+                        MaxSizeGuaranteed    = 958;
+                        MaxSizeNonGuaranteed = 384;
+                        MinBandwidth         = 107374182;
+                        MaxBandwidth         = 1073741824;
                         MinErrorToSend       = 0.001;
                         MinErrorToSendNear   = 0.01;
                         MaxPacketSize        = 1400;
@@ -181,6 +216,8 @@ namespace FASTER.Models
                           + "Resolution_W=800;\r\n"
                           + "Resolution_H=600;\r\n"
                           + "Resolution_Bpp=32;\r\n"
+                          + $"terrainGrid={terrainGrid:0.###};\r\n"
+                          + $"viewDistance = {viewDistance};\r\n"
                           + "\r\n"
                           + "\r\n"
                           + "// These options are important for performance tuning\r\n"

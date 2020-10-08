@@ -655,7 +655,9 @@
                             <mah:NumericUpDown Grid.Row="4" Grid.Column="2" Value="{Binding Profile.BasicCfg.MaxCustomFileSize}" mah:TextBoxHelper.Watermark="MaxCustomFileSize" mah:TextBoxHelper.UseFloatingWatermark="True" Minimum="0" Maximum="65535" Interval="1" Margin="3"/>
 
                             <ComboBox Grid.Row="6" Grid.Column="0" SelectedItem="{Binding Path=Profile.BasicCfg.PerfPreset}" mah:TextBoxHelper.Watermark="Load performance Preset" mah:TextBoxHelper.UseFloatingWatermark="True" ItemsSource="{Binding PerfPresets}" Margin="3"/>
-                            
+                            <ComboBox Grid.Row="6" Grid.Column="1" SelectedItem="{Binding Path=Profile.BasicCfg.TerrainGrid}" mah:TextBoxHelper.Watermark="Terrain Grid" mah:TextBoxHelper.UseFloatingWatermark="True" ItemsSource="{Binding TerrainGrids}" Margin="3"/>
+                            <mah:NumericUpDown Grid.Row="6" Grid.Column="2" Value="{Binding Profile.BasicCfg.ViewDistance}" mah:TextBoxHelper.Watermark="Server View Distance" mah:TextBoxHelper.UseFloatingWatermark="True" Minimum="0" Maximum="50000" Interval="1" Margin="3,3,3,3"/>
+
                             <CheckBox Grid.Row="8" Grid.Column="0" Margin="3,5" IsChecked="{Binding Path=Profile.ServerCfg.MaxMemOverride}" Content="Force Maximum Memory"/>
                             <CheckBox Grid.Row="8" Grid.Column="1" Margin="3,5" IsChecked="{Binding Path=Profile.EnableHyperThreading}" Content="Enable Hyper Threading"/>
                             <CheckBox Grid.Row="8" Grid.Column="2" Margin="3,5" IsChecked="{Binding Path=Profile.ServerCfg.CpuCountOverride}" Content="Force CPU Count"/>
