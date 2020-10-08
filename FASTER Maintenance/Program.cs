@@ -3,7 +3,6 @@ using FASTER_Maintenance.Models._16Models;
 using FASTER_Maintenance.Models._17Models;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -13,6 +12,7 @@ using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Serialization;
+using ServerProfile = FASTER.Models.ServerProfile;
 
 namespace FASTER_Maintenance
 {
@@ -195,201 +195,9 @@ namespace FASTER_Maintenance
 
                     var newProfiles = new List<FASTER.Models.ServerProfile>();
                     Debug.Assert(collec != null, nameof(collec) + " != null");
-                    int i;
-                    int y;
-                    string label;
                     foreach (var profile in collec.ServerProfile)
                     {
-                        Console.WriteLine($"\t ┌─Converting profile {profile.DisplayName}...");
-                        i = 0;
-                        y = 8;
-                        label = "Setting base values";
-                        var newProfile = new FASTER.Models.ServerProfile();
-                        UpdateStatus(ref i, y, label);
-                        newProfile.EnableHyperThreading = bool.Parse(profile.EnableHyperThreading);
-                        UpdateStatus(ref i, y, label);
-                        newProfile.Executable = profile.Executable;
-                        UpdateStatus(ref i, y, label);
-                        newProfile.HeadlessNumber = int.Parse(profile.NoOfHeadlessClients);
-                        UpdateStatus(ref i, y, label);
-                        newProfile.Id = $"_{Guid.NewGuid():N}";
-                        UpdateStatus(ref i, y, label);
-                        newProfile.Name = profile.DisplayName;
-                        UpdateStatus(ref i, y, label);
-                        newProfile.Port = int.Parse(profile.Port);
-                        UpdateStatus(ref i, y, label);
-                        newProfile.RankingChecked = bool.Parse(profile.RankingEnabled);
-                        UpdateStatus(ref i, y, label);
-                        Console.Write("\r\t │ Setting base values\n");
-
-                        i     = 0;
-                        y     = 23;
-                        label = "Setting Arma3Profile";
-                        Console.Write("\t └─Setting Arma3Profile");
-                        newProfile.ArmaProfile = new Arma3Profile();
-                        UpdateStatus(ref i, y, label);
-                        newProfile.ArmaProfile.AutoReport = profile.AutoReporting == "true"
-                            ? "Enabled"
-                            : "Disabled";
-                        UpdateStatus(ref i, y, label);
-                        newProfile.ArmaProfile.CameraShake = profile.CameraShake == "true"
-                            ? "Enabled"
-                            : "Disabled";
-                        UpdateStatus(ref i, y, label);
-                        newProfile.ArmaProfile.Commands = profile.Commands;
-                        UpdateStatus(ref i, y, label);
-                        newProfile.ArmaProfile.DetectedMines = profile.DetectedMines;
-                        UpdateStatus(ref i, y, label);
-                        newProfile.ArmaProfile.EnemyTags = profile.EnemyNameTags;
-                        UpdateStatus(ref i, y, label);
-                        newProfile.ArmaProfile.FriendlyTags = profile.FriendlyNameTags;
-                        UpdateStatus(ref i, y, label);
-                        newProfile.ArmaProfile.GroupIndicators = profile.GroupIndicators;
-                        UpdateStatus(ref i, y, label);
-                        newProfile.ArmaProfile.MapContentEnemy = profile.MapContentEnemy == "true"
-                            ? "Enabled"
-                            : "Disabled";
-                        UpdateStatus(ref i, y, label);
-                        newProfile.ArmaProfile.MapContentFriendly = profile.MapContentFriendly == "true"
-                            ? "Enabled"
-                            : "Disabled";
-                        UpdateStatus(ref i, y, label);
-                        newProfile.ArmaProfile.MapContentMines = profile.MapContentMines == "true"
-                            ? "Enabled"
-                            : "Disabled";
-                        UpdateStatus(ref i, y, label);
-                        newProfile.ArmaProfile.MultipleSaves = profile.MultipleSaves == "true"
-                            ? "Enabled"
-                            : "Disabled";
-                        UpdateStatus(ref i, y, label);
-                        newProfile.ArmaProfile.PrecisionAi = double.Parse(profile.AiAccuracy);
-                        UpdateStatus(ref i, y, label);
-                        newProfile.ArmaProfile.ReducedDamage = profile.ReducedDamage == "true"
-                            ? "Enabled"
-                            : "Disabled";
-                        UpdateStatus(ref i, y, label);
-                        newProfile.ArmaProfile.ScoreTable = profile.ScoreTable == "true"
-                            ? "Enabled"
-                            : "Disabled";
-                        UpdateStatus(ref i, y, label);
-                        newProfile.ArmaProfile.SkillAi = double.Parse(profile.AiSkill);
-                        newProfile.ArmaProfile.StaminaBar = profile.StaminaBar == "true"
-                            ? "Enabled"
-                            : "Disabled";
-                        UpdateStatus(ref i, y, label);
-                        newProfile.ArmaProfile.StanceIndicator = profile.StanceIndicator;
-                        newProfile.ArmaProfile.TacticalPing = profile.TacticalPing == "true"
-                            ? "Enabled"
-                            : "Disabled";
-                        UpdateStatus(ref i, y, label);
-                        newProfile.ArmaProfile.ThirdPersonView = profile.ThirdPerson == "true"
-                            ? "Enabled"
-                            : "Disabled";
-                        UpdateStatus(ref i, y, label);
-                        newProfile.ArmaProfile.VisionAid = profile.VisualAids == "true"
-                            ? "Enabled"
-                            : "Disabled";
-                        UpdateStatus(ref i, y, label);
-                        newProfile.ArmaProfile.VonID = profile.VonId == "true"
-                            ? "Enabled"
-                            : "Disabled";
-                        UpdateStatus(ref i, y, label);
-                        newProfile.ArmaProfile.Waypoints = profile.Waypoints;
-                        UpdateStatus(ref i, y, label);
-                        newProfile.ArmaProfile.WeaponCrosshair = profile.Crosshair == "true" ? "Enabled" : "Disabled";
-                        UpdateStatus(ref i, y, label);
-                        newProfile.ArmaProfile.WeaponInfo = profile.WeaponInfo;
-                        UpdateStatus(ref i, y, label);
-                        Console.Write("\r\t │ Setting Arma3Profile\n");
-
-                        i     = 0;
-                        y     = 10;
-                        label = "Setting Basic.cfg";
-                        Console.Write("\t └─Setting Basic.cfg");
-                        newProfile.BasicCfg = new FASTER.Models.BasicCfg();
-                        UpdateStatus(ref i, y, label);
-                        newProfile.BasicCfg.MaxBandwidth = ulong.Parse(profile.MaxBandwidth);
-                        UpdateStatus(ref i, y, label);
-                        newProfile.BasicCfg.MaxCustomFileSize = ushort.Parse(profile.MaxCustomFileSize);
-                        UpdateStatus(ref i, y, label);
-                        newProfile.BasicCfg.MaxMsgSend = ushort.Parse(profile.MaxMessagesSend);
-                        UpdateStatus(ref i, y, label);
-                        newProfile.BasicCfg.MaxPacketSize = ushort.Parse(profile.MaxPacketSize);
-                        UpdateStatus(ref i, y, label);
-                        newProfile.BasicCfg.MaxSizeGuaranteed = ushort.Parse(profile.MaxSizeGuaranteed);
-                        UpdateStatus(ref i, y, label);
-                        newProfile.BasicCfg.MaxSizeNonGuaranteed = ushort.Parse(profile.MaxSizeNonguaranteed);
-                        UpdateStatus(ref i, y, label);
-                        newProfile.BasicCfg.MinBandwidth = ulong.Parse(profile.MinBandwidth);
-                        UpdateStatus(ref i, y, label);
-                        newProfile.BasicCfg.MinErrorToSend = double.Parse(profile.MinErrorToSend);
-                        UpdateStatus(ref i, y, label);
-                        newProfile.BasicCfg.MinErrorToSendNear = double.Parse(profile.MinErrorToSendNear);
-                        UpdateStatus(ref i, y, label);
-                        Console.Write("\r\t │ Setting Basic.cfg\n");
-
-
-                        i     = 0;
-                        y     = 25;
-                        label = "Setting Server.cfg";
-                        Console.Write("\t └─Setting Server.cfg");
-                        newProfile.ServerCfg = new FASTER.Models.ServerCfg();
-                        UpdateStatus(ref i, y, label);
-                        newProfile.ServerCfg.AllowedFilePatching = profile.AllowFilePatching == "0"
-                            ? "No Clients"
-                            : "All Clients";
-                        UpdateStatus(ref i, y, label);
-                        newProfile.ServerCfg.AutoInit = bool.Parse(profile.AutoInit);
-                        UpdateStatus(ref i, y, label);
-                        newProfile.ServerCfg.BattlEye = bool.Parse(profile.BattleEye);
-                        UpdateStatus(ref i, y, label);
-                        newProfile.ServerCfg.CommandLineParameters = profile.ExtraParams;
-                        UpdateStatus(ref i, y, label);
-                        newProfile.ServerCfg.Difficulty = profile.DifficultyPreset;
-                        UpdateStatus(ref i, y, label);
-                        newProfile.ServerCfg.DisconnectTimeout = int.Parse(profile.DisconnectTimeout);
-                        UpdateStatus(ref i, y, label);
-                        newProfile.ServerCfg.DoubleIdDetected = profile.DoubleIdDetected;
-                        UpdateStatus(ref i, y, label);
-                        newProfile.ServerCfg.HeadlessClientEnabled = bool.Parse(profile.HeadlessClientEnabled);
-                        UpdateStatus(ref i, y, label);
-                        newProfile.ServerCfg.Hostname = profile.ServerName;
-                        UpdateStatus(ref i, y, label);
-                        newProfile.ServerCfg.Loopback = bool.Parse(profile.Loopback);
-                        UpdateStatus(ref i, y, label);
-                        newProfile.ServerCfg.MaxMem = uint.Parse(string.IsNullOrEmpty(profile.MaxMem) ? "1024" : profile.MaxMem);
-                        UpdateStatus(ref i, y, label);
-                        newProfile.ServerCfg.MaxPacketLoss = int.Parse(string.IsNullOrEmpty(profile.MaxPacketLoss) ? "50" : profile.MaxPacketLoss);
-                        UpdateStatus(ref i, y, label);
-                        newProfile.ServerCfg.MaxPing = int.Parse(string.IsNullOrEmpty(profile.MaxPing) ? "200" : profile.MaxPing);
-                        UpdateStatus(ref i, y, label);
-                        newProfile.ServerCfg.MaxPlayers = int.Parse(string.IsNullOrEmpty(profile.MaxPlayers) ? "10" : profile.MaxPlayers);
-                        UpdateStatus(ref i, y, label);
-                        newProfile.ServerCfg.MotdInterval = int.Parse(profile.MotdDelay);
-                        UpdateStatus(ref i, y, label);
-                        newProfile.ServerCfg.Password = profile.Password;
-                        UpdateStatus(ref i, y, label);
-                        newProfile.ServerCfg.PasswordAdmin = profile.AdminPassword;
-                        UpdateStatus(ref i, y, label);
-                        newProfile.ServerCfg.Upnp = bool.Parse(profile.Upnp);
-                        UpdateStatus(ref i, y, label);
-                        newProfile.ServerCfg.OnDifferentData = profile.OnDifferentData;
-                        UpdateStatus(ref i, y, label);
-                        newProfile.ServerCfg.OnHackedData = profile.OnHackedData;
-                        UpdateStatus(ref i, y, label);
-                        newProfile.ServerCfg.OnUnsignedData = profile.OnUnsignedData;
-                        UpdateStatus(ref i, y, label);
-                        newProfile.ServerCfg.OnUserConnected = profile.OnUserDisconnected;
-                        UpdateStatus(ref i, y, label);
-                        newProfile.ServerCfg.VerifySignatures = profile.VerifySignatures == "true"
-                            ? "Activated"
-                            : "Disabled";
-                        UpdateStatus(ref i, y, label);
-                        newProfile.ServerCfg.VotingEnabled = bool.Parse(profile.VotingEnabled);
-                        UpdateStatus(ref i, y, label);
-                        Console.Write("\r\t │ Setting Server.cfg\n");
-
-                        Console.Write($"\t └─Done converting {profile.DisplayName} to {newProfile.Id}\n");
+                        var newProfile = ConvertProfile(profile);
                         newProfiles.Add(newProfile);
                     }
                     
@@ -433,6 +241,234 @@ namespace FASTER_Maintenance
                     Console.WriteLine("Invalid selection.");
                     break;
             }
+        }
+
+        private static ServerProfile ConvertProfile(Models._16Models.ServerProfile profile)
+        {
+            int    i;
+            int    y;
+            string label;
+            Console.WriteLine($"\t ┌─Converting profile {profile.DisplayName}...");
+            i     = 0;
+            y     = 8;
+            label = "Setting base values";
+            var newProfile = new ServerProfile();
+            ConvertBaseValues(profile, i, y, label, newProfile);
+            Console.Write("\r\t │ Setting base values\n");
+
+            i     = 0;
+            y     = 23;
+            label = "Setting Arma3Profile";
+            Console.Write("\t └─Setting Arma3Profile");
+            ConvertArmaProfile(profile, newProfile, i, y, label);
+            Console.Write("\r\t │ Setting Arma3Profile\n");
+
+            i     = 0;
+            y     = 10;
+            label = "Setting Basic.cfg";
+            Console.Write("\t └─Setting Basic.cfg");
+            ConvertBasic(profile, newProfile, i, y, label);
+            Console.Write("\r\t │ Setting Basic.cfg\n");
+
+
+            i     = 0;
+            y     = 25;
+            label = "Setting Server.cfg";
+            Console.Write("\t └─Setting Server.cfg");
+            ConvertServer(profile, newProfile, i, y, label);
+            Console.Write("\r\t │ Setting Server.cfg\n");
+
+            Console.Write($"\t └─Done converting {profile.DisplayName} to {newProfile.Id}\n");
+            return newProfile;
+        }
+
+        private static void ConvertServer(Models._16Models.ServerProfile profile, ServerProfile newProfile, int i, int y, string label)
+        {
+            newProfile.ServerCfg = new FASTER.Models.ServerCfg();
+            UpdateStatus(ref i, y, label);
+            newProfile.ServerCfg.AllowedFilePatching = profile.AllowFilePatching == "0"
+                ? "No Clients"
+                : "All Clients";
+            UpdateStatus(ref i, y, label);
+            newProfile.ServerCfg.AutoInit = bool.Parse(profile.AutoInit);
+            UpdateStatus(ref i, y, label);
+            newProfile.ServerCfg.BattlEye = bool.Parse(profile.BattleEye);
+            UpdateStatus(ref i, y, label);
+            newProfile.ServerCfg.CommandLineParameters = profile.ExtraParams;
+            UpdateStatus(ref i, y, label);
+            newProfile.ServerCfg.Difficulty = profile.DifficultyPreset;
+            UpdateStatus(ref i, y, label);
+            newProfile.ServerCfg.DisconnectTimeout = int.Parse(profile.DisconnectTimeout);
+            UpdateStatus(ref i, y, label);
+            newProfile.ServerCfg.DoubleIdDetected = profile.DoubleIdDetected;
+            UpdateStatus(ref i, y, label);
+            newProfile.ServerCfg.HeadlessClientEnabled = bool.Parse(profile.HeadlessClientEnabled);
+            UpdateStatus(ref i, y, label);
+            newProfile.ServerCfg.Hostname = profile.ServerName;
+            UpdateStatus(ref i, y, label);
+            newProfile.ServerCfg.Loopback = bool.Parse(profile.Loopback);
+            UpdateStatus(ref i, y, label);
+            newProfile.ServerCfg.MaxMem = uint.Parse(string.IsNullOrEmpty(profile.MaxMem)
+                                                         ? "1024"
+                                                         : profile.MaxMem);
+            UpdateStatus(ref i, y, label);
+            newProfile.ServerCfg.MaxPacketLoss = int.Parse(string.IsNullOrEmpty(profile.MaxPacketLoss)
+                                                               ? "50"
+                                                               : profile.MaxPacketLoss);
+            UpdateStatus(ref i, y, label);
+            newProfile.ServerCfg.MaxPing = int.Parse(string.IsNullOrEmpty(profile.MaxPing)
+                                                         ? "200"
+                                                         : profile.MaxPing);
+            UpdateStatus(ref i, y, label);
+            newProfile.ServerCfg.MaxPlayers = int.Parse(string.IsNullOrEmpty(profile.MaxPlayers)
+                                                            ? "10"
+                                                            : profile.MaxPlayers);
+            UpdateStatus(ref i, y, label);
+            newProfile.ServerCfg.MotdInterval = int.Parse(profile.MotdDelay);
+            UpdateStatus(ref i, y, label);
+            newProfile.ServerCfg.Password = profile.Password;
+            UpdateStatus(ref i, y, label);
+            newProfile.ServerCfg.PasswordAdmin = profile.AdminPassword;
+            UpdateStatus(ref i, y, label);
+            newProfile.ServerCfg.Upnp = bool.Parse(profile.Upnp);
+            UpdateStatus(ref i, y, label);
+            newProfile.ServerCfg.OnDifferentData = profile.OnDifferentData;
+            UpdateStatus(ref i, y, label);
+            newProfile.ServerCfg.OnHackedData = profile.OnHackedData;
+            UpdateStatus(ref i, y, label);
+            newProfile.ServerCfg.OnUnsignedData = profile.OnUnsignedData;
+            UpdateStatus(ref i, y, label);
+            newProfile.ServerCfg.OnUserConnected = profile.OnUserDisconnected;
+            UpdateStatus(ref i, y, label);
+            newProfile.ServerCfg.VerifySignatures = profile.VerifySignatures == "true"
+                ? "Activated"
+                : "Disabled";
+            UpdateStatus(ref i, y, label);
+            newProfile.ServerCfg.VotingEnabled = bool.Parse(profile.VotingEnabled);
+            UpdateStatus(ref i, y, label);
+        }
+
+        private static void ConvertBasic(Models._16Models.ServerProfile profile, ServerProfile newProfile, int i, int y, string label)
+        {
+            newProfile.BasicCfg = new FASTER.Models.BasicCfg();
+            UpdateStatus(ref i, y, label);
+            newProfile.BasicCfg.MaxBandwidth = ulong.Parse(profile.MaxBandwidth);
+            UpdateStatus(ref i, y, label);
+            newProfile.BasicCfg.MaxCustomFileSize = ushort.Parse(profile.MaxCustomFileSize);
+            UpdateStatus(ref i, y, label);
+            newProfile.BasicCfg.MaxMsgSend = ushort.Parse(profile.MaxMessagesSend);
+            UpdateStatus(ref i, y, label);
+            newProfile.BasicCfg.MaxPacketSize = ushort.Parse(profile.MaxPacketSize);
+            UpdateStatus(ref i, y, label);
+            newProfile.BasicCfg.MaxSizeGuaranteed = ushort.Parse(profile.MaxSizeGuaranteed);
+            UpdateStatus(ref i, y, label);
+            newProfile.BasicCfg.MaxSizeNonGuaranteed = ushort.Parse(profile.MaxSizeNonguaranteed);
+            UpdateStatus(ref i, y, label);
+            newProfile.BasicCfg.MinBandwidth = ulong.Parse(profile.MinBandwidth);
+            UpdateStatus(ref i, y, label);
+            newProfile.BasicCfg.MinErrorToSend = double.Parse(profile.MinErrorToSend);
+            UpdateStatus(ref i, y, label);
+            newProfile.BasicCfg.MinErrorToSendNear = double.Parse(profile.MinErrorToSendNear);
+            UpdateStatus(ref i, y, label);
+        }
+
+        private static void ConvertArmaProfile(Models._16Models.ServerProfile profile, ServerProfile newProfile, int i, int y, string label)
+        {
+            newProfile.ArmaProfile = new Arma3Profile();
+            UpdateStatus(ref i, y, label);
+            newProfile.ArmaProfile.AutoReport = profile.AutoReporting == "true"
+                ? "Enabled"
+                : "Disabled";
+            UpdateStatus(ref i, y, label);
+            newProfile.ArmaProfile.CameraShake = profile.CameraShake == "true"
+                ? "Enabled"
+                : "Disabled";
+            UpdateStatus(ref i, y, label);
+            newProfile.ArmaProfile.Commands = profile.Commands;
+            UpdateStatus(ref i, y, label);
+            newProfile.ArmaProfile.DetectedMines = profile.DetectedMines;
+            UpdateStatus(ref i, y, label);
+            newProfile.ArmaProfile.EnemyTags = profile.EnemyNameTags;
+            UpdateStatus(ref i, y, label);
+            newProfile.ArmaProfile.FriendlyTags = profile.FriendlyNameTags;
+            UpdateStatus(ref i, y, label);
+            newProfile.ArmaProfile.GroupIndicators = profile.GroupIndicators;
+            UpdateStatus(ref i, y, label);
+            newProfile.ArmaProfile.MapContentEnemy = profile.MapContentEnemy == "true"
+                ? "Enabled"
+                : "Disabled";
+            UpdateStatus(ref i, y, label);
+            newProfile.ArmaProfile.MapContentFriendly = profile.MapContentFriendly == "true"
+                ? "Enabled"
+                : "Disabled";
+            UpdateStatus(ref i, y, label);
+            newProfile.ArmaProfile.MapContentMines = profile.MapContentMines == "true"
+                ? "Enabled"
+                : "Disabled";
+            UpdateStatus(ref i, y, label);
+            newProfile.ArmaProfile.MultipleSaves = profile.MultipleSaves == "true"
+                ? "Enabled"
+                : "Disabled";
+            UpdateStatus(ref i, y, label);
+            newProfile.ArmaProfile.PrecisionAi = double.Parse(profile.AiAccuracy);
+            UpdateStatus(ref i, y, label);
+            newProfile.ArmaProfile.ReducedDamage = profile.ReducedDamage == "true"
+                ? "Enabled"
+                : "Disabled";
+            UpdateStatus(ref i, y, label);
+            newProfile.ArmaProfile.ScoreTable = profile.ScoreTable == "true"
+                ? "Enabled"
+                : "Disabled";
+            UpdateStatus(ref i, y, label);
+            newProfile.ArmaProfile.SkillAi = double.Parse(profile.AiSkill);
+            newProfile.ArmaProfile.StaminaBar = profile.StaminaBar == "true"
+                ? "Enabled"
+                : "Disabled";
+            UpdateStatus(ref i, y, label);
+            newProfile.ArmaProfile.StanceIndicator = profile.StanceIndicator;
+            newProfile.ArmaProfile.TacticalPing = profile.TacticalPing == "true"
+                ? "Enabled"
+                : "Disabled";
+            UpdateStatus(ref i, y, label);
+            newProfile.ArmaProfile.ThirdPersonView = profile.ThirdPerson == "true"
+                ? "Enabled"
+                : "Disabled";
+            UpdateStatus(ref i, y, label);
+            newProfile.ArmaProfile.VisionAid = profile.VisualAids == "true"
+                ? "Enabled"
+                : "Disabled";
+            UpdateStatus(ref i, y, label);
+            newProfile.ArmaProfile.VonID = profile.VonId == "true"
+                ? "Enabled"
+                : "Disabled";
+            UpdateStatus(ref i, y, label);
+            newProfile.ArmaProfile.Waypoints = profile.Waypoints;
+            UpdateStatus(ref i, y, label);
+            newProfile.ArmaProfile.WeaponCrosshair = profile.Crosshair == "true"
+                ? "Enabled"
+                : "Disabled";
+            UpdateStatus(ref i, y, label);
+            newProfile.ArmaProfile.WeaponInfo = profile.WeaponInfo;
+            UpdateStatus(ref i, y, label);
+        }
+
+        private static void ConvertBaseValues(Models._16Models.ServerProfile profile, int i, int y, string label, ServerProfile newProfile)
+        {
+            UpdateStatus(ref i, y, label);
+            newProfile.EnableHyperThreading = bool.Parse(profile.EnableHyperThreading);
+            UpdateStatus(ref i, y, label);
+            newProfile.Executable = profile.Executable;
+            UpdateStatus(ref i, y, label);
+            newProfile.HeadlessNumber = int.Parse(profile.NoOfHeadlessClients);
+            UpdateStatus(ref i, y, label);
+            newProfile.Id = $"_{Guid.NewGuid():N}";
+            UpdateStatus(ref i, y, label);
+            newProfile.Name = profile.DisplayName;
+            UpdateStatus(ref i, y, label);
+            newProfile.Port = int.Parse(profile.Port);
+            UpdateStatus(ref i, y, label);
+            newProfile.RankingChecked = bool.Parse(profile.RankingEnabled);
+            UpdateStatus(ref i, y, label);
         }
 
         private static void UpdateStatus(ref int i, int y, string label)
