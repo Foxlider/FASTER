@@ -10,7 +10,7 @@
              mc:Ignorable="d"
              Loaded="UserControl_Loaded"
              Unloaded="UserControl_Unloaded"
-             d:DesignHeight="1000" d:DesignWidth="800">
+             d:DesignHeight="650" d:DesignWidth="880">
     <UserControl.DataContext>
         <viewModel:ProfileViewModel/>
     </UserControl.DataContext>
@@ -347,9 +347,7 @@
                             </Style>
                         </Grid.Style>
                         <Expander Header="Arma3Profile output" MaxHeight="400">
-                            <ScrollViewer HorizontalScrollBarVisibility="Visible" >
-                                <TextBox Text="{Binding Path=Profile.ArmaProfile.ArmaProfileContent}" FontFamily="GenericMonospace" AcceptsTab="True" AcceptsReturn="True" IsManipulationEnabled="True"/>
-                            </ScrollViewer>
+                            <TextBox Text="{Binding Path=Profile.ArmaProfile.ArmaProfileContent}" FontFamily="GenericMonospace" AcceptsTab="True" AcceptsReturn="True" IsManipulationEnabled="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"/>
                         </Expander>
                     </Grid>
                 </Grid>
@@ -359,7 +357,7 @@
             <TabItem Header="Server">
                 <Grid>
                     <Grid.RowDefinitions>
-                        <RowDefinition MinHeight="200"/>
+                        <RowDefinition Height="*"/>
                         <RowDefinition Height="auto"/>
                     </Grid.RowDefinitions>
                     <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
@@ -606,9 +604,7 @@
                             </Style>
                         </Grid.Style>
                         <Expander Header="Server.cfg output" MaxHeight="400">
-                            <!--<ScrollViewer HorizontalScrollBarVisibility="Visible" >-->
                             <TextBox Text="{Binding Path=Profile.ServerCfg.ServerCfgContent}" FontFamily="GenericMonospace" AcceptsTab="True" AcceptsReturn="True" IsManipulationEnabled="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"/>
-                            <!--</ScrollViewer>-->
                         </Expander>
                     </Grid>
                 </Grid>
@@ -674,9 +670,7 @@
                             </Style>
                         </Grid.Style>
                         <Expander Header="Basic.cfg output" MaxHeight="400">
-                            <ScrollViewer HorizontalScrollBarVisibility="Visible" >
-                                <TextBox Text="{Binding Path=Profile.BasicCfg.BasicContent}" FontFamily="GenericMonospace" AcceptsTab="True" AcceptsReturn="True" IsManipulationEnabled="True"/>
-                            </ScrollViewer>
+                            <TextBox Text="{Binding Path=Profile.BasicCfg.BasicContent}" FontFamily="GenericMonospace" AcceptsTab="True" AcceptsReturn="True" IsManipulationEnabled="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"/>
                         </Expander>
                     </Grid>
                 </Grid>
