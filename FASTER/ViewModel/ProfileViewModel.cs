@@ -1,4 +1,4 @@
-﻿using FASTER.Models;
+using FASTER.Models;
 using Microsoft.AppCenter.Crashes;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
@@ -241,9 +241,9 @@ namespace FASTER.ViewModel
             //Writing files
             try
             {
-                File.WriteAllText(config,        Profile.ServerCfg.ServerCfgContent);
-                File.WriteAllText(basic,         Profile.BasicCfg.BasicContent);
-                File.WriteAllText(serverProfile, Profile.ArmaProfile.ArmaProfileContent);
+                File.WriteAllLines(config,        Profile.ServerCfg.ServerCfgContent.Replace("\r", "").Split('\n'));
+                File.WriteAllLines(basic,         Profile.BasicCfg.BasicContent.Replace("\r", "").Split('\n'));
+                File.WriteAllLines(serverProfile, Profile.ArmaProfile.ArmaProfileContent.Replace("\r", "").Split('\n'));
             }
             catch
             { DisplayMessage("Could not write the config files. Please ensure the server is not running and retry."); }

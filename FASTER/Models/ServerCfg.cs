@@ -796,7 +796,7 @@ namespace FASTER.Models
                           + $"{MissionContentOverride}\t\t\t\t// An empty Missions class means there will be no mission rotation\r\n"
                           + "\r\n"
                           + "missionWhitelist[] = {};\r\n" 
-                          + "// An empty whitelist means there is no restriction on what missions' available"
+                          + "// An empty whitelist means there is no restriction on what missions available"
                           + "\r\n"
                           + "\r\n"
                           + "// HEADLESS CLIENT\r\n"
