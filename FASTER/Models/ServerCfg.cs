@@ -620,12 +620,20 @@ namespace FASTER.Models
                 //Removing previous triggers
                 _missions.ForEach(m => m.PropertyChanged -= Item_PropertyChanged);
 
-                _missions = value;
-
+                bool isEqual = _missions.Count == value.Count 
+                            && !( from mission in value 
+                                  let local = _missions.FirstOrDefault(m => m.Path == mission.Path) 
+                                  where local == null || local.MissionChecked != mission.MissionChecked 
+                                  select mission ).Any();
+                
+                if (!isEqual)
+                {
+                    _missions = value;
+                    RaisePropertyChanged("Missions");
+                }
+                
                 //Adding the trigger to count checked mods
                 _missions.ForEach(m => m.PropertyChanged += Item_PropertyChanged);
-
-                RaisePropertyChanged("Missions");
             }
         }
         #endregion
@@ -693,7 +701,11 @@ namespace FASTER.Models
             }
         }
 
-        public ServerCfg() { ServerCfgContent = ProcessFile(); }
+        public ServerCfg()
+        {
+            if(string.IsNullOrWhiteSpace(serverCfgContent))
+            { ServerCfgContent = ProcessFile(); }
+        }
 
         private void Item_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
