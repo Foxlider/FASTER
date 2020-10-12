@@ -24,6 +24,7 @@
 FASTER is an extensive rewrite of FAST2 and FAST. There was no update for a long time and it was written in VB. I translated the whole project to C# using .NET Core 3.0.  
 Thanks go out to all the guys who helped the developpment and those who will test it. Also, to BI for giving us an awesome game to play with and break.
 
+
 ##### **PREREQUISITES**
 
 - Steam account with valid copy of Arma 3.
@@ -53,7 +54,8 @@ Thanks go out to all the guys who helped the developpment and those who will tes
   - Custom difficulty
   - Headless Client support and auto launch
   - Correctly displays mods in Server Browser
-  - Load Steam Mod Presets to profiles
+  - Load Steam Mod Presets (html presets) to your profiles
+  - Manually editable config files
 
 - Local Mod Support
   - Reads local mods from server folder
@@ -62,11 +64,13 @@ Thanks go out to all the guys who helped the developpment and those who will tes
 
 ##### **_ISSUES and FEEDBACK_**
 
-As always best place to report issues is on the [GitHub Repo](https://github.com/Foxlider/FASTER/issues), as for general discussion I'll always keep an eye on the BI forum thread or come and join us in [Discord](https://discord.gg/2BUuZa3).
+As always, best place to report issues is on the [GitHub Repo](https://github.com/Foxlider/FASTER/issues). As for general discussion I'll keep an eye on the BI forum thread but I'll be more active on [Discord](https://discord.gg/2BUuZa3).
+
 
 ##### **_DOCUMENTATION_**
   
-A complete Documentation is being created, please stand-by.
+A complete Documentation is available on the [GitHub Wiki](https://github.com/Foxlider/FASTER/wiki)
+
 
 ##### **_SCREENSHOTS_**
 <details>
