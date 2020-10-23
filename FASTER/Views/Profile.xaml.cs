@@ -81,6 +81,11 @@ namespace FASTER.Views
             ((ProfileViewModel) DataContext)?.CopyModKeys();
         }
 
+        private void ClearModKeys_Click(object sender, RoutedEventArgs e)
+        {
+            ( (ProfileViewModel) DataContext )?.ClearModKeys();
+        }
+
         private void SelectServerFile(object sender, RoutedEventArgs e)
         {
             ((ProfileViewModel) DataContext)?.SelectServerFile();

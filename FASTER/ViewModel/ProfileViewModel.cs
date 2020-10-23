@@ -335,8 +335,6 @@ namespace FASTER.ViewModel
         {
             var mods = new List<string>();
             var path = Path.Combine(Properties.Settings.Default.steamCMDPath, "steamapps", "workshop", "content", "107410");
-            var ignoredKeys = new[] { "a3.bikey", "a3c.bikey", "gm.bikey" };
-
 
             if (!Directory.Exists(path))
             {
@@ -364,21 +362,7 @@ namespace FASTER.ViewModel
                 { /*there was no directory*/ }
             }
 
-            if (Directory.Exists(Path.Combine(Properties.Settings.Default.serverPath, "keys"))) 
-            {
-                foreach (var keyFile in Directory.GetFiles(Path.Combine(Properties.Settings.Default.serverPath, "keys")))
-                {
-                    if (ignoredKeys.Any(keyFile.Contains))
-                        continue;
-                    try
-                    { File.Delete(keyFile); }
-                    catch (Exception)
-                    {
-                        MainWindow.Instance.IFlyout.IsOpen = true;
-                        MainWindow.Instance.IFlyoutMessage.Content = $"Some keys could not be cleared : {Path.GetFileName(keyFile)}";
-                    }
-                }
-            }
+            await ClearModKeys();
 
             Directory.CreateDirectory(Path.Combine(Properties.Settings.Default.serverPath, "keys"));
 
@@ -393,6 +377,29 @@ namespace FASTER.ViewModel
             }
             await Task.Delay(1000);
         }
+
+        internal async Task ClearModKeys()
+        {
+            var ignoredKeys = new[] {"a3.bikey", "a3c.bikey", "gm.bikey"};
+            if (Directory.Exists(Path.Combine(Properties.Settings.Default.serverPath, "keys")))
+            {
+                foreach (var keyFile in Directory.GetFiles(Path.Combine(Properties.Settings.Default.serverPath, "keys")))
+                {
+                    if (ignoredKeys.Any(keyFile.Contains))
+                        continue;
+                    try
+                    {
+                        File.Delete(keyFile);
+                    }
+                    catch (Exception)
+                    {
+                        MainWindow.Instance.IFlyout.IsOpen         = true;
+                        MainWindow.Instance.IFlyoutMessage.Content = $"Some keys could not be cleared : {Path.GetFileName(keyFile)}";
+                    }
+                }
+            }
+        }
+
 
         public ObservableCollection<string> LimitedDistanceStrings { get; } = new ObservableCollection<string>(ProfileCfgArrays.LimitedDistanceStrings);
         public ObservableCollection<string> AiPresetStrings        { get; } = new ObservableCollection<string>(ProfileCfgArrays.AiPresetStrings);

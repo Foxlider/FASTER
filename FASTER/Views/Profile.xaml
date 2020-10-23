@@ -74,6 +74,13 @@
                                         <TextBlock Text="Copy Mods Keys" Margin="10,0"/>
                                     </StackPanel>
                                 </Button>
+                                <Button Margin="5, 5" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}"
+                                        BorderThickness="0" Padding="5,3" Click="ClearModKeys_Click">
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconModern Kind="PageDelete" />
+                                        <TextBlock Text="Clear Keys" Margin="10,0" />
+                                    </StackPanel>
+                                </Button>
                                 <StackPanel Orientation="Horizontal">
                                     <CheckBox IsChecked="{Binding Profile.ContactDLCChecked}" Content="Contact DLC" Margin="10,3"/>
                                     <CheckBox IsChecked="{Binding Profile.GMDLCChecked}" Content="GM DLC" Margin="10,3"/>
