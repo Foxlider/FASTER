@@ -4,6 +4,7 @@ using FASTER_Maintenance.Models._17Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -366,9 +367,9 @@ namespace FASTER_Maintenance
             UpdateStatus(ref i, y, label);
             newProfile.BasicCfg.MinBandwidth = ulong.Parse(profile.MinBandwidth);
             UpdateStatus(ref i, y, label);
-            newProfile.BasicCfg.MinErrorToSend = double.Parse(profile.MinErrorToSend);
+            newProfile.BasicCfg.MinErrorToSend = double.Parse(profile.MinErrorToSend.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture);
             UpdateStatus(ref i, y, label);
-            newProfile.BasicCfg.MinErrorToSendNear = double.Parse(profile.MinErrorToSendNear);
+            newProfile.BasicCfg.MinErrorToSendNear = double.Parse(profile.MinErrorToSendNear.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture);
             UpdateStatus(ref i, y, label);
         }
 
@@ -410,7 +411,7 @@ namespace FASTER_Maintenance
                 ? "Enabled"
                 : "Disabled";
             UpdateStatus(ref i, y, label);
-            newProfile.ArmaProfile.PrecisionAi = double.Parse(profile.AiAccuracy);
+            newProfile.ArmaProfile.PrecisionAi = double.Parse(profile.AiAccuracy.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture);
             UpdateStatus(ref i, y, label);
             newProfile.ArmaProfile.ReducedDamage = profile.ReducedDamage == "true"
                 ? "Enabled"
@@ -420,7 +421,7 @@ namespace FASTER_Maintenance
                 ? "Enabled"
                 : "Disabled";
             UpdateStatus(ref i, y, label);
-            newProfile.ArmaProfile.SkillAi = double.Parse(profile.AiSkill);
+            newProfile.ArmaProfile.SkillAi = double.Parse(profile.AiSkill.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture);
             newProfile.ArmaProfile.StaminaBar = profile.StaminaBar == "true"
                 ? "Enabled"
                 : "Disabled";
