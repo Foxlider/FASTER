@@ -24,11 +24,7 @@ namespace FASTER.Views
             InitializeComponent();
         }
         
-        public MainWindow MetroWindow
-        { 
-            get => (MainWindow)Window.GetWindow(this);
-            set => MetroWindow = value;
-        }
+        public MainWindow MetroWindow => (MainWindow)Window.GetWindow(this);
 
 
         private void UserControl_Initialized(object sender, EventArgs e)
@@ -87,6 +83,9 @@ namespace FASTER.Views
                     break;
                 case "Developpment": //Arma 3 Developpment branch, only for developpment clients
                     branch = "107410 -beta development";
+                    break;
+                case "Performance / Profiling":
+                    branch = "233780 -beta profiling CautionSpecialProfilingAndTestingBranchArma3";
                     break;
                 default:
                     Console.WriteLine("Nothing to see here");

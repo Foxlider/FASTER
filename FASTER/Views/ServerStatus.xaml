@@ -175,7 +175,7 @@
                                 </Grid.RowDefinitions>
                                 <ToggleButton Grid.Row="0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" IsChecked="{Binding IsReading}" Margin="5" Padding="2" BorderThickness="0" Click="PlayPause_Click">
                                     <ToggleButton.Style>
-                                        <Style BasedOn="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" TargetType="{x:Type ToggleButton}">
+                                        <Style BasedOn="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" TargetType="{x:Type ToggleButton}">
                                             <Setter Property="Content" Value="{iconPacks:Material Kind=Play}" />
                                             <Setter Property="ToolTip" Value="Run performance analysis" />
                                             <Style.Triggers>
@@ -187,8 +187,8 @@
                                         </Style>
                                     </ToggleButton.Style>
                                 </ToggleButton>
-                                <Button Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="5" Padding="2" BorderThickness="0" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" Content="{iconPacks:Material Kind=Close}" ToolTip="Terminate Process" Click="KillProcess_Click"/>
-                                <Button Grid.Row="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="5" Padding="2" BorderThickness="0" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" Content="{iconPacks:Material Kind=Console}" ToolTip="Read Outputs" Click="ReadOutput_Click"/>
+                                <Button Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="5" Padding="2" BorderThickness="0" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" Content="{iconPacks:Material Kind=Close}" ToolTip="Terminate Process" Click="KillProcess_Click"/>
+                                <Button Grid.Row="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="5" Padding="2" BorderThickness="0" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" Content="{iconPacks:Material Kind=Console}" ToolTip="Read Outputs" Click="ReadOutput_Click"/>
                             </Grid>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
@@ -200,14 +200,14 @@
                 <DropShadowEffect BlurRadius="5" RenderingBias="Performance" ShadowDepth="0"/>
             </Grid.Effect>
             <DockPanel  VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="2,2,5,5">
-                <Button DockPanel.Dock="Left" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Content="{iconPacks:Modern Kind=ControlPlay}" Name="IStartPerfs" ToolTip="Start Performance counters" Click="IStartPerfs_Click"/>
-                <Button DockPanel.Dock="Left" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Content="{iconPacks:Modern Kind=ControlPause}" Name="IStopPerfs" ToolTip="Stop Performance Counters" Click="IStopPerfs_Click"/>
-                <Button DockPanel.Dock="Left" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Content="{iconPacks:Modern Kind=Close}" Name="IKillAll" ToolTip="Kill all Server Instances" Click="IKillAll_Click"/>
-                <Button DockPanel.Dock="Left" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" Content="{iconPacks:Modern Kind=Refresh}" Name="IRescanAll" ToolTip="Rescan Server Instances" Click="IRescanAll_Click"/>
+                <Button DockPanel.Dock="Left" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Content="{iconPacks:Modern Kind=ControlPlay}" Name="IStartPerfs" ToolTip="Start Performance counters" Click="IStartPerfs_Click"/>
+                <Button DockPanel.Dock="Left" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Content="{iconPacks:Modern Kind=ControlPause}" Name="IStopPerfs" ToolTip="Stop Performance Counters" Click="IStopPerfs_Click"/>
+                <Button DockPanel.Dock="Left" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Content="{iconPacks:Modern Kind=Close}" Name="IKillAll" ToolTip="Kill all Server Instances" Click="IKillAll_Click"/>
+                <Button DockPanel.Dock="Left" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Content="{iconPacks:Modern Kind=Refresh}" Name="IRescanAll" ToolTip="Rescan Server Instances" Click="IRescanAll_Click"/>
             </DockPanel>
             <ToggleButton HorizontalAlignment="Left" Margin="5,2,2,5" BorderThickness="0" Name="IToggleGauges" IsChecked="{Binding Path=Updating}" Click="IToggleGauges_Click">
                 <ToggleButton.Style>
-                    <Style BasedOn="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" TargetType="{x:Type ToggleButton}">
+                    <Style BasedOn="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" TargetType="{x:Type ToggleButton}">
                         <Setter Property="Content" Value="{iconPacks:Modern Kind=ControlStop}"/>
                         <Setter Property="ToolTip" Value="Stop Performance Gauges" />
                         <Style.Triggers>

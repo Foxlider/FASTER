@@ -40,7 +40,11 @@ namespace FASTER.Views
 
                 Thread thread = new Thread(() =>
                 {
-                    SteamMod.UpdateInfoFromSteam();
+                    try
+                    { SteamMod.UpdateInfoFromSteam(); }
+                    catch (NullReferenceException)
+                    { MetroWindow.DisplayMessage("Could not update mods"); }
+                    
                     try
                     {
                         Dispatcher?.Invoke(() =>
@@ -127,22 +131,45 @@ namespace FASTER.Views
                 try
                 {
                     var sModId = steamMod.Replace(Path.Combine(Properties.Settings.Default.steamCMDPath, "steamapps", "workshop", "content", "107410"), "").Replace("\\", "");
-                    var modId = int.Parse(sModId);
-                    var info  = SteamMod.GetModInfo(modId);
-                    var temp  = currentMods?.FirstOrDefault(m => m.WorkshopId == modId);
+                    if (uint.TryParse(sModId, out var modId))
+                    {
+                        try
+                        {
+                            var info = SteamMod.GetModInfo(modId);
+                            var temp = currentMods?.FirstOrDefault(m => m.WorkshopId == modId);
 
-                    if (info == null || temp != null) continue;
+                            if (info == null || temp != null) continue;
 
-                    var modName         = info.Item1;
-                    var steamUpdateTime = info.Item3;
-                    var author          = info.Item2;
+                            var modName = info.Item1;
+                            var steamUpdateTime = info.Item3;
+                            var author = info.Item2;
 
-                    currentMods?.Add(new SteamMod(modId, modName, author, steamUpdateTime));
+                            currentMods?.Add(new SteamMod(modId, modName, author, steamUpdateTime));
 
-                    var modCollection = new SteamModCollection { CollectionName = "Steam", SteamMods = currentMods };
+                            var modCollection = new SteamModCollection { CollectionName = "Steam", SteamMods = currentMods };
 
-                    Properties.Settings.Default.steamMods = modCollection;
-                    Properties.Settings.Default.Save();
+                            Properties.Settings.Default.steamMods = modCollection;
+                            Properties.Settings.Default.Save();
+                        }
+                        catch (Exception e)
+                        {
+                            Crashes.TrackError(e, new Dictionary<string, string>
+                            {
+                                { "Name", Properties.Settings.Default.steamUserName },
+                                { "Reason", "Something went wrong"},
+                                { "sModID", sModId}
+                            });
+                        }
+                    }
+                    else
+                    {
+                        Crashes.TrackError(null, new Dictionary<string, string>
+                        {
+                            { "Name", Properties.Settings.Default.steamUserName },
+                            { "Reason", "Could not parse modID"},
+                            { "sModID", sModId}
+                        });
+                    }
                 }
                 catch (Exception e)
                 { Crashes.TrackError(e, new Dictionary<string, string> { { "Name", Properties.Settings.Default.steamUserName } }); }
@@ -253,10 +280,15 @@ namespace FASTER.Views
         private async void UpdateMod(object sender, RoutedEventArgs e)
         {
             var steamMod = (SteamMod)((Button)e.Source).DataContext;
+            if (steamMod == null)
+            {
+                MetroWindow.DisplayMessage("Could not update selected mod");
+                return;
+            }  
             await UpdateMod(steamMod.WorkshopId, steamMod.Name);
         }
 
-        private async Task UpdateMod(int modId, string modName, bool singleMod = true)
+        private async Task UpdateMod(uint modId, string modName, bool singleMod = true)
         {
             if (MetroWindow.ContentSteamUpdater.ReadyToUpdate())
             {
@@ -312,8 +344,7 @@ namespace FASTER.Views
                 IProgressInfo.Content           = "Checking for updates...";
 
                 List<Task> tasks = new List<Task>
-                { Task.Run(SteamMod.UpdateInfoFromSteam) };
-
+                { Task.Run(SafeUpdateFromSteam) };
                 await Task.WhenAll(tasks);
 
                 IModView.IsEnabled              = true;
@@ -323,6 +354,14 @@ namespace FASTER.Views
             }
             else
             { MetroWindow.DisplayMessage("No Mods To Check"); }
+        }
+
+        private void SafeUpdateFromSteam()
+        {
+            try
+            { SteamMod.UpdateInfoFromSteam(); }
+            catch (NullReferenceException)
+            { MetroWindow.DisplayMessage("Could not update mods"); }
         }
 
         private void UpdateModsView()

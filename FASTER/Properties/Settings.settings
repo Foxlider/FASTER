@@ -50,5 +50,8 @@
     <Setting Name="SteamAPIKey" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="Profiles" Type="FASTER.Models.ServerProfileCollection" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>

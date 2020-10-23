@@ -1,9 +1,9 @@
 ﻿using FASTER.Models;
+using FASTER.ViewModel;
 using FASTER.Views;
-
 using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 using Microsoft.WindowsAPICodePack.Dialogs;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -62,14 +62,7 @@ namespace FASTER
             get => _serverStatus ??= new ServerStatus();
             set => _serverStatus = value;
         }
-
-        List<Views.ServerProfile> _profiles;
-        public List<Views.ServerProfile> ContentProfiles
-        {
-            get => _profiles ??= new List<Views.ServerProfile>();
-            set => _profiles = value;
-        }
-
+        
         Settings _settings;
         public Settings ContentSettings
         {
@@ -83,6 +76,21 @@ namespace FASTER
             get => _about ??= new About();
             set => _about = value;
         }
+
+        Profile _profile;
+        public Profile ContentProfile
+        {
+            get => _profile ??= new Profile();
+            set => _profile = value;
+        }
+
+        private List<ProfileViewModel> _profileViews;
+
+        internal List<ProfileViewModel> ContentProfileViews
+        {
+            get => _profileViews ??= new List<ProfileViewModel>();
+            set => _profileViews = value;
+        }
         #endregion
 
         public MainWindow()
@@ -93,6 +101,9 @@ namespace FASTER
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
             NavigateToConsole();
         }
+
+        public static bool HasLoaded()
+        { return _instance != null; }
 
         #region EVENTS
         private void MetroWindow_Initialized(object sender, EventArgs e)
@@ -140,8 +151,9 @@ namespace FASTER
             nav.IsChecked = true;
             lastNavButton = nav;
 
-            AppInsights.Client.TrackPageView(nav.Name);
-            
+            //Saving just in case
+            Properties.Settings.Default.Save();
+
             //Get loading screen
             switch (nav.Name)
             {
@@ -165,7 +177,11 @@ namespace FASTER
                     break;
                 default:
                     if (IServerProfilesMenu.Items.Cast<ToggleButton>().FirstOrDefault(p => p.Name == nav.Name) != null)
-                    { MainContent.Navigate(ContentProfiles.First(p => p.Name == nav.Name)); }
+                    {
+                        ContentProfile.DataContext = ContentProfileViews.First(p => p.Profile.Id == nav.Name);
+                        ContentProfile.Refresh();
+                        MainContent.Navigate(ContentProfile);
+                    }
                     break;
             }
         }
@@ -199,7 +215,7 @@ namespace FASTER
             {
                 var profileName = INewProfileName.Text;
                 INewServerProfileDialog.IsOpen = false;
-                ServerCollection.AddServerProfile(profileName, "_" + Functions.SafeName(profileName));
+                ServerProfileCollection.AddServerProfile(profileName);
                 INewProfileName.Text = string.Empty;
             }
         }
@@ -209,17 +225,24 @@ namespace FASTER
             if (IServerProfilesMenu.SelectedIndex == -1)
             { return; }
 
-            var temp = Properties.Settings.Default.Servers.ServerProfiles.FirstOrDefault(s => s.SafeName == ((ToggleButton)IServerProfilesMenu.SelectedItem).Name);
-            if (temp == null)
+            try
             {
-                DisplayMessage("Could not find the selected profile.");
-                return;
-            }
+                var temp = Properties.Settings.Default.Profiles.FirstOrDefault(s =>
+                    s.Id == ((ToggleButton) IServerProfilesMenu.SelectedItem).Name);
+                if (temp == null)
+                {
+                    DisplayMessage("Could not find the selected profile.");
+                    return;
+                }
 
-            Models.ServerProfile serverProfile = temp.CloneObjectSerializable();
-            serverProfile.DisplayName += " 2";
-            serverProfile.SafeName = "_" + Functions.SafeName(serverProfile.DisplayName);
-            ServerCollection.AddServerProfile(serverProfile);
+                ServerProfile serverProfile = temp.Clone(); 
+                ServerProfileCollection.AddServerProfile(serverProfile);
+            }
+            catch (Exception err)
+            {
+                DisplayMessage("An error occured while cloning your profile");
+                Crashes.TrackError(err, new Dictionary<string, string> { { "Name", Properties.Settings.Default.steamUserName } });
+            }
         }
 
         private void InstallSteamCmd_Click(object sender, RoutedEventArgs e)
@@ -309,35 +332,39 @@ namespace FASTER
 
         public void LoadServerProfiles()
         {
-            if (Properties.Settings.Default.Servers == null) return;
+            if (Properties.Settings.Default.Profiles == null)
+            {
+                Properties.Settings.Default.Profiles = new ServerProfileCollection();
+                Properties.Settings.Default.Save();
+            }
+            var currentProfilesNew = Properties.Settings.Default.Profiles;
 
-            var currentProfiles = Properties.Settings.Default.Servers;
             Dispatcher?.Invoke(() => { IServerProfilesMenu.Items.Clear(); });
 
-            ContentProfiles.Clear();
+            ContentProfileViews.Clear();
 
-            foreach (var profile in currentProfiles.ServerProfiles)
+            foreach (var profile in currentProfilesNew)
             {
                 ToggleButton newItem = new ToggleButton
                 {
-                    Name = profile.SafeName,
-                    Content = profile.DisplayName,
+                    Name = profile.Id,
+                    Content = profile.Name,
                     Style = (Style)FindResource("MahApps.Styles.ToggleButton.WindowCommands"),
                     Padding = new Thickness(10, 2, 0, 2),
                     FontSize = 14,
                     HorizontalAlignment = HorizontalAlignment.Stretch,
                     HorizontalContentAlignment = HorizontalAlignment.Left,
-                    //Foreground = new SolidColorBrush(Colors.White)
                 };
                 newItem.SetValue(TextOptions.TextFormattingModeProperty, TextFormattingMode.Display);
                 Dispatcher?.Invoke(() => { IServerProfilesMenu.Items.Add(newItem); });
 
                 newItem.Click += ToggleButton_Click;
 
-                if (ContentProfiles.Any(tab => profile.SafeName == tab.Name)) 
+                if (ContentProfileViews.Any(tab => profile.Id == tab.Profile.Id)) 
                     continue;
 
-                ContentProfiles.Add(new Views.ServerProfile(profile) { Name = profile.SafeName});
+                var p = new ProfileViewModel(profile);
+                ContentProfileViews.Add(p);
             }
         }
 

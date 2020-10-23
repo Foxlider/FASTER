@@ -7,13 +7,13 @@
     <PublishReadyToRun>true</PublishReadyToRun>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <UseWPF>true</UseWPF>
-    <Version>1.6.2</Version>
+    <Version>1.7.1</Version>
     <Authors>Keelah Fox</Authors>
     <Company>FoxliCorp.</Company>
     <Description>Fox's Arma Server Tool Extended Rewrite</Description>
     <Copyright>Copyright © 2019</Copyright>
     <PackageProjectUrl>https://forums.bohemia.net/forums/topic/224359-foxs-arma-server-tool-extended-rewrite-faster/</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite</RepositoryUrl>
+    <RepositoryUrl>https://github.com/Foxlider/FASTER</RepositoryUrl>
     <ApplicationIcon>Resources\FASTER.ico</ApplicationIcon>
     <StartupObject>FASTER.App</StartupObject>
     <ApplicationManifest>Properties\FASTER.manifest</ApplicationManifest>
@@ -41,23 +41,22 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\" />
     <Folder Include="Properties\" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Autoupdater.NET.Official" Version="1.5.8" />
+    <PackageReference Include="Autoupdater.NET.Official" Version="1.6.3" />
     <PackageReference Include="LiveCharts.Wpf" Version="0.9.7" />
-    <PackageReference Include="MahApps.Metro" Version="2.0.0-alpha0660" />
-    <PackageReference Include="MahApps.Metro.IconPacks.Material" Version="3.4.0" />
-    <PackageReference Include="MahApps.Metro.IconPacks.Modern" Version="3.4.0" />
+    <PackageReference Include="MahApps.Metro" Version="2.3.0" />
+    <PackageReference Include="MahApps.Metro.IconPacks.Material" Version="4.6.0" />
+    <PackageReference Include="MahApps.Metro.IconPacks.Modern" Version="4.6.0" />
     <PackageReference Include="MahApps.Metro.SimpleChildWindow" Version="2.0.0-alpha0032" />
-    <PackageReference Include="Microsoft.AppCenter.Analytics" Version="3.0.0" />
-    <PackageReference Include="Microsoft.AppCenter.Crashes" Version="3.0.0" />
-    <PackageReference Include="Microsoft.ApplicationInsights" Version="2.13.1" />
-    <PackageReference Include="Microsoft.ApplicationInsights.DependencyCollector" Version="2.13.1" />
-    <PackageReference Include="Microsoft.ApplicationInsights.PerfCounterCollector" Version="2.13.1" />
-    <PackageReference Include="Microsoft.ApplicationInsights.WindowsServer" Version="2.13.1" />
+    <PackageReference Include="Microsoft.AppCenter.Analytics" Version="3.4.3" />
+    <PackageReference Include="Microsoft.AppCenter.Crashes" Version="3.4.3" />
+    <PackageReference Include="Microsoft.ApplicationInsights" Version="2.15.0" />
+    <PackageReference Include="Microsoft.ApplicationInsights.DependencyCollector" Version="2.15.0" />
+    <PackageReference Include="Microsoft.ApplicationInsights.PerfCounterCollector" Version="2.15.0" />
+    <PackageReference Include="Microsoft.ApplicationInsights.WindowsServer" Version="2.15.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="WindowsAPICodePack-Shell" Version="1.1.1" />
   </ItemGroup>

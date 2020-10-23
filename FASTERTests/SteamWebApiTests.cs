@@ -1,4 +1,6 @@
 ﻿using NUnit.Framework;
+// ReSharper disable CheckNamespace
+// ReSharper disable PossibleNullReferenceException
 
 namespace FASTER.Models.Tests
 {
@@ -9,6 +11,7 @@ namespace FASTER.Models.Tests
         public void GetSingleFileDetailsTest()
         {
             var res = SteamWebApi.GetSingleFileDetails(463939057);
+            Assert.IsNotNull(res);
             Assert.AreEqual("463939057", res["publishedfileid"].ToString());
             Assert.AreEqual("76561198194647182", res["creator"].ToString());
             Assert.AreEqual("ace", res["title"].ToString());

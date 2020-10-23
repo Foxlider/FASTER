@@ -104,6 +104,7 @@ namespace FASTER.Models
         // Takes any string and removes illegal characters
         public static string SafeName(string input, bool ignoreWhiteSpace = false, string replacement = "_")
         {
+            input = input.Replace("@", "");
             if (ignoreWhiteSpace)
             {
                 // input = Regex.Replace(input, "[^a-zA-Z0-9\-_\s]", replacement) >> "-" is allowed
@@ -142,6 +143,7 @@ namespace FASTER.Models
         internal static string GetVersion()
         {
             string rev = $"{(char)(Assembly.GetExecutingAssembly().GetName().Version.Build + 96)}";
+            if (Assembly.GetExecutingAssembly().GetName().Version.Build == 0) rev = "ALPHA";
 #if DEBUG
             rev += "-DEV";
 #endif

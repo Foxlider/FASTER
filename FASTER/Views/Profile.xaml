@@ -1,0 +1,709 @@
+﻿<UserControl x:Class="FASTER.Views.Profile"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:viewModel="clr-namespace:FASTER.ViewModel"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls" 
+             xmlns:models="clr-namespace:FASTER.Models"
+             mc:Ignorable="d"
+             Loaded="UserControl_Loaded"
+             Unloaded="UserControl_Unloaded"
+             d:DesignHeight="650" d:DesignWidth="880">
+    <UserControl.DataContext>
+        <viewModel:ProfileViewModel/>
+    </UserControl.DataContext>
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+        <models:NotBooleanToVisibilityConverter x:Key="BoolToHide"/>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <TabControl BorderThickness="0" Background="{x:Null}">
+            <TabControl.Effect>
+                <DropShadowEffect BlurRadius="5" RenderingBias="Performance" ShadowDepth="1"/>
+            </TabControl.Effect>
+            <!--#region  Profile-->
+            <TabItem Header="Profile">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="5*"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Margin="5">
+                        <GroupBox Header="Profile Settings">
+                            <StackPanel>
+                                <TextBox Text="{Binding Path=Profile.Name}" mah:TextBoxHelper.Watermark="Profile Name" mah:TextBoxHelper.UseFloatingWatermark="True" />
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition Width="auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox Grid.Column="0" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Server File" Margin="0,5">
+                                        <TextBox.Text>
+                                            <Binding Path="Profile.Executable"/>
+                                        </TextBox.Text>
+                                    </TextBox>
+                                    <Button Content="{iconPacks:Material Kind=FolderOpen}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="1" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" Height="auto" Margin="5,5,0,5" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Padding="3" Click="SelectServerFile"/>
+                                </Grid>
+                                <mah:NumericUpDown Value="{Binding Profile.Port}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Port" ToolTip="Port for ArmaServer"/>
+                            </StackPanel>
+                        </GroupBox>
+                    </StackPanel>
+                    <GroupBox Header="Mods" Grid.Column="1" Margin="5">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition/>
+                                <RowDefinition Height="auto"/>
+                            </Grid.RowDefinitions>
+                            <StackPanel Orientation="Horizontal">
+                                <Button Margin="0, 5" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Padding="5,3" Click="LoadFromFile_Click">
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconModern Kind="PageXml"/>
+                                        <TextBlock Text="Load from File" Margin="10,0"/>
+                                    </StackPanel>
+                                </Button>
+                                <Button Margin="5, 5" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Padding="5,3" Click="CopyModKeys_Click">
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconModern Kind="PageCopy"/>
+                                        <TextBlock Text="Copy Mods Keys" Margin="10,0"/>
+                                    </StackPanel>
+                                </Button>
+                                <Button Margin="5, 5" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}"
+                                        BorderThickness="0" Padding="5,3" Click="ClearModKeys_Click">
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconModern Kind="PageDelete" />
+                                        <TextBlock Text="Clear Keys" Margin="10,0" />
+                                    </StackPanel>
+                                </Button>
+                                <StackPanel Orientation="Horizontal">
+                                    <CheckBox IsChecked="{Binding Profile.ContactDLCChecked}" Content="Contact DLC" Margin="10,3"/>
+                                    <CheckBox IsChecked="{Binding Profile.GMDLCChecked}" Content="GM DLC" Margin="10,3"/>
+                                </StackPanel>
+                            </StackPanel>
+                            <DataGrid Grid.Row="1" ItemsSource="{Binding Path=Profile.ProfileMods, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" CanUserReorderColumns="False" CanUserSortColumns="True" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True">
+                                <DataGrid.Resources>
+                                    <ContextMenu x:Key="ServerContextMenu">
+                                        <MenuItem Tag="Server" Header="Select All" Click="ModsSelectAll">
+                                            <MenuItem.Icon>
+                                                <iconPacks:PackIconModern Kind="CheckmarkThick" Margin="5"/>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Tag="Server" Header="Select None" Click="ModsSelectNone">
+                                            <MenuItem.Icon>
+                                                <iconPacks:PackIconModern Kind="CheckmarkUncrossed" Margin="5"/>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Tag="Server" Header="Copy From Client" Click="CopyFromClient">
+                                            <MenuItem.Icon>
+                                                <iconPacks:PackIconModern Kind="PageCopy" Margin="5"/>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Tag="Server" Header="Copy From Headless" Click="CopyFromHeadless">
+                                            <MenuItem.Icon>
+                                                <iconPacks:PackIconModern Kind="PageCopy" Margin="5"/>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                    </ContextMenu>
+                                    <ContextMenu x:Key="ClientContextMenu">
+                                        <MenuItem Tag="Client" Header="Select All" Click="ModsSelectAll">
+                                            <MenuItem.Icon>
+                                                <iconPacks:PackIconModern Kind="CheckmarkThick"/>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Tag="Client" Header="Select None" Click="ModsSelectNone">
+                                            <MenuItem.Icon>
+                                                <iconPacks:PackIconModern Kind="CheckmarkUncrossed"/>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Tag="Client" Header="Copy From Server" Click="CopyFromServer">
+                                            <MenuItem.Icon>
+                                                <iconPacks:PackIconModern Kind="PageCopy"/>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Tag="Client" Header="Copy From Headless" Click="CopyFromHeadless">
+                                            <MenuItem.Icon>
+                                                <iconPacks:PackIconModern Kind="PageCopy"/>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                    </ContextMenu>
+                                    <ContextMenu x:Key="HeadlessContextMenu">
+                                        <MenuItem Tag="Headless" Header="Select All" Click="ModsSelectAll">
+                                            <MenuItem.Icon>
+                                                <iconPacks:PackIconModern Kind="CheckmarkThick"/>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Tag="Headless" Header="Select None" Click="ModsSelectNone">
+                                            <MenuItem.Icon>
+                                                <iconPacks:PackIconModern Kind="CheckmarkUncrossed"/>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Tag="Headless" Header="Copy From Server" Click="CopyFromServer">
+                                            <MenuItem.Icon>
+                                                <iconPacks:PackIconModern Kind="PageCopy"/>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Tag="Headless" Header="Copy From Client" Click="CopyFromClient">
+                                            <MenuItem.Icon>
+                                                <iconPacks:PackIconModern Kind="PageCopy"/>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                    </ContextMenu>
+
+                                    <Style TargetType="{x:Type DataGridColumnHeader}" BasedOn="{StaticResource MahApps.Styles.DataGridColumnHeader.Azure}">
+                                        <Style.Triggers>
+                                            <Trigger Property="Content" Value="Server">
+                                                <Setter Property="ContextMenu" Value="{StaticResource ServerContextMenu}" />
+                                            </Trigger>
+                                            <Trigger Property="Content" Value="Client">
+                                                <Setter Property="ContextMenu" Value="{StaticResource ClientContextMenu}" />
+                                            </Trigger>
+                                            <Trigger Property="Content" Value="Headless">
+                                                <Setter Property="ContextMenu" Value="{StaticResource HeadlessContextMenu}" />
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </DataGrid.Resources>
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="auto" CanUserSort="True" IsReadOnly="True"/>
+                                    <DataGridTemplateColumn Header="Server" Width="auto">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <CheckBox IsChecked="{Binding ServerSideChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridTemplateColumn Header="Client" Width="auto">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <CheckBox IsChecked="{Binding ClientSideChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridTemplateColumn Header="Headless" Width="auto">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <CheckBox IsChecked="{Binding HeadlessChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridTextColumn Header="Name" Binding="{Binding Name}" CanUserSort="True" Width="1*" IsReadOnly="True"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                            <Grid Grid.Row="2" Margin="5">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="{Binding Path=Profile.ServerModsChecked, StringFormat={}ServerSide : {0} mods}" Grid.Column="0"/>
+                                <TextBlock Text="{Binding Path=Profile.ClientModsChecked, StringFormat={}ClientSide : {0} mods}" Grid.Column="1"/>
+                                <TextBlock Text="{Binding Path=Profile.HeadlessModsChecked, StringFormat={}Headless Client : {0} mods}" Grid.Column="2"/>
+                            </Grid>
+                        </Grid>
+                    </GroupBox>
+                </Grid>
+
+            </TabItem>
+            <!--#endregion-->
+            <!--#region Maps-->
+            <TabItem Header="Missions">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!--Mission Selector-->
+                    <GroupBox Header="Missions" Grid.Row="0" Grid.Column="0" Margin="0, 0, 4 ,0">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
+                            </Grid.RowDefinitions>
+
+                            <mah:ToggleSwitch Content="Mission selector override" IsOn="{Binding Path=Profile.ServerCfg.MissionChecked}" Margin="5,0"/>
+                            <TextBox Grid.Row="1" MinHeight="50" Margin="0,5" Text="{Binding Path=Profile.ServerCfg.MissionContentOverride}" Visibility="{Binding Path=Profile.ServerCfg.MissionChecked, Converter={StaticResource BoolToVis}}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Mission Override" AcceptsTab="True" AcceptsReturn="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"/>
+                            <DataGrid Grid.Row="1" ItemsSource="{Binding Path=Profile.ServerCfg.Missions, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding Path=Profile.ServerCfg.MissionChecked, Converter={StaticResource BoolToHide}}" Margin="0,5" CanUserReorderColumns="False" CanUserSortColumns="False" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True">
+                                <DataGrid.Resources>
+                                    <ContextMenu x:Key="MissionContextMenu">
+                                        <MenuItem Tag="Mission" Header="Select All" Click="MissionSelectAll">
+                                            <MenuItem.Icon>
+                                                <iconPacks:PackIconModern Kind="CheckmarkThick"/>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Tag="Mission" Header="Select None" Click="MissionSelectNone">
+                                            <MenuItem.Icon>
+                                                <iconPacks:PackIconModern Kind="CheckmarkUncrossed"/>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                    </ContextMenu>
+                                    <Style TargetType="{x:Type DataGridColumnHeader}" BasedOn="{StaticResource MahApps.Styles.DataGridColumnHeader.Azure}">
+                                        <Style.Triggers>
+                                            <Trigger Property="Content" Value="Mission">
+                                                <Setter Property="ContextMenu" Value="{StaticResource MissionContextMenu}" />
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </DataGrid.Resources>
+                                <DataGrid.Columns>
+                                    <DataGridTemplateColumn Header="Mission" Width="auto">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <CheckBox IsChecked="{Binding MissionChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="1*" IsReadOnly="True"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                            <Button Content="{iconPacks:Material Kind=Refresh}" Grid.Row="2" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" Click="MissionRefresh" BorderThickness="0" Margin="0,5"/>
+                            <ComboBox Grid.Row="2" SelectedItem="{Binding Path=Profile.ServerCfg.Difficulty}" ItemsSource="{Binding Path=MissionDifficulties}"  mah:TextBoxHelper.UseFloatingWatermark="True"  mah:TextBoxHelper.Watermark="Difficulty Preset" IsEditable="False" Margin="5,0" HorizontalAlignment="Right"/>
+                            <Grid Grid.Row="3">
+                                <CheckBox Content="AutoInit" IsChecked="{Binding Path=Profile.ServerCfg.AutoInit}" Margin="5" HorizontalAlignment="Left" IsEnabled="{Binding Path=Profile.ServerCfg.Persistent}"/>
+                                <CheckBox Content="Persistant Battlefield" IsChecked="{Binding Path=Profile.ServerCfg.Persistent}" Margin="5" HorizontalAlignment="Right"/>
+                            </Grid>
+                            <Grid Grid.Row="4">
+                                <CheckBox Content="AutoSelect Mission" IsChecked="{Binding Path=Profile.ServerCfg.AutoSelectMission}" Margin="5" HorizontalAlignment="Left"/>
+                                <CheckBox Content="Random Order" IsChecked="{Binding Path=Profile.ServerCfg.RandomMissionOrder}" Margin="5" HorizontalAlignment="Right"/>
+                            </Grid>
+                        </Grid>
+                    </GroupBox>
+                    <GroupBox Grid.Column="1" Grid.Row="0" Header="Difficulty Settings" Margin="4, 0, 0, 0">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition MinHeight="200"/>
+                                <RowDefinition Height="auto"/>
+                            </Grid.RowDefinitions>
+                            <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="auto"/>
+                                        <RowDefinition Height="auto"/>
+                                        <RowDefinition Height="auto"/>
+                                        <RowDefinition Height="auto"/>
+                                        <RowDefinition Height="auto"/>
+                                        <RowDefinition Height="10"/>
+                                        <RowDefinition Height="auto"/>
+                                        <RowDefinition Height="auto"/>
+                                        <RowDefinition Height="auto"/>
+                                        <RowDefinition Height="10"/>
+                                        <RowDefinition Height="auto"/>
+                                    </Grid.RowDefinitions>
+                                    <ComboBox SelectedItem="{Binding Path=Profile.ArmaProfile.ReducedDamage}" mah:TextBoxHelper.Watermark="Reduced Damage" Grid.Column="0" Grid.Row="0" ItemsSource="{Binding Path=EnabledStrings}" mah:TextBoxHelper.UseFloatingWatermark="True" Margin="3"/>
+                                    <ComboBox SelectedItem="{Binding Path=Profile.ArmaProfile.StaminaBar}" mah:TextBoxHelper.Watermark="Stamina Bar" Grid.Column="1" Grid.Row="0" ItemsSource="{Binding Path=EnabledStrings}" mah:TextBoxHelper.UseFloatingWatermark="True" Margin="3"/>
+                                    <ComboBox SelectedItem="{Binding Path=Profile.ArmaProfile.VonID}" mah:TextBoxHelper.Watermark="VON ID" Grid.Column="2" Grid.Row="0" ItemsSource="{Binding Path=EnabledStrings}" mah:TextBoxHelper.UseFloatingWatermark="True" Margin="3"/>
+                                    <ComboBox SelectedItem="{Binding Path=Profile.ArmaProfile.MultipleSaves}" mah:TextBoxHelper.Watermark="Multiple Saves" Grid.Column="0" Grid.Row="1" ItemsSource="{Binding Path=EnabledStrings}" mah:TextBoxHelper.UseFloatingWatermark="True" Margin="3"/>
+                                    <ComboBox SelectedItem="{Binding Path=Profile.ArmaProfile.CameraShake}" mah:TextBoxHelper.Watermark="Camera Shake" Grid.Column="1" Grid.Row="1" ItemsSource="{Binding Path=EnabledStrings}" mah:TextBoxHelper.UseFloatingWatermark="True" Margin="3"/>
+                                    <ComboBox SelectedItem="{Binding Path=Profile.ArmaProfile.DeathMessages}" mah:TextBoxHelper.Watermark="Killed By" Grid.Column="2" Grid.Row="1" ItemsSource="{Binding Path=EnabledStrings}" mah:TextBoxHelper.UseFloatingWatermark="True" Margin="3"/>
+                                    <ComboBox SelectedItem="{Binding Path=Profile.ArmaProfile.ThirdPersonView}" mah:TextBoxHelper.Watermark="Third Person Camera" Grid.Column="0" Grid.Row="2" ItemsSource="{Binding Path=ThirdPersonStrings}" mah:TextBoxHelper.UseFloatingWatermark="True" Margin="3"/>
+                                    <ComboBox SelectedItem="{Binding Path=Profile.ArmaProfile.VisionAid}" mah:TextBoxHelper.Watermark="Visual Aids" Grid.Column="1" Grid.Row="2" ItemsSource="{Binding Path=EnabledStrings}" mah:TextBoxHelper.UseFloatingWatermark="True" Margin="3"/>
+                                    <ComboBox SelectedItem="{Binding Path=Profile.ArmaProfile.WeaponCrosshair}" mah:TextBoxHelper.Watermark="Weapon Crosshair" Grid.Column="2" Grid.Row="2" ItemsSource="{Binding Path=EnabledStrings}" mah:TextBoxHelper.UseFloatingWatermark="True" Margin="3"/>
+                                    <ComboBox SelectedItem="{Binding Path=Profile.ArmaProfile.ScoreTable}" mah:TextBoxHelper.Watermark="Score Table" Grid.Column="0" Grid.Row="3" ItemsSource="{Binding Path=EnabledStrings}" mah:TextBoxHelper.UseFloatingWatermark="True" Margin="3"/>
+                                    <ComboBox SelectedItem="{Binding Path=Profile.ArmaProfile.TacticalPing}" mah:TextBoxHelper.Watermark="Tactical Ping" Grid.Column="1" Grid.Row="3" ItemsSource="{Binding Path=EnabledStrings}" mah:TextBoxHelper.UseFloatingWatermark="True" Margin="3"/>
+                                    <ComboBox SelectedItem="{Binding Path=Profile.ArmaProfile.AutoReport}" mah:TextBoxHelper.Watermark="Auto Reporting" Grid.Column="2" Grid.Row="3" ItemsSource="{Binding Path=EnabledStrings}" mah:TextBoxHelper.UseFloatingWatermark="True" Margin="3"/>
+                                    <ComboBox SelectedItem="{Binding Path=Profile.ArmaProfile.MapContentFriendly}" mah:TextBoxHelper.Watermark="Map Content Friendly" Grid.Column="0" Grid.Row="4" ItemsSource="{Binding Path=EnabledStrings}" mah:TextBoxHelper.UseFloatingWatermark="True" Margin="3"/>
+                                    <ComboBox SelectedItem="{Binding Path=Profile.ArmaProfile.MapContentEnemy}" mah:TextBoxHelper.Watermark="Map Content Enemy" Grid.Column="1" Grid.Row="4" ItemsSource="{Binding Path=EnabledStrings}" mah:TextBoxHelper.UseFloatingWatermark="True" Margin="3"/>
+                                    <ComboBox SelectedItem="{Binding Path=Profile.ArmaProfile.MapContentMines}" mah:TextBoxHelper.Watermark="Map Content Mines" Grid.Column="2" Grid.Row="4" ItemsSource="{Binding Path=EnabledStrings}" mah:TextBoxHelper.UseFloatingWatermark="True" Margin="3"/>
+
+                                    <ComboBox SelectedItem="{Binding Path=Profile.ArmaProfile.FriendlyTags}" mah:TextBoxHelper.Watermark="Friendly Tags" Grid.Column="0" Grid.Row="6" ItemsSource="{Binding Path=LimitedDistanceStrings}" mah:TextBoxHelper.UseFloatingWatermark="True" Margin="3"/>
+                                    <ComboBox SelectedItem="{Binding Path=Profile.ArmaProfile.EnemyTags}" mah:TextBoxHelper.Watermark="Enemy Tags" Grid.Column="1" Grid.Row="6" ItemsSource="{Binding Path=LimitedDistanceStrings}" mah:TextBoxHelper.UseFloatingWatermark="True" Margin="3"/>
+                                    <ComboBox SelectedItem="{Binding Path=Profile.ArmaProfile.DetectedMines}" mah:TextBoxHelper.Watermark="Detected Mines" Grid.Column="2" Grid.Row="6" ItemsSource="{Binding Path=LimitedDistanceStrings}" mah:TextBoxHelper.UseFloatingWatermark="True" Margin="3"/>
+                                    <ComboBox SelectedItem="{Binding Path=Profile.ArmaProfile.GroupIndicators}" mah:TextBoxHelper.Watermark="Group Indicators" Grid.Column="0" Grid.Row="7" ItemsSource="{Binding Path=LimitedDistanceStrings}" mah:TextBoxHelper.UseFloatingWatermark="True" Margin="3"/>
+                                    <ComboBox SelectedItem="{Binding Path=Profile.ArmaProfile.Commands}" mah:TextBoxHelper.Watermark="Commands" Grid.Column="1" Grid.Row="7" ItemsSource="{Binding Path=FadeOutStrings}" mah:TextBoxHelper.UseFloatingWatermark="True" Margin="3"/>
+                                    <ComboBox SelectedItem="{Binding Path=Profile.ArmaProfile.Waypoints}" mah:TextBoxHelper.Watermark="Waypoints" Grid.Column="2" Grid.Row="7" ItemsSource="{Binding Path=FadeOutStrings}" mah:TextBoxHelper.UseFloatingWatermark="True" Margin="3"/>
+                                    <ComboBox SelectedItem="{Binding Path=Profile.ArmaProfile.WeaponInfo}" mah:TextBoxHelper.Watermark="Weapon Infos" Grid.Column="0" Grid.Row="8" ItemsSource="{Binding Path=FadeOutStrings}" mah:TextBoxHelper.UseFloatingWatermark="True" Margin="3"/>
+                                    <ComboBox SelectedItem="{Binding Path=Profile.ArmaProfile.StanceIndicator}" mah:TextBoxHelper.Watermark="Stance Indicator" Grid.Column="1" Grid.Row="8" ItemsSource="{Binding Path=FadeOutStrings}" mah:TextBoxHelper.UseFloatingWatermark="True" Margin="3"/>
+
+                                    <StackPanel Grid.Column="0" Grid.Row="10" Margin="3,0" >
+                                        <mah:NumericUpDown Value="{Binding Profile.ArmaProfile.SkillAi}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="AI Skill" VerticalAlignment="Center" Minimum="0" Maximum="1" Interval=".01" TextAlignment="Right"/>
+                                        <Slider Maximum="1" AutoToolTipPlacement="TopLeft" Value="{Binding Profile.ArmaProfile.SkillAi}" TickPlacement="BottomRight" IsSnapToTickEnabled="True" TickFrequency=".01" ToolTip="AI Skill" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="AI Skill" Margin="0,5" SmallChange=".01" LargeChange="0.1" AutoToolTipPrecision="2" />
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1" Grid.Row="10" Margin="3,0">
+                                        <mah:NumericUpDown Value="{Binding Profile.ArmaProfile.PrecisionAi}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="AI Precision" VerticalAlignment="Center" Minimum="0" Maximum="1" Interval=".01" TextAlignment="Right"/>
+                                        <Slider Maximum="1" AutoToolTipPlacement="TopLeft" Value="{Binding Profile.ArmaProfile.PrecisionAi}" TickPlacement="BottomRight" IsSnapToTickEnabled="True" TickFrequency=".01" ToolTip="AI Skill" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="AI Precision" Margin="0,5" SmallChange=".01" LargeChange="0.1" AutoToolTipPrecision="2" />
+                                    </StackPanel>
+                                    <ComboBox SelectedItem="{Binding Profile.ArmaProfile.AiLevelPreset}" mah:TextBoxHelper.Watermark="AI Preset" Grid.Column="2" Grid.Row="10" ItemsSource="{Binding Path=AiPresetStrings}" mah:TextBoxHelper.UseFloatingWatermark="True" Margin="3,0,3,15"/>
+                                </Grid>
+                            </ScrollViewer>
+
+                        </Grid>
+                    </GroupBox>
+                    <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
+                        <Grid.Style>
+                            <Style TargetType="Grid">
+                                <Setter Property="Margin" Value="5"/>
+                                <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Window.Background}"></Setter>
+                            </Style>
+                        </Grid.Style>
+                        <Expander Header="Arma3Profile output" MaxHeight="400">
+                            <TextBox Text="{Binding Path=Profile.ArmaProfile.ArmaProfileContent}" FontFamily="GenericMonospace" AcceptsTab="True" AcceptsReturn="True" IsManipulationEnabled="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"/>
+                        </Expander>
+                    </Grid>
+                </Grid>
+            </TabItem>
+            <!--#endregion-->
+            <!--#region Server.cfg-->
+            <TabItem Header="Server">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+                    <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- COLUMN 1 -->
+                            <StackPanel>
+                                <!-- SERVER OPTIONS -->
+                                <GroupBox Header="Server Options">
+                                    <GroupBox.Style>
+                                        <Style TargetType="GroupBox" BasedOn="{StaticResource MahApps.Styles.GroupBox}">
+                                            <Setter Property="Margin" Value="5"/>
+                                            <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Window.Background}"></Setter>
+                                        </Style>
+                                    </GroupBox.Style>
+                                    <StackPanel>
+                                        <TextBox Text="{Binding Path=Profile.ServerCfg.Hostname}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Server Hostname" ToolTip="Name to display in the server browser" Margin="5,3,5,5"/>
+                                        <TextBox Text="{Binding Path=Profile.ServerCfg.Password}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Password" ToolTip="Password required to log in"  Margin="5,3,5,5"/>
+                                        <TextBox Text="{Binding Path=Profile.ServerCfg.PasswordAdmin}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Admin Password" ToolTip="Admin password required to log in as admin"  Margin="5,3,5,5"/>
+                                        <Grid>
+                                            <CheckBox IsChecked="{Binding Path=Profile.ServerCfg.BattlEye}" Content="BattlEye" Margin="5" HorizontalAlignment="Left"/>
+                                            <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.MaxPlayers}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Max Players" ToolTip="Maximum number of players" HorizontalAlignment="Right" Margin="5,3" />
+                                        </Grid>
+                                        <CheckBox IsChecked="{Binding Path=Profile.RankingChecked}" Content="Server Ranking" Margin="5" />
+                                    </StackPanel>
+                                </GroupBox>
+
+                                <!-- NETWORK TILE-->
+                                <GroupBox Header="Network settings">
+                                    <GroupBox.Style>
+                                        <Style TargetType="GroupBox" BasedOn="{StaticResource MahApps.Styles.GroupBox}">
+                                            <Setter Property="Margin" Value="5"/>
+                                            <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Window.Background}"></Setter>
+                                        </Style>
+                                    </GroupBox.Style>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                        </Grid.RowDefinitions>
+                                        <CheckBox Content="Loopback" IsChecked="{Binding Path=Profile.ServerCfg.Loopback}" Margin="5,2" Grid.Column="0" Grid.Row="0"/>
+                                        <CheckBox Content="UPNP" IsChecked="{Binding Path=Profile.ServerCfg.Upnp}" Margin="5,2" Grid.Column="1" Grid.Row="0"/>
+                                        <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.DisconnectTimeout}" Margin="5,2" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Disconnect Timeout" Grid.Column="0" Grid.Row="1"/>
+                                        <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.MaxDesync}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Max Desync" Grid.Row="1" Grid.Column="1" Margin="5,2"/>
+                                        <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.MaxPing}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Max Ping" Grid.Row="2" Grid.Column="0" Margin="5,2"/>
+                                        <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.MaxPacketLoss}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Max Packet Loss" Grid.Row="2" Grid.Column="1" Margin="5,2"/>
+                                    </Grid>
+                                </GroupBox>
+
+                                <!-- SERVER ADVANCED -->
+                                <Expander Header="Server Advanced">
+                                    <Expander.Style>
+                                        <Style TargetType="Expander" BasedOn="{StaticResource MahApps.Styles.Expander}">
+                                            <Setter Property="Margin" Value="5"/>
+                                            <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Window.Background}"></Setter>
+                                        </Style>
+                                    </Expander.Style>
+                                    <StackPanel>
+                                        <ComboBox SelectedItem="{Binding Path=Profile.ServerCfg.AllowedFilePatching}" ItemsSource="{Binding Path=FilePatching}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Allow File Patching" Margin="5"/>
+                                        <ComboBox SelectedItem="{Binding Path=Profile.ServerCfg.VerifySignatures}" ItemsSource="{Binding Path=VerifySignatures}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Verify Signatures" Margin="5"/>
+                                        <CheckBox IsChecked="{Binding Path=Profile.ServerCfg.KickDuplicates}" Content="Kick Duplicates" Margin="5,2"/>
+                                        <CheckBox IsChecked="{Binding Path=Profile.ServerCfg.KickClientOnSlowNetwork}" Content="Kick on Slow Network" Margin="5,2"/>
+
+                                        <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.LobbyIdleTimeout}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Lobby Idle Timeout" Margin="5"/>
+                                        <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.SteamProtocolMaxDataSize}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Steam Protocol Max Data Size" Margin="5,0,5,5"/>
+
+                                        <StackPanel Orientation="Horizontal">
+
+                                        </StackPanel>
+                                        <TextBox MinHeight="50" Margin="5" Text="{Binding Path=Profile.ServerCfg.Admins}" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Admins IDs (one per line)"/>
+
+                                    </StackPanel>
+                                </Expander>
+                            </StackPanel>
+
+                            <!-- COLUMN 2 -->
+                            <StackPanel Grid.Column="1">
+                                <!--VON TILE-->
+                                <GroupBox Header="VON Settings">
+                                    <GroupBox.Style>
+                                        <Style TargetType="GroupBox" BasedOn="{StaticResource MahApps.Styles.GroupBox}">
+                                            <Setter Property="Margin" Value="5"/>
+                                            <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Window.Background}"></Setter>
+                                        </Style>
+                                    </GroupBox.Style>
+                                    <StackPanel>
+                                        <Grid Margin="0,3">
+                                            <mah:ToggleSwitch IsOn="{Binding Path=Profile.ServerCfg.VonActivated}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="VoN Activation" ToolTip="VoN Activation" Margin="10,2,0,2" HorizontalAlignment="Left"/>
+                                            <ComboBox HorizontalAlignment="Right" Visibility="{Binding Path=Profile.ServerCfg.VonActivated, Converter={StaticResource BoolToVis}}" ItemsSource="{Binding Path=VonCodecs}" SelectedItem="{Binding Profile.ServerCfg.VonCodec}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="VoN Codec" Margin="10,5"/>
+                                        </Grid>
+                                        <Slider Maximum="30" Visibility="{Binding Path=Profile.ServerCfg.VonActivated, Converter={StaticResource BoolToVis}}" AutoToolTipPlacement="TopLeft" Value="{Binding Path=Profile.ServerCfg.VonCodecQuality}" TickPlacement="BottomRight" IsSnapToTickEnabled="True" ToolTip="Codec Quality" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Codec Quality" Margin="20,3" SmallChange="1" />
+                                    </StackPanel>
+                                </GroupBox>
+
+                                <!--VOTING TILE-->
+                                <GroupBox Header="Voting Settings">
+                                    <GroupBox.Style>
+                                        <Style TargetType="GroupBox" BasedOn="{StaticResource MahApps.Styles.GroupBox}">
+                                            <Setter Property="Margin" Value="5"/>
+                                            <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Window.Background}"></Setter>
+                                        </Style>
+                                    </GroupBox.Style>
+                                    <StackPanel>
+                                        <mah:ToggleSwitch IsOn="{Binding Path=Profile.ServerCfg.VotingEnabled}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="VoN Activation" ToolTip="VoN Activation" Margin="10,2,0,2" HorizontalAlignment="Left"/>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition/>
+                                                <ColumnDefinition/>
+                                            </Grid.ColumnDefinitions>
+                                            <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.VoteMissionPlayers}" Visibility="{Binding Path=Profile.ServerCfg.VotingEnabled, Converter={StaticResource BoolToVis}}" Grid.Column="0" Margin="5"  mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Min Players"/>
+                                            <Slider Value="{Binding Path=Profile.ServerCfg.VoteThreshold}" AutoToolTipPlacement="TopLeft" AutoToolTipPrecision="2" IsSnapToTickEnabled="True" Visibility="{Binding Path=Profile.ServerCfg.VotingEnabled, Converter={StaticResource BoolToVis}}" Minimum="0" Maximum="1"  Grid.Column="1" Margin="5" TickFrequency="0.01" TickPlacement="BottomRight" ToolTip="Voting threshold" SmallChange="0.01"/>
+                                        </Grid>
+                                    </StackPanel>
+                                </GroupBox>
+
+                                <!--HEADLESS TILE-->
+                                <GroupBox Header="Headless Clients">
+                                    <GroupBox.Style>
+                                        <Style TargetType="GroupBox" BasedOn="{StaticResource MahApps.Styles.GroupBox}">
+                                            <Setter Property="Margin" Value="5"/>
+                                            <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Window.Background}"></Setter>
+                                        </Style>
+                                    </GroupBox.Style>
+                                    <StackPanel>
+                                        <mah:ToggleSwitch IsOn="{Binding Path=Profile.ServerCfg.HeadlessClientEnabled}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="VoN Activation" ToolTip="VoN Activation" Margin="10,2,0,2" HorizontalAlignment="Left"/>
+                                        <Button Content="Launch HCs" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" Click="LaunchHCs" BorderThickness="0" HorizontalAlignment="Stretch" Margin="10,5" Visibility="{Binding Path=Profile.ServerCfg.HeadlessClientEnabled, Converter={StaticResource BoolToVis}}"/>
+                                        <TextBox MinHeight="50" Margin="10,3" Text="{Binding Path=Profile.ServerCfg.HeadlessClients}" Visibility="{Binding Path=Profile.ServerCfg.HeadlessClientEnabled, Converter={StaticResource BoolToVis}}" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Headless IPs (one per line)"/>
+                                        <TextBox MinHeight="50" Margin="10,3" Text="{Binding Path=Profile.ServerCfg.LocalClient}" Visibility="{Binding Path=Profile.ServerCfg.HeadlessClientEnabled, Converter={StaticResource BoolToVis}}" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Local Clients (one per line)"/>
+                                        <StackPanel Visibility="{Binding Path=Profile.ServerCfg.HeadlessClientEnabled, Converter={StaticResource BoolToVis}}">
+                                            <Slider Value="{Binding Path=Profile.HeadlessNumber}" Style="{StaticResource MahApps.Styles.Slider.Flat}" AutoToolTipPlacement="TopLeft" AutoToolTipPrecision="0" Minimum="0" Maximum="5" IsSnapToTickEnabled="True" TickFrequency="1" ToolTip="Number of Headless Clients" Margin="10,5"/>
+                                            <Label Content="Number of HCs" ToolTip="Number of Headless Clients" HorizontalAlignment="Center" Margin="1"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </GroupBox>
+                            </StackPanel>
+
+                            <!-- Column 3 -->
+                            <StackPanel Grid.Column="2">
+                                <!--PERMISSIONS TILE-->
+                                <GroupBox Header="Permissions Settings">
+                                    <GroupBox.Style>
+                                        <Style TargetType="GroupBox" BasedOn="{StaticResource MahApps.Styles.GroupBox}">
+                                            <Setter Property="Margin" Value="5"/>
+                                            <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Window.Background}"></Setter>
+                                        </Style>
+                                    </GroupBox.Style>
+                                    <StackPanel>
+                                        <CheckBox IsChecked="{Binding Path=Profile.ServerCfg.DrawingInMap}" Content="Enable drawing in Map" Margin="5,3"/>
+                                        <CheckBox IsChecked="{Binding Path=Profile.ServerCfg.SkipLobby}" Content="Skip lobby" Margin="5,2"/>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="auto"/>
+                                                <ColumnDefinition/>
+                                            </Grid.ColumnDefinitions>
+                                            <CheckBox IsChecked="{Binding Path=Profile.ServerCfg.RequiredBuildChecked}" Margin="5,3"/>
+                                            <Label Grid.Column="1" Content="Arma Required Build" Margin="-10,0" Visibility="{Binding Path=Profile.ServerCfg.RequiredBuildChecked, Converter={StaticResource BoolToHide}}"/>
+                                            <mah:NumericUpDown Grid.Column="1" Value="{Binding Path=Profile.ServerCfg.RequiredBuild}" IsEnabled="{Binding Path=Profile.ServerCfg.RequiredBuildChecked}" Visibility="{Binding Path=Profile.ServerCfg.RequiredBuildChecked, Converter={StaticResource BoolToVis}}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Required Build" Margin="5,2"/>
+                                        </Grid>
+                                    </StackPanel>
+                                </GroupBox>
+
+                                <!--LOGGING TILE-->
+                                <GroupBox Header="Logging Settings">
+                                    <GroupBox.Style>
+                                        <Style TargetType="GroupBox" BasedOn="{StaticResource MahApps.Styles.GroupBox}">
+                                            <Setter Property="Margin" Value="5"/>
+                                            <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Window.Background}"></Setter>
+                                        </Style>
+                                    </GroupBox.Style>
+                                    <StackPanel>
+                                        <mah:ToggleSwitch IsOn="{Binding Path=Profile.ServerCfg.NetLogEnabled}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="NetLog Activation" ToolTip="NetLog Activation" Margin="10,2,0,2" HorizontalAlignment="Left"/>
+                                        <TextBox Text="{Binding Path=Profile.ServerCfg.LogFile}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Logfile Name" Margin="5,3" Visibility="{Binding Path=Profile.ServerCfg.NetLogEnabled, Converter={StaticResource BoolToVis}}"/>
+                                        <ComboBox ItemsSource="{Binding Path=TimestampFormats}" SelectedItem="{Binding Path=Profile.ServerCfg.TimeStampFormat}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Timestamp Format" Margin="5,2" Visibility="{Binding Path=Profile.ServerCfg.NetLogEnabled, Converter={StaticResource BoolToVis}}"/>
+                                    </StackPanel>
+                                </GroupBox>
+
+                                <!--SCRIPTING TILE-->
+                                <Expander Header="Scripting Settings">
+                                    <Expander.Style>
+                                        <Style TargetType="Expander" BasedOn="{StaticResource MahApps.Styles.Expander}">
+                                            <Setter Property="Margin" Value="5"/>
+                                            <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Window.Background}"></Setter>
+                                        </Style>
+                                    </Expander.Style>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                        </Grid.RowDefinitions>
+                                        <TextBox Text="{Binding Path=Profile.ServerCfg.ServerCommandPassword}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Server Command Password" Grid.ColumnSpan="2" Margin="5"/>
+                                        <TextBox Text="{Binding Path=Profile.ServerCfg.OnUserConnected}" Grid.Row="1" Grid.Column="0" mah:TextBoxHelper.Watermark="onUserConnected" mah:TextBoxHelper.UseFloatingWatermark="True"  Margin="5,2"/>
+                                        <TextBox Text="{Binding Path=Profile.ServerCfg.OnUserDisconnected}" Grid.Row="1" Grid.Column="1" mah:TextBoxHelper.Watermark="onUserDisconnected" mah:TextBoxHelper.UseFloatingWatermark="True"  Margin="5,2"/>
+                                        <TextBox Text="{Binding Path=Profile.ServerCfg.OnHackedData}" Grid.Row="2" Grid.Column="0" mah:TextBoxHelper.Watermark="onHackedData" mah:TextBoxHelper.UseFloatingWatermark="True"  Margin="5,2"/>
+                                        <TextBox Text="{Binding Path=Profile.ServerCfg.OnDifferentData}" Grid.Row="2" Grid.Column="1" mah:TextBoxHelper.Watermark="onDifferentData" mah:TextBoxHelper.UseFloatingWatermark="True"  Margin="5,2"/>
+                                        <TextBox Text="{Binding Path=Profile.ServerCfg.OnUnsignedData}" Grid.Row="3" Grid.Column="0" mah:TextBoxHelper.Watermark="onUnsignedData" mah:TextBoxHelper.UseFloatingWatermark="True"  Margin="5,2"/>
+                                        <TextBox Text="{Binding Path=Profile.ServerCfg.OnUserKicked}" Grid.Row="3" Grid.Column="1" mah:TextBoxHelper.Watermark="onUserKicked" mah:TextBoxHelper.UseFloatingWatermark="True"  Margin="5,2"/>
+
+                                    </Grid>
+                                </Expander>
+
+                                <!--MOTD TILE-->
+                                <GroupBox Header="MOTD">
+                                    <GroupBox.Style>
+                                        <Style TargetType="GroupBox" BasedOn="{StaticResource MahApps.Styles.GroupBox}">
+                                            <Setter Property="Margin" Value="5"/>
+                                            <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Window.Background}"></Setter>
+                                        </Style>
+                                    </GroupBox.Style>
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition />
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+                                        <TextBox Grid.Row="1" MinHeight="50" Margin="10" Text="{Binding Path=Profile.ServerCfg.Motd}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Message of the Day" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"/>
+                                        <mah:NumericUpDown Grid.Row="2" Value="{Binding Path=Profile.ServerCfg.MotdInterval}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Delay Between Messages" Margin="10,0,10,5" Minimum="0" HorizontalAlignment="Left"/>
+                                    </Grid>
+                                </GroupBox>
+                            </StackPanel>
+                        </Grid>
+                    </ScrollViewer>
+
+                    <Grid Grid.Row="1">
+                        <Grid.Style>
+                            <Style TargetType="Grid">
+                                <Setter Property="Margin" Value="5"/>
+                                <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Window.Background}"></Setter>
+                            </Style>
+                        </Grid.Style>
+                        <Expander Header="Server.cfg output" MaxHeight="400">
+                            <TextBox Text="{Binding Path=Profile.ServerCfg.ServerCfgContent}" FontFamily="GenericMonospace" AcceptsTab="True" AcceptsReturn="True" IsManipulationEnabled="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"/>
+                        </Expander>
+                    </Grid>
+                </Grid>
+            </TabItem>
+            <!--#endregion-->
+            <!--#region Server.cfg-->
+            <TabItem Header="Performance">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+                    <GroupBox Header="Performance tweaks">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="10"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="10"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="10"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="40"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="20"/>
+                                <RowDefinition Height="auto"/>
+                            </Grid.RowDefinitions>
+                            <mah:NumericUpDown Grid.Row="0" Grid.Column="0" Value="{Binding Profile.BasicCfg.MinBandwidth}" mah:TextBoxHelper.Watermark="MinBandwidth" mah:TextBoxHelper.UseFloatingWatermark="True" Minimum="0" Maximum="18446744073709551615" Interval="1" Margin="3"/>
+                            <mah:NumericUpDown Grid.Row="0" Grid.Column="1" Value="{Binding Profile.BasicCfg.MaxPacketSize}" mah:TextBoxHelper.Watermark="MaxPacketSize" mah:TextBoxHelper.UseFloatingWatermark="True" Minimum="0" Maximum="4294967295" Interval="1" Margin="3"/>
+                            <mah:NumericUpDown Grid.Row="0" Grid.Column="2" Value="{Binding Profile.BasicCfg.MaxBandwidth}" mah:TextBoxHelper.Watermark="MaxBandwidth" mah:TextBoxHelper.UseFloatingWatermark="True" Minimum="0" Maximum="18446744073709551615" Interval="1" Margin="3"/>
+
+                            <mah:NumericUpDown Grid.Row="2" Grid.Column="0" Value="{Binding Profile.BasicCfg.MaxMsgSend}" mah:TextBoxHelper.Watermark="MaxMsgSend" mah:TextBoxHelper.UseFloatingWatermark="True" Minimum="0" Maximum="65535" Interval="1" Margin="3"/>
+                            <mah:NumericUpDown Grid.Row="2" Grid.Column="1" Value="{Binding Profile.BasicCfg.MaxSizeGuaranteed}" mah:TextBoxHelper.Watermark="MaxSizeGuaranteed" mah:TextBoxHelper.UseFloatingWatermark="True" Minimum="0" Maximum="65535" Interval="1" Margin="3"/>
+                            <mah:NumericUpDown Grid.Row="2" Grid.Column="2" Value="{Binding Profile.BasicCfg.MaxSizeNonGuaranteed}" mah:TextBoxHelper.Watermark="MaxSizeNonGuaranteed" mah:TextBoxHelper.UseFloatingWatermark="True" Minimum="0" Maximum="65535" Interval="1" Margin="3"/>
+
+                            <mah:NumericUpDown Grid.Row="4" Grid.Column="0" Value="{Binding Profile.BasicCfg.MinErrorToSend}" mah:TextBoxHelper.Watermark="MinErrorToSend" mah:TextBoxHelper.UseFloatingWatermark="True" Minimum="0" Maximum="1" Margin="3" Interval="0.001"/>
+                            <mah:NumericUpDown Grid.Row="4" Grid.Column="1" Value="{Binding Profile.BasicCfg.MinErrorToSendNear}" mah:TextBoxHelper.Watermark="MinErrorToSendNear" mah:TextBoxHelper.UseFloatingWatermark="True" Minimum="0" Maximum="1" Margin="3" Interval="0.001"/>
+                            <mah:NumericUpDown Grid.Row="4" Grid.Column="2" Value="{Binding Profile.BasicCfg.MaxCustomFileSize}" mah:TextBoxHelper.Watermark="MaxCustomFileSize" mah:TextBoxHelper.UseFloatingWatermark="True" Minimum="0" Maximum="65535" Interval="1" Margin="3"/>
+
+                            <ComboBox Grid.Row="6" Grid.Column="0" SelectedItem="{Binding Path=Profile.BasicCfg.PerfPreset}" mah:TextBoxHelper.Watermark="Load performance Preset" mah:TextBoxHelper.UseFloatingWatermark="True" ItemsSource="{Binding PerfPresets}" Margin="3"/>
+                            <ComboBox Grid.Row="6" Grid.Column="1" SelectedItem="{Binding Path=Profile.BasicCfg.TerrainGrid}" mah:TextBoxHelper.Watermark="Terrain Grid" mah:TextBoxHelper.UseFloatingWatermark="True" ItemsSource="{Binding TerrainGrids}" Margin="3"/>
+                            <mah:NumericUpDown Grid.Row="6" Grid.Column="2" Value="{Binding Profile.BasicCfg.ViewDistance}" mah:TextBoxHelper.Watermark="Server View Distance" mah:TextBoxHelper.UseFloatingWatermark="True" Minimum="0" Maximum="50000" Interval="1" Margin="3,3,3,3"/>
+
+                            <CheckBox Grid.Row="8" Grid.Column="0" Margin="3,5" IsChecked="{Binding Path=Profile.ServerCfg.MaxMemOverride}" Content="Force Maximum Memory"/>
+                            <CheckBox Grid.Row="8" Grid.Column="1" Margin="3,5" IsChecked="{Binding Path=Profile.EnableHyperThreading}" Content="Enable Hyper Threading"/>
+                            <CheckBox Grid.Row="8" Grid.Column="2" Margin="3,5" IsChecked="{Binding Path=Profile.ServerCfg.CpuCountOverride}" Content="Force CPU Count"/>
+                            <mah:NumericUpDown Grid.Row="9" Grid.Column="0" Value="{Binding Profile.ServerCfg.MaxMem}" Visibility="{Binding Path=Profile.ServerCfg.MaxMemOverride, Converter={StaticResource BoolToVis}}" mah:TextBoxHelper.Watermark="Maximum Memory (MB)" mah:TextBoxHelper.UseFloatingWatermark="True" Minimum="1024" Maximum="128000" Interval="1" Margin="3,3,3,-11"/>
+                            <mah:NumericUpDown Grid.Row="9" Grid.Column="2" Value="{Binding Profile.ServerCfg.CpuCount}" Visibility="{Binding Path=Profile.ServerCfg.CpuCountOverride, Converter={StaticResource BoolToVis}}" mah:TextBoxHelper.Watermark="CPU Core Count" mah:TextBoxHelper.UseFloatingWatermark="True" Minimum="1" Maximum="34" Interval="1" Margin="3,3,3,-11"/>
+                            <TextBox Text="{Binding Profile.ServerCfg.CommandLineParameters}" Grid.Row="11" Grid.Column="0" Grid.ColumnSpan="3" Margin="3,5" mah:TextBoxHelper.Watermark="Command Line Arguments" mah:TextBoxHelper.UseFloatingWatermark="True"/>
+                        </Grid>
+                    </GroupBox>
+                    <Grid Grid.Row="1">
+                        <Grid.Style>
+                            <Style TargetType="Grid">
+                                <Setter Property="Margin" Value="5"/>
+                                <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Window.Background}"></Setter>
+                            </Style>
+                        </Grid.Style>
+                        <Expander Header="Basic.cfg output" MaxHeight="400">
+                            <TextBox Text="{Binding Path=Profile.BasicCfg.BasicContent}" FontFamily="GenericMonospace" AcceptsTab="True" AcceptsReturn="True" IsManipulationEnabled="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"/>
+                        </Expander>
+                    </Grid>
+                </Grid>
+            </TabItem>
+        </TabControl>
+
+        <!-- Bottom Controls -->
+        <Label VerticalAlignment="Center" HorizontalAlignment="Left" Grid.Row="1" Content="{Binding Path=Profile.Name}" ToolTip="{Binding Path=Profile.Id}" FontWeight="Bold" FontSize="16" Margin="10">
+            <Label.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Tag="Open" Header="Open File Location" Click="OpenProfileLocation">
+                        <MenuItem.Icon>
+                            <iconPacks:PackIconModern Kind="Folder" Margin="5"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Tag="Delete" Header="Delete Profile" Click="DeleteProfile">
+                        <MenuItem.Icon>
+                            <iconPacks:PackIconModern Kind="Delete" Margin="5"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </ContextMenu>
+            </Label.ContextMenu>
+        </Label>
+        <StackPanel Grid.Row="1" HorizontalAlignment="Right" Margin="5,10" Orientation="Horizontal">
+            <Button Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Padding="7,5" ToolTip="Save Profile" Click="SaveProfile" Content="{iconPacks:Modern Kind=Save}"/>
+            <Button Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Padding="7,5" ToolTip="Launch Server" Click="LaunchServer" Content="{iconPacks:Modern Kind=ControlPlay}"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

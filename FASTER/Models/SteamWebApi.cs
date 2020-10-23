@@ -33,7 +33,7 @@ namespace FASTER.Models
         }
 
         // Get mod info for single mod
-        public static JObject GetSingleFileDetails(int modId)
+        public static JObject GetSingleFileDetails(uint modId)
         {
             try
             {

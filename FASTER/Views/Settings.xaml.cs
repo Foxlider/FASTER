@@ -21,6 +21,8 @@ namespace FASTER.Views
     /// </summary>
     public partial class Settings
     {
+        UpdateInfoEventArgs _args;
+
         public Settings()
         {
             InitializeComponent();
@@ -32,7 +34,7 @@ namespace FASTER.Views
         {
             try
             {
-                if (AutoUpdater.DownloadUpdate() && Application.Current.MainWindow != null)
+                if (AutoUpdater.DownloadUpdate(_args) && Application.Current.MainWindow != null)
                 { Application.Current.MainWindow.Close(); }
             }
             catch (Exception exception)
@@ -49,9 +51,10 @@ namespace FASTER.Views
         {
             if (args != null)
             {
+                _args = args;
                 if (args.IsUpdateAvailable)
                 {
-                    if (args.Mandatory)
+                    if (args.Mandatory.Value)
                     {
                         IUpdateText.Text = $"There is a new version ({args.CurrentVersion}) available. You are using version {args.InstalledVersion}. \nThis is a required update. Press Ok to begin the update.";
                         IUpdateBtnCancel.Visibility = Visibility.Hidden;
@@ -172,7 +175,7 @@ namespace FASTER.Views
         }
 
         private void IUpdateApp_OnClick(object sender, RoutedEventArgs e)
-        { AutoUpdater.Start("https://raw.githubusercontent.com/Foxlider/Fox-s-Arma-Server-Tool-Extended-Rewrite/master/FASTER_Version.xml"); }
+        { AutoUpdater.Start("https://raw.githubusercontent.com/Foxlider/FASTER/master/FASTER_Version.xml"); }
 
         private void APIKeyButton_Click(object sender, RoutedEventArgs e)
         { Functions.OpenBrowser("https://forums.bohemia.net/forums/topic/224359-foxs-arma-server-tool-extended-rewrite-faster/"); }

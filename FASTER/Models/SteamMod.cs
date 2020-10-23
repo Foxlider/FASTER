@@ -1,4 +1,4 @@
-﻿using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 
 using System;
@@ -73,7 +73,7 @@ namespace FASTER.Models
         private SteamMod()
         {}
 
-        public SteamMod(int workshopId, string name, string author, int steamLastUpdated, bool privateMod = false)
+        public SteamMod(uint workshopId, string name, string author, int steamLastUpdated, bool privateMod = false)
         {
             WorkshopId = workshopId;
             Name = name;
@@ -84,7 +84,7 @@ namespace FASTER.Models
             Task.Factory.StartNew(InitModSize);
         }
 
-        private static string GetModSize(int workshopId)
+        private static string GetModSize(uint workshopId)
         {
             var modFolder = Path.Combine(Properties.Settings.Default.steamCMDPath, "steamapps", "workshop", "content", "107410", workshopId.ToString());
             if (!Directory.Exists(modFolder)) return "Unknown";
@@ -100,7 +100,7 @@ namespace FASTER.Models
             }
             // Adjust the format string to your preferences. For example "{0:0.#}{1}" would
             // show a single decimal place, and no space.
-            return $"{fullSize:0.0#} {sizes[order]}";
+            return $"{fullSize,7:F} {sizes[order],-2}";
         }
 
         private void InitModSize()
@@ -108,11 +108,11 @@ namespace FASTER.Models
 
         static long GetDirectorySize(string p)
         {
-            string[] a = Directory.GetFiles(p, "*.*");
+            string[] a = Directory.GetFiles(p, "*.*", SearchOption.AllDirectories);
             return a.Select(name => new FileInfo(name)).Select(info => info.Length).Sum();
         }
 
-        public int WorkshopId { get; set; }
+        public uint WorkshopId { get; set; }
         public string Name { get; set; } = string.Empty;
         public string Author { get; set; } = string.Empty;
         public int SteamLastUpdated { get; set; }
@@ -121,7 +121,7 @@ namespace FASTER.Models
         public string Status { get; set; } = "Not Installed";
         public string Size { get; set; } = "Unknown";
 
-        public static void DeleteSteamMod(int workshopId)
+        public static void DeleteSteamMod(uint workshopId)
         {
             var currentMods = GetSteamMods();
 
@@ -142,15 +142,15 @@ namespace FASTER.Models
             return currentSteamMods;
         }
 
-        public static int SteamIdFromUrl(string modUrl)
+        public static uint SteamIdFromUrl(string modUrl)
         {
             var modId = modUrl.Substring(modUrl.IndexOf("id=", StringComparison.Ordinal));
             if (modId.Contains("&"))
                 // ReSharper disable once StringIndexOfIsCultureSpecific.1
                 modId = modId.Substring(0, modId.IndexOf("&"));
-            modId = int.Parse(Regex.Replace(modId, @"[^\d]", "")).ToString();
+            modId = uint.Parse(Regex.Replace(modId, @"[^\d]", "")).ToString();
 
-            return int.Parse(modId);
+            return uint.Parse(modId);
         }
 
         public static void AddSteamMod(string modUrl, bool multiple = false)
@@ -163,23 +163,21 @@ namespace FASTER.Models
                 { "Name", Properties.Settings.Default.steamUserName },
                 { "ModUrl", modUrl },
             });
-            int modId = 0;
+            uint modId = 0;
             var invalid = false;
 
-            if (int.TryParse(modUrl, out _))
-            { modId = int.Parse(modUrl);}
+            if (uint.TryParse(modUrl, out _))
+            { modId = uint.Parse(modUrl);}
             else if (modUrl.Contains("://steamcommunity.com/") && modUrl.Contains("/filedetails/?id="))
             { modId = SteamIdFromUrl(modUrl); }
             else { invalid = true; }
 
             if (!invalid) { AddMod(multiple, modId); }
             else
-            {
-                MainWindow.Instance.DisplayMessage("Please use format: https://steamcommunity.com/sharedfiles/filedetails/?id=*********");
-            }
+            { MainWindow.Instance.DisplayMessage("Please use format: https://steamcommunity.com/sharedfiles/filedetails/?id=*********"); }
         }
 
-        private static void AddMod(bool multiple, int modId)
+        private static void AddMod(bool multiple, uint modId)
         {
             var duplicate   = false;
             var currentMods = GetSteamMods();
@@ -221,7 +219,7 @@ namespace FASTER.Models
             }
         }
 
-        public static Tuple<string, string, int> GetModInfo(int modId)
+        public static Tuple<string, string, int> GetModInfo(uint modId)
         {
             var modInfo = SteamWebApi.GetSingleFileDetails(modId);
             string author = null;

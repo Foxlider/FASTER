@@ -12,7 +12,7 @@ namespace FASTER.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.4.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.6.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -107,16 +107,16 @@ namespace FASTER.Properties {
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        public global::FASTER.Models.ServerCollection Servers {
-            get {
-                return ((global::FASTER.Models.ServerCollection)(this["Servers"]));
-            }
-            set {
-                this["Servers"] = value;
-            }
-        }
+        //[global::System.Configuration.UserScopedSettingAttribute()]
+        //[global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        //public global::FASTER.Models.ServerCollectionOLD Servers {
+        //    get {
+        //        return ((global::FASTER.Models.ServerCollectionOLD)(this["Servers"]));
+        //    }
+        //    set {
+        //        this["Servers"] = value;
+        //    }
+        //}
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -208,6 +208,17 @@ namespace FASTER.Properties {
             }
             set {
                 this["SteamAPIKey"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::FASTER.Models.ServerProfileCollection Profiles {
+            get {
+                return ((global::FASTER.Models.ServerProfileCollection)(this["Profiles"]));
+            }
+            set {
+                this["Profiles"] = value;
             }
         }
     }

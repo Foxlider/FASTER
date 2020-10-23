@@ -21,7 +21,7 @@
                Welcome to FASTER - an unoffical Arma 3 server updater. Use the form below to setup a few options.
             </TextBlock>
             <TextBox x:Name="ISteamUserBox" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Steam Username" Margin="10"/>
-            <PasswordBox x:Name="ISteamPassBox" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Steam Password" Style="{StaticResource MahApps.Styles.PasswordBox.ButtonRevealed}" Margin="10"/>
+            <PasswordBox x:Name="ISteamPassBox" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Steam Password" Style="{StaticResource MahApps.Styles.PasswordBox.Button.Revealed}" Margin="10"/>
             <Separator Margin="10"/>
             <Grid Margin="5,10">
                 <Grid.ColumnDefinitions>
@@ -29,7 +29,7 @@
                     <ColumnDefinition Width="auto"/>
                 </Grid.ColumnDefinitions>
                 <TextBox x:Name="ISteamDirBox" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Steam Install Directory" Margin="5"/>
-                <Button Grid.Column="1" Name="ISteamDirButton" Content="{iconPacks:Modern Kind=Folder}" Style="{DynamicResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" VerticalAlignment="Stretch" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" Margin="5" Padding="0" Click="DirButton_Click"/>
+                <Button Grid.Column="1" Name="ISteamDirButton" Content="{iconPacks:Modern Kind=Folder}" Style="{DynamicResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" VerticalAlignment="Stretch" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" Margin="5" Padding="0" Click="DirButton_Click"/>
             </Grid>
             <Grid Margin="5,10">
                 <Grid.ColumnDefinitions>
@@ -37,13 +37,20 @@
                     <ColumnDefinition Width="auto"/>
                 </Grid.ColumnDefinitions>
                 <TextBox x:Name="IServerDirBox" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Arma Install Directory" Margin="5"/>
-                <Button Grid.Column="1" Name="IServerDirButton" Content="{iconPacks:Modern Kind=Folder}" Style="{DynamicResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" VerticalAlignment="Stretch" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" Margin="5" Padding="2" Click="DirButton_Click"/>
+                <Button Grid.Column="1" Name="IServerDirButton" Content="{iconPacks:Modern Kind=Folder}" Style="{DynamicResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" VerticalAlignment="Stretch" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" Margin="5" Padding="2" Click="DirButton_Click"/>
             </Grid>
             <Separator Margin="10"/>
         </StackPanel>
         <Grid HorizontalAlignment="Stretch" VerticalAlignment="Bottom">
-            <mah:ToggleSwitch Style="{StaticResource MahApps.Styles.ToggleSwitch.Win10}" Header="Install SteamCMD" Name="IInstallSteamCheck" IsChecked="False" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10"/>
-            <Button x:Name="IContinueButton" Content="Continue" Style="{StaticResource MahApps.Styles.Button.MetroAccentSquare}" BorderThickness="0" HorizontalAlignment="Right" Margin="10" VerticalAlignment="Bottom" Click="IContinueButton_Click" />
+            <mah:ToggleSwitch Style="{StaticResource MahApps.Styles.ToggleSwitch}" Header="Install SteamCMD" Name="IInstallSteamCheck" IsOn="False" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10"/>
+            <Button x:Name="IContinueButton" Content="Continue" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" HorizontalAlignment="Right" Margin="10" VerticalAlignment="Bottom" Click="IContinueButton_Click" />
+            <mah:Flyout x:Name="IFlyoutSetup" IsOpen="False" Position="Bottom" Theme="Dark" AutoCloseInterval="5000" IsAutoCloseEnabled="True" Opacity="0.8">
+                <mah:Flyout.Effect>
+                    <DropShadowEffect BlurRadius="10" RenderingBias="Performance" ShadowDepth="0"/>
+                </mah:Flyout.Effect>
+                <TextBlock Name="IFlyoutSetupMessage" HorizontalAlignment="Center"  VerticalAlignment="Center" TextWrapping="WrapWithOverflow" Text="TEXT" TextAlignment="Center"/>
+            </mah:Flyout>
         </Grid>
+        
     </StackPanel>
 </mah:MetroWindow>

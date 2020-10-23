@@ -8,6 +8,8 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
 using System.Windows;
+using Microsoft.AppCenter;
+using Microsoft.AppCenter.Crashes;
 
 namespace FASTER.Views
 {
@@ -19,8 +21,17 @@ namespace FASTER.Views
         public Setup()
         {
             InitializeComponent();
-            bool wasFirstRun = Properties.Settings.Default.firstRun;
+            bool wasFirstRun;
 
+            //Check if configuration can be read. Else, display error message and don't continue
+            try
+            { wasFirstRun = Properties.Settings.Default.firstRun; }
+            catch (Exception)
+            {
+                DisplaySetupMessage("Could not read your configuration file. Check file before continuing");
+                return;
+            }
+            
             if (wasFirstRun)
             {
                 Properties.Settings.Default.Upgrade();
@@ -50,11 +61,14 @@ namespace FASTER.Views
             }
 
             ISteamUserBox.Text = Properties.Settings.Default.steamUserName;
+            var installId = AppCenter.GetInstallIdAsync().Result;
+            AppCenter.SetUserId($"{installId}_{Properties.Settings.Default.steamUserName}");
             ISteamPassBox.Password = Encryption.Instance.DecryptData(Properties.Settings.Default.steamPassword);
             ISteamDirBox.Text = Properties.Settings.Default.steamCMDPath;
             IServerDirBox.Text = Properties.Settings.Default.serverPath;
 
-            if (wasFirstRun) return;
+            //Do not skip to mainwindow if it was FirstRun
+            if (wasFirstRun ) return;
 
             try
             {
@@ -85,12 +99,20 @@ namespace FASTER.Views
             }
             catch (Exception e)
             {
+                Crashes.TrackError(e, new Dictionary<string, string> { {"Message", $"Could not start FASTER: \n[{ e.GetType()}] { e.Message}\n\n{ e.StackTrace}"}});
                 using EventLog eventLog = new EventLog("Application")
                 { Source = "FASTER" };
                 eventLog.WriteEntry($"Could not start FASTER : \n[{e.GetType()}] {e.Message}\n\n{e.StackTrace}", EventLogEntryType.Error);
             }
 
             Close();
+        }
+
+        //Display Error messages
+        public void DisplaySetupMessage(string message)
+        {
+            IFlyoutSetupMessage.Text = message;
+            IFlyoutSetup.IsOpen = true;
         }
 
         // Opens folder select dialog when clicking certain buttons
@@ -118,10 +140,14 @@ namespace FASTER.Views
             settings.firstRun = false;
             settings.Save();
 
-            if (IInstallSteamCheck.IsChecked != null && (bool)IInstallSteamCheck.IsChecked)
+            if (IInstallSteamCheck.IsOn)
             { MainWindow.Instance.InstallSteamCmd = true; }
 
-            MainWindow.Instance.Show();
+            try
+            { MainWindow.Instance.Show(); }
+            catch (Exception exception)
+            { Crashes.TrackError(exception); }
+            
             Close();
         }
     }
