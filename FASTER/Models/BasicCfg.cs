@@ -217,7 +217,7 @@ namespace FASTER.Models
                           + $"MinErrorToSend = {minErrorToSend.ToString(CultureInfo.InvariantCulture)};\t\t\t// Minimal error to send updates across network. Using a smaller value can make units observed by binoculars or sniper rifle to move smoother. Default: 0.001\r\n"
                           + $"MinErrorToSendNear = {minErrorToSendNear.ToString(CultureInfo.InvariantCulture)};\t\t// Minimal error to send updates across network for near units. Using larger value can reduce traffic sent for near units. Used to control client to server traffic as well. Default: 0.01\r\n"
                           + "\r\n"
-                          + $"MaxCustomFileSize = {maxCustomFileSize};\t\t\t// (bytes) Users with custom face or custom sound larger than this size are kicked when trying to connect.\r\n" 
+                          + $"MaxCustomFileSize = {maxCustomFileSize * 1000};\t\t\t// (bytes) Users with custom face or custom sound larger than this size are kicked when trying to connect.\r\n" 
                           + $"class sockets{{ maxPacketSize = {maxPacketSize};}};";
             return output;
         }
