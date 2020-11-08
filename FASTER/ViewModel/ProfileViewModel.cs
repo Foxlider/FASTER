@@ -389,7 +389,7 @@ namespace FASTER.ViewModel
                         continue;
                     try
                     {
-                        File.Delete(keyFile);
+                        await Task.Run(() => File.Delete(keyFile));
                     }
                     catch (Exception)
                     {
@@ -399,8 +399,7 @@ namespace FASTER.ViewModel
                 }
             }
         }
-
-
+        
         public ObservableCollection<string> LimitedDistanceStrings { get; } = new ObservableCollection<string>(ProfileCfgArrays.LimitedDistanceStrings);
         public ObservableCollection<string> AiPresetStrings        { get; } = new ObservableCollection<string>(ProfileCfgArrays.AiPresetStrings);
         public ObservableCollection<string> ThirdPersonStrings     { get; } = new ObservableCollection<string>(ProfileCfgArrays.ThirdPersonStrings);
