@@ -1,4 +1,5 @@
-﻿using FASTER.ViewModel;
+using System;
+using FASTER.ViewModel;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -12,6 +13,12 @@ namespace FASTER.Views
         public Profile()
         {
             InitializeComponent();
+            this.Dispatcher.ShutdownStarted += DispatcherOnShutdownStarted;
+        }
+
+        private void DispatcherOnShutdownStarted(object sender, EventArgs e)
+        {
+            ((ProfileViewModel) DataContext)?.UnloadData();
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)

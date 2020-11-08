@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Globalization;
+using System.Xml.Serialization;
 
 namespace FASTER.Models
 {
@@ -148,6 +149,7 @@ namespace FASTER.Models
             }
         }
 
+        [XmlIgnore]
         public string PerfPreset
         {
             get => "Custom";
