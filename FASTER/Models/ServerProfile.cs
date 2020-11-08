@@ -287,12 +287,13 @@ namespace FASTER.Models
     [Serializable]
     public class ProfileMod : INotifyPropertyChanged
     {
-        private bool serverSideChecked;
-        private bool clientSideChecked;
-        private bool headlessChecked;
-        private bool isLocal;
-        private uint _id;
-        private string name;
+        private bool    serverSideChecked;
+        private bool    clientSideChecked;
+        private bool    headlessChecked;
+        private ushort? loadPriority;
+        private bool    isLocal;
+        private uint    _id;
+        private string  name;
 
         public bool ServerSideChecked
         {
@@ -325,6 +326,16 @@ namespace FASTER.Models
             }
         }
 
+        public ushort? LoadPriority
+        {
+            get => loadPriority;
+            set
+            {
+                loadPriority = value;
+                RaisePropertyChanged("LoadPriority");
+            }
+        }
+
         public uint Id
         {
             get => _id;
@@ -353,6 +364,9 @@ namespace FASTER.Models
                 RaisePropertyChanged("IsLocal");
             }
         }
+
+        public override string ToString()
+        { return $"{_id} {name}"; }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
