@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using FASTER.ViewModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -36,6 +36,11 @@ namespace FASTER.Views
         internal void Refresh()
         {
             ((ProfileViewModel) DataContext)?.LoadData();
+        }
+
+        private void ClearModOrder(object sender, RoutedEventArgs e)
+        {
+            ( (ProfileViewModel) DataContext )?.ClearModOrder();
         }
 
         private void CopyFromClient(object sender, RoutedEventArgs e)

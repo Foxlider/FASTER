@@ -515,6 +515,12 @@ namespace FASTER.ViewModel
             Profile.ServerCfg.Missions = missionList;
         }
 
+        internal void ClearModOrder()
+        {
+            foreach (ProfileMod mod in Profile.ProfileMods)
+            { mod.LoadPriority = null; }
+        }
+
         internal void ModsCopyFrom(object to, string from)
         {
             foreach (var mod in Profile.ProfileMods)
