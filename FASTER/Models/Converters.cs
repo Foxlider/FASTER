@@ -36,12 +36,11 @@ namespace FASTER.Models
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             bool? isVisible = value as bool?;
-            if (parameter != null && isVisible.HasValue)
+            if (parameter != null)
                 isVisible = !isVisible;
             if (isVisible.HasValue && isVisible.Value)
                 return Visibility.Collapsed;
-            else
-                return Visibility.Visible;
+            return Visibility.Visible;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)

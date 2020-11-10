@@ -107,17 +107,6 @@ namespace FASTER.Properties {
             }
         }
         
-        //[global::System.Configuration.UserScopedSettingAttribute()]
-        //[global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        //public global::FASTER.Models.ServerCollectionOLD Servers {
-        //    get {
-        //        return ((global::FASTER.Models.ServerCollectionOLD)(this["Servers"]));
-        //    }
-        //    set {
-        //        this["Servers"] = value;
-        //    }
-        //}
-        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]

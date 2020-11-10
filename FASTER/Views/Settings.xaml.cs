@@ -124,8 +124,7 @@ namespace FASTER.Views
 
             if (!string.IsNullOrEmpty(newModFolder))
             {
-                if (Properties.Settings.Default.localModFolders == null)
-                { Properties.Settings.Default.localModFolders = new List<string>(); }
+                Properties.Settings.Default.localModFolders ??= new List<string>();
 
                 Properties.Settings.Default.localModFolders.Add(newModFolder);
                 Properties.Settings.Default.Save();

@@ -194,7 +194,7 @@ namespace FASTER_Maintenance
                     ServerCollection collec = ser.Deserialize(stm) as ServerCollection;
                     Console.WriteLine("\tExtracted profiles");
 
-                    var newProfiles = new List<FASTER.Models.ServerProfile>();
+                    var newProfiles = new List<ServerProfile>();
                     Debug.Assert(collec != null, nameof(collec) + " != null");
                     foreach (var profile in collec.ServerProfile)
                     {

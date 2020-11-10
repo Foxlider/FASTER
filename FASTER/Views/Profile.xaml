@@ -7,7 +7,6 @@
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls" 
              xmlns:models="clr-namespace:FASTER.Models"
-             xmlns:system="clr-namespace:System;assembly=System.Runtime"
              mc:Ignorable="d"
              Loaded="UserControl_Loaded"
              Unloaded="UserControl_Unloaded"
@@ -231,33 +230,33 @@
                                     <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="auto" CanUserSort="True" IsReadOnly="True"/>
                                     <DataGridTemplateColumn Header="Load" SortMemberPath="LoadPriority" Width="auto" IsReadOnly="False">
                                         <DataGridTemplateColumn.CellEditingTemplate>
-                                            <DataTemplate>
+                                            <DataTemplate DataType="models:ProfileMod">
                                                 <mah:NumericUpDown Value="{Binding LoadPriority, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HideUpDownButtons="True" Minimum="1" Maximum="65535" HorizontalAlignment="Center" />
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellEditingTemplate>
                                         <DataGridTemplateColumn.CellTemplate>
-                                            <DataTemplate>
+                                            <DataTemplate DataType="models:ProfileMod">
                                                 <Label Content="{Binding LoadPriority, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center" />
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
                                     </DataGridTemplateColumn>
                                     <DataGridTemplateColumn Header="Server" Width="auto">
                                         <DataGridTemplateColumn.CellTemplate>
-                                            <DataTemplate>
+                                            <DataTemplate DataType="models:ProfileMod">
                                                 <CheckBox IsChecked="{Binding ServerSideChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center"/>
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
                                     </DataGridTemplateColumn>
                                     <DataGridTemplateColumn Header="Client" Width="auto">
                                         <DataGridTemplateColumn.CellTemplate>
-                                            <DataTemplate>
+                                            <DataTemplate DataType="models:ProfileMod">
                                                 <CheckBox IsChecked="{Binding ClientSideChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center"/>
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
                                     </DataGridTemplateColumn>
                                     <DataGridTemplateColumn Header="Headless" Width="auto">
                                         <DataGridTemplateColumn.CellTemplate>
-                                            <DataTemplate>
+                                            <DataTemplate DataType="models:ProfileMod">
                                                 <CheckBox IsChecked="{Binding HeadlessChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center"/>
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
@@ -331,7 +330,7 @@
                                 <DataGrid.Columns>
                                     <DataGridTemplateColumn Header="Mission" Width="auto">
                                         <DataGridTemplateColumn.CellTemplate>
-                                            <DataTemplate>
+                                            <DataTemplate DataType="models:ProfileMission">
                                                 <CheckBox IsChecked="{Binding MissionChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center"/>
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
