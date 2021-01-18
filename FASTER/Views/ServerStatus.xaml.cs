@@ -273,9 +273,7 @@ namespace FASTER.Views
 
             token = new CancellationToken();
             var r = new Random();
-            var col = ThemeManager.Current.ColorSchemes[r.Next(0, ThemeManager.Current.ColorSchemes.Count)];
-            ColorConverter converter = new ColorConverter();
-            Color color     = (Color)converter.ConvertFromInvariantString(col);
+            var color = ThemeManager.Current.Themes[r.Next(0, ThemeManager.Current.Themes.Count)].PrimaryAccentColor;
             Color = new SolidColorBrush(color);
 
             //Create mapper for CPU Graph
