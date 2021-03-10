@@ -42,11 +42,19 @@ namespace FASTER
             set => _steamUpdater = value;
         }
 
-        SteamMods _steamMods;
-        public SteamMods ContentSteamMods
+
+        private Mods  _steamMods;
+        public Mods ContentSteamMods
         {
-            get => _steamMods ??= new SteamMods();
+            get => _steamMods ??= new Mods();
             set => _steamMods = value;
+        }
+
+        ModsViewModel _modsVM;
+        public ModsViewModel ModsViewModel
+        {
+            get => _modsVM ??= new ModsViewModel();
+            set => _modsVM = value;
         }
 
         LocalMods _localMods;
@@ -161,6 +169,7 @@ namespace FASTER
                     MainContent.Navigate(ContentSteamUpdater);
                     break;
                 case "navSteamMods":
+                    ContentSteamMods.DataContext = ModsViewModel;
                     MainContent.Navigate(ContentSteamMods);
                     break;
                 case "navLocalMods":

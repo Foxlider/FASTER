@@ -141,6 +141,14 @@ namespace FASTER.Properties {
                 this["steamMods"] = value;
             }
         }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::FASTER.Models.ArmaModCollection armaMods
+        {
+            get { return ( (global::FASTER.Models.ArmaModCollection) ( this["armaMods"] ) ); }
+            set { this["armaMods"] = value; }
+        }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]

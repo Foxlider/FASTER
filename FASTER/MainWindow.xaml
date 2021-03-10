@@ -85,7 +85,8 @@
                 <StackPanel.Effect>
                     <DropShadowEffect BlurRadius="5" RenderingBias="Performance" ShadowDepth="0"/>
                 </StackPanel.Effect>
-                <ListBoxItem Margin="2,5" Style="{StaticResource MahApps.Styles.ListBoxItem.HamburgerMenuSeparator}"/>
+                <Separator />
+                <!--<ListBoxItem Margin="2,5" Style="{StaticResource MahApps.Styles.ListBoxItem.HamburgerMenuSeparator}"/>-->
                 <DockPanel>
                     <Label Content="Server Profiles" DockPanel.Dock="Left" Margin="10,5" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center" FontStyle="Italic"/>
                     <Button HorizontalAlignment="Right" Margin="10,0" Click="INewServerProfileButton_Click" Content="{iconPacks:Modern Kind=Add}" Name="INewServerProfileButton" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Height="25" Width="25" VerticalAlignment="Center" Padding="0"/>
@@ -115,7 +116,8 @@
                 <StackPanel.Effect>
                     <DropShadowEffect BlurRadius="5" RenderingBias="Performance" ShadowDepth="0"/>
                 </StackPanel.Effect>
-                <ListBoxItem Margin="2,5" Style="{StaticResource MahApps.Styles.ListBoxItem.HamburgerMenuSeparator}"/>
+                <Separator/>
+                <!--<ListBoxItem Margin="2,5" Style="{StaticResource MahApps.Styles.ListBoxItem.HamburgerMenuSeparator}"/>-->
                 <Label Content="Other" Margin="10,5" FontWeight="Bold" FontStyle="Italic" />
                 <ListBox Name="IOtherMenuItems" HorizontalAlignment="Stretch" Margin="0,1">
                     <ToggleButton Name="navSettings" Style="{StaticResource MahApps.Styles.ToggleButton.WindowCommands}" Click="ToggleButton_Click">

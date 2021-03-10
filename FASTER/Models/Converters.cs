@@ -1,31 +1,48 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics.Eventing.Reader;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
 namespace FASTER.Models
 {
-    [ValueConversion(typeof(bool), typeof(bool))]
-    public class InverseBooleanConverter : IValueConverter
+    [ValueConversion(typeof(long), typeof(string))]
+    public class FolderSizeConverter : IValueConverter
     {
         #region IValueConverter Members
 
         public object Convert(object value, Type targetType, object parameter,
             System.Globalization.CultureInfo culture)
         {
-            if (targetType != typeof(bool))
-                throw new InvalidOperationException("The target must be a boolean");
+            if (value is long size)
+            {
+                double   fullSize = size;
+                string[] sizes    = {" B", "KB", "MB", "GB", "TB"};
+                var      order    = 0;
+                while (fullSize >= 1024 && order < sizes.Length - 1)
+                {
+                    order++;
+                    fullSize /= 1024.0;
+                }
 
-            return value != null && !(bool)value;
+                // Adjust the format string to your preferences. For example "{0:0.#}{1}" would
+                // show a single decimal place, and no space.
+                return $"{fullSize,7:F} {sizes[order],-2}";
+            }
+            else
+            {
+                Console.WriteLine("WAT");
+            }
+
+            return "0 B";
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter,
-            System.Globalization.CultureInfo culture)
-        {
-            throw new NotSupportedException();
-        }
+        public object ConvertBack(object                           value, Type targetType, object parameter,
+                                  System.Globalization.CultureInfo culture)
+        { return null; }
 
-        #endregion
+    #endregion
     }
 
 
@@ -33,7 +50,7 @@ namespace FASTER.Models
     {
         #region IValueConverter Members
 
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             bool? isVisible = value as bool?;
             if (parameter != null)
@@ -43,7 +60,7 @@ namespace FASTER.Models
             return Visibility.Visible;
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
         }
