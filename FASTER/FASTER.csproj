@@ -43,6 +43,7 @@
   <ItemGroup>
     <PackageReference Include="Autoupdater.NET.Official" Version="1.6.4" />
     <PackageReference Include="AvalonStudio.winpty.NET" Version="0.4.6" />
+    <PackageReference Include="FontAwesome.WPF" Version="4.5.0.8" />
     <PackageReference Include="LiveCharts.Wpf" Version="0.9.7" />
     <PackageReference Include="MahApps.Metro" Version="2.4.4" />
     <PackageReference Include="MahApps.Metro.IconPacks.Material" Version="4.8.0" />

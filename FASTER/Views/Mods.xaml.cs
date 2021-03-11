@@ -1,18 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using FASTER.Models;
+using FASTER.ViewModel;
+
+using System;
+using System.Diagnostics;
+using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using FASTER.ViewModel;
 
 namespace FASTER.Views
 {
@@ -44,49 +37,61 @@ namespace FASTER.Views
 
         public MainWindow MetroWindow => (MainWindow) Window.GetWindow(this);
 
-        private void UpdateMod(object sender, RoutedEventArgs e)
+        private async void UpdateMod(object sender, RoutedEventArgs e)
         {
-            throw new NotImplementedException();
+            var mod = ((FrameworkElement) sender).DataContext as ArmaMod;
+            if (mod == null)
+                return;
+            
+            await Task.Run(() => mod.UpdateMod());
         }
 
         private void DeleteMod(object sender, RoutedEventArgs e)
         {
-            throw new NotImplementedException();
+            var mod = ((FrameworkElement) sender).DataContext as ArmaMod;
+            ((ModsViewModel) DataContext)?.DeleteMod(mod);
         }
 
         private void OpenModPage(object sender, RoutedEventArgs e)
         {
-            throw new NotImplementedException();
+            var mod = ((FrameworkElement) sender).DataContext as ArmaMod;
+            ((ModsViewModel) DataContext)?.OpenModPage(mod);
+        }
+
+        private void OpenModFolder(object sender, RoutedEventArgs e)
+        {
+            var mod = ((FrameworkElement) sender).DataContext as ArmaMod;
+            ((ModsViewModel) DataContext)?.OpenModFolder(mod);
         }
 
         private void AddSteamMod_Click(object sender, RoutedEventArgs e)
         {
-            ( (ModsViewModel) DataContext )?.AddSteamMod();
+            ((ModsViewModel) DataContext)?.AddSteamMod();
         }
 
         private void AddLocalMod_Click(object sender, RoutedEventArgs e)
         {
-            ( (ModsViewModel) DataContext )?.AddLocalMod();
+            ((ModsViewModel) DataContext)?.AddLocalMod();
         }
 
-        private void ImportLauncherFile_Click(object sender, RoutedEventArgs e)
+        private async void ImportLauncherFile_Click(object sender, RoutedEventArgs e)
         {
-            throw new NotImplementedException();
+            await ((ModsViewModel)DataContext)?.OpenLauncherFile();
         }
 
         private void CheckForUpdates_Click(object sender, RoutedEventArgs e)
         {
-            throw new NotImplementedException();
+            ((ModsViewModel) DataContext)?.CheckForUpdates();
         }
 
         private void UpdateAll_Click(object sender, RoutedEventArgs e)
         {
-            throw new NotImplementedException();
+            ((ModsViewModel) DataContext)?.UpdateAll();
         }
 
         private void ScanSteam_Click(object sender, RoutedEventArgs e)
         {
-            throw new NotImplementedException();
+            ((ModsViewModel) DataContext)?.ImportFromSteam();
         }
     }
 }

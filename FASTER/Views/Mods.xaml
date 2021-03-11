@@ -6,6 +6,8 @@
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              xmlns:viewModel="clr-namespace:FASTER.ViewModel"
              xmlns:models="clr-namespace:FASTER.Models"
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:fa="http://schemas.fontawesome.io/icons/"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.DataContext>
@@ -68,14 +70,14 @@
                 <DropShadowEffect BlurRadius="5" RenderingBias="Performance" ShadowDepth="1"/>
             </DataGrid.Effect>
             <DataGrid.Columns>
-                <DataGridTemplateColumn CanUserResize="False" SortMemberPath="LocalMod" CanUserSort="True">
+                <DataGridTemplateColumn CanUserResize="False" SortMemberPath="IsLocal" CanUserSort="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Grid>
-                                <Grid Visibility="{Binding Path=LocalMod, Converter={StaticResource BoolToVis}}">
+                                <Grid Visibility="{Binding Path=IsLocal, Converter={StaticResource BoolToVis}}">
                                     <iconPacks:Material  Kind="Folder"></iconPacks:Material>
                                 </Grid>
-                                <Grid Visibility="{Binding Path=LocalMod, Converter={StaticResource BoolToHide}}">
+                                <Grid Visibility="{Binding Path=IsLocal, Converter={StaticResource BoolToHide}}">
                                     <iconPacks:Material Kind="Steam"></iconPacks:Material>
                                 </Grid>
                             </Grid>
@@ -89,7 +91,12 @@
                 <DataGridTemplateColumn Header="Update" CanUserSort="False" CanUserResize="False">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Height="25" Width="25" Padding="0" Click="UpdateMod" Content="{iconPacks:Material Kind=Update}"  Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" HorizontalAlignment="Center"/>
+                            <Grid>
+                                <Button Height="25" Width="25" Padding="0" Click="UpdateMod" Content="{iconPacks:Material Kind=Update}"  Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}"
+                                        Visibility="{Binding Path=IsLoading, Converter={StaticResource BoolToHide}}"
+                                        BorderThickness="0" HorizontalAlignment="Center"/>
+                                <fa:ImageAwesome Height="20" Width="20" Margin="2.5" Icon="CircleOutlineNotch" Spin="{Binding IsLoading}" Foreground="White" Visibility="{Binding Path=IsLoading, Converter={StaticResource BoolToVis}}" />
+                            </Grid>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -103,7 +110,23 @@
                 <DataGridTemplateColumn Header="Info" CanUserSort="False" CanUserResize="False">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Height="25" Width="25" Padding="0" Click="OpenModPage" Content="{iconPacks:Material Kind=Web}" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" HorizontalAlignment="Center"/>
+                            <StackPanel Orientation="Horizontal">
+                                <Button Height="25" Width="25" Margin="1" Padding="0" Click="OpenModPage" 
+                                        Content="{iconPacks:Material Kind=Web}" 
+                                        Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" 
+                                        BorderThickness="0" HorizontalAlignment="Center"
+                                        Visibility="{Binding Path=IsLocal, Converter={StaticResource BoolToHide}}" />
+                                <Button Height="25" Width="25" Padding="0" Margin="1" Click="OpenModFolder"
+                                        Content="{iconPacks:Material Kind=FolderOpen}"
+                                        Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}"
+                                        BorderThickness="0" HorizontalAlignment="Center"
+                                        Visibility="{Binding Path=IsLocal, Converter={StaticResource BoolToHide}}" />
+                                <Button Height="25" Width="52" Padding="0" Margin="1,1" Click="OpenModFolder"
+                                        Content="{iconPacks:Material Kind=FolderOpen}"
+                                        Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}"
+                                        BorderThickness="0" HorizontalAlignment="Center"
+                                        Visibility="{Binding Path=IsLocal, Converter={StaticResource BoolToVis}}" />
+                            </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>

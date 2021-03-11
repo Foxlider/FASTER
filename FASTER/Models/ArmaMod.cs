@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
@@ -73,25 +74,25 @@ namespace FASTER.Models
 
         public event PropertyChangedEventHandler PropertyChanged;
         private void RaisePropertyChanged(string property)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
-        }
+        { PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property)); }
     }
 
     
-    [Serializable] public class ArmaMod : INotifyPropertyChanged
+    [Serializable] 
+    public class ArmaMod : INotifyPropertyChanged
     {
 
         private uint   _workshopId;
         private string _name   = string.Empty;
         private string _author = string.Empty;
         private string _path;
-        private int    _steamLastUpdated;
-        private int    _localLastUpdated;
+        private ulong  _steamLastUpdated;
+        private ulong  _localLastUpdated;
         private bool   _privateMod;
-        private bool   _localMod;
+        private bool   _isLocal;
         private string _status = "Not Installed";
         private long   _size   = 0;
+        private bool   _isLoading;
 
 
 
@@ -133,7 +134,7 @@ namespace FASTER.Models
                 RaisePropertyChanged("Path");
             }
         }
-        public int    SteamLastUpdated
+        public ulong SteamLastUpdated
         {
             get => _steamLastUpdated;
             set
@@ -142,7 +143,7 @@ namespace FASTER.Models
                 RaisePropertyChanged("SteamLasttUpdated");
             }
         }
-        public int    LocalLastUpdated
+        public ulong  LocalLastUpdated
         {
             get => _localLastUpdated;
             set
@@ -160,13 +161,13 @@ namespace FASTER.Models
                 RaisePropertyChanged("PrivateMod");
             }
         }
-        public bool   LocalMod
+        public bool   IsLocal
         {
-            get => _localMod;
+            get => _isLocal;
             set
             {
-                _localMod = value;
-                RaisePropertyChanged("LocalMod");
+                _isLocal = value;
+                RaisePropertyChanged("IsLocal");
             }
         }
         public string Status
@@ -188,24 +189,127 @@ namespace FASTER.Models
             }
         }
 
-        public ArmaMod()
-        {}
+        public bool IsLoading
+        {
+            get => _isLoading;
+            set
+            {
+                _isLoading = value;
+                RaisePropertyChanged("IsLoading");
+            }
+        }
+
+
+
 
         internal void CheckModSize()
         {
-            if (!Directory.Exists(Path)) Size = 0;
+            IsLoading = true;
+
+            if (!Directory.Exists(Path))
+            {
+                Size      = 0;
+                IsLoading = false;
+                return;
+            }
             
             var ChildProcess = Task.Factory.StartNew(() => GetDirectorySize(Path));
-            Size = ChildProcess.Result;
+            Size      = ChildProcess.Result;
+            IsLoading = false;
         }
 
-        internal void UpdateInfos()
-        {
-
-        }
 
         internal void UpdateMod()
-        {}
+        {
+            if (IsLocal)
+            {
+                Status = ArmaModStatus.Local;
+                CheckModSize();
+                IsLoading = false;
+                return;
+            }
+
+            UpdateInfos(false);
+            
+            IsLoading = true;
+
+            //update code here
+            System.Threading.Thread.Sleep(5000);
+
+            CheckModSize();
+
+            IsLoading = false;
+        }
+
+
+        internal void UpdateInfos(bool checkFileSize = true)
+        {
+            IsLoading = true;
+
+            if (IsLocal)
+            {
+                Status = ArmaModStatus.Local;
+                if(checkFileSize)
+                    CheckModSize();
+                IsLoading = false;
+                return;
+            }
+
+            
+            int  failNum = 0;
+            bool success = false;
+            do
+            {
+                var modInfo = SteamWebApi.GetSingleFileDetails(WorkshopId);
+                
+                if (modInfo == null)
+                {
+                    failNum++;
+                    continue;
+                }
+
+                var modDetails = modInfo.ToObject<SteamApiFileDetails>();
+
+                if (modDetails == null || modDetails.result != 1)
+                {
+                    failNum++;
+                    continue;
+                }
+
+                try
+                {
+                    var creatorDetails = SteamWebApi.GetPlayerSummaries(modDetails.creator.ToString()).ToObject<SteamApiPlayerInfo>();
+                    Author = creatorDetails == null ? "Unknown" : creatorDetails.personaname;
+                }
+                catch
+                { Author = "Unknown"; }
+
+                SteamLastUpdated = modDetails.time_updated;
+                Name             = modDetails.title;
+
+                if (SteamLastUpdated > LocalLastUpdated && Status != ArmaModStatus.NotComplete)
+                    Status = ArmaModStatus.UpdateRequired;
+                else if (Status != ArmaModStatus.NotComplete)
+                    Status = ArmaModStatus.UpToDate;
+                success = true;
+            } while (failNum < 3 && !success);
+            
+            if(checkFileSize)
+                CheckModSize();
+
+            IsLoading        = false;
+        }
+
+        internal bool IsOnWorkshop()
+        {
+            try
+            {
+                var infos = SteamWebApi.GetSingleFileDetails(WorkshopId).ToObject<SteamApiFileDetails>();
+                return infos?.result == 1;
+            }
+            catch
+            { return false; }
+        }
 
 
         private static long GetDirectorySize(string p)
@@ -220,5 +324,13 @@ namespace FASTER.Models
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
         }
+    }
+
+    public class ArmaModStatus
+    {
+        public static string NotComplete    => "Download Not Complete";
+        public static string UpToDate       => "Up To Date";
+        public static string UpdateRequired => "Update Required";
+        public static string Local          => "Local Mod";
     }
 }
