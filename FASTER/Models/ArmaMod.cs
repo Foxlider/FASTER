@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Xml.Serialization;
 
 namespace FASTER.Models
@@ -234,7 +235,8 @@ namespace FASTER.Models
             IsLoading = true;
 
             //update code here
-            System.Threading.Thread.Sleep(5000);
+            //System.Threading.Thread.Sleep(5000);
+            //TODO Update system
 
             CheckModSize();
 

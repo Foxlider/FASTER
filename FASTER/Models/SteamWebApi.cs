@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Windows;
+using BytexDigital.Steam.Core;
 
 namespace FASTER.Models
 {
@@ -107,6 +108,31 @@ namespace FASTER.Models
             return !string.IsNullOrEmpty(Properties.Settings.Default.SteamAPIKey) 
                 ? Properties.Settings.Default.SteamAPIKey 
                 : StaticData.SteamApiKey;
+        }
+    }
+
+    internal class AuthCodeProvider : SteamAuthenticationCodesProvider
+    {
+        public override string GetEmailAuthenticationCode(SteamCredentials steamCredentials)
+        {
+            Console.Write("Please enter your email auth code: ");
+
+            string input = Console.ReadLine();
+
+            Console.Write("Retrying... ");
+
+            return input;
+        }
+
+        public override string GetTwoFactorAuthenticationCode(SteamCredentials steamCredentials)
+        {
+            Console.Write("Please enter your 2FA code: ");
+
+            string input = Console.ReadLine();
+
+            Console.Write("Retrying... ");
+
+            return input;
         }
     }
 

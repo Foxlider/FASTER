@@ -251,7 +251,7 @@ namespace FASTER.Views
 
         private async Task UpdateAllModsAsync()
         {
-            if (MetroWindow.ContentSteamUpdater.ReadyToUpdate())
+            if (true)
             {
                 var modsToUpdate = new List<string>();
 
@@ -263,13 +263,13 @@ namespace FASTER.Views
 
                 if (modsToUpdate.Count > 0)
                 {
-                    string steamCommand = "+login " + MetroWindow.ContentSteamUpdater.ISteamUserBox.Text + " " + Encryption.Instance.DecryptData(Properties.Settings.Default.steamPassword);
+                    string steamCommand = "+login " + MetroWindow.SteamUpdaterViewModel.Parameters.Username + " " + Encryption.Instance.DecryptData(Properties.Settings.Default.steamPassword);
 
                     steamCommand = modsToUpdate.Aggregate(steamCommand, (current, steamMod) => $"{current} +workshop_download_item 107410 {steamMod}");
 
-                    string steamCmd = MetroWindow.ContentSteamUpdater.ISteamDirBox.Text + @"\steamcmd.exe";
+                    string steamCmd = MetroWindow.SteamUpdaterViewModel.Parameters.InstallDirectory + @"\steamcmd.exe";
                     steamCommand += " validate +quit";
-                    _ = MetroWindow.ContentSteamUpdater.RunSteamCommand(steamCmd, steamCommand, "addon", modsToUpdate);
+                    //_ = MetroWindow.ContentSteamUpdater.RunSteamCommand(steamCmd, steamCommand, "addon", modsToUpdate);
                 }
                 else
                 { MetroWindow.DisplayMessage("No Mods to Update"); }
@@ -290,7 +290,7 @@ namespace FASTER.Views
 
         private async Task UpdateMod(uint modId, string modName, bool singleMod = true)
         {
-            if (MetroWindow.ContentSteamUpdater.ReadyToUpdate())
+            if (true)
             {
                 string modPath = Path.Combine(Properties.Settings.Default.steamCMDPath, "steamapps", "workshop", "content", "107410", modId.ToString());
 
@@ -318,15 +318,17 @@ namespace FASTER.Views
 
                 if (!singleMod) return;
 
-                string steamCmd     = MetroWindow.ContentSteamUpdater.ISteamDirBox.Text                                                                                                              + @"\steamcmd.exe";
-                string steamCommand = "+login " + MetroWindow.ContentSteamUpdater.ISteamUserBox.Text + " " + Encryption.Instance.DecryptData(Properties.Settings.Default.steamPassword) + " +workshop_download_item 107410 " + modId + " validate +quit";
+                string steamCmd     = MetroWindow.SteamUpdaterViewModel.Parameters.InstallDirectory + @"\steamcmd.exe";
+                string steamCommand = "+login " + MetroWindow.SteamUpdaterViewModel.Parameters.Username + " " + Encryption.Instance.DecryptData(Properties.Settings.Default.steamPassword) + " +workshop_download_item 107410 " + modId + " validate +quit";
 
                 List<string> modIDs = new List<string>
                 { modId.ToString() };
 
                 MetroWindow.NavigateToConsole();
                 try
-                { await MetroWindow.ContentSteamUpdater.RunSteamCommand(steamCmd, steamCommand, "addon", modIDs); }
+                { 
+                    //await MetroWindow.ContentSteamUpdater.RunSteamCommand(steamCmd, steamCommand, "addon", modIDs);
+                }
                 catch (Exception e)
                 { MetroWindow.DisplayMessage($"An error occured : {e.Message}"); }
             }

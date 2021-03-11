@@ -35,11 +35,17 @@ namespace FASTER
         private static MainWindow _instance;
         public static MainWindow Instance => _instance ??= new MainWindow();
 
-        SteamUpdater _steamUpdater;
-        public SteamUpdater ContentSteamUpdater
+        private SteamUpdaterViewModel _steamUpdaterVM;
+        Updater                       _steamUpdater;
+        public Updater ContentSteamUpdater
         {
-            get => _steamUpdater ??= new SteamUpdater();
+            get => _steamUpdater ??= new Updater();
             set => _steamUpdater = value;
+        }
+        public SteamUpdaterViewModel SteamUpdaterViewModel
+        {
+            get => _steamUpdaterVM ??= new SteamUpdaterViewModel();
+            set => _steamUpdaterVM = value;
         }
 
 
@@ -166,7 +172,9 @@ namespace FASTER
             switch (nav.Name)
             {
                 case "navSteamUpdater":
+                    ContentSteamUpdater.DataContext = SteamUpdaterViewModel;
                     MainContent.Navigate(ContentSteamUpdater);
+
                     break;
                 case "navSteamMods":
                     ContentSteamMods.DataContext = ModsViewModel;
@@ -261,10 +269,10 @@ namespace FASTER
             InstallSteam();
         }
 
-        private void OpenArmaServerLocation_Click(object sender, RoutedEventArgs e)
+        private void OpenModStagingLocation_Click(object sender, RoutedEventArgs e)
         {
             IToolsDialog.IsOpen = false;
-            var serverDirBox = ContentSteamUpdater.IServerDirBox.Text;
+            var serverDirBox = SteamUpdaterViewModel.Parameters.ModStagingDirectory;
 
             if (!string.IsNullOrEmpty(serverDirBox) && Directory.Exists(serverDirBox))
             {
@@ -283,7 +291,7 @@ namespace FASTER
         private void OpenSteamCmdLocation_Click(object sender, RoutedEventArgs e)
         {
             IToolsDialog.IsOpen = false;
-            var steamDirBox = ContentSteamUpdater.ISteamDirBox.Text;
+            var steamDirBox = SteamUpdaterViewModel.Parameters.InstallDirectory;
 
             if (!string.IsNullOrEmpty(steamDirBox) && Directory.Exists(steamDirBox))
             {
@@ -409,7 +417,7 @@ namespace FASTER
 
         private void InstallSteam()
         {
-            if (string.IsNullOrEmpty(ContentSteamUpdater.ISteamDirBox.Text))
+            if (string.IsNullOrEmpty(SteamUpdaterViewModel.Parameters.InstallDirectory))
             { DisplayMessage("Please make sure you have set a valid path for SteamCMD."); }
             else if (!File.Exists(Properties.Settings.Default.steamCMDPath + "\\steamcmd.exe"))
             {
@@ -441,7 +449,7 @@ namespace FASTER
             ContentSteamUpdater.ISteamOutputBox.AppendText("\nUnzipping...");
             ZipFile.ExtractToDirectory(zip, steamPath);
             ContentSteamUpdater.ISteamOutputBox.AppendText("\nInstalling...");
-            _ = ContentSteamUpdater.RunSteamCommand(steamPath + "\\steamcmd.exe", "+login anonymous +quit", "install");
+            //_ = ContentSteamUpdater.RunSteamCommand(steamPath + "\\steamcmd.exe", "+login anonymous +quit", "install");
 
             File.Delete(zip);
         }

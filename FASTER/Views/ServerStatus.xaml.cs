@@ -182,10 +182,10 @@ namespace FASTER.Views
         private void IRescanAll_Click(object sender, RoutedEventArgs e)
         {
             Analytics.TrackEvent("ServerStatus - Rescanning Servers", new Dictionary<string, string> {
-                { "Name", MetroWindow.ContentSteamUpdater.ISteamUserBox.Text }
+                { "Name", MetroWindow.SteamUpdaterViewModel.Parameters.Username}
             });
             AppInsights.Client.TrackEvent("ServerStatus - Rescanning Servers", new Dictionary<string, string> {
-                { "Name", MetroWindow.ContentSteamUpdater.ISteamUserBox.Text }
+                { "Name", MetroWindow.SteamUpdaterViewModel.Parameters.Username }
             });
             RefreshServers();
         }

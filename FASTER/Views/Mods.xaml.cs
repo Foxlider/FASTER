@@ -35,8 +35,6 @@ namespace FASTER.Views
             ((ModsViewModel) DataContext)?.UnloadData();
         }
 
-        public MainWindow MetroWindow => (MainWindow) Window.GetWindow(this);
-
         private async void UpdateMod(object sender, RoutedEventArgs e)
         {
             var mod = ((FrameworkElement) sender).DataContext as ArmaMod;
