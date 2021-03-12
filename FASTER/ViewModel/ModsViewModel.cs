@@ -1,14 +1,11 @@
-﻿using System;
+﻿using FASTER.Models;
+
+using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using FASTER.Models;
-using Microsoft.WindowsAPICodePack.Shell.PropertySystem;
 
 namespace FASTER.ViewModel
 {

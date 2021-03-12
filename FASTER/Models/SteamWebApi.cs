@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using System.Windows;
 using BytexDigital.Steam.Core;
 
@@ -117,6 +118,7 @@ namespace FASTER.Models
         {
             Console.Write("Please enter your email auth code: ");
 
+
             string input = Console.ReadLine();
 
             Console.Write("Retrying... ");
@@ -126,11 +128,11 @@ namespace FASTER.Models
 
         public override string GetTwoFactorAuthenticationCode(SteamCredentials steamCredentials)
         {
-            Console.Write("Please enter your 2FA code: ");
+            MainWindow.Instance.SteamUpdaterViewModel.Parameters.Output += "\nPlease enter your 2FA code: ";
+             
+            var input = MainWindow.Instance.SteamUpdaterViewModel.FooProgress().Result;
 
-            string input = Console.ReadLine();
-
-            Console.Write("Retrying... ");
+            MainWindow.Instance.SteamUpdaterViewModel.Parameters.Output += "\nRetrying... ";
 
             return input;
         }

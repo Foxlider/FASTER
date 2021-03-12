@@ -9,6 +9,9 @@ namespace FASTER.Models
         { }
 
         private string _output;
+        private bool   _isUpdating;
+
+
         public string InstallDirectory
         {
             get => Settings.Default.steamCMDPath;
@@ -65,6 +68,28 @@ namespace FASTER.Models
             }
         }
 
+        public bool IsUpdating
+        {
+            get => _isUpdating;
+            set
+            {
+                _isUpdating = value;
+                RaisePropertyChanged(nameof(IsUpdating));
+            }
+        }
+
+        public string ApiKey
+        {
+            get => !string.IsNullOrEmpty(Settings.Default.SteamAPIKey)
+                       ? Settings.Default.SteamAPIKey
+                       : StaticData.SteamApiKey;
+            set
+            {
+                Settings.Default.SteamAPIKey = value;
+                Settings.Default.Save();
+                RaisePropertyChanged(nameof(ApiKey));
+            }
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
 

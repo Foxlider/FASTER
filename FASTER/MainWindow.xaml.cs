@@ -1,4 +1,4 @@
-﻿using FASTER.Models;
+using FASTER.Models;
 using FASTER.ViewModel;
 using FASTER.Views;
 using Microsoft.AppCenter.Analytics;
@@ -44,7 +44,7 @@ namespace FASTER
         }
         public SteamUpdaterViewModel SteamUpdaterViewModel
         {
-            get => _steamUpdaterVM ??= new SteamUpdaterViewModel();
+            get => _steamUpdaterVM ??= SteamUpdaterViewModel.Instance;
             set => _steamUpdaterVM = value;
         }
 
@@ -417,41 +417,41 @@ namespace FASTER
 
         private void InstallSteam()
         {
-            if (string.IsNullOrEmpty(SteamUpdaterViewModel.Parameters.InstallDirectory))
-            { DisplayMessage("Please make sure you have set a valid path for SteamCMD."); }
-            else if (!File.Exists(Properties.Settings.Default.steamCMDPath + "\\steamcmd.exe"))
-            {
-                DisplayMessage("Steam CMD will now download and start the install process. If prompted please enter your Steam Guard " +
-                                          "Code.\n\nYou will receive this by email from steam. When this is all complete type \'quit\' to finish.");
-                ContentSteamUpdater.ISteamOutputBox.Document.Blocks.Clear();
-                ContentSteamUpdater.ISteamOutputBox.AppendText("Installing SteamCMD");
-                ContentSteamUpdater.ISteamOutputBox.AppendText("\nFile Downloading...");
-                const string url = "https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip";
-                string fileName = Properties.Settings.Default.steamCMDPath + "\\steamcmd.zip";
+            //if (string.IsNullOrEmpty(SteamUpdaterViewModel.Parameters.InstallDirectory))
+            //{ DisplayMessage("Please make sure you have set a valid path for SteamCMD."); }
+            //else if (!File.Exists(Properties.Settings.Default.steamCMDPath + "\\steamcmd.exe"))
+            //{
+            //    DisplayMessage("Steam CMD will now download and start the install process. If prompted please enter your Steam Guard " +
+            //                              "Code.\n\nYou will receive this by email from steam. When this is all complete type \'quit\' to finish.");
+            //    ContentSteamUpdater.ISteamOutputBox.Document.Blocks.Clear();
+            //    ContentSteamUpdater.ISteamOutputBox.AppendText("Installing SteamCMD");
+            //    ContentSteamUpdater.ISteamOutputBox.AppendText("\nFile Downloading...");
+            //    const string url = "https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip";
+            //    string fileName = Properties.Settings.Default.steamCMDPath + "\\steamcmd.zip";
 
-                if (!Directory.Exists(Properties.Settings.Default.steamCMDPath))
-                    Directory.CreateDirectory(Properties.Settings.Default.steamCMDPath);
+            //    if (!Directory.Exists(Properties.Settings.Default.steamCMDPath))
+            //        Directory.CreateDirectory(Properties.Settings.Default.steamCMDPath);
 
-                using WebClient client = new WebClient();
-                client.DownloadFileCompleted += SteamDownloadCompleted;
-                client.DownloadFileAsync(new Uri(url), fileName);
-            }
-            else
-            { DisplayMessage("SteamCMD already appears to be installed.\n\nPlease delete all files in the selected folder to reinstall."); }
+            //    using WebClient client = new WebClient();
+            //    client.DownloadFileCompleted += SteamDownloadCompleted;
+            //    client.DownloadFileAsync(new Uri(url), fileName);
+            //}
+            //else
+            //{ DisplayMessage("SteamCMD already appears to be installed.\n\nPlease delete all files in the selected folder to reinstall."); }
         }
         private void SteamDownloadCompleted(object sender, AsyncCompletedEventArgs e)
         {
-            ContentSteamUpdater.ISteamOutputBox.AppendText(Environment.NewLine + "Download Finished");
+            //ContentSteamUpdater.ISteamOutputBox.AppendText(Environment.NewLine + "Download Finished");
 
-            var steamPath = Properties.Settings.Default.steamCMDPath;
-            string zip = steamPath + "\\steamcmd.zip";
+            //var steamPath = Properties.Settings.Default.steamCMDPath;
+            //string zip = steamPath + "\\steamcmd.zip";
 
-            ContentSteamUpdater.ISteamOutputBox.AppendText("\nUnzipping...");
-            ZipFile.ExtractToDirectory(zip, steamPath);
-            ContentSteamUpdater.ISteamOutputBox.AppendText("\nInstalling...");
-            //_ = ContentSteamUpdater.RunSteamCommand(steamPath + "\\steamcmd.exe", "+login anonymous +quit", "install");
+            //ContentSteamUpdater.ISteamOutputBox.AppendText("\nUnzipping...");
+            //ZipFile.ExtractToDirectory(zip, steamPath);
+            //ContentSteamUpdater.ISteamOutputBox.AppendText("\nInstalling...");
+            ////_ = ContentSteamUpdater.RunSteamCommand(steamPath + "\\steamcmd.exe", "+login anonymous +quit", "install");
 
-            File.Delete(zip);
+            //File.Delete(zip);
         }
 
         internal string GetVersion()

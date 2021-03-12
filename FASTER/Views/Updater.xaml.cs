@@ -1,18 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using FASTER.ViewModel;
+
+using MahApps.Metro.Controls.Dialogs;
+
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using FASTER.ViewModel;
 
 namespace FASTER.Views
 {
@@ -24,26 +15,36 @@ namespace FASTER.Views
         public Updater()
         {
             InitializeComponent();
+            MainWindow.Instance.SteamUpdaterViewModel.dialogCoordinator = DialogCoordinator.Instance;
+            DataContext = MainWindow.Instance.SteamUpdaterViewModel;
         }
+
         private void UpdateCancel_Click(object sender, RoutedEventArgs e)
         {
-            throw new NotImplementedException();
+            ((SteamUpdaterViewModel) DataContext)?.UpdateCancelClick();
         }
-        private void Update_Click(object sender, RoutedEventArgs e)
+        private async void Update_Click(object sender, RoutedEventArgs e)
         {
-            throw new NotImplementedException();
+            await ((SteamUpdaterViewModel)DataContext)?.UpdateClick();
         }
         private void ServerDir_Click(object sender, RoutedEventArgs e)
         {
-            throw new NotImplementedException();
+            ((SteamUpdaterViewModel) DataContext)?.ServerDirClick(sender);
         }
+
         private void SteamCmdDir_Click(object sender, RoutedEventArgs e)
         {
-            throw new NotImplementedException();
+            ((SteamUpdaterViewModel) DataContext)?.SteamCmdDirClick();
         }
+        private void ModStagingDir_Click(object sender, RoutedEventArgs e)
+        {
+            ((SteamUpdaterViewModel) DataContext)?.ModStagingDirClick();
+        }
+
         private void PasswordBox_OnPasswordChanged(object sender, RoutedEventArgs e)
         {
             ((SteamUpdaterViewModel) DataContext)?.PasswordChanged(((PasswordBox) sender).Password);
         }
+        
     }
 }
