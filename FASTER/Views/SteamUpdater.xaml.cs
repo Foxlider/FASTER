@@ -84,13 +84,13 @@ namespace FASTER.Views
                     branch = "233780 -beta creatordlc";
                     break;
                 case "LegacyPorts": //Arma 3 server Legacy Ports branch for linux
-                    branch = "233780 -beta legacyPorts Arma3LegacyPorts";
+                    branch = "233780 -beta legacyPorts -betapassword Arma3LegacyPorts";
                     break;
                 case "Developpment": //Arma 3 Developpment branch, only for developpment clients
                     branch = "107410 -beta development";
                     break;
                 case "Performance / Profiling":
-                    branch = "233780 -beta profiling CautionSpecialProfilingAndTestingBranchArma3";
+                    branch = "233780 -beta profiling -betapassword CautionSpecialProfilingAndTestingBranchArma3";
                     break;
                 default:
                     Console.WriteLine("Nothing to see here");
