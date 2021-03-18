@@ -177,7 +177,7 @@ namespace FASTER.Models
                         MinBandwidth = 250000000;
                         break;
                     case 4:
-                        MaxMsgSend           = 2048;
+                        MaxMsgSend           = 512;
                         MinBandwidth         = 1000000000;
                         break;
                 }
