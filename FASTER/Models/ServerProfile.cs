@@ -40,6 +40,15 @@ namespace FASTER.Models
             Properties.Settings.Default.Save();
             MainWindow.Instance.LoadServerProfiles();
         }
+
+        internal static void RemoveServerProfile(ServerProfile profile)
+        {
+            var currentProfiles = Properties.Settings.Default.Profiles;
+            currentProfiles.Remove(profile);
+            Properties.Settings.Default.Profiles = currentProfiles;
+            Properties.Settings.Default.Save();
+            MainWindow.Instance.LoadServerProfiles();
+        }
     }
 
     [Serializable]

@@ -245,6 +245,30 @@ namespace FASTER
             }
         }
 
+        private void MenuItemDelete_Click(object sender, RoutedEventArgs e)
+        {
+            if (IServerProfilesMenu.SelectedIndex == -1)
+            { return; }
+
+            try
+            {
+                var temp = Properties.Settings.Default.Profiles.FirstOrDefault(s =>
+                    s.Id == ((ToggleButton)IServerProfilesMenu.SelectedItem).Name);
+                if (temp == null)
+                {
+                    DisplayMessage("Could not find the selected profile.");
+                    return;
+                }
+
+                ServerProfileCollection.RemoveServerProfile(temp);
+            }
+            catch (Exception err)
+            {
+                DisplayMessage("An error occured while deleting your profile");
+                Crashes.TrackError(err, new Dictionary<string, string> { { "Name", Properties.Settings.Default.steamUserName } });
+            }
+        }
+
         private void InstallSteamCmd_Click(object sender, RoutedEventArgs e)
         {
             IToolsDialog.IsOpen = false;

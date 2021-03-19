@@ -98,7 +98,12 @@
                                     <iconPacks:PackIconModern Kind="PageCopy"/>
                                 </MenuItem.Icon>
                             </MenuItem>
-                        </ContextMenu>
+							<MenuItem Header="Delete" Click="MenuItemDelete_Click">
+								<MenuItem.Icon>
+									<iconPacks:PackIconModern Kind="Delete"/>
+								</MenuItem.Icon>
+							</MenuItem>
+						</ContextMenu>
                     </ListBox.Resources>
                     <ListBox.ItemContainerStyle>
                         <Style TargetType="ListBoxItem">
