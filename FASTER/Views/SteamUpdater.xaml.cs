@@ -22,7 +22,13 @@ namespace FASTER.Views
     public partial class SteamUpdater
     {
         private bool _cancelled;
-        private Process _oProcess = new Process();
+        //private Process _oProcess = new Process();
+        IntPtr handle   = IntPtr.Zero;
+        IntPtr err      = IntPtr.Zero;
+        IntPtr cfg      = IntPtr.Zero;
+        IntPtr spawnCfg = IntPtr.Zero;
+        Stream stdin    = null;
+        Stream stdout   = null;
 
         public SteamUpdater()
         {
@@ -106,7 +112,14 @@ namespace FASTER.Views
         {
             try
             {
-                _oProcess?.Kill();
+                //_oProcess?.Kill();
+                stdin?.Dispose();
+                stdout?.Dispose();
+                winpty_config_free(cfg);
+                winpty_spawn_config_free(spawnCfg);
+                winpty_error_free(err);
+                winpty_free(handle);
+                cfg        = IntPtr.Zero;
                 _cancelled = true;
             }
             catch (Exception ex)
@@ -116,8 +129,13 @@ namespace FASTER.Views
 
         private void ISubmitCode_Click(object sender, RoutedEventArgs e)
         {
-            var oStreamWriter = _oProcess.StandardInput;
-            Dispatcher?.Invoke(() => { oStreamWriter.Write(ISteamGuardCode.Text + "\n"); });
+            Dispatcher?.Invoke(() =>
+                               {
+                                   using var oStreamWriter = new StreamWriter(stdin);
+                                   
+                                   oStreamWriter.Write(ISteamGuardCode.Text + oStreamWriter.NewLine);
+                                   oStreamWriter.Flush();
+                               });
             ISteamGuardDialog.IsOpen = false;
         }
 
@@ -175,7 +193,7 @@ namespace FASTER.Views
 
             if (ReadyToUpdate())
             {
-                _oProcess = new Process();
+                //_oProcess = new Process();
                 ISteamProgressBar.Value = 0;
                 ISteamCancelButton.IsEnabled = true;
                 ISteamUpdateButton.IsEnabled = false;
@@ -208,12 +226,7 @@ namespace FASTER.Views
                 tasks.Add(Task.Run(() =>
                 {
 
-                    IntPtr handle   = IntPtr.Zero;
-                    IntPtr err      = IntPtr.Zero;
-                    IntPtr cfg      = IntPtr.Zero;
-                    IntPtr spawnCfg = IntPtr.Zero;
-                    Stream stdin    = null;
-                    Stream stdout   = null;
+                    
 
 
                     try
@@ -256,9 +269,10 @@ namespace FASTER.Views
                         stdin?.Dispose();
                         stdout?.Dispose();
                         winpty_config_free(cfg);
-                        winpty_spawn_config_free(spawnCfg);
+                        //winpty_spawn_config_free(spawnCfg);
                         winpty_error_free(err);
                         winpty_free(handle);
+                        cfg = IntPtr.Zero;
                     }
 
 
@@ -296,8 +310,14 @@ namespace FASTER.Views
                     ISteamOutputBox.Document.Blocks.Clear();
                     ISteamOutputBox.AppendText("Process Canceled");
 
-                    _oProcess.Close();
-                    _oProcess = null;
+                    stdin?.DisposeAsync();
+                    stdout?.DisposeAsync();
+                    winpty_config_free(cfg);
+                    winpty_spawn_config_free(spawnCfg);
+                    winpty_error_free(err);
+                    winpty_free(handle);
+                    cfg = IntPtr.Zero;
+
                     CheckModUpdatesComplete(modIds);
                 }
                 else
@@ -355,7 +375,7 @@ namespace FASTER.Views
         private int threadSlept;
         private void UpdateTextBox(string text)
         {
-            if (_oProcess == null) return;
+            if (cfg == IntPtr.Zero) return;
 
             Dispatcher?.Invoke(() =>
             {
