@@ -42,18 +42,12 @@ namespace FASTER.Views
             Analytics.TrackEvent("About - Clicked Discord", new Dictionary<string, string> {
                 { "Name", Properties.Settings.Default.steamUserName }
             });
-            AppInsights.Client.TrackEvent("About - Clicked Discord", new Dictionary<string, string> {
-                { "Name", Properties.Settings.Default.steamUserName }
-            });
             Functions.OpenBrowser("https://discord.gg/2BUuZa3");
         }
 
         private void IGitHubButton_Click(object sender, RoutedEventArgs e)
         {
             Analytics.TrackEvent("About - Clicked Git", new Dictionary<string, string> {
-                { "Name", Properties.Settings.Default.steamUserName }
-            });
-            AppInsights.Client.TrackEvent("About - Clicked Git", new Dictionary<string, string> {
                 { "Name", Properties.Settings.Default.steamUserName }
             });
             Functions.OpenBrowser("https://github.com/Foxlider/FASTER");
@@ -64,18 +58,12 @@ namespace FASTER.Views
             Analytics.TrackEvent("About - Clicked Forums", new Dictionary<string, string> {
                 { "Name", Properties.Settings.Default.steamUserName }
             });
-            AppInsights.Client.TrackEvent("About - Clicked Forums", new Dictionary<string, string> {
-                { "Name", Properties.Settings.Default.steamUserName }
-            });
             Functions.OpenBrowser("https://forums.bohemia.net/forums/topic/224359-foxs-arma-server-tool-extended-rewrite-faster/");
         }
 
         private void IDonateButton_Click(object sender, RoutedEventArgs e)
         {
             Analytics.TrackEvent("About - Clicked Donate", new Dictionary<string, string> {
-                { "Name", Properties.Settings.Default.steamUserName }
-            });
-            AppInsights.Client.TrackEvent("About - Clicked Donate", new Dictionary<string, string> {
                 { "Name", Properties.Settings.Default.steamUserName }
             });
             Functions.OpenBrowser("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=49H6MZNFUJYWA&source=url");

@@ -5,14 +5,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Pipes;
-using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-
-using static winpty.WinPty;
 
 namespace FASTER.Views
 {
@@ -207,82 +204,6 @@ namespace FASTER.Views
 
                 tasks.Add(Task.Run(() =>
                 {
-
-                    IntPtr handle   = IntPtr.Zero;
-                    IntPtr err      = IntPtr.Zero;
-                    IntPtr cfg      = IntPtr.Zero;
-                    IntPtr spawnCfg = IntPtr.Zero;
-                    Stream stdin    = null;
-                    Stream stdout   = null;
-
-
-                    try
-                    {
-                        cfg = winpty_config_new(WINPTY_FLAG_COLOR_ESCAPES, out err);
-                        winpty_config_set_initial_size(cfg, 80, 32);
-
-                        handle = winpty_open(cfg, out err);
-                        if (err != IntPtr.Zero)
-                        {
-                            UpdateTextBox(winpty_error_code(err).ToString());
-                            return 1;
-                        }
-
-                        string exe = steamCmd;
-                        string args = steamCmd + " " + steamCommand;
-                        spawnCfg = winpty_spawn_config_new(WINPTY_SPAWN_FLAG_AUTO_SHUTDOWN, exe, args, null, null, out err);
-                        if (err != IntPtr.Zero)
-                        {
-                            UpdateTextBox(winpty_error_code(err).ToString());
-                            return 1;
-                        }
-
-                        stdin = CreatePipe(winpty_conin_name(handle), PipeDirection.Out);
-                        stdout = CreatePipe(winpty_conout_name(handle), PipeDirection.In);
-
-                        if (!winpty_spawn(handle, spawnCfg, out IntPtr process, out IntPtr thread, out int procError, out err))
-                        {
-                            UpdateTextBox(winpty_error_code(err).ToString());
-                            return 1;
-                        }
-
-                        Task output = new Task(() => ProcessOutputCharacters(new StreamReader(stdout)));
-                        output.Start();
-                        output.Wait();
-                        return 0;
-                    }
-                    finally
-                    {
-                        stdin?.Dispose();
-                        stdout?.Dispose();
-                        winpty_config_free(cfg);
-                        winpty_spawn_config_free(spawnCfg);
-                        winpty_error_free(err);
-                        winpty_free(handle);
-                    }
-
-
-                    //_oProcess.StartInfo.FileName = steamCmd;
-                    //_oProcess.StartInfo.Arguments = steamCommand;
-                    //_oProcess.StartInfo.UseShellExecute = false;
-                    //_oProcess.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                    //_oProcess.StartInfo.CreateNoWindow = true;
-                    //_oProcess.StartInfo.RedirectStandardOutput = true;
-                    //_oProcess.StartInfo.RedirectStandardError = true;
-                    //_oProcess.StartInfo.RedirectStandardInput = true;
-                    //_oProcess.EnableRaisingEvents = true;
-
-                    //_oProcess.Start();
-
-                    ////NOTES
-                    //// SteamCMD's behaviour is quite odd. It seems like it does not keep on writing new lines but is almost constantly editing lines
-                    //// Editing lines does not trigger the OutputDataReceived event and nor does the Input header
-                    //// (When asking for user input, the programmer can add a header specifying what to enter and it is not picked by the event until the user entered its text)
-
-                    //ProcessOutputCharacters(_oProcess.StandardError);
-                    //ProcessOutputCharacters(_oProcess.StandardOutput);
-
-                    //_oProcess.WaitForExit();
                 }));
 
                 await Task.WhenAll(tasks);

@@ -62,6 +62,8 @@ namespace FASTER.ViewModel
 
         public void PasswordChanged(string password)
         { Parameters.Password = Encryption.Instance.EncryptData(password); }
+
+
         public async Task UpdateClick()
         {
             Parameters.IsUpdating = true;
@@ -307,48 +309,39 @@ namespace FASTER.ViewModel
 
         private async Task Download(IDownloadHandler downloadHandler, string targetDir, bool sync)
         {
-            Task              downloadTask                = default;
-            bool              showSyncNotSupportedWarning = false;
+            Task downloadTask = default;
+            downloadHandler.VerificationCompleted += (sender, args) => Parameters.Output += $"\nVerification completed, {args.QueuedFiles.Count} files queued for download. ({args.QueuedFiles.Sum(f => (double)f.TotalSize)} bytes)";
+            downloadHandler.DownloadComplete      += (sender, args) => Parameters.Output += "\nDownload completed";
+
+
+            downloadTask = downloadHandler.DownloadToFolderAsync(targetDir, tokenSource.Token);
             
-
-            if (sync)
-            {
-                if (downloadHandler is MultipleFilesHandler multipleFilesHandler)
-                {
-                    Parameters.Output += "\nHashing local files (this may take some time)... ";
-                    downloadTask = multipleFilesHandler.DownloadChangesToFolderAsync(targetDir, tokenSource.Token);
-                }
-                else
-                { showSyncNotSupportedWarning = true; }
-            }
-
-            downloadTask ??= downloadHandler.DownloadToFolderAsync(targetDir, tokenSource.Token);
 
             Parameters.Output += "\nOK.";
 
             DownloadTasks.Add(downloadTask);
-
-            if (showSyncNotSupportedWarning)
-            { Parameters.Output += "\nWarning: Sync was enabled, but the app/item type being download does not support this operation."; }
-
+            
             Parameters.Output += $"\nDownloading {downloadHandler.TotalFileCount} files with total size of {BytesToDisplayText(downloadHandler.TotalFileSize)}...";
 
-            while (!downloadTask.IsCompleted || !downloadTask.IsCanceled)
+            while (!downloadTask.IsCompleted && !downloadTask.IsCanceled && !tokenSource.Token.IsCancellationRequested)
             {
                 
                 var delayTask = Task.Delay(500, tokenSource.Token);
-                var t         = await Task.WhenAny(delayTask, downloadTask);
+                await Task.WhenAny(delayTask, downloadTask);
 
                 if (tokenSource.Token.IsCancellationRequested)
                     Parameters.Output += "\nTask cancellation requested";
-                Parameters.Output += $"\nProgress {downloadHandler.TotalProgress * 100:00.00}%, buffer usage {downloadHandler.BufferUsage * 100:00.00}%";
+                Parameters.Output += $"\nProgress {downloadHandler.TotalProgress * 100:00.00}%";
             }
 
             if (downloadTask.IsCanceled)
-                Parameters.Output += "\nTask Cancelled";
+            {
+                Parameters.Output += "\nTask Cancelled"; 
+                DownloadTasks.Remove(downloadTask);
+                return;
+            }
 
             DownloadTasks.Remove(downloadTask);
-
             await downloadTask;
         }
 

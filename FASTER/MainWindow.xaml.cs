@@ -221,7 +221,6 @@ namespace FASTER
         private void ICreateProfileButton_Click(object sender, RoutedEventArgs e)
         {
             Analytics.TrackEvent("Main - Creating new profile");
-            AppInsights.Client.TrackEvent("Main - Creating new profile");
             INewProfileName.Text = INewProfileName.Text.Trim();
             if (string.IsNullOrEmpty(INewProfileName.Text))
             {

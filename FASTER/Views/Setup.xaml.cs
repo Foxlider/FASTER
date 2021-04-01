@@ -87,14 +87,6 @@ namespace FASTER.Views
                     { "OS Version", Environment.OSVersion.VersionString },
                     { "Machine Name", Environment.MachineName }
                 });
-                AppInsights.Client.TrackEvent("Setup - Launching", new Dictionary<string, string> {
-                    { "Name", Properties.Settings.Default.steamUserName },
-                    { "Version", MainWindow.Instance.Version },
-                    { "Region", RegionInfo.CurrentRegion.TwoLetterISORegionName},
-                    { "CPU Architecture", Environment.Is64BitOperatingSystem ? "x64" : "x86" },
-                    { "OS Version", Environment.OSVersion.VersionString },
-                    { "Machine Name", Environment.MachineName }
-                });
                 MainWindow.Instance.Show();
             }
             catch (Exception e)

@@ -184,9 +184,6 @@ namespace FASTER.Views
             Analytics.TrackEvent("ServerStatus - Rescanning Servers", new Dictionary<string, string> {
                 { "Name", MetroWindow.SteamUpdaterViewModel.Parameters.Username}
             });
-            AppInsights.Client.TrackEvent("ServerStatus - Rescanning Servers", new Dictionary<string, string> {
-                { "Name", MetroWindow.SteamUpdaterViewModel.Parameters.Username }
-            });
             RefreshServers();
         }
         #endregion

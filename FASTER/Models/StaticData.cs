@@ -1,6 +1,4 @@
-﻿using Microsoft.ApplicationInsights;
-
-namespace FASTER.Models
+﻿namespace FASTER.Models
 {
     internal static class StaticData
     {
@@ -26,6 +24,5 @@ namespace FASTER.Models
         /// </summary>
         public const string AzureInsightsKey = "a640a381-a202-47ed-9bf9-e77602010706";
 
-        public static TelemetryClient Client;
     }
 }
