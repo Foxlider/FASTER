@@ -23,8 +23,6 @@ namespace FASTER
     {
         protected override void OnStartup(StartupEventArgs e)
         {
-            AprilFoolsCheck();
-            
             base.OnStartup(e);
 
             var countryCode = RegionInfo.CurrentRegion.TwoLetterISORegionName;
@@ -56,26 +54,6 @@ namespace FASTER
             }
             catch
             { AppInsights.Client.Context.Device.Model = "Unknown"; }
-        }
-
-        private void AprilFoolsCheck()
-        {
-            if (DateTime.Today != new DateTime(DateTime.Today.Year, 4, 1)) return;
-
-            var themeThread = new Thread(() =>
-                {
-                    var r      = new Random();
-                    var themes = ThemeManager.Current.ColorSchemes;
-                    while (true)
-                    {
-                        Dispatcher.BeginInvoke(new Action(() => ThemeManager.Current.ChangeTheme(Current, themes[r.Next(themes.Count)])));
-                        Thread.Sleep(5000);
-                    }
-                    // ReSharper disable once FunctionNeverReturns
-                })
-                { IsBackground = true };
-
-            themeThread.Start();
         }
     }
 }
