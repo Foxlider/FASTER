@@ -67,10 +67,10 @@ namespace FASTER.ViewModel
 
             //Launching... 
             DisplayMessage($"Launching Headless Clients for {Profile.Name}...");
-            var commandLine = SetHCCommandLine();
+            string commandLine;
             for (int hc = 1; hc <= Profile.HeadlessNumber; hc++ )
             {
-                
+                commandLine = SetHCCommandLine(hc);
                 #if DEBUG
                 DisplayMessage($"{Profile.HeadlessNumber} Headless Clients launched !\n{commandLine}");
                 #else
@@ -81,7 +81,7 @@ namespace FASTER.ViewModel
             }
         }
 
-        private string SetHCCommandLine()
+        private string SetHCCommandLine(int hc)
         {
             string headlessMods = string.Join(";", Profile.ProfileMods.Where(m => m.HeadlessChecked).Select(m => m.IsLocal ? m.Name : $"@{Functions.SafeName(m.Name)}"));
             List<string> arguments = new List<string>
@@ -89,7 +89,7 @@ namespace FASTER.ViewModel
                 "-client",
                 " -connect=127.0.0.1",
                 $" -password={Profile.ServerCfg.Password}",
-                $" \"-profiles={Path.Combine(Properties.Settings.Default.serverPath, "Servers", Profile.Id)}\"",
+                $" \"-profiles={Path.Combine(Properties.Settings.Default.serverPath, "Servers", $"{Profile.Id}_hc{hc}")}\"",
                 " -nosound",
                 $" -port={Profile.Port}",
                 $"{(!string.IsNullOrWhiteSpace(headlessMods) || Profile.ContactDLCChecked || Profile.GMDLCChecked ? $" \"-mod={(Profile.ContactDLCChecked ? "contact;" : "")}{(Profile.GMDLCChecked ? "GM;" : "")}{(!string.IsNullOrWhiteSpace(headlessMods) ? headlessMods + ";" : "")}\"" : "")}",
