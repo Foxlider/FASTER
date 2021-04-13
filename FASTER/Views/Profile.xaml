@@ -34,6 +34,10 @@
                         <ColumnDefinition Width="2*"/>
                         <ColumnDefinition Width="5*"/>
                     </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
                     <StackPanel Margin="5">
                         <GroupBox Header="Profile Settings">
                             <StackPanel>
@@ -276,6 +280,10 @@
                             </Grid>
                         </Grid>
                     </GroupBox>
+
+                    <TextBox Margin="5,2" Grid.ColumnSpan="2" Grid.Column="0" Grid.Row="1" IsReadOnly="True" mah:TextBoxHelper.UseFloatingWatermark="True"
+                                 mah:TextBoxHelper.Watermark="Command Line"
+                                 Text="{Binding Path=Profile.CommandLine, Mode=OneWay}" />
                 </Grid>
 
             </TabItem>

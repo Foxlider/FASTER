@@ -168,10 +168,12 @@ namespace FASTER.Models
             }
         }
 
-        //Current logit to count the checked mods
+        //Current logic to count the checked mods
         public int ServerModsChecked => ProfileMods.Count(m => m.ServerSideChecked);
         public int ClientModsChecked => ProfileMods.Count(m => m.ClientSideChecked);
         public int HeadlessModsChecked => ProfileMods.Count(m => m.HeadlessChecked);
+
+        public string CommandLine => GetCommandLine();
 
         public List<ProfileMod> ProfileMods
         {
@@ -195,7 +197,10 @@ namespace FASTER.Models
             get => _serverCfg;
             set
             {
-                _serverCfg = value;
+                if(_serverCfg != null)
+                    _serverCfg.PropertyChanged -= Class_PropertyChanged;
+                _serverCfg                  =  value;
+                _serverCfg.PropertyChanged  += Class_PropertyChanged;
                 RaisePropertyChanged("ServerCfg");
             }
         }
@@ -205,7 +210,10 @@ namespace FASTER.Models
             get => _armaProfile;
             set
             {
-                _armaProfile = value;
+                if (_armaProfile != null)
+                    _armaProfile.PropertyChanged -= Class_PropertyChanged;
+                _armaProfile               =  value;
+                _armaProfile.PropertyChanged += Class_PropertyChanged;
                 RaisePropertyChanged("ArmaProfile");
             }
         }
@@ -215,7 +223,10 @@ namespace FASTER.Models
             get => _basicCfg;
             set
             {
-                _basicCfg = value;
+                if (_basicCfg != null)
+                    _basicCfg.PropertyChanged -= Class_PropertyChanged;
+                _basicCfg                  =  value;
+                _basicCfg.PropertyChanged += Class_PropertyChanged;
                 RaisePropertyChanged("BasicCfg");
             }
         }
@@ -283,6 +294,37 @@ namespace FASTER.Models
             return p;
         }
 
+        private string GetCommandLine()
+        {
+            string config        = Path.Combine(Properties.Settings.Default.serverPath, "Servers", Id, "server_config.cfg");
+            string basic         = Path.Combine(Properties.Settings.Default.serverPath, "Servers", Id, "server_basic.cfg");
+
+            string playerMods = string.Join(";", ProfileMods.Where(m => m.ClientSideChecked).OrderBy(m => m.LoadPriority).Select(m => m.IsLocal ? m.Name : $"@{Functions.SafeName(m.Name)}"));
+            string serverMods = string.Join(";", ProfileMods.Where(m => m.ServerSideChecked).OrderBy(m => m.LoadPriority).Select(m => m.IsLocal ? m.Name : $"@{Functions.SafeName(m.Name)}"));
+            List<string> arguments = new List<string>
+            {
+                $"-port={Port}",
+                $" \"-config={config}\"",
+                $" \"-cfg={basic}\"",
+                $" \"-profiles={Path.Combine(Properties.Settings.Default.serverPath, "Servers", Id)}\"",
+                $" -name={Id}",
+                $"{(!string.IsNullOrWhiteSpace(playerMods) || ContactDLCChecked || GMDLCChecked ? $" \"-mod={(ContactDLCChecked ? "contact;" : "")}{(GMDLCChecked ? "GM;" : "")}{(!string.IsNullOrWhiteSpace(playerMods) ? playerMods + ";" : "" )}\"" : "")}",
+                $"{(!string.IsNullOrWhiteSpace(serverMods) ? $" \"-serverMod={serverMods};\"" : "")}",
+                $"{(EnableHyperThreading ? " -enableHT" : "")}",
+                $"{(ServerCfg.AllowedFilePatching != ServerCfgArrays.AllowFilePatchingStrings[0] ? " -filePatching" : "")}",
+                $"{(ServerCfg.NetLogEnabled ? " -netlog" : "")}",
+                $"{(RankingChecked ? $" \"-ranking={Path.Combine(Properties.Settings.Default.serverPath, "Servers", Id, "ranking.log")}\"" : "")}",
+                $"{(ServerCfg.AutoInit ? " -autoInit" : "")}",
+                $"{(ServerCfg.MaxMemOverride ? $" -maxMem={ServerCfg.MaxMem}" : "")}",
+                $"{(ServerCfg.CpuCountOverride ? $" -cpuCount={ServerCfg.CpuCount}" : "")}",
+                $"{(!string.IsNullOrWhiteSpace(ServerCfg.CommandLineParameters) ? $" {ServerCfg.CommandLineParameters}" : "")}"
+            };
+
+            string commandLine = string.Join("", arguments);
+            return commandLine;
+        }
+
+
         //This is used to trigger PropertyChanged to count each checked mod
         private void Item_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
@@ -291,11 +333,17 @@ namespace FASTER.Models
             RaisePropertyChanged("HeadlessModsChecked");
         }
 
+        private void Class_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        { RaisePropertyChanged("CommandLine"); }
 
         //INOTIFYPROPERTYCHANGED
         public event PropertyChangedEventHandler PropertyChanged;
-        private void RaisePropertyChanged(string property)
-        { PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property)); }
+        internal void RaisePropertyChanged(string property)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
+            if(property != "CommandLine")
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("CommandLine"));
+        }
     }
 
     [Serializable]

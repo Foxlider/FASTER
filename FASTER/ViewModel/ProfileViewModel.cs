@@ -121,7 +121,8 @@ namespace FASTER.ViewModel
             //Launching... 
             DisplayMessage($"Launching Profile {Profile.Name}...");
 
-            var commandLine = SetCommandLine();
+            Profile.RaisePropertyChanged("CommandLine");
+            var commandLine = Profile.CommandLine;
             try { Clipboard.SetText(commandLine); }
             catch (COMException e)
             {
@@ -253,7 +254,7 @@ namespace FASTER.ViewModel
             { Properties.Settings.Default.Profiles[index] = Profile; }
 
             Properties.Settings.Default.Save();
-
+            Profile.RaisePropertyChanged("CommandLine");
             DisplayMessage($"Saved Profile {Profile.Name}");
         }
 
