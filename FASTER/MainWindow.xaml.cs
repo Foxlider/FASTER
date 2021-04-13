@@ -1,17 +1,17 @@
 using FASTER.Models;
 using FASTER.ViewModel;
 using FASTER.Views;
+
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using Microsoft.WindowsAPICodePack.Dialogs;
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
-using System.Net;
 using System.Security.Principal;
 using System.Windows;
 using System.Windows.Controls.Primitives;
@@ -437,20 +437,6 @@ namespace FASTER
             //}
             //else
             //{ DisplayMessage("SteamCMD already appears to be installed.\n\nPlease delete all files in the selected folder to reinstall."); }
-        }
-        private void SteamDownloadCompleted(object sender, AsyncCompletedEventArgs e)
-        {
-            //ContentSteamUpdater.ISteamOutputBox.AppendText(Environment.NewLine + "Download Finished");
-
-            //var steamPath = Properties.Settings.Default.steamCMDPath;
-            //string zip = steamPath + "\\steamcmd.zip";
-
-            //ContentSteamUpdater.ISteamOutputBox.AppendText("\nUnzipping...");
-            //ZipFile.ExtractToDirectory(zip, steamPath);
-            //ContentSteamUpdater.ISteamOutputBox.AppendText("\nInstalling...");
-            ////_ = ContentSteamUpdater.RunSteamCommand(steamPath + "\\steamcmd.exe", "+login anonymous +quit", "install");
-
-            //File.Delete(zip);
         }
 
         internal string GetVersion()

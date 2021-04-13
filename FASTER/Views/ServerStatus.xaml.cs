@@ -1,7 +1,5 @@
 using ControlzEx.Theming;
 
-using FASTER.Models;
-
 using LiveCharts;
 using LiveCharts.Configurations;
 

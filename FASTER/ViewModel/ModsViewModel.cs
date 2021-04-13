@@ -1,7 +1,6 @@
 ﻿using FASTER.Models;
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -90,8 +89,6 @@ namespace FASTER.ViewModel
             if (string.IsNullOrEmpty(modsFile)) return;
             using StreamReader dataReader = new StreamReader(modsFile);
             
-            var tasklist = new List<Task<ArmaMod>>();
-
             var lines = (await File.ReadAllLinesAsync(modsFile)).ToList();
 
             var extractedModlist = from line in lines

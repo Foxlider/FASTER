@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.IO.Pipes;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -145,28 +144,7 @@ namespace FASTER.Views
             IServerBranch.Text = Properties.Settings.Default.serverBranch;
         }
 
-        private Stream CreatePipe(string pipeName, PipeDirection direction)
-        {
-            string serverName = ".";
-            if (pipeName.StartsWith("\\"))
-            {
-                int slash3 = pipeName.IndexOf('\\', 2);
-                if (slash3 != -1)
-                {
-                    serverName = pipeName.Substring(2, slash3 - 2);
-                }
-
-                int slash4 = pipeName.IndexOf('\\', slash3 + 1);
-                if (slash4 != -1)
-                {
-                    pipeName = pipeName.Substring(slash4 + 1);
-                }
-            }
-
-            var pipe = new NamedPipeClientStream(serverName, pipeName, direction);
-            pipe.Connect();
-            return pipe;
-        }
+        
         public async Task RunSteamCommand(string steamCmd, string steamCommand, string type, List<string> modIds = null, bool localLaunch = false)
         {
 

@@ -1,24 +1,23 @@
 ﻿using BytexDigital.Steam.ContentDelivery;
+using BytexDigital.Steam.ContentDelivery.Exceptions;
+using BytexDigital.Steam.ContentDelivery.Models;
+using BytexDigital.Steam.ContentDelivery.Models.Downloading;
 using BytexDigital.Steam.Core;
+using BytexDigital.Steam.Core.Enumerations;
+using BytexDigital.Steam.Core.Structs;
 
 using FASTER.Models;
 
+using MahApps.Metro.Controls.Dialogs;
+
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.Threading.Tasks;
-using BytexDigital.Steam.ContentDelivery.Exceptions;
-using BytexDigital.Steam.ContentDelivery.Models;
-using BytexDigital.Steam.ContentDelivery.Models.Downloading;
-using BytexDigital.Steam.Core.Enumerations;
-using BytexDigital.Steam.Core.Structs;
 using System.Linq;
 using System.Threading;
-using System.Windows.Documents;
-using MahApps.Metro.Controls.Dialogs;
+using System.Threading.Tasks;
 
 namespace FASTER.ViewModel
 {
@@ -44,21 +43,20 @@ namespace FASTER.ViewModel
         }
     
 
-        public SteamUpdaterModel Parameters { get; set; }
-
-        public          ObservableCollection<string> ServerBranches    { get; }      = new ObservableCollection<string> {"Stable", "Contact", "Creator DLC", "LegacyPorts", "Development", "Performance / Profiling"};
-        public          string                       ServerBranch      { get; set; } = "Stable";
-        public          IDialogCoordinator           dialogCoordinator { get; set; }
-        public readonly CancellationTokenSource      tokenSource = new CancellationTokenSource();
+        public SteamUpdaterModel            Parameters        { get; set; }
+        public ObservableCollection<string> ServerBranches    { get; }      = new ObservableCollection<string> {"Stable", "Contact", "Creator DLC", "LegacyPorts", "Development", "Performance / Profiling"};
+        public string                       ServerBranch      { get; set; } = "Stable";
+        public IDialogCoordinator           dialogCoordinator { get; set; }
+        public CancellationTokenSource      tokenSource = new CancellationTokenSource();
 
         public bool IsDownloading => DownloadTasks.Count > 0;
 
         public BindingList<Task> DownloadTasks { get; } = new BindingList<Task>();
 
 
-        private static SteamClient _steamClient               = null;
-        private static SteamContentClient _steamContentClient = null;
-        private static SteamCredentials   _steamCredentials   = null;
+        private static SteamClient _steamClient;
+        private static SteamContentClient _steamContentClient;
+        private static SteamCredentials   _steamCredentials;
 
         public void PasswordChanged(string password)
         { Parameters.Password = Encryption.Instance.EncryptData(password); }
@@ -105,8 +103,8 @@ namespace FASTER.ViewModel
                     break;
             }
 
-
-            await RunServerUpdater("", appId, branch, branchPass);
+            //TODO Change this when binding is done
+            await RunServerUpdater(@".\download", appId, branch, branchPass);
         }
 
 
@@ -143,7 +141,6 @@ namespace FASTER.ViewModel
 
         public async Task<int> RunServerUpdater(string path, uint appId, string branch, string branchPass)
         {
-            path = @".\download";
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
 
@@ -194,14 +191,12 @@ namespace FASTER.ViewModel
                 return 1;
             }
             finally
-            { _steamClient.Shutdown(); }
+            { _steamClient?.Shutdown(); }
 
         }
 
         public async Task<int> RunModUpdater(ulong modId, string path)
         {
-            path = @".\download";
-
             var _OS = _steamClient.GetSteamOs().Identifier;
 
             if (!await SteamLogin())
@@ -309,12 +304,13 @@ namespace FASTER.ViewModel
 
         private async Task Download(IDownloadHandler downloadHandler, string targetDir, bool sync)
         {
-            Task downloadTask = default;
             downloadHandler.VerificationCompleted += (sender, args) => Parameters.Output += $"\nVerification completed, {args.QueuedFiles.Count} files queued for download. ({args.QueuedFiles.Sum(f => (double)f.TotalSize)} bytes)";
             downloadHandler.DownloadComplete      += (sender, args) => Parameters.Output += "\nDownload completed";
 
+            if (tokenSource.IsCancellationRequested)
+                tokenSource = new CancellationTokenSource();
 
-            downloadTask = downloadHandler.DownloadToFolderAsync(targetDir, tokenSource.Token);
+            Task downloadTask = downloadHandler.DownloadToFolderAsync(targetDir, tokenSource.Token);
             
 
             Parameters.Output += "\nOK.";

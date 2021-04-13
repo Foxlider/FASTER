@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Diagnostics.Eventing.Reader;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
@@ -12,8 +11,7 @@ namespace FASTER.Models
     {
         #region IValueConverter Members
 
-        public object Convert(object value, Type targetType, object parameter,
-            System.Globalization.CultureInfo culture)
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is long size)
             {
@@ -38,8 +36,7 @@ namespace FASTER.Models
             return "0 B";
         }
 
-        public object ConvertBack(object                           value, Type targetType, object parameter,
-                                  System.Globalization.CultureInfo culture)
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         { return null; }
 
     #endregion

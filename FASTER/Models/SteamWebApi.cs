@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using BytexDigital.Steam.Core;
+
+using Newtonsoft.Json.Linq;
 
 using System;
 using System.Collections.Generic;
@@ -6,9 +8,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Threading.Tasks;
 using System.Windows;
-using BytexDigital.Steam.Core;
 
 namespace FASTER.Models
 {

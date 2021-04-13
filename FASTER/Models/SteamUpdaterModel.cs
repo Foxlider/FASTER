@@ -5,9 +5,6 @@ namespace FASTER.Models
 {
     public class SteamUpdaterModel : INotifyPropertyChanged
     {
-        public SteamUpdaterModel()
-        { }
-
         private string _output;
         private bool   _isUpdating;
 

@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Runtime.Serialization;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Xml.Serialization;
 
 namespace FASTER.Models
@@ -92,7 +88,7 @@ namespace FASTER.Models
         private bool   _privateMod;
         private bool   _isLocal;
         private string _status = "Not Installed";
-        private long   _size   = 0;
+        private long   _size;
         private bool   _isLoading;
 
 

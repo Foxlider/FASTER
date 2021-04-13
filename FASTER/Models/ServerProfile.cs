@@ -256,16 +256,30 @@ namespace FASTER.Models
         {
             string serialized = Newtonsoft.Json.JsonConvert.SerializeObject(this);
             ServerProfile p = Newtonsoft.Json.JsonConvert.DeserializeObject<ServerProfile>(serialized);
-            p.GenerateNewId();
-            if (p.Name.EndsWith(")") && p.Name.Contains('(') && int.TryParse(p.Name.Substring(p.Name.Length - 2, 1), out _))
+
+            if (p != null)
             {
-                var i   = p.Name.IndexOf('(');
-                var j   = p.Name.Length;
-                var num = p.Name.Substring(i+1,   j -1 - i-1);
-                p.Name = $"{p.Name.Substring(0, p.Name.Length - i+1)} ({int.Parse(num) + 1})";
+                p.GenerateNewId();
+
+                if (p.Name.EndsWith(")") && p.Name.Contains('(') && int.TryParse(p.Name.Substring(p.Name.Length - 2, 1), out _))
+                {
+                    var i   = p.Name.IndexOf('(');
+                    var j   = p.Name.Length;
+                    var num = p.Name.Substring(i + 1, j - 1 - i - 1);
+                    p.Name = $"{p.Name.Substring(0,   p.Name.Length - i + 1)} ({int.Parse(num) + 1})";
+                }
+                else
+                {
+                    p.Name = $"{p.Name} (2)";
+                }
             }
             else
-            { p.Name = $"{p.Name} (2)"; }
+            {
+                p = new ServerProfile();
+                p.GenerateNewId();
+                p.Name = "New Profile";
+            }
+            
             return p;
         }
 
