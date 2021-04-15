@@ -10,6 +10,7 @@
              mc:Ignorable="d"
              Loaded="UserControl_Loaded"
              Unloaded="UserControl_Unloaded"
+             FontFamily="Comic Sans MS"
              d:DesignHeight="650" d:DesignWidth="880">
     <UserControl.DataContext>
         <viewModel:ProfileViewModel/>

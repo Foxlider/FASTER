@@ -8,7 +8,8 @@
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              xmlns:views="clr-namespace:FASTER.Views"
              xmlns:wpf="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
-             mc:Ignorable="d" 
+             mc:Ignorable="d"
+             FontFamily="Comic Sans MS"
              d:DesignHeight="570" d:DesignWidth="800">
     <Grid>
         <Grid.RowDefinitions>

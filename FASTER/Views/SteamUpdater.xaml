@@ -8,6 +8,8 @@
              xmlns:simpleChildWindow="http://metro.mahapps.com/winfx/xaml/simplechildwindow"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
+             FontFamily="Comic Sans MS"
+
              Initialized="UserControl_Initialized"
              Loaded="UserControl_Loaded">
     <Grid VerticalAlignment="Stretch" Margin="5">

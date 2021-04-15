@@ -14,7 +14,7 @@
     BorderThickness="0" 
     ResizeMode="CanResizeWithGrip"
     
-    Title="FASTER" 
+    Title="FASTER  Will Bolton Edition" 
     Height="700" Width="1100"
     MinHeight="700" MinWidth="1000"
         
@@ -22,11 +22,13 @@
     ShowIconOnTitleBar="True"
     Icon="Resources\FASTER.ico"
     ShowMaxRestoreButton="True"
+
     Background="{StaticResource MahApps.Brushes.Menu.Background}"
     
     Initialized="MetroWindow_Initialized"
     Loaded="MetroWindow_Loaded"
-    Closing="MetroWindow_Closing">
+    Closing="MetroWindow_Closing" 
+    FontFamily="Comic Sans MS">
     <mah:MetroWindow.RightWindowCommands>
         <mah:WindowCommands>
             <Button Content="{iconPacks:Modern Kind=Tools}" Click="ToolsButton_Click"/>
