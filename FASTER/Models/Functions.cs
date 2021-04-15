@@ -95,7 +95,7 @@ namespace FASTER.Models
 #endif
             string version = $"{assembly.Major}."
                              + $"{assembly.Minor}"
-                             + $"{rev} WB EDITION";
+                             + $"{rev} WP EDITION";
             return version;
         }
     }
