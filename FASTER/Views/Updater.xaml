@@ -6,6 +6,7 @@
              xmlns:viewModel="clr-namespace:FASTER.ViewModel"
              xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:models="clr-namespace:FASTER.Models"
              mc:Ignorable="d"
              mah:DialogParticipation.Register="{Binding}"
              d:DesignHeight="650" d:DesignWidth="800">
@@ -138,7 +139,7 @@
                     <Label Margin="2" Content="Steam CMD Output"/>
                     <Separator/>
                 </StackPanel>
-                <TextBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" IsReadOnly="True" Text="{Binding Parameters.Output}" Background="{StaticResource MahApps.Brushes.Gray10}" Margin="10,10,10,0" VerticalScrollBarVisibility="Visible">
+                <TextBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" IsReadOnly="True" Text="{Binding Parameters.Output}" models:TextBoxUtilities.AlwaysScrollToEnd="True" TextWrapping="Wrap" Background="{StaticResource MahApps.Brushes.Gray10}" Margin="10,10,10,0" VerticalScrollBarVisibility="Visible">
                     <TextBox.Effect>
                         <DropShadowEffect BlurRadius="5" RenderingBias="Performance" ShadowDepth="1"/>
                     </TextBox.Effect>
