@@ -7,6 +7,8 @@
              xmlns:viewModel="clr-namespace:FASTER.ViewModel"
              xmlns:models="clr-namespace:FASTER.Models"
              xmlns:fa="http://schemas.fontawesome.io/icons/"
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+             mah:DialogParticipation.Register="{Binding}"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.DataContext>

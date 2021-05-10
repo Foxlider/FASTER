@@ -4,6 +4,7 @@ using FASTER.ViewModel;
 using System;
 using System.Threading.Tasks;
 using System.Windows;
+using MahApps.Metro.Controls.Dialogs;
 
 namespace FASTER.Views
 {
@@ -15,7 +16,9 @@ namespace FASTER.Views
         public Mods()
         {
             InitializeComponent();
-            this.Dispatcher.ShutdownStarted += DispatcherOnShutdownStarted;
+            MainWindow.Instance.ModsViewModel.dialogCoordinator =  DialogCoordinator.Instance;
+
+            this.Dispatcher.ShutdownStarted                             += DispatcherOnShutdownStarted;
         }
 
         private void DispatcherOnShutdownStarted(object sender, EventArgs e)
@@ -39,7 +42,7 @@ namespace FASTER.Views
             if (mod == null)
                 return;
             
-            await Task.Run(() => mod.UpdateMod());
+            await mod.UpdateModAsync();
         }
 
         private void DeleteMod(object sender, RoutedEventArgs e)
@@ -60,9 +63,9 @@ namespace FASTER.Views
             ((ModsViewModel) DataContext)?.OpenModFolder(mod);
         }
 
-        private void AddSteamMod_Click(object sender, RoutedEventArgs e)
+        private async void AddSteamMod_Click(object sender, RoutedEventArgs e)
         {
-            ((ModsViewModel) DataContext)?.AddSteamMod();
+            await ((ModsViewModel) DataContext)?.AddSteamMod();
         }
 
         private void AddLocalMod_Click(object sender, RoutedEventArgs e)
@@ -80,9 +83,9 @@ namespace FASTER.Views
             ((ModsViewModel) DataContext)?.CheckForUpdates();
         }
 
-        private void UpdateAll_Click(object sender, RoutedEventArgs e)
+        private async void UpdateAll_Click(object sender, RoutedEventArgs e)
         {
-            ((ModsViewModel) DataContext)?.UpdateAll();
+            await ((ModsViewModel) DataContext)?.UpdateAll();
         }
 
         private void ScanSteam_Click(object sender, RoutedEventArgs e)

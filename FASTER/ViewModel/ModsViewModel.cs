@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using MahApps.Metro.Controls.Dialogs;
 
 namespace FASTER.ViewModel
 {
@@ -15,6 +16,8 @@ namespace FASTER.ViewModel
 
         public ArmaModCollection ModsCollection { get; set; }
 
+        public IDialogCoordinator dialogCoordinator { get; set; }
+
 
         internal void DisplayMessage(string msg)
         {
@@ -23,34 +26,50 @@ namespace FASTER.ViewModel
         }
 
         public void UnloadData()
-        { Properties.Settings.Default.armaMods = ModsCollection; }
-
-        public void AddSteamMod()
         {
-            Random r = new Random();
-            ModsCollection.ArmaMods.Add(new ArmaMod
+            Properties.Settings.Default.armaMods = ModsCollection;
+            Properties.Settings.Default.Save();
+        }
+
+        public async Task AddSteamMod()
+        {
+            var modID = await dialogCoordinator.ShowInputAsync(this, "Add Steam Mod", "Please enter the mod ID or mod URL");
+
+            //Cast link to mod ID
+            if (modID.Contains("steamcommunity.com"))
+                modID = modID.Split("?id=")[1].Split('&')[0];
+
+            if (!uint.TryParse(modID, out uint modIDOut))
+                return;
+
+            var mod = new ArmaMod
             {
-                Name       = "Yeet",
-                Path       = "oui",
-                Author     = "Honhon",
-                WorkshopId = Convert.ToUInt32(r.Next(0, int.MaxValue)),
-                IsLocal    = false,
-                Size       = Convert.ToInt64(r.Next(0, int.MaxValue))
-            });
+                WorkshopId = modIDOut,
+                Path       = Path.Combine(Properties.Settings.Default.modStagingDirectory, modID),
+                IsLocal = false
+            };
+
+            ModsCollection.AddSteamMod(mod);
         }
 
         public void AddLocalMod()
         {
+            var localPath = MainWindow.Instance.SelectFolder(Properties.Settings.Default.modStagingDirectory);
+
+            if (localPath == null)
+                return;
+
             Random r = new Random();
-            ModsCollection.ArmaMods.Add(new ArmaMod
+
+            var mod = new ArmaMod
             {
-                Name       = "Yeet",
-                Path       = "oui",
-                Author     = "Honhon",
-                WorkshopId = Convert.ToUInt32(r.Next(0, int.MaxValue)),
+                WorkshopId = (uint)(uint.MaxValue - r.Next(ushort.MaxValue)),
+                Path       = localPath,
                 IsLocal    = true,
-                Size       = Convert.ToInt64(r.Next(0, int.MaxValue))
-            });
+                Name       = Path.GetFileName(localPath)
+            };
+
+            ModsCollection.AddSteamMod(mod);
         }
 
         internal void DeleteMod(ArmaMod mod)
@@ -59,7 +78,8 @@ namespace FASTER.ViewModel
                 return;
 
             //TODO delete folder
-            ModsCollection.ArmaMods.Remove(mod);
+            //ModsCollection.ArmaMods.Remove(mod);
+            ModsCollection.DeleteSteamMod(mod.WorkshopId);
         }
         public void OpenModPage(ArmaMod mod)
         {
@@ -103,15 +123,19 @@ namespace FASTER.ViewModel
 
                 if(ModsCollection.ArmaMods.FirstOrDefault(m => m.WorkshopId == modId) != null)
                     continue;
+
                 var mod = new ArmaMod
-                    {WorkshopId = modId};
+                {
+                    WorkshopId = modId,
+                    Path = Path.Combine(Properties.Settings.Default.modStagingDirectory, modIdS),
+                    IsLocal = false, 
+                    Status = ArmaModStatus.UpdateRequired
+                };
 
                 if(!await Task.Run(() => mod.IsOnWorkshop()))
                     continue;
 
-                ModsCollection.ArmaMods.Add(mod);
-
-                _ = Task.Run(() => ModsCollection.ArmaMods.FirstOrDefault(m => m.WorkshopId == modId)?.UpdateInfos());
+                ModsCollection.AddSteamMod(mod);
             }
         }
 
@@ -136,10 +160,9 @@ namespace FASTER.ViewModel
             foreach (ArmaMod mod in ModsCollection.ArmaMods)
             { Task.Run(() => mod.UpdateInfos()); }
         }
-        public void UpdateAll()
+        public async Task UpdateAll()
         {
-            foreach (ArmaMod mod in ModsCollection.ArmaMods)
-            { Task.Run(() => mod.UpdateMod()); }
+            await MainWindow.Instance.SteamUpdaterViewModel.RunModsUpdater(ModsCollection.ArmaMods);
         }
         public void ImportFromSteam()
         {

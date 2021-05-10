@@ -116,12 +116,12 @@ namespace FASTER.Models
     {
         public override string GetEmailAuthenticationCode(SteamCredentials steamCredentials)
         {
-            Console.Write("Please enter your email auth code: ");
+            MainWindow.Instance.SteamUpdaterViewModel.Parameters.Output += "\nPlease enter your email auth code: ";
+            
 
+            var input = MainWindow.Instance.SteamUpdaterViewModel.SteamGuardInput().Result;
 
-            string input = Console.ReadLine();
-
-            Console.Write("Retrying... ");
+            MainWindow.Instance.SteamUpdaterViewModel.Parameters.Output += "\nRetrying... ";
 
             return input;
         }
@@ -130,7 +130,7 @@ namespace FASTER.Models
         {
             MainWindow.Instance.SteamUpdaterViewModel.Parameters.Output += "\nPlease enter your 2FA code: ";
              
-            var input = MainWindow.Instance.SteamUpdaterViewModel.FooProgress().Result;
+            var input = MainWindow.Instance.SteamUpdaterViewModel.SteamGuardInput().Result;
 
             MainWindow.Instance.SteamUpdaterViewModel.Parameters.Output += "\nRetrying... ";
 

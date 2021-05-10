@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
+using FASTER.ViewModel;
 
 namespace FASTER.Models
 {
@@ -38,7 +39,7 @@ namespace FASTER.Models
             return currentMods;
         }
 
-        public static void AddSteamMod(ArmaMod newMod)
+        public void AddSteamMod(ArmaMod newMod)
         {
             var duplicate   = false;
             var currentMods = ReloadMods();
@@ -50,6 +51,7 @@ namespace FASTER.Models
             {
                 currentMods.ArmaMods.Add(newMod);
                 Properties.Settings.Default.armaMods = currentMods;
+                _ = Task.Run(() => ArmaMods.FirstOrDefault(m => m.WorkshopId == newMod.WorkshopId)?.UpdateInfos());
             }
             else
             { MainWindow.Instance.DisplayMessage("Mod Already Exists"); }
@@ -57,7 +59,7 @@ namespace FASTER.Models
             Properties.Settings.Default.Save();
         }
 
-        public static void DeleteSteamMod(int workshopId)
+        public void DeleteSteamMod(uint workshopId)
         {
             var currentProfiles = ReloadMods();
             var item            = currentProfiles.ArmaMods.FirstOrDefault(x => x.WorkshopId == workshopId);
@@ -195,9 +197,7 @@ namespace FASTER.Models
                 RaisePropertyChanged("IsLoading");
             }
         }
-
-
-
+        
 
         internal void CheckModSize()
         {
@@ -216,7 +216,7 @@ namespace FASTER.Models
         }
 
 
-        internal void UpdateMod()
+        internal async Task UpdateModAsync()
         {
             if (IsLocal)
             {
@@ -233,9 +233,30 @@ namespace FASTER.Models
             //update code here
             //System.Threading.Thread.Sleep(5000);
             //TODO Update system
+            Path = $@".\workshop\{WorkshopId}";
+            if (!Directory.Exists(Path))
+                Directory.CreateDirectory(Path);
+            MainWindow.Instance.NavigateToConsole();
+            var res = await MainWindow.Instance.SteamUpdaterViewModel.RunModUpdater(WorkshopId, Path);
 
             CheckModSize();
 
+            switch (res)
+            {
+                case UpdateState.Error:
+                case UpdateState.Cancelled:
+                case UpdateState.LoginFailed:
+                    Status = ArmaModStatus.NotComplete;
+                    break;
+                case UpdateState.Success:
+                    Status = ArmaModStatus.UpToDate;
+                    var nx = new DateTime(1970, 1, 1);
+                    var ts = DateTime.UtcNow - nx;
+
+                    LocalLastUpdated = (ulong) ts.TotalSeconds;
+                    break;
+            }
+                
             IsLoading = false;
         }
 
