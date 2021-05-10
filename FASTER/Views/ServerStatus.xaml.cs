@@ -31,8 +31,9 @@ namespace FASTER.Views
         public bool Updating
         { get; set; }
 
-        private PerformanceCounter _cpuCounter;
-        private PerformanceCounter _ramCounter;
+        internal object             locked;
+        private  PerformanceCounter _cpuCounter;
+        private  PerformanceCounter _ramCounter;
         
         private ObservableCollection<ProcessSpy> processes = new ObservableCollection<ProcessSpy>();
         readonly long totalRamBytes;
@@ -93,14 +94,17 @@ namespace FASTER.Views
         {
             while (Updating)
             {
-                var ram = _ramCounter.NextValue();
-                Dispatcher?.BeginInvoke(new Action(() =>
+                lock (locked)
                 {
-                    gaugeCpu.Value = _cpuCounter.NextValue();
-                    gaugeRam.Value = totalRamBytes > ram 
-                        ? Convert.ToInt64((totalRamBytes - ram) / 1024)
-                        : Convert.ToInt64(totalRamBytes         / 1024);
-                }));
+                    var ram = _ramCounter.NextValue();
+                    Dispatcher?.BeginInvoke(new Action(() =>
+                    {
+                        gaugeCpu.Value = _cpuCounter.NextValue();
+                        gaugeRam.Value = totalRamBytes > ram 
+                            ? Convert.ToInt64((totalRamBytes - ram) / 1024)
+                            : Convert.ToInt64(totalRamBytes         / 1024);
+                    }));
+                }
                 Thread.Sleep(1000);
             }
         }
