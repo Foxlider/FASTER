@@ -35,6 +35,9 @@ namespace FASTER.ViewModel
         {
             var modID = await dialogCoordinator.ShowInputAsync(this, "Add Steam Mod", "Please enter the mod ID or mod URL");
 
+            if (string.IsNullOrEmpty(modID))
+                return;
+
             //Cast link to mod ID
             if (modID.Contains("steamcommunity.com"))
                 modID = modID.Split("?id=")[1].Split('&')[0];
@@ -56,20 +59,38 @@ namespace FASTER.ViewModel
         {
             var localPath = MainWindow.Instance.SelectFolder(Properties.Settings.Default.modStagingDirectory);
 
-            if (localPath == null)
+            if (string.IsNullOrEmpty(localPath))
                 return;
 
             Random r = new Random();
-
-            var mod = new ArmaMod
+            var modID   = (uint) (uint.MaxValue - r.Next(ushort.MaxValue / 2));
+            var newPath = Path.Combine(Properties.Settings.Default.modStagingDirectory, modID.ToString());
+            var oldPath = localPath;
+            if (!Directory.Exists(newPath))
+                Directory.CreateDirectory(newPath);
+            if (Directory.Exists(oldPath))
             {
-                WorkshopId = (uint)(uint.MaxValue - r.Next(ushort.MaxValue)),
-                Path       = localPath,
+                foreach (var file in Directory.EnumerateFiles(oldPath, "*", SearchOption.AllDirectories))
+                {
+                    var newFile = file.Replace(oldPath, newPath);
+                    if (!Directory.Exists(Path.GetDirectoryName(newFile)))
+                       Directory.CreateDirectory(Path.GetDirectoryName(newFile));
+
+                    File.Copy(file, newFile, true);
+                }
+            }
+
+            var newMod = new ArmaMod
+            {
+                WorkshopId = modID,
+                Name       = localPath.Substring(localPath.LastIndexOf("@", StringComparison.Ordinal) + 1),
+                Path       = newPath,
+                Author     = "Unknown",
                 IsLocal    = true,
-                Name       = Path.GetFileName(localPath)
+                Status     = ArmaModStatus.Local
             };
 
-            ModsCollection.AddSteamMod(mod);
+            ModsCollection.AddSteamMod(newMod);
         }
 
         internal void DeleteMod(ArmaMod mod)

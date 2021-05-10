@@ -28,8 +28,8 @@
                     <ColumnDefinition />
                     <ColumnDefinition Width="auto"/>
                 </Grid.ColumnDefinitions>
-                <TextBox x:Name="ISteamDirBox" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Steam Install Directory" Margin="5"/>
-                <Button Grid.Column="1" Name="ISteamDirButton" Content="{iconPacks:Modern Kind=Folder}" Style="{DynamicResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" VerticalAlignment="Stretch" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" Margin="5" Padding="0" Click="DirButton_Click"/>
+                <TextBox x:Name="IModStaging" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Mod Staging Directory" Margin="5"/>
+                <Button Grid.Column="1" Name="IModStagingDirButton" Content="{iconPacks:Modern Kind=Folder}" Style="{DynamicResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" VerticalAlignment="Stretch" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" Margin="5" Padding="0" Click="DirButton_Click"/>
             </Grid>
             <Grid Margin="5,10">
                 <Grid.ColumnDefinitions>

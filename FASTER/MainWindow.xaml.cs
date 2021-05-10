@@ -2,6 +2,8 @@ using FASTER.Models;
 using FASTER.ViewModel;
 using FASTER.Views;
 
+using MahApps.Metro.Controls.Dialogs;
+
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using Microsoft.WindowsAPICodePack.Dialogs;
@@ -13,6 +15,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Security.Principal;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
@@ -25,7 +28,7 @@ namespace FASTER
     /// </summary>
     public partial class MainWindow
     {
-        internal bool InstallSteamCmd { get; set; }
+        internal bool ConvertMods { get; set; }
         internal string Version;
         internal bool NavEnabled = true;
 
@@ -131,10 +134,15 @@ namespace FASTER
             { Close(); }
         }
 
-        private void MetroWindow_Loaded(object sender, RoutedEventArgs e)
+        private async void MetroWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            if (InstallSteamCmd)
-            { InstallSteam(); }
+            var settings = Properties.Settings.Default;
+
+            if (!Directory.Exists(settings.modStagingDirectory))
+                Directory.CreateDirectory(settings.modStagingDirectory);
+            
+            if (ConvertMods)
+                await ModConversion();
         }
 
         private void MetroWindow_Closing(object sender, CancelEventArgs e)
@@ -382,6 +390,119 @@ namespace FASTER
                 var p = new ProfileViewModel(profile);
                 ContentProfileViews.Add(p);
             }
+        }
+
+        private async Task ModConversion()
+        {
+            var properties    = Properties.Settings.Default;
+            var modStagingDir = properties.modStagingDirectory;
+
+            var controller = await this.ShowProgressAsync("Please wait...", $"Converting Steam Mods... 0 / {properties.steamMods.SteamMods.Count}");
+            controller.Maximum = properties.steamMods.SteamMods.Count;
+            var progress = 0;
+
+            foreach (var steamMod in properties.steamMods.SteamMods)
+            {
+                var newPath = Path.Combine(modStagingDir,                            steamMod.WorkshopId.ToString());
+                var oldPath = Path.Combine(Properties.Settings.Default.steamCMDPath, "steamapps", "workshop", "content", "107410", steamMod.WorkshopId.ToString());
+                if (!Directory.Exists(newPath))
+                    Directory.CreateDirectory(newPath);
+
+                await Task.Run(async () =>
+                               {
+                                   if (Directory.Exists(oldPath))
+                                   {
+                                       foreach (var file in Directory.EnumerateFiles(oldPath, "*", SearchOption.AllDirectories))
+                                       {
+                                           var newFile = file.Replace(oldPath, newPath);
+                                           if (!Directory.Exists(Path.GetDirectoryName(newFile)))
+                                               Directory.CreateDirectory(Path.GetDirectoryName(newFile));
+
+                                           await CopyFileAsync(file, newFile);
+                                       }
+                                   }
+                               });
+
+                var newMod = new ArmaMod
+                {
+                    WorkshopId       = steamMod.WorkshopId,
+                    Name             = steamMod.Name,
+                    Path             = newPath,
+                    Author           = steamMod.Author,
+                    IsLocal          = false,
+                    LocalLastUpdated = ulong.MinValue,
+                    SteamLastUpdated = Convert.ToUInt64(steamMod.SteamLastUpdated),
+                    Status           = ArmaModStatus.UpdateRequired
+                };
+                await Task.Run(() => properties.armaMods.AddSteamMod(newMod));
+                progress += 1;
+                controller.SetMessage($"Converting Steam Mods... {progress} / {controller.Maximum}");
+                controller.SetProgress(progress * 100.0 / controller.Maximum);
+            }
+
+            properties.steamMods = new SteamModCollection();
+
+
+            if (properties.localMods == null || properties.localMods.Count == 0)
+            {
+                await controller.CloseAsync();
+                properties.Save();
+                return;
+            }
+
+
+            var r = new Random();
+            progress = 0;
+            controller.Maximum = properties.localMods.Count;
+            controller.SetMessage($"Converting Local Mods... {progress} / {controller.Maximum}");
+            controller.SetProgress(progress * 100.0 / controller.Maximum);
+            foreach (var localMod in properties.localMods)
+            {
+                var modID   = (uint) (uint.MaxValue - r.Next(ushort.MaxValue/2));
+                var newPath = Path.Combine(modStagingDir, modID.ToString());
+                var oldPath = localMod.Path;
+                if (!Directory.Exists(newPath))
+                    Directory.CreateDirectory(newPath);
+
+                await Task.Run(async () =>
+                {
+                    if (Directory.Exists(oldPath))
+                    {
+                        foreach (var file in Directory.EnumerateFiles(oldPath, "*", SearchOption.AllDirectories))
+                        {
+                            var newFile = file.Replace(oldPath, newPath);
+                            if (!Directory.Exists(Path.GetDirectoryName(newFile)))
+                                Directory.CreateDirectory(Path.GetDirectoryName(newFile));
+
+                            await CopyFileAsync(file, newFile);
+                        }
+                    }
+                });
+                
+                var newMod = new ArmaMod
+                {
+                    WorkshopId       = modID,
+                    Name             = localMod.Name,
+                    Path             = newPath,
+                    Author           = localMod.Author,
+                    IsLocal          = true,
+                    Status           = ArmaModStatus.Local
+                };
+                await Task.Run(() => properties.armaMods.AddSteamMod(newMod));
+                progress += 1;
+                controller.SetMessage($"Converting Local Mods... {progress} / {controller.Maximum}");
+                controller.SetProgress(progress * 100.0 / controller.Maximum );
+            }
+
+            await controller.CloseAsync();
+            properties.Save();
+        }
+
+        private static async Task CopyFileAsync(string sourceFile, string destinationFile)
+        {
+            await using var sourceStream      = new FileStream(sourceFile,      FileMode.Open,   FileAccess.Read,  FileShare.Read, 4096, FileOptions.Asynchronous | FileOptions.SequentialScan);
+            await using var destinationStream = new FileStream(destinationFile, FileMode.Create, FileAccess.Write, FileShare.None, 4096, FileOptions.Asynchronous | FileOptions.SequentialScan);
+            await sourceStream.CopyToAsync(destinationStream);
         }
 
         public void DisplayMessage(string message)

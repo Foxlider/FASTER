@@ -420,7 +420,7 @@ namespace FASTER.ViewModel
         public void LoadData()
         {
             var modlist = new List<ProfileMod>();
-            foreach(var mod in Properties.Settings.Default.steamMods.SteamMods)
+            foreach(var mod in Properties.Settings.Default.armaMods.ArmaMods)
             {
                 ProfileMod existingMod = Profile.ProfileMods.FirstOrDefault(m => m.Id == mod.WorkshopId);
                 if (existingMod == null)
@@ -432,43 +432,43 @@ namespace FASTER.ViewModel
                 modlist.Add(existingMod);
             }
 
-            if (!string.IsNullOrWhiteSpace(Properties.Settings.Default.serverPath))
-            {
-                List<string> localMods = Directory.GetDirectories(Properties.Settings.Default.serverPath, "@*")
-                                                  .Select(addon => addon.Replace(Properties.Settings.Default.serverPath + @"\", ""))
-                                                  .ToList();
-                List<string> targetForDeletion = new List<string>();
-                foreach (var folder in Properties.Settings.Default.localModFolders)
-                {
-                    if (Directory.Exists(folder))
-                        localMods.AddRange(Directory.GetDirectories(folder, "@*"));
-                    else
-                    {
-                        DisplayMessage("A folder could not be found and have been deleted");
-                        targetForDeletion.Add(folder);
-                    }
-                }
-                foreach (var folder in targetForDeletion)
-                { Properties.Settings.Default.localModFolders.Remove(folder); }
+            //if (!string.IsNullOrWhiteSpace(Properties.Settings.Default.serverPath))
+            //{
+            //    List<string> localMods = Directory.GetDirectories(Properties.Settings.Default.serverPath, "@*")
+            //                                      .Select(addon => addon.Replace(Properties.Settings.Default.serverPath + @"\", ""))
+            //                                      .ToList();
+            //    List<string> targetForDeletion = new List<string>();
+            //    foreach (var folder in Properties.Settings.Default.localModFolders)
+            //    {
+            //        if (Directory.Exists(folder))
+            //            localMods.AddRange(Directory.GetDirectories(folder, "@*"));
+            //        else
+            //        {
+            //            DisplayMessage("A folder could not be found and have been deleted");
+            //            targetForDeletion.Add(folder);
+            //        }
+            //    }
+            //    foreach (var folder in targetForDeletion)
+            //    { Properties.Settings.Default.localModFolders.Remove(folder); }
 
-                foreach (var addon in localMods.ToList()
-                                             .Where(addon => modlist.FirstOrDefault(m => addon.Contains($"@{Functions.SafeName(m.Name)}")) != null)) 
-                { localMods.Remove(addon); }
+            //    foreach (var addon in localMods.ToList()
+            //                                 .Where(addon => modlist.FirstOrDefault(m => addon.Contains($"@{Functions.SafeName(m.Name)}")) != null)) 
+            //    { localMods.Remove(addon); }
 
-                foreach(var mod in localMods)
-                {
-                    var newId = GetUInt32HashCode(mod);
-                    ProfileMod existingMod = Profile.ProfileMods.FirstOrDefault(m => m.Id == newId);
+            //    foreach(var mod in localMods)
+            //    {
+            //        var newId = GetUInt32HashCode(mod);
+            //        ProfileMod existingMod = Profile.ProfileMods.FirstOrDefault(m => m.Id == newId);
                 
-                    if (existingMod == null)
-                    {
-                        var newProfile = new ProfileMod { Name = mod, Id = newId, IsLocal = true };
-                        modlist.Add(newProfile);
-                        continue;
-                    }
-                    modlist.Add(existingMod);
-                }
-            }
+            //        if (existingMod == null)
+            //        {
+            //            var newProfile = new ProfileMod { Name = mod, Id = newId, IsLocal = true };
+            //            modlist.Add(newProfile);
+            //            continue;
+            //        }
+            //        modlist.Add(existingMod);
+            //    }
+            //}
             
             Profile.ProfileMods = modlist;
 

@@ -61,13 +61,23 @@ namespace FASTER.Models
 
         public void DeleteSteamMod(uint workshopId)
         {
-            var currentProfiles = ReloadMods();
-            var item            = currentProfiles.ArmaMods.FirstOrDefault(x => x.WorkshopId == workshopId);
             
-            if (item != null)
-            { currentProfiles.ArmaMods.Remove(item); }
-            
-            Properties.Settings.Default.Save();
+
+            try
+            {
+                var currentProfiles = ReloadMods();
+                var item            = currentProfiles.ArmaMods.FirstOrDefault(x => x.WorkshopId == workshopId);
+                
+                if (item != null)
+                {
+                    Directory.Delete(item.Path, true);
+                    currentProfiles.ArmaMods.Remove(item);
+                }
+                
+                Properties.Settings.Default.Save();
+            }
+            catch
+            { MainWindow.Instance.DisplayMessage($"Could not delete mod {workshopId}"); }
         }
 
 
@@ -93,8 +103,7 @@ namespace FASTER.Models
         private long   _size;
         private bool   _isLoading;
 
-
-
+        
         public uint   WorkshopId       
         { 
             get => _workshopId;

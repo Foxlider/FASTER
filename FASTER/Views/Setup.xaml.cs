@@ -1,15 +1,16 @@
 ﻿using FASTER.Models;
 
+using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Reflection;
 using System.Windows;
-using Microsoft.AppCenter;
-using Microsoft.AppCenter.Crashes;
 
 namespace FASTER.Views
 {
@@ -18,10 +19,14 @@ namespace FASTER.Views
     /// </summary>
     public partial class Setup
     {
+        readonly bool convertMods;
+        
+        
         public Setup()
         {
             InitializeComponent();
             bool wasFirstRun;
+            
 
             //Check if configuration can be read. Else, display error message and don't continue
             try
@@ -62,13 +67,15 @@ namespace FASTER.Views
 
             if (Properties.Settings.Default.armaMods == null)
             {
+                //We just updated to 1.8
                 Properties.Settings.Default.armaMods = new ArmaModCollection();
                 Properties.Settings.Default.Save();
+                convertMods = true;
             }
 
             if (string.IsNullOrEmpty(Properties.Settings.Default.modStagingDirectory))
             {
-                Properties.Settings.Default.modStagingDirectory = AppDomain.CurrentDomain.BaseDirectory;
+                Properties.Settings.Default.modStagingDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ModStagingDirectory");
                 Properties.Settings.Default.Save();
             }
 
@@ -76,7 +83,7 @@ namespace FASTER.Views
             var installId = AppCenter.GetInstallIdAsync().Result;
             AppCenter.SetUserId($"{installId}_{Properties.Settings.Default.steamUserName}");
             ISteamPassBox.Password = Encryption.Instance.DecryptData(Properties.Settings.Default.steamPassword);
-            ISteamDirBox.Text = Properties.Settings.Default.steamCMDPath;
+            IModStaging.Text = Properties.Settings.Default.modStagingDirectory;
             IServerDirBox.Text = Properties.Settings.Default.serverPath;
 
             //Do not skip to mainwindow if it was FirstRun
@@ -112,6 +119,7 @@ namespace FASTER.Views
             Close();
         }
 
+
         //Display Error messages
         public void DisplaySetupMessage(string message)
         {
@@ -126,8 +134,8 @@ namespace FASTER.Views
 
             if (string.IsNullOrEmpty(path)) return;
 
-            if (Equals(sender, ISteamDirButton))
-            { ISteamDirBox.Text = path; }
+            if (Equals(sender, IModStagingDirButton))
+            { IModStaging.Text = path; }
             else if (Equals(sender, IServerDirButton))
             { IServerDirBox.Text = path; }
         }
@@ -138,20 +146,20 @@ namespace FASTER.Views
 
             var settings = Properties.Settings.Default;
             settings.serverPath = IServerDirBox.Text;
-            settings.steamCMDPath = ISteamDirBox.Text;
+            settings.modStagingDirectory = IModStaging.Text;
             settings.steamUserName = ISteamUserBox.Text;
             settings.steamPassword = encryption.EncryptData(ISteamPassBox.Password);
             settings.firstRun = false;
             settings.Save();
 
-            if (IInstallSteamCheck.IsOn)
-            { MainWindow.Instance.InstallSteamCmd = true; }
-
+            if (convertMods)
+            { MainWindow.Instance.ConvertMods = true; }
+            
             try
             { MainWindow.Instance.Show(); }
             catch (Exception exception)
             { Crashes.TrackError(exception); }
-            
+
             Close();
         }
     }

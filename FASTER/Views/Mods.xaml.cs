@@ -2,7 +2,6 @@
 using FASTER.ViewModel;
 
 using System;
-using System.Threading.Tasks;
 using System.Windows;
 using MahApps.Metro.Controls.Dialogs;
 
@@ -18,7 +17,7 @@ namespace FASTER.Views
             InitializeComponent();
             MainWindow.Instance.ModsViewModel.dialogCoordinator =  DialogCoordinator.Instance;
 
-            this.Dispatcher.ShutdownStarted                             += DispatcherOnShutdownStarted;
+            this.Dispatcher.ShutdownStarted += DispatcherOnShutdownStarted;
         }
 
         private void DispatcherOnShutdownStarted(object sender, EventArgs e)
