@@ -11,6 +11,7 @@ using FASTER.Models;
 using MahApps.Metro.Controls.Dialogs;
 
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -18,6 +19,9 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using SteamKit2.GC.Artifact.Internal;
+using SteamKit2.GC.Dota.Internal;
+using SteamKit2.Internal;
 
 namespace FASTER.ViewModel
 {
@@ -59,7 +63,10 @@ namespace FASTER.ViewModel
         private static SteamCredentials   _steamCredentials;
 
         public void PasswordChanged(string password)
-        { Parameters.Password = Encryption.Instance.EncryptData(password); }
+        {
+            Parameters.Password = Encryption.Instance.EncryptData(password);
+            var pw = Encryption.Instance.DecryptData(Parameters.Password);
+        }
 
 
         public async Task UpdateClick()
@@ -145,7 +152,8 @@ namespace FASTER.ViewModel
                 Directory.CreateDirectory(path);
 
             if (!await SteamLogin())
-                return 2; 
+                return UpdateState.LoginFailed; 
+
             var _OS = _steamClient?.GetSteamOs().Identifier;
             try
             {
@@ -177,39 +185,39 @@ namespace FASTER.ViewModel
                 catch (Exception ex)
                 {
                     Parameters.Output += $"\nError: {ex.Message}{(ex.InnerException != null ? $" Inner Exception: {ex.InnerException.Message}" : "")}";
-                    return 3;
+                    return UpdateState.Error;
                 } 
                 
                 sw.Stop(); 
                 Parameters.Output += $"\nDone in {sw.Elapsed}";
 
-                return 0;
+                return UpdateState.Success;
             }
+            catch (TaskCanceledException)
+            { return UpdateState.Cancelled; }
             catch (Exception ex)
             {
                 Parameters.Output += $"\nDownload failed: {ex.Message}";
-                return 1;
+                return UpdateState.Error;
             }
             finally
             { _steamClient?.Shutdown(); }
-
         }
 
         public async Task<int> RunModUpdater(ulong modId, string path)
         {
-            var _OS = _steamClient.GetSteamOs().Identifier;
-
             if (!await SteamLogin())
-                return 2;
+                return UpdateState.LoginFailed;
 
+            var _OS = _steamClient.GetSteamOs().Identifier;
             Stopwatch sw = Stopwatch.StartNew();
 
             try
             {
-                SteamOs    steamOs = new SteamOs(_OS);
-                ManifestId manifestId;
+                SteamOs    steamOs    = new SteamOs(_OS);
+                ManifestId manifestId = default;
 
-                if (true) //IS SYNC NEABLED
+                if (!_steamClient.Credentials.IsAnonymous) //IS SYNC NEABLED
                 {
                     manifestId = (await _steamContentClient.GetPublishedFileDetailsAsync(modId)).hcontent_file;
                     Manifest manifest = await _steamContentClient.GetManifestAsync(107410, 107410, manifestId);
@@ -217,7 +225,7 @@ namespace FASTER.ViewModel
                     SyncDeleteRemovedFiles(path, manifest);
                 }
 
-                Parameters.Output += $"Attempting to start download of item {modId}... ";
+                Parameters.Output += $"\nAttempting to start download of item {modId}... ";
 
                 var downloadHandler = await _steamContentClient.GetPublishedFileDataAsync(
                                                                                           modId,
@@ -228,15 +236,94 @@ namespace FASTER.ViewModel
 
                 await Download(downloadHandler, path, true);
             }
+            catch (TaskCanceledException)
+            {
+                sw.Stop();
+                _steamClient?.Shutdown();
+                return UpdateState.Cancelled;
+            }
             catch (Exception ex)
             {
-                Parameters.Output += $"Error: {ex.Message}{(ex.InnerException != null ? $" Inner Exception: {ex.InnerException.Message}" : "")}";
-                return 1;
+                sw.Stop();
+                Parameters.Output += $"\nError: {ex.Message}{(ex.InnerException != null ? $" Inner Exception: {ex.InnerException.Message}" : "")}";
+                _steamClient?.Shutdown();
+                return UpdateState.Error;
             }
 
             sw.Stop();
-            Parameters.Output += $"Download completed, it took {sw.Elapsed:hh\\:mm\\:ss}";
-            return 0;
+            Parameters.Output += $"\nDownload completed, it took {sw.Elapsed:hh\\:mm\\:ss}";
+            _steamClient?.Shutdown();
+            return UpdateState.Success;
+        }
+
+
+        public async Task<int> RunModsUpdater(ObservableCollection<ArmaMod> mods)
+        {
+            if (!await SteamLogin())
+                return UpdateState.LoginFailed;
+
+            var _OS = _steamClient.GetSteamOs().Identifier;
+
+            List<Task> dls = new List<Task>();
+
+            foreach (Task t in mods.Select(mod => DownloadSingleMod(mod, _OS)))
+            {
+                dls.Add(t);
+                t.Start();
+            }
+
+            await Task.WhenAll(dls.ToArray());
+
+            _steamClient?.Shutdown();
+            return UpdateState.Success;
+        }
+
+        private async Task DownloadSingleMod(ArmaMod mod, string _OS)
+        {
+            if (mod.IsLocal)
+                return;
+
+            Stopwatch sw = Stopwatch.StartNew();
+
+            try
+            {
+                SteamOs    steamOs    = new SteamOs(_OS);
+                ManifestId manifestId = default;
+
+                if (!_steamClient.Credentials.IsAnonymous) //IS SYNC NEABLED
+                {
+                    manifestId = (await _steamContentClient.GetPublishedFileDetailsAsync(mod.WorkshopId)).hcontent_file;
+                    Manifest manifest = await _steamContentClient.GetManifestAsync(107410, 107410, manifestId);
+
+                    SyncDeleteRemovedFiles(mod.Path, manifest);
+                }
+
+                Parameters.Output += $"\nAttempting to start download of item {mod.WorkshopId}... ";
+
+                var downloadHandler = await _steamContentClient.GetPublishedFileDataAsync(
+                                                                                          mod.WorkshopId,
+                                                                                          manifestId,
+                                                                                          null,
+                                                                                          null,
+                                                                                          steamOs);
+
+                await Download(downloadHandler, mod.Path, true);
+            }
+            catch (TaskCanceledException)
+            {
+                sw.Stop();
+                mod.Status = ArmaModStatus.NotComplete;
+            }
+            catch (Exception ex)
+            {
+                sw.Stop();
+                mod.Status        =  ArmaModStatus.NotComplete;
+                Parameters.Output += $"\nError: {ex.Message}{(ex.InnerException != null ? $" Inner Exception: {ex.InnerException.Message}" : "")}";
+            }
+
+            sw.Stop();
+            mod.Status        =  ArmaModStatus.UpToDate;
+            Parameters.Output += $"\nDownload completed, it took {sw.Elapsed:hh\\:mm\\:ss}";
         }
 
 
@@ -261,13 +348,12 @@ namespace FASTER.ViewModel
             Parameters.Output += $"\nConnecting to Steam as {(_steamCredentials.IsAnonymous ? "anonymous" : _steamCredentials.Username)}";
 
             try
-            {
-                await _steamClient.ConnectAsync();
-            }
+            { await _steamClient.ConnectAsync(); }
             catch (Exception ex)
             {
+                
                 Parameters.Output += $"\nFailed! Error: {ex.Message}";
-
+                _steamClient.Shutdown();
                 if (!(ex is SteamLogonException logonEx))
                     return false;
 
@@ -304,7 +390,13 @@ namespace FASTER.ViewModel
 
         private async Task Download(IDownloadHandler downloadHandler, string targetDir, bool sync)
         {
+            ulong downloadedSize = 0;
             downloadHandler.VerificationCompleted += (sender, args) => Parameters.Output += $"\nVerification completed, {args.QueuedFiles.Count} files queued for download. ({args.QueuedFiles.Sum(f => (double)f.TotalSize)} bytes)";
+            downloadHandler.FileDownloaded        += (sender, args) =>
+                                                     {
+                                                         downloadedSize    += args.TotalSize;
+                                                         Parameters.Output += $"\nProgress {downloadHandler.TotalProgress * 100:00.00}% ({Functions.ParseFileSize(downloadedSize)} / {Functions.ParseFileSize(downloadHandler.TotalFileSize)})";
+                                                     };
             downloadHandler.DownloadComplete      += (sender, args) => Parameters.Output += "\nDownload completed";
 
             if (tokenSource.IsCancellationRequested)
@@ -317,11 +409,11 @@ namespace FASTER.ViewModel
 
             DownloadTasks.Add(downloadTask);
             
-            Parameters.Output += $"\nDownloading {downloadHandler.TotalFileCount} files with total size of {BytesToDisplayText(downloadHandler.TotalFileSize)}...";
+            Parameters.Output += $"\nDownloading {downloadHandler.TotalFileCount} files with total size of {Functions.ParseFileSize(downloadHandler.TotalFileSize)}...";
 
             while (!downloadTask.IsCompleted && !downloadTask.IsCanceled && !tokenSource.Token.IsCancellationRequested)
             {
-                
+
                 var delayTask = Task.Delay(500, tokenSource.Token);
                 await Task.WhenAny(delayTask, downloadTask);
 
@@ -332,36 +424,27 @@ namespace FASTER.ViewModel
 
             if (downloadTask.IsCanceled)
             {
-                Parameters.Output += "\nTask Cancelled"; 
+                Parameters.Output += "\nTask Cancelled";
                 DownloadTasks.Remove(downloadTask);
                 return;
             }
 
-            DownloadTasks.Remove(downloadTask);
-            await downloadTask;
-        }
-
-        static string BytesToDisplayText(double len)
-        {
-            string[] sizes = {"B", "KB", "MB", "GB", "TB"};
-            int      order = 0;
-
-            while (len >= 1024 && order < sizes.Length - 1)
+            try
+            { await downloadTask; }
+            catch (TaskCanceledException)
             {
-                order++;
-                len = len / 1024;
+                Parameters.Output += "\nTask Cancelled";
+                throw;
             }
-
-            return $"{len:0.##} {sizes[order]}";
+            finally
+            {
+                DownloadTasks.Remove(downloadTask);
+                downloadTask.Dispose();
+            }
         }
 
-        public async Task<string> FooProgress()
-        {
-            // Show...
-            //ProgressDialogController controller = await this.dialogCoordinator.ShowProgressAsync(this, "Wait", "Waiting for the Answer to the Ultimate Question of Life, The Universe, and Everything...");
-
-            return await dialogCoordinator.ShowInputAsync(this, "Steam Guard", "Please enter your 2FA code");
-        }
+        public async Task<string> SteamGuardInput()
+        { return await dialogCoordinator.ShowInputAsync(this, "Steam Guard", "Please enter your 2FA code"); }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -370,5 +453,13 @@ namespace FASTER.ViewModel
             if (PropertyChanged == null) return;
             PropertyChanged(this, new PropertyChangedEventArgs(property));
         }
+    }
+
+    public static class UpdateState
+    {
+        public const int Success     = 0;
+        public const int Error       = 1;
+        public const int LoginFailed = 2;
+        public const int Cancelled   = 3;
     }
 }

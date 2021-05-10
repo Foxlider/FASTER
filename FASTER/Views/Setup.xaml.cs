@@ -60,6 +60,18 @@ namespace FASTER.Views
                 Properties.Settings.Default.Save();
             }
 
+            if (Properties.Settings.Default.armaMods == null)
+            {
+                Properties.Settings.Default.armaMods = new ArmaModCollection();
+                Properties.Settings.Default.Save();
+            }
+
+            if (string.IsNullOrEmpty(Properties.Settings.Default.modStagingDirectory))
+            {
+                Properties.Settings.Default.modStagingDirectory = AppDomain.CurrentDomain.BaseDirectory;
+                Properties.Settings.Default.Save();
+            }
+
             ISteamUserBox.Text = Properties.Settings.Default.steamUserName;
             var installId = AppCenter.GetInstallIdAsync().Result;
             AppCenter.SetUserId($"{installId}_{Properties.Settings.Default.steamUserName}");

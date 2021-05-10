@@ -44,15 +44,13 @@ namespace FASTER.Models
 
         public string ModStagingDirectory
         {
-            get;
-            set;
-            //get => Settings.Default.modStagingDirectory;
-            //set
-            //{
-            //    Settings.Default.modStagingDirectory = value;
-            //    Settings.Default.Save();
-            //    RaisePropertyChanged(nameof(ModStagingDirectory));
-            //}
+            get => Settings.Default.modStagingDirectory;
+            set
+            {
+                Settings.Default.modStagingDirectory = value;
+                Settings.Default.Save();
+                RaisePropertyChanged(nameof(ModStagingDirectory));
+            }
         }
 
         public string Output

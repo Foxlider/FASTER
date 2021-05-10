@@ -20,6 +20,34 @@ namespace FASTER.Models
                 Properties.Settings.Default.steamCMDPath = string.Empty;
         }
 
+        public static string ParseFileSize(long size)
+        {
+            double   fullSize = size;
+            return ParseFileSize(fullSize);
+        }
+
+        public static string ParseFileSize(ulong size)
+        {
+            double   fullSize = size;
+            return ParseFileSize(fullSize);
+        }
+
+        public static string ParseFileSize(double fullSize)
+        {
+            string[] sizes    = {" B", "KB", "MB", "GB", "TB"};
+            var      order    = 0;
+
+            while (fullSize >= 1024 && order < sizes.Length - 1)
+            {
+                order++;
+                fullSize /= 1024.0;
+            }
+
+            // Adjust the format string to your preferences. For example "{0:0.#}{1}" would
+            // show a single decimal place, and no space.
+            return $"{fullSize,7:F} {sizes[order],-2}";
+        }
+
         public static string StringFromRichTextBox(System.Windows.Controls.RichTextBox rtb)
         {
             TextRange textRange = new TextRange(rtb.Document.ContentStart, rtb.Document.ContentEnd);

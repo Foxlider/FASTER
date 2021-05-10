@@ -8,6 +8,9 @@
     <Setting Name="steamCMDPath" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="modStagingDirectory" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
     <Setting Name="steamUserName" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
@@ -31,6 +34,9 @@
     </Setting>
     <Setting Name="serverBranch" Type="System.String" Scope="User">
       <Value Profile="(Default)">Stable</Value>
+    </Setting>
+    <Setting Name="armaMods" Type="FASTER.Models.ArmaModCollection" Scope="User">
+    <Value Profile="(Default)" />
     </Setting>
     <Setting Name="steamMods" Type="FASTER.Models.SteamModCollection" Scope="User">
       <Value Profile="(Default)" />
