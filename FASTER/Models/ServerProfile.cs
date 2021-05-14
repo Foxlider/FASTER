@@ -54,6 +54,7 @@ namespace FASTER.Models
         private bool _missionOverride;
         private bool _contactDlcChecked;
         private bool _gmDlcChecked;
+        private bool _vnDlcChecked;
         private bool _enableHT = true;
         private bool _enableRanking;
 
@@ -147,7 +148,16 @@ namespace FASTER.Models
                 RaisePropertyChanged("GMDLCChecked");
             }
         }
+        public bool VNDLCChecked
+        {
+            get => _vnDlcChecked;
+            set
+            {
+                _vnDlcChecked = value;
+                RaisePropertyChanged("VNDLCChecked");
+            }
 
+        }
         public bool EnableHyperThreading
         {
             get => _enableHT;
@@ -287,12 +297,13 @@ namespace FASTER.Models
     [Serializable]
     public class ProfileMod : INotifyPropertyChanged
     {
-        private bool serverSideChecked;
-        private bool clientSideChecked;
-        private bool headlessChecked;
-        private bool isLocal;
-        private uint _id;
-        private string name;
+        private bool    serverSideChecked;
+        private bool    clientSideChecked;
+        private bool    headlessChecked;
+        private ushort? loadPriority;
+        private bool    isLocal;
+        private uint    _id;
+        private string  name;
 
         public bool ServerSideChecked
         {
@@ -322,6 +333,16 @@ namespace FASTER.Models
                 headlessChecked = value;
                 RaisePropertyChanged("HeadlessChecked");
                 RaisePropertyChanged("HeadlessModsChecked");
+            }
+        }
+
+        public ushort? LoadPriority
+        {
+            get => loadPriority;
+            set
+            {
+                loadPriority = value;
+                RaisePropertyChanged("LoadPriority");
             }
         }
 
@@ -357,9 +378,6 @@ namespace FASTER.Models
         public event PropertyChangedEventHandler PropertyChanged;
 
         private void RaisePropertyChanged(string property)
-        {
-            if (PropertyChanged == null) return;
-            PropertyChanged(this, new PropertyChangedEventArgs(property));
-        }
+        { PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property)); }
     }
 }

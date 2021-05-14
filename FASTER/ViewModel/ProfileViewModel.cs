@@ -179,8 +179,8 @@ namespace FASTER.ViewModel
             string config        = Path.Combine(Properties.Settings.Default.serverPath, "Servers", Profile.Id, "server_config.cfg");
             string basic         = Path.Combine(Properties.Settings.Default.serverPath, "Servers", Profile.Id, "server_basic.cfg");
 
-            string playerMods = string.Join(";", Profile.ProfileMods.Where(m => m.ClientSideChecked).Select(m => m.IsLocal ? m.Name : $"@{Functions.SafeName(m.Name)}"));
-            string serverMods = string.Join(";", Profile.ProfileMods.Where(m => m.ServerSideChecked).Select(m => m.IsLocal ? m.Name : $"@{Functions.SafeName(m.Name)}"));
+            string playerMods = string.Join(";", Profile.ProfileMods.Where(m => m.ClientSideChecked).OrderBy(m => m.LoadPriority).Select(m => m.IsLocal ? m.Name : $"@{Functions.SafeName(m.Name)}"));
+            string serverMods = string.Join(";", Profile.ProfileMods.Where(m => m.ServerSideChecked).OrderBy(m => m.LoadPriority).Select(m => m.IsLocal ? m.Name : $"@{Functions.SafeName(m.Name)}"));
             List<string> arguments = new List<string>
             {
                 $"-port={Profile.Port}",
@@ -188,7 +188,7 @@ namespace FASTER.ViewModel
                 $" \"-cfg={basic}\"",
                 $" \"-profiles={Path.Combine(Properties.Settings.Default.serverPath, "Servers", Profile.Id)}\"",
                 $" -name={Profile.Id}",
-                $"{(!string.IsNullOrWhiteSpace(playerMods) || Profile.ContactDLCChecked || Profile.GMDLCChecked ? $" \"-mod={(Profile.ContactDLCChecked ? "contact;" : "")}{(Profile.GMDLCChecked ? "GM;" : "")}{(!string.IsNullOrWhiteSpace(playerMods) ? playerMods + ";" : "" )}\"" : "")}",
+                $"{(!string.IsNullOrWhiteSpace(playerMods) || Profile.ContactDLCChecked || Profile.GMDLCChecked || Profile.VNDLCChecked ? $" \"-mod={(Profile.ContactDLCChecked ? "contact;" : "")}{(Profile.GMDLCChecked ? "GM;" : "")}{(Profile.VNDLCChecked ? "vn;" : "")}{(!string.IsNullOrWhiteSpace(playerMods) ? playerMods + ";" : "" )}\"" : "")}",
                 $"{(!string.IsNullOrWhiteSpace(serverMods) ? $" \"-serverMod={serverMods};\"" : "")}",
                 $"{(Profile.EnableHyperThreading ? " -enableHT" : "")}",
                 $"{(Profile.ServerCfg.AllowedFilePatching != ServerCfgArrays.AllowFilePatchingStrings[0] ? " -filePatching" : "")}",
@@ -292,13 +292,25 @@ namespace FASTER.ViewModel
             foreach (var mod in Profile.ProfileMods)
             { mod.ClientSideChecked = false; }
 
+            ushort? loadPriority = 1;
+
+            var extractedModlist = from line in lines 
+                                   where line.Contains("steamcommunity.com/sharedfiles/filedetails") 
+                                   select line.Split("?id=") 
+                                   into extract 
+                                   select extract[1].Split('"')[0];
+
             //Select new ones
-            foreach (var modIdS in from line in lines where line.Contains("steamcommunity.com/sharedfiles/filedetails") select line.Split("?id=") into extract select extract[1].Split('"')[0])
+            foreach (var modIdS in extractedModlist )
             {
                 if (!uint.TryParse(modIdS, out uint modId)) continue;
                 var mod = Profile.ProfileMods.FirstOrDefault(m => m.Id == modId);
                 if (mod != null)
-                { mod.ClientSideChecked = true; }
+                { 
+                    mod.ClientSideChecked = true; 
+                    mod.LoadPriority =  loadPriority;
+                    loadPriority     += 1;
+                }
                 else
                 { DisplayMessage("Some mods in the preset were not downloaded yet. Import the preset and retry later."); }
             }
@@ -389,7 +401,7 @@ namespace FASTER.ViewModel
                         continue;
                     try
                     {
-                        File.Delete(keyFile);
+                        await Task.Run(() => File.Delete(keyFile));
                     }
                     catch (Exception)
                     {
@@ -399,8 +411,7 @@ namespace FASTER.ViewModel
                 }
             }
         }
-
-
+        
         public ObservableCollection<string> LimitedDistanceStrings { get; } = new ObservableCollection<string>(ProfileCfgArrays.LimitedDistanceStrings);
         public ObservableCollection<string> AiPresetStrings        { get; } = new ObservableCollection<string>(ProfileCfgArrays.AiPresetStrings);
         public ObservableCollection<string> ThirdPersonStrings     { get; } = new ObservableCollection<string>(ProfileCfgArrays.ThirdPersonStrings);
@@ -514,6 +525,12 @@ namespace FASTER.ViewModel
             }
 
             Profile.ServerCfg.Missions = missionList;
+        }
+
+        internal void ClearModOrder()
+        {
+            foreach (ProfileMod mod in Profile.ProfileMods)
+            { mod.LoadPriority = null; }
         }
 
         internal void ModsCopyFrom(object to, string from)

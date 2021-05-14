@@ -4,6 +4,7 @@ using FASTER_Maintenance.Models._17Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -193,7 +194,7 @@ namespace FASTER_Maintenance
                     ServerCollection collec = ser.Deserialize(stm) as ServerCollection;
                     Console.WriteLine("\tExtracted profiles");
 
-                    var newProfiles = new List<FASTER.Models.ServerProfile>();
+                    var newProfiles = new List<ServerProfile>();
                     Debug.Assert(collec != null, nameof(collec) + " != null");
                     foreach (var profile in collec.ServerProfile)
                     {
@@ -298,7 +299,8 @@ namespace FASTER_Maintenance
             UpdateStatus(ref i, y, label);
             newProfile.ServerCfg.Difficulty = profile.DifficultyPreset;
             UpdateStatus(ref i, y, label);
-            newProfile.ServerCfg.DisconnectTimeout = int.Parse(profile.DisconnectTimeout);
+            int.TryParse(profile.DisconnectTimeout, out int disconnectTimeout);
+            newProfile.ServerCfg.DisconnectTimeout = disconnectTimeout;
             UpdateStatus(ref i, y, label);
             newProfile.ServerCfg.DoubleIdDetected = profile.DoubleIdDetected;
             UpdateStatus(ref i, y, label);
@@ -324,7 +326,8 @@ namespace FASTER_Maintenance
                                                             ? "10"
                                                             : profile.MaxPlayers);
             UpdateStatus(ref i, y, label);
-            newProfile.ServerCfg.MotdInterval = int.Parse(profile.MotdDelay);
+            int.TryParse(profile.MotdDelay, out int motdDelay);
+            newProfile.ServerCfg.MotdInterval = motdDelay;
             UpdateStatus(ref i, y, label);
             newProfile.ServerCfg.Password = profile.Password;
             UpdateStatus(ref i, y, label);
@@ -352,23 +355,30 @@ namespace FASTER_Maintenance
         {
             newProfile.BasicCfg = new FASTER.Models.BasicCfg();
             UpdateStatus(ref i, y, label);
-            newProfile.BasicCfg.MaxBandwidth = ulong.Parse(profile.MaxBandwidth);
+            ulong.TryParse(profile.MaxBandwidth, out ulong maxBandwidth);
+            newProfile.BasicCfg.MaxBandwidth = maxBandwidth;
             UpdateStatus(ref i, y, label);
-            newProfile.BasicCfg.MaxCustomFileSize = ushort.Parse(profile.MaxCustomFileSize);
+            ushort.TryParse(profile.MaxCustomFileSize, out ushort maxCustomFileSize);
+            newProfile.BasicCfg.MaxCustomFileSize = maxCustomFileSize;
             UpdateStatus(ref i, y, label);
-            newProfile.BasicCfg.MaxMsgSend = ushort.Parse(profile.MaxMessagesSend);
+            ushort.TryParse(profile.MaxMessagesSend, out ushort maxMsgSend);
+            newProfile.BasicCfg.MaxMsgSend = maxMsgSend;
             UpdateStatus(ref i, y, label);
-            newProfile.BasicCfg.MaxPacketSize = ushort.Parse(profile.MaxPacketSize);
+            ushort.TryParse(profile.MaxPacketSize, out ushort maxPacketSize);
+            newProfile.BasicCfg.MaxPacketSize = maxPacketSize;
             UpdateStatus(ref i, y, label);
-            newProfile.BasicCfg.MaxSizeGuaranteed = ushort.Parse(profile.MaxSizeGuaranteed);
+            ushort.TryParse(profile.MaxSizeGuaranteed, out ushort maxSizeGuaranteed);
+            newProfile.BasicCfg.MaxSizeGuaranteed = maxSizeGuaranteed;
             UpdateStatus(ref i, y, label);
-            newProfile.BasicCfg.MaxSizeNonGuaranteed = ushort.Parse(profile.MaxSizeNonguaranteed);
+            ushort.TryParse(profile.MaxSizeNonguaranteed, out ushort maxSizeNonGuaranteed);
+            newProfile.BasicCfg.MaxSizeNonGuaranteed = maxSizeNonGuaranteed;
             UpdateStatus(ref i, y, label);
-            newProfile.BasicCfg.MinBandwidth = ulong.Parse(profile.MinBandwidth);
+            ulong.TryParse(profile.MinBandwidth, out ulong minBandwidth);
+            newProfile.BasicCfg.MinBandwidth = minBandwidth;
             UpdateStatus(ref i, y, label);
-            newProfile.BasicCfg.MinErrorToSend = double.Parse(profile.MinErrorToSend);
+            newProfile.BasicCfg.MinErrorToSend = double.Parse(profile.MinErrorToSend.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture);
             UpdateStatus(ref i, y, label);
-            newProfile.BasicCfg.MinErrorToSendNear = double.Parse(profile.MinErrorToSendNear);
+            newProfile.BasicCfg.MinErrorToSendNear = double.Parse(profile.MinErrorToSendNear.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture);
             UpdateStatus(ref i, y, label);
         }
 
@@ -410,7 +420,7 @@ namespace FASTER_Maintenance
                 ? "Enabled"
                 : "Disabled";
             UpdateStatus(ref i, y, label);
-            newProfile.ArmaProfile.PrecisionAi = double.Parse(profile.AiAccuracy);
+            newProfile.ArmaProfile.PrecisionAi = double.Parse(profile.AiAccuracy.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture);
             UpdateStatus(ref i, y, label);
             newProfile.ArmaProfile.ReducedDamage = profile.ReducedDamage == "true"
                 ? "Enabled"
@@ -420,7 +430,7 @@ namespace FASTER_Maintenance
                 ? "Enabled"
                 : "Disabled";
             UpdateStatus(ref i, y, label);
-            newProfile.ArmaProfile.SkillAi = double.Parse(profile.AiSkill);
+            newProfile.ArmaProfile.SkillAi = double.Parse(profile.AiSkill.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture);
             newProfile.ArmaProfile.StaminaBar = profile.StaminaBar == "true"
                 ? "Enabled"
                 : "Disabled";
