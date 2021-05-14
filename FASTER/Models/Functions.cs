@@ -76,10 +76,11 @@ namespace FASTER.Models
         {
             string rev = $"{(char)(Assembly.GetExecutingAssembly().GetName().Version.Build + 96)}";
             if (Assembly.GetExecutingAssembly().GetName().Version.Build == 0) rev = "ALPHA";
-            var    assembly                      = Assembly.GetExecutingAssembly().GetName().Version;
 #if DEBUG
             rev += "-DEV";
 #endif
+            string version = $"{Assembly.GetExecutingAssembly().GetName().Version.Major}."
+                             + $"{Assembly.GetExecutingAssembly().GetName().Version.Minor}"
                              + $"{rev}";
             return version;
         }
