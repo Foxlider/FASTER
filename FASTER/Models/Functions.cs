@@ -77,21 +77,6 @@ namespace FASTER.Models
             string rev = $"{(char)(Assembly.GetExecutingAssembly().GetName().Version.Build + 96)}";
             if (Assembly.GetExecutingAssembly().GetName().Version.Build == 0) rev = "ALPHA";
             var    assembly                      = Assembly.GetExecutingAssembly().GetName().Version;
-            if (assembly == null) return "UNKNOWN";
-            string rev                           = $"{(char)(assembly.Build + 96)}";
-            if (assembly.Build == 0) rev = "ALPHA";
-            if (assembly.Revision != 0)
-            {
-                string releaseType = assembly.Revision.ToString().Substring(0, 1) switch
-                                     {
-                                         "1" => "H",  // HOTFIX
-                                         "2" => "RC", // RELEASE CANDIDATE
-                                         "5" => "D",  // DEV
-                                         _   => ""    // EMPTY RELEASE TYPE
-                                     };
-
-                rev += $" {releaseType}{int.Parse(assembly.Revision.ToString().Substring(1))}";
-            }
 #if DEBUG
             rev += "-DEV";
 #endif

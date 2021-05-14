@@ -375,9 +375,6 @@ namespace FASTER.Models
             }
         }
 
-        public override string ToString()
-        { return $"{_id} {name}"; }
-
         public event PropertyChangedEventHandler PropertyChanged;
 
         private void RaisePropertyChanged(string property)
