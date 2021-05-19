@@ -97,9 +97,7 @@ namespace FASTER.ViewModel
         {
             if (mod == null)
                 return;
-
-            //TODO delete folder
-            //ModsCollection.ArmaMods.Remove(mod);
+            
             ModsCollection.DeleteSteamMod(mod.WorkshopId);
         }
         public void OpenModPage(ArmaMod mod)

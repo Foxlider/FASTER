@@ -238,11 +238,8 @@ namespace FASTER.Models
             UpdateInfos(false);
             
             IsLoading = true;
-
-            //update code here
-            //System.Threading.Thread.Sleep(5000);
-            //TODO Update system
-            Path = $@".\workshop\{WorkshopId}";
+            
+            Path = System.IO.Path.Combine(Properties.Settings.Default.modStagingDirectory, WorkshopId.ToString());
             if (!Directory.Exists(Path))
                 Directory.CreateDirectory(Path);
             MainWindow.Instance.NavigateToConsole();
