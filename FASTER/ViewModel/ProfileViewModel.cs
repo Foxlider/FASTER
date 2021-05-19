@@ -353,12 +353,11 @@ namespace FASTER.ViewModel
         internal async Task CopyModKeys()
         {
             var mods = new List<string>();
-            var path = Path.Combine(Properties.Settings.Default.steamCMDPath, "steamapps", "workshop", "content", "107410");
 
-            if (!Directory.Exists(path))
+            if (!Directory.Exists(Properties.Settings.Default.modStagingDirectory))
             {
                 MainWindow.Instance.IFlyout.IsOpen         = true;
-                MainWindow.Instance.IFlyoutMessage.Content = $"The SteamCMD path does not exist :\n{path}";
+                MainWindow.Instance.IFlyoutMessage.Content = $"The SteamCMD path does not exist :\n{Properties.Settings.Default.modStagingDirectory}";
                 return;
             }
             var steamMods = Profile.ProfileMods.Where(p => p.ClientSideChecked).ToList();
@@ -366,20 +365,18 @@ namespace FASTER.ViewModel
             foreach (var line in steamMods)
             {
                 try
-                {
-                    mods.AddRange(Directory.GetFiles(Path.Combine(path, line.Id.ToString()), "*.bikey", SearchOption.AllDirectories));
-                }
+                { mods.AddRange(Directory.GetFiles(Path.Combine(Properties.Settings.Default.modStagingDirectory, line.Id.ToString()), "*.bikey", SearchOption.AllDirectories)); }
                 catch (DirectoryNotFoundException)
                 { /*there was no directory*/ }
             }
 
-            foreach (var folder in Properties.Settings.Default.localModFolders)
-            {
-                try 
-                { mods.AddRange(Directory.GetFiles(folder, "*.bikey", SearchOption.AllDirectories)); }
-                catch (DirectoryNotFoundException)
-                { /*there was no directory*/ }
-            }
+            //foreach (var folder in Properties.Settings.Default.localModFolders)
+            //{
+            //    try 
+            //    { mods.AddRange(Directory.GetFiles(folder, "*.bikey", SearchOption.AllDirectories)); }
+            //    catch (DirectoryNotFoundException)
+            //    { /*there was no directory*/ }
+            //}
 
             await ClearModKeys();
 
@@ -431,7 +428,7 @@ namespace FASTER.ViewModel
                 ProfileMod existingMod = Profile.ProfileMods.FirstOrDefault(m => m.Id == mod.WorkshopId);
                 if (existingMod == null)
                 {
-                    var newProfile = new ProfileMod { Name = mod.Name, Id = mod.WorkshopId };
+                    var newProfile = new ProfileMod { Name = mod.Name, Id = mod.WorkshopId, IsLocal = mod.IsLocal};
                     modlist.Add(newProfile);
                     continue;
                 }
