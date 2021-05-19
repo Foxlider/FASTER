@@ -95,9 +95,12 @@ namespace FASTER.Models
             {
                 _executable = value;
                 RaisePropertyChanged("Executable");
+                RaisePropertyChanged("ArmaPath");
             }
         }
-        
+
+        public string ArmaPath => Path.GetDirectoryName(_executable);
+
         public int Port 
         { 
             get => _port; 
@@ -296,8 +299,10 @@ namespace FASTER.Models
 
         private string GetCommandLine()
         {
-            string config        = Path.Combine(Properties.Settings.Default.serverPath, "Servers", Id, "server_config.cfg");
-            string basic         = Path.Combine(Properties.Settings.Default.serverPath, "Servers", Id, "server_basic.cfg");
+            
+
+            string config = Path.Combine(ArmaPath, "Servers", Id, "server_config.cfg");
+            string basic  = Path.Combine(ArmaPath, "Servers", Id, "server_basic.cfg");
 
             string playerMods = string.Join(";", ProfileMods.Where(m => m.ClientSideChecked).OrderBy(m => m.LoadPriority).Select(m => m.IsLocal ? m.Name : $"@{Functions.SafeName(m.Name)}"));
             string serverMods = string.Join(";", ProfileMods.Where(m => m.ServerSideChecked).OrderBy(m => m.LoadPriority).Select(m => m.IsLocal ? m.Name : $"@{Functions.SafeName(m.Name)}"));
@@ -306,14 +311,14 @@ namespace FASTER.Models
                 $"-port={Port}",
                 $" \"-config={config}\"",
                 $" \"-cfg={basic}\"",
-                $" \"-profiles={Path.Combine(Properties.Settings.Default.serverPath, "Servers", Id)}\"",
+                $" \"-profiles={Path.Combine(ArmaPath, "Servers", Id)}\"",
                 $" -name={Id}",
                 $"{(!string.IsNullOrWhiteSpace(playerMods) || ContactDLCChecked || GMDLCChecked ? $" \"-mod={(ContactDLCChecked ? "contact;" : "")}{(GMDLCChecked ? "GM;" : "")}{(!string.IsNullOrWhiteSpace(playerMods) ? playerMods + ";" : "" )}\"" : "")}",
                 $"{(!string.IsNullOrWhiteSpace(serverMods) ? $" \"-serverMod={serverMods};\"" : "")}",
                 $"{(EnableHyperThreading ? " -enableHT" : "")}",
                 $"{(ServerCfg.AllowedFilePatching != ServerCfgArrays.AllowFilePatchingStrings[0] ? " -filePatching" : "")}",
                 $"{(ServerCfg.NetLogEnabled ? " -netlog" : "")}",
-                $"{(RankingChecked ? $" \"-ranking={Path.Combine(Properties.Settings.Default.serverPath, "Servers", Id, "ranking.log")}\"" : "")}",
+                $"{(RankingChecked ? $" \"-ranking={Path.Combine(ArmaPath, "Servers", Id, "ranking.log")}\"" : "")}",
                 $"{(ServerCfg.AutoInit ? " -autoInit" : "")}",
                 $"{(ServerCfg.MaxMemOverride ? $" -maxMem={ServerCfg.MaxMem}" : "")}",
                 $"{(ServerCfg.CpuCountOverride ? $" -cpuCount={ServerCfg.CpuCount}" : "")}",

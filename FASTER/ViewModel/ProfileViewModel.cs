@@ -45,7 +45,7 @@ namespace FASTER.ViewModel
 
         internal void OpenProfileLocation()
         {
-            string folderPath = Path.Combine(Properties.Settings.Default.serverPath, "Servers", Profile.Id);
+            string folderPath = Path.Combine(Profile.ArmaPath, "Servers", Profile.Id);
             if (Directory.Exists(folderPath))
             {
                 ProcessStartInfo startInfo = new ProcessStartInfo
@@ -89,7 +89,7 @@ namespace FASTER.ViewModel
                 "-client",
                 " -connect=127.0.0.1",
                 $" -password={Profile.ServerCfg.Password}",
-                $" \"-profiles={Path.Combine(Properties.Settings.Default.serverPath, "Servers", $"{Profile.Id}_hc{hc}")}\"",
+                $" \"-profiles={Path.Combine(Profile.ArmaPath, "Servers", $"{Profile.Id}_hc{hc}")}\"",
                 " -nosound",
                 $" -port={Profile.Port}",
                 $"{(!string.IsNullOrWhiteSpace(headlessMods) || Profile.ContactDLCChecked || Profile.GMDLCChecked ? $" \"-mod={(Profile.ContactDLCChecked ? "contact;" : "")}{(Profile.GMDLCChecked ? "GM;" : "")}{(!string.IsNullOrWhiteSpace(headlessMods) ? headlessMods + ";" : "")}\"" : "")}",
@@ -174,40 +174,9 @@ namespace FASTER.ViewModel
             return false;
         }
 
-        //Process the command line arguments for the Server
-        private string SetCommandLine()
+        private bool ProfileFilesExist(string profile)
         {
-            string config        = Path.Combine(Properties.Settings.Default.serverPath, "Servers", Profile.Id, "server_config.cfg");
-            string basic         = Path.Combine(Properties.Settings.Default.serverPath, "Servers", Profile.Id, "server_basic.cfg");
-
-            string playerMods = string.Join(";", Profile.ProfileMods.Where(m => m.ClientSideChecked).OrderBy(m => m.LoadPriority).Select(m => m.IsLocal ? m.Name : $"@{Functions.SafeName(m.Name)}"));
-            string serverMods = string.Join(";", Profile.ProfileMods.Where(m => m.ServerSideChecked).OrderBy(m => m.LoadPriority).Select(m => m.IsLocal ? m.Name : $"@{Functions.SafeName(m.Name)}"));
-            List<string> arguments = new List<string>
-            {
-                $"-port={Profile.Port}",
-                $" \"-config={config}\"",
-                $" \"-cfg={basic}\"",
-                $" \"-profiles={Path.Combine(Properties.Settings.Default.serverPath, "Servers", Profile.Id)}\"",
-                $" -name={Profile.Id}",
-                $"{(!string.IsNullOrWhiteSpace(playerMods) || Profile.ContactDLCChecked || Profile.GMDLCChecked ? $" \"-mod={(Profile.ContactDLCChecked ? "contact;" : "")}{(Profile.GMDLCChecked ? "GM;" : "")}{(!string.IsNullOrWhiteSpace(playerMods) ? playerMods + ";" : "" )}\"" : "")}",
-                $"{(!string.IsNullOrWhiteSpace(serverMods) ? $" \"-serverMod={serverMods};\"" : "")}",
-                $"{(Profile.EnableHyperThreading ? " -enableHT" : "")}",
-                $"{(Profile.ServerCfg.AllowedFilePatching != ServerCfgArrays.AllowFilePatchingStrings[0] ? " -filePatching" : "")}",
-                $"{(Profile.ServerCfg.NetLogEnabled ? " -netlog" : "")}",
-                $"{(Profile.RankingChecked ? $" \"-ranking={Path.Combine(Properties.Settings.Default.serverPath, "Servers", Profile.Id, "ranking.log")}\"" : "")}",
-                $"{(Profile.ServerCfg.AutoInit ? " -autoInit" : "")}",
-                $"{(Profile.ServerCfg.MaxMemOverride ? $" -maxMem={Profile.ServerCfg.MaxMem}" : "")}",
-                $"{(Profile.ServerCfg.CpuCountOverride ? $" -cpuCount={Profile.ServerCfg.CpuCount}" : "")}",
-                $"{(!string.IsNullOrWhiteSpace(Profile.ServerCfg.CommandLineParameters) ? $" {Profile.ServerCfg.CommandLineParameters}" : "")}"
-            };
-
-            string commandLine = string.Join("", arguments);
-            return commandLine;
-        }
-
-        private static bool ProfileFilesExist(string profile)
-        {
-            string path = Properties.Settings.Default.serverPath;
+            string path = Profile.ArmaPath;
 
             if (!Directory.Exists(Path.Combine(path, "Servers", profile)))
             { return false; }
@@ -218,8 +187,8 @@ namespace FASTER.ViewModel
 
         internal void DeleteProfile()
         {
-            if (Directory.Exists(Path.Combine(Properties.Settings.Default.serverPath, "Servers", Profile.Id)))
-            { Directory.Delete(Path.Combine(Properties.Settings.Default.serverPath, "Servers", Profile.Id), true); }
+            if (Directory.Exists(Path.Combine(Profile.ArmaPath, "Servers", Profile.Id)))
+            { Directory.Delete(Path.Combine(Profile.ArmaPath, "Servers", Profile.Id), true); }
             Properties.Settings.Default.Profiles.Remove(Profile);
             Properties.Settings.Default.Save();
             MainWindow.Instance.ContentProfileViews.Remove(MainWindow.Instance.ContentProfileViews.FirstOrDefault(p => p.Profile.Id == Profile.Id));
@@ -232,12 +201,12 @@ namespace FASTER.ViewModel
 
         internal void SaveProfile()
         {
-            string config        = Path.Combine(Properties.Settings.Default.serverPath, "Servers", Profile.Id, "server_config.cfg");
-            string basic         = Path.Combine(Properties.Settings.Default.serverPath, "Servers", Profile.Id, "server_basic.cfg");
-            string serverProfile = Path.Combine(Properties.Settings.Default.serverPath, "Servers", Profile.Id, "users", Profile.Id, $"{Profile.Id}.Arma3Profile");
+            string config        = Path.Combine(Profile.ArmaPath, "Servers", Profile.Id, "server_config.cfg");
+            string basic         = Path.Combine(Profile.ArmaPath, "Servers", Profile.Id, "server_basic.cfg");
+            string serverProfile = Path.Combine(Profile.ArmaPath, "Servers", Profile.Id, "users", Profile.Id, $"{Profile.Id}.Arma3Profile");
 
             //Creating profile directory
-            Directory.CreateDirectory(Path.Combine(Properties.Settings.Default.serverPath, "Servers", Profile.Id, "users", Profile.Id));
+            Directory.CreateDirectory(Path.Combine(Profile.ArmaPath, "Servers", Profile.Id, "users", Profile.Id));
 
             //Writing files
             try
@@ -248,7 +217,46 @@ namespace FASTER.ViewModel
             }
             catch
             { DisplayMessage("Could not write the config files. Please ensure the server is not running and retry."); }
-            
+
+            var armaPath = Path.GetDirectoryName(Profile.Executable);
+
+            foreach (var dir in Directory.GetDirectories(armaPath))
+            {
+                var infos = new DirectoryInfo(dir);
+
+                if (infos.Name.StartsWith('@') && (infos.Attributes & FileAttributes.ReparsePoint) == FileAttributes.ReparsePoint)
+                { Directory.Delete(dir); }
+            }
+
+            foreach (ProfileMod profileMod in Profile.ProfileMods.Where(m => m.ClientSideChecked || m.HeadlessChecked || m.ServerSideChecked))
+            {
+                try
+                {
+                    var mod = Properties.Settings.Default.armaMods.ArmaMods.FirstOrDefault(m => m.WorkshopId == profileMod.Id);
+
+                    if (mod == null)
+                        continue;
+                    
+                    var linkPath    = Path.Combine(armaPath, $"@{Functions.SafeName(mod.Name)}");
+                    var linkCommand = "/c mklink /D \"" + linkPath + "\" \"" + mod.Path + "\"";
+
+                    ProcessStartInfo startInfo = new ProcessStartInfo("cmd.exe")
+                    {
+                        WindowStyle     = ProcessWindowStyle.Hidden,
+                        Verb            = "runas",
+                        CreateNoWindow  = true,
+                        UseShellExecute = false,
+                        Arguments       = linkCommand
+                    };
+                    Process.Start(startInfo);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("An exception occurred: \n\n" + ex.Message);
+                }
+            }
+
+
             var index = Properties.Settings.Default.Profiles.FindIndex(p => p.Id == Profile.Id);  
             if (index != -1)
             { Properties.Settings.Default.Profiles[index] = Profile; }
@@ -262,8 +270,6 @@ namespace FASTER.ViewModel
 
         internal void LoadModsFromFile()
         {
-            
-
             var dialog = new CommonOpenFileDialog
             {
                 Title                     = "Select the Arma3 mod preset",
@@ -377,11 +383,11 @@ namespace FASTER.ViewModel
 
             await ClearModKeys();
 
-            Directory.CreateDirectory(Path.Combine(Properties.Settings.Default.serverPath, "keys"));
+            Directory.CreateDirectory(Path.Combine(Profile.ArmaPath, "keys"));
 
             foreach (var link in mods)
             {
-                try { File.Copy(link, Path.Combine(Properties.Settings.Default.serverPath, "keys", Path.GetFileName(link)), true); }
+                try { File.Copy(link, Path.Combine(Profile.ArmaPath, "keys", Path.GetFileName(link)), true); }
                 catch (IOException)
                 {
                     MainWindow.Instance.IFlyout.IsOpen         = true;
@@ -394,9 +400,9 @@ namespace FASTER.ViewModel
         internal async Task ClearModKeys()
         {
             var ignoredKeys = new[] {"a3.bikey", "a3c.bikey", "gm.bikey"};
-            if (Directory.Exists(Path.Combine(Properties.Settings.Default.serverPath, "keys")))
+            if (Directory.Exists(Path.Combine(Profile.ArmaPath, "keys")))
             {
-                foreach (var keyFile in Directory.GetFiles(Path.Combine(Properties.Settings.Default.serverPath, "keys")))
+                foreach (var keyFile in Directory.GetFiles(Path.Combine(Profile.ArmaPath, "keys")))
                 {
                     if (ignoredKeys.Any(keyFile.Contains))
                         continue;
@@ -499,18 +505,18 @@ namespace FASTER.ViewModel
 
         internal void LoadMissions()
         {
-            if (!Directory.Exists(Path.Combine(Properties.Settings.Default.serverPath, "mpmissions"))) return;
+            if (!Directory.Exists(Path.Combine(Profile.ArmaPath, "mpmissions"))) return;
 
             var missionList = new List<ProfileMission>();
             List<string> newMissions = new List<string>();
 
             //Load PBO files
-            newMissions.AddRange(Directory.EnumerateFiles(Path.Combine(Properties.Settings.Default.serverPath, "mpmissions"), "*.pbo",  searchOption: SearchOption.TopDirectoryOnly)
-                                                    .Select(mission => mission.Replace(Path.Combine(Properties.Settings.Default.serverPath, "mpmissions") + "\\", "")));
+            newMissions.AddRange(Directory.EnumerateFiles(Path.Combine(Profile.ArmaPath, "mpmissions"), "*.pbo",  searchOption: SearchOption.TopDirectoryOnly)
+                                                    .Select(mission => mission.Replace(Path.Combine(Profile.ArmaPath, "mpmissions") + "\\", "")));
             //Load folders
             //Credits to Pucker and LinkIsParking
             newMissions.AddRange(Directory.GetDirectories(Path.Combine(Properties.Settings.Default.serverPath, "mpmissions"))
-                                                .Select(mission => mission.Replace(Path.Combine(Properties.Settings.Default.serverPath, "mpmissions") + "\\", "")));
+                                                .Select(mission => mission.Replace(Path.Combine(Profile.ArmaPath, "mpmissions") + "\\", "")));
 
 
             foreach (var mission in newMissions)
