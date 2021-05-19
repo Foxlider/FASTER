@@ -333,7 +333,8 @@ namespace FASTER.ViewModel
 
             if (string.IsNullOrEmpty(Parameters.Username)
              || Parameters.Username == "anonymous"
-             || string.IsNullOrEmpty(Parameters.Password))
+             || string.IsNullOrEmpty(Parameters.Password)
+             || string.IsNullOrEmpty(Encryption.Instance.DecryptData(Parameters.Password)))
             {
                 _steamCredentials = SteamCredentials.Anonymous;
             }
