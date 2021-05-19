@@ -50,6 +50,8 @@ namespace FASTER.ViewModel
         public SteamUpdaterModel            Parameters        { get; set; }
         public ObservableCollection<string> ServerBranches    { get; }      = new ObservableCollection<string> {"Stable", "Contact", "Creator DLC", "LegacyPorts", "Development", "Performance / Profiling"};
         public string                       ServerBranch      { get; set; } = "Stable";
+
+
         public IDialogCoordinator           dialogCoordinator { get; set; }
         public CancellationTokenSource      tokenSource = new CancellationTokenSource();
 
@@ -68,6 +70,10 @@ namespace FASTER.ViewModel
             var pw = Encryption.Instance.DecryptData(Parameters.Password);
         }
 
+        internal string GetPw()
+        {
+            return Encryption.Instance.DecryptData(Parameters.Password);
+        }
 
         public async Task UpdateClick()
         {
@@ -355,15 +361,14 @@ namespace FASTER.ViewModel
                 
                 Parameters.Output += $"\nFailed! Error: {ex.Message}";
                 _steamClient.Shutdown();
-                if (!(ex is SteamLogonException logonEx))
-                    return false;
 
-                if (logonEx.Result == SteamKit2.EResult.InvalidPassword)
+                if (ex.GetBaseException() is SteamLogonException logonEx && logonEx.Result == SteamKit2.EResult.InvalidPassword)
                 {
-                    Parameters.Output += "\nWarning: The logon may have failed due to expired sentry-data."
-                                       + $"\nIf you are sure that the provided username and password are correct, consider deleting the .bin and .key file for the user \"{_steamClient.Credentials.Username}\" in the sentries directory.";
+                    Parameters.Output += "\nWarning: The logon may have failed due to expired sentry-data." 
+                                       + $"\nIf you are sure that the provided username and password are correct, consider deleting the .bin and .key file for the user \"{_steamClient.Credentials.Username}\" in the sentries directory."
+                                       + $"{AppDomain.CurrentDomain.BaseDirectory}\\sentries";
                 }
-
+                
                 return false;
             }
 

@@ -46,6 +46,10 @@ namespace FASTER.Views
             if(sender is PasswordBox box && box.IsFocused)
                 ((SteamUpdaterViewModel) DataContext)?.PasswordChanged(box.Password);
         }
-        
+
+        private void Updater_OnLoaded(object sender, RoutedEventArgs e)
+        {
+            PasswordBox.Password = ((SteamUpdaterViewModel) DataContext)?.GetPw();
+        }
     }
 }

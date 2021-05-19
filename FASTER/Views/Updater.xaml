@@ -1,4 +1,5 @@
 ﻿<UserControl x:Class="FASTER.Views.Updater"
+             Loaded="Updater_OnLoaded"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -72,7 +73,7 @@
                             Click="ModStagingDir_Click" />
                 </Grid>
                 <TextBox Grid.Row="3" Text="{Binding Path=Parameters.Username}" Grid.Column="0" Grid.ColumnSpan="2" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="User Name" Margin="10,30,10,10"/>
-                <PasswordBox Grid.Row="4" Grid.Column="0" PasswordChanged="PasswordBox_OnPasswordChanged" Grid.ColumnSpan="2" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Password" Style="{StaticResource MahApps.Styles.PasswordBox.Button.Revealed}" Margin="10,10,10,30"/>
+                <PasswordBox Name="PasswordBox" Grid.Row="4" Grid.Column="0" PasswordChanged="PasswordBox_OnPasswordChanged" Grid.ColumnSpan="2" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Password" Style="{StaticResource MahApps.Styles.PasswordBox.Button.Revealed}" Margin="10,10,10,30"/>
             </Grid>
         </Grid>
 
