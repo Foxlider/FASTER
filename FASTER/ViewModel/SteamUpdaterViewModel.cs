@@ -19,9 +19,6 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using SteamKit2.GC.Artifact.Internal;
-using SteamKit2.GC.Dota.Internal;
-using SteamKit2.Internal;
 
 namespace FASTER.ViewModel
 {
@@ -31,8 +28,7 @@ namespace FASTER.ViewModel
         {
             Parameters = new SteamUpdaterModel();
         }
-
-
+        
         private static readonly Lazy<SteamUpdaterViewModel>
             lazy =
                 new Lazy<SteamUpdaterViewModel>
@@ -45,7 +41,8 @@ namespace FASTER.ViewModel
             Parameters                =  model;
             DownloadTasks.ListChanged += (sender, args) => RaisePropertyChanged(nameof(IsDownloading));
         }
-    
+
+        private bool _isLoggingIn;
 
         public SteamUpdaterModel            Parameters        { get; set; }
         public ObservableCollection<string> ServerBranches    { get; }      = new ObservableCollection<string> {"Stable", "Contact", "Creator DLC", "LegacyPorts", "Development", "Performance / Profiling"};
@@ -55,9 +52,20 @@ namespace FASTER.ViewModel
         public IDialogCoordinator           dialogCoordinator { get; set; }
         public CancellationTokenSource      tokenSource = new CancellationTokenSource();
 
-        public bool IsDownloading => DownloadTasks.Count > 0;
+        public bool IsDownloading => DownloadTasks.Count > 0 || IsLoggingIn;
 
         public BindingList<Task> DownloadTasks { get; } = new BindingList<Task>();
+
+        public bool IsLoggingIn
+        {
+            get => _isLoggingIn;
+            set
+            {
+                _isLoggingIn = value;
+                RaisePropertyChanged(nameof(IsLoggingIn));
+                RaisePropertyChanged(nameof(IsDownloading));
+            }
+        }
 
 
         private static SteamClient _steamClient;
@@ -156,6 +164,7 @@ namespace FASTER.ViewModel
         {
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
+            tokenSource = new CancellationTokenSource();
 
             if (!await SteamLogin())
                 return UpdateState.LoginFailed; 
@@ -212,6 +221,7 @@ namespace FASTER.ViewModel
 
         public async Task<int> RunModUpdater(ulong modId, string path)
         {
+            tokenSource = new CancellationTokenSource();
             if (!await SteamLogin())
                 return UpdateState.LoginFailed;
 
@@ -223,7 +233,7 @@ namespace FASTER.ViewModel
                 SteamOs    steamOs    = new SteamOs(_OS);
                 ManifestId manifestId = default;
 
-                if (!_steamClient.Credentials.IsAnonymous) //IS SYNC NEABLED
+                if (!_steamClient.Credentials.IsAnonymous) //IS SYNC ENABLED
                 {
                     manifestId = (await _steamContentClient.GetPublishedFileDetailsAsync(modId)).hcontent_file;
                     Manifest manifest = await _steamContentClient.GetManifestAsync(107410, 107410, manifestId);
@@ -265,20 +275,22 @@ namespace FASTER.ViewModel
 
         public async Task<int> RunModsUpdater(ObservableCollection<ArmaMod> mods)
         {
-            if (!await SteamLogin())
+            
+            tokenSource = new CancellationTokenSource();
+            if(!await SteamLogin())
+            { 
+                IsLoggingIn = false;
                 return UpdateState.LoginFailed;
+            }
 
             var _OS = _steamClient.GetSteamOs().Identifier;
 
-            List<Task> dls = new List<Task>();
-
             foreach (Task t in mods.Select(mod => DownloadSingleMod(mod, _OS)))
             {
-                dls.Add(t);
-                t.Start();
+                DownloadTasks.Add(t);
             }
 
-            await Task.WhenAll(dls.ToArray());
+            await Task.WhenAll(DownloadTasks);
 
             _steamClient?.Shutdown();
             return UpdateState.Success;
@@ -335,6 +347,7 @@ namespace FASTER.ViewModel
 
         private async Task<bool> SteamLogin()
         {
+            IsLoggingIn = true;
             SteamAuthenticationFilesProvider sentryFileProvider = new DirectorySteamAuthenticationFilesProvider(".\\sentries");
 
             if (string.IsNullOrEmpty(Parameters.Username)
@@ -355,7 +368,7 @@ namespace FASTER.ViewModel
             Parameters.Output += $"\nConnecting to Steam as {(_steamCredentials.IsAnonymous ? "anonymous" : _steamCredentials.Username)}";
 
             try
-            { await _steamClient.ConnectAsync(); }
+            { await _steamClient.ConnectAsync(tokenSource.Token); }
             catch (Exception ex)
             {
                 
@@ -368,12 +381,13 @@ namespace FASTER.ViewModel
                                        + $"\nIf you are sure that the provided username and password are correct, consider deleting the .bin and .key file for the user \"{_steamClient.Credentials.Username}\" in the sentries directory."
                                        + $"{AppDomain.CurrentDomain.BaseDirectory}\\sentries";
                 }
-                
+                IsLoggingIn = false;
                 return false;
             }
 
             Parameters.Output += "\nOK.";
-            return true;
+            IsLoggingIn = false;
+            return _steamClient.IsConnected;
         }
 
 

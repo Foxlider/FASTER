@@ -179,9 +179,13 @@ namespace FASTER.ViewModel
             foreach (ArmaMod mod in ModsCollection.ArmaMods)
             { Task.Run(() => mod.UpdateInfos()); }
         }
+
         public async Task UpdateAll()
         {
-            await MainWindow.Instance.SteamUpdaterViewModel.RunModsUpdater(ModsCollection.ArmaMods);
+            MainWindow.Instance.NavigateToConsole();
+            var ans = await MainWindow.Instance.SteamUpdaterViewModel.RunModsUpdater(ModsCollection.ArmaMods);
+            if(ans == UpdateState.LoginFailed) 
+                DisplayMessage("Steam Login Failed");
         }
         public void ImportFromSteam()
         {
