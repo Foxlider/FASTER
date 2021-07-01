@@ -220,8 +220,6 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
-                <Button Grid.Row="0" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" HorizontalAlignment="Stretch" Click="InstallSteamCmd_Click" Content="Install SteamCMD" Margin="10"/>
-                <Button Grid.Row="1" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" HorizontalAlignment="Stretch" Click="OpenSteamCmdLocation_Click" Content="Open SteamCMD Folder" Margin="10"/>
                 <Button Grid.Row="2" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" HorizontalAlignment="Stretch" Click="OpenModStagingLocation_Click" Content="Open Mod Staging Directory" Margin="10"/>
             </Grid>
         </simpleChildWindow:ChildWindow>

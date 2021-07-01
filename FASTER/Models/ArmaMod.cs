@@ -351,7 +351,7 @@ namespace FASTER.Models
         }
     }
 
-    public class ArmaModStatus
+    public static class ArmaModStatus
     {
         public static string NotComplete    => "Download Not Complete";
         public static string UpToDate       => "Up To Date";

@@ -268,14 +268,7 @@ namespace FASTER
                 Crashes.TrackError(err, new Dictionary<string, string> { { "Name", Properties.Settings.Default.steamUserName } });
             }
         }
-
-        private void InstallSteamCmd_Click(object sender, RoutedEventArgs e)
-        {
-            IToolsDialog.IsOpen = false;
-            MainGrid.Effect = null;
-            InstallSteam();
-        }
-
+        
         private void OpenModStagingLocation_Click(object sender, RoutedEventArgs e)
         {
             IToolsDialog.IsOpen = false;
@@ -293,25 +286,6 @@ namespace FASTER
             }
             else
             { MessageBox.Show($"{serverDirBox} Directory does not exist!"); }
-        }
-
-        private void OpenSteamCmdLocation_Click(object sender, RoutedEventArgs e)
-        {
-            IToolsDialog.IsOpen = false;
-            var steamDirBox = SteamUpdaterViewModel.Parameters.InstallDirectory;
-
-            if (!string.IsNullOrEmpty(steamDirBox) && Directory.Exists(steamDirBox))
-            {
-                try
-                {
-                    ProcessStartInfo startInfo = new ProcessStartInfo { Arguments = steamDirBox, FileName = "explorer.exe" };
-                    Process.Start(startInfo);
-                }
-                catch
-                { MessageBox.Show($" Could not open {steamDirBox}"); }
-            }
-            else
-            { MessageBox.Show($"{steamDirBox} Directory does not exist!"); }
         }
 
         private void ToolsButton_Click(object sender, RoutedEventArgs e)
@@ -408,20 +382,7 @@ namespace FASTER
                 if (!Directory.Exists(newPath))
                     Directory.CreateDirectory(newPath);
 
-                await Task.Run(async () =>
-                               {
-                                   if (Directory.Exists(oldPath))
-                                   {
-                                       foreach (var file in Directory.EnumerateFiles(oldPath, "*", SearchOption.AllDirectories))
-                                       {
-                                           var newFile = file.Replace(oldPath, newPath);
-                                           if (!Directory.Exists(Path.GetDirectoryName(newFile)))
-                                               Directory.CreateDirectory(Path.GetDirectoryName(newFile));
-
-                                           await CopyFileAsync(file, newFile);
-                                       }
-                                   }
-                               });
+                await MoveMod(oldPath, newPath);
 
                 var newMod = new ArmaMod
                 {
@@ -442,7 +403,6 @@ namespace FASTER
 
             properties.steamMods = new SteamModCollection();
 
-
             if (properties.localMods == null || properties.localMods.Count == 0)
             {
                 await controller.CloseAsync();
@@ -450,12 +410,11 @@ namespace FASTER
                 return;
             }
 
-
             var r = new Random();
             progress = 0;
             controller.Maximum = properties.localMods.Count;
             controller.SetMessage($"Converting Local Mods... {progress} / {controller.Maximum}");
-            controller.SetProgress(progress * 100.0 / controller.Maximum);
+            controller.SetProgress(progress);
             foreach (var localMod in properties.localMods)
             {
                 var modID   = (uint) (uint.MaxValue - r.Next(ushort.MaxValue/2));
@@ -464,20 +423,7 @@ namespace FASTER
                 if (!Directory.Exists(newPath))
                     Directory.CreateDirectory(newPath);
 
-                await Task.Run(async () =>
-                {
-                    if (Directory.Exists(oldPath))
-                    {
-                        foreach (var file in Directory.EnumerateFiles(oldPath, "*", SearchOption.AllDirectories))
-                        {
-                            var newFile = file.Replace(oldPath, newPath);
-                            if (!Directory.Exists(Path.GetDirectoryName(newFile)))
-                                Directory.CreateDirectory(Path.GetDirectoryName(newFile));
-
-                            await CopyFileAsync(file, newFile);
-                        }
-                    }
-                });
+                await MoveMod(oldPath, newPath);
                 
                 var newMod = new ArmaMod
                 {
@@ -496,6 +442,20 @@ namespace FASTER
 
             await controller.CloseAsync();
             properties.Save();
+        }
+
+        private static async Task MoveMod(string oldPath, string newPath)
+        {
+            if(Directory.Exists(oldPath))
+            {
+                foreach (var file in Directory.EnumerateFiles(oldPath, "*", SearchOption.AllDirectories))
+                {
+                    var newFile = file.Replace(oldPath, newPath);
+                    if(!Directory.Exists(Path.GetDirectoryName(newFile))) Directory.CreateDirectory(Path.GetDirectoryName(newFile));
+
+                    await CopyFileAsync(file, newFile);
+                }
+            }
         }
 
         private static async Task CopyFileAsync(string sourceFile, string destinationFile)
@@ -534,32 +494,7 @@ namespace FASTER
                 ? dlg.FileName
                 : null;
         }
-
-        private void InstallSteam()
-        {
-            //if (string.IsNullOrEmpty(SteamUpdaterViewModel.Parameters.InstallDirectory))
-            //{ DisplayMessage("Please make sure you have set a valid path for SteamCMD."); }
-            //else if (!File.Exists(Properties.Settings.Default.steamCMDPath + "\\steamcmd.exe"))
-            //{
-            //    DisplayMessage("Steam CMD will now download and start the install process. If prompted please enter your Steam Guard " +
-            //                              "Code.\n\nYou will receive this by email from steam. When this is all complete type \'quit\' to finish.");
-            //    ContentSteamUpdater.ISteamOutputBox.Document.Blocks.Clear();
-            //    ContentSteamUpdater.ISteamOutputBox.AppendText("Installing SteamCMD");
-            //    ContentSteamUpdater.ISteamOutputBox.AppendText("\nFile Downloading...");
-            //    const string url = "https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip";
-            //    string fileName = Properties.Settings.Default.steamCMDPath + "\\steamcmd.zip";
-
-            //    if (!Directory.Exists(Properties.Settings.Default.steamCMDPath))
-            //        Directory.CreateDirectory(Properties.Settings.Default.steamCMDPath);
-
-            //    using WebClient client = new WebClient();
-            //    client.DownloadFileCompleted += SteamDownloadCompleted;
-            //    client.DownloadFileAsync(new Uri(url), fileName);
-            //}
-            //else
-            //{ DisplayMessage("SteamCMD already appears to be installed.\n\nPlease delete all files in the selected folder to reinstall."); }
-        }
-
+        
         internal string GetVersion()
         { return Functions.GetVersion(); }
     }

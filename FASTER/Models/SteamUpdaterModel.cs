@@ -11,10 +11,10 @@ namespace FASTER.Models
 
         public string InstallDirectory
         {
-            get => Settings.Default.steamCMDPath;
+            get => Settings.Default.serverPath;
             set
             {
-                Settings.Default.steamCMDPath = value;
+                Settings.Default.serverPath = value;
                 Settings.Default.Save();
                 RaisePropertyChanged(nameof(InstallDirectory));
             }

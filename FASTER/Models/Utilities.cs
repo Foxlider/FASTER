@@ -35,7 +35,7 @@ namespace FASTER.Models
         {
             if (textBox == null)
             {
-                throw new ArgumentNullException("textBox");
+                throw new ArgumentNullException(nameof(textBox));
             }
 
             return (bool) textBox.GetValue(AlwaysScrollToEndProperty);
@@ -45,7 +45,7 @@ namespace FASTER.Models
         {
             if (textBox == null)
             {
-                throw new ArgumentNullException("textBox");
+                throw new ArgumentNullException(nameof(textBox));
             }
 
             textBox.SetValue(AlwaysScrollToEndProperty, alwaysScrollToEnd);

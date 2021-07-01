@@ -370,14 +370,6 @@ namespace FASTER.ViewModel
                 { /*there was no directory*/ }
             }
 
-            //foreach (var folder in Properties.Settings.Default.localModFolders)
-            //{
-            //    try 
-            //    { mods.AddRange(Directory.GetFiles(folder, "*.bikey", SearchOption.AllDirectories)); }
-            //    catch (DirectoryNotFoundException)
-            //    { /*there was no directory*/ }
-            //}
-
             await ClearModKeys();
 
             Directory.CreateDirectory(Path.Combine(Profile.ArmaPath, "keys"));
@@ -434,44 +426,6 @@ namespace FASTER.ViewModel
                 }
                 modlist.Add(existingMod);
             }
-
-            //if (!string.IsNullOrWhiteSpace(Properties.Settings.Default.serverPath))
-            //{
-            //    List<string> localMods = Directory.GetDirectories(Properties.Settings.Default.serverPath, "@*")
-            //                                      .Select(addon => addon.Replace(Properties.Settings.Default.serverPath + @"\", ""))
-            //                                      .ToList();
-            //    List<string> targetForDeletion = new List<string>();
-            //    foreach (var folder in Properties.Settings.Default.localModFolders)
-            //    {
-            //        if (Directory.Exists(folder))
-            //            localMods.AddRange(Directory.GetDirectories(folder, "@*"));
-            //        else
-            //        {
-            //            DisplayMessage("A folder could not be found and have been deleted");
-            //            targetForDeletion.Add(folder);
-            //        }
-            //    }
-            //    foreach (var folder in targetForDeletion)
-            //    { Properties.Settings.Default.localModFolders.Remove(folder); }
-
-            //    foreach (var addon in localMods.ToList()
-            //                                 .Where(addon => modlist.FirstOrDefault(m => addon.Contains($"@{Functions.SafeName(m.Name)}")) != null)) 
-            //    { localMods.Remove(addon); }
-
-            //    foreach(var mod in localMods)
-            //    {
-            //        var newId = GetUInt32HashCode(mod);
-            //        ProfileMod existingMod = Profile.ProfileMods.FirstOrDefault(m => m.Id == newId);
-                
-            //        if (existingMod == null)
-            //        {
-            //            var newProfile = new ProfileMod { Name = mod, Id = newId, IsLocal = true };
-            //            modlist.Add(newProfile);
-            //            continue;
-            //        }
-            //        modlist.Add(existingMod);
-            //    }
-            //}
             
             Profile.ProfileMods = modlist;
 
@@ -484,22 +438,7 @@ namespace FASTER.ViewModel
             if (index != -1)
             { Properties.Settings.Default.Profiles[index] = Profile; }
         }
-
-
-        private uint GetUInt32HashCode(string strText)
-        {
-            if (string.IsNullOrEmpty(strText)) return 0;
-
-            //Unicode Encode Covering all characterset
-            byte[] byteContents   = Encoding.Unicode.GetBytes(strText);
-            byte[] hashText       = hash.ComputeHash(byteContents);
-            uint   hashCodeStart  = BitConverter.ToUInt32(hashText, 0);
-            uint   hashCodeMedium = BitConverter.ToUInt32(hashText, 8);
-            uint   hashCodeEnd    = BitConverter.ToUInt32(hashText, 16);
-            var    hashCode       = hashCodeStart ^ hashCodeMedium ^ hashCodeEnd;
-            return uint.MaxValue - hashCode;
-        } 
-
+        
         internal void LoadMissions()
         {
             if (!Directory.Exists(Path.Combine(Profile.ArmaPath, "mpmissions"))) return;

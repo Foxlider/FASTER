@@ -48,13 +48,12 @@ namespace FASTER.ViewModel
         public ObservableCollection<string> ServerBranches    { get; }      = new ObservableCollection<string> {"Stable", "Contact", "Creator DLC", "LegacyPorts", "Development", "Performance / Profiling"};
         public string                       ServerBranch      { get; set; } = "Stable";
 
-
-        public IDialogCoordinator           dialogCoordinator { get; set; }
-        public CancellationTokenSource      tokenSource = new CancellationTokenSource();
+        public  IDialogCoordinator      dialogCoordinator { get; set; }
+        private CancellationTokenSource tokenSource = new CancellationTokenSource();
 
         public bool IsDownloading => DownloadTasks.Count > 0 || IsLoggingIn;
 
-        public BindingList<Task> DownloadTasks { get; } = new BindingList<Task>();
+        private BindingList<Task> DownloadTasks { get; } = new BindingList<Task>();
 
         public bool IsLoggingIn
         {
@@ -75,7 +74,6 @@ namespace FASTER.ViewModel
         public void PasswordChanged(string password)
         {
             Parameters.Password = Encryption.Instance.EncryptData(password);
-            var pw = Encryption.Instance.DecryptData(Parameters.Password);
         }
 
         internal string GetPw()
@@ -124,8 +122,7 @@ namespace FASTER.ViewModel
                     break;
             }
 
-            //TODO Change this when binding is done
-            await RunServerUpdater(@".\download", appId, branch, branchPass);
+            await RunServerUpdater(Parameters.InstallDirectory, appId, branch, branchPass);
         }
 
 
@@ -195,7 +192,7 @@ namespace FASTER.ViewModel
 
                     var downloadHandler = await _steamContentClient.GetAppDataAsync(appId, depotId, manifestId,branch, branchPass, steamOs);
 
-                    await Download(downloadHandler, path, true);
+                    await Download(downloadHandler, path);
                 }
                 catch (Exception ex)
                 {
@@ -250,7 +247,7 @@ namespace FASTER.ViewModel
                                                                                           null,
                                                                                           steamOs);
 
-                await Download(downloadHandler, path, true);
+                await Download(downloadHandler, path);
             }
             catch (TaskCanceledException)
             {
@@ -325,7 +322,7 @@ namespace FASTER.ViewModel
                                                                                           null,
                                                                                           steamOs);
 
-                await Download(downloadHandler, mod.Path, true);
+                await Download(downloadHandler, mod.Path);
             }
             catch (TaskCanceledException)
             {
@@ -399,7 +396,7 @@ namespace FASTER.ViewModel
             {
                 var relativeLocalPath = Path.GetRelativePath(targetDir, localFilePath);
 
-                if (manifest.Files.Count(x => x.FileName.ToLowerInvariant() == relativeLocalPath.ToLowerInvariant()) != 0)
+                if (manifest.Files.Any(x => string.Equals(x.FileName, relativeLocalPath, StringComparison.InvariantCultureIgnoreCase)))
                     continue;
 
                 Console.WriteLine($"Deleting local file {relativeLocalPath}");
@@ -408,7 +405,7 @@ namespace FASTER.ViewModel
         }
 
 
-        private async Task Download(IDownloadHandler downloadHandler, string targetDir, bool sync)
+        private async Task Download(IDownloadHandler downloadHandler, string targetDir)
         {
             ulong downloadedSize = 0;
             downloadHandler.VerificationCompleted += (sender, args) => Parameters.Output += $"\nVerification completed, {args.QueuedFiles.Count} files queued for download. ({args.QueuedFiles.Sum(f => (double)f.TotalSize)} bytes)";

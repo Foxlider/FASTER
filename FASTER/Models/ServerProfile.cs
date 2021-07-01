@@ -347,7 +347,7 @@ namespace FASTER.Models
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
             if(property != "CommandLine")
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("CommandLine"));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CommandLine)));
         }
     }
 
