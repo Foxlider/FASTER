@@ -437,7 +437,7 @@ namespace FASTER
                 await Task.Run(() => properties.armaMods.AddSteamMod(newMod));
                 progress += 1;
                 controller.SetMessage($"Converting Steam Mods... {progress} / {controller.Maximum}");
-                controller.SetProgress(progress * 100.0 / controller.Maximum);
+                controller.SetProgress(progress);
             }
 
             properties.steamMods = new SteamModCollection();

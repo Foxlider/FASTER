@@ -31,7 +31,7 @@ namespace FASTER.Views
         public bool Updating
         { get; set; }
 
-        internal object             locked;
+        internal object             locked = new object();
         private  PerformanceCounter _cpuCounter;
         private  PerformanceCounter _ramCounter;
         
