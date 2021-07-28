@@ -206,7 +206,8 @@ namespace FASTER.Views
                 
                 var tasks = new List<Task>();
 
-                ISteamProgressBar.IsIndeterminate = true;
+                //ISteamProgressBar.IsIndeterminate = true;
+                ISteamProgressBar.Value = 1;
 
                 switch (type)
                 {
@@ -401,8 +402,10 @@ namespace FASTER.Views
                     while (_localRunThread && threadSlept < 10000);
                     if (_localRunThread)
                     { 
-                        Dispatcher?.Invoke(() => 
+                        Dispatcher?.Invoke(() =>
                         {
+                            if (ISteamGuardDialog.IsOpen) 
+                                return;
                             ISteamGuardDialog.Visibility = Visibility.Visible;
                             ISteamGuardDialog.IsOpen = true; 
                         }); 
@@ -411,7 +414,24 @@ namespace FASTER.Views
                 t.Start();
             }
 
-            if (text.Contains("Logged in OK"))
+            if (text.StartsWith("password:"))
+            {
+                Dispatcher?.Invoke(() =>
+                {
+                    MetroWindow.DisplayMessage("You need to enter your password.");
+                });
+            }
+
+            if (text.Contains("Enter the current code from "))
+            {
+                Dispatcher?.Invoke(() =>
+                {
+                    ISteamGuardDialog.Visibility = Visibility.Visible;
+                    ISteamGuardDialog.IsOpen     = true;
+                }); 
+            }
+
+            if (text.Contains("Logged in OK") || text.Contains("Waiting for user info..."))
             {
                 lock (_runLogLock)
                 { _runLog = false; }
