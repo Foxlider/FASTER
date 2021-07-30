@@ -22,10 +22,6 @@ namespace FASTER.ViewModel
 
         public ProfileViewModel(ServerProfile p)
         { Profile = p; }
-
-        //Hash for ID generation
-        private readonly System.Security.Cryptography.SHA1 hash = new System.Security.Cryptography.SHA1CryptoServiceProvider();
-
         public ServerProfile Profile { get; set; }
 
         public ObservableCollection<string> VonCodecs           { get; } = new ObservableCollection<string>(ServerCfgArrays.VonCodecStrings);

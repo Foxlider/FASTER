@@ -1,4 +1,4 @@
-﻿using BytexDigital.Steam.ContentDelivery;
+using BytexDigital.Steam.ContentDelivery;
 using BytexDigital.Steam.ContentDelivery.Exceptions;
 using BytexDigital.Steam.ContentDelivery.Models;
 using BytexDigital.Steam.ContentDelivery.Models.Downloading;
@@ -11,7 +11,6 @@ using FASTER.Models;
 using MahApps.Metro.Controls.Dialogs;
 
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;

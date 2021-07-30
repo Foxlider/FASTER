@@ -10,7 +10,7 @@ namespace FASTER.Views
     /// <summary>
     /// Interaction logic for Updater.xaml
     /// </summary>
-    public partial class Updater : UserControl
+    public partial class Updater
     {
         public Updater()
         {
