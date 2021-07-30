@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using FASTER.Properties;
+using SteamKit2.GC.TF2.Internal;
 
 namespace FASTER.Models
 {
@@ -7,6 +8,7 @@ namespace FASTER.Models
     {
         private string _output;
         private bool   _isUpdating;
+        private double _progress;
 
 
         public string InstallDirectory
@@ -70,6 +72,16 @@ namespace FASTER.Models
             {
                 _isUpdating = value;
                 RaisePropertyChanged(nameof(IsUpdating));
+            }
+        }
+
+        public double Progress
+        {
+            get => _progress;
+            set
+            {
+                _progress = value;
+                RaisePropertyChanged(nameof(Progress));
             }
         }
 

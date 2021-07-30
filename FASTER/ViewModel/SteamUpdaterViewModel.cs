@@ -1,4 +1,4 @@
-using BytexDigital.Steam.ContentDelivery;
+﻿using BytexDigital.Steam.ContentDelivery;
 using BytexDigital.Steam.ContentDelivery.Exceptions;
 using BytexDigital.Steam.ContentDelivery.Models;
 using BytexDigital.Steam.ContentDelivery.Models.Downloading;
@@ -42,6 +42,7 @@ namespace FASTER.ViewModel
         }
 
         private bool _isLoggingIn;
+        private bool _isDlOverride;
 
         public SteamUpdaterModel            Parameters        { get; set; }
         public ObservableCollection<string> ServerBranches    { get; }      = new ObservableCollection<string> {"Stable", "Contact", "Creator DLC", "LegacyPorts", "Development", "Performance / Profiling"};
@@ -50,7 +51,7 @@ namespace FASTER.ViewModel
         public  IDialogCoordinator      dialogCoordinator { get; set; }
         private CancellationTokenSource tokenSource = new CancellationTokenSource();
 
-        public bool IsDownloading => DownloadTasks.Count > 0 || IsLoggingIn;
+        public bool IsDownloading => DownloadTasks.Count > 0 || IsLoggingIn || IsDlOverride;
 
         private BindingList<Task> DownloadTasks { get; } = new BindingList<Task>();
 
@@ -65,6 +66,16 @@ namespace FASTER.ViewModel
             }
         }
 
+        public bool IsDlOverride
+        {
+            get => _isDlOverride;
+            set
+            {
+                _isDlOverride = value;
+                RaisePropertyChanged(nameof(IsDlOverride));
+                RaisePropertyChanged(nameof(IsDownloading));
+            }
+        }
 
         private static SteamClient _steamClient;
         private static SteamContentClient _steamContentClient;
@@ -281,65 +292,88 @@ namespace FASTER.ViewModel
 
             var _OS = _steamClient.GetSteamOs().Identifier;
 
-            foreach (Task t in mods.Select(mod => DownloadSingleMod(mod, _OS)))
+            Parameters.Output += "\nAdding mods to download list...";
+
+            SemaphoreSlim maxThread = new SemaphoreSlim(2);
+            var  r  = new Random();
+            var  ml = mods.Where(m => !m.IsLocal);
+            uint finished = 0;
+            IsDlOverride = true;
+
+            foreach (ArmaMod mod in ml)
             {
-                DownloadTasks.Add(t);
+                await maxThread.WaitAsync();
+
+                _ = Task.Factory.StartNew(() =>
+                {
+                    if (tokenSource.Token.IsCancellationRequested)
+                    {
+                        mod.Status = ArmaModStatus.NotComplete;
+                        return;
+                    }
+                    Parameters.Output += $"\n   Starting {mod.WorkshopId}";
+
+                    Stopwatch sw = Stopwatch.StartNew();
+                    try
+                    {
+                        SteamOs steamOs = new SteamOs(_OS);
+                        ManifestId manifestId = default;
+
+                        if (!_steamClient.Credentials.IsAnonymous) //IS SYNC NEABLED
+                        {
+                            Parameters.Output += $"\n   Getting manifest for {mod.WorkshopId}";
+                            manifestId = _steamContentClient.GetPublishedFileDetailsAsync(mod.WorkshopId).Result.hcontent_file;
+                            Manifest manifest = _steamContentClient.GetManifestAsync(107410, 107410, manifestId).Result;
+                            Parameters.Output += $"\n   Manifest retreived {mod.WorkshopId}";
+                            SyncDeleteRemovedFiles(mod.Path, manifest);
+                        }
+
+                        Parameters.Output += $"\n    Attempting to start download of item {mod.WorkshopId}... ";
+
+                        var downloadHandler = _steamContentClient.GetPublishedFileDataAsync(mod.WorkshopId,
+                                                                                            manifestId,
+                                                                                            null,
+                                                                                            null,
+                                                                                            steamOs);
+
+                        DownloadForMultiple(downloadHandler.Result, mod.Path).Wait();
+                    }
+                    catch (TaskCanceledException)
+                    {
+                        sw.Stop();
+                        mod.Status = ArmaModStatus.NotComplete;
+                    }
+                    catch (Exception ex)
+                    {
+                        sw.Stop();
+                        mod.Status = ArmaModStatus.NotComplete;
+                        Parameters.Output += $"\nError: {ex.Message}{(ex.InnerException != null ? $" Inner Exception: {ex.InnerException.Message}" : "")}";
+                    }
+
+                    sw.Stop();
+                    mod.Status = ArmaModStatus.UpToDate;
+                    Parameters.Output += $"\n    Download {mod.WorkshopId} completed, it took {sw.Elapsed:hh\\:mm\\:ss}";
+
+
+                }, TaskCreationOptions.LongRunning).ContinueWith((task) =>
+                {
+                    finished += 1;
+                    Parameters.Output += $"\n   Thread {mod.WorkshopId} complete  ({finished} / {ml.Count()})";
+                    Parameters.Progress = finished * ml.Count() / 100.00;
+                    maxThread.Release();
+                });
             }
 
-            await Task.WhenAll(DownloadTasks);
+            Parameters.Output += "\nAlmost there...";
+            await maxThread.WaitAsync();
 
+            
             _steamClient?.Shutdown();
+            Parameters.Output += "\nMods updated !";
+            IsDlOverride = false;
             return UpdateState.Success;
         }
-
-        private async Task DownloadSingleMod(ArmaMod mod, string _OS)
-        {
-            if (mod.IsLocal)
-                return;
-
-            Stopwatch sw = Stopwatch.StartNew();
-
-            try
-            {
-                SteamOs    steamOs    = new SteamOs(_OS);
-                ManifestId manifestId = default;
-
-                if (!_steamClient.Credentials.IsAnonymous) //IS SYNC NEABLED
-                {
-                    manifestId = (await _steamContentClient.GetPublishedFileDetailsAsync(mod.WorkshopId)).hcontent_file;
-                    Manifest manifest = await _steamContentClient.GetManifestAsync(107410, 107410, manifestId);
-
-                    SyncDeleteRemovedFiles(mod.Path, manifest);
-                }
-
-                Parameters.Output += $"\nAttempting to start download of item {mod.WorkshopId}... ";
-
-                var downloadHandler = await _steamContentClient.GetPublishedFileDataAsync(
-                                                                                          mod.WorkshopId,
-                                                                                          manifestId,
-                                                                                          null,
-                                                                                          null,
-                                                                                          steamOs);
-
-                await Download(downloadHandler, mod.Path);
-            }
-            catch (TaskCanceledException)
-            {
-                sw.Stop();
-                mod.Status = ArmaModStatus.NotComplete;
-            }
-            catch (Exception ex)
-            {
-                sw.Stop();
-                mod.Status        =  ArmaModStatus.NotComplete;
-                Parameters.Output += $"\nError: {ex.Message}{(ex.InnerException != null ? $" Inner Exception: {ex.InnerException.Message}" : "")}";
-            }
-
-            sw.Stop();
-            mod.Status        =  ArmaModStatus.UpToDate;
-            Parameters.Output += $"\nDownload completed, it took {sw.Elapsed:hh\\:mm\\:ss}";
-        }
-
+        
 
         private async Task<bool> SteamLogin()
         {
@@ -412,6 +446,7 @@ namespace FASTER.ViewModel
                                                      {
                                                          downloadedSize    += args.TotalSize;
                                                          Parameters.Output += $"\nProgress {downloadHandler.TotalProgress * 100:00.00}% ({Functions.ParseFileSize(downloadedSize)} / {Functions.ParseFileSize(downloadHandler.TotalFileSize)})";
+                                                         Parameters.Progress = downloadHandler.TotalProgress * 100;
                                                      };
             downloadHandler.DownloadComplete      += (sender, args) => Parameters.Output += "\nDownload completed";
 
@@ -426,7 +461,7 @@ namespace FASTER.ViewModel
             DownloadTasks.Add(downloadTask);
             
             Parameters.Output += $"\nDownloading {downloadHandler.TotalFileCount} files with total size of {Functions.ParseFileSize(downloadHandler.TotalFileSize)}...";
-
+            Parameters.Progress = 0;
             while (!downloadTask.IsCompleted && !downloadTask.IsCanceled && !tokenSource.Token.IsCancellationRequested)
             {
 
@@ -436,11 +471,13 @@ namespace FASTER.ViewModel
                 if (tokenSource.Token.IsCancellationRequested)
                     Parameters.Output += "\nTask cancellation requested";
                 Parameters.Output += $"\nProgress {downloadHandler.TotalProgress * 100:00.00}%";
+                Parameters.Progress = downloadHandler.TotalProgress * 100;
             }
 
             if (downloadTask.IsCanceled)
             {
                 Parameters.Output += "\nTask Cancelled";
+                Parameters.Progress = 0;
                 DownloadTasks.Remove(downloadTask);
                 return;
             }
@@ -450,6 +487,61 @@ namespace FASTER.ViewModel
             catch (TaskCanceledException)
             {
                 Parameters.Output += "\nTask Cancelled";
+                Parameters.Progress = 0;
+                throw;
+            }
+            finally
+            {
+                DownloadTasks.Remove(downloadTask);
+                downloadTask.Dispose();
+            }
+        }
+
+        private async Task DownloadForMultiple(IDownloadHandler downloadHandler, string targetDir)
+        {
+            if (!Directory.Exists(targetDir))
+                Directory.CreateDirectory(targetDir);
+
+            tokenSource.Token.ThrowIfCancellationRequested();
+            ulong downloadedSize = 0;
+            downloadHandler.VerificationCompleted += (sender, args) => Parameters.Output += $"\n    Verification completed, {args.QueuedFiles.Count} files queued for download. ({args.QueuedFiles.Sum(f => (double)f.TotalSize)} bytes)";
+            downloadHandler.FileDownloaded        += (sender, args) =>
+                                                     {
+                                                         downloadedSize    += args.TotalSize;
+                                                         Parameters.Output += $"\n    Progress {downloadHandler.TotalProgress * 100:00.00}% ({Functions.ParseFileSize(downloadedSize)} / {Functions.ParseFileSize(downloadHandler.TotalFileSize)})";
+                                                     };
+            downloadHandler.DownloadComplete      += (sender, args) => Parameters.Output += "\n    Download completed";
+
+            Task downloadTask = downloadHandler.DownloadToFolderAsync(targetDir, tokenSource.Token);
+            
+            Parameters.Output += "\n    OK.";
+
+            DownloadTasks.Add(downloadTask);
+            
+            Parameters.Output += $"\n    Downloading {downloadHandler.TotalFileCount} files with total size of {Functions.ParseFileSize(downloadHandler.TotalFileSize)}...";
+            Parameters.Progress = 0;
+            while (!downloadTask.IsCompleted && !downloadTask.IsCanceled && !tokenSource.IsCancellationRequested)
+            {
+
+                var delayTask = Task.Delay(500, tokenSource.Token);
+                await Task.WhenAny(delayTask, downloadTask);
+
+                if (tokenSource.IsCancellationRequested)
+                    Parameters.Output += "\n    Task cancellation requested";
+            }
+
+            if (downloadTask.IsCanceled)
+            {
+                Parameters.Output += "\n    Task Cancelled";
+                DownloadTasks.Remove(downloadTask);
+                return;
+            }
+
+            try
+            { await downloadTask; }
+            catch (TaskCanceledException)
+            {
+                Parameters.Output += "\n    Task Cancelled";
                 throw;
             }
             finally
