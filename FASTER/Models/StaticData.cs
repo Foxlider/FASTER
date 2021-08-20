@@ -8,7 +8,16 @@
         public static readonly string[] Supporters =
         {
             "SirGhosty22",
-            "Mildly_Interested"
+            "Mildly_Interested",
+            "WillParker",
+            "headass",
+            "Keefe",
+            "MadSoloSniper",
+            "Ben Miller",
+            "QuickCentralHosting",
+            "Meefs",
+            "Ultradar",
+            "Will Bolton"
         };
 
         /// <summary>
