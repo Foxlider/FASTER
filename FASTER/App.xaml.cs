@@ -6,6 +6,7 @@ using Microsoft.AppCenter.Crashes;
 using System;
 using System.Globalization;
 using System.Windows;
+using ControlzEx.Theming;
 
 namespace FASTER
 {
@@ -20,6 +21,10 @@ namespace FASTER
 
             var countryCode = RegionInfo.CurrentRegion.TwoLetterISORegionName;
             var userID = AppCenter.GetInstallIdAsync();
+
+            ThemeManager.Current.ThemeSyncMode = ThemeSyncMode.SyncAll;
+            ThemeManager.Current.ChangeTheme(Current, FASTER.Properties.Settings.Default.theme);
+
             AppCenter.SetCountryCode(countryCode);
             AppCenter.SetUserId(Environment.UserName + Environment.MachineName + Environment.UserDomainName + userID);
             Analytics.SetEnabledAsync(true);

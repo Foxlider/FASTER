@@ -1,4 +1,4 @@
-﻿<?xml version='1.0' encoding='utf-8'?>
+<?xml version='1.0' encoding='utf-8'?>
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="FASTER.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
@@ -58,6 +58,9 @@
     </Setting>
     <Setting Name="Profiles" Type="FASTER.Models.ServerProfileCollection" Scope="User">
       <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="theme" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Dark.Blue</Value>
     </Setting>
   </Settings>
 </SettingsFile>

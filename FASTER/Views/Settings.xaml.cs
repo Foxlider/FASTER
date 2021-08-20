@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-
+using ControlzEx.Theming;
 using Application = System.Windows.Application;
 using CheckBox = System.Windows.Controls.CheckBox;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
@@ -28,6 +28,9 @@ namespace FASTER.Views
             InitializeComponent();
             AutoUpdater.CheckForUpdateEvent += AutoUpdaterOnCheckForUpdateEvent;
 
+            colorPicker.ItemsSource = ThemeManager.Current.Themes.Where(t => t.BaseColorScheme == "Dark");
+            colorPicker.DisplayMemberPath = "DisplayName";
+            colorPicker.SelectedItem = ThemeManager.Current.Themes.FirstOrDefault(t => t.Name == Properties.Settings.Default.theme);
         }
 
         private void IUpdateBtnOK_Click(object sender, RoutedEventArgs e)
@@ -186,6 +189,27 @@ namespace FASTER.Views
             Properties.Settings.Default.checkForAppUpdates = IAppUpdatesOnLaunch.IsChecked ?? true;
             Properties.Settings.Default.checkForModUpdates = IModUpdatesOnLaunch.IsChecked ?? true;
             Properties.Settings.Default.Save();
+        }
+
+        private void ResetTheme_Click(object sender, RoutedEventArgs e)
+        {
+            ThemeManager.Current.ThemeSyncMode = ThemeSyncMode.SyncAll;
+            ThemeManager.Current.ChangeTheme(Application.Current, "Dark.Blue");
+
+            Properties.Settings.Default.theme = "Dark.Blue";
+            Properties.Settings.Default.Save();
+        }
+
+        private void ComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            if(!(e.AddedItems[0] is Theme theme))
+                return;
+            ThemeManager.Current.ThemeSyncMode = ThemeSyncMode.SyncAll;
+            ThemeManager.Current.ChangeTheme(Application.Current, theme);
+
+            Properties.Settings.Default.theme = theme.Name;
+            Properties.Settings.Default.Save();
+
         }
     }
 }

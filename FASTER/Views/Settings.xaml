@@ -93,6 +93,10 @@
                     <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Window.Background}"></Setter>
                 </Style>
             </Grid.Style>
+            <StackPanel Orientation="Horizontal" Height="auto" VerticalAlignment="Top" Margin="10,50">
+                <Button Content="Default Theme" Click="ResetTheme_Click" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Margin="5"/>
+                <ComboBox Name="colorPicker" controls:TextBoxHelper.UseFloatingWatermark="True" controls:TextBoxHelper.Watermark="Colors" Margin="5" SelectionChanged="ComboBox_SelectionChanged"/>
+            </StackPanel>
         </Grid>
 
         <mah:ChildWindow
