@@ -77,9 +77,9 @@ namespace FASTER.ViewModel
             }
         }
 
-        private static SteamClient _steamClient;
-        private static SteamContentClient _steamContentClient;
-        private static SteamCredentials   _steamCredentials;
+        private SteamClient _steamClient;
+        private SteamContentClient _steamContentClient;
+        private SteamCredentials   _steamCredentials;
 
         public void PasswordChanged(string password)
         {
