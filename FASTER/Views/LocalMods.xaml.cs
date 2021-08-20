@@ -30,7 +30,7 @@ namespace FASTER.Views
 
         private void IEditFolders_Click(object sender, RoutedEventArgs e)
         {
-            MetroWindow.MainContent.Navigate(MetroWindow.ContentSettings);
+            MetroWindow.MainContent.Content = MetroWindow.ContentSettings;
         }
 
         private void UpdateModsView()

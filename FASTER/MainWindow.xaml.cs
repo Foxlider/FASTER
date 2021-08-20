@@ -52,11 +52,11 @@ namespace FASTER
         }
 
 
-        private Mods  _steamMods;
+        private Mods  _mods;
         public Mods ContentSteamMods
         {
-            get => _steamMods ??= new Mods();
-            set => _steamMods = value;
+            get => _mods ??= new Mods();
+            set => _mods = value;
         }
 
         ModsViewModel _modsVM;
@@ -66,11 +66,18 @@ namespace FASTER
             set => _modsVM = value;
         }
 
-        LocalMods _localMods;
-        public LocalMods ContentLocalMods
+        LocalMods _deploy;
+        public LocalMods ContentDeploy
         {
-            get => _localMods ??= new LocalMods();
-            set => _localMods = value;
+            get => _deploy ??= new LocalMods();
+            set => _deploy = value;
+        }
+
+        ModsViewModel _deployVM;
+        public ModsViewModel DeployViewModel
+        {
+            get => _deployVM ??= new ModsViewModel();
+            set => _deployVM = value;
         }
 
         ServerStatus _serverStatus;
@@ -181,38 +188,36 @@ namespace FASTER
             {
                 case "navSteamUpdater":
                     ContentSteamUpdater.DataContext = SteamUpdaterViewModel;
-                    MainContent.Navigate(ContentSteamUpdater);
+                    MainContent.Content  = ContentSteamUpdater;
 
                     break;
-                case "navSteamMods":
+                case "navMods":
                     ContentSteamMods.DataContext = ModsViewModel;
-                    MainContent.Navigate(ContentSteamMods);
+                    MainContent.Content = ContentSteamMods;
                     break;
-                case "navLocalMods":
-                    MainContent.Navigate(ContentLocalMods);
+                case "navDeploy":
+                    ContentDeploy.DataContext = DeployViewModel;
+                    MainContent.Content = ContentDeploy;
                     break;
                 case "navServerStatus":
-                    MainContent.Navigate(ContentServerStatus);
+                    MainContent.Content = ContentServerStatus;
                     break;
                 case "navSettings":
-                    MainContent.Navigate(ContentSettings);
+                    MainContent.Content = ContentSettings;
                     break;
                 case "navAbout":
-                    MainContent.Navigate(ContentAbout);
+                    MainContent.Content = ContentAbout;
                     break;
                 default:
                     if (IServerProfilesMenu.Items.Cast<ToggleButton>().FirstOrDefault(p => p.Name == nav.Name) != null)
                     {
                         ContentProfile.DataContext = ContentProfileViews.First(p => p.Profile.Id == nav.Name);
                         ContentProfile.Refresh();
-                        MainContent.Navigate(ContentProfile);
+                        MainContent.Content = ContentProfile;
                     }
                     break;
             }
         }
-
-        private void MainContent_Navigated(object sender, System.Windows.Navigation.NavigationEventArgs e)
-        { MainContent.NavigationService.RemoveBackEntry(); }
 
         private void INewServerProfileButton_Click(object sender, RoutedEventArgs e)
         {
@@ -300,9 +305,10 @@ namespace FASTER
         {
             navSteamUpdater.IsChecked = true;
             lastNavButton = navSteamUpdater;
-            MainContent.Navigate(ContentSteamUpdater);
+            MainContent.Content = ContentSteamUpdater;
         }
 
+        //Checks if FASTER is running as Admin
         private bool CheckAdmin()
         {
             try

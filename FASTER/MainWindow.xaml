@@ -59,13 +59,13 @@
                             <Label Content="Updater" FontWeight="DemiBold" FontSize="13" Name="lbl_Updater" Margin="15,0,0,0" />
                         </DockPanel>
                     </ToggleButton>
-                    <ToggleButton Name="navSteamMods" Style="{StaticResource MahApps.Styles.ToggleButton.WindowCommands}" Click="ToggleButton_Click">
+                    <ToggleButton Name="navMods" Style="{StaticResource MahApps.Styles.ToggleButton.WindowCommands}" Click="ToggleButton_Click">
                         <DockPanel Width="180">
                             <iconPacks:PackIconModern Kind="Steam" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
                             <Label Content="Mods" FontWeight="DemiBold" FontSize="13" Name="lbl_SteamMods" Margin="15,0,0,0" />
                         </DockPanel>
                     </ToggleButton>
-                    <ToggleButton Name="navLocalMods" Style="{StaticResource MahApps.Styles.ToggleButton.WindowCommands}" Click="ToggleButton_Click">
+                    <ToggleButton Name="navDeploy" Style="{StaticResource MahApps.Styles.ToggleButton.WindowCommands}" Click="ToggleButton_Click">
                         <DockPanel Width="180">
                             <iconPacks:PackIconModern Kind="Folder" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
                             <Label Content="Deployment" FontWeight="DemiBold" FontSize="13" Name="lbl_LocalMods" Margin="15,0,0,0" />
@@ -141,11 +141,11 @@
                 <DropShadowEffect BlurRadius="15" Direction="-90" RenderingBias="Performance" ShadowDepth="2"/>
             </Grid.Effect>
             Background="{StaticResource MahApps.Brushes.Badged.DisabledBackground}"-->
-            <Frame Name="MainContent" Background="{StaticResource MahApps.Brushes.Badged.Background.Disabled}" NavigationUIVisibility="Hidden" Navigated="MainContent_Navigated">
-                <Frame.Effect>
+            <mah:TransitioningContentControl Name="MainContent" Background="{StaticResource MahApps.Brushes.Badged.Background.Disabled}">
+                <ContentControl.Effect>
                     <DropShadowEffect BlurRadius="15" Direction="-90" RenderingBias="Performance" ShadowDepth="2"/>
-                </Frame.Effect>
-            </Frame>
+                </ContentControl.Effect>
+            </mah:TransitioningContentControl>
         </Grid>
 
         <simpleChildWindow:ChildWindow
