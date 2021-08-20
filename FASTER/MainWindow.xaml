@@ -51,24 +51,24 @@
                 <StackPanel.Effect>
                     <DropShadowEffect BlurRadius="5" RenderingBias="Performance" ShadowDepth="0"/>
                 </StackPanel.Effect>
-                <Label  Content="Main" Margin="10,10,0,0" FontWeight="Bold" FontStyle="Italic"/>
+                <Label  Content="Main" Margin="10,10,0,0" FontWeight="Bold"/>
                 <ListBox Name="IMainMenuItems" HorizontalAlignment="Stretch">
                     <ToggleButton Name="navSteamUpdater" Style="{StaticResource MahApps.Styles.ToggleButton.WindowCommands}" Click="ToggleButton_Click">
                         <DockPanel Width="180">
                             <iconPacks:PackIconModern Kind="Console" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-                            <Label Content="Steam Updater" FontWeight="DemiBold" FontSize="13" Name="lbl_Updater" Margin="15,0,0,0" />
+                            <Label Content="Updater" FontWeight="DemiBold" FontSize="13" Name="lbl_Updater" Margin="15,0,0,0" />
                         </DockPanel>
                     </ToggleButton>
                     <ToggleButton Name="navSteamMods" Style="{StaticResource MahApps.Styles.ToggleButton.WindowCommands}" Click="ToggleButton_Click">
                         <DockPanel Width="180">
                             <iconPacks:PackIconModern Kind="Steam" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-                            <Label Content="Steam Mods" FontWeight="DemiBold" FontSize="13" Name="lbl_SteamMods" Margin="15,0,0,0" />
+                            <Label Content="Mods" FontWeight="DemiBold" FontSize="13" Name="lbl_SteamMods" Margin="15,0,0,0" />
                         </DockPanel>
                     </ToggleButton>
                     <ToggleButton Name="navLocalMods" Style="{StaticResource MahApps.Styles.ToggleButton.WindowCommands}" Click="ToggleButton_Click">
                         <DockPanel Width="180">
                             <iconPacks:PackIconModern Kind="Folder" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-                            <Label Content="Local Mods" FontWeight="DemiBold" FontSize="13" Name="lbl_LocalMods" Margin="15,0,0,0" />
+                            <Label Content="Deployment" FontWeight="DemiBold" FontSize="13" Name="lbl_LocalMods" Margin="15,0,0,0" />
                         </DockPanel>
                     </ToggleButton>
                     <ToggleButton Name="navServerStatus" Style="{StaticResource MahApps.Styles.ToggleButton.WindowCommands}" Click="ToggleButton_Click">
@@ -88,7 +88,7 @@
                 <Separator />
                 <!--<ListBoxItem Margin="2,5" Style="{StaticResource MahApps.Styles.ListBoxItem.HamburgerMenuSeparator}"/>-->
                 <DockPanel>
-                    <Label Content="Server Profiles" DockPanel.Dock="Left" Margin="10,5" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center" FontStyle="Italic"/>
+                    <Label Content="Server Profiles" DockPanel.Dock="Left" Margin="10,5" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                     <Button HorizontalAlignment="Right" Margin="10,0" Click="INewServerProfileButton_Click" Content="{iconPacks:Modern Kind=Add}" Name="INewServerProfileButton" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Height="25" Width="25" VerticalAlignment="Center" Padding="0"/>
                 </DockPanel>
                 <ListBox Name="IServerProfilesMenu" HorizontalAlignment="Stretch" Margin="0,0,0,2" ScrollViewer.VerticalScrollBarVisibility="Auto" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch">
@@ -118,7 +118,7 @@
                 </StackPanel.Effect>
                 <Separator/>
                 <!--<ListBoxItem Margin="2,5" Style="{StaticResource MahApps.Styles.ListBoxItem.HamburgerMenuSeparator}"/>-->
-                <Label Content="Other" Margin="10,5" FontWeight="Bold" FontStyle="Italic" />
+                <Label Content="Other" Margin="10,5" FontWeight="Bold"/>
                 <ListBox Name="IOtherMenuItems" HorizontalAlignment="Stretch" Margin="0,1">
                     <ToggleButton Name="navSettings" Style="{StaticResource MahApps.Styles.ToggleButton.WindowCommands}" Click="ToggleButton_Click">
                         <DockPanel Width="180">
