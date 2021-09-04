@@ -92,7 +92,7 @@ namespace FASTER.ViewModel
                 $" \"-profiles={Path.Combine(Properties.Settings.Default.serverPath, "Servers", Profile.Id)}\"",
                 " -nosound",
                 $" -port={Profile.Port}",
-                $"{(!string.IsNullOrWhiteSpace(headlessMods) || Profile.ContactDLCChecked || Profile.GMDLCChecked || Profile.PFDLCChecked ? $" \"-mod={(Profile.ContactDLCChecked ? "contact;" : "")}{(Profile.GMDLCChecked ? "GM;" : "")}{(Profile.PFDLCChecked ? "vn;" : "")}{(!string.IsNullOrWhiteSpace(headlessMods) ? headlessMods + ";" : "")}\"" : "")}",
+                $"{(!string.IsNullOrWhiteSpace(headlessMods) || Profile.ContactDLCChecked || Profile.GMDLCChecked || Profile.PFDLCChecked || Profile.CLSADLCChecked ? $" \"-mod={(Profile.ContactDLCChecked ? "contact;" : "")}{(Profile.GMDLCChecked ? "GM;" : "")}{(Profile.PFDLCChecked ? "vn;" : "")}{(Profile.CLSADLCChecked ? "csla;" : "")}{(!string.IsNullOrWhiteSpace(headlessMods) ? headlessMods + ";" : "")}\"" : "")}",
                 $"{(Profile.ServerCfg.MaxMemOverride ? $" -maxMem={Profile.ServerCfg.MaxMem}" : "")}",
                 $"{(Profile.ServerCfg.CpuCountOverride ? $" -cpuCount={Profile.ServerCfg.CpuCount}" : "")}",
                 $"{(Profile.EnableHyperThreading ? " -enableHT" : "")}",
