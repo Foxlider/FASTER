@@ -54,6 +54,8 @@ namespace FASTER.Models
         private bool _missionOverride;
         private bool _contactDlcChecked;
         private bool _gmDlcChecked;
+        private bool _pfDlcChecked;
+        private bool _clsaDlcChecked;
         private bool _enableHT = true;
         private bool _enableRanking;
 
@@ -145,6 +147,26 @@ namespace FASTER.Models
             {
                 _gmDlcChecked = value;
                 RaisePropertyChanged("GMDLCChecked");
+            }
+        }
+
+        public bool PFDLCChecked
+        {
+            get => _pfDlcChecked;
+            set
+            {
+                _pfDlcChecked = value;
+                RaisePropertyChanged("PFDLCChecked");
+            }
+        }
+
+        public bool CLSADLCChecked
+        {
+            get => _clsaDlcChecked;
+            set
+            {
+                _clsaDlcChecked = value;
+                RaisePropertyChanged("CLSADLCChecked");
             }
         }
 

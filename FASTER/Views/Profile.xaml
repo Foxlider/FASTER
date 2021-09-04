@@ -81,9 +81,15 @@
                                         <TextBlock Text="Clear Keys" Margin="10,0" />
                                     </StackPanel>
                                 </Button>
-                                <StackPanel Orientation="Horizontal">
-                                    <CheckBox IsChecked="{Binding Profile.ContactDLCChecked}" Content="Contact DLC" Margin="10,3"/>
-                                    <CheckBox IsChecked="{Binding Profile.GMDLCChecked}" Content="GM DLC" Margin="10,3"/>
+                                <StackPanel Orientation="Vertical">
+                                    <StackPanel Orientation="Horizontal">
+                                        <CheckBox IsChecked="{Binding Profile.ContactDLCChecked}" Content="Contact DLC" Margin="10,3" Width="101"/>
+                                        <CheckBox IsChecked="{Binding Profile.GMDLCChecked}" Content="GM DLC" Margin="10,3"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <CheckBox IsChecked="{Binding Profile.PFDLCChecked}" Content="Prarie Fire DLC" Margin="10,3"/>
+                                        <CheckBox IsChecked="{Binding Profile.CLSADLCChecked}" Content="CLSA DLC" Margin="10,3"/>
+                                    </StackPanel>
                                 </StackPanel>
                             </StackPanel>
                             <DataGrid Grid.Row="1" ItemsSource="{Binding Path=Profile.ProfileMods, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" CanUserReorderColumns="False" CanUserSortColumns="True" AutoGenerateColumns="False" CanUserAddRows="False">
