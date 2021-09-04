@@ -11,6 +11,7 @@ using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls.Primitives;
+using System.Xml;
 
 namespace FASTER.ViewModel
 {
@@ -287,8 +288,6 @@ namespace FASTER.ViewModel
                 MessageBox.Show("Please enter a valid arma3server executable location");
                 return;
             }
-
-            var lines = File.ReadAllLines(dialog.FileName).ToList();
             
             //Clear mods
             foreach (var mod in Profile.ProfileMods)
@@ -296,25 +295,54 @@ namespace FASTER.ViewModel
 
             ushort? loadPriority = 1;
 
-            var extractedModlist = from line in lines 
-                                   where line.Contains("steamcommunity.com/sharedfiles/filedetails") 
-                                   select line.Split("?id=") 
-                                   into extract 
-                                   select extract[1].Split('"')[0];
+            var lines = File.ReadAllText(dialog.FileName);
+
+            var extractedModlist = new List<ProfileMod>();
+            var doc = new XmlDocument();
+            doc.LoadXml(lines);
+            var modNodes = doc.SelectNodes("//tr[@data-type=\"ModContainer\"]");
+            for (int i = 0; i < modNodes.Count; i++)
+            {
+                var modNode = modNodes.Item(i);
+                var modName = modNode.SelectSingleNode("td[@data-type='DisplayName']").InnerText;
+                var modIdNode = modNode.SelectSingleNode("td/a[@data-type='Link']");
+                uint modId = 0;
+                if (modIdNode != null)
+                {
+                    string modIdS = modIdNode.Attributes.GetNamedItem("href").Value.Split("?id=")[1].Split('"')[0];
+                    uint.TryParse(modIdS, out modId);
+                }
+
+                var mod = new ProfileMod
+                {
+                    Id = modId,
+                    Name = modName,
+                    IsLocal = modIdNode == null
+                };
+                extractedModlist.Add(mod);
+            }
 
             //Select new ones
-            foreach (var modIdS in extractedModlist )
+            var notFound = new List<string>();
+            foreach (var extractedMod in extractedModlist)
             {
-                if (!uint.TryParse(modIdS, out uint modId)) continue;
-                var mod = Profile.ProfileMods.FirstOrDefault(m => m.Id == modId);
+                var mod = Profile.ProfileMods.FirstOrDefault(m => m.Id == extractedMod.Id || (new string[] { extractedMod.Name, extractedMod.Name.Replace(" ", "_") }).Contains((m.Name.Contains("@") ? m.Name[(m.Name.IndexOf("@") + 1)..] : m.Name)));
                 if (mod != null)
-                { 
-                    mod.ClientSideChecked = true; 
-                    mod.LoadPriority =  loadPriority;
-                    loadPriority     += 1;
+                {
+                    mod.ClientSideChecked = true;
+                    mod.LoadPriority = loadPriority;
+                    loadPriority += 1;
                 }
                 else
-                { DisplayMessage("Some mods in the preset were not downloaded yet. Import the preset and retry later."); }
+                {
+                    notFound.Add(extractedMod.Name);
+                }
+            }
+
+            // Display mods that weren't found in message
+            if (notFound.Count > 0)
+            {
+                DisplayMessage($"Some mods in the preset were not found: \n{string.Join("\n\t", notFound)}");
             }
         }
 
@@ -421,7 +449,36 @@ namespace FASTER.ViewModel
                 }
                 modlist.Add(existingMod);
             }
-            
+
+            var localMods = LocalMod.GetLocalMods();
+            var serverPathMods = LocalMod.GetLocalMods(true);
+            var steamMods = SteamMod.GetSteamMods();
+
+            var modsToRemove = (from localMod in serverPathMods
+                                from steamMod in steamMods
+                                where localMod.Name == Functions.SafeName(steamMod.Name)
+                                select localMod).ToList();
+
+            foreach (var remove in modsToRemove)
+            {
+                try { serverPathMods.RemoveAt(serverPathMods.IndexOf(serverPathMods.Find(m => m.Name == remove.Name))); }
+                catch (ArgumentOutOfRangeException) { /*IGNORED*/ }
+            }
+
+            localMods.AddRange(serverPathMods);
+
+            foreach (var localmod in localMods)
+            {
+                ProfileMod existingMod = Profile.ProfileMods.FirstOrDefault(m => (new string[] { localmod.Name, localmod.Name.Replace(" ", "_") }).Contains((m.Name.Contains("@") ? m.Name[(m.Name.IndexOf("@") + 1)..] : m.Name)));
+                if (existingMod == null)
+                {
+                    var newProfile = new ProfileMod { Name = localmod.Name, IsLocal = true };
+                    modlist.Add(newProfile);
+                    continue;
+                }
+                modlist.Add(existingMod);
+            }
+
             Profile.ProfileMods = modlist;
 
             LoadMissions();
