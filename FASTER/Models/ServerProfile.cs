@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows.Controls.Primitives;
 using System.Xml.Serialization;
 
@@ -54,6 +55,8 @@ namespace FASTER.Models
         private bool _missionOverride;
         private bool _contactDlcChecked;
         private bool _gmDlcChecked;
+        private bool _pfDlcChecked;
+        private bool _clsaDlcChecked;
         private bool _enableHT = true;
         private bool _enableRanking;
 
@@ -148,6 +151,26 @@ namespace FASTER.Models
             {
                 _gmDlcChecked = value;
                 RaisePropertyChanged("GMDLCChecked");
+            }
+        }
+
+        public bool PFDLCChecked
+        {
+            get => _pfDlcChecked;
+            set
+            {
+                _pfDlcChecked = value;
+                RaisePropertyChanged("PFDLCChecked");
+            }
+        }
+
+        public bool CLSADLCChecked
+        {
+            get => _clsaDlcChecked;
+            set
+            {
+                _clsaDlcChecked = value;
+                RaisePropertyChanged("CLSADLCChecked");
             }
         }
 
@@ -297,6 +320,32 @@ namespace FASTER.Models
             return p;
         }
 
+        public string GetDlcAndPlayerMods(string playerMods)
+        {
+            StringBuilder mods = new StringBuilder();
+            if (ContactDLCChecked)
+            {
+                _ = mods.Append("contact;");
+            }
+            if (GMDLCChecked)
+            {
+                _ = mods.Append("gm;");
+            }
+            if (PFDLCChecked)
+            {
+                _ = mods.Append("vn;");
+            }
+            if (CLSADLCChecked)
+            {
+                _ = mods.Append("clsa;");
+            }
+            if (!string.IsNullOrWhiteSpace(playerMods))
+            {
+                _ = mods.Append($"{playerMods};");
+            }
+            return !string.IsNullOrWhiteSpace(mods.ToString()) ? $" \"-mod={mods}\"" : "";
+        }
+
         private string GetCommandLine()
         {
             
@@ -313,7 +362,7 @@ namespace FASTER.Models
                 $" \"-cfg={basic}\"",
                 $" \"-profiles={Path.Combine(ArmaPath, "Servers", Id)}\"",
                 $" -name={Id}",
-                $"{(!string.IsNullOrWhiteSpace(playerMods) || ContactDLCChecked || GMDLCChecked ? $" \"-mod={(ContactDLCChecked ? "contact;" : "")}{(GMDLCChecked ? "GM;" : "")}{(!string.IsNullOrWhiteSpace(playerMods) ? playerMods + ";" : "" )}\"" : "")}",
+                GetDlcAndPlayerMods(playerMods),
                 $"{(!string.IsNullOrWhiteSpace(serverMods) ? $" \"-serverMod={serverMods};\"" : "")}",
                 $"{(EnableHyperThreading ? " -enableHT" : "")}",
                 $"{(ServerCfg.AllowedFilePatching != ServerCfgArrays.AllowFilePatchingStrings[0] ? " -filePatching" : "")}",
