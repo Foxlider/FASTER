@@ -65,7 +65,7 @@
                                 <RowDefinition/>
                                 <RowDefinition Height="auto"/>
                             </Grid.RowDefinitions>
-                            <StackPanel Orientation="Horizontal">
+                            <StackPanel Orientation="Horizontal" Panel.ZIndex="1">
                                 <Button Margin="0, 5" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Padding="5,3" Click="LoadFromFile_Click">
                                     <StackPanel Orientation="Horizontal">
                                         <iconPacks:PackIconModern Kind="PageXml"/>
@@ -85,16 +85,16 @@
                                         <TextBlock Text="Clear Keys" Margin="10,0" />
                                     </StackPanel>
                                 </Button>
-                                <StackPanel Orientation="Vertical">
-                                    <StackPanel Orientation="Horizontal">
-                                        <CheckBox IsChecked="{Binding Profile.ContactDLCChecked}" Content="Contact DLC" Margin="10,3" Width="105"/>
-                                        <CheckBox IsChecked="{Binding Profile.GMDLCChecked}" Content="GM DLC" Margin="10,3"/>
-                                    </StackPanel>
-                                    <StackPanel Orientation="Horizontal">
-                                        <CheckBox IsChecked="{Binding Profile.PFDLCChecked}" Content="Prairie Fire DLC" Margin="10,3" Width="105"/>
-                                        <CheckBox IsChecked="{Binding Profile.CLSADLCChecked}" Content="CLSA DLC" Margin="10,3"/>
-                                    </StackPanel>
-                                </StackPanel>
+                                <Canvas>
+                                    <Expander Header="DLCs" Margin="3" mah:ControlsHelper.ContentCharacterCasing="Normal" Background="{Binding Mode=OneWay, Source={StaticResource MahApps.Brushes.Menu.Background}}">
+                                        <StackPanel Orientation="Vertical">
+                                            <CheckBox IsChecked="{Binding Profile.ContactDLCChecked}" Content="Contact DLC" Margin="10,3" Width="105"/>
+                                            <CheckBox IsChecked="{Binding Profile.GMDLCChecked}" Content="GM DLC" Margin="10,3"/>
+                                            <CheckBox IsChecked="{Binding Profile.PFDLCChecked}" Content="Prairie Fire DLC" Margin="10,3" Width="105"/>
+                                            <CheckBox IsChecked="{Binding Profile.CLSADLCChecked}" Content="CLSA DLC" Margin="10,3"/>
+                                        </StackPanel>
+                                    </Expander>
+                                </Canvas>
                             </StackPanel>
                             <DataGrid Grid.Row="1" ItemsSource="{Binding Path=Profile.ProfileMods, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" CanUserReorderColumns="False" CanUserSortColumns="True" AutoGenerateColumns="False" CanUserAddRows="False">
                                 <DataGrid.Resources>
