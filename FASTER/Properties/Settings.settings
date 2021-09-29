@@ -36,7 +36,7 @@
       <Value Profile="(Default)">Stable</Value>
     </Setting>
     <Setting Name="armaMods" Type="FASTER.Models.ArmaModCollection" Scope="User">
-    <Value Profile="(Default)" />
+      <Value Profile="(Default)" />
     </Setting>
     <Setting Name="steamMods" Type="FASTER.Models.SteamModCollection" Scope="User">
       <Value Profile="(Default)" />
@@ -61,6 +61,9 @@
     </Setting>
     <Setting Name="theme" Type="System.String" Scope="User">
       <Value Profile="(Default)">Dark.Blue</Value>
+    </Setting>
+    <Setting Name="font" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Segoe UI</Value>
     </Setting>
   </Settings>
 </SettingsFile>

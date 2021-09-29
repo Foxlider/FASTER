@@ -13,6 +13,7 @@ using ControlzEx.Theming;
 using Application = System.Windows.Application;
 using CheckBox = System.Windows.Controls.CheckBox;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
+using System.Windows.Media;
 
 namespace FASTER.Views
 {
@@ -22,15 +23,21 @@ namespace FASTER.Views
     public partial class Settings
     {
         UpdateInfoEventArgs _args;
+        public MainWindow MetroWindow;
 
-        public Settings()
+        public Settings(MainWindow main)
         {
             InitializeComponent();
+            MetroWindow = main;
             AutoUpdater.CheckForUpdateEvent += AutoUpdaterOnCheckForUpdateEvent;
 
-            colorPicker.ItemsSource = ThemeManager.Current.Themes.Where(t => t.BaseColorScheme == "Dark");
+            colorPicker.ItemsSource = ThemeManager.Current.Themes/*.Where(t => t.BaseColorScheme == "Dark")*/;
             colorPicker.DisplayMemberPath = "DisplayName";
             colorPicker.SelectedItem = ThemeManager.Current.Themes.FirstOrDefault(t => t.Name == Properties.Settings.Default.theme);
+
+            fontPicker.ItemsSource = Fonts.SystemFontFamilies;
+            fontPicker.DisplayMemberPath = "Source";
+            fontPicker.SelectedItem = Fonts.SystemFontFamilies.FirstOrDefault(t => t.Source == Properties.Settings.Default.font);
         }
 
         private void IUpdateBtnOK_Click(object sender, RoutedEventArgs e)
@@ -200,7 +207,15 @@ namespace FASTER.Views
             Properties.Settings.Default.Save();
         }
 
-        private void ComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        private void ResetFont_Click(object sender, RoutedEventArgs e)
+        {
+            MetroWindow.FontFamily = Fonts.SystemFontFamilies.FirstOrDefault(f => f.Source == "Segoe UI");
+
+            Properties.Settings.Default.font = "Segoe UI";
+            Properties.Settings.Default.Save();
+        }
+
+        private void Colors_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
             if(!(e.AddedItems[0] is Theme theme))
                 return;
@@ -209,7 +224,17 @@ namespace FASTER.Views
 
             Properties.Settings.Default.theme = theme.Name;
             Properties.Settings.Default.Save();
+        }
 
+        private void Fonts_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            if (!(e.AddedItems[0] is FontFamily font))
+                return;
+
+            MetroWindow.FontFamily = font;
+
+            Properties.Settings.Default.font = font.Source;
+            Properties.Settings.Default.Save();
         }
     }
 }
