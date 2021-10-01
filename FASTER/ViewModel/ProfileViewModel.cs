@@ -185,8 +185,13 @@ namespace FASTER.ViewModel
         {
             if (Directory.Exists(Path.Combine(Profile.ArmaPath, "Servers", Profile.Id)))
             { Directory.Delete(Path.Combine(Profile.ArmaPath, "Servers", Profile.Id), true); }
-            Properties.Settings.Default.Profiles.Remove(Profile);
+            var currentProfiles = Properties.Settings.Default.Profiles;
+            currentProfiles.Remove(Profile);
+            var newProfiles = new ServerProfileCollection();
+            newProfiles.AddRange(currentProfiles.FindAll(p => p.Id != Profile.Id));
+            Properties.Settings.Default.Profiles = newProfiles;
             Properties.Settings.Default.Save();
+
             MainWindow.Instance.ContentProfileViews.Remove(MainWindow.Instance.ContentProfileViews.FirstOrDefault(p => p.Profile.Id == Profile.Id));
             var menuItem = MainWindow.Instance.IServerProfilesMenu.Items.Cast<ToggleButton>().FirstOrDefault(p => p.Name == Profile.Id);
             if(menuItem != null)
@@ -264,6 +269,13 @@ namespace FASTER.ViewModel
 
         public ObservableCollection<string> FadeOutStrings         { get; } = new ObservableCollection<string>(ProfileCfgArrays.FadeOutStrings);
 
+        internal static string GetCompareString(string input)
+        {
+            input = input.Replace("@", "");
+            input = System.Text.RegularExpressions.Regex.Replace(input, "[^a-zA-Z0-9]", string.Empty);
+            return input;
+        }
+
         internal void LoadModsFromFile()
         {
             var dialog = new CommonOpenFileDialog
@@ -326,7 +338,7 @@ namespace FASTER.ViewModel
             var notFound = new List<string>();
             foreach (var extractedMod in extractedModlist)
             {
-                var mod = Profile.ProfileMods.FirstOrDefault(m => m.Id == extractedMod.Id || (new string[] { extractedMod.Name, extractedMod.Name.Replace(" ", "_") }).Contains((m.Name.Contains("@") ? m.Name[(m.Name.IndexOf("@") + 1)..] : m.Name)));
+                var mod = Profile.ProfileMods.FirstOrDefault(m => m.Id == extractedMod.Id || GetCompareString(extractedMod.Name) == GetCompareString(m.Name));
                 if (mod != null)
                 {
                     mod.ClientSideChecked = true;
@@ -469,7 +481,7 @@ namespace FASTER.ViewModel
 
             foreach (var localmod in localMods)
             {
-                ProfileMod existingMod = Profile.ProfileMods.FirstOrDefault(m => (new string[] { localmod.Name, localmod.Name.Replace(" ", "_") }).Contains((m.Name.Contains("@") ? m.Name[(m.Name.IndexOf("@") + 1)..] : m.Name)));
+                ProfileMod existingMod = Profile.ProfileMods.FirstOrDefault(m => GetCompareString(localmod.Name) == GetCompareString(m.Name));
                 if (existingMod == null)
                 {
                     var newProfile = new ProfileMod { Name = localmod.Name, IsLocal = true };

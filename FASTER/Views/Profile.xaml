@@ -788,6 +788,8 @@
             <StackPanel.Effect>
                 <DropShadowEffect BlurRadius="5" RenderingBias="Performance" ShadowDepth="1"/>
             </StackPanel.Effect>
+            <Button Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Padding="7,5" ToolTip="Delete Profile" Click="DeleteProfile" Content="{iconPacks:Modern Kind=Delete}"/>
+            <Button Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Padding="7,5" ToolTip="Open File Location" Click="OpenProfileLocation" Content="{iconPacks:Modern Kind=Folder}"/>
             <Button Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Padding="7,5" ToolTip="Save Profile" Click="SaveProfile" Content="{iconPacks:Modern Kind=Save}"/>
             <Button Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Padding="7,5" ToolTip="Launch Server" Click="LaunchServer" Content="{iconPacks:Modern Kind=ControlPlay}"/>
         </StackPanel>
