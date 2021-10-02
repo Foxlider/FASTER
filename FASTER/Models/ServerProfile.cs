@@ -224,32 +224,39 @@ namespace FASTER.Models
             }
         }
 
-        public List<ProfileMod> FilteredProfileMods => ProfileMods.Where(m => {
-            if (string.IsNullOrEmpty(ProfileModsFilter))
+        public List<ProfileMod> FilteredProfileMods
+        {
+            get
             {
-                return true;
-            }
-            var pattern = ProfileModsFilter;
-            if (!ProfileModsFilterIsRegex)
-            {
-                pattern = Regex.Replace(pattern, @"[\\\{\}\*\+\?\|\^\$\.\[\]\(\)]", "\\$&");
-            }
+                var filteredProfileMods = _profileMods.Where(m => {
+                    if (string.IsNullOrEmpty(ProfileModsFilter))
+                    {
+                        return true;
+                    }
+                    var pattern = ProfileModsFilter;
+                    if (!ProfileModsFilterIsRegex)
+                    {
+                        pattern = Regex.Replace(pattern, @"[\\\{\}\*\+\?\|\^\$\.\[\]\(\)]", "\\$&");
+                    }
 
-            if (ProfileModsFilterIsWholeWord)
-            {
-                if (!Regex.IsMatch(pattern[0].ToString(), @"\B"))
-                {
-                    pattern = $"\\b{pattern}";
-                }
-                if (!Regex.IsMatch(pattern[pattern.Length - 1].ToString(), @"\B"))
-                {
-                    pattern = $"{pattern}\\b";
-                }
-            }
+                    if (ProfileModsFilterIsWholeWord)
+                    {
+                        if (!Regex.IsMatch(pattern[0].ToString(), @"\B"))
+                        {
+                            pattern = $"\\b{pattern}";
+                        }
+                        if (!Regex.IsMatch(pattern[pattern.Length - 1].ToString(), @"\B"))
+                        {
+                            pattern = $"{pattern}\\b";
+                        }
+                    }
 
-            var options = ProfileModsFilterIsCaseSensitive ? RegexOptions.None : RegexOptions.IgnoreCase;
-            return Regex.IsMatch(m.Name, pattern, options);
-        }).ToList();
+                    var options = ProfileModsFilterIsCaseSensitive ? RegexOptions.None : RegexOptions.IgnoreCase;
+                    return Regex.IsMatch(m.Name, pattern, options);
+                }).ToList();
+                return filteredProfileMods;
+            }
+        }
 
         public string ProfileModsFilter
         {
