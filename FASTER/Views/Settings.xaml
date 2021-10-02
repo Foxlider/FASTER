@@ -84,6 +84,16 @@
         </Grid>
 
         <Grid Grid.Column="1" Margin="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
             <Grid.Effect>
                 <DropShadowEffect BlurRadius="5" RenderingBias="Performance" ShadowDepth="0"/>
             </Grid.Effect>
@@ -93,10 +103,12 @@
                     <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Window.Background}"></Setter>
                 </Style>
             </Grid.Style>
-            <StackPanel Orientation="Horizontal" Height="auto" VerticalAlignment="Top" Margin="10,50">
-                <Button Content="Default Theme" Click="ResetTheme_Click" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Margin="5"/>
-                <ComboBox Name="colorPicker" controls:TextBoxHelper.UseFloatingWatermark="True" controls:TextBoxHelper.Watermark="Colors" Margin="5" SelectionChanged="ComboBox_SelectionChanged"/>
-            </StackPanel>
+
+            <Button Grid.Column="0" Grid.Row="1" Content="Default Theme" Click="ResetTheme_Click" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Margin="5" HorizontalAlignment="Stretch"/>
+            <ComboBox Grid.Column="1" Grid.Row="1" Name="colorPicker" controls:TextBoxHelper.UseFloatingWatermark="True" controls:TextBoxHelper.Watermark="Colors" Margin="5" SelectionChanged="Colors_SelectionChanged"/>
+
+            <Button Grid.Column="0" Grid.Row="2"  Content="Default Font" Click="ResetFont_Click" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Margin="5" HorizontalAlignment="Stretch"/>
+            <ComboBox Grid.Column="1" Grid.Row="2" Name="fontPicker" controls:TextBoxHelper.UseFloatingWatermark="True" controls:TextBoxHelper.Watermark="Fonts" Margin="5" SelectionChanged="Fonts_SelectionChanged"/>
         </Grid>
 
         <mah:ChildWindow

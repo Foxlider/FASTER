@@ -90,7 +90,7 @@ namespace FASTER
         Settings _settings;
         public Settings ContentSettings
         {
-            get => _settings ??= new Settings();
+            get => _settings ??= new Settings(this);
             set => _settings = value;
         }
 
@@ -120,6 +120,10 @@ namespace FASTER
         public MainWindow()
         {
             InitializeComponent();
+
+            //Set font preferences
+            FontFamily = Fonts.SystemFontFamilies.FirstOrDefault(f => f.Source == FASTER.Properties.Settings.Default.font);
+
             _instance = this;
             Version = GetVersion();
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
