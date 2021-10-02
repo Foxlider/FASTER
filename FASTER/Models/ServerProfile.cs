@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Controls.Primitives;
 using System.Xml.Serialization;
 
@@ -61,6 +62,10 @@ namespace FASTER.Models
         private bool _enableRanking;
 
         private List<ProfileMod> _profileMods = new List<ProfileMod>();
+        private string _profileModsFilter = "";
+        private bool _profileModsFilterIsCaseSensitive = false;
+        private bool _profileModsFilterIsWholeWord = false;
+        private bool _profileModsFilterIsRegex = false;
         private ServerCfg _serverCfg;
         private Arma3Profile _armaProfile;
         private BasicCfg _basicCfg;
@@ -215,6 +220,78 @@ namespace FASTER.Models
                 _profileMods.ForEach(m => m.PropertyChanged += Item_PropertyChanged);
 
                 RaisePropertyChanged("ProfileMods");
+                RaisePropertyChanged("FilteredProfileMods");
+            }
+        }
+
+        public List<ProfileMod> FilteredProfileMods => ProfileMods.Where(m => {
+            if (string.IsNullOrEmpty(ProfileModsFilter))
+            {
+                return true;
+            }
+            var pattern = ProfileModsFilter;
+            if (!ProfileModsFilterIsRegex)
+            {
+                pattern = Regex.Replace(pattern, @"[\\\{\}\*\+\?\|\^\$\.\[\]\(\)]", "\\$&");
+            }
+
+            if (ProfileModsFilterIsWholeWord)
+            {
+                if (!Regex.IsMatch(pattern[0].ToString(), @"\B"))
+                {
+                    pattern = $"\\b{pattern}";
+                }
+                if (!Regex.IsMatch(pattern[pattern.Length - 1].ToString(), @"\B"))
+                {
+                    pattern = $"{pattern}\\b";
+                }
+            }
+
+            var options = ProfileModsFilterIsCaseSensitive ? RegexOptions.None : RegexOptions.IgnoreCase;
+            return Regex.IsMatch(m.Name, pattern, options);
+        }).ToList();
+
+        public string ProfileModsFilter
+        {
+            get => _profileModsFilter;
+            set
+            {
+                _profileModsFilter = value;
+                RaisePropertyChanged("ProfileModsFilter");
+                RaisePropertyChanged("FilteredProfileMods");
+            }
+        }
+
+        public bool ProfileModsFilterIsCaseSensitive
+        {
+            get => _profileModsFilterIsCaseSensitive;
+            set
+            {
+                _profileModsFilterIsCaseSensitive = value;
+                RaisePropertyChanged("ProfileModsFilterIsCaseSensitive");
+                RaisePropertyChanged("FilteredProfileMods");
+            }
+        }
+
+        public bool ProfileModsFilterIsWholeWord
+        {
+            get => _profileModsFilterIsWholeWord;
+            set
+            {
+                _profileModsFilterIsWholeWord = value;
+                RaisePropertyChanged("ProfileModsFilterIsWholeWord");
+                RaisePropertyChanged("FilteredProfileMods");
+            }
+        }
+
+        public bool ProfileModsFilterIsRegex
+        {
+            get => _profileModsFilterIsRegex;
+            set
+            {
+                _profileModsFilterIsRegex = value;
+                RaisePropertyChanged("ProfileModsFilterIsRegex");
+                RaisePropertyChanged("FilteredProfileMods");
             }
         }
 

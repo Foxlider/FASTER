@@ -64,6 +64,7 @@
                                 <RowDefinition Height="auto"/>
                                 <RowDefinition/>
                                 <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
                             </Grid.RowDefinitions>
                             <StackPanel Orientation="Horizontal" Panel.ZIndex="1">
                                 <Button Margin="0, 5" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Padding="5,3" Click="LoadFromFile_Click">
@@ -96,7 +97,7 @@
                                     </Expander>
                                 </Canvas>
                             </StackPanel>
-                            <DataGrid Grid.Row="1" ItemsSource="{Binding Path=Profile.ProfileMods, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" CanUserReorderColumns="False" CanUserSortColumns="True" AutoGenerateColumns="False" CanUserAddRows="False">
+                            <DataGrid Grid.Row="1" ItemsSource="{Binding Path=Profile.FilteredProfileMods, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" CanUserReorderColumns="False" CanUserSortColumns="True" AutoGenerateColumns="False" CanUserAddRows="False">
                                 <DataGrid.Resources>
 
                                     <ContextMenu x:Key="LoadContextMenu">
@@ -283,6 +284,25 @@
                                 <TextBlock Text="{Binding Path=Profile.ServerModsChecked, StringFormat={}ServerSide : {0} mods}" Grid.Column="0"/>
                                 <TextBlock Text="{Binding Path=Profile.ClientModsChecked, StringFormat={}ClientSide : {0} mods}" Grid.Column="1"/>
                                 <TextBlock Text="{Binding Path=Profile.HeadlessModsChecked, StringFormat={}Headless Client : {0} mods}" Grid.Column="2"/>
+                            </Grid>
+                            <Grid Grid.Row="3" Margin="5">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition Width="auto"/>
+                                    <ColumnDefinition Width="auto"/>
+                                    <ColumnDefinition Width="auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBox Grid.Column="0" Margin="5,2" IsReadOnly="False" mah:TextBoxHelper.UseFloatingWatermark="True"
+                                 mah:TextBoxHelper.Watermark="Filter:" Text="{Binding Path=Profile.ProfileModsFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                <ToggleButton Grid.Column="1" Content="{iconPacks:Material Kind=FormatLetterCase}" IsChecked="{Binding Path=Profile.ProfileModsFilterIsCaseSensitive}" 
+                                              BorderThickness="0" Width="30" Height="30" Margin="2" Padding="0" 
+                                              ToolTip="Match Case" Style="{StaticResource MahApps.Styles.ToggleButton.Flat}"/>
+                                <ToggleButton Grid.Column="2" Content="{iconPacks:Material Kind=FormatLetterMatches}" IsChecked="{Binding Path=Profile.ProfileModsFilterIsWholeWord}" 
+                                              BorderThickness="0" Width="30" Height="30" Margin="2" Padding="0" 
+                                              ToolTip="Match Whole Word" Style="{StaticResource MahApps.Styles.ToggleButton.Flat}"/>
+                                <ToggleButton Grid.Column="3" Content="{iconPacks:Material Kind=Regex}" IsChecked="{Binding Path=Profile.ProfileModsFilterIsRegex}" 
+                                              BorderThickness="0" Width="30" Height="30" Margin="2" Padding="0" 
+                                              ToolTip="Use Regular Expressions" Style="{StaticResource MahApps.Styles.ToggleButton.Flat}"/>
                             </Grid>
                         </Grid>
                     </GroupBox>
