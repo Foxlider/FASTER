@@ -188,7 +188,7 @@ namespace FASTER.ViewModel
                 $" \"-cfg={basic}\"",
                 $" \"-profiles={Path.Combine(Properties.Settings.Default.serverPath, "Servers", Profile.Id)}\"",
                 $" -name={Profile.Id}",
-                $"{(!string.IsNullOrWhiteSpace(playerMods) || Profile.ContactDLCChecked || Profile.GMDLCChecked ? $" \"-mod={(Profile.ContactDLCChecked ? "contact;" : "")}{(Profile.GMDLCChecked ? "GM;" : "")}{(!string.IsNullOrWhiteSpace(playerMods) ? playerMods + ";" : "" )}\"" : "")}",
+                Profile.GetDlcAndPlayerMods(playerMods),
                 $"{(!string.IsNullOrWhiteSpace(serverMods) ? $" \"-serverMod={serverMods};\"" : "")}",
                 $"{(Profile.EnableHyperThreading ? " -enableHT" : "")}",
                 $"{(Profile.ServerCfg.AllowedFilePatching != ServerCfgArrays.AllowFilePatchingStrings[0] ? " -filePatching" : "")}",
@@ -392,7 +392,7 @@ namespace FASTER.ViewModel
 
         internal async Task ClearModKeys()
         {
-            var ignoredKeys = new[] {"a3.bikey", "a3c.bikey", "gm.bikey"};
+            var ignoredKeys = new[] {"a3.bikey", "a3c.bikey", "gm.bikey", "csla.bikey", "gm.bikey", "vn.bikey"};
             if (Directory.Exists(Path.Combine(Properties.Settings.Default.serverPath, "keys")))
             {
                 foreach (var keyFile in Directory.GetFiles(Path.Combine(Properties.Settings.Default.serverPath, "keys")))
