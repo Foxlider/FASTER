@@ -66,17 +66,17 @@ namespace FASTER
             set => _modsVM = value;
         }
 
-        LocalMods _deploy;
-        public LocalMods ContentDeploy
+        Deployment _deploy;
+        public Deployment ContentDeploy
         {
-            get => _deploy ??= new LocalMods();
+            get => _deploy ??= new Deployment();
             set => _deploy = value;
         }
 
-        ModsViewModel _deployVM;
-        public ModsViewModel DeployViewModel
+        DeploymentViewModel _deployVM;
+        public DeploymentViewModel DeployViewModel
         {
-            get => _deployVM ??= new ModsViewModel();
+            get => _deployVM ??= new DeploymentViewModel();
             set => _deployVM = value;
         }
 

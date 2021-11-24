@@ -143,15 +143,7 @@ namespace FASTER.ViewModel
 
             tokenSource.Cancel();
         }
-        public void SteamCmdDirClick()
-        {
-            string path = MainWindow.Instance.SelectFolder(Parameters.InstallDirectory);
 
-            if (path == null) 
-                return;
-
-            Parameters.InstallDirectory = path;
-        }
         public void ModStagingDirClick()
         {
             string path = MainWindow.Instance.SelectFolder(Parameters.ModStagingDirectory);
@@ -161,9 +153,15 @@ namespace FASTER.ViewModel
 
             Parameters.ModStagingDirectory = path;
         }
+
         public void ServerDirClick(object sender)
         {
-            throw new NotImplementedException();
+            string path = MainWindow.Instance.SelectFolder(Parameters.InstallDirectory);
+
+            if (path == null)
+                return;
+
+            Parameters.InstallDirectory = path;
         }
 
 
@@ -229,8 +227,16 @@ namespace FASTER.ViewModel
         public async Task<int> RunModUpdater(ulong modId, string path)
         {
             tokenSource = new CancellationTokenSource();
-            if (!await SteamLogin())
+
+            try
+            {
+                if (!await SteamLogin())
+                    return UpdateState.LoginFailed;
+            }
+            catch(Exception ex)
+            {
                 return UpdateState.LoginFailed;
+            }
 
             var _OS = _steamClient.GetSteamOs().Identifier;
             Stopwatch sw = Stopwatch.StartNew();
@@ -239,6 +245,8 @@ namespace FASTER.ViewModel
             {
                 SteamOs    steamOs    = new SteamOs(_OS);
                 ManifestId manifestId = default;
+
+                Parameters.Output += $"\nFetching mod {modId} infos... ";
 
                 if (!_steamClient.Credentials.IsAnonymous) //IS SYNC ENABLED
                 {

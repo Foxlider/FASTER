@@ -200,8 +200,7 @@ namespace FASTER.Views
 
         private void ResetTheme_Click(object sender, RoutedEventArgs e)
         {
-            ThemeManager.Current.ThemeSyncMode = ThemeSyncMode.SyncAll;
-            ThemeManager.Current.ChangeTheme(Application.Current, "Dark.Blue");
+            colorPicker.SelectedItem = ThemeManager.Current.Themes.FirstOrDefault(t => t.Name == "Dark.Blue");
 
             Properties.Settings.Default.theme = "Dark.Blue";
             Properties.Settings.Default.Save();
@@ -209,7 +208,7 @@ namespace FASTER.Views
 
         private void ResetFont_Click(object sender, RoutedEventArgs e)
         {
-            MetroWindow.FontFamily = Fonts.SystemFontFamilies.FirstOrDefault(f => f.Source == "Segoe UI");
+            fontPicker.SelectedItem = Fonts.SystemFontFamilies.FirstOrDefault(f => f.Source == "Segoe UI");
 
             Properties.Settings.Default.font = "Segoe UI";
             Properties.Settings.Default.Save();

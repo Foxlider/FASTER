@@ -83,7 +83,9 @@ namespace FASTER.ViewModel
             var newMod = new ArmaMod
             {
                 WorkshopId = modID,
-                Name       = localPath.Substring(localPath.LastIndexOf("@", StringComparison.Ordinal) + 1),
+                Name       = localPath.Contains("@") 
+                                ? localPath.Substring(localPath.LastIndexOf("@", StringComparison.Ordinal) + 1)
+                                : Path.GetFileName(localPath),
                 Path       = newPath,
                 Author     = "Unknown",
                 IsLocal    = true,

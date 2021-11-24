@@ -32,10 +32,6 @@ namespace FASTER.Views
             ((SteamUpdaterViewModel) DataContext)?.ServerDirClick(sender);
         }
 
-        private void SteamCmdDir_Click(object sender, RoutedEventArgs e)
-        {
-            ((SteamUpdaterViewModel) DataContext)?.SteamCmdDirClick();
-        }
         private void ModStagingDir_Click(object sender, RoutedEventArgs e)
         {
             ((SteamUpdaterViewModel) DataContext)?.ModStagingDirClick();
