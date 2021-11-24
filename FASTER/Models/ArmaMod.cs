@@ -197,6 +197,7 @@ namespace FASTER.Models
             }
         }
 
+        [XmlIgnore]
         public bool IsLoading
         {
             get => _isLoading;
