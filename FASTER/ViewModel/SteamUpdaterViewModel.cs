@@ -233,7 +233,7 @@ namespace FASTER.ViewModel
                 if (!await SteamLogin())
                     return UpdateState.LoginFailed;
             }
-            catch(Exception ex)
+            catch(Exception)
             {
                 return UpdateState.LoginFailed;
             }
