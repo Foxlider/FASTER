@@ -1,6 +1,5 @@
-﻿using System.ComponentModel;
-using FASTER.Properties;
-using SteamKit2.GC.TF2.Internal;
+﻿using FASTER.Properties;
+using System.ComponentModel;
 
 namespace FASTER.Models
 {

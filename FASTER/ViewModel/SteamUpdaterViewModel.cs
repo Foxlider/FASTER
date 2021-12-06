@@ -303,7 +303,6 @@ namespace FASTER.ViewModel
             Parameters.Output += "\nAdding mods to download list...";
 
             SemaphoreSlim maxThread = new SemaphoreSlim(2);
-            var  r  = new Random();
             var  ml = mods.Where(m => !m.IsLocal);
             uint finished = 0;
             IsDlOverride = true;

@@ -13,8 +13,8 @@
 [![Build Status](https://vsrm.dev.azure.com/keelah/_apis/public/Release/badge/4b51eb35-4363-4038-8d99-543c01a3578f/2/2)](https://dev.azure.com/keelah/FASTER/_release)
 
 ***Code quality***  
-[![Sonar Quality Gate](https://img.shields.io/sonar/quality_gate/FASTER_App?label=Code%20quality&logo=sonarcloud&logoColor=white&server=https%3A%2F%2Fsonarcloud.io&style=flat-square)](https://sonarcloud.io/dashboard?id=FASTER_App)
-[![Sonar Violations (long format)](https://img.shields.io/sonar/violations/FASTER_App?format=long&label=Issues&logo=sonarcloud&logoColor=white&server=https%3A%2F%2Fsonarcloud.io&style=flat-square)](https://sonarcloud.io/project/issues?id=FASTER_App&resolved=false)
+[![Sonar Quality Gate](https://img.shields.io/sonar/quality_gate/Foxlider_FASTER?label=Code%20quality&logo=sonarcloud&logoColor=white&server=https%3A%2F%2Fsonarcloud.io&style=flat-square)](https://sonarcloud.io/dashboard?id=Foxlider_FASTER)
+[![Sonar Violations (long format)](https://img.shields.io/sonar/violations/Foxlider_FASTER?format=long&label=Issues&logo=sonarcloud&logoColor=white&server=https%3A%2F%2Fsonarcloud.io&style=flat-square)](https://sonarcloud.io/project/issues?id=Foxlider_FASTERp&resolved=false)
 
 
 [![Discord](https://img.shields.io/discord/366955806777671681?label=Discord&logo=discord&logoColor=white&style=for-the-badge)](https://discord.gg/2BUuZa3)
