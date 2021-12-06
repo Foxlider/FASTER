@@ -277,7 +277,33 @@ namespace FASTER
                 Crashes.TrackError(err, new Dictionary<string, string> { { "Name", Properties.Settings.Default.steamUserName } });
             }
         }
-        
+
+        private void MenuItemDelete_Click(object sender, RoutedEventArgs e)
+        {
+            if (IServerProfilesMenu.SelectedIndex == -1)
+            { return; }
+
+            try
+            {
+                var temp = Properties.Settings.Default.Profiles.FirstOrDefault(s =>
+                    s.Id == ((ToggleButton)IServerProfilesMenu.SelectedItem).Name);
+                if (temp == null)
+                {
+                    DisplayMessage("Could not find the selected profile.");
+                    return;
+                }
+
+                ContentProfileViews.FirstOrDefault(p => p.Profile.Id == temp.Id).DeleteProfile();
+            }
+            catch (Exception err)
+            {
+                DisplayMessage("An error occured while cloning your profile");
+                Crashes.TrackError(err, new Dictionary<string, string> { { "Name", Properties.Settings.Default.steamUserName } });
+            }
+
+        }
+
+
         private void OpenModStagingLocation_Click(object sender, RoutedEventArgs e)
         {
             IToolsDialog.IsOpen = false;
