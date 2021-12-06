@@ -45,22 +45,22 @@
     <AdditionalFiles Include="..\.sonarlint\faster_app\CSharp\SonarLint.xml" Link="SonarLint.xml" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Autoupdater.NET.Official" Version="1.6.4" />
+    <PackageReference Include="Autoupdater.NET.Official" Version="1.7.0" />
     <PackageReference Include="BytexDigital.Steam" Version="0.8.0-alpha2" />
     <PackageReference Include="FontAwesome.WPF" Version="4.7.0.9" />
     <PackageReference Include="LiveCharts.Wpf" Version="0.9.7" />
-    <PackageReference Include="MahApps.Metro" Version="2.4.7" />
-    <PackageReference Include="MahApps.Metro.IconPacks.Material" Version="4.8.0" />
-    <PackageReference Include="MahApps.Metro.IconPacks.Modern" Version="4.8.0" />
+    <PackageReference Include="MahApps.Metro" Version="2.4.9" />
+    <PackageReference Include="MahApps.Metro.IconPacks.Material" Version="4.11.0" />
+    <PackageReference Include="MahApps.Metro.IconPacks.Modern" Version="4.11.0" />
     <PackageReference Include="MahApps.Metro.SimpleChildWindow" Version="2.0.0" />
-    <PackageReference Include="Microsoft.AppCenter.Analytics" Version="4.3.0" />
-    <PackageReference Include="Microsoft.AppCenter.Crashes" Version="4.3.0" />
+    <PackageReference Include="Microsoft.AppCenter.Analytics" Version="4.4.0" />
+    <PackageReference Include="Microsoft.AppCenter.Crashes" Version="4.4.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="WindowsAPICodePack-Shell" Version="1.1.1" />
-    <PackageReference Include="Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers" Version="0.2.212405">
+    <PackageReference Include="Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers" Version="0.3.256001">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Windows.Compatibility" Version="6.0.0-preview.1.21102.12" />
+    <PackageReference Include="Microsoft.Windows.Compatibility" Version="6.0.0" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\FASTER.ico">
