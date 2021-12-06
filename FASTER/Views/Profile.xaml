@@ -23,7 +23,7 @@
             <RowDefinition/>
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
-        <mah:MetroAnimatedTabControl BorderThickness="0" Background="{x:Null}">
+        <mah:MetroAnimatedTabControl BorderThickness="0"  Style="{StaticResource MahApps.Styles.TabControl.AnimatedSingleRow}">
             <TabControl.Effect>
                 <DropShadowEffect BlurRadius="5" RenderingBias="Performance" ShadowDepth="1"/>
             </TabControl.Effect>

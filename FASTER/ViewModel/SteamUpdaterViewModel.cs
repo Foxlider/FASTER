@@ -392,13 +392,9 @@ namespace FASTER.ViewModel
              || Parameters.Username == "anonymous"
              || string.IsNullOrEmpty(Parameters.Password)
              || string.IsNullOrEmpty(Encryption.Instance.DecryptData(Parameters.Password)))
-            {
-                _steamCredentials = SteamCredentials.Anonymous;
-            }
+            { _steamCredentials = SteamCredentials.Anonymous; }
             else
-            {
-                _steamCredentials = new SteamCredentials(Parameters.Username, Encryption.Instance.DecryptData(Parameters.Password), Parameters.ApiKey);
-            }
+            { _steamCredentials = new SteamCredentials(Parameters.Username, Encryption.Instance.DecryptData(Parameters.Password), Parameters.ApiKey); }
 
             _steamClient        = new SteamClient(_steamCredentials, new AuthCodeProvider(), sentryFileProvider);
             _steamContentClient = new SteamContentClient(_steamClient);
