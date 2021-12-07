@@ -14,7 +14,7 @@
 
 ***Code quality***  
 [![Sonar Quality Gate](https://img.shields.io/sonar/quality_gate/Foxlider_FASTER?label=Code%20quality&logo=sonarcloud&logoColor=white&server=https%3A%2F%2Fsonarcloud.io&style=flat-square)](https://sonarcloud.io/dashboard?id=Foxlider_FASTER)
-[![Sonar Violations (long format)](https://img.shields.io/sonar/violations/Foxlider_FASTER?format=long&label=Issues&logo=sonarcloud&logoColor=white&server=https%3A%2F%2Fsonarcloud.io&style=flat-square)](https://sonarcloud.io/project/issues?id=Foxlider_FASTERp&resolved=false)
+[![Sonar Violations (long format)](https://img.shields.io/sonar/violations/Foxlider_FASTER?format=long&label=Issues&logo=sonarcloud&logoColor=white&server=https%3A%2F%2Fsonarcloud.io&style=flat-square)](https://sonarcloud.io/project/issues?id=Foxlider_FASTER&resolved=false)
 
 
 [![Discord](https://img.shields.io/discord/366955806777671681?label=Discord&logo=discord&logoColor=white&style=for-the-badge)](https://discord.gg/2BUuZa3)
