@@ -81,21 +81,18 @@
                 </Style>
             </Grid.Style>
             <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto" />
                     <RowDefinition />
                 </Grid.RowDefinitions>
-                <StackPanel Grid.ColumnSpan="2">
+                <StackPanel>
                     <Label Margin="2" Content="Arma 3 Settings"/>
                     <Separator/>
                 </StackPanel>
-                <Grid  Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="5,10">
+                <Grid  Grid.Row="1" Margin="5">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
                         <ColumnDefinition Width="auto"/>
@@ -103,9 +100,20 @@
                     <TextBox Grid.Column="0" mah:TextBoxHelper.UseFloatingWatermark="True" Text="{Binding Parameters.InstallDirectory}" mah:TextBoxHelper.Watermark="Install Directory" Margin="5"/>
                     <Button Grid.Column="1" Content="{iconPacks:Modern Kind=Folder}" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" VerticalAlignment="Stretch" Height="auto" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" Margin="5" Padding="2" Click="ServerDir_Click"/>
                 </Grid>
-                <ComboBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Version" SelectedItem="{Binding ServerBranch}" ItemsSource="{Binding ServerBranches}" Margin="10,20,10,15">
-                </ComboBox>
-                <Button Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="3" Content="Update" Margin="10,5,10,10" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Click="Update_Click"/>
+                <mah:ToggleSwitch Grid.Row="2" Content="Profiling" IsOn="{Binding ProfilingBranch}" Style="{StaticResource MahApps.Styles.ToggleSwitch}" Margin="10,5"/>
+                <StackPanel Orientation="Vertical" Grid.Row="3" Margin="10">
+                    <CheckBox IsChecked="{Binding ContactDLCChecked}" Content="Contact DLC"
+                              Margin="10,3" Width="105" HorizontalAlignment="Left" />
+                    <CheckBox IsChecked="{Binding GMDLCChecked}" Content="GM DLC" Margin="10,3"
+                              HorizontalAlignment="Left" />
+                    <CheckBox IsChecked="{Binding PFDLCChecked}" Content="Prairie Fire DLC"
+                              Margin="10,3" Width="105" HorizontalAlignment="Left" />
+                    <CheckBox IsChecked="{Binding CLSADLCChecked}" Content="CLSA DLC" Margin="10,3"
+                              HorizontalAlignment="Left" />
+                    <CheckBox IsChecked="{Binding WSDLCChecked}" Content="Western Sahara DLC"
+                              Margin="10,3" HorizontalAlignment="Left" />
+                </StackPanel>
+                <Button Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Grid.Row="4" Content="Update" Margin="10" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Click="Update_Click"/>
             </Grid>
         </Grid>
 

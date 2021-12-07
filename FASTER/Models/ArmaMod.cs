@@ -1,11 +1,12 @@
-﻿using System;
+﻿using FASTER.ViewModel;
+
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
-using FASTER.ViewModel;
 
 namespace FASTER.Models
 {
@@ -235,10 +236,9 @@ namespace FASTER.Models
                 IsLoading = false;
                 return;
             }
+            IsLoading = true;
 
             UpdateInfos(false);
-            
-            IsLoading = true;
             
             Path = System.IO.Path.Combine(Properties.Settings.Default.modStagingDirectory, WorkshopId.ToString());
             if (!Directory.Exists(Path))
@@ -275,19 +275,19 @@ namespace FASTER.Models
             if (IsLocal)
             {
                 Status = ArmaModStatus.Local;
-                if(checkFileSize)
+                if (checkFileSize)
                     CheckModSize();
                 IsLoading = false;
                 return;
             }
 
-            
-            int  failNum = 0;
+
+            int failNum = 0;
             bool success = false;
             do
             {
                 var modInfo = SteamWebApi.GetSingleFileDetails(WorkshopId);
-                
+
                 if (modInfo == null)
                 {
                     failNum++;
@@ -311,7 +311,7 @@ namespace FASTER.Models
                 { Author = "Unknown"; }
 
                 SteamLastUpdated = modDetails.time_updated;
-                Name             = modDetails.title;
+                Name = modDetails.title;
 
                 if (SteamLastUpdated > LocalLastUpdated && Status != ArmaModStatus.NotComplete)
                     Status = ArmaModStatus.UpdateRequired;
@@ -319,11 +319,11 @@ namespace FASTER.Models
                     Status = ArmaModStatus.UpToDate;
                 success = true;
             } while (failNum < 3 && !success);
-            
-            if(checkFileSize)
+
+            if (checkFileSize)
                 CheckModSize();
 
-            IsLoading        = false;
+            IsLoading = false;
         }
 
         internal bool IsOnWorkshop()

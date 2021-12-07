@@ -1,4 +1,4 @@
-﻿using BytexDigital.Steam.ContentDelivery;
+using BytexDigital.Steam.ContentDelivery;
 using BytexDigital.Steam.ContentDelivery.Exceptions;
 using BytexDigital.Steam.ContentDelivery.Models;
 using BytexDigital.Steam.ContentDelivery.Models.Downloading;
@@ -45,8 +45,13 @@ namespace FASTER.ViewModel
         private bool _isDlOverride;
 
         public SteamUpdaterModel            Parameters        { get; set; }
-        public ObservableCollection<string> ServerBranches    { get; }      = new ObservableCollection<string> {"Stable", "Contact", "Creator DLC", "LegacyPorts", "Development", "Performance / Profiling"};
-        public string                       ServerBranch      { get; set; } = "Stable";
+
+        public bool ProfilingBranch   { get; set; }
+        public bool ContactDLCChecked { get; set; }
+        public bool GMDLCChecked      { get; set; }
+        public bool WSDLCChecked      { get; set; }
+        public bool CLSADLCChecked    { get; set; }
+        public bool PFDLCChecked      { get; set; }
 
         public  IDialogCoordinator      DialogCoordinator { get; set; }
         private CancellationTokenSource tokenSource = new CancellationTokenSource();
@@ -95,44 +100,47 @@ namespace FASTER.ViewModel
         {
             Parameters.IsUpdating = true;
             Parameters.Output     = "Starting Update...";
+            Parameters.Output += "\nPlease don't quit this page or cancel the download\nThis might take a while...";
+            
+            uint   appId      = 233780;
 
-            string branch     = "public";
-            string branchPass = null;
-            uint   appId      = 0;
-            switch (ServerBranch)
+            Parameters.Output += "\nDownloading Shared Content...";
+            //Downloading Depot 233781 from either branch contact or public
+            await RunServerUpdater(Parameters.InstallDirectory, appId, 233781, ContactDLCChecked? "contact" : "public", null);
+
+            Parameters.Output += "\nDownloading Executables...";
+            //Either downloading depot 233782 fow Windows from branch public or 233784 for windows in branch profiling
+            if (ProfilingBranch)
+                await RunServerUpdater(Parameters.InstallDirectory, appId, 233784, "profiling", "CautionSpecialProfilingAndTestingBranchArma3");
+            else
+                await RunServerUpdater(Parameters.InstallDirectory, appId, 233782, "public", null);
+
+            //Downloading mods
+            if (GMDLCChecked)
             {
-                case "Stable":
-                    //Arma3 Server main branch
-                    appId  = 233780;
-                    break;
-                case "Contact": //Arma 3 server Contact DLC
-                    appId  = 233780;
-                    branch = "contact";
-                    break;
-                case "Creator DLC": //Arma 3 server Creator DLC
-                    appId  = 233780;
-                    branch = "creatordlc";
-                    break;
-                case "LegacyPorts": //Arma 3 server Legacy Ports branch for linux
-                    appId      = 233780;
-                    branch     = "legacyPorts";
-                    branchPass = "Arma3LegacyPorts";
-                    break;
-                case "Developpment": //Arma 3 Developpment branch, only for developpment clients
-                    appId = 107410;
-                    branch = "development";
-                    break;
-                case "Performance / Profiling":
-                    appId  = 233780;
-                    branch = "profiling"; 
-                    branchPass = "CautionSpecialProfilingAndTestingBranchArma3";
-                    break;
-                default:
-                    Console.WriteLine("Nothing to see here");
-                    break;
+                Parameters.Output += "\nDownloading Arma 3 Server Creator DLC - GM...";
+                await RunServerUpdater(Parameters.InstallDirectory, appId, 233787, "creatordlc", null);
             }
 
-            await RunServerUpdater(Parameters.InstallDirectory, appId, branch, branchPass);
+            if (CLSADLCChecked)
+            {
+                Parameters.Output += "\nDownloading Arma 3 Server Creator DLC - CSLA...";
+                await RunServerUpdater(Parameters.InstallDirectory, appId, 233789, "creatordlc", null);
+            }
+
+            if (PFDLCChecked)
+            {
+                Parameters.Output += "\nDownloading Arma 3 Server Creator DLC - SOGPF...";
+                await RunServerUpdater(Parameters.InstallDirectory, appId, 233790, "creatordlc", null);
+            }
+
+            if (WSDLCChecked)
+            {
+                Parameters.Output += "\nDownloading Arma 3 Server Creator DLC - Western Sahara...";
+                await RunServerUpdater(Parameters.InstallDirectory, appId, 233786, "creatordlc", null);
+            }
+
+            Parameters.Output += "\n\nAll Done ! ";
         }
 
 
@@ -165,7 +173,7 @@ namespace FASTER.ViewModel
         }
 
 
-        public async Task<int> RunServerUpdater(string path, uint appId, string branch, string branchPass)
+        public async Task<int> RunServerUpdater(string path, uint appId, uint depotId, string branch, string branchPass)
         {
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
@@ -182,19 +190,9 @@ namespace FASTER.ViewModel
                 try
                 {
                     SteamOs steamOs      = new SteamOs(_OS);
-
-                    var        publicDepots = await _steamContentClient.GetDepotsOfBranchAsync(appId, "public");
-                    var        depotId      = publicDepots[0].Id;
                     ManifestId manifestId;
 
-
-                    if (true) //IS SYNC ENABLED
-                    {
-                        manifestId = await _steamContentClient.GetDepotDefaultManifestIdAsync(appId, depotId, branch, branchPass);
-                        Manifest manifest = await _steamContentClient.GetManifestAsync(appId, depotId, manifestId);
-
-                        SyncDeleteRemovedFiles(path, manifest);
-                    }
+                    manifestId = await _steamContentClient.GetDepotDefaultManifestIdAsync(appId, depotId, branch, branchPass);
 
                     Parameters.Output += $"\nAttempting to start download of app {appId}, depot {depotId}... ";
 
@@ -209,7 +207,7 @@ namespace FASTER.ViewModel
                 } 
                 
                 sw.Stop(); 
-                Parameters.Output += $"\nDone in {sw.Elapsed}";
+                Parameters.Output += $"\nDone in {sw.Elapsed.Hours}h {sw.Elapsed.Minutes}m {sw.Elapsed.Seconds}s {sw.Elapsed.Milliseconds}ms";
 
                 return UpdateState.Success;
             }
