@@ -140,15 +140,37 @@ namespace FASTER.Views
             { IServerDirBox.Text = path; }
         }
 
+        private void APIKeyButton_Click(object sender, RoutedEventArgs e)
+        {
+            Functions.OpenBrowser("https://steamcommunity.com/dev/apikey");
+        }
+
         private void IContinueButton_Click(object sender, RoutedEventArgs e)
         {
             var encryption = Encryption.Instance;
+
+            if(string.IsNullOrEmpty(IModStaging.Text) || !Directory.Exists(IModStaging.Text))
+            {
+                DisplaySetupMessage("Please enter a valid Mod Staging Directory");
+                return;
+            }
+
+            if (string.IsNullOrEmpty(IServerDirBox.Text) || !Directory.Exists(IServerDirBox.Text))
+            {
+                DisplaySetupMessage("Please enter a valid Arma Server Directory");
+                return;
+            }
+                
+
+
 
             var settings = Properties.Settings.Default;
             settings.serverPath = IServerDirBox.Text;
             settings.modStagingDirectory = IModStaging.Text;
             settings.steamUserName = ISteamUserBox.Text;
             settings.steamPassword = encryption.EncryptData(ISteamPassBox.Password);
+            if (!string.IsNullOrEmpty(IApiKeyBox.Text))
+                Properties.Settings.Default.SteamAPIKey = IApiKeyBox.Text;
             settings.firstRun = false;
             settings.Save();
 
