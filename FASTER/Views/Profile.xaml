@@ -88,10 +88,11 @@
                                 <Canvas>
                                     <Expander Header="DLCs" Margin="3" mah:ControlsHelper.ContentCharacterCasing="Normal" Background="{Binding Mode=OneWay, Source={StaticResource MahApps.Brushes.Menu.Background}}">
                                         <StackPanel Orientation="Vertical">
-                                            <CheckBox IsChecked="{Binding Profile.ContactDLCChecked}" Content="Contact DLC" Margin="10,3" Width="105"/>
-                                            <CheckBox IsChecked="{Binding Profile.GMDLCChecked}" Content="GM DLC" Margin="10,3"/>
-                                            <CheckBox IsChecked="{Binding Profile.PFDLCChecked}" Content="Prairie Fire DLC" Margin="10,3" Width="105"/>
-                                            <CheckBox IsChecked="{Binding Profile.CLSADLCChecked}" Content="CLSA DLC" Margin="10,3"/>
+                                            <CheckBox IsChecked="{Binding Profile.ContactDLCChecked}" Content="Contact DLC" Margin="10,3" Width="105" HorizontalAlignment="Left"/>
+                                            <CheckBox IsChecked="{Binding Profile.GMDLCChecked}" Content="GM DLC" Margin="10,3" HorizontalAlignment="Left"/>
+                                            <CheckBox IsChecked="{Binding Profile.PFDLCChecked}" Content="Prairie Fire DLC" Margin="10,3" Width="105" HorizontalAlignment="Left"/>
+                                            <CheckBox IsChecked="{Binding Profile.CLSADLCChecked}" Content="CLSA DLC" Margin="10,3" HorizontalAlignment="Left"/>
+                                            <CheckBox IsChecked="{Binding Profile.WSDLCChecked}" Content="Western Sahara DLC" Margin="10,3" HorizontalAlignment="Left"/>
                                         </StackPanel>
                                     </Expander>
                                 </Canvas>
