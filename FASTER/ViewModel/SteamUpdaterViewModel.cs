@@ -48,7 +48,7 @@ namespace FASTER.ViewModel
         public ObservableCollection<string> ServerBranches    { get; }      = new ObservableCollection<string> {"Stable", "Contact", "Creator DLC", "LegacyPorts", "Development", "Performance / Profiling"};
         public string                       ServerBranch      { get; set; } = "Stable";
 
-        public  IDialogCoordinator      dialogCoordinator { get; set; }
+        public  IDialogCoordinator      DialogCoordinator { get; set; }
         private CancellationTokenSource tokenSource = new CancellationTokenSource();
 
         public bool IsDownloading => DownloadTasks.Count > 0 || IsLoggingIn || IsDlOverride;
@@ -555,7 +555,7 @@ namespace FASTER.ViewModel
         }
 
         public async Task<string> SteamGuardInput()
-        { return await dialogCoordinator.ShowInputAsync(this, "Steam Guard", "Please enter your 2FA code"); }
+        { return await DialogCoordinator.ShowInputAsync(this, "Steam Guard", "Please enter your 2FA code"); }
 
         public event PropertyChangedEventHandler PropertyChanged;
 

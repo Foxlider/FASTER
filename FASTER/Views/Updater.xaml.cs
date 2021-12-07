@@ -15,7 +15,7 @@ namespace FASTER.Views
         public Updater()
         {
             InitializeComponent();
-            MainWindow.Instance.SteamUpdaterViewModel.dialogCoordinator = DialogCoordinator.Instance;
+            MainWindow.Instance.SteamUpdaterViewModel.DialogCoordinator = DialogCoordinator.Instance;
             DataContext = MainWindow.Instance.SteamUpdaterViewModel;
         }
 
