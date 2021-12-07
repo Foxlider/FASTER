@@ -49,6 +49,8 @@ namespace FASTER.Models
 
             if (!duplicate)
             {
+                if (!Directory.Exists(newMod.Path))
+                    Directory.CreateDirectory(newMod.Path);
                 currentMods.ArmaMods.Add(newMod);
                 Properties.Settings.Default.armaMods = currentMods;
                 _ = Task.Run(() => ArmaMods.FirstOrDefault(m => m.WorkshopId == newMod.WorkshopId)?.UpdateInfos());
@@ -70,7 +72,8 @@ namespace FASTER.Models
                 
                 if (item != null)
                 {
-                    Directory.Delete(item.Path, true);
+                    if (Directory.Exists(item.Path)) 
+                        Directory.Delete(item.Path, true);
                     currentProfiles.ArmaMods.Remove(item);
                 }
                 

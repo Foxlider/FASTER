@@ -132,7 +132,7 @@ namespace FASTER.ViewModel
                     break;
             }
 
-            await RunServerUpdater(Parameters.InstallDirectory, appId, branch, branchPass);
+            await RunServerUpdater(Parameters.ArmaInstallDirectory, appId, branch, branchPass);
         }
 
 
@@ -145,12 +145,12 @@ namespace FASTER.ViewModel
         }
         public void SteamCmdDirClick()
         {
-            string path = MainWindow.Instance.SelectFolder(Parameters.InstallDirectory);
+            string path = MainWindow.Instance.SelectFolder(Parameters.SteamCmdInstallDirectory);
 
             if (path == null) 
                 return;
 
-            Parameters.InstallDirectory = path;
+            Parameters.SteamCmdInstallDirectory = path;
         }
         public void ModStagingDirClick()
         {
@@ -163,7 +163,12 @@ namespace FASTER.ViewModel
         }
         public void ServerDirClick(object sender)
         {
-            throw new NotImplementedException();
+            string path = MainWindow.Instance.SelectFolder(Parameters.ArmaInstallDirectory);
+
+            if (path == null)
+                return;
+
+            Parameters.ArmaInstallDirectory = path;
         }
 
 

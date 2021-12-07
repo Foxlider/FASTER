@@ -55,7 +55,7 @@
                         <ColumnDefinition />
                         <ColumnDefinition Width="auto"/>
                     </Grid.ColumnDefinitions>
-                    <TextBox Grid.Column="0" Text="{Binding Parameters.InstallDirectory}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Install Directory" Margin="5"/>
+                    <TextBox Grid.Column="0" Text="{Binding Parameters.SteamCmdInstallDirectory}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Install Directory" Margin="5"/>
                     <Button Grid.Column="1" Content="{iconPacks:Modern Kind=Folder}" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" VerticalAlignment="Stretch" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" Margin="5" Padding="2" Click="SteamCmdDir_Click"/>
                 </Grid>
                 <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="5,10">
@@ -107,7 +107,7 @@
                         <ColumnDefinition />
                         <ColumnDefinition Width="auto"/>
                     </Grid.ColumnDefinitions>
-                    <TextBox Grid.Column="0" mah:TextBoxHelper.UseFloatingWatermark="True" Text="{Binding Parameters.InstallDirectory}" mah:TextBoxHelper.Watermark="Install Directory" Margin="5"/>
+                    <TextBox Grid.Column="0" mah:TextBoxHelper.UseFloatingWatermark="True" Text="{Binding Parameters.ArmaInstallDirectory}" mah:TextBoxHelper.Watermark="Install Directory" Margin="5"/>
                     <Button Grid.Column="1" Content="{iconPacks:Modern Kind=Folder}" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" VerticalAlignment="Stretch" Height="auto" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" Margin="5" Padding="2" Click="ServerDir_Click"/>
                 </Grid>
                 <ComboBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Version" SelectedItem="{Binding ServerBranch}" ItemsSource="{Binding ServerBranches}" Margin="10,20,10,15">

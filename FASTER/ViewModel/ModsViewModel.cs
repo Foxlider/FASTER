@@ -6,6 +6,8 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using MahApps.Metro.Controls.Dialogs;
+using System.Collections.Generic;
+using System.Xml;
 
 namespace FASTER.ViewModel
 {
@@ -100,6 +102,17 @@ namespace FASTER.ViewModel
             
             ModsCollection.DeleteSteamMod(mod.WorkshopId);
         }
+        internal void DeleteAllMods()
+        {
+            var copyArmaMods = new List<ArmaMod>(ModsCollection.ArmaMods);
+            foreach (var mod in copyArmaMods)
+            {
+                if (!mod.IsLocal)
+                {
+                    ModsCollection.DeleteSteamMod(mod.WorkshopId);
+                }
+            }
+        }
         public void OpenModPage(ArmaMod mod)
         {
             if (mod == null)
@@ -126,35 +139,54 @@ namespace FASTER.ViewModel
             string modsFile = Functions.SelectFile("Arma 3 Launcher File|*.html");
 
             if (string.IsNullOrEmpty(modsFile)) return;
-            using StreamReader dataReader = new StreamReader(modsFile);
             
-            var lines = (await File.ReadAllLinesAsync(modsFile)).ToList();
+            var lines = File.ReadAllText(modsFile);
 
-            var extractedModlist = from line in lines
-                                   where line.Contains("steamcommunity.com/sharedfiles/filedetails")
-                                   select line.Split("?id=")
-                                   into extract
-                                   select extract[1].Split('"')[0];
-
-            foreach (string modIdS in extractedModlist)
+            var extractedModlist = new List<ArmaMod>();
+            var doc = new XmlDocument();
+            doc.LoadXml(lines);
+            var modNodes = doc.SelectNodes("//tr[@data-type=\"ModContainer\"]");
+            for (int i = 0; i < modNodes.Count; i++)
             {
-                if (!uint.TryParse(modIdS, out uint modId)) continue; 
-
-                if(ModsCollection.ArmaMods.FirstOrDefault(m => m.WorkshopId == modId) != null)
-                    continue;
+                var modNode = modNodes.Item(i);
+                var modName = modNode.SelectSingleNode("td[@data-type='DisplayName']").InnerText;
+                var modIdNode = modNode.SelectSingleNode("td/a[@data-type='Link']");
+                Random r = new Random();
+                var modId = (uint)(uint.MaxValue - r.Next(ushort.MaxValue / 2));
+                var modIdS = modId.ToString();
+                if (modIdNode != null)
+                {
+                    modIdS = modIdNode.Attributes.GetNamedItem("href").Value.Split("?id=")[1].Split('"')[0];
+                    uint.TryParse(modIdS, out modId);
+                }
 
                 var mod = new ArmaMod
                 {
                     WorkshopId = modId,
                     Path = Path.Combine(Properties.Settings.Default.modStagingDirectory, modIdS),
-                    IsLocal = false, 
-                    Status = ArmaModStatus.UpdateRequired
+                    Name = modName,
+                    IsLocal = modIdNode == null,
+                    Status = modIdNode == null ? ArmaModStatus.Local : ArmaModStatus.UpToDate,
                 };
+                extractedModlist.Add(mod);
+            }
 
-                if(!await Task.Run(() => mod.IsOnWorkshop()))
+            foreach (var extractedMod in extractedModlist)
+            {
+                var mod = ModsCollection.ArmaMods.FirstOrDefault(m => m.WorkshopId == extractedMod.WorkshopId || ProfileViewModel.GetCompareString(extractedMod.Name) == ProfileViewModel.GetCompareString(m.Name));
+                if (mod != null)
                     continue;
 
-                ModsCollection.AddSteamMod(mod);
+                if (extractedMod.IsLocal)
+                {
+                    ModsCollection.ArmaMods.Add(extractedMod);
+                    continue;
+                }
+
+                if(!await Task.Run(() => extractedMod.IsOnWorkshop()))
+                    continue;
+
+                ModsCollection.AddSteamMod(extractedMod);
             }
         }
 

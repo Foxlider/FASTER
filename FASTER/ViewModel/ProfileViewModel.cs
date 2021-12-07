@@ -11,6 +11,7 @@ using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls.Primitives;
+using System.Text.RegularExpressions;
 using System.Xml;
 
 namespace FASTER.ViewModel
@@ -272,7 +273,7 @@ namespace FASTER.ViewModel
         internal static string GetCompareString(string input)
         {
             input = input.Replace("@", "");
-            input = System.Text.RegularExpressions.Regex.Replace(input, "[^a-zA-Z0-9]", string.Empty);
+            input = Regex.Replace(input, "[^a-zA-Z0-9]", string.Empty);
             return input;
         }
 
@@ -318,16 +319,17 @@ namespace FASTER.ViewModel
                 var modNode = modNodes.Item(i);
                 var modName = modNode.SelectSingleNode("td[@data-type='DisplayName']").InnerText;
                 var modIdNode = modNode.SelectSingleNode("td/a[@data-type='Link']");
-                uint modId = 0;
+                Random r = new Random();
+                var modID = (uint)(uint.MaxValue - r.Next(ushort.MaxValue / 2));
                 if (modIdNode != null)
                 {
                     string modIdS = modIdNode.Attributes.GetNamedItem("href").Value.Split("?id=")[1].Split('"')[0];
-                    uint.TryParse(modIdS, out modId);
+                    uint.TryParse(modIdS, out modID);
                 }
 
                 var mod = new ProfileMod
                 {
-                    Id = modId,
+                    Id = modID,
                     Name = modName,
                     IsLocal = modIdNode == null
                 };
