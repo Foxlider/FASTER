@@ -17,6 +17,9 @@
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
         <models:NotBooleanToVisibilityConverter x:Key="BoolToHide"/>
+        <models:ProfileModsFilterIsInvalidBorderColorConverter x:Key="ProfileModsFilterIsInvalidBorderColorConverter"/>
+        <models:ProfileModsFilterIsInvalidBackgroundColorConverter x:Key="ProfileModsFilterIsInvalidBackgroundColorConverter"/>
+        <models:ProfileModsFilterIsInvalidTextConverter x:Key="ProfileModsFilterIsInvalidTextConverter"/>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -63,6 +66,7 @@
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="auto"/>
                                 <RowDefinition/>
+                                <RowDefinition Height="auto"/>
                                 <RowDefinition Height="auto"/>
                                 <RowDefinition Height="auto"/>
                             </Grid.RowDefinitions>
@@ -292,8 +296,11 @@
                                     <ColumnDefinition Width="auto"/>
                                     <ColumnDefinition Width="auto"/>
                                 </Grid.ColumnDefinitions>
-                                <TextBox Grid.Column="0" Margin="5,2" IsReadOnly="False" mah:TextBoxHelper.UseFloatingWatermark="True"
-                                 mah:TextBoxHelper.Watermark="Filter:" Text="{Binding Path=Profile.ProfileModsFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                <Border Grid.Column="0" Margin="5,2" BorderThickness="1"
+                                        BorderBrush="{Binding Path=Profile.ProfileModsFilterIsInvalid, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ProfileModsFilterIsInvalidBorderColorConverter}}">
+                                    <TextBox IsReadOnly="False" mah:TextBoxHelper.UseFloatingWatermark="True"
+                                             mah:TextBoxHelper.Watermark="Filter:" Text="{Binding Path=Profile.ProfileModsFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                </Border>
                                 <ToggleButton Grid.Column="1" Content="{iconPacks:Material Kind=FormatLetterCase}" IsChecked="{Binding Path=Profile.ProfileModsFilterIsCaseSensitive}" 
                                               BorderThickness="0" Width="30" Height="30" Margin="2" Padding="0" 
                                               ToolTip="Match Case" Style="{StaticResource MahApps.Styles.ToggleButton.Flat}"/>
@@ -303,6 +310,13 @@
                                 <ToggleButton Grid.Column="3" Content="{iconPacks:Material Kind=Regex}" IsChecked="{Binding Path=Profile.ProfileModsFilterIsRegex}" 
                                               BorderThickness="0" Width="30" Height="30" Margin="2" Padding="0" 
                                               ToolTip="Use Regular Expressions" Style="{StaticResource MahApps.Styles.ToggleButton.Flat}"/>
+                            </Grid>
+                            <Grid Grid.Row="4" Margin="10,-5,110,0" Height="20">
+                                <Border BorderThickness="1" BorderBrush="{Binding Path=Profile.ProfileModsFilterIsInvalid, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ProfileModsFilterIsInvalidBorderColorConverter}}">
+                                    <TextBlock Foreground="White" Padding="5,1,0,0"
+                                           Text="{Binding Path=Profile.ProfileModsFilterIsInvalid, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ProfileModsFilterIsInvalidTextConverter}}"
+                                           Background="{Binding Path=Profile.ProfileModsFilterIsInvalid, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ProfileModsFilterIsInvalidBackgroundColorConverter}}"/>
+                                </Border>
                             </Grid>
                         </Grid>
                     </GroupBox>

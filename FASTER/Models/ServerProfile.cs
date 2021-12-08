@@ -66,6 +66,7 @@ namespace FASTER.Models
         private bool _profileModsFilterIsCaseSensitive = false;
         private bool _profileModsFilterIsWholeWord = false;
         private bool _profileModsFilterIsRegex = false;
+        private bool _profileModsFilterIsInvalid = false;
         private ServerCfg _serverCfg;
         private Arma3Profile _armaProfile;
         private BasicCfg _basicCfg;
@@ -228,33 +229,52 @@ namespace FASTER.Models
         {
             get
             {
-                var filteredProfileMods = _profileMods.Where(m => {
-                    if (string.IsNullOrEmpty(ProfileModsFilter))
+                if (string.IsNullOrEmpty(ProfileModsFilter))
+                {
+                    if (ProfileModsFilterIsInvalid)
                     {
-                        return true;
+                        ProfileModsFilterIsInvalid = false;
                     }
-                    var pattern = ProfileModsFilter;
-                    if (!ProfileModsFilterIsRegex)
-                    {
-                        pattern = Regex.Replace(pattern, @"[\\\{\}\*\+\?\|\^\$\.\[\]\(\)]", "\\$&");
-                    }
+                    return new List<ProfileMod>(_profileMods);
+                }
 
-                    if (ProfileModsFilterIsWholeWord)
-                    {
-                        if (!Regex.IsMatch(pattern[0].ToString(), @"\B"))
-                        {
-                            pattern = $"\\b{pattern}";
-                        }
-                        if (!Regex.IsMatch(pattern[pattern.Length - 1].ToString(), @"\B"))
-                        {
-                            pattern = $"{pattern}\\b";
-                        }
-                    }
+                var pattern = ProfileModsFilter;
+                if (!ProfileModsFilterIsRegex)
+                {
+                    pattern = Regex.Replace(pattern, @"[\\\{\}\*\+\?\|\^\$\.\[\]\(\)]", "\\$&");
+                }
 
-                    var options = ProfileModsFilterIsCaseSensitive ? RegexOptions.None : RegexOptions.IgnoreCase;
-                    return Regex.IsMatch(m.Name, pattern, options);
-                }).ToList();
-                return filteredProfileMods;
+                if (ProfileModsFilterIsWholeWord)
+                {
+                    if (!Regex.IsMatch(pattern[0].ToString(), @"\B"))
+                    {
+                        pattern = $"\\b{pattern}";
+                    }
+                    if (!Regex.IsMatch(pattern[pattern.Length - 1].ToString(), @"\B"))
+                    {
+                        pattern = $"{pattern}\\b";
+                    }
+                }
+
+                var options = ProfileModsFilterIsCaseSensitive ? RegexOptions.None : RegexOptions.IgnoreCase;
+
+                try
+                {
+                    var filteredProfileMods = _profileMods.Where(m => Regex.IsMatch(m.Name, pattern, options)).ToList();
+                    if (ProfileModsFilterIsInvalid)
+                    {
+                        ProfileModsFilterIsInvalid = false;
+                    }
+                    return filteredProfileMods;
+                }
+                catch (ArgumentException)
+                {
+                    if (!ProfileModsFilterIsInvalid)
+                    {
+                        ProfileModsFilterIsInvalid = true;
+                    }
+                    return new List<ProfileMod>();
+                }
             }
         }
 
@@ -299,6 +319,16 @@ namespace FASTER.Models
                 _profileModsFilterIsRegex = value;
                 RaisePropertyChanged("ProfileModsFilterIsRegex");
                 RaisePropertyChanged("FilteredProfileMods");
+            }
+        }
+
+        public bool ProfileModsFilterIsInvalid
+        {
+            get => _profileModsFilterIsInvalid;
+            set
+            {
+                _profileModsFilterIsInvalid = value;
+                RaisePropertyChanged("ProfileModsFilterIsInvalid");
             }
         }
 
