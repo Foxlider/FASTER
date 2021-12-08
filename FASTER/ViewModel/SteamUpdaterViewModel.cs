@@ -280,7 +280,7 @@ namespace FASTER.ViewModel
             }
 
             sw.Stop();
-            Parameters.Output += $"\nDownload completed, it took {sw.Elapsed:hh\\:mm\\:ss}";
+            Parameters.Output += $"\nDownload completed, it took {sw.Elapsed.TotalMinutes}m {sw.Elapsed.Seconds}s {sw.Elapsed.Milliseconds}ms";
             _steamClient?.Shutdown();
             return UpdateState.Success;
         }
@@ -300,7 +300,7 @@ namespace FASTER.ViewModel
 
             Parameters.Output += "\nAdding mods to download list...";
 
-            SemaphoreSlim maxThread = new SemaphoreSlim(2);
+            SemaphoreSlim maxThread = new SemaphoreSlim(3);
             var  ml = mods.Where(m => !m.IsLocal);
             uint finished = 0;
             IsDlOverride = true;
@@ -311,6 +311,9 @@ namespace FASTER.ViewModel
 
                 _ = Task.Factory.StartNew(() =>
                 {
+                    if (!Directory.Exists(mod.Path))
+                        Directory.CreateDirectory(mod.Path);
+
                     if (tokenSource.Token.IsCancellationRequested)
                     {
                         mod.Status = ArmaModStatus.NotComplete;
@@ -357,7 +360,11 @@ namespace FASTER.ViewModel
 
                     sw.Stop();
                     mod.Status = ArmaModStatus.UpToDate;
-                    Parameters.Output += $"\n    Download {mod.WorkshopId} completed, it took {sw.Elapsed:hh\\:mm\\:ss}";
+                    var nx = new DateTime(1970, 1, 1);
+                    var ts = DateTime.UtcNow - nx;
+                    mod.LocalLastUpdated = (ulong) ts.TotalSeconds;
+
+                    Parameters.Output += $"\n    Download {mod.WorkshopId} completed, it took {sw.Elapsed.TotalMinutes}m {sw.Elapsed.Seconds}s {sw.Elapsed.Milliseconds}ms";
 
 
                 }, TaskCreationOptions.LongRunning).ContinueWith((task) =>

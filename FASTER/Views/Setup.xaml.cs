@@ -149,7 +149,7 @@ namespace FASTER.Views
         {
             var encryption = Encryption.Instance;
 
-            if(string.IsNullOrEmpty(IModStaging.Text) || !Directory.Exists(IModStaging.Text))
+            if(string.IsNullOrEmpty(IModStaging.Text))
             {
                 DisplaySetupMessage("Please enter a valid Mod Staging Directory");
                 return;
@@ -160,9 +160,6 @@ namespace FASTER.Views
                 DisplaySetupMessage("Please enter a valid Arma Server Directory");
                 return;
             }
-                
-
-
 
             var settings = Properties.Settings.Default;
             settings.serverPath = IServerDirBox.Text;
@@ -173,6 +170,8 @@ namespace FASTER.Views
                 Properties.Settings.Default.SteamAPIKey = IApiKeyBox.Text;
             settings.firstRun = false;
             settings.Save();
+
+            MainWindow.Instance.SteamUpdaterViewModel.Parameters.ModStagingDirectory = settings.modStagingDirectory;
 
             if (convertMods)
             { MainWindow.Instance.ConvertMods = true; }

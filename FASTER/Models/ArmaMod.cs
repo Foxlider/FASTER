@@ -71,7 +71,8 @@ namespace FASTER.Models
                 
                 if (item != null)
                 {
-                    Directory.Delete(item.Path, true);
+                    if(Directory.Exists(item.Path))
+                        Directory.Delete(item.Path, true);
                     currentProfiles.ArmaMods.Remove(item);
                 }
                 
