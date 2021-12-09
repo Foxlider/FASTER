@@ -422,7 +422,7 @@ namespace FASTER.ViewModel
                 Parameters.Output += $"\nFailed! Error: {ex.Message}";
                 _steamClient.Shutdown();
 
-                if (ex.GetBaseException() is SteamLogonException logonEx && logonEx.Result == SteamKit2.EResult.InvalidPassword)
+                if (ex.GetBaseException() is SteamLogonException {Result: SteamKit2.EResult.InvalidPassword} logonEx)
                 {
                     Parameters.Output += "\nWarning: The logon may have failed due to expired sentry-data." 
                                        + $"\nIf you are sure that the provided username and password are correct, consider deleting the .bin and .key file for the user \"{_steamClient.Credentials.Username}\" in the sentries directory."
