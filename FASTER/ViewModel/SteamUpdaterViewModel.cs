@@ -11,6 +11,7 @@ using FASTER.Models;
 using MahApps.Metro.Controls.Dialogs;
 
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -18,6 +19,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AppCenter.Analytics;
 
 namespace FASTER.ViewModel
 {
@@ -98,6 +100,13 @@ namespace FASTER.ViewModel
 
         public async Task UpdateClick()
         {
+            Analytics.TrackEvent("Updater - Clicked Update", new Dictionary<string, string>
+            {
+                {"Name", Properties.Settings.Default.steamUserName},
+                {"DLCs", $"{(GMDLCChecked ? "GM " : "")}{(CLSADLCChecked? "CLSA " : "")}{(PFDLCChecked ? "SOG " : "")}{(WSDLCChecked ? "WS " : "")}"},
+                {"Branch", $"{(ProfilingBranch? "Profiling" : "Public")}"}
+            });
+
             Parameters.IsUpdating = true;
             Parameters.Output     = "Starting Update...";
             Parameters.Output += "\nPlease don't quit this page or cancel the download\nThis might take a while...";

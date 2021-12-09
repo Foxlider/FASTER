@@ -1,11 +1,13 @@
 ﻿using FASTER.Models;
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using MahApps.Metro.Controls.Dialogs;
+using Microsoft.AppCenter.Analytics;
 
 namespace FASTER.ViewModel
 {
@@ -37,6 +39,12 @@ namespace FASTER.ViewModel
 
             if (string.IsNullOrEmpty(modID))
                 return;
+
+            Analytics.TrackEvent("Mods - Clicked AddSteamMod", new Dictionary<string, string>
+            {
+                {"Name", Properties.Settings.Default.steamUserName},
+                {"Mod", modID}
+            });
 
             //Cast link to mod ID
             if (modID.Contains("steamcommunity.com"))
@@ -184,6 +192,11 @@ namespace FASTER.ViewModel
 
         public async Task UpdateAll()
         {
+            Analytics.TrackEvent("Mods - Clicked UpdateAll", new Dictionary<string, string>
+            {
+                {"Name", Properties.Settings.Default.steamUserName}
+            });
+
             MainWindow.Instance.NavigateToConsole();
             var ans = await MainWindow.Instance.SteamUpdaterViewModel.RunModsUpdater(ModsCollection.ArmaMods);
             if(ans == UpdateState.LoginFailed) 

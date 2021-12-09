@@ -1,8 +1,10 @@
 ﻿using FASTER.Models;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using Microsoft.AppCenter.Analytics;
 
 namespace FASTER.ViewModel
 {
@@ -64,6 +66,12 @@ namespace FASTER.ViewModel
         /// <param name="mod"></param>
         public void DeployMod(DeploymentMod mod)
         {
+            Analytics.TrackEvent("Deployment - Clicked DeployMod", new Dictionary<string, string>
+            {
+                {"Name", Properties.Settings.Default.steamUserName},
+                {"Mod", mod.Name}
+            });
+
             mod.Marked = !mod.Marked;
             var linkPath = Path.Combine(Deployment.InstallPath, $"@{Functions.SafeName(mod.Name)}");
             if (mod.Marked)
@@ -89,6 +97,11 @@ namespace FASTER.ViewModel
         /// </summary>
         public void DeployAll()
         {
+            Analytics.TrackEvent("Deployment - Clicked DeployAll", new Dictionary<string, string>
+            {
+                {"Name", Properties.Settings.Default.steamUserName}
+            });
+
             foreach (var mod in Deployment.DeployMods)
             {
                 var linkPath = Path.Combine(Deployment.InstallPath, $"@{Functions.SafeName(mod.Name)}");

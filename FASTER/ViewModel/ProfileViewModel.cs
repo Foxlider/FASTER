@@ -11,6 +11,7 @@ using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls.Primitives;
+using Microsoft.AppCenter.Analytics;
 
 namespace FASTER.ViewModel
 {
@@ -40,6 +41,11 @@ namespace FASTER.ViewModel
 
         internal void OpenProfileLocation()
         {
+            Analytics.TrackEvent("Profile - Clicked OpenProfile", new Dictionary<string, string>
+            {
+                {"Name", Properties.Settings.Default.steamUserName}
+            });
+
             string folderPath = Path.Combine(Profile.ArmaPath, "Servers", Profile.Id);
             if (Directory.Exists(folderPath))
             {
@@ -115,6 +121,11 @@ namespace FASTER.ViewModel
 
             //Launching... 
             DisplayMessage($"Launching Profile {Profile.Name}...");
+
+            Analytics.TrackEvent("Profile - Clicked LaunchServer", new Dictionary<string, string>
+            {
+                {"Name", Properties.Settings.Default.steamUserName}
+            });
 
             Profile.RaisePropertyChanged("CommandLine");
             var commandLine = Profile.CommandLine;
