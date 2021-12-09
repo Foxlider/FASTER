@@ -1,4 +1,4 @@
-namespace FASTER.Models
+﻿namespace FASTER.Models
 {
     internal static class StaticData
     {
@@ -17,7 +17,8 @@ namespace FASTER.Models
             "QuickCentralHosting",
             "Meefs",
             "Ultradar",
-            "Will Bolton"
+            "Will Bolton",
+            "Harkness31"
         };
 
         /// <summary>
