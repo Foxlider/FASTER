@@ -75,7 +75,7 @@ namespace FASTER.Views
 
             if (string.IsNullOrEmpty(Properties.Settings.Default.modStagingDirectory))
             {
-                Properties.Settings.Default.modStagingDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ModStagingDirectory");
+                Properties.Settings.Default.modStagingDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ModStagingDirectory");
                 Properties.Settings.Default.Save();
             }
 
@@ -172,6 +172,10 @@ namespace FASTER.Views
             settings.Save();
 
             MainWindow.Instance.SteamUpdaterViewModel.Parameters.ModStagingDirectory = settings.modStagingDirectory;
+            MainWindow.Instance.SteamUpdaterViewModel.Parameters.ApiKey = settings.SteamAPIKey;
+            MainWindow.Instance.SteamUpdaterViewModel.Parameters.InstallDirectory = settings.serverPath;
+            MainWindow.Instance.SteamUpdaterViewModel.Parameters.Username = settings.steamUserName;
+            MainWindow.Instance.SteamUpdaterViewModel.Parameters.Password = settings.steamPassword;
 
             if (convertMods)
             { MainWindow.Instance.ConvertMods = true; }
