@@ -144,7 +144,7 @@ namespace FASTER.Models
 
         public static uint SteamIdFromUrl(string modUrl)
         {
-            var modId = modUrl.Substring(modUrl.IndexOf("id=", StringComparison.Ordinal));
+            var modId = modUrl[modUrl.IndexOf("id=", StringComparison.Ordinal)..];
             if (modId.Contains("&"))
                 // ReSharper disable once StringIndexOfIsCultureSpecific.1
                 modId = modId.Substring(0, modId.IndexOf("&"));

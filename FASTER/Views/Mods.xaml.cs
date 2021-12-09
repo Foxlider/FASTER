@@ -37,8 +37,7 @@ namespace FASTER.Views
 
         private async void UpdateMod(object sender, RoutedEventArgs e)
         {
-            var mod = ((FrameworkElement) sender).DataContext as ArmaMod;
-            if (mod == null)
+            if (!(((FrameworkElement) sender).DataContext is ArmaMod mod))
                 return;
             
             await mod.UpdateModAsync();

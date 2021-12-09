@@ -122,7 +122,7 @@ namespace FASTER
             InitializeComponent();
 
             //Set font preferences
-            FontFamily = Fonts.SystemFontFamilies.FirstOrDefault(f => f.Source == FASTER.Properties.Settings.Default.font);
+            FontFamily = Fonts.SystemFontFamilies.FirstOrDefault(f => f.Source == Properties.Settings.Default.font);
 
             _instance = this;
             Version = GetVersion();
@@ -293,7 +293,7 @@ namespace FASTER
                     return;
                 }
 
-                ContentProfileViews.FirstOrDefault(p => p.Profile.Id == temp.Id).DeleteProfile();
+                ContentProfileViews.FirstOrDefault(p => p.Profile.Id == temp.Id)?.DeleteProfile();
             }
             catch (Exception err)
             {
@@ -423,9 +423,9 @@ namespace FASTER
                 controller.SetMessage($"Checking Drive Space... {Functions.ParseFileSize(fullzize)}");
             }
 
-            var d = DriveInfo.GetDrives().FirstOrDefault(d => d.Name == Path.GetPathRoot(modStagingDir));
+            var drive = DriveInfo.GetDrives().FirstOrDefault(d => d.Name == Path.GetPathRoot(modStagingDir));
 
-            if (d.AvailableFreeSpace < fullzize)
+            if (drive.AvailableFreeSpace < fullzize)
             {
                 properties.armaMods = null;
                 properties.firstRun = true;
@@ -435,7 +435,7 @@ namespace FASTER
 
                 while (closing > 0)
                 {
-                    controller.SetMessage($"Not enough free space on your drive for your mods. ({Functions.ParseFileSize(d.AvailableFreeSpace)} / {Functions.ParseFileSize(fullzize)} )\nClear some space and retry.\n\nFASTER will close in {closing/1000} seconds.");
+                    controller.SetMessage($"Not enough free space on your drive for your mods. ({Functions.ParseFileSize(drive.AvailableFreeSpace)} / {Functions.ParseFileSize(fullzize)} )\nClear some space and retry.\n\nFASTER will close in {closing/1000} seconds.");
                     await Task.Delay(1000);
                     closing -= 1000;
                 }

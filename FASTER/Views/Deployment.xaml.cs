@@ -1,14 +1,13 @@
 ﻿using FASTER.Models;
 using FASTER.ViewModel;
 using System.Windows;
-using System.Windows.Controls;
 
 namespace FASTER.Views
 {
     /// <summary>
     /// Interaction logic for Deployment.xaml
     /// </summary>
-    public partial class Deployment : UserControl
+    public partial class Deployment
     {
         public Deployment()
         {

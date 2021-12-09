@@ -171,7 +171,7 @@ namespace FASTER.ViewModel
             Parameters.ModStagingDirectory = path;
         }
 
-        public void ServerDirClick(object sender)
+        public void ServerDirClick()
         {
             string path = MainWindow.Instance.SelectFolder(Parameters.InstallDirectory);
 

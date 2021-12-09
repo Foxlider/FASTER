@@ -29,7 +29,7 @@ namespace FASTER.Views
         }
         private void ServerDir_Click(object sender, RoutedEventArgs e)
         {
-            ((SteamUpdaterViewModel) DataContext)?.ServerDirClick(sender);
+            ((SteamUpdaterViewModel) DataContext)?.ServerDirClick();
         }
 
         private void ModStagingDir_Click(object sender, RoutedEventArgs e)

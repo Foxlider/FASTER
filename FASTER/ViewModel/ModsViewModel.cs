@@ -92,7 +92,7 @@ namespace FASTER.ViewModel
             {
                 WorkshopId = modID,
                 Name       = localPath.Contains("@") 
-                                ? localPath.Substring(localPath.LastIndexOf("@", StringComparison.Ordinal) + 1)
+                                ? localPath[(localPath.LastIndexOf("@", StringComparison.Ordinal) + 1)..]
                                 : Path.GetFileName(localPath),
                 Path       = newPath,
                 Author     = "Unknown",

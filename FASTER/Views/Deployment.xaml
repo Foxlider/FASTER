@@ -6,7 +6,6 @@
              xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              xmlns:models="clr-namespace:FASTER.Models"
-             xmlns:fa="http://schemas.fontawesome.io/icons/"
              mc:Ignorable="d" 
              Loaded="UserControl_Loaded"
              Unloaded="UserControl_Unloaded"
@@ -28,7 +27,7 @@
             <DockPanel.Effect>
                 <DropShadowEffect BlurRadius="5" RenderingBias="Performance" ShadowDepth="1" />
             </DockPanel.Effect>
-            <Grid  Grid.Row="1" DockPanel.Dock="Left" Grid.Column="0" Grid.ColumnSpan="2">
+            <Grid  DockPanel.Dock="Left">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
                     <ColumnDefinition Width="auto"/>
@@ -48,7 +47,7 @@
                 </Expander>
             </Canvas>-->
         </DockPanel>
-        <DataGrid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="10,5,10,10"
+        <DataGrid Grid.Row="1" Grid.Column="0" Margin="10,5,10,10"
                   ItemsSource="{Binding Path=Deployment.DeployMods, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                   CanUserReorderColumns="False" CanUserSortColumns="True" AutoGenerateColumns="False"
                   CanUserAddRows="False">
