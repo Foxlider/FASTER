@@ -407,9 +407,44 @@ namespace FASTER
             var properties    = Properties.Settings.Default;
             var modStagingDir = properties.modStagingDirectory;
 
-            var controller = await this.ShowProgressAsync("Please wait...", $"Converting Steam Mods... 0 / {properties.steamMods.SteamMods.Count}");
+            var controller = await this.ShowProgressAsync("Please wait...", "Checking Drive Space...");
             controller.Maximum = properties.steamMods.SteamMods.Count;
             var progress = 0;
+
+            long fullzize = 0;
+            foreach (var mod in properties.steamMods.SteamMods.Select(m => Path.Combine(Properties.Settings.Default.steamCMDPath, "steamapps", "workshop", "content", "107410", m.WorkshopId.ToString())).Concat(properties.localMods.Select(m => m.Path)))
+            {
+                if(!Directory.Exists(mod))
+                    continue;
+
+                string[] a = Directory.GetFiles(mod, "*.*", SearchOption.AllDirectories);
+                fullzize += a.Select(name => new FileInfo(name)).Select(info => info.Length).Sum();
+
+                controller.SetMessage($"Checking Drive Space... {Functions.ParseFileSize(fullzize)}");
+            }
+
+            var d = DriveInfo.GetDrives().FirstOrDefault(d => d.Name == Path.GetPathRoot(modStagingDir));
+
+            if (d.AvailableFreeSpace < fullzize)
+            {
+                properties.armaMods = null;
+                properties.firstRun = true;
+                properties.Save();
+
+                var closing = 10000;
+
+                while (closing > 0)
+                {
+                    controller.SetMessage($"Not enough free space on your drive for your mods. ({Functions.ParseFileSize(d.AvailableFreeSpace)} / {Functions.ParseFileSize(fullzize)} )\nClear some space and retry.\n\nFASTER will close in {closing/1000} seconds.");
+                    await Task.Delay(1000);
+                    closing -= 1000;
+                }
+
+                await controller.CloseAsync();
+                Instance.OnClosing(new CancelEventArgs(true));
+                return;
+            }
+                
 
             foreach (var steamMod in properties.steamMods.SteamMods)
             {
