@@ -48,9 +48,6 @@
             <Button ToolTip="Update All"
                     Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Padding="7,5"
                     Content="{iconPacks:Material Kind=Update}" Click="UpdateAll_Click" RenderTransformOrigin="0.258,42.716" />
-            <Button ToolTip="Scan Mods from Steam"
-                    Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Padding="7,5"
-                    Content="{iconPacks:Modern Kind=Steam}" Click="ScanSteam_Click" />
         </StackPanel>
         <Grid Grid.Row="0" Grid.Column="1">
             <Grid.Effect>

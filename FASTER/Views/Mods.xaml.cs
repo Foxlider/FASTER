@@ -86,10 +86,5 @@ namespace FASTER.Views
         {
             await ((ModsViewModel) DataContext)?.UpdateAll();
         }
-
-        private void ScanSteam_Click(object sender, RoutedEventArgs e)
-        {
-            ((ModsViewModel) DataContext)?.ImportFromSteam();
-        }
     }
 }

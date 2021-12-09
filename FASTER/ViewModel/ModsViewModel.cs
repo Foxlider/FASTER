@@ -189,9 +189,5 @@ namespace FASTER.ViewModel
             if(ans == UpdateState.LoginFailed) 
                 DisplayMessage("Steam Login Failed");
         }
-        public void ImportFromSteam()
-        {
-            throw new NotImplementedException();
-        }
     }
 }
