@@ -42,11 +42,10 @@ namespace FASTER.ViewModel
             Deployment = Settings.Default.Deployments;
             foreach (var mod in Settings.Default.armaMods.ArmaMods)
             {
-                if (Deployment.DeployMods.All(m => m.WorkshopId != mod.WorkshopId))
-                {
-                    Deployment.DeployMods.Add(new DeploymentMod(mod));
-                    Settings.Default.Save();
-                }
+                if (Deployment.DeployMods.Any(m => m.WorkshopId == mod.WorkshopId))
+                    continue;
+                Deployment.DeployMods.Add(new DeploymentMod(mod));
+                Settings.Default.Save();
             }
             foreach (var mod in Deployment.DeployMods.ToArray())
             {

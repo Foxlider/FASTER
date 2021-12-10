@@ -432,7 +432,7 @@ namespace FASTER.ViewModel
                                                     .Select(mission => mission.Replace(Path.Combine(Profile.ArmaPath, "mpmissions") + "\\", "")));
             //Load folders
             //Credits to Pucker and LinkIsParking
-            newMissions.AddRange(Directory.GetDirectories(Path.Combine(Properties.Settings.Default.serverPath, "mpmissions"))
+            newMissions.AddRange(Directory.GetDirectories(Path.Combine(Profile.ArmaPath, "mpmissions"))
                                                 .Select(mission => mission.Replace(Path.Combine(Profile.ArmaPath, "mpmissions") + "\\", "")));
 
 
