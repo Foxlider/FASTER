@@ -297,12 +297,12 @@
                                     <ColumnDefinition Width="auto"/>
                                     <ColumnDefinition Width="auto"/>
                                 </Grid.ColumnDefinitions>
-                                <Border Grid.Column="0" Margin="0,2" BorderThickness="1"
+                                <Border Grid.Column="0" Margin="0,0" BorderThickness="1"
                                         BorderBrush="{Binding Path=Profile.ProfileModsFilterIsInvalid, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ProfileModsFilterIsInvalidBorderColorConverter}}">
                                     <TextBox IsReadOnly="False" mah:TextBoxHelper.UseFloatingWatermark="True"
                                              mah:TextBoxHelper.Watermark="Filter:" Text="{Binding Path=Profile.ProfileModsFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                                 </Border>
-                                <Canvas Grid.Column="0" Margin="0"
+                                <Canvas Grid.Column="0" Margin="0,2"
                                         Visibility="{Binding Path=Profile.ProfileModsFilterIsInvalid, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
                                     <Border BorderThickness="1" BorderBrush="{Binding Path=Profile.ProfileModsFilterIsInvalid, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ProfileModsFilterIsInvalidBorderColorConverter}}">
                                         <TextBlock Foreground="White" Padding="5,1"
