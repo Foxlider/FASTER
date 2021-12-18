@@ -45,7 +45,7 @@
                     <ColumnDefinition Width="auto" />
                 </Grid.ColumnDefinitions>
                 <TextBox x:Name="IApiKeyBox" mah:TextBoxHelper.UseFloatingWatermark="True"
-                         mah:TextBoxHelper.Watermark="ABCD1234ABCD1234ABCD1234ABCD1234" ToolTip="Not Required" Margin="5" />
+                         mah:TextBoxHelper.Watermark="Custom API Key" ToolTip="Not Required" Margin="5" />
                 <Button Grid.Column="1" Name="IApiKeyOpenBtn" Content="{iconPacks:Modern Kind=Browser}"
                         Style="{DynamicResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0"
                         VerticalAlignment="Stretch"

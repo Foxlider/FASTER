@@ -608,7 +608,7 @@
                                         </Style>
                                     </GroupBox.Style>
                                     <StackPanel>
-                                        <mah:ToggleSwitch IsOn="{Binding Path=Profile.ServerCfg.VotingEnabled}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="VoN Activation" ToolTip="VoN Activation" Margin="10,2,0,2" HorizontalAlignment="Left"/>
+                                        <mah:ToggleSwitch IsOn="{Binding Path=Profile.ServerCfg.VotingEnabled}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Voting Settings" ToolTip="Voting Settings" Margin="10,2,0,2" HorizontalAlignment="Left"/>
                                         <Grid>
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition/>
@@ -629,7 +629,7 @@
                                         </Style>
                                     </GroupBox.Style>
                                     <StackPanel>
-                                        <mah:ToggleSwitch IsOn="{Binding Path=Profile.ServerCfg.HeadlessClientEnabled}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="VoN Activation" ToolTip="VoN Activation" Margin="10,2,0,2" HorizontalAlignment="Left"/>
+                                        <mah:ToggleSwitch IsOn="{Binding Path=Profile.ServerCfg.HeadlessClientEnabled}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Headless Clients" ToolTip="Headless Clients" Margin="10,2,0,2" HorizontalAlignment="Left"/>
                                         <Button Content="Launch HCs" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" Click="LaunchHCs" BorderThickness="0" HorizontalAlignment="Stretch" Margin="10,5" Visibility="{Binding Path=Profile.ServerCfg.HeadlessClientEnabled, Converter={StaticResource BoolToVis}}"/>
                                         <TextBox MinHeight="50" Margin="10,3" Text="{Binding Path=Profile.ServerCfg.HeadlessClients}" Visibility="{Binding Path=Profile.ServerCfg.HeadlessClientEnabled, Converter={StaticResource BoolToVis}}" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Headless IPs (one per line)"/>
                                         <TextBox MinHeight="50" Margin="10,3" Text="{Binding Path=Profile.ServerCfg.LocalClient}" Visibility="{Binding Path=Profile.ServerCfg.HeadlessClientEnabled, Converter={StaticResource BoolToVis}}" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Local Clients (one per line)"/>
