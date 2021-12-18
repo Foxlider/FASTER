@@ -47,8 +47,11 @@ namespace FASTER.ViewModel
             });
 
             //Cast link to mod ID
-            if (modID.Contains("steamcommunity.com"))
-                modID = modID.Split("?id=")[1].Split('&')[0];
+            if (modID.Contains("steamcommunity.com") && modID.Contains("id="))
+            {
+                var uri = new Uri(modID);
+                modID = System.Web.HttpUtility.ParseQueryString(uri.Query).Get("id");
+            }
 
             if (!uint.TryParse(modID, out uint modIDOut))
                 return;
@@ -142,9 +145,7 @@ namespace FASTER.ViewModel
 
             var extractedModlist = from line in lines
                                    where line.Contains("steamcommunity.com/sharedfiles/filedetails")
-                                   select line.Split("?id=")
-                                   into extract
-                                   select extract[1].Split('"')[0];
+                                   select System.Web.HttpUtility.ParseQueryString(new Uri(line).Query).Get("id");
 
             foreach (string modIdS in extractedModlist)
             {
