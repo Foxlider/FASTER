@@ -1,13 +1,12 @@
 ﻿using FASTER.Models;
-
+using MahApps.Metro.Controls.Dialogs;
+using Microsoft.AppCenter.Analytics;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using MahApps.Metro.Controls.Dialogs;
-using Microsoft.AppCenter.Analytics;
 
 namespace FASTER.ViewModel
 {
@@ -18,7 +17,7 @@ namespace FASTER.ViewModel
 
         public ArmaModCollection ModsCollection { get; set; }
 
-        public IDialogCoordinator dialogCoordinator { get; set; }
+        public IDialogCoordinator DialogCoordinator { get; set; }
 
 
         internal void DisplayMessage(string msg)
@@ -35,7 +34,7 @@ namespace FASTER.ViewModel
 
         public async Task AddSteamMod()
         {
-            var modID = await dialogCoordinator.ShowInputAsync(this, "Add Steam Mod", "Please enter the mod ID or mod URL");
+            var modID = await DialogCoordinator.ShowInputAsync(this, "Add Steam Mod", "Please enter the mod ID or mod URL");
 
             if (string.IsNullOrEmpty(modID))
                 return;
@@ -66,7 +65,7 @@ namespace FASTER.ViewModel
             ModsCollection.AddSteamMod(mod);
         }
 
-        public void AddLocalMod()
+        public async Task AddLocalModAsync()
         {
             var localPath = MainWindow.Instance.SelectFolder(Properties.Settings.Default.modStagingDirectory);
 
@@ -81,14 +80,25 @@ namespace FASTER.ViewModel
                 Directory.CreateDirectory(newPath);
             if (Directory.Exists(oldPath))
             {
-                foreach (var file in Directory.EnumerateFiles(oldPath, "*", SearchOption.AllDirectories))
+                var progress = await DialogCoordinator.ShowProgressAsync(this, "Local Mod", "Copying mod...");
+                var files = Directory.EnumerateFiles(oldPath, "*", SearchOption.AllDirectories).ToList();
+                progress.Maximum = files.Count;
+                await Task.Factory.StartNew(() =>
                 {
-                    var newFile = file.Replace(oldPath, newPath);
-                    if (!Directory.Exists(Path.GetDirectoryName(newFile)))
-                       Directory.CreateDirectory(Path.GetDirectoryName(newFile));
+                    foreach (var file in files)
+                    {
+                        var newFile = file.Replace(oldPath, newPath);
+                        if (!Directory.Exists(Path.GetDirectoryName(newFile)))
+                            Directory.CreateDirectory(Path.GetDirectoryName(newFile));
 
-                    File.Copy(file, newFile, true);
-                }
+                        File.Copy(file, newFile, true);
+                        var progressDone = files.IndexOf(file);
+                        progress.SetMessage($"Copying mod from {oldPath}\n{progressDone} / {progress.Maximum}");
+                        progress.SetProgress(progressDone);
+                    }
+                });
+                
+                await progress.CloseAsync();
             }
 
             var newMod = new ArmaMod

@@ -15,7 +15,7 @@ namespace FASTER.Views
         public Mods()
         {
             InitializeComponent();
-            MainWindow.Instance.ModsViewModel.dialogCoordinator =  DialogCoordinator.Instance;
+            MainWindow.Instance.ModsViewModel.DialogCoordinator =  DialogCoordinator.Instance;
 
             this.Dispatcher.ShutdownStarted += DispatcherOnShutdownStarted;
         }
@@ -68,7 +68,7 @@ namespace FASTER.Views
 
         private void AddLocalMod_Click(object sender, RoutedEventArgs e)
         {
-            ((ModsViewModel) DataContext)?.AddLocalMod();
+            ((ModsViewModel) DataContext)?.AddLocalModAsync();
         }
 
         private async void ImportLauncherFile_Click(object sender, RoutedEventArgs e)
