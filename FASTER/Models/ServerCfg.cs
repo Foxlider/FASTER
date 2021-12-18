@@ -48,7 +48,7 @@ namespace FASTER.Models
         private bool   randomMissionOrder = true;
 
         //Arma server only 
-        private short  verifySignatures         = 2;        // 0 = Disabled ; 1 = Deprecated Activated ; 2 = Activated (Default)
+        private short  verifySignatures         = 0;        // 0 = Disabled (FASTER Default); 1 = Deprecated Activated ; 2 = Activated (Arma Default)
         private bool   drawingInMap             = true;
         private short  disableVoN;                          // 0 = VoN activated ; 1 = VoN Disabled
         private int    vonCodecQuality          = 3;        // 8kHz is 0-10, 16kHz is 11-20, 32kHz is 21-30 (and 48kHz with OPUS enabled)
