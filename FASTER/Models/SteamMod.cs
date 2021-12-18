@@ -144,19 +144,9 @@ namespace FASTER.Models
 
         public static uint SteamIdFromUrl(string modUrl)
         {
-<<<<<<< HEAD
             var uri = new Uri(modUrl);
             var modID = System.Web.HttpUtility.ParseQueryString(uri.Query).Get("id");
             return uint.Parse(modID);
-=======
-            var modId = modUrl[modUrl.IndexOf("id=", StringComparison.Ordinal)..];
-            if (modId.Contains("&"))
-                // ReSharper disable once StringIndexOfIsCultureSpecific.1
-                modId = modId.Substring(0, modId.IndexOf("&"));
-            modId = uint.Parse(Regex.Replace(modId, @"[^\d]", "")).ToString();
-
-            return uint.Parse(modId);
->>>>>>> upstream/feature/Update-1.8
         }
 
         public static void AddSteamMod(string modUrl, bool multiple = false)
