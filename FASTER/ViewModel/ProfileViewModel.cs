@@ -297,10 +297,8 @@ namespace FASTER.ViewModel
             ushort? loadPriority = 1;
 
             var extractedModlist = from line in lines 
-                                   where line.Contains("steamcommunity.com/sharedfiles/filedetails") 
-                                   select line.Split("?id=") 
-                                   into extract 
-                                   select extract[1].Split('"')[0];
+                                   where line.Contains("steamcommunity.com/sharedfiles/filedetails")
+                                   select System.Web.HttpUtility.ParseQueryString(new Uri(line).Query).Get("id");
 
             //Select new ones
             foreach (var modIdS in extractedModlist )
