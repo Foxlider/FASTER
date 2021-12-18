@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RuleSet xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Name="SonarQube - FASTER_App FoxliWay" Description="This rule set was automatically generated from SonarQube https://sonarcloud.io/profiles/show?key=AW7Rfkrd6A1-kc3fchk2" ToolsVersion="14.0">
+<RuleSet xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Name="SonarQube - FASTER FoxliWay" Description="This rule set was automatically generated from SonarQube https://sonarcloud.io/profiles/show?key=AW7Rfkrd6A1-kc3fchk2" ToolsVersion="14.0">
   <Rules AnalyzerId="SonarAnalyzer.CSharp" RuleNamespace="SonarAnalyzer.CSharp">
     <Rule Id="S100" Action="None" />
     <Rule Id="S1006" Action="Warning" />
@@ -169,6 +169,7 @@
     <Rule Id="S3010" Action="Warning" />
     <Rule Id="S3011" Action="Warning" />
     <Rule Id="S3052" Action="None" />
+    <Rule Id="S3059" Action="None" />
     <Rule Id="S3060" Action="Warning" />
     <Rule Id="S3168" Action="Warning" />
     <Rule Id="S3169" Action="Warning" />
@@ -194,11 +195,13 @@
     <Rule Id="S3254" Action="None" />
     <Rule Id="S3256" Action="Info" />
     <Rule Id="S3257" Action="None" />
+    <Rule Id="S3260" Action="None" />
     <Rule Id="S3261" Action="Info" />
     <Rule Id="S3262" Action="Warning" />
     <Rule Id="S3263" Action="Warning" />
     <Rule Id="S3264" Action="Warning" />
     <Rule Id="S3265" Action="Warning" />
+    <Rule Id="S3267" Action="Info" />
     <Rule Id="S3329" Action="Warning" />
     <Rule Id="S3343" Action="Warning" />
     <Rule Id="S3346" Action="Warning" />

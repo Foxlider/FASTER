@@ -11,6 +11,7 @@ using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls.Primitives;
+using Microsoft.AppCenter.Analytics;
 
 namespace FASTER.ViewModel
 {
@@ -40,6 +41,11 @@ namespace FASTER.ViewModel
 
         internal void OpenProfileLocation()
         {
+            Analytics.TrackEvent("Profile - Clicked OpenProfile", new Dictionary<string, string>
+            {
+                {"Name", Properties.Settings.Default.steamUserName}
+            });
+
             string folderPath = Path.Combine(Profile.ArmaPath, "Servers", Profile.Id);
             if (Directory.Exists(folderPath))
             {
@@ -78,7 +84,7 @@ namespace FASTER.ViewModel
 
         private string SetHCCommandLine(int hc)
         {
-            string headlessMods = string.Join(";", Profile.ProfileMods.Where(m => m.HeadlessChecked).Select(m => m.IsLocal ? m.Name : $"@{Functions.SafeName(m.Name)}"));
+            string headlessMods = string.Join(";", Profile.ProfileMods.Where(m => m.HeadlessChecked).Select(m =>$"@{Functions.SafeName(m.Name)}"));
             List<string> arguments = new List<string>
             {
                 "-client",
@@ -115,6 +121,11 @@ namespace FASTER.ViewModel
 
             //Launching... 
             DisplayMessage($"Launching Profile {Profile.Name}...");
+
+            Analytics.TrackEvent("Profile - Clicked LaunchServer", new Dictionary<string, string>
+            {
+                {"Name", Properties.Settings.Default.steamUserName}
+            });
 
             Profile.RaisePropertyChanged("CommandLine");
             var commandLine = Profile.CommandLine;
@@ -214,43 +225,14 @@ namespace FASTER.ViewModel
             { DisplayMessage("Could not write the config files. Please ensure the server is not running and retry."); }
 
             var armaPath = Path.GetDirectoryName(Profile.Executable);
-
-            foreach (var dir in Directory.GetDirectories(armaPath))
-            {
-                var infos = new DirectoryInfo(dir);
-
-                if (infos.Name.StartsWith('@') && (infos.Attributes & FileAttributes.ReparsePoint) == FileAttributes.ReparsePoint)
-                { Directory.Delete(dir); }
-            }
-
+            var links = Directory.EnumerateDirectories(armaPath).Select(d => new DirectoryInfo(d)).Where(d => d.Attributes.HasFlag(FileAttributes.ReparsePoint));
+            bool displayMissingModMessage = false;
             foreach (ProfileMod profileMod in Profile.ProfileMods.Where(m => m.ClientSideChecked || m.HeadlessChecked || m.ServerSideChecked))
             {
-                try
-                {
-                    var mod = Properties.Settings.Default.armaMods.ArmaMods.FirstOrDefault(m => m.WorkshopId == profileMod.Id);
-
-                    if (mod == null)
-                        continue;
-                    
-                    var linkPath    = Path.Combine(armaPath, $"@{Functions.SafeName(mod.Name)}");
-                    var linkCommand = "/c mklink /D \"" + linkPath + "\" \"" + mod.Path + "\"";
-
-                    ProcessStartInfo startInfo = new ProcessStartInfo("cmd.exe")
-                    {
-                        WindowStyle     = ProcessWindowStyle.Hidden,
-                        Verb            = "runas",
-                        CreateNoWindow  = true,
-                        UseShellExecute = false,
-                        Arguments       = linkCommand
-                    };
-                    Process.Start(startInfo);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("An exception occurred: \n\n" + ex.Message);
-                }
+                if (!links.Any(l => l.Name == $"@{Functions.SafeName(profileMod.Name)}"))
+                    displayMissingModMessage = true;
             }
-
+            
 
             var index = Properties.Settings.Default.Profiles.FindIndex(p => p.Id == Profile.Id);  
             if (index != -1)
@@ -259,6 +241,10 @@ namespace FASTER.ViewModel
             Properties.Settings.Default.Save();
             Profile.RaisePropertyChanged("CommandLine");
             DisplayMessage($"Saved Profile {Profile.Name}");
+
+            if (displayMissingModMessage)
+                DisplayMessage("Some mods were not found in the Arma directory.\nMake sure you have deployed the correct mods");
+
         }
 
         public ObservableCollection<string> FadeOutStrings         { get; } = new ObservableCollection<string>(ProfileCfgArrays.FadeOutStrings);
@@ -444,7 +430,7 @@ namespace FASTER.ViewModel
                                                     .Select(mission => mission.Replace(Path.Combine(Profile.ArmaPath, "mpmissions") + "\\", "")));
             //Load folders
             //Credits to Pucker and LinkIsParking
-            newMissions.AddRange(Directory.GetDirectories(Path.Combine(Properties.Settings.Default.serverPath, "mpmissions"))
+            newMissions.AddRange(Directory.GetDirectories(Path.Combine(Profile.ArmaPath, "mpmissions"))
                                                 .Select(mission => mission.Replace(Path.Combine(Profile.ArmaPath, "mpmissions") + "\\", "")));
 
 

@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Controls.Primitives;
 using System.Xml.Serialization;
 
@@ -57,10 +58,16 @@ namespace FASTER.Models
         private bool _gmDlcChecked;
         private bool _pfDlcChecked;
         private bool _clsaDlcChecked;
+        private bool _wsDlcChecked;
         private bool _enableHT = true;
         private bool _enableRanking;
 
         private List<ProfileMod> _profileMods = new List<ProfileMod>();
+        private string _profileModsFilter = "";
+        private bool _profileModsFilterIsCaseSensitive = false;
+        private bool _profileModsFilterIsWholeWord = false;
+        private bool _profileModsFilterIsRegex = false;
+        private bool _profileModsFilterIsInvalid = false;
         private ServerCfg _serverCfg;
         private Arma3Profile _armaProfile;
         private BasicCfg _basicCfg;
@@ -174,6 +181,16 @@ namespace FASTER.Models
             }
         }
 
+        public bool WSDLCChecked
+        {
+            get => _wsDlcChecked;
+            set
+            {
+                _wsDlcChecked = value;
+                RaisePropertyChanged(nameof(WSDLCChecked));
+            }
+        }
+
         public bool EnableHyperThreading
         {
             get => _enableHT;
@@ -215,6 +232,114 @@ namespace FASTER.Models
                 _profileMods.ForEach(m => m.PropertyChanged += Item_PropertyChanged);
 
                 RaisePropertyChanged("ProfileMods");
+                RaisePropertyChanged("FilteredProfileMods");
+            }
+        }
+
+        public List<ProfileMod> FilteredProfileMods
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(ProfileModsFilter))
+                {
+                    if (ProfileModsFilterIsInvalid)
+                    {
+                        ProfileModsFilterIsInvalid = false;
+                    }
+                    return new List<ProfileMod>(_profileMods);
+                }
+
+                var pattern = ProfileModsFilter;
+                if (!ProfileModsFilterIsRegex)
+                {
+                    pattern = Regex.Replace(pattern, @"[\\\{\}\*\+\?\|\^\$\.\[\]\(\)]", "\\$&");
+                }
+
+                if (ProfileModsFilterIsWholeWord)
+                {
+                    if (!Regex.IsMatch(pattern[0].ToString(), @"\B"))
+                    {
+                        pattern = $"\\b{pattern}";
+                    }
+                    if (!Regex.IsMatch(pattern[pattern.Length - 1].ToString(), @"\B"))
+                    {
+                        pattern = $"{pattern}\\b";
+                    }
+                }
+
+                var options = ProfileModsFilterIsCaseSensitive ? RegexOptions.None : RegexOptions.IgnoreCase;
+
+                try
+                {
+                    var filteredProfileMods = _profileMods.Where(m => Regex.IsMatch(m.Name, pattern, options)).ToList();
+                    if (ProfileModsFilterIsInvalid)
+                    {
+                        ProfileModsFilterIsInvalid = false;
+                    }
+                    return filteredProfileMods;
+                }
+                catch (ArgumentException)
+                {
+                    if (!ProfileModsFilterIsInvalid)
+                    {
+                        ProfileModsFilterIsInvalid = true;
+                    }
+                    return new List<ProfileMod>();
+                }
+            }
+        }
+
+        public string ProfileModsFilter
+        {
+            get => _profileModsFilter;
+            set
+            {
+                _profileModsFilter = value;
+                RaisePropertyChanged("ProfileModsFilter");
+                RaisePropertyChanged("FilteredProfileMods");
+            }
+        }
+
+        public bool ProfileModsFilterIsCaseSensitive
+        {
+            get => _profileModsFilterIsCaseSensitive;
+            set
+            {
+                _profileModsFilterIsCaseSensitive = value;
+                RaisePropertyChanged("ProfileModsFilterIsCaseSensitive");
+                RaisePropertyChanged("FilteredProfileMods");
+            }
+        }
+
+        public bool ProfileModsFilterIsWholeWord
+        {
+            get => _profileModsFilterIsWholeWord;
+            set
+            {
+                _profileModsFilterIsWholeWord = value;
+                RaisePropertyChanged("ProfileModsFilterIsWholeWord");
+                RaisePropertyChanged("FilteredProfileMods");
+            }
+        }
+
+        public bool ProfileModsFilterIsRegex
+        {
+            get => _profileModsFilterIsRegex;
+            set
+            {
+                _profileModsFilterIsRegex = value;
+                RaisePropertyChanged("ProfileModsFilterIsRegex");
+                RaisePropertyChanged("FilteredProfileMods");
+            }
+        }
+
+        public bool ProfileModsFilterIsInvalid
+        {
+            get => _profileModsFilterIsInvalid;
+            set
+            {
+                _profileModsFilterIsInvalid = value;
+                RaisePropertyChanged("ProfileModsFilterIsInvalid");
             }
         }
 
@@ -339,6 +464,10 @@ namespace FASTER.Models
             {
                 _ = mods.Append("clsa;");
             }
+            if (WSDLCChecked)
+            {
+                _ = mods.Append("ws;");
+            }
             if (!string.IsNullOrWhiteSpace(playerMods))
             {
                 _ = mods.Append($"{playerMods};");
@@ -353,8 +482,8 @@ namespace FASTER.Models
             string config = Path.Combine(ArmaPath, "Servers", Id, "server_config.cfg");
             string basic  = Path.Combine(ArmaPath, "Servers", Id, "server_basic.cfg");
 
-            string playerMods = string.Join(";", ProfileMods.Where(m => m.ClientSideChecked).OrderBy(m => m.LoadPriority).Select(m => m.IsLocal ? m.Name : $"@{Functions.SafeName(m.Name)}"));
-            string serverMods = string.Join(";", ProfileMods.Where(m => m.ServerSideChecked).OrderBy(m => m.LoadPriority).Select(m => m.IsLocal ? m.Name : $"@{Functions.SafeName(m.Name)}"));
+            string playerMods = string.Join(";", ProfileMods.Where(m => m.ClientSideChecked).OrderBy(m => m.LoadPriority).Select(m => $"@{Functions.SafeName(m.Name)}"));
+            string serverMods = string.Join(";", ProfileMods.Where(m => m.ServerSideChecked).OrderBy(m => m.LoadPriority).Select(m => $"@{Functions.SafeName(m.Name)}"));
             List<string> arguments = new List<string>
             {
                 $"-port={Port}",

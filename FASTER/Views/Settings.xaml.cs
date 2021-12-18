@@ -187,7 +187,7 @@ namespace FASTER.Views
         { AutoUpdater.Start("https://raw.githubusercontent.com/Foxlider/FASTER/master/FASTER_Version.xml"); }
 
         private void APIKeyButton_Click(object sender, RoutedEventArgs e)
-        { Functions.OpenBrowser("https://forums.bohemia.net/forums/topic/224359-foxs-arma-server-tool-extended-rewrite-faster/"); }
+        { Functions.OpenBrowser("https://steamcommunity.com/dev/apikey"); }
 
         private void ISaveSettings_Click(object sender, RoutedEventArgs e)
         {
@@ -200,8 +200,7 @@ namespace FASTER.Views
 
         private void ResetTheme_Click(object sender, RoutedEventArgs e)
         {
-            ThemeManager.Current.ThemeSyncMode = ThemeSyncMode.SyncAll;
-            ThemeManager.Current.ChangeTheme(Application.Current, "Dark.Blue");
+            colorPicker.SelectedItem = ThemeManager.Current.Themes.FirstOrDefault(t => t.Name == "Dark.Blue");
 
             Properties.Settings.Default.theme = "Dark.Blue";
             Properties.Settings.Default.Save();
@@ -209,7 +208,7 @@ namespace FASTER.Views
 
         private void ResetFont_Click(object sender, RoutedEventArgs e)
         {
-            MetroWindow.FontFamily = Fonts.SystemFontFamilies.FirstOrDefault(f => f.Source == "Segoe UI");
+            fontPicker.SelectedItem = Fonts.SystemFontFamilies.FirstOrDefault(f => f.Source == "Segoe UI");
 
             Properties.Settings.Default.font = "Segoe UI";
             Properties.Settings.Default.Save();

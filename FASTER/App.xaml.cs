@@ -26,7 +26,7 @@ namespace FASTER
             ThemeManager.Current.ChangeTheme(Current, FASTER.Properties.Settings.Default.theme);
 
             AppCenter.SetCountryCode(countryCode);
-            AppCenter.SetUserId(Environment.UserName + Environment.MachineName + Environment.UserDomainName + userID);
+            AppCenter.SetUserId($"{Environment.UserName}_{Environment.MachineName}_{Environment.UserDomainName}_{userID}");
             Analytics.SetEnabledAsync(true);
             AppCenter.Start("257a7dac-e53c-4bec-b672-b6b939ed5d1e", typeof(Analytics), typeof(Crashes));
         }

@@ -6,7 +6,7 @@ namespace FASTER.Models
 {
     public class Encryption
     {
-        private static readonly TripleDESCryptoServiceProvider TripleDes = new TripleDESCryptoServiceProvider();
+        private static readonly AesCryptoServiceProvider Crypt = new AesCryptoServiceProvider();
         private static Encryption _instance;
         
         public static Encryption Instance => _instance ??= new Encryption();
@@ -30,8 +30,8 @@ namespace FASTER.Models
         {
             // Initialize the crypto provider.
             string key = Environment.UserName + SystemSerialNumber();
-            TripleDes.Key = TruncateHash(key, TripleDes.KeySize / 8);
-            TripleDes.IV = TruncateHash("", TripleDes.BlockSize / 8);
+            Crypt.Key = TruncateHash(key, Crypt.KeySize / 8);
+            Crypt.IV = TruncateHash("", Crypt.BlockSize / 8);
         }
 
         public string EncryptData(string plaintext)
@@ -44,7 +44,7 @@ namespace FASTER.Models
                 // Create the stream.
                 System.IO.MemoryStream ms = new System.IO.MemoryStream();
                 // Create the encoder to write to the stream.
-                CryptoStream encStream = new CryptoStream(ms, TripleDes.CreateEncryptor(), CryptoStreamMode.Write);
+                CryptoStream encStream = new CryptoStream(ms, Crypt.CreateEncryptor(), CryptoStreamMode.Write);
 
                 // Use the crypto stream to write the byte array to the stream.
                 encStream.Write(plaintextBytes, 0, plaintextBytes.Length);
@@ -67,7 +67,7 @@ namespace FASTER.Models
                 // Create the stream.
                 System.IO.MemoryStream ms = new System.IO.MemoryStream();
                 // Create the decoder to write to the stream.
-                CryptoStream decStream = new CryptoStream(ms, TripleDes.CreateDecryptor(), CryptoStreamMode.Write);
+                CryptoStream decStream = new CryptoStream(ms, Crypt.CreateDecryptor(), CryptoStreamMode.Write);
 
                 // Use the crypto stream to write the byte array to the stream.
                 decStream.Write(encryptedBytes, 0, encryptedBytes.Length);

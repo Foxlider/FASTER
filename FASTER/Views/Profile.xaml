@@ -17,13 +17,16 @@
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
         <models:NotBooleanToVisibilityConverter x:Key="BoolToHide"/>
+        <models:ProfileModsFilterIsInvalidBorderColorConverter x:Key="ProfileModsFilterIsInvalidBorderColorConverter"/>
+        <models:ProfileModsFilterIsInvalidBackgroundColorConverter x:Key="ProfileModsFilterIsInvalidBackgroundColorConverter"/>
+        <models:ProfileModsFilterIsInvalidTextConverter x:Key="ProfileModsFilterIsInvalidTextConverter"/>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition/>
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
-        <mah:MetroAnimatedTabControl BorderThickness="0" Background="{x:Null}">
+        <mah:MetroAnimatedTabControl BorderThickness="0"  Style="{StaticResource MahApps.Styles.TabControl.AnimatedSingleRow}">
             <TabControl.Effect>
                 <DropShadowEffect BlurRadius="5" RenderingBias="Performance" ShadowDepth="1"/>
             </TabControl.Effect>
@@ -64,6 +67,8 @@
                                 <RowDefinition Height="auto"/>
                                 <RowDefinition/>
                                 <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
                             </Grid.RowDefinitions>
                             <StackPanel Orientation="Horizontal" Panel.ZIndex="1">
                                 <Button Margin="0, 5" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Padding="5,3" Click="LoadFromFile_Click">
@@ -88,15 +93,16 @@
                                 <Canvas>
                                     <Expander Header="DLCs" Margin="3" mah:ControlsHelper.ContentCharacterCasing="Normal" Background="{Binding Mode=OneWay, Source={StaticResource MahApps.Brushes.Menu.Background}}">
                                         <StackPanel Orientation="Vertical">
-                                            <CheckBox IsChecked="{Binding Profile.ContactDLCChecked}" Content="Contact DLC" Margin="10,3" Width="105"/>
-                                            <CheckBox IsChecked="{Binding Profile.GMDLCChecked}" Content="GM DLC" Margin="10,3"/>
-                                            <CheckBox IsChecked="{Binding Profile.PFDLCChecked}" Content="Prairie Fire DLC" Margin="10,3" Width="105"/>
-                                            <CheckBox IsChecked="{Binding Profile.CLSADLCChecked}" Content="CLSA DLC" Margin="10,3"/>
+                                            <CheckBox IsChecked="{Binding Profile.ContactDLCChecked}" Content="Contact DLC" Margin="10,3" Width="105" HorizontalAlignment="Left"/>
+                                            <CheckBox IsChecked="{Binding Profile.GMDLCChecked}" Content="GM DLC" Margin="10,3" HorizontalAlignment="Left"/>
+                                            <CheckBox IsChecked="{Binding Profile.PFDLCChecked}" Content="Prairie Fire DLC" Margin="10,3" Width="105" HorizontalAlignment="Left"/>
+                                            <CheckBox IsChecked="{Binding Profile.CLSADLCChecked}" Content="CLSA DLC" Margin="10,3" HorizontalAlignment="Left"/>
+                                            <CheckBox IsChecked="{Binding Profile.WSDLCChecked}" Content="Western Sahara DLC" Margin="10,3" HorizontalAlignment="Left"/>
                                         </StackPanel>
                                     </Expander>
                                 </Canvas>
                             </StackPanel>
-                            <DataGrid Grid.Row="1" ItemsSource="{Binding Path=Profile.ProfileMods, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" CanUserReorderColumns="False" CanUserSortColumns="True" AutoGenerateColumns="False" CanUserAddRows="False">
+                            <DataGrid Grid.Row="1" ItemsSource="{Binding Path=Profile.FilteredProfileMods, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" CanUserReorderColumns="False" CanUserSortColumns="True" AutoGenerateColumns="False" CanUserAddRows="False">
                                 <DataGrid.Resources>
 
                                     <ContextMenu x:Key="LoadContextMenu">
@@ -284,6 +290,47 @@
                                 <TextBlock Text="{Binding Path=Profile.ClientModsChecked, StringFormat={}ClientSide : {0} mods}" Grid.Column="1"/>
                                 <TextBlock Text="{Binding Path=Profile.HeadlessModsChecked, StringFormat={}Headless Client : {0} mods}" Grid.Column="2"/>
                             </Grid>
+                            <Grid Grid.Row="3" Margin="0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition Width="auto"/>
+                                    <ColumnDefinition Width="auto"/>
+                                    <ColumnDefinition Width="auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Border Grid.Column="0" Margin="0,0" BorderThickness="1"
+                                        BorderBrush="{Binding Path=Profile.ProfileModsFilterIsInvalid, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ProfileModsFilterIsInvalidBorderColorConverter}}">
+                                    <TextBox IsReadOnly="False" mah:TextBoxHelper.UseFloatingWatermark="True"
+                                             mah:TextBoxHelper.Watermark="Filter:" Text="{Binding Path=Profile.ProfileModsFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                </Border>
+                                <Canvas Grid.Column="0" Margin="0,2"
+                                        Visibility="{Binding Path=Profile.ProfileModsFilterIsInvalid, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                    <Border BorderThickness="1" BorderBrush="{Binding Path=Profile.ProfileModsFilterIsInvalid, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ProfileModsFilterIsInvalidBorderColorConverter}}">
+                                        <TextBlock Foreground="White" Padding="5,1"
+                                                   Text="{Binding Path=Profile.ProfileModsFilterIsInvalid, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ProfileModsFilterIsInvalidTextConverter}}"
+                                                   Background="{Binding Path=Profile.ProfileModsFilterIsInvalid, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ProfileModsFilterIsInvalidBackgroundColorConverter}}" />
+                                    </Border>
+                                </Canvas>
+                                <ToggleButton Grid.Column="1" Content="{iconPacks:Material Kind=FormatLetterCase}" IsChecked="{Binding Path=Profile.ProfileModsFilterIsCaseSensitive}" 
+                                              BorderThickness="0" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"
+                                              Margin="2" Padding="0" 
+                                              ToolTip="Match Case" Style="{StaticResource MahApps.Styles.ToggleButton.Flat}"/>
+                                <ToggleButton Grid.Column="2" Content="{iconPacks:Material Kind=FormatLetterMatches}" IsChecked="{Binding Path=Profile.ProfileModsFilterIsWholeWord}" 
+                                              BorderThickness="0"
+                                              Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"
+                                              Margin="2" Padding="0" 
+                                              ToolTip="Match Whole Word" Style="{StaticResource MahApps.Styles.ToggleButton.Flat}"/>
+                                <ToggleButton Grid.Column="3" Content="{iconPacks:Material Kind=Regex}" IsChecked="{Binding Path=Profile.ProfileModsFilterIsRegex}" 
+                                              BorderThickness="0" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"
+                                              Margin="2" Padding="0" 
+                                              ToolTip="Use Regular Expressions" Style="{StaticResource MahApps.Styles.ToggleButton.Flat}"/>
+                                
+                            </Grid>
+                            
+                            <!--<Border Grid.Row="4" Margin="5,-5,105,0" Height="20" BorderThickness="1" Visibility="{Binding Path=Profile.ProfileModsFilterIsInvalid, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}" BorderBrush="{Binding Path=Profile.ProfileModsFilterIsInvalid, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ProfileModsFilterIsInvalidBorderColorConverter}}">
+                                <TextBlock Foreground="White" Padding="5,1,0,0"
+                                       Text="{Binding Path=Profile.ProfileModsFilterIsInvalid, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ProfileModsFilterIsInvalidTextConverter}}"
+                                       Background="{Binding Path=Profile.ProfileModsFilterIsInvalid, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ProfileModsFilterIsInvalidBackgroundColorConverter}}"/>
+                            </Border>-->
                         </Grid>
                     </GroupBox>
 

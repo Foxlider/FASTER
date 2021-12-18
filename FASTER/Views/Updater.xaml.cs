@@ -15,7 +15,7 @@ namespace FASTER.Views
         public Updater()
         {
             InitializeComponent();
-            MainWindow.Instance.SteamUpdaterViewModel.dialogCoordinator = DialogCoordinator.Instance;
+            MainWindow.Instance.SteamUpdaterViewModel.DialogCoordinator = DialogCoordinator.Instance;
             DataContext = MainWindow.Instance.SteamUpdaterViewModel;
         }
 
@@ -29,13 +29,9 @@ namespace FASTER.Views
         }
         private void ServerDir_Click(object sender, RoutedEventArgs e)
         {
-            ((SteamUpdaterViewModel) DataContext)?.ServerDirClick(sender);
+            ((SteamUpdaterViewModel) DataContext)?.ServerDirClick();
         }
 
-        private void SteamCmdDir_Click(object sender, RoutedEventArgs e)
-        {
-            ((SteamUpdaterViewModel) DataContext)?.SteamCmdDirClick();
-        }
         private void ModStagingDir_Click(object sender, RoutedEventArgs e)
         {
             ((SteamUpdaterViewModel) DataContext)?.ModStagingDirClick();
@@ -43,7 +39,7 @@ namespace FASTER.Views
 
         private void PasswordBox_OnPasswordChanged(object sender, RoutedEventArgs e)
         {
-            if(sender is PasswordBox box && box.IsFocused)
+            if(sender is PasswordBox {IsFocused: true} box)
                 ((SteamUpdaterViewModel) DataContext)?.PasswordChanged(box.Password);
         }
 

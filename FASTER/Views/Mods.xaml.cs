@@ -37,8 +37,7 @@ namespace FASTER.Views
 
         private async void UpdateMod(object sender, RoutedEventArgs e)
         {
-            var mod = ((FrameworkElement) sender).DataContext as ArmaMod;
-            if (mod == null)
+            if (!(((FrameworkElement) sender).DataContext is ArmaMod mod))
                 return;
             
             await mod.UpdateModAsync();
@@ -85,11 +84,6 @@ namespace FASTER.Views
         private async void UpdateAll_Click(object sender, RoutedEventArgs e)
         {
             await ((ModsViewModel) DataContext)?.UpdateAll();
-        }
-
-        private void ScanSteam_Click(object sender, RoutedEventArgs e)
-        {
-            ((ModsViewModel) DataContext)?.ImportFromSteam();
         }
     }
 }
