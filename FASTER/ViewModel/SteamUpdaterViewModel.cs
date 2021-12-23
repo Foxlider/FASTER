@@ -184,6 +184,9 @@ namespace FASTER.ViewModel
 
         public async Task<int> RunServerUpdater(string path, uint appId, uint depotId, string branch, string branchPass)
         {
+            if (string.IsNullOrWhiteSpace(path))
+                return UpdateState.Cancelled;
+
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
             tokenSource = new CancellationTokenSource();
