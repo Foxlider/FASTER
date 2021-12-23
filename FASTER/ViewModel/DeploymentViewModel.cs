@@ -72,6 +72,12 @@ namespace FASTER.ViewModel
                 {"Mod", mod.Name}
             });
 
+            if(!Directory.Exists(Deployment.InstallPath))
+            {
+                DisplayMessage("Arma Install Path is empty.\nMake sure you have entered a valid path before deploying mods.");
+                return;
+            }
+
             mod.Marked = !mod.Marked;
             var linkPath = Path.Combine(Deployment.InstallPath, $"@{Functions.SafeName(mod.Name)}");
             if (mod.Marked)
