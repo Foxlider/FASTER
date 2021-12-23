@@ -313,7 +313,7 @@ namespace FASTER.ViewModel
             Parameters.Output += "\nAdding mods to download list...";
 
             SemaphoreSlim maxThread = new SemaphoreSlim(3);
-            var  ml = mods.Where(m => !m.IsLocal);
+            var  ml = mods.Where(m => !m.IsLocal).ToList();
             uint finished = 0;
             IsDlOverride = true;
 
@@ -382,8 +382,8 @@ namespace FASTER.ViewModel
                 }, TaskCreationOptions.LongRunning).ContinueWith((task) =>
                 {
                     finished += 1;
-                    Parameters.Output += $"\n   Thread {mod.WorkshopId} complete  ({finished} / {ml.Count()})";
-                    Parameters.Progress = finished * ml.Count() / 100.00;
+                    Parameters.Output += $"\n   Thread {mod.WorkshopId} complete  ({finished} / {ml.Count})";
+                    Parameters.Progress = finished * ml.Count / 100.00;
                     maxThread.Release();
                 });
             }
