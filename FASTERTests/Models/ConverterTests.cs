@@ -92,8 +92,9 @@ namespace FASTER.Models.Tests
         [Test()]
         public void ConvertTest()
         {
-            Assert.AreEqual("   1,00  B", converter.Convert((long)1, typeof(string), null, System.Globalization.CultureInfo.InvariantCulture));
-            Assert.AreEqual("   1,00 KB", converter.Convert((long)1024, typeof(string), null, System.Globalization.CultureInfo.InvariantCulture));
+            var separator = System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
+            Assert.AreEqual($"   1{separator}00  B", converter.Convert((long)1, typeof(string), null, System.Globalization.CultureInfo.InvariantCulture));
+            Assert.AreEqual($"   1{separator}00 KB", converter.Convert((long)1024, typeof(string), null, System.Globalization.CultureInfo.InvariantCulture));
             Assert.AreEqual("0 B", converter.Convert("FAIL", typeof(string), null, System.Globalization.CultureInfo.InvariantCulture));
         }
 
