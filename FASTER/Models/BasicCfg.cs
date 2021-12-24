@@ -1,10 +1,11 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Globalization;
+using System.Xml.Serialization;
 
 namespace FASTER.Models
 {
-    static class BasicCfgArrays
+    public static class BasicCfgArrays
     {
         public static string[] PerfPresets { get; } = {"Custom", "Arma3 Defaults", "1Mb Preset", "250Mb Preset", "1Gb Preset"};
         public static double[] TerrainGrids { get; } = { 50, 25, 12.5, 6.25, 3.125 };
@@ -20,7 +21,7 @@ namespace FASTER.Models
         private ushort maxSizeGuaranteed    = 256;
         private ushort maxSizeNonguaranteed = 512;
         private ulong  minBandwidth         = 131072;
-        private ulong  maxBandwidth         = 10000000000;
+        private ulong  maxBandwidth         = int.MaxValue;
         private double minErrorToSend       = 0.001;
         private double minErrorToSendNear   = 0.01;
         private ushort maxCustomFileSize    = 1024;
@@ -148,6 +149,7 @@ namespace FASTER.Models
             }
         }
 
+        [XmlIgnore]
         public string PerfPreset
         {
             get => "Custom";
@@ -165,24 +167,18 @@ namespace FASTER.Models
                 switch ((short)Array.IndexOf(BasicCfgArrays.PerfPresets, value))
                 {
                     case 1:
-                        MaxMsgSend           = 128;
-                        MinBandwidth         = 131072;
-                        MaxBandwidth         = 10000000000;
+                        MaxMsgSend   = 128;
+                        MinBandwidth = 131072;
                         break;
                     case 2:
-                        MinBandwidth         = 768000;
-                        MaxBandwidth         = 10000000000;
+                        MinBandwidth = 1000000;
                         break;
                     case 3:
-                        MinBandwidth         = 2000000000;
-                        MaxBandwidth         = 10000000000;
+                        MinBandwidth = 250000000;
                         break;
                     case 4:
-                        MaxMsgSend           = 2048;
-                        MaxSizeGuaranteed    = 958;
-                        MaxSizeNonGuaranteed = 384;
-                        MinBandwidth         = 107374182;
-                        MaxBandwidth         = 1073741824;
+                        MaxMsgSend           = 512;
+                        MinBandwidth         = 1000000000;
                         break;
                 }
                 RaisePropertyChanged("PerfPreset");

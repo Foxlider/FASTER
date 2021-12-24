@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using BytexDigital.Steam.Core;
+
+using Newtonsoft.Json.Linq;
 
 using System;
 using System.Collections.Generic;
@@ -63,6 +65,7 @@ namespace FASTER.Models
         {
             // Create a request for the URL. 
             WebRequest request = WebRequest.Create(uri);
+            request.Timeout = 5 * 1000;
             // Get the response.
             WebResponse response = null;
             try
@@ -82,7 +85,12 @@ namespace FASTER.Models
                     eventLog.WriteEntry($"Could not reach Steam API : \n[WebException] {e.Message}\n\n{e.StackTrace}", EventLogEntryType.Error);
                 }
                 catch (Exception) //In case it was called before Initialized in SteamMods_Initialized() and could not connect to SteamAPI
-                { MessageBox.Show("Cannot reach Steam API \n\nCheck https://steamstat.us/", "Steam API Error", MessageBoxButton.OK, MessageBoxImage.Warning); }
+                {
+                    if (Environment.UserInteractive)
+                        MessageBox.Show("Cannot reach Steam API \n\nCheck https://steamstat.us/", "Steam API Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    else
+                        Console.WriteLine("Cannot reach Steam API \n\nCheck https://steamstat.us/");
+                }
             }
             // Display the status.
             Console.WriteLine(((HttpWebResponse)response)?.StatusDescription);
@@ -108,5 +116,54 @@ namespace FASTER.Models
                 ? Properties.Settings.Default.SteamAPIKey 
                 : StaticData.SteamApiKey;
         }
+    }
+
+    internal class AuthCodeProvider : SteamAuthenticationCodesProvider
+    {
+        public override string GetEmailAuthenticationCode(SteamCredentials steamCredentials)
+        {
+            MainWindow.Instance.SteamUpdaterViewModel.Parameters.Output += "\nPlease enter your email auth code: ";
+            
+
+            var input = MainWindow.Instance.SteamUpdaterViewModel.SteamGuardInput().Result;
+
+            MainWindow.Instance.SteamUpdaterViewModel.Parameters.Output += "\nRetrying... ";
+
+            return input;
+        }
+
+        public override string GetTwoFactorAuthenticationCode(SteamCredentials steamCredentials)
+        {
+            MainWindow.Instance.SteamUpdaterViewModel.Parameters.Output += "\nPlease enter your 2FA code: ";
+             
+            var input = MainWindow.Instance.SteamUpdaterViewModel.SteamGuardInput().Result;
+
+            MainWindow.Instance.SteamUpdaterViewModel.Parameters.Output += "\nRetrying... ";
+
+            return input;
+        }
+    }
+
+
+    internal class SteamApiFileDetails
+    {
+        public uint   result           { get; set; }
+        public ulong  publishedfileid  { get; set; }
+        public ulong  creator          { get; set; }
+        public uint   creator_appid    { get; set; }
+        public uint   consumer_appid   { get; set; }
+        public string filename         { get; set; }
+        public ulong  file_size        { get; set; }
+        public string title            { get; set; }
+        public string file_description { get; set; }
+        public ulong  time_created     { get; set; }
+        public ulong  time_updated     { get; set; }
+    }
+
+    internal class SteamApiPlayerInfo
+    {
+        public ulong  steamid     { get; set; }
+        public string personaname { get; set; }
+        public string profileurl  { get; set; }
     }
 }

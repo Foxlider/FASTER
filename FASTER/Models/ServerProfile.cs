@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Controls.Primitives;
 using System.Xml.Serialization;
 
@@ -54,10 +56,18 @@ namespace FASTER.Models
         private bool _missionOverride;
         private bool _contactDlcChecked;
         private bool _gmDlcChecked;
+        private bool _pfDlcChecked;
+        private bool _clsaDlcChecked;
+        private bool _wsDlcChecked;
         private bool _enableHT = true;
         private bool _enableRanking;
 
         private List<ProfileMod> _profileMods = new List<ProfileMod>();
+        private string _profileModsFilter = "";
+        private bool _profileModsFilterIsCaseSensitive = false;
+        private bool _profileModsFilterIsWholeWord = false;
+        private bool _profileModsFilterIsRegex = false;
+        private bool _profileModsFilterIsInvalid = false;
         private ServerCfg _serverCfg;
         private Arma3Profile _armaProfile;
         private BasicCfg _basicCfg;
@@ -95,9 +105,12 @@ namespace FASTER.Models
             {
                 _executable = value;
                 RaisePropertyChanged("Executable");
+                RaisePropertyChanged("ArmaPath");
             }
         }
-        
+
+        public string ArmaPath => Path.GetDirectoryName(_executable);
+
         public int Port 
         { 
             get => _port; 
@@ -148,6 +161,36 @@ namespace FASTER.Models
             }
         }
 
+        public bool PFDLCChecked
+        {
+            get => _pfDlcChecked;
+            set
+            {
+                _pfDlcChecked = value;
+                RaisePropertyChanged("PFDLCChecked");
+            }
+        }
+
+        public bool CLSADLCChecked
+        {
+            get => _clsaDlcChecked;
+            set
+            {
+                _clsaDlcChecked = value;
+                RaisePropertyChanged("CLSADLCChecked");
+            }
+        }
+
+        public bool WSDLCChecked
+        {
+            get => _wsDlcChecked;
+            set
+            {
+                _wsDlcChecked = value;
+                RaisePropertyChanged(nameof(WSDLCChecked));
+            }
+        }
+
         public bool EnableHyperThreading
         {
             get => _enableHT;
@@ -168,10 +211,12 @@ namespace FASTER.Models
             }
         }
 
-        //Current logit to count the checked mods
+        //Current logic to count the checked mods
         public int ServerModsChecked => ProfileMods.Count(m => m.ServerSideChecked);
         public int ClientModsChecked => ProfileMods.Count(m => m.ClientSideChecked);
         public int HeadlessModsChecked => ProfileMods.Count(m => m.HeadlessChecked);
+
+        public string CommandLine => GetCommandLine();
 
         public List<ProfileMod> ProfileMods
         {
@@ -187,6 +232,114 @@ namespace FASTER.Models
                 _profileMods.ForEach(m => m.PropertyChanged += Item_PropertyChanged);
 
                 RaisePropertyChanged("ProfileMods");
+                RaisePropertyChanged("FilteredProfileMods");
+            }
+        }
+
+        public List<ProfileMod> FilteredProfileMods
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(ProfileModsFilter))
+                {
+                    if (ProfileModsFilterIsInvalid)
+                    {
+                        ProfileModsFilterIsInvalid = false;
+                    }
+                    return new List<ProfileMod>(_profileMods);
+                }
+
+                var pattern = ProfileModsFilter;
+                if (!ProfileModsFilterIsRegex)
+                {
+                    pattern = Regex.Replace(pattern, @"[\\\{\}\*\+\?\|\^\$\.\[\]\(\)]", "\\$&");
+                }
+
+                if (ProfileModsFilterIsWholeWord)
+                {
+                    if (!Regex.IsMatch(pattern[0].ToString(), @"\B"))
+                    {
+                        pattern = $"\\b{pattern}";
+                    }
+                    if (!Regex.IsMatch(pattern[pattern.Length - 1].ToString(), @"\B"))
+                    {
+                        pattern = $"{pattern}\\b";
+                    }
+                }
+
+                var options = ProfileModsFilterIsCaseSensitive ? RegexOptions.None : RegexOptions.IgnoreCase;
+
+                try
+                {
+                    var filteredProfileMods = _profileMods.Where(m => Regex.IsMatch(m.Name, pattern, options)).ToList();
+                    if (ProfileModsFilterIsInvalid)
+                    {
+                        ProfileModsFilterIsInvalid = false;
+                    }
+                    return filteredProfileMods;
+                }
+                catch (ArgumentException)
+                {
+                    if (!ProfileModsFilterIsInvalid)
+                    {
+                        ProfileModsFilterIsInvalid = true;
+                    }
+                    return new List<ProfileMod>();
+                }
+            }
+        }
+
+        public string ProfileModsFilter
+        {
+            get => _profileModsFilter;
+            set
+            {
+                _profileModsFilter = value;
+                RaisePropertyChanged("ProfileModsFilter");
+                RaisePropertyChanged("FilteredProfileMods");
+            }
+        }
+
+        public bool ProfileModsFilterIsCaseSensitive
+        {
+            get => _profileModsFilterIsCaseSensitive;
+            set
+            {
+                _profileModsFilterIsCaseSensitive = value;
+                RaisePropertyChanged("ProfileModsFilterIsCaseSensitive");
+                RaisePropertyChanged("FilteredProfileMods");
+            }
+        }
+
+        public bool ProfileModsFilterIsWholeWord
+        {
+            get => _profileModsFilterIsWholeWord;
+            set
+            {
+                _profileModsFilterIsWholeWord = value;
+                RaisePropertyChanged("ProfileModsFilterIsWholeWord");
+                RaisePropertyChanged("FilteredProfileMods");
+            }
+        }
+
+        public bool ProfileModsFilterIsRegex
+        {
+            get => _profileModsFilterIsRegex;
+            set
+            {
+                _profileModsFilterIsRegex = value;
+                RaisePropertyChanged("ProfileModsFilterIsRegex");
+                RaisePropertyChanged("FilteredProfileMods");
+            }
+        }
+
+        public bool ProfileModsFilterIsInvalid
+        {
+            get => _profileModsFilterIsInvalid;
+            set
+            {
+                _profileModsFilterIsInvalid = value;
+                RaisePropertyChanged("ProfileModsFilterIsInvalid");
             }
         }
 
@@ -195,7 +348,10 @@ namespace FASTER.Models
             get => _serverCfg;
             set
             {
-                _serverCfg = value;
+                if(_serverCfg != null)
+                    _serverCfg.PropertyChanged -= Class_PropertyChanged;
+                _serverCfg                  =  value;
+                _serverCfg.PropertyChanged  += Class_PropertyChanged;
                 RaisePropertyChanged("ServerCfg");
             }
         }
@@ -205,7 +361,10 @@ namespace FASTER.Models
             get => _armaProfile;
             set
             {
-                _armaProfile = value;
+                if (_armaProfile != null)
+                    _armaProfile.PropertyChanged -= Class_PropertyChanged;
+                _armaProfile               =  value;
+                _armaProfile.PropertyChanged += Class_PropertyChanged;
                 RaisePropertyChanged("ArmaProfile");
             }
         }
@@ -215,7 +374,10 @@ namespace FASTER.Models
             get => _basicCfg;
             set
             {
-                _basicCfg = value;
+                if (_basicCfg != null)
+                    _basicCfg.PropertyChanged -= Class_PropertyChanged;
+                _basicCfg                  =  value;
+                _basicCfg.PropertyChanged += Class_PropertyChanged;
                 RaisePropertyChanged("BasicCfg");
             }
         }
@@ -256,18 +418,95 @@ namespace FASTER.Models
         {
             string serialized = Newtonsoft.Json.JsonConvert.SerializeObject(this);
             ServerProfile p = Newtonsoft.Json.JsonConvert.DeserializeObject<ServerProfile>(serialized);
-            p.GenerateNewId();
-            if (p.Name.EndsWith(")") && p.Name.Contains('(') && int.TryParse(p.Name.Substring(p.Name.Length - 2, 1), out _))
+
+            if (p != null)
             {
-                var i   = p.Name.IndexOf('(');
-                var j   = p.Name.Length;
-                var num = p.Name.Substring(i+1,   j -1 - i-1);
-                p.Name = $"{p.Name.Substring(0, p.Name.Length - i+1)} ({int.Parse(num) + 1})";
+                p.GenerateNewId();
+
+                if (p.Name.EndsWith(")") && p.Name.Contains('(') && int.TryParse(p.Name.Substring(p.Name.Length - 2, 1), out _))
+                {
+                    var i   = p.Name.IndexOf('(');
+                    var j   = p.Name.Length;
+                    var num = p.Name.Substring(i + 1, j - 1 - i - 1);
+                    p.Name = $"{p.Name.Substring(0,   p.Name.Length - i + 1)} ({int.Parse(num) + 1})";
+                }
+                else
+                {
+                    p.Name = $"{p.Name} (2)";
+                }
             }
             else
-            { p.Name = $"{p.Name} (2)"; }
+            {
+                p = new ServerProfile();
+                p.GenerateNewId();
+                p.Name = "New Profile";
+            }
+            
             return p;
         }
+
+        public string GetDlcAndPlayerMods(string playerMods)
+        {
+            StringBuilder mods = new StringBuilder();
+            if (ContactDLCChecked)
+            {
+                _ = mods.Append("contact;");
+            }
+            if (GMDLCChecked)
+            {
+                _ = mods.Append("gm;");
+            }
+            if (PFDLCChecked)
+            {
+                _ = mods.Append("vn;");
+            }
+            if (CLSADLCChecked)
+            {
+                _ = mods.Append("clsa;");
+            }
+            if (WSDLCChecked)
+            {
+                _ = mods.Append("ws;");
+            }
+            if (!string.IsNullOrWhiteSpace(playerMods))
+            {
+                _ = mods.Append($"{playerMods};");
+            }
+            return !string.IsNullOrWhiteSpace(mods.ToString()) ? $" \"-mod={mods}\"" : "";
+        }
+
+        private string GetCommandLine()
+        {
+            
+
+            string config = Path.Combine(ArmaPath, "Servers", Id, "server_config.cfg");
+            string basic  = Path.Combine(ArmaPath, "Servers", Id, "server_basic.cfg");
+
+            string playerMods = string.Join(";", ProfileMods.Where(m => m.ClientSideChecked).OrderBy(m => m.LoadPriority).Select(m => $"@{Functions.SafeName(m.Name)}"));
+            string serverMods = string.Join(";", ProfileMods.Where(m => m.ServerSideChecked).OrderBy(m => m.LoadPriority).Select(m => $"@{Functions.SafeName(m.Name)}"));
+            List<string> arguments = new List<string>
+            {
+                $"-port={Port}",
+                $" \"-config={config}\"",
+                $" \"-cfg={basic}\"",
+                $" \"-profiles={Path.Combine(ArmaPath, "Servers", Id)}\"",
+                $" -name={Id}",
+                GetDlcAndPlayerMods(playerMods),
+                $"{(!string.IsNullOrWhiteSpace(serverMods) ? $" \"-serverMod={serverMods};\"" : "")}",
+                $"{(EnableHyperThreading ? " -enableHT" : "")}",
+                $"{(ServerCfg.AllowedFilePatching != ServerCfgArrays.AllowFilePatchingStrings[0] ? " -filePatching" : "")}",
+                $"{(ServerCfg.NetLogEnabled ? " -netlog" : "")}",
+                $"{(RankingChecked ? $" \"-ranking={Path.Combine(ArmaPath, "Servers", Id, "ranking.log")}\"" : "")}",
+                $"{(ServerCfg.AutoInit ? " -autoInit" : "")}",
+                $"{(ServerCfg.MaxMemOverride ? $" -maxMem={ServerCfg.MaxMem}" : "")}",
+                $"{(ServerCfg.CpuCountOverride ? $" -cpuCount={ServerCfg.CpuCount}" : "")}",
+                $"{(!string.IsNullOrWhiteSpace(ServerCfg.CommandLineParameters) ? $" {ServerCfg.CommandLineParameters}" : "")}"
+            };
+
+            string commandLine = string.Join("", arguments);
+            return commandLine;
+        }
+
 
         //This is used to trigger PropertyChanged to count each checked mod
         private void Item_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -277,22 +516,29 @@ namespace FASTER.Models
             RaisePropertyChanged("HeadlessModsChecked");
         }
 
+        private void Class_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        { RaisePropertyChanged("CommandLine"); }
 
         //INOTIFYPROPERTYCHANGED
         public event PropertyChangedEventHandler PropertyChanged;
-        private void RaisePropertyChanged(string property)
-        { PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property)); }
+        internal void RaisePropertyChanged(string property)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
+            if(property != "CommandLine")
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CommandLine)));
+        }
     }
 
     [Serializable]
     public class ProfileMod : INotifyPropertyChanged
     {
-        private bool serverSideChecked;
-        private bool clientSideChecked;
-        private bool headlessChecked;
-        private bool isLocal;
-        private uint _id;
-        private string name;
+        private bool    serverSideChecked;
+        private bool    clientSideChecked;
+        private bool    headlessChecked;
+        private ushort? loadPriority;
+        private bool    isLocal;
+        private uint    _id;
+        private string  name;
 
         public bool ServerSideChecked
         {
@@ -325,6 +571,16 @@ namespace FASTER.Models
             }
         }
 
+        public ushort? LoadPriority
+        {
+            get => loadPriority;
+            set
+            {
+                loadPriority = value;
+                RaisePropertyChanged("LoadPriority");
+            }
+        }
+
         public uint Id
         {
             get => _id;
@@ -354,12 +610,12 @@ namespace FASTER.Models
             }
         }
 
+        public override string ToString()
+        { return $"{_id} {name}"; }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         private void RaisePropertyChanged(string property)
-        {
-            if (PropertyChanged == null) return;
-            PropertyChanged(this, new PropertyChangedEventArgs(property));
-        }
+        { PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property)); }
     }
 }

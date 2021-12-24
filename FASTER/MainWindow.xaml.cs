@@ -1,18 +1,21 @@
-﻿using FASTER.Models;
+using FASTER.Models;
 using FASTER.ViewModel;
 using FASTER.Views;
+
+using MahApps.Metro.Controls.Dialogs;
+
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using Microsoft.WindowsAPICodePack.Dialogs;
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
-using System.Net;
 using System.Security.Principal;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
@@ -25,7 +28,7 @@ namespace FASTER
     /// </summary>
     public partial class MainWindow
     {
-        internal bool InstallSteamCmd { get; set; }
+        internal bool ConvertMods { get; set; }
         internal string Version;
         internal bool NavEnabled = true;
 
@@ -35,25 +38,46 @@ namespace FASTER
         private static MainWindow _instance;
         public static MainWindow Instance => _instance ??= new MainWindow();
 
-        SteamUpdater _steamUpdater;
-        public SteamUpdater ContentSteamUpdater
+        private SteamUpdaterViewModel _steamUpdaterVM;
+        Updater                       _steamUpdater;
+        public Updater ContentSteamUpdater
         {
-            get => _steamUpdater ??= new SteamUpdater();
+            get => _steamUpdater ??= new Updater();
             set => _steamUpdater = value;
         }
-
-        SteamMods _steamMods;
-        public SteamMods ContentSteamMods
+        public SteamUpdaterViewModel SteamUpdaterViewModel
         {
-            get => _steamMods ??= new SteamMods();
-            set => _steamMods = value;
+            get => _steamUpdaterVM ??= SteamUpdaterViewModel.Instance;
+            set => _steamUpdaterVM = value;
         }
 
-        LocalMods _localMods;
-        public LocalMods ContentLocalMods
+
+        private Mods  _mods;
+        public Mods ContentSteamMods
         {
-            get => _localMods ??= new LocalMods();
-            set => _localMods = value;
+            get => _mods ??= new Mods();
+            set => _mods = value;
+        }
+
+        ModsViewModel _modsVM;
+        public ModsViewModel ModsViewModel
+        {
+            get => _modsVM ??= new ModsViewModel();
+            set => _modsVM = value;
+        }
+
+        Deployment _deploy;
+        public Deployment ContentDeploy
+        {
+            get => _deploy ??= new Deployment();
+            set => _deploy = value;
+        }
+
+        DeploymentViewModel _deployVM;
+        public DeploymentViewModel DeployViewModel
+        {
+            get => _deployVM ??= new DeploymentViewModel();
+            set => _deployVM = value;
         }
 
         ServerStatus _serverStatus;
@@ -66,7 +90,7 @@ namespace FASTER
         Settings _settings;
         public Settings ContentSettings
         {
-            get => _settings ??= new Settings();
+            get => _settings ??= new Settings(this);
             set => _settings = value;
         }
 
@@ -96,6 +120,10 @@ namespace FASTER
         public MainWindow()
         {
             InitializeComponent();
+
+            //Set font preferences
+            FontFamily = Fonts.SystemFontFamilies.FirstOrDefault(f => f.Source == Properties.Settings.Default.font);
+
             _instance = this;
             Version = GetVersion();
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
@@ -117,10 +145,15 @@ namespace FASTER
             { Close(); }
         }
 
-        private void MetroWindow_Loaded(object sender, RoutedEventArgs e)
+        private async void MetroWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            if (InstallSteamCmd)
-            { InstallSteam(); }
+            var settings = Properties.Settings.Default;
+
+            if (!Directory.Exists(settings.modStagingDirectory))
+                Directory.CreateDirectory(settings.modStagingDirectory);
+            
+            if (ConvertMods)
+                await ModConversion();
         }
 
         private void MetroWindow_Closing(object sender, CancelEventArgs e)
@@ -158,36 +191,37 @@ namespace FASTER
             switch (nav.Name)
             {
                 case "navSteamUpdater":
-                    MainContent.Navigate(ContentSteamUpdater);
+                    ContentSteamUpdater.DataContext = SteamUpdaterViewModel;
+                    MainContent.Content  = ContentSteamUpdater;
+
                     break;
-                case "navSteamMods":
-                    MainContent.Navigate(ContentSteamMods);
+                case "navMods":
+                    ContentSteamMods.DataContext = ModsViewModel;
+                    MainContent.Content = ContentSteamMods;
                     break;
-                case "navLocalMods":
-                    MainContent.Navigate(ContentLocalMods);
+                case "navDeploy":
+                    ContentDeploy.DataContext = DeployViewModel;
+                    MainContent.Content = ContentDeploy;
                     break;
                 case "navServerStatus":
-                    MainContent.Navigate(ContentServerStatus);
+                    MainContent.Content = ContentServerStatus;
                     break;
                 case "navSettings":
-                    MainContent.Navigate(ContentSettings);
+                    MainContent.Content = ContentSettings;
                     break;
                 case "navAbout":
-                    MainContent.Navigate(ContentAbout);
+                    MainContent.Content = ContentAbout;
                     break;
                 default:
                     if (IServerProfilesMenu.Items.Cast<ToggleButton>().FirstOrDefault(p => p.Name == nav.Name) != null)
                     {
                         ContentProfile.DataContext = ContentProfileViews.First(p => p.Profile.Id == nav.Name);
                         ContentProfile.Refresh();
-                        MainContent.Navigate(ContentProfile);
+                        MainContent.Content = ContentProfile;
                     }
                     break;
             }
         }
-
-        private void MainContent_Navigated(object sender, System.Windows.Navigation.NavigationEventArgs e)
-        { MainContent.NavigationService.RemoveBackEntry(); }
 
         private void INewServerProfileButton_Click(object sender, RoutedEventArgs e)
         {
@@ -204,7 +238,6 @@ namespace FASTER
         private void ICreateProfileButton_Click(object sender, RoutedEventArgs e)
         {
             Analytics.TrackEvent("Main - Creating new profile");
-            AppInsights.Client.TrackEvent("Main - Creating new profile");
             INewProfileName.Text = INewProfileName.Text.Trim();
             if (string.IsNullOrEmpty(INewProfileName.Text))
             {
@@ -245,17 +278,36 @@ namespace FASTER
             }
         }
 
-        private void InstallSteamCmd_Click(object sender, RoutedEventArgs e)
+        private void MenuItemDelete_Click(object sender, RoutedEventArgs e)
         {
-            IToolsDialog.IsOpen = false;
-            MainGrid.Effect = null;
-            InstallSteam();
+            if (IServerProfilesMenu.SelectedIndex == -1)
+            { return; }
+
+            try
+            {
+                var temp = Properties.Settings.Default.Profiles.FirstOrDefault(s =>
+                    s.Id == ((ToggleButton)IServerProfilesMenu.SelectedItem).Name);
+                if (temp == null)
+                {
+                    DisplayMessage("Could not find the selected profile.");
+                    return;
+                }
+
+                ContentProfileViews.FirstOrDefault(p => p.Profile.Id == temp.Id)?.DeleteProfile();
+            }
+            catch (Exception err)
+            {
+                DisplayMessage("An error occured while cloning your profile");
+                Crashes.TrackError(err, new Dictionary<string, string> { { "Name", Properties.Settings.Default.steamUserName } });
+            }
+
         }
 
-        private void OpenArmaServerLocation_Click(object sender, RoutedEventArgs e)
+
+        private void OpenModStagingLocation_Click(object sender, RoutedEventArgs e)
         {
             IToolsDialog.IsOpen = false;
-            var serverDirBox = ContentSteamUpdater.IServerDirBox.Text;
+            var serverDirBox = SteamUpdaterViewModel.Parameters.ModStagingDirectory;
 
             if (!string.IsNullOrEmpty(serverDirBox) && Directory.Exists(serverDirBox))
             {
@@ -271,25 +323,6 @@ namespace FASTER
             { MessageBox.Show($"{serverDirBox} Directory does not exist!"); }
         }
 
-        private void OpenSteamCmdLocation_Click(object sender, RoutedEventArgs e)
-        {
-            IToolsDialog.IsOpen = false;
-            var steamDirBox = ContentSteamUpdater.ISteamDirBox.Text;
-
-            if (!string.IsNullOrEmpty(steamDirBox) && Directory.Exists(steamDirBox))
-            {
-                try
-                {
-                    ProcessStartInfo startInfo = new ProcessStartInfo { Arguments = steamDirBox, FileName = "explorer.exe" };
-                    Process.Start(startInfo);
-                }
-                catch
-                { MessageBox.Show($" Could not open {steamDirBox}"); }
-            }
-            else
-            { MessageBox.Show($"{steamDirBox} Directory does not exist!"); }
-        }
-
         private void ToolsButton_Click(object sender, RoutedEventArgs e)
         {
             IToolsDialog.Visibility = Visibility.Visible;
@@ -302,9 +335,10 @@ namespace FASTER
         {
             navSteamUpdater.IsChecked = true;
             lastNavButton = navSteamUpdater;
-            MainContent.Navigate(ContentSteamUpdater);
+            MainContent.Content = ContentSteamUpdater;
         }
 
+        //Checks if FASTER is running as Admin
         private bool CheckAdmin()
         {
             try
@@ -368,6 +402,142 @@ namespace FASTER
             }
         }
 
+        private async Task ModConversion()
+        {
+            var properties    = Properties.Settings.Default;
+            var modStagingDir = properties.modStagingDirectory;
+
+            var controller = await this.ShowProgressAsync("Please wait...", "Checking Drive Space...");
+            controller.Maximum = properties.steamMods.SteamMods.Count;
+            var progress = 0;
+
+            long fullzize = 0;
+            foreach (var mod in properties.steamMods.SteamMods.Select(m => Path.Combine(Properties.Settings.Default.steamCMDPath, "steamapps", "workshop", "content", "107410", m.WorkshopId.ToString())).Concat(properties.localMods.Select(m => m.Path)))
+            {
+                if(!Directory.Exists(mod))
+                    continue;
+
+                string[] a = Directory.GetFiles(mod, "*.*", SearchOption.AllDirectories);
+                fullzize += a.Select(name => new FileInfo(name)).Select(info => info.Length).Sum();
+
+                controller.SetMessage($"Checking Drive Space... {Functions.ParseFileSize(fullzize)}");
+            }
+
+            var drive = DriveInfo.GetDrives().FirstOrDefault(d => d.Name == Path.GetPathRoot(modStagingDir));
+
+            if (drive.AvailableFreeSpace < fullzize)
+            {
+                properties.armaMods = null;
+                properties.firstRun = true;
+                properties.Save();
+
+                var closing = 10000;
+
+                while (closing > 0)
+                {
+                    controller.SetMessage($"Not enough free space on your drive for your mods. ({Functions.ParseFileSize(drive.AvailableFreeSpace)} / {Functions.ParseFileSize(fullzize)} )\nClear some space and retry.\n\nFASTER will close in {closing/1000} seconds.");
+                    await Task.Delay(1000);
+                    closing -= 1000;
+                }
+
+                await controller.CloseAsync();
+                Instance.OnClosing(new CancelEventArgs(true));
+                return;
+            }
+                
+
+            foreach (var steamMod in properties.steamMods.SteamMods)
+            {
+                var newPath = Path.Combine(modStagingDir,                            steamMod.WorkshopId.ToString());
+                var oldPath = Path.Combine(Properties.Settings.Default.steamCMDPath, "steamapps", "workshop", "content", "107410", steamMod.WorkshopId.ToString());
+                if (!Directory.Exists(newPath))
+                    Directory.CreateDirectory(newPath);
+
+                await MoveMod(oldPath, newPath);
+
+                var newMod = new ArmaMod
+                {
+                    WorkshopId       = steamMod.WorkshopId,
+                    Name             = steamMod.Name,
+                    Path             = newPath,
+                    Author           = steamMod.Author,
+                    IsLocal          = false,
+                    LocalLastUpdated = ulong.MinValue,
+                    SteamLastUpdated = Convert.ToUInt64(steamMod.SteamLastUpdated),
+                    Status           = ArmaModStatus.UpdateRequired
+                };
+                await Task.Run(() => properties.armaMods.AddSteamMod(newMod));
+                progress += 1;
+                controller.SetMessage($"Converting Steam Mods... {progress} / {controller.Maximum}");
+                controller.SetProgress(progress);
+            }
+
+            properties.steamMods = new SteamModCollection();
+
+            if (properties.localMods == null || properties.localMods.Count == 0)
+            {
+                await controller.CloseAsync();
+                properties.Save();
+                return;
+            }
+
+            var r = new Random();
+            progress = 0;
+            controller.Maximum = properties.localMods.Count;
+            controller.SetMessage($"Converting Local Mods... {progress} / {controller.Maximum}");
+            controller.SetProgress(progress);
+            foreach (var localMod in properties.localMods)
+            {
+                var modID   = (uint) (uint.MaxValue - r.Next(ushort.MaxValue/2));
+                var newPath = Path.Combine(modStagingDir, modID.ToString());
+                var oldPath = localMod.Path;
+                if (!Directory.Exists(newPath))
+                    Directory.CreateDirectory(newPath);
+
+                await MoveMod(oldPath, newPath);
+                
+                var newMod = new ArmaMod
+                {
+                    WorkshopId       = modID,
+                    Name             = localMod.Name,
+                    Path             = newPath,
+                    Author           = localMod.Author,
+                    IsLocal          = true,
+                    Status           = ArmaModStatus.Local
+                };
+                await Task.Run(() => properties.armaMods.AddSteamMod(newMod));
+                progress += 1;
+                controller.SetMessage($"Converting Local Mods... {progress} / {controller.Maximum}");
+                controller.SetProgress(progress * 100.0 / controller.Maximum );
+            }
+
+            await controller.CloseAsync();
+            properties.Save();
+        }
+
+        private static async Task MoveMod(string oldPath, string newPath)
+        {
+            if(Directory.Exists(oldPath))
+            {
+                foreach (var file in Directory.EnumerateFiles(oldPath, "*", SearchOption.AllDirectories))
+                {
+                    var newFile = file.Replace(oldPath, newPath);
+                    if(!Directory.Exists(Path.GetDirectoryName(newFile))) Directory.CreateDirectory(Path.GetDirectoryName(newFile));
+
+                    await CopyFileAsync(file, newFile);
+                }
+            }
+        }
+
+        private static async Task CopyFileAsync(string sourceFile, string destinationFile)
+        {
+            await using var sourceStream      = new FileStream(sourceFile,      FileMode.Open,   FileAccess.Read,  FileShare.Read, 4096, FileOptions.Asynchronous | FileOptions.SequentialScan);
+            await using var destinationStream = new FileStream(destinationFile, FileMode.Create, FileAccess.Write, FileShare.None, 4096, FileOptions.Asynchronous | FileOptions.SequentialScan);
+            await sourceStream.CopyToAsync(destinationStream);
+            destinationStream.Close();
+            sourceStream.Close();
+        }
+
         public void DisplayMessage(string message)
         {
             IFlyoutMessage.Content = message;
@@ -397,46 +567,7 @@ namespace FASTER
                 ? dlg.FileName
                 : null;
         }
-
-        private void InstallSteam()
-        {
-            if (string.IsNullOrEmpty(ContentSteamUpdater.ISteamDirBox.Text))
-            { DisplayMessage("Please make sure you have set a valid path for SteamCMD."); }
-            else if (!File.Exists(Properties.Settings.Default.steamCMDPath + "\\steamcmd.exe"))
-            {
-                DisplayMessage("Steam CMD will now download and start the install process. If prompted please enter your Steam Guard " +
-                                          "Code.\n\nYou will receive this by email from steam. When this is all complete type \'quit\' to finish.");
-                ContentSteamUpdater.ISteamOutputBox.Document.Blocks.Clear();
-                ContentSteamUpdater.ISteamOutputBox.AppendText("Installing SteamCMD");
-                ContentSteamUpdater.ISteamOutputBox.AppendText("\nFile Downloading...");
-                const string url = "https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip";
-                string fileName = Properties.Settings.Default.steamCMDPath + "\\steamcmd.zip";
-
-                if (!Directory.Exists(Properties.Settings.Default.steamCMDPath))
-                    Directory.CreateDirectory(Properties.Settings.Default.steamCMDPath);
-
-                using WebClient client = new WebClient();
-                client.DownloadFileCompleted += SteamDownloadCompleted;
-                client.DownloadFileAsync(new Uri(url), fileName);
-            }
-            else
-            { DisplayMessage("SteamCMD already appears to be installed.\n\nPlease delete all files in the selected folder to reinstall."); }
-        }
-        private void SteamDownloadCompleted(object sender, AsyncCompletedEventArgs e)
-        {
-            ContentSteamUpdater.ISteamOutputBox.AppendText(Environment.NewLine + "Download Finished");
-
-            var steamPath = Properties.Settings.Default.steamCMDPath;
-            string zip = steamPath + "\\steamcmd.zip";
-
-            ContentSteamUpdater.ISteamOutputBox.AppendText("\nUnzipping...");
-            ZipFile.ExtractToDirectory(zip, steamPath);
-            ContentSteamUpdater.ISteamOutputBox.AppendText("\nInstalling...");
-            _ = ContentSteamUpdater.RunSteamCommand(steamPath + "\\steamcmd.exe", "+login anonymous +quit", "install");
-
-            File.Delete(zip);
-        }
-
+        
         internal string GetVersion()
         { return Functions.GetVersion(); }
     }

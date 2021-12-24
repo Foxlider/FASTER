@@ -12,9 +12,11 @@ namespace FASTER.Models.Tests
         {
             Assert.AreEqual(463939057, SteamMod.SteamIdFromUrl("https://steamcommunity.com/workshop/filedetails/?id=463939057"));
             Assert.AreEqual(463939057, SteamMod.SteamIdFromUrl("https://steamcommunity.com/workshop/filedetails/?id=463939057&l=french"));
+            Assert.AreEqual(463939057, SteamMod.SteamIdFromUrl("https://steamcommunity.com/sharedfiles/filedetails/?l=german&id=463939057"));
             Assert.AreEqual(463939057, SteamMod.SteamIdFromUrl("https://steamcommunity.com/workshop/filedetails/?l=french&id=463939057"));
             Assert.AreEqual(463939057, SteamMod.SteamIdFromUrl("https://steamcommunity.com/workshop/filedetails/?l=english&id=463939057&l=french"));
         }
+
 
         [Test()]
         public void GetModInfoTest()

@@ -1,7 +1,5 @@
 using ControlzEx.Theming;
 
-using FASTER.Models;
-
 using LiveCharts;
 using LiveCharts.Configurations;
 
@@ -33,8 +31,9 @@ namespace FASTER.Views
         public bool Updating
         { get; set; }
 
-        private PerformanceCounter _cpuCounter;
-        private PerformanceCounter _ramCounter;
+        internal object             locked = new object();
+        private  PerformanceCounter _cpuCounter;
+        private  PerformanceCounter _ramCounter;
         
         private ObservableCollection<ProcessSpy> processes = new ObservableCollection<ProcessSpy>();
         readonly long totalRamBytes;
@@ -95,14 +94,17 @@ namespace FASTER.Views
         {
             while (Updating)
             {
-                var ram = _ramCounter.NextValue();
-                Dispatcher?.BeginInvoke(new Action(() =>
+                lock (locked)
                 {
-                    gaugeCpu.Value = _cpuCounter.NextValue();
-                    gaugeRam.Value = totalRamBytes > ram 
-                        ? Convert.ToInt64((totalRamBytes - ram) / 1024)
-                        : Convert.ToInt64(totalRamBytes         / 1024);
-                }));
+                    var ram = _ramCounter.NextValue();
+                    Dispatcher?.BeginInvoke(new Action(() =>
+                    {
+                        gaugeCpu.Value = _cpuCounter.NextValue();
+                        gaugeRam.Value = totalRamBytes > ram 
+                            ? Convert.ToInt64((totalRamBytes - ram) / 1024)
+                            : Convert.ToInt64(totalRamBytes         / 1024);
+                    }));
+                }
                 Thread.Sleep(1000);
             }
         }
@@ -182,10 +184,7 @@ namespace FASTER.Views
         private void IRescanAll_Click(object sender, RoutedEventArgs e)
         {
             Analytics.TrackEvent("ServerStatus - Rescanning Servers", new Dictionary<string, string> {
-                { "Name", MetroWindow.ContentSteamUpdater.ISteamUserBox.Text }
-            });
-            AppInsights.Client.TrackEvent("ServerStatus - Rescanning Servers", new Dictionary<string, string> {
-                { "Name", MetroWindow.ContentSteamUpdater.ISteamUserBox.Text }
+                { "Name", MetroWindow.SteamUpdaterViewModel.Parameters.Username}
             });
             RefreshServers();
         }
@@ -273,9 +272,7 @@ namespace FASTER.Views
 
             token = new CancellationToken();
             var r = new Random();
-            var col = ThemeManager.Current.ColorSchemes[r.Next(0, ThemeManager.Current.ColorSchemes.Count)];
-            ColorConverter converter = new ColorConverter();
-            Color color     = (Color)converter.ConvertFromInvariantString(col);
+            var color = ThemeManager.Current.Themes[r.Next(0, ThemeManager.Current.Themes.Count)].PrimaryAccentColor;
             Color = new SolidColorBrush(color);
 
             //Create mapper for CPU Graph

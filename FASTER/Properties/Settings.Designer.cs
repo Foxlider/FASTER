@@ -12,7 +12,7 @@ namespace FASTER.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.6.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.10.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -44,6 +44,18 @@ namespace FASTER.Properties {
             }
             set {
                 this["steamCMDPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string modStagingDirectory {
+            get {
+                return ((string)(this["modStagingDirectory"]));
+            }
+            set {
+                this["modStagingDirectory"] = value;
             }
         }
         
@@ -107,17 +119,6 @@ namespace FASTER.Properties {
             }
         }
         
-        //[global::System.Configuration.UserScopedSettingAttribute()]
-        //[global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        //public global::FASTER.Models.ServerCollectionOLD Servers {
-        //    get {
-        //        return ((global::FASTER.Models.ServerCollectionOLD)(this["Servers"]));
-        //    }
-        //    set {
-        //        this["Servers"] = value;
-        //    }
-        //}
-        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
@@ -139,6 +140,17 @@ namespace FASTER.Properties {
             }
             set {
                 this["serverBranch"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::FASTER.Models.ArmaModCollection armaMods {
+            get {
+                return ((global::FASTER.Models.ArmaModCollection)(this["armaMods"]));
+            }
+            set {
+                this["armaMods"] = value;
             }
         }
         
@@ -219,6 +231,41 @@ namespace FASTER.Properties {
             }
             set {
                 this["Profiles"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Dark.Blue")]
+        public string theme {
+            get {
+                return ((string)(this["theme"]));
+            }
+            set {
+                this["theme"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Segoe UI")]
+        public string font {
+            get {
+                return ((string)(this["font"]));
+            }
+            set {
+                this["font"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::FASTER.Models.ArmaDeployment Deployments {
+            get {
+                return ((global::FASTER.Models.ArmaDeployment)(this["Deployments"]));
+            }
+            set {
+                this["Deployments"] = value;
             }
         }
     }

@@ -9,10 +9,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-
+using ControlzEx.Theming;
 using Application = System.Windows.Application;
 using CheckBox = System.Windows.Controls.CheckBox;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
+using System.Windows.Media;
 
 namespace FASTER.Views
 {
@@ -22,12 +23,21 @@ namespace FASTER.Views
     public partial class Settings
     {
         UpdateInfoEventArgs _args;
+        public MainWindow MetroWindow;
 
-        public Settings()
+        public Settings(MainWindow main)
         {
             InitializeComponent();
+            MetroWindow = main;
             AutoUpdater.CheckForUpdateEvent += AutoUpdaterOnCheckForUpdateEvent;
 
+            colorPicker.ItemsSource = ThemeManager.Current.Themes/*.Where(t => t.BaseColorScheme == "Dark")*/;
+            colorPicker.DisplayMemberPath = "DisplayName";
+            colorPicker.SelectedItem = ThemeManager.Current.Themes.FirstOrDefault(t => t.Name == Properties.Settings.Default.theme);
+
+            fontPicker.ItemsSource = Fonts.SystemFontFamilies;
+            fontPicker.DisplayMemberPath = "Source";
+            fontPicker.SelectedItem = Fonts.SystemFontFamilies.FirstOrDefault(t => t.Source == Properties.Settings.Default.font);
         }
 
         private void IUpdateBtnOK_Click(object sender, RoutedEventArgs e)
@@ -124,8 +134,7 @@ namespace FASTER.Views
 
             if (!string.IsNullOrEmpty(newModFolder))
             {
-                if (Properties.Settings.Default.localModFolders == null)
-                { Properties.Settings.Default.localModFolders = new List<string>(); }
+                Properties.Settings.Default.localModFolders ??= new List<string>();
 
                 Properties.Settings.Default.localModFolders.Add(newModFolder);
                 Properties.Settings.Default.Save();
@@ -178,7 +187,7 @@ namespace FASTER.Views
         { AutoUpdater.Start("https://raw.githubusercontent.com/Foxlider/FASTER/master/FASTER_Version.xml"); }
 
         private void APIKeyButton_Click(object sender, RoutedEventArgs e)
-        { Functions.OpenBrowser("https://forums.bohemia.net/forums/topic/224359-foxs-arma-server-tool-extended-rewrite-faster/"); }
+        { Functions.OpenBrowser("https://steamcommunity.com/dev/apikey"); }
 
         private void ISaveSettings_Click(object sender, RoutedEventArgs e)
         {
@@ -186,6 +195,44 @@ namespace FASTER.Views
                 Properties.Settings.Default.SteamAPIKey = IAPIKeyBox.Text;
             Properties.Settings.Default.checkForAppUpdates = IAppUpdatesOnLaunch.IsChecked ?? true;
             Properties.Settings.Default.checkForModUpdates = IModUpdatesOnLaunch.IsChecked ?? true;
+            Properties.Settings.Default.Save();
+        }
+
+        private void ResetTheme_Click(object sender, RoutedEventArgs e)
+        {
+            colorPicker.SelectedItem = ThemeManager.Current.Themes.FirstOrDefault(t => t.Name == "Dark.Blue");
+
+            Properties.Settings.Default.theme = "Dark.Blue";
+            Properties.Settings.Default.Save();
+        }
+
+        private void ResetFont_Click(object sender, RoutedEventArgs e)
+        {
+            fontPicker.SelectedItem = Fonts.SystemFontFamilies.FirstOrDefault(f => f.Source == "Segoe UI");
+
+            Properties.Settings.Default.font = "Segoe UI";
+            Properties.Settings.Default.Save();
+        }
+
+        private void Colors_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            if(!(e.AddedItems[0] is Theme theme))
+                return;
+            ThemeManager.Current.ThemeSyncMode = ThemeSyncMode.SyncAll;
+            ThemeManager.Current.ChangeTheme(Application.Current, theme);
+
+            Properties.Settings.Default.theme = theme.Name;
+            Properties.Settings.Default.Save();
+        }
+
+        private void Fonts_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            if (!(e.AddedItems[0] is FontFamily font))
+                return;
+
+            MetroWindow.FontFamily = font;
+
+            Properties.Settings.Default.font = font.Source;
             Properties.Settings.Default.Save();
         }
     }
