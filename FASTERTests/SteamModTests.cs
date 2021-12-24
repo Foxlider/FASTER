@@ -17,6 +17,7 @@ namespace FASTER.Models.Tests
             Assert.AreEqual(463939057, SteamMod.SteamIdFromUrl("https://steamcommunity.com/workshop/filedetails/?l=english&id=463939057&l=french"));
         }
 
+
         [Test()]
         public void GetModInfoTest()
         {

@@ -85,7 +85,12 @@ namespace FASTER.Models
                     eventLog.WriteEntry($"Could not reach Steam API : \n[WebException] {e.Message}\n\n{e.StackTrace}", EventLogEntryType.Error);
                 }
                 catch (Exception) //In case it was called before Initialized in SteamMods_Initialized() and could not connect to SteamAPI
-                { MessageBox.Show("Cannot reach Steam API \n\nCheck https://steamstat.us/", "Steam API Error", MessageBoxButton.OK, MessageBoxImage.Warning); }
+                {
+                    if (Environment.UserInteractive)
+                        MessageBox.Show("Cannot reach Steam API \n\nCheck https://steamstat.us/", "Steam API Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    else
+                        Console.WriteLine("Cannot reach Steam API \n\nCheck https://steamstat.us/");
+                }
             }
             // Display the status.
             Console.WriteLine(((HttpWebResponse)response)?.StatusDescription);

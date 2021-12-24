@@ -116,7 +116,7 @@ namespace FASTER.Models
                                          _   => ""    // EMPTY RELEASE TYPE
                                      };
 
-                rev += $" {releaseType}{int.Parse(assembly.Revision.ToString().Substring(1))}";
+                rev += $" {releaseType}{int.Parse(assembly.Revision.ToString()[1..])}";
             }
 #if DEBUG
             rev += "-DEV";

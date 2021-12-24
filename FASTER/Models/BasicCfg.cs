@@ -5,7 +5,7 @@ using System.Xml.Serialization;
 
 namespace FASTER.Models
 {
-    static class BasicCfgArrays
+    public static class BasicCfgArrays
     {
         public static string[] PerfPresets { get; } = {"Custom", "Arma3 Defaults", "1Mb Preset", "250Mb Preset", "1Gb Preset"};
         public static double[] TerrainGrids { get; } = { 50, 25, 12.5, 6.25, 3.125 };

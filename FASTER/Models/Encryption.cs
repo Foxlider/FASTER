@@ -6,7 +6,7 @@ namespace FASTER.Models
 {
     public class Encryption
     {
-        private static readonly AesCryptoServiceProvider Crypt = new AesCryptoServiceProvider();
+        private static readonly Aes Crypt = Aes.Create();
         private static Encryption _instance;
         
         public static Encryption Instance => _instance ??= new Encryption();
