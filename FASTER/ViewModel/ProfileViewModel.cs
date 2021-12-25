@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using Microsoft.AppCenter.Analytics;
+using System.Xml.Linq;
 
 namespace FASTER.ViewModel
 {
@@ -274,7 +275,9 @@ namespace FASTER.ViewModel
                 return;
             }
 
-            var lines = File.ReadAllLines(dialog.FileName).ToList();
+            var lines = File.ReadAllLines(dialog.FileName)
+                            .AsEnumerable()
+                            .Where(l => l.Contains("steamcommunity.com/sharedfiles/filedetails"));
             
             //Clear mods
             foreach (var mod in Profile.ProfileMods)
@@ -282,13 +285,13 @@ namespace FASTER.ViewModel
 
             ushort? loadPriority = 1;
 
-            var extractedModlist = from line in lines 
-                                   where line.Contains("steamcommunity.com/sharedfiles/filedetails")
-                                   select System.Web.HttpUtility.ParseQueryString(new Uri(line).Query).Get("id");
-
-            //Select new ones
-            foreach (var modIdS in extractedModlist )
+            foreach (string line in lines)
             {
+                var link = XElement.Parse(line).Attribute("href").Value;
+                if (link == null)
+                    continue;
+                var modIdS = System.Web.HttpUtility.ParseQueryString(new Uri(link).Query).Get("id");
+
                 if (!uint.TryParse(modIdS, out uint modId)) continue;
                 var mod = Profile.ProfileMods.FirstOrDefault(m => m.Id == modId);
                 if (mod != null)

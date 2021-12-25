@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace FASTER.ViewModel
 {
@@ -151,14 +152,16 @@ namespace FASTER.ViewModel
             if (string.IsNullOrEmpty(modsFile)) return;
             using StreamReader dataReader = new StreamReader(modsFile);
             
-            var lines = (await File.ReadAllLinesAsync(modsFile)).ToList();
+            var lines = (await File.ReadAllLinesAsync(modsFile))
+                                   .AsEnumerable()
+                                   .Where(l => l.Contains("steamcommunity.com/sharedfiles/filedetails"));
 
-            var extractedModlist = from line in lines
-                                   where line.Contains("steamcommunity.com/sharedfiles/filedetails")
-                                   select System.Web.HttpUtility.ParseQueryString(new Uri(line).Query).Get("id");
-
-            foreach (string modIdS in extractedModlist)
+            foreach (string line in lines)
             {
+                var link = XElement.Parse(line).Attribute("href").Value;
+                if (link == null)
+                    continue;
+                var modIdS = System.Web.HttpUtility.ParseQueryString(new Uri(link).Query).Get("id");
                 if (!uint.TryParse(modIdS, out uint modId)) continue; 
 
                 if(ModsCollection.ArmaMods.FirstOrDefault(m => m.WorkshopId == modId) != null)
