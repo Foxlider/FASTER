@@ -336,13 +336,20 @@ namespace FASTER.ViewModel
                     Stopwatch sw = Stopwatch.StartNew();
                     try
                     {
-                        SteamOs steamOs = new SteamOs(_OS);
+                        SteamOs steamOs = new(_OS);
                         ManifestId manifestId = default;
+                        var modDetails = _steamContentClient.GetPublishedFileDetailsAsync(mod.WorkshopId).Result;
+                        if(mod.LocalLastUpdated > modDetails.time_updated)
+                        {
+                            mod.Status = ArmaModStatus.UpToDate;
+                            Parameters.Output += $"\n   Mod{mod.WorkshopId} already up to date. Ignoring...";
+                            return;
+                        }
 
                         if (!_steamClient.Credentials.IsAnonymous) //IS SYNC NEABLED
                         {
                             Parameters.Output += $"\n   Getting manifest for {mod.WorkshopId}";
-                            manifestId = _steamContentClient.GetPublishedFileDetailsAsync(mod.WorkshopId).Result.hcontent_file;
+                            manifestId = modDetails.hcontent_file;
                             Manifest manifest = _steamContentClient.GetManifestAsync(107410, 107410, manifestId).Result;
                             Parameters.Output += $"\n   Manifest retreived {mod.WorkshopId}";
                             SyncDeleteRemovedFiles(mod.Path, manifest);
@@ -355,7 +362,6 @@ namespace FASTER.ViewModel
                                                                                             null,
                                                                                             null,
                                                                                             steamOs);
-
                         DownloadForMultiple(downloadHandler.Result, mod.Path).Wait();
                     }
                     catch (TaskCanceledException)
