@@ -50,7 +50,7 @@ namespace FASTER.ViewModel
             string folderPath = Path.Combine(Profile.ArmaPath, "Servers", Profile.Id);
             if (Directory.Exists(folderPath))
             {
-                ProcessStartInfo startInfo = new ProcessStartInfo
+                ProcessStartInfo startInfo = new()
                 {
                     Arguments = folderPath,
                     FileName  = "explorer.exe"
@@ -86,7 +86,7 @@ namespace FASTER.ViewModel
         private string SetHCCommandLine(int hc)
         {
             string headlessMods = string.Join(";", Profile.ProfileMods.Where(m => m.HeadlessChecked).Select(m =>$"@{Functions.SafeName(m.Name)}"));
-            List<string> arguments = new List<string>
+            List<string> arguments = new()
             {
                 "-client",
                 " -connect=127.0.0.1",
@@ -426,7 +426,7 @@ namespace FASTER.ViewModel
             if (!Directory.Exists(Path.Combine(Profile.ArmaPath, "mpmissions"))) return;
 
             var missionList = new List<ProfileMission>();
-            List<string> newMissions = new List<string>();
+            List<string> newMissions = new();
 
             //Load PBO files
             newMissions.AddRange(Directory.EnumerateFiles(Path.Combine(Profile.ArmaPath, "mpmissions"), "*.pbo",  searchOption: SearchOption.TopDirectoryOnly)

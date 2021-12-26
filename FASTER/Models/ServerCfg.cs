@@ -22,11 +22,11 @@ namespace FASTER.Models
         private string       password;
         private string       hostname;
         private int          maxPlayers = 32;
-        private List<string> motd       = new List<string>();
+        private List<string> motd       = new();
         private int          motdInterval;
-        private List<string> admins          = new List<string>();
-        private List<string> headlessClients = new List<string>();
-        private List<string> localClient     = new List<string>();
+        private List<string> admins          = new();
+        private List<string> headlessClients = new();
+        private List<string> localClient     = new();
         private bool         headlessClientEnabled;
         private bool         votingEnabled;
         private bool         netlogEnabled;
@@ -74,7 +74,7 @@ namespace FASTER.Models
 
         private bool                 missionSelectorChecked;
         private string               missionContentOverride;
-        private List<ProfileMission> _missions = new List<ProfileMission>();
+        private List<ProfileMission> _missions = new();
         private bool                 autoInit;
         private string               difficulty = "Custom";
 
@@ -717,7 +717,7 @@ namespace FASTER.Models
         {
             if (!missionSelectorChecked)
             {
-                List<string> lines = new List<string> { "class Missions {" };
+                List<string> lines = new() { "class Missions {" };
                 foreach (var mission in Missions.Where(m => m.MissionChecked).Select(m => m.Name))
                 {
                     lines.AddRange(new List<string>

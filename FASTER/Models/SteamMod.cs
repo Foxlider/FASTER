@@ -18,7 +18,7 @@ namespace FASTER.Models
         public string CollectionName { get; set; } = "Main";
 
         [XmlElement(Order = 2, ElementName = "SteamMod")]
-        public List<SteamMod> SteamMods = new List<SteamMod>();
+        public List<SteamMod> SteamMods = new();
     }
 
     [Serializable]
@@ -78,7 +78,7 @@ namespace FASTER.Models
 
         public static List<SteamMod> GetSteamMods()
         {
-            List<SteamMod> currentSteamMods = new List<SteamMod>();
+            List<SteamMod> currentSteamMods = new();
 
             if (Properties.Settings.Default.steamMods == null) return currentSteamMods;
 

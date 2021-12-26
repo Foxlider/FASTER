@@ -32,8 +32,7 @@ namespace FASTER.ViewModel
         
         private static readonly Lazy<SteamUpdaterViewModel>
             lazy =
-                new Lazy<SteamUpdaterViewModel>
-                    (() => new SteamUpdaterViewModel(new SteamUpdaterModel()));
+                new(() => new SteamUpdaterViewModel(new SteamUpdaterModel()));
 
         public static SteamUpdaterViewModel Instance => lazy.Value;
 
@@ -56,7 +55,7 @@ namespace FASTER.ViewModel
         public bool PFDLCChecked      { get; set; }
 
         public  IDialogCoordinator      DialogCoordinator { get; set; }
-        private CancellationTokenSource tokenSource = new CancellationTokenSource();
+        private CancellationTokenSource tokenSource = new();
 
         public bool IsDownloading => DownloadTasks.Count > 0 || IsLoggingIn || IsDlOverride;
 
@@ -201,7 +200,7 @@ namespace FASTER.ViewModel
 
                 try
                 {
-                    SteamOs steamOs      = new SteamOs(_OS);
+                    SteamOs steamOs      = new(_OS);
                     ManifestId manifestId;
 
                     manifestId = await _steamContentClient.GetDepotDefaultManifestIdAsync(appId, depotId, branch, branchPass);
@@ -253,7 +252,7 @@ namespace FASTER.ViewModel
 
             try
             {
-                SteamOs    steamOs    = new SteamOs(_OS);
+                SteamOs    steamOs    = new(_OS);
                 ManifestId manifestId = default;
 
                 Parameters.Output += $"\nFetching mod {modId} infos... ";
@@ -312,7 +311,7 @@ namespace FASTER.ViewModel
 
             Parameters.Output += "\nAdding mods to download list...";
 
-            SemaphoreSlim maxThread = new SemaphoreSlim(3);
+            SemaphoreSlim maxThread = new(3);
             var  ml = mods.Where(m => !m.IsLocal).ToList();
             uint finished = 0;
             IsDlOverride = true;

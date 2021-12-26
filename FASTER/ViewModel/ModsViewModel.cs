@@ -73,7 +73,7 @@ namespace FASTER.ViewModel
             if (string.IsNullOrEmpty(localPath))
                 return;
 
-            Random r = new Random();
+            Random r = new();
             var modID   = (uint) (uint.MaxValue - r.Next(ushort.MaxValue / 2));
             var newPath = Path.Combine(Properties.Settings.Default.modStagingDirectory, modID.ToString());
             var oldPath = localPath;
@@ -150,7 +150,7 @@ namespace FASTER.ViewModel
             string modsFile = Functions.SelectFile("Arma 3 Launcher File|*.html");
 
             if (string.IsNullOrEmpty(modsFile)) return;
-            using StreamReader dataReader = new StreamReader(modsFile);
+            using StreamReader dataReader = new(modsFile);
             
             var lines = (await File.ReadAllLinesAsync(modsFile))
                                    .AsEnumerable()
@@ -190,7 +190,7 @@ namespace FASTER.ViewModel
                 return;
             }
 
-            ProcessStartInfo startInfo = new ProcessStartInfo
+            ProcessStartInfo startInfo = new()
             {
                 Arguments = mod.Path,
                 FileName  = "explorer.exe"
