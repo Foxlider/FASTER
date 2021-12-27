@@ -227,11 +227,11 @@ namespace FASTER.ViewModel
 
             var armaPath = Path.GetDirectoryName(Profile.Executable);
             var links = Directory.EnumerateDirectories(armaPath).Select(d => new DirectoryInfo(d)).Where(d => d.Attributes.HasFlag(FileAttributes.ReparsePoint));
-            bool displayMissingModMessage = false;
+            uint MissingMods = 0;
             foreach (ProfileMod profileMod in Profile.ProfileMods.Where(m => m.ClientSideChecked || m.HeadlessChecked || m.ServerSideChecked))
             {
                 if (!links.Any(l => l.Name == $"@{Functions.SafeName(profileMod.Name)}"))
-                    displayMissingModMessage = true;
+                    MissingMods++;
             }
             
 
@@ -243,8 +243,8 @@ namespace FASTER.ViewModel
             Profile.RaisePropertyChanged("CommandLine");
             DisplayMessage($"Saved Profile {Profile.Name}");
 
-            if (displayMissingModMessage)
-                DisplayMessage("Some mods were not found in the Arma directory.\nMake sure you have deployed the correct mods");
+            if (MissingMods > 0)
+                DisplayMessage($"{MissingMods} mods were not found in the Arma directory.\nMake sure you have deployed the correct mods");
 
         }
 
@@ -406,6 +406,8 @@ namespace FASTER.ViewModel
                     modlist.Add(newProfile);
                     continue;
                 }
+                else //refresh mods names
+                { existingMod.Name = mod.Name; }
                 modlist.Add(existingMod);
             }
             
