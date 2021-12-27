@@ -105,7 +105,7 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Info" CanUserSort="False" CanUserResize="False">
+                <DataGridTemplateColumn Header="Info" CanUserSort="False" Width="52" CanUserResize="False">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">
