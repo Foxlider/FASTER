@@ -162,7 +162,7 @@ namespace FASTER.ViewModel
                 return;
             }
 
-            ProcessStartInfo startInfo = new ProcessStartInfo
+            ProcessStartInfo startInfo = new()
             {
                 Arguments = mod.Path,
                 FileName = "explorer.exe"
@@ -208,7 +208,7 @@ namespace FASTER.ViewModel
             {
                 var linkCommand = "/c mklink /D \"" + linkPath + "\" \"" + mod.Path + "\"";
 
-                ProcessStartInfo startInfo = new ProcessStartInfo("cmd.exe")
+                ProcessStartInfo startInfo = new("cmd.exe")
                 {
                     WindowStyle = ProcessWindowStyle.Hidden,
                     Verb = "runas",

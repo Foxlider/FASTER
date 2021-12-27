@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using Microsoft.AppCenter.Analytics;
+using System.Xml.Linq;
 
 namespace FASTER.ViewModel
 {
@@ -49,7 +50,7 @@ namespace FASTER.ViewModel
             string folderPath = Path.Combine(Profile.ArmaPath, "Servers", Profile.Id);
             if (Directory.Exists(folderPath))
             {
-                ProcessStartInfo startInfo = new ProcessStartInfo
+                ProcessStartInfo startInfo = new()
                 {
                     Arguments = folderPath,
                     FileName  = "explorer.exe"
@@ -85,7 +86,7 @@ namespace FASTER.ViewModel
         private string SetHCCommandLine(int hc)
         {
             string headlessMods = string.Join(";", Profile.ProfileMods.Where(m => m.HeadlessChecked).Select(m =>$"@{Functions.SafeName(m.Name)}"));
-            List<string> arguments = new List<string>
+            List<string> arguments = new()
             {
                 "-client",
                 " -connect=127.0.0.1",
@@ -226,11 +227,11 @@ namespace FASTER.ViewModel
 
             var armaPath = Path.GetDirectoryName(Profile.Executable);
             var links = Directory.EnumerateDirectories(armaPath).Select(d => new DirectoryInfo(d)).Where(d => d.Attributes.HasFlag(FileAttributes.ReparsePoint));
-            bool displayMissingModMessage = false;
+            uint MissingMods = 0;
             foreach (ProfileMod profileMod in Profile.ProfileMods.Where(m => m.ClientSideChecked || m.HeadlessChecked || m.ServerSideChecked))
             {
                 if (!links.Any(l => l.Name == $"@{Functions.SafeName(profileMod.Name)}"))
-                    displayMissingModMessage = true;
+                    MissingMods++;
             }
             
 
@@ -242,8 +243,8 @@ namespace FASTER.ViewModel
             Profile.RaisePropertyChanged("CommandLine");
             DisplayMessage($"Saved Profile {Profile.Name}");
 
-            if (displayMissingModMessage)
-                DisplayMessage("Some mods were not found in the Arma directory.\nMake sure you have deployed the correct mods");
+            if (MissingMods > 0)
+                DisplayMessage($"{MissingMods} mods were not found in the Arma directory.\nMake sure you have deployed the correct mods");
 
         }
 
@@ -274,7 +275,9 @@ namespace FASTER.ViewModel
                 return;
             }
 
-            var lines = File.ReadAllLines(dialog.FileName).ToList();
+            var lines = File.ReadAllLines(dialog.FileName)
+                            .AsEnumerable()
+                            .Where(l => l.Contains("steamcommunity.com/sharedfiles/filedetails"));
             
             //Clear mods
             foreach (var mod in Profile.ProfileMods)
@@ -282,13 +285,13 @@ namespace FASTER.ViewModel
 
             ushort? loadPriority = 1;
 
-            var extractedModlist = from line in lines 
-                                   where line.Contains("steamcommunity.com/sharedfiles/filedetails")
-                                   select System.Web.HttpUtility.ParseQueryString(new Uri(line).Query).Get("id");
-
-            //Select new ones
-            foreach (var modIdS in extractedModlist )
+            foreach (string line in lines)
             {
+                var link = XElement.Parse(line).Attribute("href").Value;
+                if (link == null)
+                    continue;
+                var modIdS = System.Web.HttpUtility.ParseQueryString(new Uri(link).Query).Get("id");
+
                 if (!uint.TryParse(modIdS, out uint modId)) continue;
                 var mod = Profile.ProfileMods.FirstOrDefault(m => m.Id == modId);
                 if (mod != null)
@@ -403,6 +406,8 @@ namespace FASTER.ViewModel
                     modlist.Add(newProfile);
                     continue;
                 }
+                else //refresh mods names
+                { existingMod.Name = mod.Name; }
                 modlist.Add(existingMod);
             }
             
@@ -423,7 +428,7 @@ namespace FASTER.ViewModel
             if (!Directory.Exists(Path.Combine(Profile.ArmaPath, "mpmissions"))) return;
 
             var missionList = new List<ProfileMission>();
-            List<string> newMissions = new List<string>();
+            List<string> newMissions = new();
 
             //Load PBO files
             newMissions.AddRange(Directory.EnumerateFiles(Path.Combine(Profile.ArmaPath, "mpmissions"), "*.pbo",  searchOption: SearchOption.TopDirectoryOnly)
