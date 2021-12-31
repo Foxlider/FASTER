@@ -47,17 +47,10 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <StackPanel Grid.ColumnSpan="2">
-                    <Label Margin="2" Content="Steam CMD Settings"/>
+                    <Label Margin="2" Content="Mod Installer Settings"/>
                     <Separator/>
                 </StackPanel>
-                <Grid  Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="5,10">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition Width="auto"/>
-                    </Grid.ColumnDefinitions>
-                    <TextBox Grid.Column="0" Text="{Binding Parameters.SteamCmdInstallDirectory}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Install Directory" Margin="5"/>
-                    <Button Grid.Column="1" Content="{iconPacks:Modern Kind=Folder}" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" VerticalAlignment="Stretch" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" Margin="5" Padding="2" Click="SteamCmdDir_Click"/>
-                </Grid>
+                
                 <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="5,10">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
@@ -88,31 +81,39 @@
                 </Style>
             </Grid.Style>
             <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto" />
                     <RowDefinition />
                 </Grid.RowDefinitions>
-                <StackPanel Grid.ColumnSpan="2">
+                <StackPanel>
                     <Label Margin="2" Content="Arma 3 Settings"/>
                     <Separator/>
                 </StackPanel>
-                <Grid  Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="5,10">
+                <Grid  Grid.Row="1" Margin="5">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
                         <ColumnDefinition Width="auto"/>
                     </Grid.ColumnDefinitions>
-                    <TextBox Grid.Column="0" mah:TextBoxHelper.UseFloatingWatermark="True" Text="{Binding Parameters.ArmaInstallDirectory}" mah:TextBoxHelper.Watermark="Install Directory" Margin="5"/>
+                    <TextBox Grid.Column="0" mah:TextBoxHelper.UseFloatingWatermark="True" Text="{Binding Parameters.InstallDirectory}" mah:TextBoxHelper.Watermark="Install Directory" Margin="5"/>
                     <Button Grid.Column="1" Content="{iconPacks:Modern Kind=Folder}" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" VerticalAlignment="Stretch" Height="auto" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" Margin="5" Padding="2" Click="ServerDir_Click"/>
                 </Grid>
-                <ComboBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Version" SelectedItem="{Binding ServerBranch}" ItemsSource="{Binding ServerBranches}" Margin="10,20,10,15">
-                </ComboBox>
-                <Button Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="3" Content="Update" Margin="10,5,10,10" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Click="Update_Click"/>
+                <mah:ToggleSwitch Grid.Row="2" Content="Profiling" IsOn="{Binding ProfilingBranch}" Style="{StaticResource MahApps.Styles.ToggleSwitch}" Margin="10,5"/>
+                <StackPanel Orientation="Vertical" Grid.Row="3" Margin="10">
+                    <CheckBox IsChecked="{Binding ContactDLCChecked}" Content="Contact DLC"
+                              Margin="10,3" Width="105" HorizontalAlignment="Left" />
+                    <CheckBox IsChecked="{Binding GMDLCChecked}" Content="GM DLC" Margin="10,3"
+                              HorizontalAlignment="Left" />
+                    <CheckBox IsChecked="{Binding PFDLCChecked}" Content="Prairie Fire DLC"
+                              Margin="10,3" Width="105" HorizontalAlignment="Left" />
+                    <CheckBox IsChecked="{Binding CLSADLCChecked}" Content="CLSA DLC" Margin="10,3"
+                              HorizontalAlignment="Left" />
+                    <CheckBox IsChecked="{Binding WSDLCChecked}" Content="Western Sahara DLC"
+                              Margin="10,3" HorizontalAlignment="Left" />
+                </StackPanel>
+                <Button Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Grid.Row="4" Content="Update" Margin="10" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Click="Update_Click"/>
             </Grid>
         </Grid>
 
@@ -137,7 +138,7 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <StackPanel Grid.ColumnSpan="2">
-                    <Label Margin="2" Content="Steam CMD Output"/>
+                    <Label Margin="2" Content="Console Output"/>
                     <Separator/>
                 </StackPanel>
                 <TextBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" IsReadOnly="True" Text="{Binding Parameters.Output}" models:TextBoxUtilities.AlwaysScrollToEnd="True" TextWrapping="Wrap" Background="{StaticResource MahApps.Brushes.Gray10}" Margin="10,10,10,0" VerticalScrollBarVisibility="Visible">
@@ -154,49 +155,5 @@
                 <Button Grid.Row="2" VerticalAlignment="Stretch" Grid.Column="1" Content="Cancel" Margin="0,10,10,10" IsEnabled="{Binding IsDownloading}" Click="UpdateCancel_Click" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0"/>
             </Grid>
         </Grid>
-        <!--<simpleChildWindow:ChildWindow
-            Visibility="Collapsed"
-            Name="ISteamGuardDialog"
-            Grid.Column="0"
-            Grid.ColumnSpan="2"
-            Grid.Row="0" Grid.RowSpan="2"
-            IsOpen="False"
-            HorizontalContentAlignment="Center"
-            VerticalContentAlignment="Center"
-            Foreground="White"
-            Background="{StaticResource MahApps.Brushes.Flyout.Background}"
-            Padding="15"
-            CloseOnOverlay="True"
-            GlowBrush="Black"
-            BorderThickness="0"
-            Title="Steam Guard">
-            <simpleChildWindow:ChildWindow.Icon>
-                <iconPacks:PackIconModern
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Foreground="White"
-                    Kind="Steam" />
-            </simpleChildWindow:ChildWindow.Icon>
-            <simpleChildWindow:ChildWindow.OverlayBrush>
-                <SolidColorBrush Opacity="0.7" Color="{StaticResource MahApps.Colors.Gray10}"/>
-            </simpleChildWindow:ChildWindow.OverlayBrush>
-            <Grid Name="ISteamGuardDialogContent">
-                --><!--Grid Definitions--><!--
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="30"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-
-                <StackPanel Grid.Row="1" Margin="20,10">
-                    <TextBlock TextWrapping="Wrap" TextAlignment="Left" Margin="0,0,0,5">
-                        Enter Steam Guard code from email or mobile app.
-                    </TextBlock>
-                    <TextBox Name="ISteamGuardCode" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Steam Guard Code"/>
-                    <DockPanel Margin="0,10">
-                        <Button Name="ISubmitCode" Click="ISubmitCode_Click" Content="Submit" HorizontalAlignment="Right" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0"/>
-                    </DockPanel>
-                </StackPanel>
-            </Grid>
-        </simpleChildWindow:ChildWindow>-->
     </Grid>
 </UserControl>

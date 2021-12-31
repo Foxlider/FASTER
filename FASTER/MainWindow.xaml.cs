@@ -66,17 +66,17 @@ namespace FASTER
             set => _modsVM = value;
         }
 
-        LocalMods _deploy;
-        public LocalMods ContentDeploy
+        Deployment _deploy;
+        public Deployment ContentDeploy
         {
-            get => _deploy ??= new LocalMods();
+            get => _deploy ??= new Deployment();
             set => _deploy = value;
         }
 
-        ModsViewModel _deployVM;
-        public ModsViewModel DeployViewModel
+        DeploymentViewModel _deployVM;
+        public DeploymentViewModel DeployViewModel
         {
-            get => _deployVM ??= new ModsViewModel();
+            get => _deployVM ??= new DeploymentViewModel();
             set => _deployVM = value;
         }
 
@@ -122,7 +122,7 @@ namespace FASTER
             InitializeComponent();
 
             //Set font preferences
-            FontFamily = Fonts.SystemFontFamilies.FirstOrDefault(f => f.Source == FASTER.Properties.Settings.Default.font);
+            FontFamily = Fonts.SystemFontFamilies.FirstOrDefault(f => f.Source == Properties.Settings.Default.font);
 
             _instance = this;
             Version = GetVersion();
@@ -277,7 +277,33 @@ namespace FASTER
                 Crashes.TrackError(err, new Dictionary<string, string> { { "Name", Properties.Settings.Default.steamUserName } });
             }
         }
-        
+
+        private void MenuItemDelete_Click(object sender, RoutedEventArgs e)
+        {
+            if (IServerProfilesMenu.SelectedIndex == -1)
+            { return; }
+
+            try
+            {
+                var temp = Properties.Settings.Default.Profiles.FirstOrDefault(s =>
+                    s.Id == ((ToggleButton)IServerProfilesMenu.SelectedItem).Name);
+                if (temp == null)
+                {
+                    DisplayMessage("Could not find the selected profile.");
+                    return;
+                }
+
+                ContentProfileViews.FirstOrDefault(p => p.Profile.Id == temp.Id)?.DeleteProfile();
+            }
+            catch (Exception err)
+            {
+                DisplayMessage("An error occured while cloning your profile");
+                Crashes.TrackError(err, new Dictionary<string, string> { { "Name", Properties.Settings.Default.steamUserName } });
+            }
+
+        }
+
+
         private void OpenModStagingLocation_Click(object sender, RoutedEventArgs e)
         {
             IToolsDialog.IsOpen = false;
@@ -381,9 +407,44 @@ namespace FASTER
             var properties    = Properties.Settings.Default;
             var modStagingDir = properties.modStagingDirectory;
 
-            var controller = await this.ShowProgressAsync("Please wait...", $"Converting Steam Mods... 0 / {properties.steamMods.SteamMods.Count}");
+            var controller = await this.ShowProgressAsync("Please wait...", "Checking Drive Space...");
             controller.Maximum = properties.steamMods.SteamMods.Count;
             var progress = 0;
+
+            long fullzize = 0;
+            foreach (var mod in properties.steamMods.SteamMods.Select(m => Path.Combine(Properties.Settings.Default.steamCMDPath, "steamapps", "workshop", "content", "107410", m.WorkshopId.ToString())).Concat(properties.localMods.Select(m => m.Path)))
+            {
+                if(!Directory.Exists(mod))
+                    continue;
+
+                string[] a = Directory.GetFiles(mod, "*.*", SearchOption.AllDirectories);
+                fullzize += a.Select(name => new FileInfo(name)).Select(info => info.Length).Sum();
+
+                controller.SetMessage($"Checking Drive Space... {Functions.ParseFileSize(fullzize)}");
+            }
+
+            var drive = DriveInfo.GetDrives().FirstOrDefault(d => d.Name == Path.GetPathRoot(modStagingDir));
+
+            if (drive.AvailableFreeSpace < fullzize)
+            {
+                properties.armaMods = null;
+                properties.firstRun = true;
+                properties.Save();
+
+                var closing = 10000;
+
+                while (closing > 0)
+                {
+                    controller.SetMessage($"Not enough free space on your drive for your mods. ({Functions.ParseFileSize(drive.AvailableFreeSpace)} / {Functions.ParseFileSize(fullzize)} )\nClear some space and retry.\n\nFASTER will close in {closing/1000} seconds.");
+                    await Task.Delay(1000);
+                    closing -= 1000;
+                }
+
+                await controller.CloseAsync();
+                Instance.OnClosing(new CancelEventArgs(true));
+                return;
+            }
+                
 
             foreach (var steamMod in properties.steamMods.SteamMods)
             {
@@ -473,6 +534,8 @@ namespace FASTER
             await using var sourceStream      = new FileStream(sourceFile,      FileMode.Open,   FileAccess.Read,  FileShare.Read, 4096, FileOptions.Asynchronous | FileOptions.SequentialScan);
             await using var destinationStream = new FileStream(destinationFile, FileMode.Create, FileAccess.Write, FileShare.None, 4096, FileOptions.Asynchronous | FileOptions.SequentialScan);
             await sourceStream.CopyToAsync(destinationStream);
+            destinationStream.Close();
+            sourceStream.Close();
         }
 
         public void DisplayMessage(string message)

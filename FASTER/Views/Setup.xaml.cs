@@ -75,7 +75,7 @@ namespace FASTER.Views
 
             if (string.IsNullOrEmpty(Properties.Settings.Default.modStagingDirectory))
             {
-                Properties.Settings.Default.modStagingDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ModStagingDirectory");
+                Properties.Settings.Default.modStagingDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ModStagingDirectory");
                 Properties.Settings.Default.Save();
             }
 
@@ -140,17 +140,42 @@ namespace FASTER.Views
             { IServerDirBox.Text = path; }
         }
 
+        private void APIKeyButton_Click(object sender, RoutedEventArgs e)
+        {
+            Functions.OpenBrowser("https://steamcommunity.com/dev/apikey");
+        }
+
         private void IContinueButton_Click(object sender, RoutedEventArgs e)
         {
             var encryption = Encryption.Instance;
+
+            if(string.IsNullOrEmpty(IModStaging.Text))
+            {
+                DisplaySetupMessage("Please enter a valid Mod Staging Directory");
+                return;
+            }
+
+            if (string.IsNullOrEmpty(IServerDirBox.Text) || !Directory.Exists(IServerDirBox.Text))
+            {
+                DisplaySetupMessage("Please enter a valid Arma Server Directory");
+                return;
+            }
 
             var settings = Properties.Settings.Default;
             settings.serverPath = IServerDirBox.Text;
             settings.modStagingDirectory = IModStaging.Text;
             settings.steamUserName = ISteamUserBox.Text;
             settings.steamPassword = encryption.EncryptData(ISteamPassBox.Password);
+            if (!string.IsNullOrEmpty(IApiKeyBox.Text))
+                Properties.Settings.Default.SteamAPIKey = IApiKeyBox.Text;
             settings.firstRun = false;
             settings.Save();
+
+            MainWindow.Instance.SteamUpdaterViewModel.Parameters.ModStagingDirectory = settings.modStagingDirectory;
+            MainWindow.Instance.SteamUpdaterViewModel.Parameters.ApiKey = settings.SteamAPIKey;
+            MainWindow.Instance.SteamUpdaterViewModel.Parameters.InstallDirectory = settings.serverPath;
+            MainWindow.Instance.SteamUpdaterViewModel.Parameters.Username = settings.steamUserName;
+            MainWindow.Instance.SteamUpdaterViewModel.Parameters.Password = settings.steamPassword;
 
             if (convertMods)
             { MainWindow.Instance.ConvertMods = true; }

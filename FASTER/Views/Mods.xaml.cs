@@ -15,7 +15,7 @@ namespace FASTER.Views
         public Mods()
         {
             InitializeComponent();
-            MainWindow.Instance.ModsViewModel.dialogCoordinator =  DialogCoordinator.Instance;
+            MainWindow.Instance.ModsViewModel.DialogCoordinator =  DialogCoordinator.Instance;
 
             this.Dispatcher.ShutdownStarted += DispatcherOnShutdownStarted;
         }
@@ -37,8 +37,7 @@ namespace FASTER.Views
 
         private async void UpdateMod(object sender, RoutedEventArgs e)
         {
-            var mod = ((FrameworkElement) sender).DataContext as ArmaMod;
-            if (mod == null)
+            if (!(((FrameworkElement) sender).DataContext is ArmaMod mod))
                 return;
             
             await mod.UpdateModAsync();
@@ -74,7 +73,7 @@ namespace FASTER.Views
 
         private void AddLocalMod_Click(object sender, RoutedEventArgs e)
         {
-            ((ModsViewModel) DataContext)?.AddLocalMod();
+            ((ModsViewModel) DataContext)?.AddLocalModAsync();
         }
 
         private async void ImportLauncherFile_Click(object sender, RoutedEventArgs e)
@@ -90,11 +89,6 @@ namespace FASTER.Views
         private async void UpdateAll_Click(object sender, RoutedEventArgs e)
         {
             await ((ModsViewModel) DataContext)?.UpdateAll();
-        }
-
-        private void ScanSteam_Click(object sender, RoutedEventArgs e)
-        {
-            ((ModsViewModel) DataContext)?.ImportFromSteam();
         }
     }
 }

@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
@@ -144,13 +143,9 @@ namespace FASTER.Models
 
         public static uint SteamIdFromUrl(string modUrl)
         {
-            var modId = modUrl.Substring(modUrl.IndexOf("id=", StringComparison.Ordinal));
-            if (modId.Contains("&"))
-                // ReSharper disable once StringIndexOfIsCultureSpecific.1
-                modId = modId.Substring(0, modId.IndexOf("&"));
-            modId = uint.Parse(Regex.Replace(modId, @"[^\d]", "")).ToString();
-
-            return uint.Parse(modId);
+            var uri = new Uri(modUrl);
+            var modID = System.Web.HttpUtility.ParseQueryString(uri.Query).Get("id");
+            return uint.Parse(modID);
         }
 
         public static void AddSteamMod(string modUrl, bool multiple = false)
@@ -164,7 +159,7 @@ namespace FASTER.Models
 
             if (uint.TryParse(modUrl, out _))
             { modId = uint.Parse(modUrl);}
-            else if (modUrl.Contains("://steamcommunity.com/") && modUrl.Contains("/filedetails/?id="))
+            else if (modUrl.Contains("://steamcommunity.com/") && modUrl.Contains("/filedetails/") && modUrl.Contains("id="))
             { modId = SteamIdFromUrl(modUrl); }
             else { invalid = true; }
 

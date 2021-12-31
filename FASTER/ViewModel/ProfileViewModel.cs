@@ -13,6 +13,7 @@ using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Text.RegularExpressions;
 using System.Xml;
+using Microsoft.AppCenter.Analytics;
 
 namespace FASTER.ViewModel
 {
@@ -42,6 +43,11 @@ namespace FASTER.ViewModel
 
         internal void OpenProfileLocation()
         {
+            Analytics.TrackEvent("Profile - Clicked OpenProfile", new Dictionary<string, string>
+            {
+                {"Name", Properties.Settings.Default.steamUserName}
+            });
+
             string folderPath = Path.Combine(Profile.ArmaPath, "Servers", Profile.Id);
             if (Directory.Exists(folderPath))
             {
@@ -117,6 +123,11 @@ namespace FASTER.ViewModel
 
             //Launching... 
             DisplayMessage($"Launching Profile {Profile.Name}...");
+
+            Analytics.TrackEvent("Profile - Clicked LaunchServer", new Dictionary<string, string>
+            {
+                {"Name", Properties.Settings.Default.steamUserName}
+            });
 
             Profile.RaisePropertyChanged("CommandLine");
             var commandLine = Profile.CommandLine;
@@ -517,7 +528,7 @@ namespace FASTER.ViewModel
                                                     .Select(mission => mission.Replace(Path.Combine(Profile.ArmaPath, "mpmissions") + "\\", "")));
             //Load folders
             //Credits to Pucker and LinkIsParking
-            newMissions.AddRange(Directory.GetDirectories(Path.Combine(Properties.Settings.Default.serverPath, "mpmissions"))
+            newMissions.AddRange(Directory.GetDirectories(Path.Combine(Profile.ArmaPath, "mpmissions"))
                                                 .Select(mission => mission.Replace(Path.Combine(Profile.ArmaPath, "mpmissions") + "\\", "")));
 
 

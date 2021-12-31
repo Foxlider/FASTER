@@ -1,4 +1,6 @@
-﻿using System;
+﻿using FASTER.ViewModel;
+
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
@@ -72,8 +74,7 @@ namespace FASTER.Models
                 
                 if (item != null)
                 {
-                    if (Directory.Exists(item.Path)) 
-                        Directory.Delete(item.Path, true);
+                    Directory.Delete(item.Path, true);
                     currentProfiles.ArmaMods.Remove(item);
                 }
                 

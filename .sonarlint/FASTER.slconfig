@@ -2,14 +2,14 @@
   "ServerUri": "https://sonarcloud.io/",
   "Organization": {
     "Key": "foxlicorp",
-    "Name": "FoxliCorp."
+    "Name": "Keelah"
   },
-  "ProjectKey": "FASTER_App",
-  "ProjectName": "FASTER_App",
+  "ProjectKey": "Foxlider_FASTER",
+  "ProjectName": "FASTER",
   "Profiles": {
     "CSharp": {
       "ProfileKey": "AW7Rfkrd6A1-kc3fchk2",
-      "ProfileTimestamp": "2021-09-15T08:42:47Z"
+      "ProfileTimestamp": "2021-11-28T14:54:48Z"
     }
   }
 }

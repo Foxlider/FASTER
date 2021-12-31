@@ -65,6 +65,7 @@ namespace FASTER.Models
         {
             // Create a request for the URL. 
             WebRequest request = WebRequest.Create(uri);
+            request.Timeout = 5 * 1000;
             // Get the response.
             WebResponse response = null;
             try
