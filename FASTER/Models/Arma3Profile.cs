@@ -5,7 +5,7 @@ using System.Globalization;
 
 namespace FASTER.Models
 {
-    static class ProfileCfgArrays
+    public static class ProfileCfgArrays
     {
         public static string[] LimitedDistanceStrings { get; } = { "Never", "Limited Distance", "Always" };
         public static string[] FadeOutStrings { get; } = { "Never", "Fade Out", "Always" };

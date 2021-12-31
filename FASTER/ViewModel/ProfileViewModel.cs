@@ -14,6 +14,7 @@ using System.Windows.Controls.Primitives;
 using System.Text.RegularExpressions;
 using System.Xml;
 using Microsoft.AppCenter.Analytics;
+using System.Xml.Linq;
 
 namespace FASTER.ViewModel
 {

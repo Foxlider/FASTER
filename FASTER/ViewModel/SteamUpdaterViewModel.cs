@@ -32,8 +32,7 @@ namespace FASTER.ViewModel
         
         private static readonly Lazy<SteamUpdaterViewModel>
             lazy =
-                new Lazy<SteamUpdaterViewModel>
-                    (() => new SteamUpdaterViewModel(new SteamUpdaterModel()));
+                new(() => new SteamUpdaterViewModel(new SteamUpdaterModel()));
 
         public static SteamUpdaterViewModel Instance => lazy.Value;
 
@@ -56,7 +55,7 @@ namespace FASTER.ViewModel
         public bool PFDLCChecked      { get; set; }
 
         public  IDialogCoordinator      DialogCoordinator { get; set; }
-        private CancellationTokenSource tokenSource = new CancellationTokenSource();
+        private CancellationTokenSource tokenSource = new();
 
         public bool IsDownloading => DownloadTasks.Count > 0 || IsLoggingIn || IsDlOverride;
 
@@ -184,6 +183,9 @@ namespace FASTER.ViewModel
 
         public async Task<int> RunServerUpdater(string path, uint appId, uint depotId, string branch, string branchPass)
         {
+            if (string.IsNullOrWhiteSpace(path))
+                return UpdateState.Cancelled;
+
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
             tokenSource = new CancellationTokenSource();
@@ -198,7 +200,7 @@ namespace FASTER.ViewModel
 
                 try
                 {
-                    SteamOs steamOs      = new SteamOs(_OS);
+                    SteamOs steamOs      = new(_OS);
                     ManifestId manifestId;
 
                     manifestId = await _steamContentClient.GetDepotDefaultManifestIdAsync(appId, depotId, branch, branchPass);
@@ -250,7 +252,7 @@ namespace FASTER.ViewModel
 
             try
             {
-                SteamOs    steamOs    = new SteamOs(_OS);
+                SteamOs    steamOs    = new(_OS);
                 ManifestId manifestId = default;
 
                 Parameters.Output += $"\nFetching mod {modId} infos... ";
@@ -309,8 +311,8 @@ namespace FASTER.ViewModel
 
             Parameters.Output += "\nAdding mods to download list...";
 
-            SemaphoreSlim maxThread = new SemaphoreSlim(3);
-            var  ml = mods.Where(m => !m.IsLocal);
+            SemaphoreSlim maxThread = new(3);
+            var  ml = mods.Where(m => !m.IsLocal).ToList();
             uint finished = 0;
             IsDlOverride = true;
 
@@ -333,13 +335,20 @@ namespace FASTER.ViewModel
                     Stopwatch sw = Stopwatch.StartNew();
                     try
                     {
-                        SteamOs steamOs = new SteamOs(_OS);
+                        SteamOs steamOs = new(_OS);
                         ManifestId manifestId = default;
+                        var modDetails = _steamContentClient.GetPublishedFileDetailsAsync(mod.WorkshopId).Result;
+                        if(mod.LocalLastUpdated > modDetails.time_updated)
+                        {
+                            mod.Status = ArmaModStatus.UpToDate;
+                            Parameters.Output += $"\n   Mod{mod.WorkshopId} already up to date. Ignoring...";
+                            return;
+                        }
 
                         if (!_steamClient.Credentials.IsAnonymous) //IS SYNC NEABLED
                         {
                             Parameters.Output += $"\n   Getting manifest for {mod.WorkshopId}";
-                            manifestId = _steamContentClient.GetPublishedFileDetailsAsync(mod.WorkshopId).Result.hcontent_file;
+                            manifestId = modDetails.hcontent_file;
                             Manifest manifest = _steamContentClient.GetManifestAsync(107410, 107410, manifestId).Result;
                             Parameters.Output += $"\n   Manifest retreived {mod.WorkshopId}";
                             SyncDeleteRemovedFiles(mod.Path, manifest);
@@ -352,7 +361,6 @@ namespace FASTER.ViewModel
                                                                                             null,
                                                                                             null,
                                                                                             steamOs);
-
                         DownloadForMultiple(downloadHandler.Result, mod.Path).Wait();
                     }
                     catch (TaskCanceledException)
@@ -379,8 +387,8 @@ namespace FASTER.ViewModel
                 }, TaskCreationOptions.LongRunning).ContinueWith((task) =>
                 {
                     finished += 1;
-                    Parameters.Output += $"\n   Thread {mod.WorkshopId} complete  ({finished} / {ml.Count()})";
-                    Parameters.Progress = finished * ml.Count() / 100.00;
+                    Parameters.Output += $"\n   Thread {mod.WorkshopId} complete  ({finished} / {ml.Count})";
+                    Parameters.Progress = finished * ml.Count / 100.00;
                     maxThread.Release();
                 });
             }

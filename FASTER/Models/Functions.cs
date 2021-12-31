@@ -50,14 +50,13 @@ namespace FASTER.Models
 
         public static string StringFromRichTextBox(System.Windows.Controls.RichTextBox rtb)
         {
-            TextRange textRange = new TextRange(rtb.Document.ContentStart, rtb.Document.ContentEnd);
+            TextRange textRange = new(rtb.Document.ContentStart, rtb.Document.ContentEnd);
             return textRange.Text;
         }
 
         public static string SelectFile(string filter)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog
-            { Filter = filter };
+            OpenFileDialog openFileDialog = new() { Filter = filter };
             return openFileDialog.ShowDialog() == true ? openFileDialog.FileName : null;
         }
 
@@ -108,15 +107,15 @@ namespace FASTER.Models
             if (assembly.Build == 0) rev = "ALPHA";
             if (assembly.Revision != 0)
             {
-                string releaseType = assembly.Revision.ToString().Substring(0, 1) switch
+                string releaseType = (assembly.Revision / 100) switch
                                      {
-                                         "1" => "H",  // HOTFIX
-                                         "2" => "RC", // RELEASE CANDIDATE
-                                         "5" => "D",  // DEV
+                                         1 => "H",  // HOTFIX
+                                         2 => "RC", // RELEASE CANDIDATE
+                                         5 => "D",  // DEV
                                          _   => ""    // EMPTY RELEASE TYPE
                                      };
-
-                rev += $" {releaseType}{int.Parse(assembly.Revision.ToString().Substring(1))}";
+                if(releaseType != "")
+                     rev += $" {releaseType}{int.Parse(assembly.Revision.ToString()[1..])}";
             }
 #if DEBUG
             rev += "-DEV";

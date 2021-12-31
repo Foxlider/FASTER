@@ -43,7 +43,6 @@ namespace FASTER.Models
     #endregion
     }
 
-
     public class NotBooleanToVisibilityConverter : IValueConverter
     {
         #region IValueConverter Members

@@ -72,6 +72,12 @@ namespace FASTER.ViewModel
                 {"Mod", mod.Name}
             });
 
+            if(!Directory.Exists(Deployment.InstallPath))
+            {
+                DisplayMessage("Arma Install Path is empty.\nMake sure you have entered a valid path before deploying mods.");
+                return;
+            }
+
             mod.Marked = !mod.Marked;
             var linkPath = Path.Combine(Deployment.InstallPath, $"@{Functions.SafeName(mod.Name)}");
             if (mod.Marked)
@@ -156,7 +162,7 @@ namespace FASTER.ViewModel
                 return;
             }
 
-            ProcessStartInfo startInfo = new ProcessStartInfo
+            ProcessStartInfo startInfo = new()
             {
                 Arguments = mod.Path,
                 FileName = "explorer.exe"
@@ -202,7 +208,7 @@ namespace FASTER.ViewModel
             {
                 var linkCommand = "/c mklink /D \"" + linkPath + "\" \"" + mod.Path + "\"";
 
-                ProcessStartInfo startInfo = new ProcessStartInfo("cmd.exe")
+                ProcessStartInfo startInfo = new("cmd.exe")
                 {
                     WindowStyle = ProcessWindowStyle.Hidden,
                     Verb = "runas",
