@@ -97,7 +97,7 @@
                         <ColumnDefinition />
                         <ColumnDefinition Width="auto"/>
                     </Grid.ColumnDefinitions>
-                    <TextBox Grid.Column="0" mah:TextBoxHelper.UseFloatingWatermark="True" Text="{Binding Parameters.InstallDirectory}" mah:TextBoxHelper.Watermark="Install Directory" Margin="5"/>
+                    <TextBox Grid.Column="0" mah:TextBoxHelper.UseFloatingWatermark="True" Text="{Binding Parameters.ArmaInstallDirectory}" mah:TextBoxHelper.Watermark="Install Directory" Margin="5"/>
                     <Button Grid.Column="1" Content="{iconPacks:Modern Kind=Folder}" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" VerticalAlignment="Stretch" Height="auto" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" Margin="5" Padding="2" Click="ServerDir_Click"/>
                 </Grid>
                 <mah:ToggleSwitch Grid.Row="2" Content="Profiling" IsOn="{Binding ProfilingBranch}" Style="{StaticResource MahApps.Styles.ToggleSwitch}" Margin="10,5"/>
