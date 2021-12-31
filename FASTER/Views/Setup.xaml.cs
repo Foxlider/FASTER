@@ -173,7 +173,7 @@ namespace FASTER.Views
 
             MainWindow.Instance.SteamUpdaterViewModel.Parameters.ModStagingDirectory = settings.modStagingDirectory;
             MainWindow.Instance.SteamUpdaterViewModel.Parameters.ApiKey = settings.SteamAPIKey;
-            MainWindow.Instance.SteamUpdaterViewModel.Parameters.InstallDirectory = settings.serverPath;
+            MainWindow.Instance.SteamUpdaterViewModel.Parameters.ArmaInstallDirectory = settings.serverPath;
             MainWindow.Instance.SteamUpdaterViewModel.Parameters.Username = settings.steamUserName;
             MainWindow.Instance.SteamUpdaterViewModel.Parameters.Password = settings.steamPassword;
 

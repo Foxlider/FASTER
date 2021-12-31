@@ -114,38 +114,38 @@ namespace FASTER.ViewModel
 
             Parameters.Output += "\nDownloading Shared Content...";
             //Downloading Depot 233781 from either branch contact or public
-            await RunServerUpdater(Parameters.InstallDirectory, appId, 233781, ContactDLCChecked? "contact" : "public", null);
+            await RunServerUpdater(Parameters.ArmaInstallDirectory, appId, 233781, ContactDLCChecked? "contact" : "public", null);
 
             Parameters.Output += "\nDownloading Executables...";
             //Either downloading depot 233782 fow Windows from branch public or 233784 for windows in branch profiling
             if (ProfilingBranch)
-                await RunServerUpdater(Parameters.InstallDirectory, appId, 233784, "profiling", "CautionSpecialProfilingAndTestingBranchArma3");
+                await RunServerUpdater(Parameters.ArmaInstallDirectory, appId, 233784, "profiling", "CautionSpecialProfilingAndTestingBranchArma3");
             else
-                await RunServerUpdater(Parameters.InstallDirectory, appId, 233782, "public", null);
+                await RunServerUpdater(Parameters.ArmaInstallDirectory, appId, 233782, "public", null);
 
             //Downloading mods
             if (GMDLCChecked)
             {
                 Parameters.Output += "\nDownloading Arma 3 Server Creator DLC - GM...";
-                await RunServerUpdater(Parameters.InstallDirectory, appId, 233787, "creatordlc", null);
+                await RunServerUpdater(Parameters.ArmaInstallDirectory, appId, 233787, "creatordlc", null);
             }
 
             if (CLSADLCChecked)
             {
                 Parameters.Output += "\nDownloading Arma 3 Server Creator DLC - CSLA...";
-                await RunServerUpdater(Parameters.InstallDirectory, appId, 233789, "creatordlc", null);
+                await RunServerUpdater(Parameters.ArmaInstallDirectory, appId, 233789, "creatordlc", null);
             }
 
             if (PFDLCChecked)
             {
                 Parameters.Output += "\nDownloading Arma 3 Server Creator DLC - SOGPF...";
-                await RunServerUpdater(Parameters.InstallDirectory, appId, 233790, "creatordlc", null);
+                await RunServerUpdater(Parameters.ArmaInstallDirectory, appId, 233790, "creatordlc", null);
             }
 
             if (WSDLCChecked)
             {
                 Parameters.Output += "\nDownloading Arma 3 Server Creator DLC - Western Sahara...";
-                await RunServerUpdater(Parameters.InstallDirectory, appId, 233786, "creatordlc", null);
+                await RunServerUpdater(Parameters.ArmaInstallDirectory, appId, 233786, "creatordlc", null);
             }
 
             Parameters.Output += "\n\nAll Done ! ";
@@ -172,12 +172,12 @@ namespace FASTER.ViewModel
 
         public void ServerDirClick()
         {
-            string path = MainWindow.Instance.SelectFolder(Parameters.InstallDirectory);
+            string path = MainWindow.Instance.SelectFolder(Parameters.ArmaInstallDirectory);
 
             if (path == null)
                 return;
 
-            Parameters.InstallDirectory = path;
+            Parameters.ArmaInstallDirectory = path;
         }
 
 
