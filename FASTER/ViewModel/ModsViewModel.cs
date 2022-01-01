@@ -7,7 +7,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Collections.Generic;
 using System.Xml;
 
 namespace FASTER.ViewModel
@@ -74,46 +73,52 @@ namespace FASTER.ViewModel
             if (string.IsNullOrEmpty(localPath))
                 return;
 
-            Random r = new Random();
-            var modID   = (uint) (uint.MaxValue - r.Next(ushort.MaxValue / 2));
-            var newPath = Path.Combine(Properties.Settings.Default.modStagingDirectory, modID.ToString());
-            var oldPath = localPath;
-            if (!Directory.Exists(newPath))
-                Directory.CreateDirectory(newPath);
-            if (Directory.Exists(oldPath))
-            {
-                var progress = await DialogCoordinator.ShowProgressAsync(this, "Local Mod", "Copying mod...");
-                var files = Directory.EnumerateFiles(oldPath, "*", SearchOption.AllDirectories).ToList();
-                progress.Maximum = files.Count;
-                await Task.Factory.StartNew(() =>
-                {
-                    foreach (var file in files)
-                    {
-                        var newFile = file.Replace(oldPath, newPath);
-                        if (!Directory.Exists(Path.GetDirectoryName(newFile)))
-                            Directory.CreateDirectory(Path.GetDirectoryName(newFile));
+            if (!Directory.Exists(localPath))
+                return;
 
-                        File.Copy(file, newFile, true);
-                        var progressDone = files.IndexOf(file);
-                        progress.SetMessage($"Copying mod from {oldPath}\n{progressDone} / {progress.Maximum}");
-                        progress.SetProgress(progressDone);
-                    }
-                });
-                
-                await progress.CloseAsync();
+            var oldPaths = new List<string>();
+            if (!Path.GetFileName(localPath).StartsWith("@") && Directory.GetDirectories(localPath).Where((file) => Path.GetFileName(file).StartsWith("@")).ToList().Count > 0)
+            {
+                oldPaths = Directory.GetDirectories(localPath).Where((file) => Path.GetFileName(file).StartsWith("@")).ToList();
+            }
+            else
+            {
+                oldPaths.Add(localPath);
             }
 
-            var newMod = new ArmaMod
+            var progress = await DialogCoordinator.ShowProgressAsync(this, "Local Mod", "Copying mod(s)...");
+            progress.Maximum = oldPaths.Count;
+            foreach (var oldPath in oldPaths.Where((path) => Directory.Exists(path)))
             {
-                WorkshopId = modID,
-                Name       = localPath.Substring(localPath.LastIndexOf("@", StringComparison.Ordinal) + 1),
-                Path       = newPath,
-                Author     = "Unknown",
-                IsLocal    = true,
-                Status     = ArmaModStatus.Local
-            };
+                uint modID = 0;
+                var existingIds = ModsCollection.ArmaMods.Select(mod => mod.WorkshopId);
+                while (modID == 0 || existingIds.Contains(modID))
+                {
+                    Random r = new();
+                    modID = (uint)(uint.MaxValue - r.Next(ushort.MaxValue / 2));
+                }
+                var newPath = Path.Combine(Properties.Settings.Default.modStagingDirectory, modID.ToString());
 
-            ModsCollection.AddSteamMod(newMod);
+                await Task.Factory.StartNew(() => {
+                    Directory.CreateSymbolicLink(newPath, oldPath);
+                    var progressDone = oldPaths.IndexOf(oldPath);
+                    progress.SetMessage($"Copying mod from {oldPath}\n{progressDone} / {progress.Maximum}");
+                    progress.SetProgress(progressDone);
+                });
+
+                var newMod = new ArmaMod
+                {
+                    WorkshopId = modID,
+                    Name = oldPath.Substring(oldPath.LastIndexOf("@", StringComparison.Ordinal) + 1),
+                    Path = newPath,
+                    Author = "Unknown",
+                    IsLocal = true,
+                    Status = ArmaModStatus.Local
+                };
+
+                ModsCollection.AddSteamMod(newMod);
+            }
+            await progress.CloseAsync();
         }
 
         internal void DeleteMod(ArmaMod mod)
@@ -128,10 +133,7 @@ namespace FASTER.ViewModel
             var copyArmaMods = new List<ArmaMod>(ModsCollection.ArmaMods);
             foreach (var mod in copyArmaMods)
             {
-                if (!mod.IsLocal)
-                {
-                    ModsCollection.DeleteSteamMod(mod.WorkshopId);
-                }
+                DeleteMod(mod);
             }
         }
         public void OpenModPage(ArmaMod mod)

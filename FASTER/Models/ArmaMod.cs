@@ -7,7 +7,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
-using FASTER.ViewModel;
 
 namespace FASTER.Models
 {
@@ -74,7 +73,8 @@ namespace FASTER.Models
                 
                 if (item != null)
                 {
-                    Directory.Delete(item.Path, true);
+                    if (Directory.Exists(item.Path))
+                        Directory.Delete(item.Path, true);
                     currentProfiles.ArmaMods.Remove(item);
                 }
                 
@@ -343,7 +343,8 @@ namespace FASTER.Models
 
         private static long GetDirectorySize(string p)
         {
-            string[] a = Directory.GetFiles(p, "*.*", SearchOption.AllDirectories);
+            var d = Directory.ResolveLinkTarget(p, true);
+            string[] a = Directory.GetFiles(d != null ? d.FullName : p, "*.*", SearchOption.AllDirectories);
             return a.Select(name => new FileInfo(name)).Select(info => info.Length).Sum();
         }
 
