@@ -9,18 +9,6 @@ namespace FASTER.Models
         private bool   _isUpdating;
         private double _progress;
 
-
-        public string SteamCmdInstallDirectory
-        {
-            get => Settings.Default.steamCMDPath;
-            set
-            {
-                Settings.Default.steamCMDPath = value;
-                Settings.Default.Save();
-                RaisePropertyChanged(nameof(SteamCmdInstallDirectory));
-            }
-        }
-
         public string Username
         {
             get => Settings.Default.steamUserName;
@@ -43,14 +31,14 @@ namespace FASTER.Models
             }
         }
 
-        public string ArmaInstallDirectory
+        public string InstallDirectory
         {
             get => Settings.Default.serverPath;
             set
             {
                 Settings.Default.serverPath = value;
                 Settings.Default.Save();
-                RaisePropertyChanged(nameof(ArmaInstallDirectory));
+                RaisePropertyChanged(nameof(InstallDirectory));
             }
         }
 
