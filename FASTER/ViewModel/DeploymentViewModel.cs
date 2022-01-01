@@ -206,17 +206,14 @@ namespace FASTER.ViewModel
         {
             try
             {
-                var linkCommand = "/c mklink /D \"" + linkPath + "\" \"" + mod.Path + "\"";
-
-                ProcessStartInfo startInfo = new("cmd.exe")
+                if (File.GetAttributes(mod.Path).HasFlag(FileAttributes.Directory))
                 {
-                    WindowStyle = ProcessWindowStyle.Hidden,
-                    Verb = "runas",
-                    CreateNoWindow = true,
-                    UseShellExecute = false,
-                    Arguments = linkCommand
-                };
-                Process.Start(startInfo);
+                    Directory.CreateSymbolicLink(linkPath, mod.Path);
+                }
+                else
+                {
+                    File.CreateSymbolicLink(linkPath, mod.Path);
+                }
             }
             catch (Exception ex)
             { DisplayMessage("An exception occurred: \n\n" + ex.Message); }
