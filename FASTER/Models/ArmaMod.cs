@@ -50,8 +50,6 @@ namespace FASTER.Models
 
             if (!duplicate)
             {
-                if (!Directory.Exists(newMod.Path))
-                    Directory.CreateDirectory(newMod.Path);
                 currentMods.ArmaMods.Add(newMod);
                 Properties.Settings.Default.armaMods = currentMods;
                 _ = Task.Run(() => ArmaMods.FirstOrDefault(m => m.WorkshopId == newMod.WorkshopId)?.UpdateInfos());
@@ -201,6 +199,7 @@ namespace FASTER.Models
             }
         }
 
+        [XmlIgnore]
         public bool IsLoading
         {
             get => _isLoading;
@@ -285,7 +284,7 @@ namespace FASTER.Models
             }
 
             
-            int  failNum = 0;
+            int failNum = 0;
             bool success = false;
             do
             {
@@ -350,7 +349,7 @@ namespace FASTER.Models
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private void RaisePropertyChanged(string property)
+        internal void RaisePropertyChanged(string property)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
         }
