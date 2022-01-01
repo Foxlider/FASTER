@@ -9,6 +9,18 @@ namespace FASTER.Models
         private bool   _isUpdating;
         private double _progress;
 
+
+        public string InstallDirectory
+        {
+            get => Settings.Default.serverPath;
+            set
+            {
+                Settings.Default.serverPath = value;
+                Settings.Default.Save();
+                RaisePropertyChanged(nameof(InstallDirectory));
+            }
+        }
+
         public string Username
         {
             get => Settings.Default.steamUserName;
@@ -28,17 +40,6 @@ namespace FASTER.Models
                 Settings.Default.steamPassword = value;
                 Settings.Default.Save();
                 RaisePropertyChanged(nameof(Password));
-            }
-        }
-
-        public string InstallDirectory
-        {
-            get => Settings.Default.serverPath;
-            set
-            {
-                Settings.Default.serverPath = value;
-                Settings.Default.Save();
-                RaisePropertyChanged(nameof(InstallDirectory));
             }
         }
 
