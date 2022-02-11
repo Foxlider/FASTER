@@ -391,7 +391,7 @@ namespace FASTER.ViewModel
 
             Parameters.Output += "\nAdding mods to download list...";
 
-            SemaphoreSlim maxThread = new(3);
+            SemaphoreSlim maxThread = new(1);
             var  ml = mods.Where(m => !m.IsLocal).ToList();
             uint finished = 0;
             IsDlOverride = true;
