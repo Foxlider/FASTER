@@ -84,7 +84,7 @@ namespace FASTER.ViewModel
             }
         }
 
-        private SteamClient _steamClient;
+        internal SteamClient SteamClient;
         private SteamContentClient _steamContentClient;
         private SteamCredentials   _steamCredentials;
 
@@ -226,7 +226,7 @@ namespace FASTER.ViewModel
             if (!await SteamLogin())
                 return UpdateState.LoginFailed;
 
-            var _OS = _steamClient?.GetSteamOs().Identifier;
+            var _OS = SteamClient?.GetSteamOs().Identifier;
             Stopwatch sw = Stopwatch.StartNew();
 
             foreach (var depot in depots)
@@ -266,7 +266,7 @@ namespace FASTER.ViewModel
             if (!await SteamLogin())
                 return UpdateState.LoginFailed; 
 
-            var _OS = _steamClient?.GetSteamOs().Identifier;
+            var _OS = SteamClient?.GetSteamOs().Identifier;
             try
             {
                 Stopwatch sw = Stopwatch.StartNew();
@@ -303,7 +303,7 @@ namespace FASTER.ViewModel
                 return UpdateState.Error;
             }
             finally
-            { _steamClient?.Shutdown(); }
+            { SteamClient?.Shutdown(); }
         }
 
         public async Task<int> RunModUpdater(ulong modId, string path)
@@ -312,6 +312,12 @@ namespace FASTER.ViewModel
 
             try
             {
+                if(SteamClient is {IsConnected: true})
+                {
+                    SteamClient.Shutdown();
+                    SteamClient.Dispose();
+                    SteamClient = null;
+                }
                 if (!await SteamLogin())
                     return UpdateState.LoginFailed;
             }
@@ -320,7 +326,7 @@ namespace FASTER.ViewModel
                 return UpdateState.LoginFailed;
             }
 
-            var _OS = _steamClient.GetSteamOs().Identifier;
+            var _OS = SteamClient.GetSteamOs().Identifier;
             Stopwatch sw = Stopwatch.StartNew();
 
             try
@@ -330,7 +336,7 @@ namespace FASTER.ViewModel
 
                 Parameters.Output += $"\nFetching mod {modId} infos... ";
 
-                if (!_steamClient.Credentials.IsAnonymous) //IS SYNC ENABLED
+                if (!SteamClient.Credentials.IsAnonymous) //IS SYNC ENABLED
                 {
                     manifestId = (await _steamContentClient.GetPublishedFileDetailsAsync(modId)).hcontent_file;
                     Manifest manifest = await _steamContentClient.GetManifestAsync(107410, 107410, manifestId);
@@ -352,20 +358,19 @@ namespace FASTER.ViewModel
             catch (TaskCanceledException)
             {
                 sw.Stop();
-                _steamClient?.Shutdown();
+                SteamClient?.Shutdown();
                 return UpdateState.Cancelled;
             }
             catch (Exception ex)
             {
                 sw.Stop();
                 Parameters.Output += $"\nError: {ex.Message}{(ex.InnerException != null ? $" Inner Exception: {ex.InnerException.Message}" : "")}";
-                _steamClient?.Shutdown();
+                SteamClient?.Shutdown();
                 return UpdateState.Error;
             }
 
             sw.Stop();
             Parameters.Output += $"\nDownload completed, it took {sw.Elapsed.Minutes + sw.Elapsed.Hours * 60}m {sw.Elapsed.Seconds}s {sw.Elapsed.Milliseconds}ms";
-            _steamClient?.Shutdown();
             return UpdateState.Success;
         }
 
@@ -380,7 +385,7 @@ namespace FASTER.ViewModel
                 return UpdateState.LoginFailed;
             }
 
-            var _OS = _steamClient.GetSteamOs().Identifier;
+            var _OS = SteamClient.GetSteamOs().Identifier;
 
             Parameters.Output += "\nAdding mods to download list...";
 
@@ -418,7 +423,7 @@ namespace FASTER.ViewModel
                             return;
                         }
 
-                        if (!_steamClient.Credentials.IsAnonymous) //IS SYNC NEABLED
+                        if (!SteamClient.Credentials.IsAnonymous) //IS SYNC NEABLED
                         {
                             Parameters.Output += $"\n   Getting manifest for {mod.WorkshopId}";
                             manifestId = _steamContentClient.GetPublishedFileDetailsAsync(mod.WorkshopId).Result.hcontent_file;
@@ -470,7 +475,7 @@ namespace FASTER.ViewModel
             await maxThread.WaitAsync();
 
             
-            _steamClient?.Shutdown();
+            SteamClient?.Shutdown();
             Parameters.Output += "\nMods updated !";
             IsDlOverride = false;
             return UpdateState.Success;
@@ -485,23 +490,23 @@ namespace FASTER.ViewModel
             if (_steamCredentials == null || _steamCredentials.IsAnonymous)
                 _steamCredentials = new SteamCredentials(Parameters.Username, Encryption.Instance.DecryptData(Parameters.Password), Parameters.ApiKey);
 
-            _steamClient ??= new SteamClient(_steamCredentials, new AuthCodeProvider(), sentryFileProvider);
+            SteamClient ??= new SteamClient(_steamCredentials, new AuthCodeProvider(), sentryFileProvider);
 
-            if (!_steamClient.IsConnected || _steamClient.IsFaulted)
+            if (!SteamClient.IsConnected || SteamClient.IsFaulted)
             {
                 Parameters.Output += $"\nConnecting to Steam as {(_steamCredentials.IsAnonymous ? "anonymous" : _steamCredentials.Username)}";
-                _steamClient.MaximumLogonAttempts = 5;
+                SteamClient.MaximumLogonAttempts = 5;
                 try
-                { await _steamClient.ConnectAsync(); }
+                { await SteamClient.ConnectAsync(); }
                 catch (Exception ex)
                 {
                     Parameters.Output += $"\nFailed! Error: {ex.Message}";
-                    _steamClient.Shutdown();
+                    SteamClient.Shutdown();
 
                     if (ex.GetBaseException() is SteamLogonException { Result: SteamKit2.EResult.InvalidPassword } logonEx)
                     {
                         Parameters.Output += "\nWarning: The logon may have failed due to expired sentry-data."
-                                             + $"\nIf you are sure that the provided username and password are correct, consider deleting the .bin and .key file for the user \"{_steamClient.Credentials.Username}\" in the sentries directory."
+                                             + $"\nIf you are sure that the provided username and password are correct, consider deleting the .bin and .key file for the user \"{SteamClient.Credentials.Username}\" in the sentries directory."
                                              + $"{path}";
                     }
                     IsLoggingIn = false;
@@ -509,9 +514,9 @@ namespace FASTER.ViewModel
                 }
             }
             
-            _steamContentClient ??= new SteamContentClient(_steamClient);
+            _steamContentClient = new SteamContentClient(SteamClient);
             IsLoggingIn = false;
-            return _steamClient.IsConnected;
+            return SteamClient.IsConnected;
         }
 
         private void SyncDeleteRemovedFiles(string targetDir, Manifest manifest)
@@ -534,6 +539,7 @@ namespace FASTER.ViewModel
         private async Task Download(IDownloadHandler downloadHandler, string targetDir)
         {
             ulong downloadedSize = 0;
+            downloadHandler.FileVerified          += (sender, args) => Parameters.Output += $"{(args.RequiresDownload ? $"\nFile verified : {args.ManifestFile.FileName} ({Functions.ParseFileSize(args.ManifestFile.TotalSize)})" : "")}";
             downloadHandler.VerificationCompleted += (sender, args) => Parameters.Output += $"\nVerification completed, {args.QueuedFiles.Count} files queued for download. ({args.QueuedFiles.Sum(f => (double)f.TotalSize)} bytes)";
             downloadHandler.FileDownloaded        += (sender, args) =>
                                                      {
@@ -597,6 +603,7 @@ namespace FASTER.ViewModel
 
             tokenSource.Token.ThrowIfCancellationRequested();
             ulong downloadedSize = 0;
+            downloadHandler.FileVerified          += (sender, args) => Parameters.Output += $"{(args.RequiresDownload ? $"\n    File verified : {args.ManifestFile.FileName} ({Functions.ParseFileSize(args.ManifestFile.TotalSize)})" : "")}";
             downloadHandler.VerificationCompleted += (sender, args) => Parameters.Output += $"\n    Verification completed, {args.QueuedFiles.Count} files queued for download. ({args.QueuedFiles.Sum(f => (double)f.TotalSize)} bytes)";
             downloadHandler.FileDownloaded        += (sender, args) =>
                                                      {

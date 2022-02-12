@@ -159,6 +159,8 @@ namespace FASTER
         private void MetroWindow_Closing(object sender, CancelEventArgs e)
         {
             Properties.Settings.Default.Save();
+            SteamUpdaterViewModel.Instance.SteamClient.Shutdown();
+            SteamUpdaterViewModel.Instance.SteamClient.Dispose();
             Application.Current.Shutdown();
         }
 
