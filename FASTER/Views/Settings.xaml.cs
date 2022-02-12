@@ -1,19 +1,17 @@
 ﻿using AutoUpdaterDotNET;
 
+using ControlzEx.Theming;
+
 using FASTER.Models;
 
-using Microsoft.AppCenter.Crashes;
-
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using ControlzEx.Theming;
-using Application = System.Windows.Application;
-using CheckBox = System.Windows.Controls.CheckBox;
-using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using System.Windows.Media;
+
+using Application = System.Windows.Application;
+using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 
 namespace FASTER.Views
 {
@@ -125,34 +123,6 @@ namespace FASTER.Views
             IModUpdatesOnLaunch.IsChecked = Properties.Settings.Default?.checkForModUpdates;
             IAppUpdatesOnLaunch.IsChecked = Properties.Settings.Default?.checkForAppUpdates;
             IAPIKeyBox.Text = Properties.Settings.Default?.SteamAPIKey ?? string.Empty;
-            UpdateLocalModFolders();
-        }
-        
-        private void INewLocalFolder_Click(object sender, RoutedEventArgs e)
-        {
-            string newModFolder = MainWindow.Instance.SelectFolder();
-
-            if (!string.IsNullOrEmpty(newModFolder))
-            {
-                Properties.Settings.Default.localModFolders ??= new List<string>();
-
-                Properties.Settings.Default.localModFolders.Add(newModFolder);
-                Properties.Settings.Default.Save();
-            }
-            UpdateLocalModFolders();
-        }
-
-        private void IRemoveLocalFolders_Click(object sender, RoutedEventArgs e)
-        {
-            foreach (var item in ILocalModFolders.Items)
-            {
-                var cb = item as CheckBox;
-                if (!(cb?.IsChecked ?? false)) continue;
-
-                Properties.Settings.Default.localModFolders.Remove(cb.Content.ToString());
-                Properties.Settings.Default.Save();
-            }
-            UpdateLocalModFolders();
         }
         
         private void IModUpdatesOnLaunch_Checked(object sender, RoutedEventArgs e)
@@ -165,22 +135,6 @@ namespace FASTER.Views
         {
             Properties.Settings.Default.checkForAppUpdates = IAppUpdatesOnLaunch.IsChecked ?? true;
             Properties.Settings.Default.Save();
-        }
-
-        private void UpdateLocalModFolders()
-        {
-            try
-            {
-                ILocalModFolders.Items.Clear();
-
-                if (!(Properties.Settings.Default?.localModFolders.Count > 0)) return;
-
-                foreach (var cb in from folder in Properties.Settings.Default?.localModFolders 
-                                   select new CheckBox { Content = folder, IsChecked = false }) 
-                { ILocalModFolders.Items.Add(cb); }
-            }
-            catch (Exception e)
-            { Crashes.TrackError(e, new Dictionary<string, string> { { "Name", Properties.Settings.Default?.steamUserName } }); }
         }
 
         private void IUpdateApp_OnClick(object sender, RoutedEventArgs e)
