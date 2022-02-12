@@ -122,7 +122,6 @@ namespace FASTER.ViewModel
                 depotsList.FirstOrDefault(d => d.Name == "Arma 3 Alpha Dedicated Server Content (internal)")!.Id.Id, 
                 ContactDLCChecked ? "contact" : "public", 
                 null));
-            //await RunServerUpdater(Parameters.InstallDirectory, appId, 233781, ContactDLCChecked? "contact" : "public", null);
 
             Parameters.Output += "\nChecking Executables...";
             //Either downloading depot 233782 fow Windows from branch public or 233784 for windows in branch profiling
@@ -131,13 +130,11 @@ namespace FASTER.ViewModel
                     depotsList.FirstOrDefault(d => d.Name == "Arma 3 Server Profiling - WINDOWS Depot")!.Id.Id,
                     "profiling",
                     "CautionSpecialProfilingAndTestingBranchArma3"));
-            //await RunServerUpdater(Parameters.InstallDirectory, appId, 233784, "profiling", "CautionSpecialProfilingAndTestingBranchArma3");
             else
                 depotsDownload.Add((
                     depotsList.FirstOrDefault(d => d.Name == "Arma 3 Alpha Dedicated Server binary Windows (internal)")!.Id.Id,
                     "public",
                     null));
-            //await RunServerUpdater(Parameters.InstallDirectory, appId, 233782, "public", null);
 
             //Downloading mods
             if (GMDLCChecked)
@@ -147,7 +144,6 @@ namespace FASTER.ViewModel
                     depotsList.FirstOrDefault(d => d.Name == "Arma 3 Server Creator DLC - GM")!.Id.Id,
                     "creatordlc",
                     null));
-                //await RunServerUpdater(Parameters.InstallDirectory, appId, 233787, "creatordlc", null);
             }
 
             if (CLSADLCChecked)
@@ -157,7 +153,6 @@ namespace FASTER.ViewModel
                     depotsList.FirstOrDefault(d => d.Name == "Arma 3 Server Creator DLC - CSLA")!.Id.Id,
                     "creatordlc",
                     null));
-                //await RunServerUpdater(Parameters.InstallDirectory, appId, 233789, "creatordlc", null);
             }
 
             if (PFDLCChecked)
@@ -167,7 +162,6 @@ namespace FASTER.ViewModel
                     depotsList.FirstOrDefault(d => d.Name == "Arma 3 Server Creator DLC - SOGPF")!.Id.Id,
                     "creatordlc",
                     null));
-                //await RunServerUpdater(Parameters.InstallDirectory, appId, 233790, "creatordlc", null);
             }
 
             if (WSDLCChecked)
@@ -177,7 +171,6 @@ namespace FASTER.ViewModel
                     depotsList.FirstOrDefault(d => d.Name == "Arma 3 Server Creator DLC - WS")!.Id.Id,
                     "creatordlc",
                     null));
-                //await RunServerUpdater(Parameters.InstallDirectory, appId, 233786, "creatordlc", null);
             }
 
             await RunServerUpdater(Parameters.InstallDirectory, appId, depotsDownload);
@@ -520,48 +513,6 @@ namespace FASTER.ViewModel
             IsLoggingIn = false;
             return _steamClient.IsConnected;
         }
-
-        //private async Task<bool> SteamLogin()
-        //{
-        //    IsLoggingIn = true;
-        //    SteamAuthenticationFilesProvider sentryFileProvider = new DirectorySteamAuthenticationFilesProvider(".\\sentries");
-
-        //    if (string.IsNullOrEmpty(Parameters.Username)
-        //     || Parameters.Username == "anonymous"
-        //     || string.IsNullOrEmpty(Parameters.Password)
-        //     || string.IsNullOrEmpty(Encryption.Instance.DecryptData(Parameters.Password)))
-        //    { _steamCredentials = SteamCredentials.Anonymous; }
-        //    else
-        //    { _steamCredentials = new SteamCredentials(Parameters.Username, Encryption.Instance.DecryptData(Parameters.Password), Parameters.ApiKey); }
-
-        //    _steamClient        = new SteamClient(_steamCredentials, new AuthCodeProvider(), sentryFileProvider);
-        //    _steamContentClient = new SteamContentClient(_steamClient);
-
-        //    Parameters.Output += $"\nConnecting to Steam as {(_steamCredentials.IsAnonymous ? "anonymous" : _steamCredentials.Username)}";
-
-        //    try
-        //    { await _steamClient.ConnectAsync(tokenSource.Token); }
-        //    catch (Exception ex)
-        //    {
-                
-        //        Parameters.Output += $"\nFailed! Error: {ex.Message}";
-        //        _steamClient.Shutdown();
-
-        //        if (ex.GetBaseException() is SteamLogonException {Result: SteamKit2.EResult.InvalidPassword} logonEx)
-        //        {
-        //            Parameters.Output += "\nWarning: The logon may have failed due to expired sentry-data." 
-        //                               + $"\nIf you are sure that the provided username and password are correct, consider deleting the .bin and .key file for the user \"{_steamClient.Credentials.Username}\" in the sentries directory."
-        //                               + $"{AppDomain.CurrentDomain.BaseDirectory}\\sentries";
-        //        }
-        //        IsLoggingIn = false;
-        //        return false;
-        //    }
-
-        //    Parameters.Output += "\nOK.";
-        //    IsLoggingIn = false;
-        //    return _steamClient.IsConnected;
-        //}
-
 
         private void SyncDeleteRemovedFiles(string targetDir, Manifest manifest)
         {

@@ -169,7 +169,7 @@ namespace FASTER
             list.AddRange(IServerProfilesMenu.Items.Cast<ToggleButton>().Where(i => i.IsChecked == true));
             list.AddRange(IOtherMenuItems.Items.Cast<ToggleButton>().Where(i => i.IsChecked == true));
 
-            if (!(sender is ToggleButton nav) || !NavEnabled) return;
+            if (sender is not ToggleButton nav || !NavEnabled) return;
 
             //Don't navigate if same menu is clicked
             if (nav == lastNavButton) return;
