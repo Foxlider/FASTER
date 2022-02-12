@@ -11,6 +11,7 @@
     mc:Ignorable="d"
     
     GlowBrush="Black"
+    AllowsTransparency="False"
     BorderThickness="0" 
     ResizeMode="CanResizeWithGrip"
     
