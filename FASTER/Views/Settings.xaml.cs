@@ -1,5 +1,7 @@
 ﻿using AutoUpdaterDotNET;
 
+using BytexDigital.Steam.ContentDelivery;
+
 using ControlzEx.Theming;
 
 using FASTER.Models;
@@ -21,7 +23,9 @@ namespace FASTER.Views
     public partial class Settings
     {
         UpdateInfoEventArgs _args;
-        public MainWindow MetroWindow;
+
+        private MainWindow MetroWindow { get; set; }
+
 
         public Settings(MainWindow main)
         {
@@ -36,6 +40,8 @@ namespace FASTER.Views
             fontPicker.ItemsSource = Fonts.SystemFontFamilies;
             fontPicker.DisplayMemberPath = "Source";
             fontPicker.SelectedItem = Fonts.SystemFontFamilies.FirstOrDefault(t => t.Source == Properties.Settings.Default.font);
+            
+            Slider.Value = Properties.Settings.Default.CliWorkers;
         }
 
         private void IUpdateBtnOK_Click(object sender, RoutedEventArgs e)
@@ -123,6 +129,7 @@ namespace FASTER.Views
             IModUpdatesOnLaunch.IsChecked = Properties.Settings.Default?.checkForModUpdates;
             IAppUpdatesOnLaunch.IsChecked = Properties.Settings.Default?.checkForAppUpdates;
             IAPIKeyBox.Text = Properties.Settings.Default?.SteamAPIKey ?? string.Empty;
+            Slider.Value = Properties.Settings.Default.CliWorkers;
         }
         
         private void IModUpdatesOnLaunch_Checked(object sender, RoutedEventArgs e)
@@ -170,7 +177,7 @@ namespace FASTER.Views
 
         private void Colors_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-            if(!(e.AddedItems[0] is Theme theme))
+            if(e.AddedItems[0] is not Theme theme)
                 return;
             ThemeManager.Current.ThemeSyncMode = ThemeSyncMode.SyncAll;
             ThemeManager.Current.ChangeTheme(Application.Current, theme);
@@ -181,13 +188,21 @@ namespace FASTER.Views
 
         private void Fonts_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-            if (!(e.AddedItems[0] is FontFamily font))
+            if (e.AddedItems[0] is not FontFamily font)
                 return;
 
             MetroWindow.FontFamily = font;
 
             Properties.Settings.Default.font = font.Source;
             Properties.Settings.Default.Save();
+        }
+
+        private void RangeBase_OnValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            Properties.Settings.Default.CliWorkers = Convert.ToUInt16(e.NewValue);
+            NumericUpDown.Value = e.NewValue;
+            if (MainWindow.Instance.SteamUpdaterViewModel.SteamContentClient != null)
+                MainWindow.Instance.SteamUpdaterViewModel.SteamContentClient = new SteamContentClient(MainWindow.Instance.SteamUpdaterViewModel.SteamClient, Properties.Settings.Default.CliWorkers);
         }
     }
 }

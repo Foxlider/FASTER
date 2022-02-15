@@ -65,5 +65,8 @@
     <Setting Name="Deployments" Type="FASTER.Models.ArmaDeployment" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="CliWorkers" Type="System.UInt16" Scope="User">
+      <Value Profile="(Default)">10</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

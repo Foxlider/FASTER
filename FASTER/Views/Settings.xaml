@@ -38,6 +38,7 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition/>
                 </Grid.RowDefinitions>
                 <StackPanel Grid.ColumnSpan="10">
@@ -45,11 +46,20 @@
                     <Separator/>
                 </StackPanel>
 
-                
+
                 <CheckBox Name="IModUpdatesOnLaunch" Grid.ColumnSpan="2" Grid.Row="1" Grid.Column="0" Content="Check for Steam Mod Updates on Launch" Click="IModUpdatesOnLaunch_Checked" IsChecked="True" Margin="10,0,10,10"/>
                 <CheckBox Name="IAppUpdatesOnLaunch" Grid.ColumnSpan="2" Grid.Row="2" Grid.Column="0" Content="Auto Update FASTER on Launch" Click="IAppUpdatesOnLaunch_Checked" IsChecked="False" Margin="10,0,10,10"/>
 
-                <Grid Grid.Row="3" Grid.ColumnSpan="2" Grid.Column="0" Margin="5,10">
+                <Grid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="10,20">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <controls:NumericUpDown Name="NumericUpDown" Margin="0,0,10,0" Grid.Column="0" IsReadOnly="True" HorizontalAlignment="Left" Style="{StaticResource MahApps.Styles.NumericUpDown.DataGrid}" controls:TextBoxHelper.Watermark="Updater Worker Count" controls:TextBoxHelper.UseFloatingWatermark="True"/>
+                    <Slider Name="Slider" Grid.Column="1" IsSnapToTickEnabled="True" Minimum="0" Maximum="25" SmallChange="1" LargeChange="0" ValueChanged="RangeBase_OnValueChanged"/>
+                </Grid>
+
+                <Grid Grid.Row="4" Grid.ColumnSpan="2" Grid.Column="0" Margin="5,10">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
                         <ColumnDefinition Width="auto"/>
@@ -58,7 +68,7 @@
                     <Button Grid.Column="1" Name="IAPIKeyButton" Content="{iconPacks:Material Kind=Web}" Style="{DynamicResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" VerticalAlignment="Stretch" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" Margin="5" Padding="2" Click="APIKeyButton_Click"/>
                 </Grid>
 
-                <Grid Grid.Row="4" Grid.ColumnSpan="4" Grid.Column="0">
+                <Grid Grid.Row="5" Grid.ColumnSpan="4" Grid.Column="0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
                         <ColumnDefinition/>

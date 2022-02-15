@@ -85,7 +85,7 @@ namespace FASTER.ViewModel
         }
 
         internal SteamClient SteamClient;
-        private SteamContentClient _steamContentClient;
+        internal SteamContentClient SteamContentClient;
         private SteamCredentials   _steamCredentials;
 
         public void PasswordChanged(string password)
@@ -183,7 +183,7 @@ namespace FASTER.ViewModel
             if (!await SteamLogin())
                 return null;
             
-            return await _steamContentClient.GetDepotsAsync(appId);
+            return await SteamContentClient.GetDepotsAsync(appId);
         }
 
         public void UpdateCancelClick()
@@ -236,10 +236,10 @@ namespace FASTER.ViewModel
                     SteamOs steamOs = new(_OS);
                     ManifestId manifestId;
 
-                    manifestId = await _steamContentClient.GetDepotDefaultManifestIdAsync(appId, depot.id, depot.branch, depot.pass);
+                    manifestId = await SteamContentClient.GetDepotDefaultManifestIdAsync(appId, depot.id, depot.branch, depot.pass);
 
                     Parameters.Output += $"\nAttempting to start download of app {appId}, depot {depot.id}  ({depots.IndexOf(depot)+1}/{depots.Count})... ";
-                    var downloadHandler = await _steamContentClient.GetAppDataAsync(appId, depot.id, manifestId, depot.branch, depot.pass, steamOs);
+                    var downloadHandler = await SteamContentClient.GetAppDataAsync(appId, depot.id, manifestId, depot.branch, depot.pass, steamOs);
                     await Download(downloadHandler, path);
                 }
                 catch (Exception ex)
@@ -276,11 +276,11 @@ namespace FASTER.ViewModel
                     SteamOs steamOs      = new(_OS);
                     ManifestId manifestId;
 
-                    manifestId = await _steamContentClient.GetDepotDefaultManifestIdAsync(appId, depotId, branch, branchPass);
+                    manifestId = await SteamContentClient.GetDepotDefaultManifestIdAsync(appId, depotId, branch, branchPass);
 
                     Parameters.Output += $"\nAttempting to start download of app {appId}, depot {depotId}... ";
 
-                    var downloadHandler = await _steamContentClient.GetAppDataAsync(appId, depotId, manifestId,branch, branchPass, steamOs);
+                    var downloadHandler = await SteamContentClient.GetAppDataAsync(appId, depotId, manifestId,branch, branchPass, steamOs);
 
                     await Download(downloadHandler, path);
                 }
@@ -338,15 +338,15 @@ namespace FASTER.ViewModel
 
                 if (!SteamClient.Credentials.IsAnonymous) //IS SYNC ENABLED
                 {
-                    manifestId = (await _steamContentClient.GetPublishedFileDetailsAsync(modId)).hcontent_file;
-                    Manifest manifest = await _steamContentClient.GetManifestAsync(107410, 107410, manifestId);
+                    manifestId = (await SteamContentClient.GetPublishedFileDetailsAsync(modId)).hcontent_file;
+                    Manifest manifest = await SteamContentClient.GetManifestAsync(107410, 107410, manifestId);
 
                     SyncDeleteRemovedFiles(path, manifest);
                 }
 
                 Parameters.Output += $"\nAttempting to start download of item {modId}... ";
 
-                var downloadHandler = await _steamContentClient.GetPublishedFileDataAsync(
+                var downloadHandler = await SteamContentClient.GetPublishedFileDataAsync(
                                                                                           modId,
                                                                                           manifestId,
                                                                                           null,
@@ -426,15 +426,15 @@ namespace FASTER.ViewModel
                         if (!SteamClient.Credentials.IsAnonymous) //IS SYNC NEABLED
                         {
                             Parameters.Output += $"\n   Getting manifest for {mod.WorkshopId}";
-                            manifestId = _steamContentClient.GetPublishedFileDetailsAsync(mod.WorkshopId).Result.hcontent_file;
-                            Manifest manifest = _steamContentClient.GetManifestAsync(107410, 107410, manifestId).Result;
+                            manifestId = SteamContentClient.GetPublishedFileDetailsAsync(mod.WorkshopId).Result.hcontent_file;
+                            Manifest manifest = SteamContentClient.GetManifestAsync(107410, 107410, manifestId).Result;
                             Parameters.Output += $"\n   Manifest retrieved {mod.WorkshopId}";
                             SyncDeleteRemovedFiles(mod.Path, manifest);
                         }
 
                         Parameters.Output += $"\n    Attempting to start download of item {mod.WorkshopId}... ";
 
-                        var downloadHandler = _steamContentClient.GetPublishedFileDataAsync(mod.WorkshopId,
+                        var downloadHandler = SteamContentClient.GetPublishedFileDataAsync(mod.WorkshopId,
                                                                                             manifestId,
                                                                                             null,
                                                                                             null,
@@ -514,7 +514,7 @@ namespace FASTER.ViewModel
                 }
             }
             
-            _steamContentClient = new SteamContentClient(SteamClient);
+            SteamContentClient = new SteamContentClient(SteamClient, Properties.Settings.Default.CliWorkers);
             IsLoggingIn = false;
             return SteamClient.IsConnected;
         }
