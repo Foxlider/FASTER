@@ -303,7 +303,11 @@ namespace FASTER.ViewModel
                 return UpdateState.Error;
             }
             finally
-            { SteamClient?.Shutdown(); }
+            {
+                SteamClient?.Shutdown();
+                SteamClient?.Dispose();
+                SteamClient = null;
+            }
         }
 
         public async Task<int> RunModUpdater(ulong modId, string path)
@@ -314,8 +318,8 @@ namespace FASTER.ViewModel
             {
                 if(SteamClient is {IsConnected: true})
                 {
-                    SteamClient.Shutdown();
-                    SteamClient.Dispose();
+                    SteamClient?.Shutdown();
+                    SteamClient?.Dispose();
                     SteamClient = null;
                 }
                 if (!await SteamLogin())
@@ -358,14 +362,18 @@ namespace FASTER.ViewModel
             catch (TaskCanceledException)
             {
                 sw.Stop();
-                SteamClient?.Shutdown();
+                SteamClient.Shutdown();
+                SteamClient.Dispose();
+                SteamClient = null;
                 return UpdateState.Cancelled;
             }
             catch (Exception ex)
             {
                 sw.Stop();
                 Parameters.Output += $"\nError: {ex.Message}{(ex.InnerException != null ? $" Inner Exception: {ex.InnerException.Message}" : "")}";
-                SteamClient?.Shutdown();
+                SteamClient.Shutdown();
+                SteamClient.Dispose();
+                SteamClient = null;
                 return UpdateState.Error;
             }
 
@@ -474,8 +482,10 @@ namespace FASTER.ViewModel
             Parameters.Output += "\nAlmost there...";
             await maxThread.WaitAsync();
 
-            
-            SteamClient?.Shutdown();
+
+            SteamClient.Shutdown();
+            SteamClient.Dispose();
+            SteamClient = null;
             Parameters.Output += "\nMods updated !";
             IsDlOverride = false;
             return UpdateState.Success;
@@ -486,7 +496,6 @@ namespace FASTER.ViewModel
             IsLoggingIn = true;
             var path = Path.Combine(Path.GetDirectoryName(ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal).FilePath), "sentries");
             SteamAuthenticationFilesProvider sentryFileProvider = new DirectorySteamAuthenticationFilesProvider(path);
-
             if (_steamCredentials == null || _steamCredentials.IsAnonymous)
                 _steamCredentials = new SteamCredentials(Parameters.Username, Encryption.Instance.DecryptData(Parameters.Password), Parameters.ApiKey);
 
@@ -502,6 +511,8 @@ namespace FASTER.ViewModel
                 {
                     Parameters.Output += $"\nFailed! Error: {ex.Message}";
                     SteamClient.Shutdown();
+                    SteamClient.Dispose();
+                    SteamClient = null;
 
                     if (ex.GetBaseException() is SteamLogonException { Result: SteamKit2.EResult.InvalidPassword } logonEx)
                     {
@@ -551,7 +562,7 @@ namespace FASTER.ViewModel
 
             if (tokenSource.IsCancellationRequested)
                 tokenSource = new CancellationTokenSource();
-
+            
             Task downloadTask = downloadHandler.DownloadToFolderAsync(targetDir, tokenSource.Token);
             
 
@@ -575,8 +586,10 @@ namespace FASTER.ViewModel
 
             if (downloadTask.IsCanceled)
             {
+                
                 Parameters.Output += "\nTask Cancelled";
                 Parameters.Progress = 0;
+                await downloadHandler.DisposeAsync();
                 DownloadTasks.Remove(downloadTask);
                 return;
             }
@@ -592,6 +605,7 @@ namespace FASTER.ViewModel
             finally
             {
                 DownloadTasks.Remove(downloadTask);
+                await downloadHandler.DisposeAsync();
                 downloadTask.Dispose();
             }
         }
@@ -634,6 +648,7 @@ namespace FASTER.ViewModel
             {
                 Parameters.Output += "\n    Task Cancelled";
                 DownloadTasks.Remove(downloadTask);
+                await downloadHandler.DisposeAsync();
                 return;
             }
 
@@ -647,6 +662,7 @@ namespace FASTER.ViewModel
             finally
             {
                 DownloadTasks.Remove(downloadTask);
+                await downloadHandler.DisposeAsync();
                 downloadTask.Dispose();
             }
         }
