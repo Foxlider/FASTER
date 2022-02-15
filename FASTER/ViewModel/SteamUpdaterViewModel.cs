@@ -114,6 +114,13 @@ namespace FASTER.ViewModel
             uint appId = 233780;
 
             IReadOnlyList<Depot> depotsList = await GetAppDepots(appId);
+            
+            if(depotsList.Count == 0)
+            {
+                Parameters.Output += "\n\n /!\\ Could not retrieve depots list. PLease retry later or check your internet connection\nAlternatively, clear the sentry folder and try again.";
+                return;
+            }
+            
             List<(uint id, string branch, string pass)> depotsDownload = new();
 
             Parameters.Output += "\nChecking Shared Content...";
@@ -252,62 +259,6 @@ namespace FASTER.ViewModel
             Parameters.Output += $"\nDone in {sw.Elapsed.Hours}h {sw.Elapsed.Minutes}m {sw.Elapsed.Seconds}s {sw.Elapsed.Milliseconds}ms";
 
             return 0;
-        }
-
-        public async Task<int> RunServerUpdater(string path, uint appId, uint depotId, string branch, string branchPass)
-        {
-            if (string.IsNullOrWhiteSpace(path))
-                return UpdateState.Cancelled;
-
-            if (!Directory.Exists(path))
-                Directory.CreateDirectory(path);
-            tokenSource = new CancellationTokenSource();
-
-            if (!await SteamLogin())
-                return UpdateState.LoginFailed; 
-
-            var _OS = SteamClient?.GetSteamOs().Identifier;
-            try
-            {
-                Stopwatch sw = Stopwatch.StartNew();
-
-                try
-                {
-                    SteamOs steamOs      = new(_OS);
-                    ManifestId manifestId;
-
-                    manifestId = await SteamContentClient.GetDepotDefaultManifestIdAsync(appId, depotId, branch, branchPass);
-
-                    Parameters.Output += $"\nAttempting to start download of app {appId}, depot {depotId}... ";
-
-                    var downloadHandler = await SteamContentClient.GetAppDataAsync(appId, depotId, manifestId,branch, branchPass, steamOs);
-
-                    await Download(downloadHandler, path);
-                }
-                catch (Exception ex)
-                {
-                    Parameters.Output += $"\nError: {ex.Message}{(ex.InnerException != null ? $" Inner Exception: {ex.InnerException.Message}" : "")}";
-                    return UpdateState.Error;
-                } 
-                
-                sw.Stop(); 
-                Parameters.Output += $"\nDone in {sw.Elapsed.Hours}h {sw.Elapsed.Minutes}m {sw.Elapsed.Seconds}s {sw.Elapsed.Milliseconds}ms";
-
-                return UpdateState.Success;
-            }
-            catch (TaskCanceledException)
-            { return UpdateState.Cancelled; }
-            catch (Exception ex)
-            {
-                Parameters.Output += $"\nDownload failed: {ex.Message}";
-                return UpdateState.Error;
-            }
-            finally
-            {
-                SteamClient?.Shutdown();
-                SteamClient?.Dispose();
-                SteamClient = null;
-            }
         }
 
         public async Task<int> RunModUpdater(ulong modId, string path)
