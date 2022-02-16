@@ -209,7 +209,7 @@ namespace FASTER.ViewModel
                 if(Directory.Exists(linkPath))
                     Directory.Delete(linkPath, true);
 
-                Directory.CreateSymbolicLink(linkPath, mod.Path);
+                Directory.CreateSymbolicLink(linkPath ?? throw new ArgumentNullException(nameof(linkPath)), mod.Path);
             }
             catch (Exception ex)
             { DisplayMessage("An exception occurred: \n\n" + ex.Message); }

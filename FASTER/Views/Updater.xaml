@@ -11,6 +11,10 @@
              mc:Ignorable="d"
              mah:DialogParticipation.Register="{Binding}"
              d:DesignHeight="650" d:DesignWidth="800">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <models:NotBooleanToVisibilityConverter x:Key="NotBooleanToVisibilityConverter"/>
+    </UserControl.Resources>
     <UserControl.DataContext>
         <viewModel:SteamUpdaterViewModel />
     </UserControl.DataContext>
@@ -141,6 +145,30 @@
                     <Label Margin="2" Content="Console Output"/>
                     <Separator/>
                 </StackPanel>
+                <Grid Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right" Margin="10,5">
+                    <Grid.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Connect Client" Click="ClientConnect_OnClick" Visibility="{Binding UpdaterOnline, Converter={StaticResource NotBooleanToVisibilityConverter}}" >
+                                <MenuItem.Icon>
+                                    <iconPacks:PackIconModern Kind="Connect" Margin="5" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="Disconnect Client" Click="ClientReset_OnClick" Visibility="{Binding UpdaterOnline, Converter={StaticResource BooleanToVisibilityConverter}}" >
+                                <MenuItem.Icon>
+                                    <iconPacks:PackIconModern Kind="Disconnect" Margin="5" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="Reset Client" Click="ClientReset_OnClick" Visibility="{Binding UpdaterFaulted, Converter={StaticResource BooleanToVisibilityConverter}}" >
+                                <MenuItem.Icon>
+                                    <iconPacks:PackIconModern Kind="Reset" Margin="5" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                        </ContextMenu>
+                    </Grid.ContextMenu>
+                    <Ellipse Width="20" Height="20" ToolTip="Updater Offline" Fill="{Binding Mode=OneWay, Source={StaticResource MahApps.Brushes.Gray8}}" Stroke="{StaticResource MahApps.Brushes.Gray}" Visibility="{Binding UpdaterOnline, Converter={StaticResource NotBooleanToVisibilityConverter}}" />
+                    <Ellipse Width="20" Height="20" ToolTip="Updater Online" Fill="#FF00CC6A" Stroke="#FF10893E" Visibility="{Binding UpdaterOnline, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    <Ellipse Width="20" Height="20" ToolTip="Updater Faulted" Fill="#E81123" Stroke="#D13438" Visibility="{Binding UpdaterFaulted, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                </Grid>
                 <TextBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" IsReadOnly="True" Text="{Binding Parameters.Output}" models:TextBoxUtilities.AlwaysScrollToEnd="True" TextWrapping="Wrap" Background="{StaticResource MahApps.Brushes.Gray10}" Margin="10,10,10,0" VerticalScrollBarVisibility="Visible">
                     <TextBox.Effect>
                         <DropShadowEffect BlurRadius="5" RenderingBias="Performance" ShadowDepth="1"/>

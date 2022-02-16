@@ -28,7 +28,7 @@ namespace FASTER.Views
             "for supporting FASTER !"
         };
 
-        private readonly Random r = new Random();
+        private readonly Random r = new();
 
         public About()
         {

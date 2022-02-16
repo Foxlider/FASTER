@@ -25,7 +25,7 @@ namespace FASTER.Views
         }
         private async void Update_Click(object sender, RoutedEventArgs e)
         {
-            await ((SteamUpdaterViewModel)DataContext)?.UpdateClick();
+            await ((SteamUpdaterViewModel)DataContext)?.UpdateClick()!;
         }
         private void ServerDir_Click(object sender, RoutedEventArgs e)
         {
@@ -45,7 +45,17 @@ namespace FASTER.Views
 
         private void Updater_OnLoaded(object sender, RoutedEventArgs e)
         {
-            PasswordBox.Password = ((SteamUpdaterViewModel) DataContext)?.GetPw();
+            PasswordBox.Password = ((SteamUpdaterViewModel) DataContext)?.GetPw() ?? string.Empty;
+        }
+
+        private void ClientReset_OnClick(object sender, RoutedEventArgs e)
+        {
+            ((SteamUpdaterViewModel)DataContext)?.SteamReset();
+        }
+
+        private void ClientConnect_OnClick(object sender, RoutedEventArgs e)
+        {
+            ((SteamUpdaterViewModel)DataContext)?.SteamLogin();
         }
     }
 }
