@@ -104,17 +104,17 @@
                     <TextBox Grid.Column="0" mah:TextBoxHelper.UseFloatingWatermark="True" Text="{Binding Parameters.InstallDirectory}" mah:TextBoxHelper.Watermark="Install Directory" Margin="5"/>
                     <Button Grid.Column="1" Content="{iconPacks:Modern Kind=Folder}" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" VerticalAlignment="Stretch" Height="auto" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" Margin="5" Padding="2" Click="ServerDir_Click"/>
                 </Grid>
-                <mah:ToggleSwitch Grid.Row="2" Content="Profiling" IsOn="{Binding ProfilingBranch}" Style="{StaticResource MahApps.Styles.ToggleSwitch}" Margin="10,5"/>
+                <mah:ToggleSwitch Grid.Row="2" Content="Profiling" IsOn="{Binding Parameters.UsingPerfBinaries}" Style="{StaticResource MahApps.Styles.ToggleSwitch}" Margin="10,5"/>
                 <StackPanel Orientation="Vertical" Grid.Row="3" Margin="10">
-                    <CheckBox IsChecked="{Binding ContactDLCChecked}" Content="Contact DLC"
+                    <CheckBox IsChecked="{Binding Parameters.UsingContactDlc}" Content="Contact DLC"
                               Margin="10,3" Width="105" HorizontalAlignment="Left" />
-                    <CheckBox IsChecked="{Binding GMDLCChecked}" Content="GM DLC" Margin="10,3"
+                    <CheckBox IsChecked="{Binding Parameters.UsingGMDlc}" Content="GM DLC" Margin="10,3"
                               HorizontalAlignment="Left" />
-                    <CheckBox IsChecked="{Binding PFDLCChecked}" Content="Prairie Fire DLC"
+                    <CheckBox IsChecked="{Binding Parameters.UsingPFDlc}" Content="Prairie Fire DLC"
                               Margin="10,3" Width="105" HorizontalAlignment="Left" />
-                    <CheckBox IsChecked="{Binding CLSADLCChecked}" Content="CLSA DLC" Margin="10,3"
+                    <CheckBox IsChecked="{Binding Parameters.UsingCLSADlc}" Content="CLSA DLC" Margin="10,3"
                               HorizontalAlignment="Left" />
-                    <CheckBox IsChecked="{Binding WSDLCChecked}" Content="Western Sahara DLC"
+                    <CheckBox IsChecked="{Binding Parameters.UsingWSDlc}" Content="Western Sahara DLC"
                               Margin="10,3" HorizontalAlignment="Left" />
                 </StackPanel>
                 <Button Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Grid.Row="4" Content="Update" Margin="10" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Click="Update_Click"/>

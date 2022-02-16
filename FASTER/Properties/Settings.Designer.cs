@@ -280,5 +280,77 @@ namespace FASTER.Properties {
                 this["CliWorkers"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool usingPerfBinaries {
+            get {
+                return ((bool)(this["usingPerfBinaries"]));
+            }
+            set {
+                this["usingPerfBinaries"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool usingContactDlc {
+            get {
+                return ((bool)(this["usingContactDlc"]));
+            }
+            set {
+                this["usingContactDlc"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool usingGMDlc {
+            get {
+                return ((bool)(this["usingGMDlc"]));
+            }
+            set {
+                this["usingGMDlc"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool usingPFDlc {
+            get {
+                return ((bool)(this["usingPFDlc"]));
+            }
+            set {
+                this["usingPFDlc"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool usingCLSADlc {
+            get {
+                return ((bool)(this["usingCLSADlc"]));
+            }
+            set {
+                this["usingCLSADlc"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool usingWSDlc {
+            get {
+                return ((bool)(this["usingWSDlc"]));
+            }
+            set {
+                this["usingWSDlc"] = value;
+            }
+        }
     }
 }

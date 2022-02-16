@@ -59,14 +59,7 @@ namespace FASTER.ViewModel
         private bool _updaterFaulted;
 
         public SteamUpdaterModel            Parameters        { get; set; }
-
-        public bool ProfilingBranch   { get; set; }
-        public bool ContactDLCChecked { get; set; }
-        public bool GMDLCChecked      { get; set; }
-        public bool WSDLCChecked      { get; set; }
-        public bool CLSADLCChecked    { get; set; }
-        public bool PFDLCChecked      { get; set; }
-
+        
         
         public  IDialogCoordinator      DialogCoordinator { get; set; }
         private CancellationTokenSource tokenSource = new();
@@ -148,8 +141,8 @@ namespace FASTER.ViewModel
             Analytics.TrackEvent("Updater - Clicked Update", new Dictionary<string, string>
             {
                 {"Name", Properties.Settings.Default.steamUserName},
-                {"DLCs", $"{(GMDLCChecked ? "GM " : "")}{(CLSADLCChecked? "CLSA " : "")}{(PFDLCChecked ? "SOG " : "")}{(WSDLCChecked ? "WS " : "")}"},
-                {"Branch", $"{(ProfilingBranch? "Profiling" : "Public")}"}
+                {"DLCs", $"{(Parameters.UsingGMDlc ? "GM " : "")}{(Parameters.UsingCLSADlc? "CLSA " : "")}{(Parameters.UsingPFDlc ? "SOG " : "")}{(Parameters.UsingWSDlc ? "WS " : "")}"},
+                {"Branch", $"{(Parameters.UsingPerfBinaries? "Profiling" : "Public")}"}
             });
 
             Parameters.IsUpdating = true;
@@ -172,12 +165,12 @@ namespace FASTER.ViewModel
             //Downloading Depot 233781 from either branch contact or public
             depotsDownload.Add((
                 depotsList.FirstOrDefault(d => d.Name == "Arma 3 Alpha Dedicated Server Content (internal)")!.Id.Id, 
-                ContactDLCChecked ? "contact" : "public", 
+                Parameters.UsingContactDlc ? "contact" : "public", 
                 null));
 
             Parameters.Output += "\nChecking Executables...";
             //Either downloading depot 233782 fow Windows from branch public or 233784 for windows in branch profiling
-            if (ProfilingBranch)
+            if (Parameters.UsingPerfBinaries)
                 depotsDownload.Add((
                     depotsList.FirstOrDefault(d => d.Name == "Arma 3 Server Profiling - WINDOWS Depot")!.Id.Id,
                     "profiling",
@@ -189,7 +182,7 @@ namespace FASTER.ViewModel
                     null));
 
             //Downloading mods
-            if (GMDLCChecked)
+            if (Parameters.UsingGMDlc)
             {
                 Parameters.Output += "\nChecking Arma 3 Server Creator DLC - GM...";
                 depotsDownload.Add((
@@ -198,7 +191,7 @@ namespace FASTER.ViewModel
                     null));
             }
 
-            if (CLSADLCChecked)
+            if (Parameters.UsingCLSADlc)
             {
                 Parameters.Output += "\nChecking Arma 3 Server Creator DLC - CSLA...";
                 depotsDownload.Add((
@@ -207,7 +200,7 @@ namespace FASTER.ViewModel
                     null));
             }
 
-            if (PFDLCChecked)
+            if (Parameters.UsingPFDlc)
             {
                 Parameters.Output += "\nChecking Arma 3 Server Creator DLC - SOGPF...";
                 depotsDownload.Add((
@@ -216,7 +209,7 @@ namespace FASTER.ViewModel
                     null));
             }
 
-            if (WSDLCChecked)
+            if (Parameters.UsingWSDlc)
             {
                 Parameters.Output += "\nChecking Arma 3 Server Creator DLC - Western Sahara...";
                 depotsDownload.Add((

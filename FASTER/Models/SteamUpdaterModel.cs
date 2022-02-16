@@ -83,6 +83,73 @@ namespace FASTER.Models
                 RaisePropertyChanged(nameof(Progress));
             }
         }
+        
+        public bool UsingPerfBinaries
+        {
+            get => Settings.Default.usingPerfBinaries;
+            set
+            {
+                Settings.Default.usingPerfBinaries = value;
+                Settings.Default.Save();
+                RaisePropertyChanged(nameof(UsingPerfBinaries));
+            }
+        }
+        
+        public bool UsingContactDlc
+        {
+            get => Settings.Default.usingContactDlc;
+            set
+            {
+                Settings.Default.usingContactDlc = value;
+                Settings.Default.Save();
+                RaisePropertyChanged(nameof(UsingContactDlc));
+            }
+        }
+
+        public bool UsingGMDlc
+        {
+            get => Settings.Default.usingGMDlc;
+            set
+            {
+                Settings.Default.usingGMDlc = value;
+                Settings.Default.Save();
+                RaisePropertyChanged(nameof(UsingGMDlc));
+            }
+        }
+
+        public bool UsingPFDlc
+        {
+            get => Settings.Default.usingPFDlc;
+            set
+            {
+                Settings.Default.usingPFDlc = value;
+                Settings.Default.Save();
+                RaisePropertyChanged(nameof(UsingPFDlc));
+            }
+        }
+
+        public bool UsingCLSADlc
+        {
+            get => Settings.Default.usingCLSADlc;
+            set
+            {
+                Settings.Default.usingCLSADlc = value;
+                Settings.Default.Save();
+                RaisePropertyChanged(nameof(UsingCLSADlc));
+            }
+        }
+
+        public bool UsingWSDlc
+        {
+            get => Settings.Default.usingWSDlc;
+            set
+            {
+                Settings.Default.usingWSDlc = value;
+                Settings.Default.Save();
+                RaisePropertyChanged(nameof(UsingWSDlc));
+            }
+        }
+
 
         public string ApiKey
         {
