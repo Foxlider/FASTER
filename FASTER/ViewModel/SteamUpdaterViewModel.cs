@@ -432,11 +432,8 @@ namespace FASTER.ViewModel
 
             Parameters.Output += "\nAlmost there...";
             await maxThread.WaitAsync();
-
-
-            SteamClient.Shutdown();
-            SteamClient.Dispose();
-            SteamClient = null;
+            
+            
             Parameters.Output += "\nMods updated !";
             IsDlOverride = false;
             return UpdateState.Success;
