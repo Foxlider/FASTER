@@ -210,18 +210,6 @@ namespace FASTER.ViewModel
                     Directory.Delete(linkPath, true);
 
                 Directory.CreateSymbolicLink(linkPath, mod.Path);
-                
-                //var linkCommand = "/c mklink /D \"" + linkPath + "\" \"" + mod.Path + "\"";
-
-                //ProcessStartInfo startInfo = new("cmd.exe")
-                //{
-                //    WindowStyle = ProcessWindowStyle.Hidden,
-                //    Verb = "runas",
-                //    CreateNoWindow = true,
-                //    UseShellExecute = false,
-                //    Arguments = linkCommand
-                //};
-                //Process.Start(startInfo);
             }
             catch (Exception ex)
             { DisplayMessage("An exception occurred: \n\n" + ex.Message); }
