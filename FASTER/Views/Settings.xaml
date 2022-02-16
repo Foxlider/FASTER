@@ -56,7 +56,7 @@
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
                     <controls:NumericUpDown Name="NumericUpDown" Margin="0,0,10,0" Grid.Column="0" IsReadOnly="True" HorizontalAlignment="Left" Style="{StaticResource MahApps.Styles.NumericUpDown.DataGrid}" controls:TextBoxHelper.Watermark="Updater Worker Count" controls:TextBoxHelper.UseFloatingWatermark="True"/>
-                    <Slider Name="Slider" Grid.Column="1" IsSnapToTickEnabled="True" Minimum="0" Maximum="25" SmallChange="1" LargeChange="0" ValueChanged="RangeBase_OnValueChanged"/>
+                    <Slider Name="Slider" Grid.Column="1" IsSnapToTickEnabled="True" Minimum="1" Maximum="50" SmallChange="1" LargeChange="0" ValueChanged="RangeBase_OnValueChanged"/>
                 </Grid>
 
                 <Grid Grid.Row="4" Grid.ColumnSpan="2" Grid.Column="0" Margin="5,10">
