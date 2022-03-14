@@ -151,9 +151,18 @@ namespace FASTER.ViewModel
             
             uint appId = 233780;
 
-            IReadOnlyList<Depot> depotsList = await GetAppDepots(appId);
+            IReadOnlyList<Depot> depotsList;
+                
+            try
+            { depotsList = await GetAppDepots(appId); }
+            catch
+            {
+                Parameters.Output += "\n\n /!\\ Something went wrong while getting the depots list. Check login/password and your internet connexion.\nAlternatively, clear the sentry folder and try again.";
+                return;
+            }
+                
             
-            if(depotsList.Count == 0)
+            if(depotsList == null || depotsList.Count == 0)
             {
                 Parameters.Output += "\n\n /!\\ Could not retrieve depots list. PLease retry later or check your internet connection\nAlternatively, clear the sentry folder and try again.";
                 return;
