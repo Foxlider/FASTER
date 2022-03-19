@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Windows;
 
 namespace FASTER.Models
@@ -22,7 +23,7 @@ namespace FASTER.Models
         // Gets mod info for multiple mods
         public static List<JObject> GetFileDetails(List<int> modIds)
         {
-            try 
+            try
             {
                 string mods = modIds.Aggregate(string.Empty, (current, modId) => $"{current}{V}{modIds.IndexOf(modId)}{V1}{modId}");
 
@@ -63,13 +64,12 @@ namespace FASTER.Models
         // Calls to Steam API Endpoint and returns the result as JSON Object
         private static JObject ApiCall(string uri)
         {
-            // Create a request for the URL. 
-            WebRequest request = WebRequest.Create(uri);
-            request.Timeout = 5 * 1000;
+            // Create a request for the URL.
+            var request = new HttpRequestMessage(HttpMethod.Get, uri);
             // Get the response.
-            WebResponse response = null;
+            HttpResponseMessage response = null;
             try
-            { response = request.GetResponse(); }
+            { response = new HttpClient().Send(request); }
             catch (WebException e)
             {
                 try
@@ -93,27 +93,27 @@ namespace FASTER.Models
                 }
             }
             // Display the status.
-            Console.WriteLine(((HttpWebResponse)response)?.StatusDescription);
-            
-            if (response == null) return null;
-            
+            Console.WriteLine(response?.ReasonPhrase);
+
+            if (response == null || ((int)response.StatusCode) < 200 || ((int)response.StatusCode) >= 300) return null;
+
             // Get the stream containing content returned by the server.
-            Stream dataStream = response.GetResponseStream();
+            Stream dataStream = response.Content.ReadAsStream();
             // Open the stream using a StreamReader for easy access.
             StreamReader reader = new StreamReader(dataStream ?? throw new InvalidOperationException());
             // Read the content.
             var responseFromServer = reader.ReadToEnd();
             // Clean up the streams and the response.
             reader.Close();
-            response.Close();
+            response.Dispose();
             // Return the response
             return JObject.Parse(responseFromServer);
         }
 
         private static string GetApiKey()
         {
-            return !string.IsNullOrEmpty(Properties.Settings.Default.SteamAPIKey) 
-                ? Properties.Settings.Default.SteamAPIKey 
+            return !string.IsNullOrEmpty(Properties.Settings.Default.SteamAPIKey)
+                ? Properties.Settings.Default.SteamAPIKey
                 : StaticData.SteamApiKey;
         }
     }
@@ -123,7 +123,7 @@ namespace FASTER.Models
         public override string GetEmailAuthenticationCode(SteamCredentials steamCredentials)
         {
             MainWindow.Instance.SteamUpdaterViewModel.Parameters.Output += "\nPlease enter your email auth code: ";
-            
+
 
             var input = MainWindow.Instance.SteamUpdaterViewModel.SteamGuardInput().Result;
 
@@ -135,7 +135,7 @@ namespace FASTER.Models
         public override string GetTwoFactorAuthenticationCode(SteamCredentials steamCredentials)
         {
             MainWindow.Instance.SteamUpdaterViewModel.Parameters.Output += "\nPlease enter your 2FA code: ";
-             
+
             var input = MainWindow.Instance.SteamUpdaterViewModel.SteamGuardInput().Result;
 
             MainWindow.Instance.SteamUpdaterViewModel.Parameters.Output += "\nRetrying... ";
