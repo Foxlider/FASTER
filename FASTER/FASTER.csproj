@@ -3,11 +3,11 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net6.0-windows</TargetFramework>
     <PublishSingleFile Condition="'$(Configuration)' == 'Release'">true</PublishSingleFile>
-    <PublishReadyToRun Condition="'$(Configuration)' == 'Release'">true</PublishReadyToRun>
+    <PublishReadyToRun>true</PublishReadyToRun>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
     <UseWPF>true</UseWPF>
-    <Version>1.8.2.1</Version>
+    <Version>1.8.3.3</Version>
     <Authors>Keelah Fox</Authors>
     <Company>FoxliCorp.</Company>
     <Description>Fox's Arma Server Tool Extended Rewrite</Description>
@@ -59,8 +59,8 @@
     <PackageReference Include="MahApps.Metro.IconPacks.Material" Version="4.11.0" />
     <PackageReference Include="MahApps.Metro.IconPacks.Modern" Version="4.11.0" />
     <PackageReference Include="MahApps.Metro.SimpleChildWindow" Version="2.0.0" />
-    <PackageReference Include="Microsoft.AppCenter.Analytics" Version="4.4.0" />
-    <PackageReference Include="Microsoft.AppCenter.Crashes" Version="4.4.0" />
+    <PackageReference Include="Microsoft.AppCenter.Analytics" Version="4.5.0" />
+    <PackageReference Include="Microsoft.AppCenter.Crashes" Version="4.5.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="WindowsAPICodePack-Shell" Version="1.1.1" />
   </ItemGroup>

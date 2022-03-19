@@ -1,6 +1,9 @@
 ﻿using FASTER.Models;
+
 using MahApps.Metro.Controls.Dialogs;
+
 using Microsoft.AppCenter.Analytics;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

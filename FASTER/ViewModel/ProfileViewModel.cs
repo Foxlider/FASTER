@@ -228,6 +228,13 @@ namespace FASTER.ViewModel
             { DisplayMessage("Could not write the config files. Please ensure the server is not running and retry."); }
 
             var armaPath = Path.GetDirectoryName(Profile.Executable);
+            
+            if(string.IsNullOrWhiteSpace(armaPath))
+            {
+                DisplayMessage("Arma executable is empty. Select the correct executable before saving your profile.");
+                return;
+            }
+            
             var links = Directory.EnumerateDirectories(armaPath).Select(d => new DirectoryInfo(d)).Where(d => d.Attributes.HasFlag(FileAttributes.ReparsePoint));
             uint MissingMods = 0;
             foreach (ProfileMod profileMod in Profile.ProfileMods.Where(m => m.ClientSideChecked || m.HeadlessChecked || m.ServerSideChecked))

@@ -11,6 +11,7 @@
     mc:Ignorable="d"
     
     GlowBrush="Black"
+    AllowsTransparency="False"
     BorderThickness="0" 
     ResizeMode="CanResizeWithGrip"
     
@@ -224,8 +225,11 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
+                <Button Grid.Row="1" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" HorizontalAlignment="Stretch" Click="OpenArmaServerLocation_Click" Content="Open Arma Server Directory" Margin="10"/>
                 <Button Grid.Row="2" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" HorizontalAlignment="Stretch" Click="OpenModStagingLocation_Click" Content="Open Mod Staging Directory" Margin="10"/>
+                <Button Grid.Row="3" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" HorizontalAlignment="Stretch" Click="OpenAppDataLocation_Click" Content="Open AppData Directory" Margin="10"/>
             </Grid>
         </simpleChildWindow:ChildWindow>
 

@@ -61,7 +61,7 @@
                             </StackPanel>
                         </GroupBox>
                     </StackPanel>
-                    <GroupBox Header="Mods" Grid.Column="1" Margin="5">
+                    <GroupBox Header="Mods" Grid.Row="0" Grid.Column="1" Margin="5">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="auto"/>

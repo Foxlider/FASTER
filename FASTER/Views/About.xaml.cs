@@ -28,7 +28,7 @@ namespace FASTER.Views
             "for supporting FASTER !"
         };
 
-        private readonly Random r = new Random();
+        private readonly Random r = new();
 
         public About()
         {
@@ -72,6 +72,7 @@ namespace FASTER.Views
         private void About_Loaded(object sender, RoutedEventArgs e)
         {
             IVersionLabel.Text = MetroWindow.GetVersion();
+            IVersionLabel.ToolTip = Functions.GetRawVersion();
         }
 
         private void IDonateButton_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)

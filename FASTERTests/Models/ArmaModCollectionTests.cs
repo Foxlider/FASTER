@@ -1,24 +1,18 @@
 ﻿using NUnit.Framework;
-using FASTER.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FASTER.Models.Tests
 {
     [TestFixture()]
     public class ArmaModCollectionTests
     {
-        ArmaModCollection amc;
-        ArmaMod mod;
+        ArmaModCollection _amc;
+        ArmaMod _mod;
 
         [OneTimeSetUp]
         public void SetUp()
         {
-            amc = new ArmaModCollection();
-            mod = new ArmaMod
+            _amc = new ArmaModCollection();
+            _mod = new ArmaMod
             {
                 Author = "Test",
                 IsLocal = false,
@@ -31,44 +25,44 @@ namespace FASTER.Models.Tests
         [Test()]
         public void AddSteamModTest()
         {
-            Assert.DoesNotThrow(() => amc.AddSteamMod(mod));
+            Assert.DoesNotThrow(() => _amc.AddSteamMod(_mod));
 
             //Really should throw but whatever
-            Assert.DoesNotThrow(() => amc.AddSteamMod(mod));
+            Assert.DoesNotThrow(() => _amc.AddSteamMod(_mod));
 
-            Assert.DoesNotThrow(() => amc.DeleteSteamMod(mod.WorkshopId));
+            Assert.DoesNotThrow(() => _amc.DeleteSteamMod(_mod.WorkshopId));
         }
 
         [Test]
         public void TestSteamModGet()
         {
-            Assert.IsFalse(string.IsNullOrEmpty(mod.Author));
-            Assert.IsFalse(string.IsNullOrEmpty(mod.Name));
-            Assert.IsFalse(string.IsNullOrEmpty(mod.Path));
-            Assert.IsFalse(string.IsNullOrEmpty(mod.Status));
-            Assert.IsNotNull(mod.Size);
-            Assert.IsNotNull(mod.LocalLastUpdated);
-            Assert.IsNotNull(mod.WorkshopId);
-            Assert.IsNotNull(mod.SteamLastUpdated);
-            Assert.IsNotNull(mod.PrivateMod);
-            Assert.IsNotNull(mod.IsLocal);
-            Assert.IsNotNull(mod.IsLoading);
+            Assert.IsFalse(string.IsNullOrEmpty(_mod.Author));
+            Assert.IsFalse(string.IsNullOrEmpty(_mod.Name));
+            Assert.IsFalse(string.IsNullOrEmpty(_mod.Path));
+            Assert.IsFalse(string.IsNullOrEmpty(_mod.Status));
+            Assert.IsNotNull(_mod.Size);
+            Assert.IsNotNull(_mod.LocalLastUpdated);
+            Assert.IsNotNull(_mod.WorkshopId);
+            Assert.IsNotNull(_mod.SteamLastUpdated);
+            Assert.IsNotNull(_mod.PrivateMod);
+            Assert.IsNotNull(_mod.IsLocal);
+            Assert.IsNotNull(_mod.IsLoading);
         }
 
         [Test]
         public void TestSteamModSet()
         {
-            Assert.DoesNotThrow(() => mod.Author = "Test2");
-            Assert.DoesNotThrow(() => mod.Name = "Test2");
-            Assert.DoesNotThrow(() => mod.Path = "Test2");
-            Assert.DoesNotThrow(() => mod.Status = ArmaModStatus.UpToDate);
-            Assert.DoesNotThrow(() => mod.Size = 5);
-            Assert.DoesNotThrow(() => mod.LocalLastUpdated = 0);
-            Assert.DoesNotThrow(() => mod.WorkshopId = 2);
-            Assert.DoesNotThrow(() => mod.SteamLastUpdated = 1);
-            Assert.DoesNotThrow(() => mod.PrivateMod = false);
-            Assert.DoesNotThrow(() => mod.IsLocal = false);
-            Assert.DoesNotThrow(() => mod.IsLoading = false);
+            Assert.DoesNotThrow(() => _mod.Author = "Test2");
+            Assert.DoesNotThrow(() => _mod.Name = "Test2");
+            Assert.DoesNotThrow(() => _mod.Path = "Test2");
+            Assert.DoesNotThrow(() => _mod.Status = ArmaModStatus.UpToDate);
+            Assert.DoesNotThrow(() => _mod.Size = 5);
+            Assert.DoesNotThrow(() => _mod.LocalLastUpdated = 0);
+            Assert.DoesNotThrow(() => _mod.WorkshopId = 2);
+            Assert.DoesNotThrow(() => _mod.SteamLastUpdated = 1);
+            Assert.DoesNotThrow(() => _mod.PrivateMod = false);
+            Assert.DoesNotThrow(() => _mod.IsLocal = false);
+            Assert.DoesNotThrow(() => _mod.IsLoading = false);
         }
     }
 }

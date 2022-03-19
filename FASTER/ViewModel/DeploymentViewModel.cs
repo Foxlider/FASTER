@@ -206,14 +206,10 @@ namespace FASTER.ViewModel
         {
             try
             {
-                if (File.GetAttributes(mod.Path).HasFlag(FileAttributes.Directory))
-                {
-                    Directory.CreateSymbolicLink(linkPath, mod.Path);
-                }
-                else
-                {
-                    File.CreateSymbolicLink(linkPath, mod.Path);
-                }
+                if(Directory.Exists(linkPath))
+                    Directory.Delete(linkPath, true);
+
+                Directory.CreateSymbolicLink(linkPath ?? throw new ArgumentNullException(nameof(linkPath)), mod.Path);
             }
             catch (Exception ex)
             { DisplayMessage("An exception occurred: \n\n" + ex.Message); }
@@ -227,7 +223,8 @@ namespace FASTER.ViewModel
         {
             try
             {
-                Directory.Delete(linkPath);
+                if (Directory.Exists(linkPath))
+                    Directory.Delete(linkPath, true);
             }
             catch (Exception ex)
             { DisplayMessage("An exception occurred: \n\n" + ex.Message); }

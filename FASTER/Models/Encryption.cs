@@ -13,7 +13,7 @@ namespace FASTER.Models
 
         private static byte[] TruncateHash(string key, int length)
         {
-            var sha1 = SHA1.Create();
+            SHA1 sha1 = SHA1.Create();
 
             // Hash the key.
             byte[] keyBytes = System.Text.Encoding.Unicode.GetBytes(key);

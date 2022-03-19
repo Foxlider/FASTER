@@ -12,7 +12,7 @@ namespace FASTER.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.10.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.0.3.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -266,6 +266,90 @@ namespace FASTER.Properties {
             }
             set {
                 this["Deployments"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("10")]
+        public ushort CliWorkers {
+            get {
+                return ((ushort)(this["CliWorkers"]));
+            }
+            set {
+                this["CliWorkers"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool usingPerfBinaries {
+            get {
+                return ((bool)(this["usingPerfBinaries"]));
+            }
+            set {
+                this["usingPerfBinaries"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool usingContactDlc {
+            get {
+                return ((bool)(this["usingContactDlc"]));
+            }
+            set {
+                this["usingContactDlc"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool usingGMDlc {
+            get {
+                return ((bool)(this["usingGMDlc"]));
+            }
+            set {
+                this["usingGMDlc"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool usingPFDlc {
+            get {
+                return ((bool)(this["usingPFDlc"]));
+            }
+            set {
+                this["usingPFDlc"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool usingCLSADlc {
+            get {
+                return ((bool)(this["usingCLSADlc"]));
+            }
+            set {
+                this["usingCLSADlc"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool usingWSDlc {
+            get {
+                return ((bool)(this["usingWSDlc"]));
+            }
+            set {
+                this["usingWSDlc"] = value;
             }
         }
     }
