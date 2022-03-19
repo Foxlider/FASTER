@@ -8,7 +8,7 @@ namespace FASTER.Models
     {
         private static readonly Aes Crypt = Aes.Create();
         private static Encryption _instance;
-        
+
         public static Encryption Instance => _instance ??= new Encryption();
 
         private static byte[] TruncateHash(string key, int length)

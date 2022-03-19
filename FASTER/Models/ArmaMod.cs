@@ -62,20 +62,20 @@ namespace FASTER.Models
 
         public void DeleteSteamMod(uint workshopId)
         {
-            
+
 
             try
             {
                 var currentProfiles = ReloadMods();
                 var item            = currentProfiles.ArmaMods.FirstOrDefault(x => x.WorkshopId == workshopId);
-                
+
                 if (item != null)
                 {
                     if (Directory.Exists(item.Path))
                         Directory.Delete(item.Path, true);
                     currentProfiles.ArmaMods.Remove(item);
                 }
-                
+
                 Properties.Settings.Default.Save();
             }
             catch
@@ -88,8 +88,8 @@ namespace FASTER.Models
         { PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property)); }
     }
 
-    
-    [Serializable] 
+
+    [Serializable]
     public class ArmaMod : INotifyPropertyChanged
     {
 
@@ -105,9 +105,9 @@ namespace FASTER.Models
         private long   _size;
         private bool   _isLoading;
 
-        
-        public uint   WorkshopId       
-        { 
+
+        public uint   WorkshopId
+        {
             get => _workshopId;
             set
             {
@@ -209,7 +209,7 @@ namespace FASTER.Models
                 RaisePropertyChanged("IsLoading");
             }
         }
-        
+
 
         internal void CheckModSize()
         {
@@ -221,7 +221,7 @@ namespace FASTER.Models
                 IsLoading = false;
                 return;
             }
-            
+
             var ChildProcess = Task.Factory.StartNew(() => GetDirectorySize(Path));
             Size      = ChildProcess.Result;
             IsLoading = false;
@@ -237,11 +237,10 @@ namespace FASTER.Models
                 IsLoading = false;
                 return;
             }
+            IsLoading = true;
 
             UpdateInfos(false);
-            
-            IsLoading = true;
-            
+
             Path = System.IO.Path.Combine(Properties.Settings.Default.modStagingDirectory, WorkshopId.ToString());
             if (!Directory.Exists(Path))
                 Directory.CreateDirectory(Path);
@@ -265,7 +264,7 @@ namespace FASTER.Models
                     LocalLastUpdated = (ulong) ts.TotalSeconds;
                     break;
             }
-                
+
             IsLoading = false;
         }
 
@@ -277,19 +276,19 @@ namespace FASTER.Models
             if (IsLocal)
             {
                 Status = ArmaModStatus.Local;
-                if(checkFileSize)
+                if (checkFileSize)
                     CheckModSize();
                 IsLoading = false;
                 return;
             }
 
-            
+
             int failNum = 0;
             bool success = false;
             do
             {
                 var modInfo = SteamWebApi.GetSingleFileDetails(WorkshopId);
-                
+
                 if (modInfo == null)
                 {
                     failNum++;
@@ -313,7 +312,7 @@ namespace FASTER.Models
                 { Author = "Unknown"; }
 
                 SteamLastUpdated = modDetails.time_updated;
-                Name             = modDetails.title;
+                Name = modDetails.title;
 
                 if (SteamLastUpdated > LocalLastUpdated && Status != ArmaModStatus.NotComplete)
                     Status = ArmaModStatus.UpdateRequired;
@@ -321,11 +320,11 @@ namespace FASTER.Models
                     Status = ArmaModStatus.UpToDate;
                 success = true;
             } while (failNum < 3 && !success);
-            
-            if(checkFileSize)
+
+            if (checkFileSize)
                 CheckModSize();
 
-            IsLoading        = false;
+            IsLoading = false;
         }
 
         internal bool IsOnWorkshop()

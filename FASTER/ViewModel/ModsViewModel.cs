@@ -125,7 +125,7 @@ namespace FASTER.ViewModel
         {
             if (mod == null)
                 return;
-            
+
             ModsCollection.DeleteSteamMod(mod.WorkshopId);
         }
         internal void DeleteAllMods()
@@ -162,7 +162,7 @@ namespace FASTER.ViewModel
             string modsFile = Functions.SelectFile("Arma 3 Launcher File|*.html");
 
             if (string.IsNullOrEmpty(modsFile)) return;
-            
+
             var lines = File.ReadAllText(modsFile);
 
             var extractedModlist = new List<ArmaMod>();
@@ -244,7 +244,7 @@ namespace FASTER.ViewModel
 
             MainWindow.Instance.NavigateToConsole();
             var ans = await MainWindow.Instance.SteamUpdaterViewModel.RunModsUpdater(ModsCollection.ArmaMods);
-            if(ans == UpdateState.LoginFailed) 
+            if(ans == UpdateState.LoginFailed)
                 DisplayMessage("Steam Login Failed");
         }
     }

@@ -69,7 +69,7 @@ namespace FASTER.ViewModel
             if (!Profile.ServerCfg.HeadlessClientEnabled) return;
             if (!VerifyBeforeLaunch()) return;
 
-            //Launching... 
+            //Launching...
             DisplayMessage($"Launching Headless Clients for {Profile.Name}...");
             string commandLine;
             for (int hc = 1; hc <= Profile.HeadlessNumber; hc++ )
@@ -122,7 +122,7 @@ namespace FASTER.ViewModel
         {
             if (!VerifyBeforeLaunch()) return;
 
-            //Launching... 
+            //Launching...
             DisplayMessage($"Launching Profile {Profile.Name}...");
 
             Analytics.TrackEvent("Profile - Clicked LaunchServer", new Dictionary<string, string>
@@ -157,7 +157,7 @@ namespace FASTER.ViewModel
 
             LaunchHCs();
             #endif
-            
+
         }
 
         /// <summary>
@@ -190,7 +190,7 @@ namespace FASTER.ViewModel
             if (!Directory.Exists(Path.Combine(path, "Servers", profile)))
             { return false; }
 
-            return File.Exists(Path.Combine(path, "Servers", profile, "server_config.cfg")) 
+            return File.Exists(Path.Combine(path, "Servers", profile, "server_config.cfg"))
                 && File.Exists(Path.Combine(path, "Servers", profile, "server_basic.cfg"));
         }
 
@@ -198,18 +198,13 @@ namespace FASTER.ViewModel
         {
             if (Directory.Exists(Path.Combine(Profile.ArmaPath, "Servers", Profile.Id)))
             { Directory.Delete(Path.Combine(Profile.ArmaPath, "Servers", Profile.Id), true); }
-            var currentProfiles = Properties.Settings.Default.Profiles;
-            currentProfiles.Remove(Profile);
-            var newProfiles = new ServerProfileCollection();
-            newProfiles.AddRange(currentProfiles.FindAll(p => p.Id != Profile.Id));
-            Properties.Settings.Default.Profiles = newProfiles;
+            Properties.Settings.Default.Profiles.Remove(Profile);
             Properties.Settings.Default.Save();
-
             MainWindow.Instance.ContentProfileViews.Remove(MainWindow.Instance.ContentProfileViews.FirstOrDefault(p => p.Profile.Id == Profile.Id));
             var menuItem = MainWindow.Instance.IServerProfilesMenu.Items.Cast<ToggleButton>().FirstOrDefault(p => p.Name == Profile.Id);
             if(menuItem != null)
                 MainWindow.Instance.IServerProfilesMenu.Items.Remove(menuItem);
-            
+
             MainWindow.Instance.NavigateToConsole();
         }
 
@@ -235,7 +230,6 @@ namespace FASTER.ViewModel
             var armaPath = Path.GetDirectoryName(Profile.Executable);
             var links = Directory.EnumerateDirectories(armaPath).Select(d => new DirectoryInfo(d)).Where(d => d.Attributes.HasFlag(FileAttributes.ReparsePoint));
             uint MissingMods = 0;
-
             foreach (ProfileMod profileMod in Profile.ProfileMods.Where(m => m.ClientSideChecked || m.HeadlessChecked || m.ServerSideChecked))
             {
                 if (!links.Any(l => l.Name == $"@{Functions.SafeName(profileMod.Name)}"))
@@ -245,16 +239,18 @@ namespace FASTER.ViewModel
 
             var index = Properties.Settings.Default.Profiles.FindIndex(p => p.Id == Profile.Id);
             if (index != -1)
-                Properties.Settings.Default.Save();
+            { Properties.Settings.Default.Profiles[index] = Profile; }
+
+            Properties.Settings.Default.Save();
             Profile.RaisePropertyChanged("CommandLine");
             DisplayMessage($"Saved Profile {Profile.Name}");
 
             if (MissingMods > 0)
                 DisplayMessage($"{MissingMods} mods were not found in the Arma directory.\nMake sure you have deployed the correct mods");
 
-    }
+        }
 
-    public ObservableCollection<string> FadeOutStrings         { get; } = new ObservableCollection<string>(ProfileCfgArrays.FadeOutStrings);
+        public ObservableCollection<string> FadeOutStrings         { get; } = new ObservableCollection<string>(ProfileCfgArrays.FadeOutStrings);
 
         internal static string GetCompareString(string input)
         {
@@ -287,7 +283,7 @@ namespace FASTER.ViewModel
                 MessageBox.Show("Please enter a valid arma3server executable location");
                 return;
             }
-            
+
             //Clear mods
             foreach (var mod in Profile.ProfileMods)
             { mod.ClientSideChecked = false; }
@@ -430,11 +426,11 @@ namespace FASTER.ViewModel
                 }
             }
         }
-        
+
         public ObservableCollection<string> LimitedDistanceStrings { get; } = new ObservableCollection<string>(ProfileCfgArrays.LimitedDistanceStrings);
         public ObservableCollection<string> AiPresetStrings        { get; } = new ObservableCollection<string>(ProfileCfgArrays.AiPresetStrings);
         public ObservableCollection<string> ThirdPersonStrings     { get; } = new ObservableCollection<string>(ProfileCfgArrays.ThirdPersonStrings);
-        
+
         public void LoadData()
         {
             var modlist = new List<ProfileMod>();
@@ -447,35 +443,8 @@ namespace FASTER.ViewModel
                     modlist.Add(newProfile);
                     continue;
                 }
-                modlist.Add(existingMod);
-            }
-
-            var localMods = LocalMod.GetLocalMods();
-            var serverPathMods = LocalMod.GetLocalMods(true);
-            var steamMods = SteamMod.GetSteamMods();
-
-            var modsToRemove = (from localMod in serverPathMods
-                                from steamMod in steamMods
-                                where localMod.Name == Functions.SafeName(steamMod.Name)
-                                select localMod).ToList();
-
-            foreach (var remove in modsToRemove)
-            {
-                try { serverPathMods.RemoveAt(serverPathMods.IndexOf(serverPathMods.Find(m => m.Name == remove.Name))); }
-                catch (ArgumentOutOfRangeException) { /*IGNORED*/ }
-            }
-
-            localMods.AddRange(serverPathMods);
-
-            foreach (var localmod in localMods)
-            {
-                ProfileMod existingMod = Profile.ProfileMods.FirstOrDefault(m => GetCompareString(localmod.Name) == GetCompareString(m.Name));
-                if (existingMod == null)
-                {
-                    var newProfile = new ProfileMod { Name = localmod.Name, IsLocal = true };
-                    modlist.Add(newProfile);
-                    continue;
-                }
+                else //refresh mods names
+                { existingMod.Name = mod.Name; }
                 modlist.Add(existingMod);
             }
 
@@ -486,11 +455,11 @@ namespace FASTER.ViewModel
 
         public void UnloadData()
         {
-            var index = Properties.Settings.Default.Profiles.FindIndex(p => p.Id == Profile.Id);  
+            var index = Properties.Settings.Default.Profiles.FindIndex(p => p.Id == Profile.Id);
             if (index != -1)
             { Properties.Settings.Default.Profiles[index] = Profile; }
         }
-        
+
         internal void LoadMissions()
         {
             if (!Directory.Exists(Path.Combine(Profile.ArmaPath, "mpmissions"))) return;

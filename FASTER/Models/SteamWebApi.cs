@@ -41,7 +41,7 @@ namespace FASTER.Models
             try
             {
                 var response = ApiCall("https://api.steampowered.com/IPublishedFileService/GetDetails/v1?key=" + GetApiKey() + V3 + modId);
-                return (JObject)response?.SelectToken("response.publishedfiledetails[0]");
+                return (JObject) response?.SelectToken("response.publishedfiledetails[0]");
             }
             catch
             { return null; }
@@ -54,7 +54,7 @@ namespace FASTER.Models
             try
             {
                 var response = ApiCall("https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v1?key=" + GetApiKey() + V2 + playerId);
-                return (JObject)response?.SelectToken("response.players.player[0]");
+                return (JObject) response?.SelectToken("response.players.player[0]");
             }
             catch
             { return null; }
@@ -96,7 +96,7 @@ namespace FASTER.Models
             Console.WriteLine(response?.ReasonPhrase);
 
             if (response == null || ((int)response.StatusCode) < 200 || ((int)response.StatusCode) >= 300) return null;
-            
+
             // Get the stream containing content returned by the server.
             Stream dataStream = response.Content.ReadAsStream();
             // Open the stream using a StreamReader for easy access.
@@ -112,8 +112,8 @@ namespace FASTER.Models
 
         private static string GetApiKey()
         {
-            return !string.IsNullOrEmpty(Properties.Settings.Default.SteamAPIKey) 
-                ? Properties.Settings.Default.SteamAPIKey 
+            return !string.IsNullOrEmpty(Properties.Settings.Default.SteamAPIKey)
+                ? Properties.Settings.Default.SteamAPIKey
                 : StaticData.SteamApiKey;
         }
     }
@@ -123,7 +123,7 @@ namespace FASTER.Models
         public override string GetEmailAuthenticationCode(SteamCredentials steamCredentials)
         {
             MainWindow.Instance.SteamUpdaterViewModel.Parameters.Output += "\nPlease enter your email auth code: ";
-            
+
 
             var input = MainWindow.Instance.SteamUpdaterViewModel.SteamGuardInput().Result;
 
@@ -135,7 +135,7 @@ namespace FASTER.Models
         public override string GetTwoFactorAuthenticationCode(SteamCredentials steamCredentials)
         {
             MainWindow.Instance.SteamUpdaterViewModel.Parameters.Output += "\nPlease enter your 2FA code: ";
-             
+
             var input = MainWindow.Instance.SteamUpdaterViewModel.SteamGuardInput().Result;
 
             MainWindow.Instance.SteamUpdaterViewModel.Parameters.Output += "\nRetrying... ";
