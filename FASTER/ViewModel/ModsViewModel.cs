@@ -101,6 +101,11 @@ namespace FASTER.ViewModel
                     modID = (uint)(uint.MaxValue - r.Next(ushort.MaxValue / 2));
                 }
                 var newPath = Path.Combine(Properties.Settings.Default.modStagingDirectory, modID.ToString());
+                if (Directory.Exists(newPath))
+                {
+                    await DialogCoordinator.ShowMessageAsync(this, "Warning", "Directory already exist. Please try again.");
+                    return;
+                }
 
                 await Task.Factory.StartNew(() => {
                     Directory.CreateSymbolicLink(newPath, oldPath);
