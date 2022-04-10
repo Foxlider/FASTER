@@ -112,7 +112,7 @@
                               HorizontalAlignment="Left" />
                     <CheckBox IsChecked="{Binding Parameters.UsingPFDlc}" Content="Prairie Fire DLC"
                               Margin="10,3" Width="105" HorizontalAlignment="Left" />
-                    <CheckBox IsChecked="{Binding Parameters.UsingCLSADlc}" Content="CLSA DLC" Margin="10,3"
+                    <CheckBox IsChecked="{Binding Parameters.UsingCSLADlc}" Content="CSLA DLC" Margin="10,3"
                               HorizontalAlignment="Left" />
                     <CheckBox IsChecked="{Binding Parameters.UsingWSDlc}" Content="Western Sahara DLC"
                               Margin="10,3" HorizontalAlignment="Left" />

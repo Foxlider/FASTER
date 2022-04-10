@@ -80,7 +80,7 @@
     <Setting Name="usingPFDlc" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="usingCLSADlc" Type="System.Boolean" Scope="User">
+    <Setting Name="usingCSLADlc" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="usingWSDlc" Type="System.Boolean" Scope="User">
