@@ -24,7 +24,7 @@ on:
 jobs:
   analyze:
     name: Analyze
-    runs-on: self-hosted, windows-latest
+    runs-on: [self-hosted, windows-latest]
 
     strategy:
       fail-fast: false
