@@ -128,14 +128,14 @@ namespace FASTER.Models
             }
         }
 
-        public bool UsingCLSADlc
+        public bool UsingCSLADlc
         {
-            get => Settings.Default.usingCLSADlc;
+            get => Settings.Default.usingCSLADlc;
             set
             {
-                Settings.Default.usingCLSADlc = value;
+                Settings.Default.usingCSLADlc = value;
                 Settings.Default.Save();
-                RaisePropertyChanged(nameof(UsingCLSADlc));
+                RaisePropertyChanged(nameof(UsingCSLADlc));
             }
         }
 
