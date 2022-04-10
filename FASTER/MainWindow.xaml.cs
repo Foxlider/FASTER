@@ -11,6 +11,7 @@ using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -159,6 +160,8 @@ namespace FASTER
         private void MetroWindow_Closing(object sender, CancelEventArgs e)
         {
             Properties.Settings.Default.Save();
+            SteamUpdaterViewModel.Instance.SteamClient?.Shutdown();
+            SteamUpdaterViewModel.Instance.SteamClient?.Dispose();
             Application.Current.Shutdown();
         }
 
@@ -169,7 +172,7 @@ namespace FASTER
             list.AddRange(IServerProfilesMenu.Items.Cast<ToggleButton>().Where(i => i.IsChecked == true));
             list.AddRange(IOtherMenuItems.Items.Cast<ToggleButton>().Where(i => i.IsChecked == true));
 
-            if (!(sender is ToggleButton nav) || !NavEnabled) return;
+            if (sender is not ToggleButton nav || !NavEnabled) return;
 
             //Don't navigate if same menu is clicked
             if (nav == lastNavButton) return;
@@ -322,6 +325,45 @@ namespace FASTER
             else
             { MessageBox.Show($"{serverDirBox} Directory does not exist!"); }
         }
+
+        private void OpenArmaServerLocation_Click(object sender, RoutedEventArgs e)
+        {
+            IToolsDialog.IsOpen = false;
+            var serverDirBox = SteamUpdaterViewModel.Parameters.InstallDirectory;
+
+            if (!string.IsNullOrEmpty(serverDirBox) && Directory.Exists(serverDirBox))
+            {
+                try
+                {
+                    ProcessStartInfo startInfo = new ProcessStartInfo { Arguments = serverDirBox, FileName = "explorer.exe" };
+                    Process.Start(startInfo);
+                }
+                catch
+                { MessageBox.Show($" Could not open {serverDirBox}"); }
+            }
+            else
+            { MessageBox.Show($"{serverDirBox} Directory does not exist!"); }
+        }
+
+        private void OpenAppDataLocation_Click(object sender, RoutedEventArgs e)
+        {
+            IToolsDialog.IsOpen = false;
+            var appdataDirectory= Path.GetDirectoryName(ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal).FilePath);
+
+            if (!string.IsNullOrEmpty(appdataDirectory) && Directory.Exists(appdataDirectory))
+            {
+                try
+                {
+                    ProcessStartInfo startInfo = new ProcessStartInfo { Arguments = appdataDirectory, FileName = "explorer.exe" };
+                    Process.Start(startInfo);
+                }
+                catch
+                { MessageBox.Show($" Could not open {appdataDirectory}"); }
+            }
+            else
+            { MessageBox.Show($"{appdataDirectory} Directory does not exist!"); }
+        }
+
 
         private void ToolsButton_Click(object sender, RoutedEventArgs e)
         {

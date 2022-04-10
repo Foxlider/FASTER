@@ -5,7 +5,6 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
-using System.Windows.Documents;
 
 namespace FASTER.Models
 {
@@ -22,13 +21,13 @@ namespace FASTER.Models
 
         public static string ParseFileSize(long size)
         {
-            double   fullSize = size;
+            double fullSize = size;
             return ParseFileSize(fullSize);
         }
 
         public static string ParseFileSize(ulong size)
         {
-            double   fullSize = size;
+            double fullSize = size;
             return ParseFileSize(fullSize);
         }
 
@@ -46,12 +45,6 @@ namespace FASTER.Models
             // Adjust the format string to your preferences. For example "{0:0.#}{1}" would
             // show a single decimal place, and no space.
             return $"{fullSize,7:F} {sizes[order],-2}";
-        }
-
-        public static string StringFromRichTextBox(System.Windows.Controls.RichTextBox rtb)
-        {
-            TextRange textRange = new(rtb.Document.ContentStart, rtb.Document.ContentEnd);
-            return textRange.Text;
         }
 
         public static string SelectFile(string filter)
@@ -101,10 +94,15 @@ namespace FASTER.Models
 
         internal static string GetVersion()
         {
-            var    assembly                      = Assembly.GetExecutingAssembly().GetName().Version;
-            if (assembly == null) return "UNKNOWN";
-            string rev                           = $"{(char)(assembly.Build + 96)}";
-            if (assembly.Build == 0) rev = "ALPHA";
+            var assembly = Assembly.GetExecutingAssembly().GetName().Version;
+            
+            if (assembly == null) 
+                return "UNKNOWN";
+            
+            string rev = $"{(char)(assembly.Build + 96)}";
+            
+            if (assembly.Build == 0) 
+                rev = "ALPHA";
             if (assembly.Revision != 0)
             {
                 string releaseType = (assembly.Revision / 100) switch
@@ -124,6 +122,12 @@ namespace FASTER.Models
                              + $"{assembly.Minor}"
                              + $"{rev}";
             return version;
+        }
+        
+        internal static string GetRawVersion()
+        {
+            var assembly = Assembly.GetExecutingAssembly().GetName().Version;
+            return assembly.ToString();
         }
     }
 }

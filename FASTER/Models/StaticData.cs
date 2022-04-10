@@ -18,7 +18,9 @@
             "Meefs",
             "Ultradar",
             "Will Bolton",
-            "Harkness31"
+            "Harkness31",
+            "Ace",
+            "bojothebigman",
         };
 
         /// <summary>

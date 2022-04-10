@@ -206,17 +206,10 @@ namespace FASTER.ViewModel
         {
             try
             {
-                var linkCommand = "/c mklink /D \"" + linkPath + "\" \"" + mod.Path + "\"";
+                if(Directory.Exists(linkPath))
+                    Directory.Delete(linkPath, true);
 
-                ProcessStartInfo startInfo = new("cmd.exe")
-                {
-                    WindowStyle = ProcessWindowStyle.Hidden,
-                    Verb = "runas",
-                    CreateNoWindow = true,
-                    UseShellExecute = false,
-                    Arguments = linkCommand
-                };
-                Process.Start(startInfo);
+                Directory.CreateSymbolicLink(linkPath ?? throw new ArgumentNullException(nameof(linkPath)), mod.Path);
             }
             catch (Exception ex)
             { DisplayMessage("An exception occurred: \n\n" + ex.Message); }
@@ -230,7 +223,8 @@ namespace FASTER.ViewModel
         {
             try
             {
-                Directory.Delete(linkPath);
+                if (Directory.Exists(linkPath))
+                    Directory.Delete(linkPath, true);
             }
             catch (Exception ex)
             { DisplayMessage("An exception occurred: \n\n" + ex.Message); }

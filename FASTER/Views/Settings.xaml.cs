@@ -1,19 +1,20 @@
 ﻿using AutoUpdaterDotNET;
 
+using BytexDigital.Steam.ContentDelivery;
+
+using ControlzEx.Theming;
+
 using FASTER.Models;
 
-using Microsoft.AppCenter.Crashes;
-
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
-using ControlzEx.Theming;
-using Application = System.Windows.Application;
-using CheckBox = System.Windows.Controls.CheckBox;
-using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using System.Windows.Media;
+
+using Application = System.Windows.Application;
+using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 
 namespace FASTER.Views
 {
@@ -23,7 +24,9 @@ namespace FASTER.Views
     public partial class Settings
     {
         UpdateInfoEventArgs _args;
-        public MainWindow MetroWindow;
+
+        private MainWindow MetroWindow { get; set; }
+
 
         public Settings(MainWindow main)
         {
@@ -38,6 +41,8 @@ namespace FASTER.Views
             fontPicker.ItemsSource = Fonts.SystemFontFamilies;
             fontPicker.DisplayMemberPath = "Source";
             fontPicker.SelectedItem = Fonts.SystemFontFamilies.FirstOrDefault(t => t.Source == Properties.Settings.Default.font);
+            
+            Slider.Value = Properties.Settings.Default.CliWorkers;
         }
 
         private void IUpdateBtnOK_Click(object sender, RoutedEventArgs e)
@@ -125,34 +130,8 @@ namespace FASTER.Views
             IModUpdatesOnLaunch.IsChecked = Properties.Settings.Default?.checkForModUpdates;
             IAppUpdatesOnLaunch.IsChecked = Properties.Settings.Default?.checkForAppUpdates;
             IAPIKeyBox.Text = Properties.Settings.Default?.SteamAPIKey ?? string.Empty;
-            UpdateLocalModFolders();
-        }
-        
-        private void INewLocalFolder_Click(object sender, RoutedEventArgs e)
-        {
-            string newModFolder = MainWindow.Instance.SelectFolder();
-
-            if (!string.IsNullOrEmpty(newModFolder))
-            {
-                Properties.Settings.Default.localModFolders ??= new List<string>();
-
-                Properties.Settings.Default.localModFolders.Add(newModFolder);
-                Properties.Settings.Default.Save();
-            }
-            UpdateLocalModFolders();
-        }
-
-        private void IRemoveLocalFolders_Click(object sender, RoutedEventArgs e)
-        {
-            foreach (var item in ILocalModFolders.Items)
-            {
-                var cb = item as CheckBox;
-                if (!(cb?.IsChecked ?? false)) continue;
-
-                Properties.Settings.Default.localModFolders.Remove(cb.Content.ToString());
-                Properties.Settings.Default.Save();
-            }
-            UpdateLocalModFolders();
+            Slider.Value = Properties.Settings.Default.CliWorkers;
+            NumericUpDown.Value = Slider.Value;
         }
         
         private void IModUpdatesOnLaunch_Checked(object sender, RoutedEventArgs e)
@@ -165,22 +144,6 @@ namespace FASTER.Views
         {
             Properties.Settings.Default.checkForAppUpdates = IAppUpdatesOnLaunch.IsChecked ?? true;
             Properties.Settings.Default.Save();
-        }
-
-        private void UpdateLocalModFolders()
-        {
-            try
-            {
-                ILocalModFolders.Items.Clear();
-
-                if (!(Properties.Settings.Default?.localModFolders.Count > 0)) return;
-
-                foreach (var cb in from folder in Properties.Settings.Default?.localModFolders 
-                                   select new CheckBox { Content = folder, IsChecked = false }) 
-                { ILocalModFolders.Items.Add(cb); }
-            }
-            catch (Exception e)
-            { Crashes.TrackError(e, new Dictionary<string, string> { { "Name", Properties.Settings.Default?.steamUserName } }); }
         }
 
         private void IUpdateApp_OnClick(object sender, RoutedEventArgs e)
@@ -216,7 +179,7 @@ namespace FASTER.Views
 
         private void Colors_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-            if(!(e.AddedItems[0] is Theme theme))
+            if(e.AddedItems[0] is not Theme theme)
                 return;
             ThemeManager.Current.ThemeSyncMode = ThemeSyncMode.SyncAll;
             ThemeManager.Current.ChangeTheme(Application.Current, theme);
@@ -227,13 +190,25 @@ namespace FASTER.Views
 
         private void Fonts_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-            if (!(e.AddedItems[0] is FontFamily font))
+            if (e.AddedItems[0] is not FontFamily font)
                 return;
 
             MetroWindow.FontFamily = font;
 
             Properties.Settings.Default.font = font.Source;
             Properties.Settings.Default.Save();
+        }
+
+        private void RangeBase_OnValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+
+            if ((sender is Slider slider) && !slider.IsLoaded)
+                return;
+
+            Properties.Settings.Default.CliWorkers = Convert.ToUInt16(e.NewValue);
+            NumericUpDown.Value = e.NewValue;
+            if (MainWindow.Instance.SteamUpdaterViewModel.SteamContentClient != null)
+                MainWindow.Instance.SteamUpdaterViewModel.SteamContentClient = new SteamContentClient(MainWindow.Instance.SteamUpdaterViewModel.SteamClient, Properties.Settings.Default.CliWorkers);
         }
     }
 }

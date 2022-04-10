@@ -61,7 +61,7 @@
                             </StackPanel>
                         </GroupBox>
                     </StackPanel>
-                    <GroupBox Header="Mods" Grid.Column="1" Margin="5">
+                    <GroupBox Header="Mods" Grid.Row="0" Grid.Column="1" Margin="5">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="auto"/>
@@ -96,7 +96,7 @@
                                             <CheckBox IsChecked="{Binding Profile.ContactDLCChecked}" Content="Contact DLC" Margin="10,3" Width="105" HorizontalAlignment="Left"/>
                                             <CheckBox IsChecked="{Binding Profile.GMDLCChecked}" Content="GM DLC" Margin="10,3" HorizontalAlignment="Left"/>
                                             <CheckBox IsChecked="{Binding Profile.PFDLCChecked}" Content="Prairie Fire DLC" Margin="10,3" Width="105" HorizontalAlignment="Left"/>
-                                            <CheckBox IsChecked="{Binding Profile.CLSADLCChecked}" Content="CLSA DLC" Margin="10,3" HorizontalAlignment="Left"/>
+                                            <CheckBox IsChecked="{Binding Profile.CSLADLCChecked}" Content="CSLA DLC" Margin="10,3" HorizontalAlignment="Left"/>
                                             <CheckBox IsChecked="{Binding Profile.WSDLCChecked}" Content="Western Sahara DLC" Margin="10,3" HorizontalAlignment="Left"/>
                                         </StackPanel>
                                     </Expander>

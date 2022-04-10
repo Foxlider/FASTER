@@ -1,6 +1,9 @@
 ﻿using FASTER.Models;
+
 using MahApps.Metro.Controls.Dialogs;
+
 using Microsoft.AppCenter.Analytics;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -77,27 +80,18 @@ namespace FASTER.ViewModel
             var modID   = (uint) (uint.MaxValue - r.Next(ushort.MaxValue / 2));
             var newPath = Path.Combine(Properties.Settings.Default.modStagingDirectory, modID.ToString());
             var oldPath = localPath;
-            if (!Directory.Exists(newPath))
-                Directory.CreateDirectory(newPath);
+            
+            if (Directory.Exists(newPath))
+            {
+                await DialogCoordinator.ShowMessageAsync(this, "Warning", "Directory already exist. Please try again.");
+                return;
+            }
+                
             if (Directory.Exists(oldPath))
             {
                 var progress = await DialogCoordinator.ShowProgressAsync(this, "Local Mod", "Copying mod...");
-                var files = Directory.EnumerateFiles(oldPath, "*", SearchOption.AllDirectories).ToList();
-                progress.Maximum = files.Count;
-                await Task.Factory.StartNew(() =>
-                {
-                    foreach (var file in files)
-                    {
-                        var newFile = file.Replace(oldPath, newPath);
-                        if (!Directory.Exists(Path.GetDirectoryName(newFile)))
-                            Directory.CreateDirectory(Path.GetDirectoryName(newFile));
-
-                        File.Copy(file, newFile, true);
-                        var progressDone = files.IndexOf(file);
-                        progress.SetMessage($"Copying mod from {oldPath}\n{progressDone} / {progress.Maximum}");
-                        progress.SetProgress(progressDone);
-                    }
-                });
+                
+                Directory.CreateSymbolicLink(newPath, oldPath);
                 
                 await progress.CloseAsync();
             }
@@ -113,7 +107,6 @@ namespace FASTER.ViewModel
                 IsLocal    = true,
                 Status     = ArmaModStatus.Local
             };
-
             ModsCollection.AddSteamMod(newMod);
         }
 
