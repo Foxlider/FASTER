@@ -45,8 +45,7 @@ jobs:
       with:
         dotnet-version: 6.x
         
-    - name: Autobuild
-      uses: github/codeql-action/autobuild@v1
+    - run: dotnet build ./FASTER.sln --configuration Debug
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v1
