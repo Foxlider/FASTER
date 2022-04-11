@@ -44,7 +44,11 @@ jobs:
       uses: actions/setup-dotnet@v2.0.0
       with:
         dotnet-version: 6.x
-        
+    
+    # new step
+    - name: Add nuget.org as nuget package source
+      run: dotnet nuget add source https://api.nuget.org/v3/index.json --name nuget.org
+      
     - run: dotnet restore ./FASTER.sln
     - run: dotnet build ./FASTER.sln --configuration Debug
 
