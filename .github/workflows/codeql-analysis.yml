@@ -45,7 +45,7 @@ jobs:
       with:
         dotnet-version: 6.x
         
-    - run: dotnet restore
+    - run: dotnet restore ./FASTER.sln
     - run: dotnet build ./FASTER.sln --configuration Debug
 
     - name: Perform CodeQL Analysis
