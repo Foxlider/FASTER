@@ -57,7 +57,7 @@ namespace FASTER.Models
         private bool _contactDlcChecked;
         private bool _gmDlcChecked;
         private bool _pfDlcChecked;
-        private bool _clsaDlcChecked;
+        private bool _cslaDlcChecked;
         private bool _wsDlcChecked;
         private bool _enableHT = true;
         private bool _enableRanking;
@@ -171,13 +171,13 @@ namespace FASTER.Models
             }
         }
 
-        public bool CLSADLCChecked
+        public bool CSLADLCChecked
         {
-            get => _clsaDlcChecked;
+            get => _cslaDlcChecked;
             set
             {
-                _clsaDlcChecked = value;
-                RaisePropertyChanged("CLSADLCChecked");
+                _cslaDlcChecked = value;
+                RaisePropertyChanged("CSLADLCChecked");
             }
         }
 
@@ -460,9 +460,9 @@ namespace FASTER.Models
             {
                 _ = mods.Append("vn;");
             }
-            if (CLSADLCChecked)
+            if (CSLADLCChecked)
             {
-                _ = mods.Append("clsa;");
+                _ = mods.Append("csla;");
             }
             if (WSDLCChecked)
             {

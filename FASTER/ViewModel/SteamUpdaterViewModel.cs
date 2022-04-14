@@ -141,7 +141,7 @@ namespace FASTER.ViewModel
             Analytics.TrackEvent("Updater - Clicked Update", new Dictionary<string, string>
             {
                 {"Name", Properties.Settings.Default.steamUserName},
-                {"DLCs", $"{(Parameters.UsingGMDlc ? "GM " : "")}{(Parameters.UsingCLSADlc? "CLSA " : "")}{(Parameters.UsingPFDlc ? "SOG " : "")}{(Parameters.UsingWSDlc ? "WS " : "")}"},
+                {"DLCs", $"{(Parameters.UsingGMDlc ? "GM " : "")}{(Parameters.UsingCSLADlc? "CSLA " : "")}{(Parameters.UsingPFDlc ? "SOG " : "")}{(Parameters.UsingWSDlc ? "WS " : "")}"},
                 {"Branch", $"{(Parameters.UsingPerfBinaries? "Profiling" : "Public")}"}
             });
 
@@ -200,7 +200,7 @@ namespace FASTER.ViewModel
                     null));
             }
 
-            if (Parameters.UsingCLSADlc)
+            if (Parameters.UsingCSLADlc)
             {
                 Parameters.Output += "\nChecking Arma 3 Server Creator DLC - CSLA...";
                 depotsDownload.Add((

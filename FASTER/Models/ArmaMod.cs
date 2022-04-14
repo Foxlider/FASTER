@@ -17,7 +17,7 @@ namespace FASTER.Models
         // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public string CollectionName { get; set; } = "Main";
 
-        private ObservableCollection<ArmaMod> _mods = new ObservableCollection<ArmaMod>();
+        private ObservableCollection<ArmaMod> _mods = new();
 
         [XmlElement(Order = 2, ElementName = "ArmaMod")]
         public ObservableCollection<ArmaMod> ArmaMods
@@ -32,7 +32,7 @@ namespace FASTER.Models
 
         private static ArmaModCollection ReloadMods()
         {
-            ArmaModCollection currentMods = new ArmaModCollection();
+            ArmaModCollection currentMods = new();
 
             if (Properties.Settings.Default.steamMods != null)
                 currentMods = Properties.Settings.Default.armaMods;
