@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Xml.Serialization;
+using System.Text.RegularExpressions;
 
 namespace FASTER.Models
 {
@@ -10,6 +11,11 @@ namespace FASTER.Models
     public class ArmaDeployment : INotifyPropertyChanged
     {
         private ObservableCollection<DeploymentMod> _mods = new ObservableCollection<DeploymentMod>();
+        private string _deployModsFilter = "";
+        private bool _deployModsFilterIsCaseSensitive = false;
+        private bool _deployModsFilterIsWholeWord = false;
+        private bool _deployModsFilterIsRegex = false;
+        private bool _deployModsFilterIsInvalid = false;
         private string _name = "Main";
         
         [XmlElement(Order = 1)]
@@ -35,8 +41,117 @@ namespace FASTER.Models
                 _mods = value;
                 Properties.Settings.Default.Save();
                 RaisePropertyChanged("DeployMods");
+                RaisePropertyChanged("FilteredDeployMods");
             }
         }
+
+        public ObservableCollection<DeploymentMod> FilteredDeployMods
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(DeployModsFilter))
+                {
+                    if (DeployModsFilterIsInvalid)
+                    {
+                        DeployModsFilterIsInvalid = false;
+                    }
+                    return new ObservableCollection<DeploymentMod>(_mods);
+                }
+
+                var pattern = DeployModsFilter;
+                if (!DeployModsFilterIsRegex)
+                {
+                    pattern = Regex.Replace(pattern, @"[\\\{\}\*\+\?\|\^\$\.\[\]\(\)]", "\\$&");
+                }
+
+                if (DeployModsFilterIsWholeWord)
+                {
+                    if (!Regex.IsMatch(pattern[0].ToString(), @"\B"))
+                    {
+                        pattern = $"\\b{pattern}";
+                    }
+                    if (!Regex.IsMatch(pattern[pattern.Length - 1].ToString(), @"\B"))
+                    {
+                        pattern = $"{pattern}\\b";
+                    }
+                }
+
+                var options = DeployModsFilterIsCaseSensitive ? RegexOptions.None : RegexOptions.IgnoreCase;
+
+                try
+                {
+                    var filteredDeployMods = new ObservableCollection<DeploymentMod>(_mods.Where(m => Regex.IsMatch(m.Name, pattern, options)));
+                    if (DeployModsFilterIsInvalid)
+                    {
+                        DeployModsFilterIsInvalid = false;
+                    }
+                    return filteredDeployMods;
+                }
+                catch (ArgumentException)
+                {
+                    if (!DeployModsFilterIsInvalid)
+                    {
+                        DeployModsFilterIsInvalid = true;
+                    }
+                    return new ObservableCollection<DeploymentMod>();
+                }
+            }
+        }
+
+        public string DeployModsFilter
+        {
+            get => _deployModsFilter;
+            set
+            {
+                _deployModsFilter = value;
+                RaisePropertyChanged("DeployModsFilter");
+                RaisePropertyChanged("FilteredDeployMods");
+            }
+        }
+
+        public bool DeployModsFilterIsCaseSensitive
+        {
+            get => _deployModsFilterIsCaseSensitive;
+            set
+            {
+                _deployModsFilterIsCaseSensitive = value;
+                RaisePropertyChanged("DeployModsFilterIsCaseSensitive");
+                RaisePropertyChanged("FilteredDeployMods");
+            }
+        }
+
+        public bool DeployModsFilterIsWholeWord
+        {
+            get => _deployModsFilterIsWholeWord;
+            set
+            {
+                _deployModsFilterIsWholeWord = value;
+                RaisePropertyChanged("DeployModsFilterIsWholeWord");
+                RaisePropertyChanged("FilteredDeployMods");
+            }
+        }
+
+        public bool DeployModsFilterIsRegex
+        {
+            get => _deployModsFilterIsRegex;
+            set
+            {
+                _deployModsFilterIsRegex = value;
+                RaisePropertyChanged("DeployModsFilterIsRegex");
+                RaisePropertyChanged("FilteredDeployMods");
+            }
+        }
+
+        public bool DeployModsFilterIsInvalid
+        {
+            get => _deployModsFilterIsInvalid;
+            set
+            {
+                _deployModsFilterIsInvalid = value;
+                RaisePropertyChanged("DeployModsFilterIsInvalid");
+            }
+        }
+
 
         public ArmaDeployment()
         {
