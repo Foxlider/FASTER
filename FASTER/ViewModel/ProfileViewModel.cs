@@ -266,6 +266,45 @@ namespace FASTER.ViewModel
             return input;
         }
 
+        // We're parsing to ArmaMod instead of ProfileMod because there's more info on the ArmaMod object and we can thus re-use this function
+        internal static List<ArmaMod> ParseModsFromArmaProfileFile(string filePath)
+        {
+            if (File.Exists(filePath)) // This should never happen, but it pays to be safe.
+                return new List<ArmaMod>();
+            var lines = File.ReadAllText(filePath);
+
+            List<ArmaMod> extractedModlist = new();
+            XmlDocument doc = new();
+            doc.LoadXml(lines);
+            var modNodes = doc.SelectNodes("//tr[@data-type=\"ModContainer\"]");
+            for (int i = 0; i < modNodes.Count; i++)
+            {
+                var modNode = modNodes.Item(i);
+                var modName = modNode.SelectSingleNode("td[@data-type='DisplayName']").InnerText;
+                var modIdNode = modNode.SelectSingleNode("td/a[@data-type='Link']");
+                Random r = new();
+                var modId = (uint)(uint.MaxValue - r.Next(ushort.MaxValue / 2));
+                var modIdS = modId.ToString();
+                if (modIdNode != null)
+                {
+                    modIdS = modIdNode.Attributes.GetNamedItem("href").Value.Split("?id=")[1].Split('"')[0];
+                    uint.TryParse(modIdS, out modId);
+                }
+
+                ArmaMod mod = new()
+                {
+                    WorkshopId = modId,
+                    Path = Path.Combine(Properties.Settings.Default.modStagingDirectory, modIdS),
+                    Name = modName,
+                    IsLocal = modIdNode == null,
+                    Status = modIdNode == null ? ArmaModStatus.Local : ArmaModStatus.UpToDate,
+                };
+                extractedModlist.Add(mod);
+            }
+
+            return extractedModlist;
+        }
+
         internal void LoadModsFromFile()
         {
             var dialog = new CommonOpenFileDialog
@@ -296,38 +335,19 @@ namespace FASTER.ViewModel
             { mod.ClientSideChecked = false; }
 
             ushort? loadPriority = 1;
-
-            var lines = File.ReadAllText(dialog.FileName);
-
-            var extractedModlist = new List<ProfileMod>();
-            var doc = new XmlDocument();
-            doc.LoadXml(lines);
-            var modNodes = doc.SelectNodes("//tr[@data-type=\"ModContainer\"]");
-            for (int i = 0; i < modNodes.Count; i++)
+            List<ProfileMod> extractedModList = ParseModsFromArmaProfileFile(dialog.FileName).Select(armaMod =>
             {
-                var modNode = modNodes.Item(i);
-                var modName = modNode.SelectSingleNode("td[@data-type='DisplayName']").InnerText;
-                var modIdNode = modNode.SelectSingleNode("td/a[@data-type='Link']");
-                Random r = new();
-                var modID = (uint)(uint.MaxValue - r.Next(ushort.MaxValue / 2));
-                if (modIdNode != null)
+                return new ProfileMod
                 {
-                    string modIdS = modIdNode.Attributes.GetNamedItem("href").Value.Split("?id=")[1].Split('"')[0];
-                    uint.TryParse(modIdS, out modID);
-                }
-
-                var mod = new ProfileMod
-                {
-                    Id = modID,
-                    Name = modName,
-                    IsLocal = modIdNode == null
+                    Id = armaMod.WorkshopId,
+                    Name = armaMod.Name,
+                    IsLocal = armaMod.IsLocal
                 };
-                extractedModlist.Add(mod);
-            }
+            }).ToList();
 
             //Select new ones
-            var notFound = new List<string>();
-            foreach (var extractedMod in extractedModlist)
+            List<string> notFound = new();
+            foreach (var extractedMod in extractedModList)
             {
                 var mod = Profile.ProfileMods.FirstOrDefault(m => m.Id == extractedMod.Id || GetCompareString(extractedMod.Name) == GetCompareString(m.Name));
                 if (mod != null)

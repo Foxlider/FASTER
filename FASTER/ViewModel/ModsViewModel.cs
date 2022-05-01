@@ -171,38 +171,9 @@ namespace FASTER.ViewModel
 
             if (string.IsNullOrEmpty(modsFile)) return;
 
-            var lines = File.ReadAllText(modsFile);
+            var extractedModList = ProfileViewModel.ParseModsFromArmaProfileFile(modsFile);
 
-            var extractedModlist = new List<ArmaMod>();
-            var doc = new XmlDocument();
-            doc.LoadXml(lines);
-            var modNodes = doc.SelectNodes("//tr[@data-type=\"ModContainer\"]");
-            for (int i = 0; i < modNodes.Count; i++)
-            {
-                var modNode = modNodes.Item(i);
-                var modName = modNode.SelectSingleNode("td[@data-type='DisplayName']").InnerText;
-                var modIdNode = modNode.SelectSingleNode("td/a[@data-type='Link']");
-                Random r = new();
-                var modId = (uint)(uint.MaxValue - r.Next(ushort.MaxValue / 2));
-                var modIdS = modId.ToString();
-                if (modIdNode != null)
-                {
-                    modIdS = modIdNode.Attributes.GetNamedItem("href").Value.Split("?id=")[1].Split('"')[0];
-                    uint.TryParse(modIdS, out modId);
-                }
-
-                var mod = new ArmaMod
-                {
-                    WorkshopId = modId,
-                    Path = Path.Combine(Properties.Settings.Default.modStagingDirectory, modIdS),
-                    Name = modName,
-                    IsLocal = modIdNode == null,
-                    Status = modIdNode == null ? ArmaModStatus.Local : ArmaModStatus.UpToDate,
-                };
-                extractedModlist.Add(mod);
-            }
-
-            foreach (var extractedMod in extractedModlist)
+            foreach (var extractedMod in extractedModList)
             {
                 var mod = ModsCollection.ArmaMods.FirstOrDefault(m => m.WorkshopId == extractedMod.WorkshopId || ProfileViewModel.GetCompareString(extractedMod.Name) == ProfileViewModel.GetCompareString(m.Name));
                 if (mod != null)
