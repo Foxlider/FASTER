@@ -87,7 +87,7 @@ namespace FASTER.ViewModel
 
         private string SetHCCommandLine(int hc)
         {
-            string headlessMods = string.Join(";", Profile.ProfileMods.Where(m => m.HeadlessChecked).Select(m => $"@{Functions.SafeName(m.Name)}"));
+            string headlessMods = string.Join(";", Profile.ProfileMods.Where(m => m.HeadlessChecked).Select(m =>$"@{Functions.SafeName(m.Name)}"));
             List<string> arguments = new()
             {
                 "-client",
