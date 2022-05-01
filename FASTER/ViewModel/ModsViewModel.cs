@@ -103,8 +103,8 @@ namespace FASTER.ViewModel
                 var newPath = Path.Combine(Properties.Settings.Default.modStagingDirectory, modID.ToString());
                 if (Directory.Exists(newPath))
                 {
-                    await DialogCoordinator.ShowMessageAsync(this, "Warning", "Directory already exist. Please try again.");
-                    return;
+                    await DialogCoordinator.ShowMessageAsync(this, "Warning", $"Directory already exists for {oldPath.Substring(oldPath.LastIndexOf("@", StringComparison.Ordinal) + 1)}.");
+                    continue;
                 }
 
                 await Task.Factory.StartNew(() => {
