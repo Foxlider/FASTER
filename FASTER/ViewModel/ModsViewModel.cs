@@ -182,7 +182,7 @@ namespace FASTER.ViewModel
                 var modNode = modNodes.Item(i);
                 var modName = modNode.SelectSingleNode("td[@data-type='DisplayName']").InnerText;
                 var modIdNode = modNode.SelectSingleNode("td/a[@data-type='Link']");
-                Random r = new Random();
+                Random r = new();
                 var modId = (uint)(uint.MaxValue - r.Next(ushort.MaxValue / 2));
                 var modIdS = modId.ToString();
                 if (modIdNode != null)
@@ -229,7 +229,7 @@ namespace FASTER.ViewModel
                 return;
             }
 
-            ProcessStartInfo startInfo = new ProcessStartInfo
+            ProcessStartInfo startInfo = new()
             {
                 Arguments = mod.Path,
                 FileName  = "explorer.exe"
@@ -252,7 +252,7 @@ namespace FASTER.ViewModel
 
             MainWindow.Instance.NavigateToConsole();
             var ans = await MainWindow.Instance.SteamUpdaterViewModel.RunModsUpdater(ModsCollection.ArmaMods);
-            if(ans == UpdateState.LoginFailed)
+            if(ans == UpdateState.LoginFailed) 
                 DisplayMessage("Steam Login Failed");
         }
     }

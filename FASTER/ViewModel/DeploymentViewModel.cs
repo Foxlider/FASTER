@@ -12,7 +12,7 @@ namespace FASTER.ViewModel
     public class DeploymentViewModel
     {
         public DeploymentViewModel()
-        {
+        { 
             if(Settings.Default.Deployments == null)
             {
                 Settings.Default.Deployments = new ArmaDeployment();
@@ -23,7 +23,7 @@ namespace FASTER.ViewModel
         }
 
         public ArmaDeployment Deployment { get; set; }
-
+        
 
         /// <summary>
         /// Unload data
@@ -55,7 +55,7 @@ namespace FASTER.ViewModel
                     Settings.Default.Save();
                     continue;
                 }
-                mod.UpdateInfos();
+                mod.UpdateInfos(); 
             }
         }
 

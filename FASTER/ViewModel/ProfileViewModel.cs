@@ -52,7 +52,7 @@ namespace FASTER.ViewModel
             string folderPath = Path.Combine(Profile.ArmaPath, "Servers", Profile.Id);
             if (Directory.Exists(folderPath))
             {
-                ProcessStartInfo startInfo = new ProcessStartInfo
+                ProcessStartInfo startInfo = new()
                 {
                     Arguments = folderPath,
                     FileName  = "explorer.exe"
@@ -69,7 +69,7 @@ namespace FASTER.ViewModel
             if (!Profile.ServerCfg.HeadlessClientEnabled) return;
             if (!VerifyBeforeLaunch()) return;
 
-            //Launching...
+            //Launching... 
             DisplayMessage($"Launching Headless Clients for {Profile.Name}...");
             string commandLine;
             for (int hc = 1; hc <= Profile.HeadlessNumber; hc++ )
@@ -87,8 +87,8 @@ namespace FASTER.ViewModel
 
         private string SetHCCommandLine(int hc)
         {
-            string headlessMods = string.Join(";", Profile.ProfileMods.Where(m => m.HeadlessChecked).Select(m => m.IsLocal ? m.Name : $"@{Functions.SafeName(m.Name)}"));
-            List<string> arguments = new List<string>
+            string headlessMods = string.Join(";", Profile.ProfileMods.Where(m => m.HeadlessChecked).Select(m => $"@{Functions.SafeName(m.Name)}"));
+            List<string> arguments = new()
             {
                 "-client",
                 " -connect=127.0.0.1",
@@ -122,7 +122,7 @@ namespace FASTER.ViewModel
         {
             if (!VerifyBeforeLaunch()) return;
 
-            //Launching...
+            //Launching... 
             DisplayMessage($"Launching Profile {Profile.Name}...");
 
             Analytics.TrackEvent("Profile - Clicked LaunchServer", new Dictionary<string, string>
@@ -157,7 +157,7 @@ namespace FASTER.ViewModel
 
             LaunchHCs();
             #endif
-
+            
         }
 
         /// <summary>
@@ -190,7 +190,7 @@ namespace FASTER.ViewModel
             if (!Directory.Exists(Path.Combine(path, "Servers", profile)))
             { return false; }
 
-            return File.Exists(Path.Combine(path, "Servers", profile, "server_config.cfg"))
+            return File.Exists(Path.Combine(path, "Servers", profile, "server_config.cfg")) 
                 && File.Exists(Path.Combine(path, "Servers", profile, "server_basic.cfg"));
         }
 
@@ -204,7 +204,7 @@ namespace FASTER.ViewModel
             var menuItem = MainWindow.Instance.IServerProfilesMenu.Items.Cast<ToggleButton>().FirstOrDefault(p => p.Name == Profile.Id);
             if(menuItem != null)
                 MainWindow.Instance.IServerProfilesMenu.Items.Remove(menuItem);
-
+            
             MainWindow.Instance.NavigateToConsole();
         }
 
@@ -242,9 +242,9 @@ namespace FASTER.ViewModel
                 if (!links.Any(l => l.Name == $"@{Functions.SafeName(profileMod.Name)}"))
                     MissingMods++;
             }
+            
 
-
-            var index = Properties.Settings.Default.Profiles.FindIndex(p => p.Id == Profile.Id);
+            var index = Properties.Settings.Default.Profiles.FindIndex(p => p.Id == Profile.Id);  
             if (index != -1)
             { Properties.Settings.Default.Profiles[index] = Profile; }
 
@@ -308,7 +308,7 @@ namespace FASTER.ViewModel
                 var modNode = modNodes.Item(i);
                 var modName = modNode.SelectSingleNode("td[@data-type='DisplayName']").InnerText;
                 var modIdNode = modNode.SelectSingleNode("td/a[@data-type='Link']");
-                Random r = new Random();
+                Random r = new();
                 var modID = (uint)(uint.MaxValue - r.Next(ushort.MaxValue / 2));
                 if (modIdNode != null)
                 {
@@ -433,11 +433,11 @@ namespace FASTER.ViewModel
                 }
             }
         }
-
+        
         public ObservableCollection<string> LimitedDistanceStrings { get; } = new ObservableCollection<string>(ProfileCfgArrays.LimitedDistanceStrings);
         public ObservableCollection<string> AiPresetStrings        { get; } = new ObservableCollection<string>(ProfileCfgArrays.AiPresetStrings);
         public ObservableCollection<string> ThirdPersonStrings     { get; } = new ObservableCollection<string>(ProfileCfgArrays.ThirdPersonStrings);
-
+        
         public void LoadData()
         {
             var modlist = new List<ProfileMod>();
@@ -454,7 +454,7 @@ namespace FASTER.ViewModel
                 { existingMod.Name = mod.Name; }
                 modlist.Add(existingMod);
             }
-
+            
             Profile.ProfileMods = modlist;
 
             LoadMissions();
@@ -462,17 +462,17 @@ namespace FASTER.ViewModel
 
         public void UnloadData()
         {
-            var index = Properties.Settings.Default.Profiles.FindIndex(p => p.Id == Profile.Id);
+            var index = Properties.Settings.Default.Profiles.FindIndex(p => p.Id == Profile.Id);  
             if (index != -1)
             { Properties.Settings.Default.Profiles[index] = Profile; }
         }
-
+        
         internal void LoadMissions()
         {
             if (!Directory.Exists(Path.Combine(Profile.ArmaPath, "mpmissions"))) return;
 
             var missionList = new List<ProfileMission>();
-            List<string> newMissions = new List<string>();
+            List<string> newMissions = new();
 
             //Load PBO files
             newMissions.AddRange(Directory.EnumerateFiles(Path.Combine(Profile.ArmaPath, "mpmissions"), "*.pbo",  searchOption: SearchOption.TopDirectoryOnly)

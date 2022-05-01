@@ -62,20 +62,20 @@ namespace FASTER.Models
 
         public void DeleteSteamMod(uint workshopId)
         {
-
+            
 
             try
             {
                 var currentProfiles = ReloadMods();
                 var item            = currentProfiles.ArmaMods.FirstOrDefault(x => x.WorkshopId == workshopId);
-
+                
                 if (item != null)
                 {
-                    if (Directory.Exists(item.Path))
+                    if(Directory.Exists(item.Path))
                         Directory.Delete(item.Path, true);
                     currentProfiles.ArmaMods.Remove(item);
                 }
-
+                
                 Properties.Settings.Default.Save();
             }
             catch
@@ -88,8 +88,8 @@ namespace FASTER.Models
         { PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property)); }
     }
 
-
-    [Serializable]
+    
+    [Serializable] 
     public class ArmaMod : INotifyPropertyChanged
     {
 
@@ -105,9 +105,9 @@ namespace FASTER.Models
         private long   _size;
         private bool   _isLoading;
 
-
-        public uint   WorkshopId
-        {
+        
+        public uint   WorkshopId       
+        { 
             get => _workshopId;
             set
             {
@@ -209,7 +209,7 @@ namespace FASTER.Models
                 RaisePropertyChanged("IsLoading");
             }
         }
-
+        
 
         internal void CheckModSize()
         {
@@ -221,7 +221,7 @@ namespace FASTER.Models
                 IsLoading = false;
                 return;
             }
-
+            
             var ChildProcess = Task.Factory.StartNew(() => GetDirectorySize(Path));
             Size      = ChildProcess.Result;
             IsLoading = false;
@@ -240,7 +240,7 @@ namespace FASTER.Models
             IsLoading = true;
 
             UpdateInfos(false);
-
+            
             Path = System.IO.Path.Combine(Properties.Settings.Default.modStagingDirectory, WorkshopId.ToString());
             if (!Directory.Exists(Path))
                 Directory.CreateDirectory(Path);
@@ -264,7 +264,7 @@ namespace FASTER.Models
                     LocalLastUpdated = (ulong) ts.TotalSeconds;
                     break;
             }
-
+                
             IsLoading = false;
         }
 

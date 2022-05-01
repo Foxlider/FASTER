@@ -45,7 +45,7 @@ namespace FASTER.Models
         // Calls to Steam API Endpoint and returns the result as JSON Object
         private static JObject ApiCall(string uri)
         {
-            // Create a request for the URL.
+            // Create a request for the URL. 
             HttpClient client = new();
             client.Timeout = TimeSpan.FromSeconds(5);
 

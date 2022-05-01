@@ -39,7 +39,7 @@ namespace FASTER.Views
         {
             if (((FrameworkElement) sender).DataContext is not ArmaMod mod)
                 return;
-
+            
             await mod.UpdateModAsync();
         }
 
