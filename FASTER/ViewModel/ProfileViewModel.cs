@@ -259,52 +259,6 @@ namespace FASTER.ViewModel
 
         public ObservableCollection<string> FadeOutStrings         { get; } = new ObservableCollection<string>(ProfileCfgArrays.FadeOutStrings);
 
-        internal static string GetCompareString(string input)
-        {
-            input = input.Replace("@", "");
-            input = Regex.Replace(input, "[^a-zA-Z0-9]", string.Empty);
-            return input;
-        }
-
-        // We're parsing to ArmaMod instead of ProfileMod because there's more info on the ArmaMod object and we can thus re-use this function
-        internal static List<ArmaMod> ParseModsFromArmaProfileFile(string filePath)
-        {
-            if (File.Exists(filePath)) // This should never happen, but it pays to be safe.
-                return new List<ArmaMod>();
-            var lines = File.ReadAllText(filePath);
-
-            List<ArmaMod> extractedModlist = new();
-            XmlDocument doc = new();
-            doc.LoadXml(lines);
-            var modNodes = doc.SelectNodes("//tr[@data-type=\"ModContainer\"]");
-            for (int i = 0; i < modNodes.Count; i++)
-            {
-                var modNode = modNodes.Item(i);
-                var modName = modNode.SelectSingleNode("td[@data-type='DisplayName']").InnerText;
-                var modIdNode = modNode.SelectSingleNode("td/a[@data-type='Link']");
-                Random r = new();
-                var modId = (uint)(uint.MaxValue - r.Next(ushort.MaxValue / 2));
-                var modIdS = modId.ToString();
-                if (modIdNode != null)
-                {
-                    modIdS = modIdNode.Attributes.GetNamedItem("href").Value.Split("?id=")[1].Split('"')[0];
-                    uint.TryParse(modIdS, out modId);
-                }
-
-                ArmaMod mod = new()
-                {
-                    WorkshopId = modId,
-                    Path = Path.Combine(Properties.Settings.Default.modStagingDirectory, modIdS),
-                    Name = modName,
-                    IsLocal = modIdNode == null,
-                    Status = modIdNode == null ? ArmaModStatus.Local : ArmaModStatus.UpToDate,
-                };
-                extractedModlist.Add(mod);
-            }
-
-            return extractedModlist;
-        }
-
         internal void LoadModsFromFile()
         {
             var dialog = new CommonOpenFileDialog
@@ -335,7 +289,7 @@ namespace FASTER.ViewModel
             { mod.ClientSideChecked = false; }
 
             ushort? loadPriority = 1;
-            List<ProfileMod> extractedModList = ParseModsFromArmaProfileFile(dialog.FileName).Select(armaMod =>
+            List<ProfileMod> extractedModList = ModUtilities.ParseModsFromArmaProfileFile(dialog.FileName).Select(armaMod =>
             {
                 return new ProfileMod
                 {
@@ -349,7 +303,7 @@ namespace FASTER.ViewModel
             List<string> notFound = new();
             foreach (var extractedMod in extractedModList)
             {
-                var mod = Profile.ProfileMods.FirstOrDefault(m => m.Id == extractedMod.Id || GetCompareString(extractedMod.Name) == GetCompareString(m.Name));
+                var mod = Profile.ProfileMods.FirstOrDefault(m => m.Id == extractedMod.Id || ModUtilities.GetCompareString(extractedMod.Name) == ModUtilities.GetCompareString(m.Name));
                 if (mod != null)
                 {
                     mod.ClientSideChecked = true;

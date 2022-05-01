@@ -171,11 +171,11 @@ namespace FASTER.ViewModel
 
             if (string.IsNullOrEmpty(modsFile)) return;
 
-            var extractedModList = ProfileViewModel.ParseModsFromArmaProfileFile(modsFile);
+            var extractedModList = ModUtilities.ParseModsFromArmaProfileFile(modsFile);
 
             foreach (var extractedMod in extractedModList)
             {
-                var mod = ModsCollection.ArmaMods.FirstOrDefault(m => m.WorkshopId == extractedMod.WorkshopId || ProfileViewModel.GetCompareString(extractedMod.Name) == ProfileViewModel.GetCompareString(m.Name));
+                var mod = ModsCollection.ArmaMods.FirstOrDefault(m => m.WorkshopId == extractedMod.WorkshopId || ModUtilities.GetCompareString(extractedMod.Name) == ModUtilities.GetCompareString(m.Name));
                 if (mod != null)
                     continue;
 
