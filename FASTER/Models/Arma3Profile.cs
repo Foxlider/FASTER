@@ -13,6 +13,8 @@ namespace FASTER.Models
 
         public static string[] AiPresetStrings { get; } = { "Low", "Normal", "High", "Custom" };
         public static string[] ThirdPersonStrings { get; } = { "Disabled", "Enabled", "Vehicles Only" };
+        public static string[] TacticalPingStrings { get; } = { "Disabled", "Deprecated", "Excluding Map", "Enabled" };
+
     }
 
     [Serializable]
@@ -40,7 +42,7 @@ namespace FASTER.Models
         private ushort mapContentMines = 1;
         private ushort autoReport = 0;
         private ushort multipleSaves = 0;
-        private ushort tacticalPing = 1;
+        private ushort tacticalPing = 3;
 
         private ushort aiLevelPreset = 3;
 
@@ -282,10 +284,10 @@ namespace FASTER.Models
 
         public string TacticalPing
         {
-            get => ProfileCfgArrays.EnabledStrings[tacticalPing];
+            get => ProfileCfgArrays.TacticalPingStrings[tacticalPing];
             set
             {
-                tacticalPing = (ushort)Array.IndexOf(ProfileCfgArrays.EnabledStrings, value);
+                tacticalPing = (ushort)Array.IndexOf(ProfileCfgArrays.TacticalPingStrings, value);
                 RaisePropertyChanged("TacticalPing");
             }
         }
