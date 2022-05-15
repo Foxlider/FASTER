@@ -64,6 +64,15 @@
                   ItemsSource="{Binding Path=ModsCollection.ArmaMods, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                   CanUserReorderColumns="False" CanUserSortColumns="True" AutoGenerateColumns="False"
                   CanUserAddRows="False">
+            <DataGrid.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Tag="Delete All" Header="Delete All" Click="DeleteAllMods">
+                        <MenuItem.Icon>
+                            <iconPacks:PackIconModern Kind="Delete" Margin="5"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </ContextMenu>
+            </DataGrid.ContextMenu>
             <DataGrid.Effect>
                 <DropShadowEffect BlurRadius="5" RenderingBias="Performance" ShadowDepth="1"/>
             </DataGrid.Effect>

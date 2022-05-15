@@ -341,7 +341,8 @@ namespace FASTER.Models
 
         private static long GetDirectorySize(string p)
         {
-            string[] a = Directory.GetFiles(p, "*.*", SearchOption.AllDirectories);
+            var d = Directory.ResolveLinkTarget(p, true);
+            string[] a = Directory.GetFiles(d != null ? d.FullName : p, "*.*", SearchOption.AllDirectories);
             return a.Select(name => new FileInfo(name)).Select(info => info.Length).Sum();
         }
 
