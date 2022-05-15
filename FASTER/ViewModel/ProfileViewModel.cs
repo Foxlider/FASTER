@@ -1,6 +1,9 @@
 using FASTER.Models;
+
+using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using Microsoft.WindowsAPICodePack.Dialogs;
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -11,10 +14,6 @@ using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls.Primitives;
-using System.Text.RegularExpressions;
-using System.Xml;
-using Microsoft.AppCenter.Analytics;
-using System.Xml.Linq;
 
 namespace FASTER.ViewModel
 {
