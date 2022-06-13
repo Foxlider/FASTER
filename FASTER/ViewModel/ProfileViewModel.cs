@@ -1,6 +1,9 @@
 using FASTER.Models;
+
+using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using Microsoft.WindowsAPICodePack.Dialogs;
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -11,8 +14,6 @@ using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls.Primitives;
-using Microsoft.AppCenter.Analytics;
-using System.Xml.Linq;
 
 namespace FASTER.ViewModel
 {
@@ -282,33 +283,42 @@ namespace FASTER.ViewModel
                 return;
             }
 
-            var lines = File.ReadAllLines(dialog.FileName)
-                            .AsEnumerable()
-                            .Where(l => l.Contains("steamcommunity.com/sharedfiles/filedetails"));
-            
             //Clear mods
             foreach (var mod in Profile.ProfileMods)
             { mod.ClientSideChecked = false; }
 
             ushort? loadPriority = 1;
-
-            foreach (string line in lines)
+            List<ProfileMod> extractedModList = ModUtilities.ParseModsFromArmaProfileFile(dialog.FileName).Select(armaMod =>
             {
-                var link = XElement.Parse(line).Attribute("href").Value;
-                if (link == null)
-                    continue;
-                var modIdS = System.Web.HttpUtility.ParseQueryString(new Uri(link).Query).Get("id");
+                return new ProfileMod
+                {
+                    Id = armaMod.WorkshopId,
+                    Name = armaMod.Name,
+                    IsLocal = armaMod.IsLocal
+                };
+            }).ToList();
 
-                if (!uint.TryParse(modIdS, out uint modId)) continue;
-                var mod = Profile.ProfileMods.FirstOrDefault(m => m.Id == modId);
+            //Select new ones
+            List<string> notFound = new();
+            foreach (var extractedMod in extractedModList)
+            {
+                var mod = Profile.ProfileMods.FirstOrDefault(m => m.Id == extractedMod.Id || ModUtilities.GetCompareString(extractedMod.Name) == ModUtilities.GetCompareString(m.Name));
                 if (mod != null)
-                { 
-                    mod.ClientSideChecked = true; 
-                    mod.LoadPriority =  loadPriority;
-                    loadPriority     += 1;
+                {
+                    mod.ClientSideChecked = true;
+                    mod.LoadPriority = loadPriority;
+                    loadPriority += 1;
                 }
                 else
-                { DisplayMessage("Some mods in the preset were not downloaded yet. Import the preset and retry later."); }
+                {
+                    notFound.Add(extractedMod.Name);
+                }
+            }
+
+            // Display mods that weren't found in message
+            if (notFound.Count > 0)
+            {
+                DisplayMessage($"Some mods in the preset were not found: \n{string.Join("\n\t", notFound)}");
             }
         }
 

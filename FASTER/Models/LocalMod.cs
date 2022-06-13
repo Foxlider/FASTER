@@ -32,7 +32,7 @@ namespace FASTER.Models
         {
             var localMods = new List<LocalMod>();
 
-            List<string> foldersToSearch = new List<string>();
+            List<string> foldersToSearch = new();
 
             if (serverPathOnly && !string.IsNullOrEmpty(Properties.Settings.Default.serverPath))
             { foldersToSearch.Add(Properties.Settings.Default.serverPath); }
@@ -49,7 +49,7 @@ namespace FASTER.Models
                     var modFolders = Directory.GetDirectories(localModFolder, "@*");
 
                     localMods.AddRange(from modFolder in modFolders
-                                       let name = modFolder.Substring(modFolder.LastIndexOf("@", StringComparison.Ordinal) + 1)
+                                       let name = modFolder[(modFolder.LastIndexOf("@", StringComparison.Ordinal) + 1)..]
                                        let author = "Unknown"
                                        let website = "Unknown"
                                        select new LocalMod(name, modFolder, author, website));
