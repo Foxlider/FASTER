@@ -102,7 +102,7 @@ namespace FASTER.ViewModel
                 var newPath = Path.Combine(Properties.Settings.Default.modStagingDirectory, modID.ToString());
                 if (Directory.Exists(newPath))
                 {
-                    await DialogCoordinator.ShowMessageAsync(this, "Warning", $"Directory already exists for {oldPath.Substring(oldPath.LastIndexOf("@", StringComparison.Ordinal) + 1)}.");
+                    await DialogCoordinator.ShowMessageAsync(this, "Warning", $"Directory already exists for {oldPath[(oldPath.LastIndexOf("@", StringComparison.Ordinal) + 1)..]}.");
                     continue;
                 }
 
@@ -116,7 +116,7 @@ namespace FASTER.ViewModel
                 var newMod = new ArmaMod
                 {
                     WorkshopId = modID,
-                    Name = oldPath.Substring(oldPath.LastIndexOf("@", StringComparison.Ordinal) + 1),
+                    Name = oldPath[(oldPath.LastIndexOf("@", StringComparison.Ordinal) + 1)..],
                     Path = newPath,
                     Author = "Unknown",
                     IsLocal = true,

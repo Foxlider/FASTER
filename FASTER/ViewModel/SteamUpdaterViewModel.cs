@@ -465,6 +465,8 @@ namespace FASTER.ViewModel
                     var ts = DateTime.UtcNow - nx;
                     mod.LocalLastUpdated = (ulong) ts.TotalSeconds;
 
+                    mod.CheckModSize();
+
                     Parameters.Output += $"\n    Download {mod.WorkshopId} completed, it took {sw.Elapsed.Minutes + sw.Elapsed.Hours*60}m {sw.Elapsed.Seconds}s {sw.Elapsed.Milliseconds}ms";
 
 
