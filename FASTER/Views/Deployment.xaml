@@ -70,13 +70,22 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTextColumn Header="ID" Binding="{Binding Path=WorkshopId}" SortMemberPath="WorkshopId" CanUserSort="True" IsReadOnly="True"/>
-
                 <DataGridTextColumn Header="Status" CanUserSort="True" Binding="{Binding Path=Status}" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Name" Binding="{Binding Path=Name}" CanUserSort="True" Width="1*" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Author" Binding="{Binding Path=Author}" CanUserSort="False" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Size" Binding="{Binding Path=Size, Converter={StaticResource SizeConverter}}" Width="auto" MinWidth="90" CanUserSort="True" IsReadOnly="True">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="HorizontalAlignment" Value="Right"/>
+                            <Setter Property="Margin"  Value="5,0,3,0"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
 
-                <DataGridTemplateColumn Header="Deploy" CanUserSort="False" CanUserResize="False">
+                <DataGridTemplateColumn Header="Deploy" CanUserSort="False">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate DataType="models:ProfileMod">
-                            <StackPanel Orientation="Horizontal">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                 <CheckBox IsChecked="{Binding Marked, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="False" HorizontalAlignment="Center"/>
                                 <Button Height="25" Width="25" Padding="0" Click="DeployMod" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" ToolTip="Deploy Mod" HorizontalAlignment="Center">
                                     <Grid Margin="3">
@@ -92,8 +101,8 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                
-                <DataGridTemplateColumn Header="Info" CanUserSort="False" CanUserResize="False">
+
+                <DataGridTemplateColumn Header="Info" CanUserSort="False">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">
@@ -116,17 +125,6 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-
-                <DataGridTextColumn Header="Name" Binding="{Binding Path=Name}" CanUserSort="True" Width="1*" IsReadOnly="True"/>
-                <DataGridTextColumn Header="Author" Binding="{Binding Path=Author}" CanUserSort="False" IsReadOnly="True"/>
-                <DataGridTextColumn Header="Size" Binding="{Binding Path=Size, Converter={StaticResource SizeConverter}}" Width="auto" MinWidth="90" CanUserSort="True" IsReadOnly="True">
-                    <DataGridTextColumn.ElementStyle>
-                        <Style TargetType="TextBlock">
-                            <Setter Property="HorizontalAlignment" Value="Right"/>
-                            <Setter Property="Margin"  Value="5,0,3,0"/>
-                        </Style>
-                    </DataGridTextColumn.ElementStyle>
-                </DataGridTextColumn>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>
