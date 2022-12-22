@@ -48,6 +48,9 @@
             <Button ToolTip="Update All"
                     Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Padding="7,5"
                     Content="{iconPacks:Material Kind=Update}" Click="UpdateAll_Click" RenderTransformOrigin="0.258,42.716" />
+            <Button ToolTip="Delete All"
+                    Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Padding="7,5"
+                    Content="{iconPacks:Modern Kind=Delete}" Click="DeleteAll_Click" RenderTransformOrigin="0.258,42.716" />
         </StackPanel>
         <Grid Grid.Row="0" Grid.Column="1">
             <Grid.Effect>
@@ -64,9 +67,19 @@
                   ItemsSource="{Binding Path=ModsCollection.ArmaMods, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                   CanUserReorderColumns="False" CanUserSortColumns="True" AutoGenerateColumns="False"
                   CanUserAddRows="False">
+            <DataGrid.RowStyle>
+                <Style TargetType="{x:Type DataGridRow}" BasedOn="{StaticResource MahApps.Styles.DataGridRow.Azure}">
+                    <Setter Property="IsSelected" Value="{Binding Path=IsSelected, UpdateSourceTrigger=PropertyChanged}" />
+                </Style>
+            </DataGrid.RowStyle>
             <DataGrid.ContextMenu>
                 <ContextMenu>
-                    <MenuItem Tag="Delete All" Header="Delete All" Click="DeleteAllMods">
+                    <MenuItem Tag="Update" Header="Update" Click="UpdateSelectedMods">
+                        <MenuItem.Icon>
+                            <iconPacks:PackIconMaterial Kind="Update" Margin="5"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Tag="Delete" Header="Delete" Click="DeleteSelectedMods">
                         <MenuItem.Icon>
                             <iconPacks:PackIconModern Kind="Delete" Margin="5"/>
                         </MenuItem.Icon>
@@ -92,28 +105,17 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTextColumn Header="ID" Binding="{Binding Path=WorkshopId}" SortMemberPath="WorkshopId" CanUserSort="True" IsReadOnly="True"/>
-
                 <DataGridTextColumn Header="Status" CanUserSort="True" Binding="{Binding Path=Status}" IsReadOnly="True"/>
-
-                <DataGridTemplateColumn Header="Update" CanUserSort="False" CanUserResize="False">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Grid Visibility="{Binding Path=IsLocal, Converter={StaticResource BoolToHide}}">
-                                <Button Height="25" Width="25" Padding="0" Click="UpdateMod" Content="{iconPacks:Material Kind=Update}"  Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}"
-                                        Visibility="{Binding Path=IsLoading, Converter={StaticResource BoolToHide}}"
-                                        BorderThickness="0" HorizontalAlignment="Center"/>
-                                <fa:ImageAwesome Height="20" Width="20" Margin="2.5" Icon="CircleOutlineNotch" Spin="{Binding Path=IsLoading}" Foreground="White" Visibility="{Binding Path=IsLoading, Converter={StaticResource BoolToVis}}" />
-                            </Grid>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Delete" CanUserSort="False" CanUserResize="False">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Button Height="25" Width="25" Padding="0" Click="DeleteMod" Content="{iconPacks:Material Kind=Delete}" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" HorizontalAlignment="Center"/>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
+                <DataGridTextColumn Header="Name" Binding="{Binding Path=Name}" CanUserSort="True" Width="1*" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Author" Binding="{Binding Path=Author}" CanUserSort="False" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Size" Binding="{Binding Path=Size, Converter={StaticResource SizeConverter}}" Width="auto" MinWidth="90" CanUserSort="True" IsReadOnly="True">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="HorizontalAlignment" Value="Right"/>
+                            <Setter Property="Margin"  Value="5,0,3,0"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
                 <DataGridTemplateColumn Header="Info" CanUserSort="False" Width="52" CanUserResize="False">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
@@ -137,17 +139,6 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-
-                <DataGridTextColumn Header="Name" Binding="{Binding Path=Name}" CanUserSort="True" Width="1*" IsReadOnly="True"/>
-                <DataGridTextColumn Header="Author" Binding="{Binding Path=Author}" CanUserSort="False" IsReadOnly="True"/>
-                <DataGridTextColumn Header="Size" Binding="{Binding Path=Size, Converter={StaticResource SizeConverter}}" Width="auto" MinWidth="90" CanUserSort="True" IsReadOnly="True">
-                    <DataGridTextColumn.ElementStyle>
-                        <Style TargetType="TextBlock">
-                            <Setter Property="HorizontalAlignment" Value="Right"/>
-                            <Setter Property="Margin"  Value="5,0,3,0"/>
-                        </Style>
-                    </DataGridTextColumn.ElementStyle>
-                </DataGridTextColumn>
             </DataGrid.Columns>
         </DataGrid>
 
