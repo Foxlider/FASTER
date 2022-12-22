@@ -135,6 +135,11 @@
                                                 <iconPacks:PackIconModern Kind="PageCopy" Margin="5"/>
                                             </MenuItem.Icon>
                                         </MenuItem>
+                                        <MenuItem Tag="Server" Header="Copy From Optional" Click="CopyFromOpt">
+                                            <MenuItem.Icon>
+                                                <iconPacks:PackIconModern Kind="PageCopy"/>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
                                     </ContextMenu>
                                     <ContextMenu x:Key="ClientContextMenu">
                                         <MenuItem Tag="Client" Header="Select All" Click="ModsSelectAll">
@@ -157,24 +162,61 @@
                                                 <iconPacks:PackIconModern Kind="PageCopy"/>
                                             </MenuItem.Icon>
                                         </MenuItem>
-                                    </ContextMenu>
-                                    <ContextMenu x:Key="HeadlessContextMenu">
-                                        <MenuItem Tag="Headless" Header="Select All" Click="ModsSelectAll">
-                                            <MenuItem.Icon>
-                                                <iconPacks:PackIconModern Kind="CheckmarkThick"/>
-                                            </MenuItem.Icon>
-                                        </MenuItem>
-                                        <MenuItem Tag="Headless" Header="Select None" Click="ModsSelectNone">
-                                            <MenuItem.Icon>
-                                                <iconPacks:PackIconModern Kind="CheckmarkUncrossed"/>
-                                            </MenuItem.Icon>
-                                        </MenuItem>
-                                        <MenuItem Tag="Headless" Header="Copy From Server" Click="CopyFromServer">
+                                        <MenuItem Tag="Client" Header="Copy From Optional" Click="CopyFromOpt">
                                             <MenuItem.Icon>
                                                 <iconPacks:PackIconModern Kind="PageCopy"/>
                                             </MenuItem.Icon>
                                         </MenuItem>
-                                        <MenuItem Tag="Headless" Header="Copy From Client" Click="CopyFromClient">
+                                    </ContextMenu>
+                                    <ContextMenu x:Key="HeadlessContextMenu">
+                                        <MenuItem Tag="HC" Header="Select All" Click="ModsSelectAll">
+                                            <MenuItem.Icon>
+                                                <iconPacks:PackIconModern Kind="CheckmarkThick"/>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Tag="HC" Header="Select None" Click="ModsSelectNone">
+                                            <MenuItem.Icon>
+                                                <iconPacks:PackIconModern Kind="CheckmarkUncrossed"/>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Tag="HC" Header="Copy From Server" Click="CopyFromServer">
+                                            <MenuItem.Icon>
+                                                <iconPacks:PackIconModern Kind="PageCopy"/>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Tag="HC" Header="Copy From Client" Click="CopyFromClient">
+                                            <MenuItem.Icon>
+                                                <iconPacks:PackIconModern Kind="PageCopy"/>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Tag="HC" Header="Copy From Optional" Click="CopyFromOpt">
+                                            <MenuItem.Icon>
+                                                <iconPacks:PackIconModern Kind="PageCopy"/>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                    </ContextMenu>
+                                    <ContextMenu x:Key="OptContextMenu">
+                                        <MenuItem Tag="Opt" Header="Select All" Click="ModsSelectAll">
+                                            <MenuItem.Icon>
+                                                <iconPacks:PackIconModern Kind="CheckmarkThick"/>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Tag="Opt" Header="Select None" Click="ModsSelectNone">
+                                            <MenuItem.Icon>
+                                                <iconPacks:PackIconModern Kind="CheckmarkUncrossed"/>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Tag="Opt" Header="Copy From Server" Click="CopyFromServer">
+                                            <MenuItem.Icon>
+                                                <iconPacks:PackIconModern Kind="PageCopy"/>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Tag="Opt" Header="Copy From Client" Click="CopyFromClient">
+                                            <MenuItem.Icon>
+                                                <iconPacks:PackIconModern Kind="PageCopy"/>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Tag="Opt" Header="Copy From Headless" Click="CopyFromHeadless">
                                             <MenuItem.Icon>
                                                 <iconPacks:PackIconModern Kind="PageCopy"/>
                                             </MenuItem.Icon>
@@ -225,7 +267,7 @@
                                                     </Setter.Value>
                                                 </Setter>
                                             </Trigger>
-                                            <Trigger Property="Content" Value="Headless">
+                                            <Trigger Property="Content" Value="HC">
                                                 <Setter Property="ContextMenu" Value="{StaticResource HeadlessContextMenu}" />
                                                 <Setter Property="ContentTemplate">
                                                     <Setter.Value>
@@ -233,6 +275,20 @@
                                                             <ContentControl Content="{Binding}">
                                                                 <ToolTipService.ToolTip>
                                                                     <ToolTip Content="Mods loaded by the Headless Clients" />
+                                                                </ToolTipService.ToolTip>
+                                                            </ContentControl>
+                                                        </DataTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Trigger>
+                                            <Trigger Property="Content" Value="Opt">
+                                                <Setter Property="ContextMenu" Value="{StaticResource OptContextMenu}" />
+                                                <Setter Property="ContentTemplate">
+                                                    <Setter.Value>
+                                                        <DataTemplate>
+                                                            <ContentControl Content="{Binding}">
+                                                                <ToolTipService.ToolTip>
+                                                                    <ToolTip Content="Suggested/Additional/Optional client mods" />
                                                                 </ToolTipService.ToolTip>
                                                             </ContentControl>
                                                         </DataTemplate>
@@ -270,10 +326,17 @@
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
                                     </DataGridTemplateColumn>
-                                    <DataGridTemplateColumn Header="Headless" Width="auto">
+                                    <DataGridTemplateColumn Header="HC" Width="auto">
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate DataType="models:ProfileMod">
                                                 <CheckBox IsChecked="{Binding HeadlessChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridTemplateColumn Header="Opt" Width="auto">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate DataType="models:ProfileMod">
+                                                <CheckBox IsChecked="{Binding OptChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center"/>
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
                                     </DataGridTemplateColumn>
@@ -285,10 +348,12 @@
                                     <ColumnDefinition/>
                                     <ColumnDefinition/>
                                     <ColumnDefinition/>
+                                    <ColumnDefinition/>
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Text="{Binding Path=Profile.ServerModsChecked, StringFormat={}ServerSide : {0} mods}" Grid.Column="0"/>
                                 <TextBlock Text="{Binding Path=Profile.ClientModsChecked, StringFormat={}ClientSide : {0} mods}" Grid.Column="1"/>
                                 <TextBlock Text="{Binding Path=Profile.HeadlessModsChecked, StringFormat={}Headless Client : {0} mods}" Grid.Column="2"/>
+                                <TextBlock Text="{Binding Path=Profile.OptModsChecked, StringFormat={}Optional : {0} mods}" Grid.Column="3"/>
                             </Grid>
                             <Grid Grid.Row="3" Margin="0">
                                 <Grid.ColumnDefinitions>

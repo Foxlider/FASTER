@@ -43,19 +43,24 @@ namespace FASTER.Views
             ( (ProfileViewModel) DataContext )?.ClearModOrder();
         }
 
-        private void CopyFromClient(object sender, RoutedEventArgs e)
-        {
-            ((ProfileViewModel) DataContext)?.ModsCopyFrom(((MenuItem)sender).Tag, "Client");
-        }
-
         private void CopyFromServer(object sender, RoutedEventArgs e)
         {
             ((ProfileViewModel) DataContext)?.ModsCopyFrom(((MenuItem)sender).Tag, "Server");
         }
 
+        private void CopyFromClient(object sender, RoutedEventArgs e)
+        {
+            ((ProfileViewModel) DataContext)?.ModsCopyFrom(((MenuItem)sender).Tag, "Client");
+        }
+
         private void CopyFromHeadless(object sender, RoutedEventArgs e)
         {
-            ((ProfileViewModel) DataContext)?.ModsCopyFrom(((MenuItem)sender).Tag, "Headless");
+            ((ProfileViewModel) DataContext)?.ModsCopyFrom(((MenuItem)sender).Tag, "HC");
+        }
+
+        private void CopyFromOpt(object sender, RoutedEventArgs e)
+        {
+            ((ProfileViewModel) DataContext)?.ModsCopyFrom(((MenuItem)sender).Tag, "Opt");
         }
 
         private void ModsSelectAll(object sender, RoutedEventArgs e)
