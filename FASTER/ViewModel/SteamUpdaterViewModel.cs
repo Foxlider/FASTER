@@ -150,30 +150,43 @@ namespace FASTER.ViewModel
             Parameters.Output += "\nPlease don't quit this page or cancel the download\nThis might take a while...";
             
             uint appId = 233780;
-
-            IReadOnlyList<Depot> depotsList;
-                
-            try
-            { depotsList = await GetAppDepots(appId); }
-            catch
+            Dictionary<uint, string> depotsIDs = new()
             {
-                Parameters.Output += "\n\n /!\\ Something went wrong while getting the depots list. Check login/password and your internet connexion.\nAlternatively, clear the sentry folder and try again.";
-                return;
-            }
+                {233781, "Arma 3 Alpha Dedicated Server Content (internal)"},
+                {233782, "Arma 3 Alpha Dedicated Server binary Windows (internal)"},
+                {233783, "Arma 3 Alpha Dedicated Server binary Linux (internal)"},
+                {233784, "Arma 3 Server Profiling - WINDOWS Depot"},
+                {233785, "Arma 3 Server - Profiler - LINUX Depot"},
+                {233787, "Arma 3 Server Creator DLC - GM"},
+                {233788, "Arma 3 Server Prague Project 2"},
+                {233789, "Arma 3 Server Creator DLC - CSLA"},
+                {233790, "Arma 3 Server Creator DLC - SOGPF"},
+                {233791, "Arma 3 Server Creator DLC - WS"},
+            };
+
+            //IReadOnlyList<Depot> depotsList;
+                
+            //try
+            //{ depotsList = await GetAppDepots(appId); }
+            //catch
+            //{
+            //    Parameters.Output += "\n\n /!\\ Something went wrong while getting the depots list. Check login/password and your internet connexion.\nAlternatively, clear the sentry folder and try again.";
+            //    return;
+            //}
                 
             
-            if(depotsList == null || depotsList.Count == 0)
-            {
-                Parameters.Output += "\n\n /!\\ Could not retrieve depots list. PLease retry later or check your internet connection\nAlternatively, clear the sentry folder and try again.";
-                return;
-            }
+            //if(depotsList == null || depotsList.Count == 0)
+            //{
+            //    Parameters.Output += "\n\n /!\\ Could not retrieve depots list. PLease retry later or check your internet connection\nAlternatively, clear the sentry folder and try again.";
+            //    return;
+            //}
             
             List<(uint id, string branch, string pass)> depotsDownload = new();
 
             Parameters.Output += "\nChecking Shared Content...";
             //Downloading Depot 233781 from either branch contact or public
             depotsDownload.Add((
-                depotsList.FirstOrDefault(d => d.Name == "Arma 3 Alpha Dedicated Server Content (internal)")!.Id.Id, 
+                depotsIDs.FirstOrDefault(d => d.Value == "Arma 3 Alpha Dedicated Server Content (internal)").Key, 
                 Parameters.UsingContactDlc ? "contact" : "public", 
                 null));
 
@@ -181,12 +194,12 @@ namespace FASTER.ViewModel
             //Either downloading depot 233782 fow Windows from branch public or 233784 for windows in branch profiling
             if (Parameters.UsingPerfBinaries)
                 depotsDownload.Add((
-                    depotsList.FirstOrDefault(d => d.Name == "Arma 3 Server Profiling - WINDOWS Depot")!.Id.Id,
+                    depotsIDs.FirstOrDefault(d => d.Value == "Arma 3 Server Profiling - WINDOWS Depot").Key,
                     "profiling",
                     "CautionSpecialProfilingAndTestingBranchArma3"));
             else
                 depotsDownload.Add((
-                    depotsList.FirstOrDefault(d => d.Name == "Arma 3 Alpha Dedicated Server binary Windows (internal)")!.Id.Id,
+                    depotsIDs.FirstOrDefault(d => d.Value == "Arma 3 Alpha Dedicated Server binary Windows (internal)").Key,
                     "public",
                     null));
 
@@ -195,7 +208,7 @@ namespace FASTER.ViewModel
             {
                 Parameters.Output += "\nChecking Arma 3 Server Creator DLC - GM...";
                 depotsDownload.Add((
-                    depotsList.FirstOrDefault(d => d.Name == "Arma 3 Server Creator DLC - GM")!.Id.Id,
+                    depotsIDs.FirstOrDefault(d => d.Value == "Arma 3 Server Creator DLC - GM").Key,
                     "creatordlc",
                     null));
             }
@@ -204,7 +217,7 @@ namespace FASTER.ViewModel
             {
                 Parameters.Output += "\nChecking Arma 3 Server Creator DLC - CSLA...";
                 depotsDownload.Add((
-                    depotsList.FirstOrDefault(d => d.Name == "Arma 3 Server Creator DLC - CSLA")!.Id.Id,
+                    depotsIDs.FirstOrDefault(d => d.Value == "Arma 3 Server Creator DLC - CSLA").Key,
                     "creatordlc",
                     null));
             }
@@ -213,7 +226,7 @@ namespace FASTER.ViewModel
             {
                 Parameters.Output += "\nChecking Arma 3 Server Creator DLC - SOGPF...";
                 depotsDownload.Add((
-                    depotsList.FirstOrDefault(d => d.Name == "Arma 3 Server Creator DLC - SOGPF")!.Id.Id,
+                    depotsIDs.FirstOrDefault(d => d.Value == "Arma 3 Server Creator DLC - SOGPF").Key,
                     "creatordlc",
                     null));
             }
@@ -222,7 +235,7 @@ namespace FASTER.ViewModel
             {
                 Parameters.Output += "\nChecking Arma 3 Server Creator DLC - Western Sahara...";
                 depotsDownload.Add((
-                    depotsList.FirstOrDefault(d => d.Name == "Arma 3 Server Creator DLC - WS")!.Id.Id,
+                    depotsIDs.FirstOrDefault(d => d.Value == "Arma 3 Server Creator DLC - WS").Key,
                     "creatordlc",
                     null));
             }

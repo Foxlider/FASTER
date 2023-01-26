@@ -51,7 +51,7 @@
     <AdditionalFiles Include="..\.sonarlint\foxlider_faster\CSharp\SonarLint.xml" Link="SonarLint.xml" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Autoupdater.NET.Official" Version="1.7.2" />
+    <PackageReference Include="Autoupdater.NET.Official" Version="1.7.6" />
     <PackageReference Include="BytexDigital.Steam" Version="0.8.2-preview.1647708363" />
     <PackageReference Include="FontAwesome.WPF" Version="4.7.0.9" />
     <PackageReference Include="LiveCharts.Wpf" Version="0.9.7" />
@@ -59,9 +59,9 @@
     <PackageReference Include="MahApps.Metro.IconPacks.Material" Version="4.11.0" />
     <PackageReference Include="MahApps.Metro.IconPacks.Modern" Version="4.11.0" />
     <PackageReference Include="MahApps.Metro.SimpleChildWindow" Version="2.0.0" />
-    <PackageReference Include="Microsoft.AppCenter.Analytics" Version="4.5.1" />
-    <PackageReference Include="Microsoft.AppCenter.Crashes" Version="4.5.1" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Microsoft.AppCenter.Analytics" Version="5.0.1" />
+    <PackageReference Include="Microsoft.AppCenter.Crashes" Version="5.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
     <PackageReference Include="WindowsAPICodePack-Shell" Version="1.1.1" />
   </ItemGroup>
   <ItemGroup>
