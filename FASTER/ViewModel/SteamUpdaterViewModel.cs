@@ -506,8 +506,8 @@ namespace FASTER.ViewModel
             IsLoggingIn = true;
             var path = Path.Combine(Path.GetDirectoryName(ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal).FilePath) ?? string.Empty, "sentries");
             SteamAuthenticationFilesProvider sentryFileProvider = new DirectorySteamAuthenticationFilesProvider(path);
-            if (_steamCredentials == null || _steamCredentials.IsAnonymous)
-                _steamCredentials = new SteamCredentials(Parameters.Username, Encryption.Instance.DecryptData(Parameters.Password), Parameters.ApiKey);
+
+            _steamCredentials = new SteamCredentials(Parameters.Username, Encryption.Instance.DecryptData(Parameters.Password), Parameters.ApiKey);
 
             SteamClient ??= new SteamClient(_steamCredentials, new AuthCodeProvider(), sentryFileProvider);
 
