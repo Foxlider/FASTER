@@ -218,6 +218,9 @@ namespace FASTER
                 default:
                     if (IServerProfilesMenu.Items.Cast<ToggleButton>().FirstOrDefault(p => p.Name == nav.Name) != null)
                     {
+                        var profile = new Profile();
+                        MainContent.Content = profile;
+
                         ContentProfile.DataContext = ContentProfileViews.First(p => p.Profile.Id == nav.Name);
                         ContentProfile.Refresh();
                         MainContent.Content = ContentProfile;
