@@ -332,3 +332,4 @@ ASALocalRun/
 
 # VS Code User Files
 .vscode/
+.sonarlint/

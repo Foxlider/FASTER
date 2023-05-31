@@ -293,20 +293,21 @@ namespace FASTER.ViewModel
             if (!await SteamLogin())
                 return UpdateState.LoginFailed;
 
-            var _OS = SteamClient?.GetSteamOs().Identifier;
+            //var _OS = SteamClient?.GetSteamOs().Identifier;
             Stopwatch sw = Stopwatch.StartNew();
 
             foreach (var depot in depots)
             {
                 try
                 {
-                    SteamOs steamOs = new(_OS);
+                    SteamOs steamOs = new("win");
                     ManifestId manifestId;
 
-                    manifestId = await SteamContentClient.GetDepotDefaultManifestIdAsync(appId, depot.id, depot.branch, depot.pass);
+                    manifestId = await SteamContentClient.GetDepotManifestIdAsync(appId, depot.id, depot.branch, depot.pass);
 
-                    Parameters.Output += $"\nAttempting to start download of app {appId}, depot {depot.id}  ({depots.IndexOf(depot)+1}/{depots.Count})... ";
-                    var downloadHandler = await SteamContentClient.GetAppDataAsync(appId, depot.id, manifestId, depot.branch, depot.pass, steamOs);
+                    Parameters.Output += $"\nFetching infor;ations of app {appId}, depot {depot.id} from Steam ({depots.IndexOf(depot)+1}/{depots.Count})... ";
+                    var downloadHandler = await SteamContentClient.GetAppDataAsync(appId, depot.id, manifestId, tokenSource.Token);
+
                     await Download(downloadHandler, path);
                 }
                 catch (Exception ex)
@@ -341,12 +342,10 @@ namespace FASTER.ViewModel
                 return UpdateState.LoginFailed;
             }
 
-            var _OS = SteamClient.GetSteamOs().Identifier;
             Stopwatch sw = Stopwatch.StartNew();
 
             try
             {
-                SteamOs    steamOs    = new(_OS);
                 ManifestId manifestId = default;
 
                 Parameters.Output += $"\nFetching mod {modId} infos... ";
@@ -361,12 +360,7 @@ namespace FASTER.ViewModel
 
                 Parameters.Output += $"\nAttempting to start download of item {modId}... ";
 
-                var downloadHandler = await SteamContentClient.GetPublishedFileDataAsync(
-                                                                                          modId,
-                                                                                          manifestId,
-                                                                                          null,
-                                                                                          null,
-                                                                                          steamOs);
+                var downloadHandler = await SteamContentClient.GetPublishedFileDataAsync(modId, manifestId, tokenSource.Token);
 
                 await Download(downloadHandler, path);
             }
@@ -404,8 +398,6 @@ namespace FASTER.ViewModel
                 return UpdateState.LoginFailed;
             }
 
-            var _OS = SteamClient.GetSteamOs().Identifier;
-
             Parameters.Output += "\nAdding mods to download list...";
 
             SemaphoreSlim maxThread = new(1);
@@ -432,7 +424,6 @@ namespace FASTER.ViewModel
                     Stopwatch sw = Stopwatch.StartNew();
                     try
                     {
-                        SteamOs steamOs = new(_OS);
                         ManifestId manifestId = default;
                         
                         if(mod.LocalLastUpdated > mod.SteamLastUpdated)
@@ -453,11 +444,7 @@ namespace FASTER.ViewModel
 
                         Parameters.Output += $"\n    Attempting to start download of item {mod.WorkshopId}... ";
 
-                        var downloadHandler = SteamContentClient.GetPublishedFileDataAsync(mod.WorkshopId,
-                                                                                            manifestId,
-                                                                                            null,
-                                                                                            null,
-                                                                                            steamOs);
+                        var downloadHandler = SteamContentClient.GetPublishedFileDataAsync(mod.WorkshopId, manifestId, tokenSource.Token);
                         DownloadForMultiple(downloadHandler.Result, mod.Path).Wait();
                     }
                     catch (TaskCanceledException)
@@ -505,6 +492,9 @@ namespace FASTER.ViewModel
         {
             IsLoggingIn = true;
             var path = Path.Combine(Path.GetDirectoryName(ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal).FilePath) ?? string.Empty, "sentries");
+            //path = path.Replace("FoxliCorp.\\", "FoxliCorp\\");
+            //if(!Directory.Exists(path))
+            //    Directory.CreateDirectory(path);
             SteamAuthenticationFilesProvider sentryFileProvider = new DirectorySteamAuthenticationFilesProvider(path);
 
             _steamCredentials = new SteamCredentials(Parameters.Username, Encryption.Instance.DecryptData(Parameters.Password), Parameters.ApiKey);
