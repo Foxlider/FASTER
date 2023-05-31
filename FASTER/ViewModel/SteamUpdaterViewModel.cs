@@ -492,14 +492,10 @@ namespace FASTER.ViewModel
         {
             IsLoggingIn = true;
             var path = Path.Combine(Path.GetDirectoryName(ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal).FilePath) ?? string.Empty, "sentries");
-            //path = path.Replace("FoxliCorp.\\", "FoxliCorp\\");
-            //if(!Directory.Exists(path))
-            //    Directory.CreateDirectory(path);
-            SteamAuthenticationFilesProvider sentryFileProvider = new DirectorySteamAuthenticationFilesProvider(path);
 
             _steamCredentials = new SteamCredentials(Parameters.Username, Encryption.Instance.DecryptData(Parameters.Password), Parameters.ApiKey);
 
-            SteamClient ??= new SteamClient(_steamCredentials, new AuthCodeProvider(), sentryFileProvider);
+            SteamClient ??= new SteamClient(_steamCredentials, new AuthCodeProvider(_steamCredentials.Username, path));
 
             if (!SteamClient.IsConnected || SteamClient.IsFaulted)
             {
@@ -683,6 +679,9 @@ namespace FASTER.ViewModel
 
         public async Task<string> SteamGuardInput()
         { return await DialogCoordinator.ShowInputAsync(this, "Steam Guard", "Please enter your 2FA code"); }
+
+        public async Task<MessageDialogResult> SteamGuardInputPhone()
+        { return await DialogCoordinator.ShowMessageAsync(this, "Steam Guard", "Press OK after accepting authentification on mobile", MessageDialogStyle.Affirmative); }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
