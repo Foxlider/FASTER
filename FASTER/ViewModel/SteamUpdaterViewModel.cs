@@ -113,7 +113,6 @@ namespace FASTER.ViewModel
 
         internal SteamClient SteamClient;
         internal SteamContentClient SteamContentClient;
-        private SteamCredentials   _steamCredentials;
 
         public void PasswordChanged(string password)
         {
@@ -293,16 +292,13 @@ namespace FASTER.ViewModel
             if (!await SteamLogin())
                 return UpdateState.LoginFailed;
 
-            //var _OS = SteamClient?.GetSteamOs().Identifier;
             Stopwatch sw = Stopwatch.StartNew();
 
             foreach (var depot in depots)
             {
                 try
                 {
-                    SteamOs steamOs = new("win");
                     ManifestId manifestId;
-
                     manifestId = await SteamContentClient.GetDepotManifestIdAsync(appId, depot.id, depot.branch, depot.pass);
 
                     Parameters.Output += $"\nFetching infor;ations of app {appId}, depot {depot.id} from Steam ({depots.IndexOf(depot)+1}/{depots.Count})... ";
@@ -493,7 +489,7 @@ namespace FASTER.ViewModel
             IsLoggingIn = true;
             var path = Path.Combine(Path.GetDirectoryName(ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal).FilePath) ?? string.Empty, "sentries");
 
-            _steamCredentials = new SteamCredentials(Parameters.Username, Encryption.Instance.DecryptData(Parameters.Password), Parameters.ApiKey);
+            SteamCredentials _steamCredentials = new SteamCredentials(Parameters.Username, Encryption.Instance.DecryptData(Parameters.Password), Parameters.ApiKey);
 
             SteamClient ??= new SteamClient(_steamCredentials, new AuthCodeProvider(_steamCredentials.Username, path));
 
