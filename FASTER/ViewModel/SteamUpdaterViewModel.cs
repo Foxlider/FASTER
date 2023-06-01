@@ -243,14 +243,6 @@ namespace FASTER.ViewModel
             Parameters.Output += "\n\nAll Done ! ";
         }
 
-        private async Task<IReadOnlyList<Depot>> GetAppDepots(uint appId)
-        {
-            if (!await SteamLogin())
-                return null;
-            
-            return await SteamContentClient.GetDepotsAsync(appId);
-        }
-
         public void UpdateCancelClick()
         {
             Parameters.Output     += "\nUpdate Cancelled.";
@@ -300,9 +292,13 @@ namespace FASTER.ViewModel
                     ManifestId manifestId;
                     manifestId = await SteamContentClient.GetDepotManifestIdAsync(appId, depot.id, depot.branch, depot.pass);
 
-                    Parameters.Output += $"\nFetching infor;ations of app {appId}, depot {depot.id} from Steam ({depots.IndexOf(depot)+1}/{depots.Count})... ";
+                    Parameters.Output += $"\nFetching informations of app {appId}, depot {depot.id} from Steam ({depots.IndexOf(depot)+1}/{depots.Count})... ";
                     var downloadHandler = await SteamContentClient.GetAppDataAsync(appId, depot.id, manifestId, tokenSource.Token);
-
+                    if(downloadHandler.TotalFileSize == 0 && downloadHandler.TotalFileCount == 0)
+                    {
+                        Parameters.Output += $"\nNothing to do for {appId}, depot {depot.id}. Skipping...";
+                        continue;
+                    }
                     await Download(downloadHandler, path);
                 }
                 catch (Exception ex)
@@ -488,7 +484,7 @@ namespace FASTER.ViewModel
             IsLoggingIn = true;
             var path = Path.Combine(Path.GetDirectoryName(ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal).FilePath) ?? string.Empty, "sentries");
 
-            SteamCredentials _steamCredentials = new SteamCredentials(Parameters.Username, Encryption.Instance.DecryptData(Parameters.Password), Parameters.ApiKey);
+            SteamCredentials _steamCredentials = new(Parameters.Username, Encryption.Instance.DecryptData(Parameters.Password), Parameters.ApiKey);
 
             SteamClient ??= new SteamClient(_steamCredentials, new AuthCodeProvider(_steamCredentials.Username, path));
 
