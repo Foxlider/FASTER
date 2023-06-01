@@ -243,14 +243,6 @@ namespace FASTER.ViewModel
             Parameters.Output += "\n\nAll Done ! ";
         }
 
-        private async Task<IReadOnlyList<Depot>> GetAppDepots(uint appId)
-        {
-            if (!await SteamLogin())
-                return null;
-            
-            return await SteamContentClient.GetDepotsAsync(appId);
-        }
-
         public void UpdateCancelClick()
         {
             Parameters.Output     += "\nUpdate Cancelled.";
@@ -492,7 +484,7 @@ namespace FASTER.ViewModel
             IsLoggingIn = true;
             var path = Path.Combine(Path.GetDirectoryName(ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal).FilePath) ?? string.Empty, "sentries");
 
-            SteamCredentials _steamCredentials = new SteamCredentials(Parameters.Username, Encryption.Instance.DecryptData(Parameters.Password), Parameters.ApiKey);
+            SteamCredentials _steamCredentials = new(Parameters.Username, Encryption.Instance.DecryptData(Parameters.Password), Parameters.ApiKey);
 
             SteamClient ??= new SteamClient(_steamCredentials, new AuthCodeProvider(_steamCredentials.Username, path));
 
