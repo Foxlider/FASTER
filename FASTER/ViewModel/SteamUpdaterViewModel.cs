@@ -300,9 +300,13 @@ namespace FASTER.ViewModel
                     ManifestId manifestId;
                     manifestId = await SteamContentClient.GetDepotManifestIdAsync(appId, depot.id, depot.branch, depot.pass);
 
-                    Parameters.Output += $"\nFetching infor;ations of app {appId}, depot {depot.id} from Steam ({depots.IndexOf(depot)+1}/{depots.Count})... ";
+                    Parameters.Output += $"\nFetching informations of app {appId}, depot {depot.id} from Steam ({depots.IndexOf(depot)+1}/{depots.Count})... ";
                     var downloadHandler = await SteamContentClient.GetAppDataAsync(appId, depot.id, manifestId, tokenSource.Token);
-
+                    if(downloadHandler.TotalFileSize == 0 && downloadHandler.TotalFileCount == 0)
+                    {
+                        Parameters.Output += $"\nNothing to do for {appId}, depot {depot.id}. Skipping...";
+                        continue;
+                    }
                     await Download(downloadHandler, path);
                 }
                 catch (Exception ex)
