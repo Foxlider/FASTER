@@ -3,7 +3,6 @@ using BytexDigital.Steam.ContentDelivery.Exceptions;
 using BytexDigital.Steam.ContentDelivery.Models;
 using BytexDigital.Steam.ContentDelivery.Models.Downloading;
 using BytexDigital.Steam.Core;
-using BytexDigital.Steam.Core.Enumerations;
 using BytexDigital.Steam.Core.Structs;
 
 using FASTER.Models;

@@ -114,7 +114,7 @@ namespace FASTER.Models
             _persistenceDirectory = persistenceDirectory;
         }
 
-        public override Task<string> GetEmailAuthenticationCodeAsync(string account_email, bool previousCodeWasIncorrect, CancellationToken cancellationToken = default)
+        public override Task<string> GetEmailAuthenticationCodeAsync(string accountEmail, bool previousCodeWasIncorrect, CancellationToken cancellationToken = default)
         {
             if (previousCodeWasIncorrect)
                 MainWindow.Instance.SteamUpdaterViewModel.Parameters.Output += "\nPreviously entered email code was incorrect!";
