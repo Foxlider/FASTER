@@ -3,7 +3,6 @@ using BytexDigital.Steam.ContentDelivery.Exceptions;
 using BytexDigital.Steam.ContentDelivery.Models;
 using BytexDigital.Steam.ContentDelivery.Models.Downloading;
 using BytexDigital.Steam.Core;
-using BytexDigital.Steam.Core.Enumerations;
 using BytexDigital.Steam.Core.Structs;
 
 using FASTER.Models;
@@ -113,7 +112,6 @@ namespace FASTER.ViewModel
 
         internal SteamClient SteamClient;
         internal SteamContentClient SteamContentClient;
-        private SteamCredentials   _steamCredentials;
 
         public void PasswordChanged(string password)
         {
@@ -293,20 +291,18 @@ namespace FASTER.ViewModel
             if (!await SteamLogin())
                 return UpdateState.LoginFailed;
 
-            var _OS = SteamClient?.GetSteamOs().Identifier;
             Stopwatch sw = Stopwatch.StartNew();
 
             foreach (var depot in depots)
             {
                 try
                 {
-                    SteamOs steamOs = new(_OS);
                     ManifestId manifestId;
+                    manifestId = await SteamContentClient.GetDepotManifestIdAsync(appId, depot.id, depot.branch, depot.pass);
 
-                    manifestId = await SteamContentClient.GetDepotDefaultManifestIdAsync(appId, depot.id, depot.branch, depot.pass);
+                    Parameters.Output += $"\nFetching infor;ations of app {appId}, depot {depot.id} from Steam ({depots.IndexOf(depot)+1}/{depots.Count})... ";
+                    var downloadHandler = await SteamContentClient.GetAppDataAsync(appId, depot.id, manifestId, tokenSource.Token);
 
-                    Parameters.Output += $"\nAttempting to start download of app {appId}, depot {depot.id}  ({depots.IndexOf(depot)+1}/{depots.Count})... ";
-                    var downloadHandler = await SteamContentClient.GetAppDataAsync(appId, depot.id, manifestId, depot.branch, depot.pass, steamOs);
                     await Download(downloadHandler, path);
                 }
                 catch (Exception ex)
@@ -341,12 +337,10 @@ namespace FASTER.ViewModel
                 return UpdateState.LoginFailed;
             }
 
-            var _OS = SteamClient.GetSteamOs().Identifier;
             Stopwatch sw = Stopwatch.StartNew();
 
             try
             {
-                SteamOs    steamOs    = new(_OS);
                 ManifestId manifestId = default;
 
                 Parameters.Output += $"\nFetching mod {modId} infos... ";
@@ -361,12 +355,7 @@ namespace FASTER.ViewModel
 
                 Parameters.Output += $"\nAttempting to start download of item {modId}... ";
 
-                var downloadHandler = await SteamContentClient.GetPublishedFileDataAsync(
-                                                                                          modId,
-                                                                                          manifestId,
-                                                                                          null,
-                                                                                          null,
-                                                                                          steamOs);
+                var downloadHandler = await SteamContentClient.GetPublishedFileDataAsync(modId, manifestId, tokenSource.Token);
 
                 await Download(downloadHandler, path);
             }
@@ -404,8 +393,6 @@ namespace FASTER.ViewModel
                 return UpdateState.LoginFailed;
             }
 
-            var _OS = SteamClient.GetSteamOs().Identifier;
-
             Parameters.Output += "\nAdding mods to download list...";
 
             SemaphoreSlim maxThread = new(1);
@@ -432,7 +419,6 @@ namespace FASTER.ViewModel
                     Stopwatch sw = Stopwatch.StartNew();
                     try
                     {
-                        SteamOs steamOs = new(_OS);
                         ManifestId manifestId = default;
                         
                         if(mod.LocalLastUpdated > mod.SteamLastUpdated)
@@ -453,11 +439,7 @@ namespace FASTER.ViewModel
 
                         Parameters.Output += $"\n    Attempting to start download of item {mod.WorkshopId}... ";
 
-                        var downloadHandler = SteamContentClient.GetPublishedFileDataAsync(mod.WorkshopId,
-                                                                                            manifestId,
-                                                                                            null,
-                                                                                            null,
-                                                                                            steamOs);
+                        var downloadHandler = SteamContentClient.GetPublishedFileDataAsync(mod.WorkshopId, manifestId, tokenSource.Token);
                         DownloadForMultiple(downloadHandler.Result, mod.Path).Wait();
                     }
                     catch (TaskCanceledException)
@@ -505,11 +487,10 @@ namespace FASTER.ViewModel
         {
             IsLoggingIn = true;
             var path = Path.Combine(Path.GetDirectoryName(ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal).FilePath) ?? string.Empty, "sentries");
-            SteamAuthenticationFilesProvider sentryFileProvider = new DirectorySteamAuthenticationFilesProvider(path);
-            if (_steamCredentials == null || _steamCredentials.IsAnonymous)
-                _steamCredentials = new SteamCredentials(Parameters.Username, Encryption.Instance.DecryptData(Parameters.Password), Parameters.ApiKey);
 
-            SteamClient ??= new SteamClient(_steamCredentials, new AuthCodeProvider(), sentryFileProvider);
+            SteamCredentials _steamCredentials = new SteamCredentials(Parameters.Username, Encryption.Instance.DecryptData(Parameters.Password), Parameters.ApiKey);
+
+            SteamClient ??= new SteamClient(_steamCredentials, new AuthCodeProvider(_steamCredentials.Username, path));
 
             if (!SteamClient.IsConnected || SteamClient.IsFaulted)
             {
@@ -693,6 +674,9 @@ namespace FASTER.ViewModel
 
         public async Task<string> SteamGuardInput()
         { return await DialogCoordinator.ShowInputAsync(this, "Steam Guard", "Please enter your 2FA code"); }
+
+        public async Task<MessageDialogResult> SteamGuardInputPhone()
+        { return await DialogCoordinator.ShowMessageAsync(this, "Steam Guard", "Press OK after accepting authentification on mobile", MessageDialogStyle.Affirmative); }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
