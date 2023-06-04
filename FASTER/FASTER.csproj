@@ -52,7 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Autoupdater.NET.Official" Version="1.8.2" />
-    <PackageReference Include="BytexDigital.Steam" Version="0.8.2-preview.1685575037" />
+    <PackageReference Include="BytexDigital.Steam" Version="0.8.2-preview.1685631065" />
     <PackageReference Include="FontAwesome.WPF" Version="4.7.0.9" />
     <PackageReference Include="LiveCharts.Wpf" Version="0.9.7" />
     <PackageReference Include="MahApps.Metro" Version="2.4.9" />

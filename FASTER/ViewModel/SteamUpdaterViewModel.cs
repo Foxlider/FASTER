@@ -48,8 +48,6 @@ namespace FASTER.ViewModel
             };
             timer.Tick += Timer_Tick;
             timer.IsEnabled = true;
-           
-            
         }
 
         private bool _isLoggingIn;
@@ -57,10 +55,10 @@ namespace FASTER.ViewModel
         private bool _updaterOnline;
         private bool _updaterFaulted;
 
-        public SteamUpdaterModel            Parameters        { get; set; }
+        public SteamUpdaterModel Parameters { get; set; }
         
         
-        public  IDialogCoordinator      DialogCoordinator { get; set; }
+        public IDialogCoordinator DialogCoordinator { get; set; }
         private CancellationTokenSource tokenSource = new();
 
         public bool IsDownloading => DownloadTasks.Count > 0 || IsLoggingIn || IsDlOverride;
@@ -294,12 +292,17 @@ namespace FASTER.ViewModel
 
                     Parameters.Output += $"\nFetching informations of app {appId}, depot {depot.id} from Steam ({depots.IndexOf(depot)+1}/{depots.Count})... ";
                     var downloadHandler = await SteamContentClient.GetAppDataAsync(appId, depot.id, manifestId, tokenSource.Token);
-                    if(downloadHandler.TotalFileSize == 0 && downloadHandler.TotalFileCount == 0)
-                    {
-                        Parameters.Output += $"\nNothing to do for {appId}, depot {depot.id}. Skipping...";
-                        continue;
-                    }
+
                     await Download(downloadHandler, path);
+                }
+                catch (ArgumentException ex)
+                {
+                    if(ex.Message.Contains("'tasks'"))
+                        Parameters.Output += "\nSkipped...";
+                    else
+                    {
+                        throw;
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -548,8 +551,13 @@ namespace FASTER.ViewModel
         private async Task Download(IDownloadHandler downloadHandler, string targetDir)
         {
             ulong downloadedSize = 0;
+            bool skipDownload = false;
             downloadHandler.FileVerified          += (_, args) => Parameters.Output += $"{(args.RequiresDownload ? $"\nFile verified : {args.ManifestFile.FileName} ({Functions.ParseFileSize(args.ManifestFile.TotalSize)})" : "")}";
-            downloadHandler.VerificationCompleted += (_, args) => Parameters.Output += $"\nVerification completed, {args.QueuedFiles.Count} files queued for download. ({args.QueuedFiles.Sum(f => (double)f.TotalSize)} bytes)";
+            downloadHandler.VerificationCompleted += (_, args) => {
+                Parameters.Output += $"\nVerification completed, {args.QueuedFiles.Count} files queued for download. ({args.QueuedFiles.Sum(f => (double)f.TotalSize)} bytes)"; 
+                if (args.QueuedFiles.Count == 0) 
+                    {skipDownload = true; } 
+                };
             downloadHandler.FileDownloaded        += (_, args) =>
                                                      {
                                                          downloadedSize    += args.TotalSize;
@@ -569,8 +577,9 @@ namespace FASTER.ViewModel
             DownloadTasks.Add(downloadTask);
             
             Parameters.Output += $"\nDownloading {downloadHandler.TotalFileCount} files with total size of {Functions.ParseFileSize(downloadHandler.TotalFileSize)}...";
+            Parameters.Output += $"\nVerifying Install...";
             Parameters.Progress = 0;
-            while (!downloadTask.IsCompleted && !downloadTask.IsCanceled && !tokenSource.Token.IsCancellationRequested)
+            while (!downloadTask.IsCompleted && !downloadTask.IsCanceled && !tokenSource.Token.IsCancellationRequested && !skipDownload)
             {
 
                 var delayTask = Task.Delay(500, tokenSource.Token);
@@ -581,6 +590,16 @@ namespace FASTER.ViewModel
                 Parameters.Output += $"\nProgress {downloadHandler.TotalProgress * 100:00.00}%";
                 Parameters.Progress = downloadHandler.TotalProgress * 100;
             }
+
+            if (skipDownload)
+            {
+                Parameters.Output += "\nSkipping Download...";
+                Parameters.Progress = 0;
+                await downloadHandler.DisposeAsync();
+                DownloadTasks.Remove(downloadTask);
+                return;
+            }
+
 
             if (downloadTask.IsCanceled)
             {
