@@ -619,6 +619,11 @@ namespace FASTER.ViewModel
                 Parameters.Progress = 0;
                 throw;
             }
+            catch (ArgumentException)
+            {
+                Parameters.Output += $"\nSkipping download : No tasks ";
+                Parameters.Progress = 0;
+            }
             finally
             {
                 DownloadTasks.Remove(downloadTask);
