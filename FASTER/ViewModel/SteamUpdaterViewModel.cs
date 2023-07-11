@@ -3,6 +3,7 @@ using BytexDigital.Steam.ContentDelivery.Exceptions;
 using BytexDigital.Steam.ContentDelivery.Models;
 using BytexDigital.Steam.ContentDelivery.Models.Downloading;
 using BytexDigital.Steam.Core;
+using BytexDigital.Steam.Core.Exceptions;
 using BytexDigital.Steam.Core.Structs;
 
 using FASTER.Models;
@@ -322,12 +323,12 @@ namespace FASTER.ViewModel
 
             try
             {
-                if(SteamClient is {IsConnected: true})
-                {
-                    SteamClient?.Shutdown();
-                    SteamClient?.Dispose();
-                    SteamClient = null;
-                }
+                //if(SteamClient is {IsConnected: true})
+                //{
+                //    SteamClient?.Shutdown();
+                //    SteamClient?.Dispose();
+                //    SteamClient = null;
+                //}
                 if (!await SteamLogin())
                     return UpdateState.LoginFailed;
             }
@@ -487,9 +488,17 @@ namespace FASTER.ViewModel
             IsLoggingIn = true;
             var path = Path.Combine(Path.GetDirectoryName(ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal).FilePath) ?? string.Empty, "sentries");
 
-            SteamCredentials _steamCredentials = new(Parameters.Username, Encryption.Instance.DecryptData(Parameters.Password), Parameters.ApiKey);
+            SteamCredentials _steamCredentials = new(Parameters.Username, Encryption.Instance.DecryptData(Parameters.Password));
 
-            SteamClient ??= new SteamClient(_steamCredentials, new AuthCodeProvider(_steamCredentials.Username, path));
+            if (SteamClient == null || SteamClient.Credentials.Username != _steamCredentials.Username || SteamClient.Credentials.Password != _steamCredentials.Password)
+            { 
+                SteamClient = new SteamClient(_steamCredentials, new AuthCodeProvider(_steamCredentials.Username, path));
+                SteamClient.InternalClientAttemptingConnect += () => Parameters.Output += "\n\tClient : Attempting connect..";
+                SteamClient.InternalClientConnected         += () => Parameters.Output += "\n\tClient : Connected";
+                SteamClient.InternalClientDisconnected      += () => Parameters.Output += "\n\tClient : Disconnected";
+                SteamClient.InternalClientLoggedOn          += () => Parameters.Output += "\n\tClient : Logged on";
+                SteamClient.InternalClientLoggedOff         += () => Parameters.Output += "\n\tClient : Logged off";
+            }
 
             if (!SteamClient.IsConnected || SteamClient.IsFaulted)
             {
@@ -497,6 +506,12 @@ namespace FASTER.ViewModel
                 SteamClient.MaximumLogonAttempts = 5;
                 try
                 { await SteamClient.ConnectAsync(); }
+                catch (SteamClientAlreadyRunningException)
+                { 
+                    Parameters.Output += $"\nClient already logged in."; 
+                    IsLoggingIn = false;
+                    return false;
+                }
                 catch (Exception ex)
                 {
                     Parameters.Output += $"\nFailed! Error: {ex.Message}";
@@ -504,10 +519,10 @@ namespace FASTER.ViewModel
                     SteamClient.Dispose();
                     SteamClient = null;
 
-                    if (ex.GetBaseException() is SteamLogonException { Result: SteamKit2.EResult.InvalidPassword })
+                    if (ex.GetBaseException() is SteamAuthenticationException)
                     {
                         Parameters.Output += "\nWarning: The logon may have failed due to expired sentry-data."
-                                             + $"\nIf you are sure that the provided username and password are correct, consider deleting the .bin and .key file for the user \"{SteamClient?.Credentials.Username}\" in the sentries directory."
+                                             + $"\nIf you are sure that the provided username and password are correct, consider deleting the token file for the user \"{SteamClient?.Credentials.Username}\" in the sentries directory."
                                              + $"{path}";
                     }
                     IsLoggingIn = false;
@@ -696,7 +711,7 @@ namespace FASTER.ViewModel
         { return await DialogCoordinator.ShowInputAsync(this, "Steam Guard", "Please enter your 2FA code"); }
 
         public async Task<MessageDialogResult> SteamGuardInputPhone()
-        { return await DialogCoordinator.ShowMessageAsync(this, "Steam Guard", "Press OK after accepting authentification on mobile", MessageDialogStyle.Affirmative); }
+        { return await DialogCoordinator.ShowMessageAsync(this, "Steam Guard", "Press OK after accepting authentification on mobile\nOr press Cancel to enter a 2FA Code", MessageDialogStyle.AffirmativeAndNegative); }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
