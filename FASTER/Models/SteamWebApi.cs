@@ -114,7 +114,7 @@ namespace FASTER.Models
             _persistenceDirectory = persistenceDirectory;
         }
 
-        public override Task<string> GetEmailAuthenticationCodeAsync(string accountEmail, bool previousCodeWasIncorrect, CancellationToken cancellationToken = default)
+        public override async Task<string> GetEmailAuthenticationCodeAsync(string accountEmail, bool previousCodeWasIncorrect, CancellationToken cancellationToken = default)
         {
             if (previousCodeWasIncorrect)
                 MainWindow.Instance.SteamUpdaterViewModel.Parameters.Output += "\nPreviously entered email code was incorrect!";
@@ -122,14 +122,14 @@ namespace FASTER.Models
 
             MainWindow.Instance.SteamUpdaterViewModel.Parameters.Output += "\nPlease enter your 2FA code: ";
 
-            var input = MainWindow.Instance.SteamUpdaterViewModel.SteamGuardInput().Result;
+            var input = await MainWindow.Instance.SteamUpdaterViewModel.SteamGuardInput();
 
             MainWindow.Instance.SteamUpdaterViewModel.Parameters.Output += "\nRetrying... ";
 
-            return Task.FromResult(input);
+            return input;
         }
 
-        public override Task<string> GetTwoFactorAuthenticationCodeAsync(bool previousCodeWasIncorrect, CancellationToken cancellationToken = default)
+        public override async Task<string> GetTwoFactorAuthenticationCodeAsync(bool previousCodeWasIncorrect, CancellationToken cancellationToken = default)
         {
             if (previousCodeWasIncorrect)
                 MainWindow.Instance.SteamUpdaterViewModel.Parameters.Output += "\nPreviously entered 2FA code was incorrect!";
@@ -137,25 +137,27 @@ namespace FASTER.Models
 
             MainWindow.Instance.SteamUpdaterViewModel.Parameters.Output += "\nPlease enter your 2FA code: ";
 
-            var input = MainWindow.Instance.SteamUpdaterViewModel.SteamGuardInput().Result;
+            var input = await MainWindow.Instance.SteamUpdaterViewModel.SteamGuardInput();
 
             MainWindow.Instance.SteamUpdaterViewModel.Parameters.Output += "\nRetrying... ";
 
-            return Task.FromResult(input);
+            return input;
         }
 
-        public override Task<bool> NotifyMobileNotificationAsync(CancellationToken cancellationToken = default)
+        public override async Task<bool> NotifyMobileNotificationAsync(CancellationToken cancellationToken = default)
         {
-            MainWindow.Instance.SteamUpdaterViewModel.Parameters.Output += "\nMobile notification sent. Answer \"y\" once you've authorized this login. If no notification was received or you'd like to enter a traditional 2FA code, enter \"n\": ";
+            MainWindow.Instance.SteamUpdaterViewModel.Parameters.Output += "\nMobile notification sent. Answer \"OK\" once you've authorized this login. If no notification was received or you'd like to enter a traditional 2FA code, press \"Cancel\": ";
 
             MessageDialogResult response;
 
             do
             {
-                response = MainWindow.Instance.SteamUpdaterViewModel.SteamGuardInputPhone().Result;
-            } while (response != MessageDialogResult.Affirmative);
+                response = await MainWindow.Instance.SteamUpdaterViewModel.SteamGuardInputPhone();
+            } while (response != MessageDialogResult.Affirmative && response != MessageDialogResult.Negative);
 
-            return Task.FromResult(true);
+            MainWindow.Instance.SteamUpdaterViewModel.Parameters.Output += "\n\tAuth : Authorizing...";
+            
+            return response == MessageDialogResult.Affirmative;
         }
 
         public override Task PersistAccessTokenAsync(string token, CancellationToken cancellationToken = default)
