@@ -9,7 +9,7 @@
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract> 
     <PublishReadyToRunComposite>false</PublishReadyToRunComposite>
     <UseWPF>true</UseWPF>
-    <Version>1.9.3.3</Version>
+    <Version>1.9.4.1</Version>
     <Authors>Keelah Fox</Authors>
     <Company>FoxliCorp.</Company>
     <Description>Fox's Arma Server Tool Extended Rewrite</Description>

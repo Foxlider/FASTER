@@ -138,7 +138,7 @@ namespace FASTER.ViewModel
             Analytics.TrackEvent("Updater - Clicked Update", new Dictionary<string, string>
             {
                 {"Name", Properties.Settings.Default.steamUserName},
-                {"DLCs", $"{(Parameters.UsingGMDlc ? "GM " : "")}{(Parameters.UsingCSLADlc? "CSLA " : "")}{(Parameters.UsingPFDlc ? "SOG " : "")}{(Parameters.UsingWSDlc ? "WS " : "")}"},
+                {"DLCs", $"{(Parameters.UsingGMDlc ? "GM " : "")}{(Parameters.UsingCSLADlc? "CSLA " : "")}{(Parameters.UsingPFDlc ? "SOG " : "")}{(Parameters.UsingWSDlc ? "WS " : "")}{(Parameters.UsingSPEDlc ? "SPE " : "")}"},
                 {"Branch", $"{(Parameters.UsingPerfBinaries? "Profiling" : "Public")}"}
             });
 
@@ -155,7 +155,7 @@ namespace FASTER.ViewModel
                 {233784, "Arma 3 Server Profiling - WINDOWS Depot"},
                 {233785, "Arma 3 Server - Profiler - LINUX Depot"},
                 {233787, "Arma 3 Server Creator DLC - GM"},
-                {233788, "Arma 3 Server Prague Project 2"},
+                {233788, "Arma 3 Server Creator DLC - SPE"},
                 {233789, "Arma 3 Server Creator DLC - CSLA"},
                 {233790, "Arma 3 Server Creator DLC - SOGPF"},
                 {233791, "Arma 3 Server Creator DLC - WS"},
@@ -188,17 +188,22 @@ namespace FASTER.ViewModel
                 null));
 
             Parameters.Output += "\nChecking Executables...";
-            //Either downloading depot 233782 fow Windows from branch public or 233784 for windows in branch profiling
+            
+            
+            // Downloading depot 233782 fow Windows from branch public
+            depotsDownload.Add((
+                depotsIDs.FirstOrDefault(d => d.Value == "Arma 3 Alpha Dedicated Server binary Windows (internal)").Key,
+                "public",
+                null));
+
+
+            //Download depot 233784 for windows in branch profiling
             if (Parameters.UsingPerfBinaries)
                 depotsDownload.Add((
                     depotsIDs.FirstOrDefault(d => d.Value == "Arma 3 Server Profiling - WINDOWS Depot").Key,
                     "profiling",
                     "CautionSpecialProfilingAndTestingBranchArma3"));
-            else
-                depotsDownload.Add((
-                    depotsIDs.FirstOrDefault(d => d.Value == "Arma 3 Alpha Dedicated Server binary Windows (internal)").Key,
-                    "public",
-                    null));
+            
 
             //Downloading mods
             if (Parameters.UsingGMDlc)
@@ -233,6 +238,15 @@ namespace FASTER.ViewModel
                 Parameters.Output += "\nChecking Arma 3 Server Creator DLC - Western Sahara...";
                 depotsDownload.Add((
                     depotsIDs.FirstOrDefault(d => d.Value == "Arma 3 Server Creator DLC - WS").Key,
+                    "creatordlc",
+                    null));
+            }
+
+            if (Parameters.UsingSPEDlc)
+            {
+                Parameters.Output += "\nChecking Arma 3 Server Creator DLC - SPE...";
+                depotsDownload.Add((
+                    depotsIDs.FirstOrDefault(d => d.Value == "Arma 3 Server Creator DLC - SPE").Key,
                     "creatordlc",
                     null));
             }
@@ -590,10 +604,11 @@ namespace FASTER.ViewModel
             Parameters.Output += "\nOK.";
 
             DownloadTasks.Add(downloadTask);
-            
+
+            Parameters.Progress = 0;
             Parameters.Output += $"\nDownloading {downloadHandler.TotalFileCount} files with total size of {Functions.ParseFileSize(downloadHandler.TotalFileSize)}...";
             Parameters.Output += $"\nVerifying Install...";
-            Parameters.Progress = 0;
+            
             while (!downloadTask.IsCompleted && !downloadTask.IsCanceled && !tokenSource.Token.IsCancellationRequested && !skipDownload)
             {
 
