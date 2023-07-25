@@ -188,17 +188,22 @@ namespace FASTER.ViewModel
                 null));
 
             Parameters.Output += "\nChecking Executables...";
-            //Either downloading depot 233782 fow Windows from branch public or 233784 for windows in branch profiling
+            
+            
+            // Downloading depot 233782 fow Windows from branch public
+            depotsDownload.Add((
+                depotsIDs.FirstOrDefault(d => d.Value == "Arma 3 Alpha Dedicated Server binary Windows (internal)").Key,
+                "public",
+                null));
+
+
+            //Download depot 233784 for windows in branch profiling
             if (Parameters.UsingPerfBinaries)
                 depotsDownload.Add((
                     depotsIDs.FirstOrDefault(d => d.Value == "Arma 3 Server Profiling - WINDOWS Depot").Key,
                     "profiling",
                     "CautionSpecialProfilingAndTestingBranchArma3"));
-            else
-                depotsDownload.Add((
-                    depotsIDs.FirstOrDefault(d => d.Value == "Arma 3 Alpha Dedicated Server binary Windows (internal)").Key,
-                    "public",
-                    null));
+            
 
             //Downloading mods
             if (Parameters.UsingGMDlc)
@@ -599,10 +604,11 @@ namespace FASTER.ViewModel
             Parameters.Output += "\nOK.";
 
             DownloadTasks.Add(downloadTask);
-            
+
+            Parameters.Progress = 0;
             Parameters.Output += $"\nDownloading {downloadHandler.TotalFileCount} files with total size of {Functions.ParseFileSize(downloadHandler.TotalFileSize)}...";
             Parameters.Output += $"\nVerifying Install...";
-            Parameters.Progress = 0;
+            
             while (!downloadTask.IsCompleted && !downloadTask.IsCanceled && !tokenSource.Token.IsCancellationRequested && !skipDownload)
             {
 
