@@ -138,7 +138,7 @@ namespace FASTER.ViewModel
             Analytics.TrackEvent("Updater - Clicked Update", new Dictionary<string, string>
             {
                 {"Name", Properties.Settings.Default.steamUserName},
-                {"DLCs", $"{(Parameters.UsingGMDlc ? "GM " : "")}{(Parameters.UsingCSLADlc? "CSLA " : "")}{(Parameters.UsingPFDlc ? "SOG " : "")}{(Parameters.UsingWSDlc ? "WS " : "")}"},
+                {"DLCs", $"{(Parameters.UsingGMDlc ? "GM " : "")}{(Parameters.UsingCSLADlc? "CSLA " : "")}{(Parameters.UsingPFDlc ? "SOG " : "")}{(Parameters.UsingWSDlc ? "WS " : "")}{(Parameters.UsingSPEDlc ? "SPE " : "")}"},
                 {"Branch", $"{(Parameters.UsingPerfBinaries? "Profiling" : "Public")}"}
             });
 
@@ -155,7 +155,7 @@ namespace FASTER.ViewModel
                 {233784, "Arma 3 Server Profiling - WINDOWS Depot"},
                 {233785, "Arma 3 Server - Profiler - LINUX Depot"},
                 {233787, "Arma 3 Server Creator DLC - GM"},
-                {233788, "Arma 3 Server Prague Project 2"},
+                {233788, "Arma 3 Server Creator DLC - SPE"},
                 {233789, "Arma 3 Server Creator DLC - CSLA"},
                 {233790, "Arma 3 Server Creator DLC - SOGPF"},
                 {233791, "Arma 3 Server Creator DLC - WS"},
@@ -233,6 +233,15 @@ namespace FASTER.ViewModel
                 Parameters.Output += "\nChecking Arma 3 Server Creator DLC - Western Sahara...";
                 depotsDownload.Add((
                     depotsIDs.FirstOrDefault(d => d.Value == "Arma 3 Server Creator DLC - WS").Key,
+                    "creatordlc",
+                    null));
+            }
+
+            if (Parameters.UsingSPEDlc)
+            {
+                Parameters.Output += "\nChecking Arma 3 Server Creator DLC - SPE...";
+                depotsDownload.Add((
+                    depotsIDs.FirstOrDefault(d => d.Value == "Arma 3 Server Creator DLC - SPE").Key,
                     "creatordlc",
                     null));
             }

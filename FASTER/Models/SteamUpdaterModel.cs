@@ -150,6 +150,17 @@ namespace FASTER.Models
             }
         }
 
+        public bool UsingSPEDlc
+        {
+            get => Settings.Default.usingSPEDlc;
+            set
+            {
+                Settings.Default.usingSPEDlc = value;
+                Settings.Default.Save();
+                RaisePropertyChanged(nameof(UsingSPEDlc));
+            }
+        }
+
 
         public string ApiKey
         {

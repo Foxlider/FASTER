@@ -352,5 +352,20 @@ namespace FASTER.Properties {
                 this["usingWSDlc"] = value;
             }
         }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool usingSPEDlc
+        {
+            get
+            {
+                return ((bool)(this["usingSPEDlc"]));
+            }
+            set
+            {
+                this["usingSPEDlc"] = value;
+            }
+        }
     }
 }
