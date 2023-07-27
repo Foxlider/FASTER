@@ -50,7 +50,7 @@ namespace FASTER.Models
         private int    roleTimeOut = 90; // These are BI base figues
         private int    votingTimeOut = 60; //
         private int    debriefingTimeOut = 45; //
-        private bool   LogObjectNotFound = false;			// logging disabled
+        private bool   LogObjectNotFound = true;			// logging enabled
         private bool   SkipDescriptionParsing = false;		// parse description.ext
         private bool   ignoreMissionLoadErrors = false;	// do not ingore errors
         private int    armaUnitsTimeout = 30; // Defines how long the player will be stuck connecting and wait for armaUnits data. Player will be notified if timeout elapsed and no units data was received
