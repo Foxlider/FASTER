@@ -1,11 +1,11 @@
 <UserControl x:Class="FASTER.Views.Profile"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:viewModel="clr-namespace:FASTER.ViewModel"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
-             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls" 
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:models="clr-namespace:FASTER.Models"
              mc:Ignorable="d"
              Loaded="UserControl_Loaded"
@@ -311,22 +311,22 @@
                                                    Background="{Binding Path=Profile.ProfileModsFilterIsInvalid, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ProfileModsFilterIsInvalidBackgroundColorConverter}}" />
                                     </Border>
                                 </Canvas>
-                                <ToggleButton Grid.Column="1" Content="{iconPacks:Material Kind=FormatLetterCase}" IsChecked="{Binding Path=Profile.ProfileModsFilterIsCaseSensitive}" 
+                                <ToggleButton Grid.Column="1" Content="{iconPacks:Material Kind=FormatLetterCase}" IsChecked="{Binding Path=Profile.ProfileModsFilterIsCaseSensitive}"
                                               BorderThickness="0" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"
-                                              Margin="2" Padding="0" 
+                                              Margin="2" Padding="0"
                                               ToolTip="Match Case" Style="{StaticResource MahApps.Styles.ToggleButton.Flat}"/>
-                                <ToggleButton Grid.Column="2" Content="{iconPacks:Material Kind=FormatLetterMatches}" IsChecked="{Binding Path=Profile.ProfileModsFilterIsWholeWord}" 
+                                <ToggleButton Grid.Column="2" Content="{iconPacks:Material Kind=FormatLetterMatches}" IsChecked="{Binding Path=Profile.ProfileModsFilterIsWholeWord}"
                                               BorderThickness="0"
                                               Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"
-                                              Margin="2" Padding="0" 
+                                              Margin="2" Padding="0"
                                               ToolTip="Match Whole Word" Style="{StaticResource MahApps.Styles.ToggleButton.Flat}"/>
-                                <ToggleButton Grid.Column="3" Content="{iconPacks:Material Kind=Regex}" IsChecked="{Binding Path=Profile.ProfileModsFilterIsRegex}" 
+                                <ToggleButton Grid.Column="3" Content="{iconPacks:Material Kind=Regex}" IsChecked="{Binding Path=Profile.ProfileModsFilterIsRegex}"
                                               BorderThickness="0" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"
-                                              Margin="2" Padding="0" 
+                                              Margin="2" Padding="0"
                                               ToolTip="Use Regular Expressions" Style="{StaticResource MahApps.Styles.ToggleButton.Flat}"/>
-                                
+
                             </Grid>
-                            
+
                             <!--<Border Grid.Row="4" Margin="5,-5,105,0" Height="20" BorderThickness="1" Visibility="{Binding Path=Profile.ProfileModsFilterIsInvalid, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}" BorderBrush="{Binding Path=Profile.ProfileModsFilterIsInvalid, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ProfileModsFilterIsInvalidBorderColorConverter}}">
                                 <TextBlock Foreground="White" Padding="5,1,0,0"
                                        Text="{Binding Path=Profile.ProfileModsFilterIsInvalid, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ProfileModsFilterIsInvalidTextConverter}}"
@@ -570,8 +570,15 @@
                                         <CheckBox IsChecked="{Binding Path=Profile.ServerCfg.KickClientOnSlowNetwork}" Content="Kick on Slow Network" Margin="5,2"/>
 
                                         <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.LobbyIdleTimeout}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Lobby Idle Timeout" Margin="5"/>
+                                        <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.BriefingTimeOut}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Briefing Idle Timeout" Margin="5"/>
+                                        <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.RoleTimeOut}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Role Idle Timeout" Margin="5"/>
+                                        <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.VotingTimeOut}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Voting Timeout" Margin="5"/>
+                                        <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.DebriefingTimeOut}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Debriefing Idle Timeout" Margin="5"/>
                                         <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.SteamProtocolMaxDataSize}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Steam Protocol Max Data Size" Margin="5,0,5,5"/>
 
+                                          <ComboBox SelectedItem="{Binding Path=Profile.ServerCfg.LogObjectNotFound}" ItemsSource="{Binding Path=LogObjectNotFound}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Log Object Not Found" Margin="5"/>
+                                          <ComboBox SelectedItem="{Binding Path=Profile.ServerCfg.SkipDescriptionParsing}" ItemsSource="{Binding Path=SkipDescriptionParsing}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Skip Description Parsing" Margin="5"/>
+                                          <ComboBox SelectedItem="{Binding Path=Profile.ServerCfg.IgnoreMissionLoadErrors}" ItemsSource="{Binding Path=IgnoreMissionLoadErrors}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Ignore Mission Load Errors" Margin="5"/>
                                         <StackPanel Orientation="Horizontal">
 
                                         </StackPanel>
