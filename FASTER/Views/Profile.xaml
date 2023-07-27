@@ -577,8 +577,8 @@
                                         <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.ArmaUnitsTimeout}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Arma Units Timeout" Margin="5"/>
                                         <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.SteamProtocolMaxDataSize}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Steam Protocol Max Data Size" Margin="5,0,5,5"/>
 
-                                        <CheckBox IsChecked="{Binding Path=Profile.ServerCfg.LogObjectNotFound}" Content="Log Object Not Found" Margin="5,2"/>
-                                        <CheckBox IsChecked="{Binding Path=Profile.ServerCfg.SkipDescriptionParsing}" Content="Skip Description Parsing" Margin="5,2"/>
+                                        <CheckBox IsChecked="{Binding Path=Profile.ServerCfg.logObjectNotFound}" Content="Log Object Not Found" Margin="5,2"/>
+                                        <CheckBox IsChecked="{Binding Path=Profile.ServerCfg.skipDescriptionParsing}" Content="Skip Description Parsing" Margin="5,2"/>
                                         <CheckBox IsChecked="{Binding Path=Profile.ServerCfg.IgnoreMissionLoadErrors}" Content="Ignore Mission Load Errors" Margin="5,2"/>
                                         <StackPanel Orientation="Horizontal">
 

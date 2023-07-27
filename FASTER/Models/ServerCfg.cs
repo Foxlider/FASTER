@@ -391,23 +391,23 @@ namespace FASTER.Models
             }
         }
 
-        public bool LogObjectNotFound
+        public bool logObjectNotFound
         {
-            get => logObjectNotFound;
+            get => LogObjectNotFound;
             set
             {
-                logObjectNotFound = value;
-                RaisePropertyChanged("LogObjectNotFound");
+                LogObjectNotFound = value;
+                RaisePropertyChanged("logObjectNotFound");
             }
         }
 
-        public bool SkipDescriptionParsing
+        public bool skipDescriptionParsing
         {
-            get => skipDescriptionParsing;
+            get => SkipDescriptionParsing;
             set
             {
-                skipDescriptionParsing = value;
-                RaisePropertyChanged("SkipDescriptionParsing");
+                SkipDescriptionParsing = value;
+                RaisePropertyChanged("skipDescriptionParsing");
             }
         }
 
@@ -872,8 +872,8 @@ namespace FASTER.Models
                           + $"persistent = {persistent};\t\t\t\t\t// If 1, missions still run on even after the last player disconnected.\r\n"
                           + $"timeStampFormat = \"{timeStampFormat}\";\t\t\t// Set the timestamp format used on each report line in server-side RPT file. Possible values are \"none\" (default),\"short\",\"full\".\r\n"
                           + $"BattlEye = {battlEye};\t\t\t\t\t// Server to use BattlEye system\r\n"
-                          + $"LogObjectNotFound = {LogObjectNotFound};\t\t\t\t\t // When false to skip logging 'Server: Object not found messages'.\r\n"
-                          + $"SkipDescriptionParsing = {SkipDescriptionParsing};\t\t\t\t\t // When true to skip parsing of description.ext/mission.sqm. Will show pbo filename instead of configured missionName. OverviewText and such won't work, but loading the mission list is a lot faster when there are many missions \r\n"
+                          + $"LogObjectNotFound = {logObjectNotFound};\t\t\t\t\t // When false to skip logging 'Server: Object not found messages'.\r\n"
+                          + $"SkipDescriptionParsing = {skipDescriptionParsing};\t\t\t\t\t // When true to skip parsing of description.ext/mission.sqm. Will show pbo filename instead of configured missionName. OverviewText and such won't work, but loading the mission list is a lot faster when there are many missions \r\n"
                           + $"ignoreMissionLoadErrors = {ignoreMissionLoadErrors};\t\t\t\t\t // When set to true, the mission will load no matter the amount of loading errors. If set to false, the server will abort mission's loading and return to mission selection.\r\n"
                           + "\r\n"
                           + "// TIMEOUTS\r\n"
@@ -883,7 +883,7 @@ namespace FASTER.Models
                           + $"maxPacketLoss= {maxpacketloss}; // Max packetloss value until server kick the user\r\n"
                           + $"kickClientsOnSlowNetwork[] = {( kickClientOnSlowNetwork ? "{ 1, 1, 1, 1 }" : "{ 0, 0, 0, 0 }")}; //Defines if {{<MaxPing>, <MaxPacketLoss>, <MaxDesync>, <DisconnectTimeout>}} will be logged (0) or kicked (1)\r\n"
                           + $"lobbyIdleTimeout = {lobbyIdleTimeout}; // The amount of time the server will wait before force-starting a mission without a logged-in Admin.\r\n"
-                          + $"armaUnitsTimeout = {armaUnitsTimeout};\t\t\t\t\t // Defines how long the player will be stuck connecting and wait for armaUnits data. Player will be notified if timeout elapsed and no units data was received.\r\n"
+                          + $"armaUnitsTimeout = {armaUnitsTimeout}; // Defines how long the player will be stuck connecting and wait for armaUnits data. Player will be notified if timeout elapsed and no units data was received.\r\n"
                           + "\r\n"
                           + "\r\n"
                           + "// SCRIPTING ISSUES\r\n"
