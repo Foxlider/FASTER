@@ -572,12 +572,23 @@
                                         <CheckBox IsChecked="{Binding Path=Profile.ServerCfg.skipDescriptionParsing}" Content="Skip Description Parsing" Margin="5,2"/>
                                         <CheckBox IsChecked="{Binding Path=Profile.ServerCfg.IgnoreMissionLoadErrors}" Content="Ignore Mission Load Errors" Margin="5,2"/>
 
-                                        <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.LobbyIdleTimeout}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Lobby Idle Timeout" Margin="5"/>
-                                        <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.BriefingTimeOut}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Briefing Idle Timeout" Margin="5"/>
-                                        <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.RoleTimeOut}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Role Idle Timeout" Margin="5"/>
-                                        <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.VotingTimeOut}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Voting Timeout" Margin="5"/>
-                                        <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.DebriefingTimeOut}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Debriefing Idle Timeout" Margin="5"/>
-                                        <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.ArmaUnitsTimeout}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Arma Units Timeout" Margin="5"/>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition/>
+                                                <ColumnDefinition/>
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Grid.Column="0" Margin="4,5,0,5">
+                                                <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.LobbyIdleTimeout}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Lobby Idle Timeout" Margin="1"/>
+                                                <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.RoleTimeOut}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Role Idle Timeout" Margin="1"/>
+                                                <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.DebriefingTimeOut}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Debriefing Idle Timeout" Margin="1"/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="1" Margin="0,5,4,5">
+                                                <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.BriefingTimeOut}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Briefing Idle Timeout" Margin="1"/>
+                                                <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.VotingTimeOut}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Voting Timeout" Margin="1"/>
+                                                <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.ArmaUnitsTimeout}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Arma Units Timeout" Margin="1"/>
+                                            </StackPanel>
+                                            
+                                        </Grid>
                                         <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.SteamProtocolMaxDataSize}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Steam Protocol Max Data Size" Margin="5,0,5,5"/>
 
 
