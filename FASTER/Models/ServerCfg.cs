@@ -53,6 +53,7 @@ namespace FASTER.Models
         private bool   LogObjectNotFound = false;			// logging disabled
         private bool   SkipDescriptionParsing = false;		// parse description.ext
         private bool   ignoreMissionLoadErrors = false;	// do not ingore errors
+        private int    armaUnitsTimeout = 30; // Defines how long the player will be stuck connecting and wait for armaUnits data. Player will be notified if timeout elapsed and no units data was received
 
         //Arma server only
         private short  verifySignatures         = 0;        // 0 = Disabled (FASTER Default); 1 = Deprecated Activated ; 2 = Activated (Arma Default)
@@ -392,20 +393,20 @@ namespace FASTER.Models
 
         public bool LogObjectNotFound
         {
-            get => LogObjectNotFound;
+            get => logObjectNotFound;
             set
             {
-                LogObjectNotFound = value;
+                logObjectNotFound = value;
                 RaisePropertyChanged("LogObjectNotFound");
             }
         }
 
         public bool SkipDescriptionParsing
         {
-            get => SkipDescriptionParsing;
+            get => skipDescriptionParsing;
             set
             {
-                SkipDescriptionParsing = value;
+                skipDescriptionParsing = value;
                 RaisePropertyChanged("SkipDescriptionParsing");
             }
         }
@@ -417,6 +418,16 @@ namespace FASTER.Models
             {
                 ignoreMissionLoadErrors = value;
                 RaisePropertyChanged("IgnoreMissionLoadErrors");
+            }
+        }
+
+        public int ArmaUnitsTimeout
+        {
+            get => armaUnitsTimeout;
+            set
+            {
+                armaUnitsTimeout = value;
+                RaisePropertyChanged("ArmaUnitsTimeout");
             }
         }
 
@@ -872,6 +883,7 @@ namespace FASTER.Models
                           + $"maxPacketLoss= {maxpacketloss}; // Max packetloss value until server kick the user\r\n"
                           + $"kickClientsOnSlowNetwork[] = {( kickClientOnSlowNetwork ? "{ 1, 1, 1, 1 }" : "{ 0, 0, 0, 0 }")}; //Defines if {{<MaxPing>, <MaxPacketLoss>, <MaxDesync>, <DisconnectTimeout>}} will be logged (0) or kicked (1)\r\n"
                           + $"lobbyIdleTimeout = {lobbyIdleTimeout}; // The amount of time the server will wait before force-starting a mission without a logged-in Admin.\r\n"
+                          + $"armaUnitsTimeout = {armaUnitsTimeout};\t\t\t\t\t // Defines how long the player will be stuck connecting and wait for armaUnits data. Player will be notified if timeout elapsed and no units data was received.\r\n"
                           + "\r\n"
                           + "\r\n"
                           + "// SCRIPTING ISSUES\r\n"

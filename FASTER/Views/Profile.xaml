@@ -574,6 +574,7 @@
                                         <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.RoleTimeOut}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Role Idle Timeout" Margin="5"/>
                                         <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.VotingTimeOut}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Voting Timeout" Margin="5"/>
                                         <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.DebriefingTimeOut}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Debriefing Idle Timeout" Margin="5"/>
+                                        <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.ArmaUnitsTimeout}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Arma Units Timeout" Margin="5"/>
                                         <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.SteamProtocolMaxDataSize}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Steam Protocol Max Data Size" Margin="5,0,5,5"/>
 
                                         <CheckBox IsChecked="{Binding Path=Profile.ServerCfg.LogObjectNotFound}" Content="Log Object Not Found" Margin="5,2"/>
