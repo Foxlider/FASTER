@@ -125,7 +125,8 @@ namespace FASTER_Maintenance.Models._17Models
         [XmlElement(ElementName = "MaxDesync")]
         public string MaxDesync { get; set; }
 
-        [XmlElement(ElementName = "MaxPing")] public string MaxPing { get; set; }
+        [XmlElement(ElementName = "MaxPing")]
+        public string MaxPing { get; set; }
 
         [XmlElement(ElementName = "MaxPacketLoss")]
         public string MaxPacketLoss { get; set; }
@@ -141,6 +142,27 @@ namespace FASTER_Maintenance.Models._17Models
 
         [XmlElement(ElementName = "RandomMissionOrder")]
         public string RandomMissionOrder { get; set; }
+
+        [XmlElement(ElementName = "BriefingTimeOut")]
+        public string BriefingTimeOut { get; set; }
+
+        [XmlElement(ElementName = "RoleTimeOut")]
+        public string RoleTimeOut { get; set; }
+
+        [XmlElement(ElementName = "VotingTimeOut")]
+        public string VotingTimeOut { get; set; }
+
+        [XmlElement(ElementName = "DebriefingTimeOut")]
+        public string DebriefingTimeOut { get; set; }
+
+        [XmlElement(ElementName = "LogObjectNotFound")]
+        public string LogObjectNotFound { get; set; }
+
+        [XmlElement(ElementName = "SkipDescriptionParsing")]
+        public string SkipDescriptionParsing { get; set; }
+
+        [XmlElement(ElementName = "IgnoreMissionLoadErrors")]
+        public string IgnoreMissionLoadErrors { get; set; }
 
         [XmlElement(ElementName = "VerifySignatures")]
         public string VerifySignatures { get; set; }

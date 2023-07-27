@@ -46,8 +46,16 @@ namespace FASTER.Models
         private int    lobbyIdleTimeout   = 300;
         private bool   autoSelectMission  = true;
         private bool   randomMissionOrder = true;
+        private int    briefingTimeOut = 60; //
+        private int    roleTimeOut = 90; // These are BI base figues
+        private int    votingTimeOut = 60; //
+        private int    debriefingTimeOut = 45; //
+        private bool   LogObjectNotFound = true;			// logging enabled
+        private bool   SkipDescriptionParsing = false;		// parse description.ext
+        private bool   ignoreMissionLoadErrors = false;	// do not ingore errors
+        private int    armaUnitsTimeout = 30; // Defines how long the player will be stuck connecting and wait for armaUnits data. Player will be notified if timeout elapsed and no units data was received
 
-        //Arma server only 
+        //Arma server only
         private short  verifySignatures         = 0;        // 0 = Disabled (FASTER Default); 1 = Deprecated Activated ; 2 = Activated (Arma Default)
         private bool   drawingInMap             = true;
         private short  disableVoN;                          // 0 = VoN activated ; 1 = VoN Disabled
@@ -86,7 +94,7 @@ namespace FASTER.Models
 
         private string serverCfgContent;
 
-        
+
 
         #region Server Options
         public string PasswordAdmin
@@ -138,7 +146,7 @@ namespace FASTER.Models
                 RaisePropertyChanged("MaxPlayers");
             }
         }
-        
+
         public string Motd
         {
             get => string.Join("\n", motd);
@@ -340,6 +348,86 @@ namespace FASTER.Models
             {
                 lobbyIdleTimeout = value;
                 RaisePropertyChanged("LobbyIdleTimeout");
+            }
+        }
+
+        public int BriefingTimeOut
+        {
+            get => briefingTimeOut;
+            set
+            {
+                briefingTimeOut = value;
+                RaisePropertyChanged("BriefingTimeOut");
+            }
+        }
+
+        public int RoleTimeOut
+        {
+            get => roleTimeOut;
+            set
+            {
+                roleTimeOut = value;
+                RaisePropertyChanged("RoleTimeOut");
+            }
+        }
+
+        public int VotingTimeOut
+        {
+            get => votingTimeOut;
+            set
+            {
+                votingTimeOut = value;
+                RaisePropertyChanged("VotingTimeOut");
+            }
+        }
+
+        public int DebriefingTimeOut
+        {
+            get => debriefingTimeOut;
+            set
+            {
+                debriefingTimeOut = value;
+                RaisePropertyChanged("DebriefingTimeOut");
+            }
+        }
+
+        public bool logObjectNotFound
+        {
+            get => LogObjectNotFound;
+            set
+            {
+                LogObjectNotFound = value;
+                RaisePropertyChanged("logObjectNotFound");
+            }
+        }
+
+        public bool skipDescriptionParsing
+        {
+            get => SkipDescriptionParsing;
+            set
+            {
+                SkipDescriptionParsing = value;
+                RaisePropertyChanged("skipDescriptionParsing");
+            }
+        }
+
+        public bool IgnoreMissionLoadErrors
+        {
+            get => ignoreMissionLoadErrors;
+            set
+            {
+                ignoreMissionLoadErrors = value;
+                RaisePropertyChanged("IgnoreMissionLoadErrors");
+            }
+        }
+
+        public int ArmaUnitsTimeout
+        {
+            get => armaUnitsTimeout;
+            set
+            {
+                armaUnitsTimeout = value;
+                RaisePropertyChanged("ArmaUnitsTimeout");
             }
         }
 
@@ -611,7 +699,7 @@ namespace FASTER.Models
                 RaisePropertyChanged("Difficulty");
             }
         }
-        
+
         public List<ProfileMission> Missions
         {
             get => _missions;
@@ -620,24 +708,24 @@ namespace FASTER.Models
                 //Removing previous triggers
                 _missions.ForEach(m => m.PropertyChanged -= Item_PropertyChanged);
 
-                bool isEqual = _missions.Count == value.Count 
-                            && !( from mission in value 
-                                  let local = _missions.FirstOrDefault(m => m.Path == mission.Path) 
-                                  where local == null || local.MissionChecked != mission.MissionChecked 
+                bool isEqual = _missions.Count == value.Count
+                            && !( from mission in value
+                                  let local = _missions.FirstOrDefault(m => m.Path == mission.Path)
+                                  where local == null || local.MissionChecked != mission.MissionChecked
                                   select mission ).Any();
-                
+
                 if (!isEqual)
                 {
                     _missions = value;
                     RaisePropertyChanged("Missions");
                 }
-                
+
                 //Adding the trigger to count checked mods
                 _missions.ForEach(m => m.PropertyChanged += Item_PropertyChanged);
             }
         }
         #endregion
-        
+
         #region Performances
         public bool MaxMemOverride
         {
@@ -770,6 +858,10 @@ namespace FASTER.Models
                           + $"{(votingEnabled ? $"voteThreshold = {voteThreshold.ToString(CultureInfo.InvariantCulture)};" : "voteThreshold = 0;")}\t\t\t\t// 33% or more players need to vote for something, for example an admin or a new map, to become effective\r\n"
                           + $"{(votingEnabled ? "" : "allowedVoteCmds[] = {};")}\r\n"
                           + $"{(votingEnabled ? "" : "allowedVotedAdminCmds[] = {};")}\r\n"
+                          + $"briefingTimeOut = {briefingTimeOut}; // The amount of time a player can sit in briefing mode before being kicked.\r\n"
+                          + $"roleTimeOut = {roleTimeOut}; // The amount of time a player can sit in role selection before being kicked.\r\n"
+                          + $"votingTimeOut = {votingTimeOut}; // The amount of time a vote will last before ending.\r\n"
+                          + $"debriefingTimeOut = {debriefingTimeOut}; // // The amount of time a player can sit in breifing mode before being kicked.\r\n"
                           + "\r\n"
                           + "\r\n"
                           + "// INGAME SETTINGS\r\n"
@@ -780,6 +872,9 @@ namespace FASTER.Models
                           + $"persistent = {persistent};\t\t\t\t\t// If 1, missions still run on even after the last player disconnected.\r\n"
                           + $"timeStampFormat = \"{timeStampFormat}\";\t\t\t// Set the timestamp format used on each report line in server-side RPT file. Possible values are \"none\" (default),\"short\",\"full\".\r\n"
                           + $"BattlEye = {battlEye};\t\t\t\t\t// Server to use BattlEye system\r\n"
+                          + $"LogObjectNotFound = {logObjectNotFound};\t\t\t\t\t // When false to skip logging 'Server: Object not found messages'.\r\n"
+                          + $"SkipDescriptionParsing = {skipDescriptionParsing};\t\t\t\t\t // When true to skip parsing of description.ext/mission.sqm. Will show pbo filename instead of configured missionName. OverviewText and such won't work, but loading the mission list is a lot faster when there are many missions \r\n"
+                          + $"ignoreMissionLoadErrors = {ignoreMissionLoadErrors};\t\t\t\t\t // When set to true, the mission will load no matter the amount of loading errors. If set to false, the server will abort mission's loading and return to mission selection.\r\n"
                           + "\r\n"
                           + "// TIMEOUTS\r\n"
                           + $"disconnectTimeout = {disconnectTimeout}; // Time to wait before disconnecting a user which temporarly lost connection. Range is 5 to 90 seconds.\r\n"
@@ -788,6 +883,7 @@ namespace FASTER.Models
                           + $"maxPacketLoss= {maxpacketloss}; // Max packetloss value until server kick the user\r\n"
                           + $"kickClientsOnSlowNetwork[] = {( kickClientOnSlowNetwork ? "{ 1, 1, 1, 1 }" : "{ 0, 0, 0, 0 }")}; //Defines if {{<MaxPing>, <MaxPacketLoss>, <MaxDesync>, <DisconnectTimeout>}} will be logged (0) or kicked (1)\r\n"
                           + $"lobbyIdleTimeout = {lobbyIdleTimeout}; // The amount of time the server will wait before force-starting a mission without a logged-in Admin.\r\n"
+                          + $"armaUnitsTimeout = {armaUnitsTimeout}; // Defines how long the player will be stuck connecting and wait for armaUnits data. Player will be notified if timeout elapsed and no units data was received.\r\n"
                           + "\r\n"
                           + "\r\n"
                           + "// SCRIPTING ISSUES\r\n"
@@ -807,7 +903,7 @@ namespace FASTER.Models
                           + "\r\n"
                           + $"{MissionContentOverride}\t\t\t\t// An empty Missions class means there will be no mission rotation\r\n"
                           + "\r\n"
-                          + "missionWhitelist[] = {};\r\n" 
+                          + "missionWhitelist[] = {};\r\n"
                           + "// An empty whitelist means there is no restriction on what missions available"
                           + "\r\n"
                           + "\r\n"
