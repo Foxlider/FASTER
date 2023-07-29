@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
+using System.Text.RegularExpressions;
 
 namespace FASTER.Models
 {
@@ -18,6 +19,11 @@ namespace FASTER.Models
         public string CollectionName { get; set; } = "Main";
 
         private ObservableCollection<ArmaMod> _mods = new();
+        private string _armaModsFilter = "";
+        private bool _armaModsFilterIsCaseSensitive = false;
+        private bool _armaModsFilterIsWholeWord = false;
+        private bool _armaModsFilterIsRegex = false;
+        private bool _armaModsFilterIsInvalid = false;
 
         [XmlElement(Order = 2, ElementName = "ArmaMod")]
         public ObservableCollection<ArmaMod> ArmaMods
@@ -27,6 +33,114 @@ namespace FASTER.Models
             {
                 _mods = value;
                 RaisePropertyChanged("ArmaMods");
+                RaisePropertyChanged("FilteredArmaMods");
+            }
+        }
+
+        public ObservableCollection<ArmaMod> FilteredArmaMods
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(ArmaModsFilter))
+                {
+                    if (ArmaModsFilterIsInvalid)
+                    {
+                        ArmaModsFilterIsInvalid = false;
+                    }
+                    return new ObservableCollection<ArmaMod>(_mods);
+                }
+
+                var pattern = ArmaModsFilter;
+                if (!ArmaModsFilterIsRegex)
+                {
+                    pattern = Regex.Replace(pattern, @"[\\\{\}\*\+\?\|\^\$\.\[\]\(\)]", "\\$&");
+                }
+
+                if (ArmaModsFilterIsWholeWord)
+                {
+                    if (!Regex.IsMatch(pattern[0].ToString(), @"\B"))
+                    {
+                        pattern = $"\\b{pattern}";
+                    }
+                    if (!Regex.IsMatch(pattern[pattern.Length - 1].ToString(), @"\B"))
+                    {
+                        pattern = $"{pattern}\\b";
+                    }
+                }
+
+                var options = ArmaModsFilterIsCaseSensitive ? RegexOptions.None : RegexOptions.IgnoreCase;
+
+                try
+                {
+                    var filteredArmaMods = new ObservableCollection<ArmaMod>(_mods.Where(m => Regex.IsMatch(m.Name, pattern, options)));
+                    if (ArmaModsFilterIsInvalid)
+                    {
+                        ArmaModsFilterIsInvalid = false;
+                    }
+                    return filteredArmaMods;
+                }
+                catch (ArgumentException)
+                {
+                    if (!ArmaModsFilterIsInvalid)
+                    {
+                        ArmaModsFilterIsInvalid = true;
+                    }
+                    return new ObservableCollection<ArmaMod>();
+                }
+            }
+        }
+
+        public string ArmaModsFilter
+        {
+            get => _armaModsFilter;
+            set
+            {
+                _armaModsFilter = value;
+                RaisePropertyChanged("ArmaModsFilter");
+                RaisePropertyChanged("FilteredArmaMods");
+            }
+        }
+
+        public bool ArmaModsFilterIsCaseSensitive
+        {
+            get => _armaModsFilterIsCaseSensitive;
+            set
+            {
+                _armaModsFilterIsCaseSensitive = value;
+                RaisePropertyChanged("ArmaModsFilterIsCaseSensitive");
+                RaisePropertyChanged("FilteredArmaMods");
+            }
+        }
+
+        public bool ArmaModsFilterIsWholeWord
+        {
+            get => _armaModsFilterIsWholeWord;
+            set
+            {
+                _armaModsFilterIsWholeWord = value;
+                RaisePropertyChanged("ArmaModsFilterIsWholeWord");
+                RaisePropertyChanged("FilteredArmaMods");
+            }
+        }
+
+        public bool ArmaModsFilterIsRegex
+        {
+            get => _armaModsFilterIsRegex;
+            set
+            {
+                _armaModsFilterIsRegex = value;
+                RaisePropertyChanged("ArmaModsFilterIsRegex");
+                RaisePropertyChanged("FilteredArmaMods");
+            }
+        }
+
+        public bool ArmaModsFilterIsInvalid
+        {
+            get => _armaModsFilterIsInvalid;
+            set
+            {
+                _armaModsFilterIsInvalid = value;
+                RaisePropertyChanged("ArmaModsFilterIsInvalid");
             }
         }
 

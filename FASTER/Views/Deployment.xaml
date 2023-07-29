@@ -17,11 +17,15 @@
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
         <models:FolderSizeConverter x:Key="SizeConverter" />
         <models:NotBooleanToVisibilityConverter x:Key="BoolToHide" />
+        <models:ProfileModsFilterIsInvalidBorderColorConverter x:Key="ProfileModsFilterIsInvalidBorderColorConverter"/>
+        <models:ProfileModsFilterIsInvalidBackgroundColorConverter x:Key="ProfileModsFilterIsInvalidBackgroundColorConverter"/>
+        <models:ProfileModsFilterIsInvalidTextConverter x:Key="ProfileModsFilterIsInvalidTextConverter"/>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <DockPanel HorizontalAlignment="Stretch" Margin="10,10,5,5">
             <DockPanel.Effect>
@@ -48,7 +52,7 @@
             </Canvas>-->
         </DockPanel>
         <DataGrid Grid.Row="1" Grid.Column="0" Margin="10,5,10,10"
-                  ItemsSource="{Binding Path=Deployment.DeployMods, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                  ItemsSource="{Binding Path=Deployment.FilteredDeployMods, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                   CanUserReorderColumns="False" CanUserSortColumns="True" AutoGenerateColumns="False"
                   CanUserAddRows="False">
             <DataGrid.Effect>
@@ -129,5 +133,40 @@
                 </DataGridTextColumn>
             </DataGrid.Columns>
         </DataGrid>
+
+        <Grid Grid.Row="2" Margin="50px 0px 50px 10px">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="600px"/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+            <Border Grid.Column="0" Margin="0,0" BorderThickness="1"
+                                        BorderBrush="{Binding Path=Deployment.DeployModsFilterIsInvalid, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ProfileModsFilterIsInvalidBorderColorConverter}}">
+                <TextBox IsReadOnly="False" mah:TextBoxHelper.UseFloatingWatermark="True"
+                                             mah:TextBoxHelper.Watermark="Filter:" Text="{Binding Path=Deployment.DeployModsFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            </Border>
+            <Canvas Grid.Column="0" Margin="0,2"
+                                        Visibility="{Binding Path=Deployment.DeployModsFilterIsInvalid, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <Border BorderThickness="1" BorderBrush="{Binding Path=Deployment.DeployModsFilterIsInvalid, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ProfileModsFilterIsInvalidBorderColorConverter}}">
+                    <TextBlock Foreground="White" Padding="5,1"
+                                                   Text="{Binding Path=Deployment.DeployModsFilterIsInvalid, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ProfileModsFilterIsInvalidTextConverter}}"
+                                                   Background="{Binding Path=Deployment.DeployModsFilterIsInvalid, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ProfileModsFilterIsInvalidBackgroundColorConverter}}" />
+                </Border>
+            </Canvas>
+            <ToggleButton Grid.Column="1" Content="{iconPacks:Material Kind=FormatLetterCase}" IsChecked="{Binding Path=Deployment.DeployModsFilterIsCaseSensitive}" 
+                                              BorderThickness="0" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"
+                                              Margin="2" Padding="0" 
+                                              ToolTip="Match Case" Style="{StaticResource MahApps.Styles.ToggleButton.Flat}"/>
+            <ToggleButton Grid.Column="2" Content="{iconPacks:Material Kind=FormatLetterMatches}" IsChecked="{Binding Path=Deployment.DeployModsFilterIsWholeWord}" 
+                                              BorderThickness="0"
+                                              Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"
+                                              Margin="2" Padding="0" 
+                                              ToolTip="Match Whole Word" Style="{StaticResource MahApps.Styles.ToggleButton.Flat}"/>
+            <ToggleButton Grid.Column="3" Content="{iconPacks:Material Kind=Regex}" IsChecked="{Binding Path=Deployment.DeployModsFilterIsRegex}" 
+                                              BorderThickness="0" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"
+                                              Margin="2" Padding="0" 
+                                              ToolTip="Use Regular Expressions" Style="{StaticResource MahApps.Styles.ToggleButton.Flat}"/>
+        </Grid>
     </Grid>
 </UserControl>
