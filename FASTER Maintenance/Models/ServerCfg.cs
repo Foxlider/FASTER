@@ -48,6 +48,13 @@ namespace FASTER.Models
         private bool   autoSelectMission  = true;
         private bool   randomMissionOrder = true;
         private bool   queueSizeLogG = 1000000; // if a specific players message queue is larger than 1MB and #monitor is running, dump his messages to a logfile for analysis
+        private int    briefingTimeOut = 60; //
+        private int    roleTimeOut = 90; // These are BI base figues
+        private int    votingTimeOut = 60; //
+        private int    debriefingTimeOut = 45; //
+        private bool   LogObjectNotFound = false;			// logging disabled
+	      private bool   SkipDescriptionParsing = false;		// parse description.ext
+	      private bool   ignoreMissionLoadErrors = false;	// do not ingore errors
 
         //Arma server only
         private short  verifySignatures         = 2;        // 0 = Disabled ; 1 = Deprecated Activated ; 2 = Activated (Default)
@@ -352,6 +359,76 @@ namespace FASTER.Models
             {
                 queueSizeLogG = value;
                 RaisePropertyChanged("QueueSizeLogG");
+            }
+        }
+
+        public int BriefingTimeOut
+        {
+            get => briefingTimeOut;
+            set
+            {
+                briefingTimeOut = value;
+                RaisePropertyChanged("BriefingTimeOut");
+            }
+        }
+
+        public int RoleTimeOut
+        {
+            get => roleTimeOut;
+            set
+            {
+                roleTimeOut = value;
+                RaisePropertyChanged("RoleTimeOut");
+            }
+        }
+
+        public int VotingTimeOut
+        {
+            get => votingTimeOut;
+            set
+            {
+                votingTimeOut = value;
+                RaisePropertyChanged("VotingTimeOut");
+            }
+        }
+
+        public int DebriefingTimeOut
+        {
+            get => debriefingTimeOut;
+            set
+            {
+                debriefingTimeOut = value;
+                RaisePropertyChanged("DebriefingTimeOut");
+            }
+        }
+
+        public bool LogObjectNotFound
+        {
+            get => LogObjectNotFound;
+            set
+            {
+                LogObjectNotFound = value;
+                RaisePropertyChanged("LogObjectNotFound");
+            }
+        }
+
+        public bool SkipDescriptionParsing
+        {
+            get => SkipDescriptionParsing;
+            set
+            {
+                SkipDescriptionParsing = value;
+                RaisePropertyChanged("SkipDescriptionParsing");
+            }
+        }
+
+        public bool IgnoreMissionLoadErrors
+        {
+            get => ignoreMissionLoadErrors;
+            set
+            {
+                ignoreMissionLoadErrors = value;
+                RaisePropertyChanged("IgnoreMissionLoadErrors");
             }
         }
 
@@ -779,7 +856,11 @@ namespace FASTER.Models
                           + $"vonCodecQuality = {vonCodecQuality};\t\t\t\t// since 1.62.95417 supports range 1-20 //since 1.63.x will supports range 1-30 //8kHz is 0-10, 16kHz is 11-20, 32kHz(48kHz) is 21-30 \r\n"
                           + $"persistent = {persistent};\t\t\t\t\t// If 1, missions still run on even after the last player disconnected.\r\n"
                           + $"timeStampFormat = \"{timeStampFormat}\";\t\t\t// Set the timestamp format used on each report line in server-side RPT file. Possible values are \"none\" (default),\"short\",\"full\".\r\n"
+                          + $"BattlEye = {battlEye};\t\t\t\t\t// Server to use BattlEye system.\r\n"
                           + $"queueSizeLogG = {queueSizeLogG}; \t\t\t\t\t// // if a specific players message queue is larger than 1MB and \#monitor\ is running, dump his messages to a logfile for analysis \r\n"
+                          + $"LogObjectNotFound = {LogObjectNotFound};\t\t\t\t\t // When false to skip logging 'Server: Object not found messages'.\r\n"
+                          + $"SkipDescriptionParsing = {SkipDescriptionParsing};\t\t\t\t\t // When true to skip parsing of description.ext/mission.sqm. Will show pbo filename instead of configured missionName. OverviewText and such won't work, but loading the mission list is a lot faster when there are many missions \r\n"
+                          + $"ignoreMissionLoadErrors = {ignoreMissionLoadErrors};\t\t\t\t\t // When set to true, the mission will load no matter the amount of loading errors. If set to false, the server will abort mission's loading and return to mission selection.\r\n"
                           + "\r\n"
                           + "// TIMEOUTS\r\n"
                           + $"disconnectTimeout = {disconnectTimeout}; // Time to wait before disconnecting a user which temporarly lost connection. Range is 5 to 90 seconds.\r\n"
@@ -787,7 +868,12 @@ namespace FASTER.Models
                           + $"maxPing= {maxping}; // Max ping value until server kick the user\r\n"
                           + $"maxPacketLoss= {maxpacketloss}; // Max packetloss value until server kick the user\r\n"
                           + $"kickClientsOnSlowNetwork[] = {( kickClientOnSlowNetwork ? "{ 1, 1, 1, 1 }" : "{ 0, 0, 0, 0 }")}; //Defines if {{<MaxPing>, <MaxPacketLoss>, <MaxDesync>, <DisconnectTimeout>}} will be logged (0) or kicked (1)\r\n"
+                          + $"armaUnitsTimeout = {armaUnitsTimeout}; // Defines how long the player will be stuck connecting and wait for armaUnits data. Player will be notified if timeout elapsed and no units data was received.\r\n"
                           + $"lobbyIdleTimeout = {lobbyIdleTimeout}; // The amount of time the server will wait before force-starting a mission without a logged-in Admin.\r\n"
+                          + $"briefingTimeOut = {briefingTimeOut}; // The amount of time a player can sit in briefing mode before being kicked.\r\n"
+                          + $"roleTimeOut = {roleTimeOut}; // The amount of time a player can sit in role selection before being kicked.\r\n"
+                          + $"votingTimeOut = {votingTimeOut}; // The amount of time a vote will last before ending.\r\n"
+                          + $"debriefingTimeOut = {debriefingTimeOut}; // // The amount of time a player can sit in breifing mode before being kicked.\r\n"
                           + "\r\n"
                           + "\r\n"
                           + "// SCRIPTING ISSUES\r\n"
