@@ -8,7 +8,8 @@ namespace FASTER_Maintenance.Models._17Models
     [XmlRoot(ElementName = "ArrayOfString")]
     public class ArrayOfString
     {
-        [XmlElement(ElementName = "string")] public string String { get; set; }
+        [XmlElement(ElementName = "string")]
+        public string String { get; set; }
 
         [XmlAttribute(AttributeName = "xsi", Namespace = "http://www.w3.org/2000/xmlns/")]
         public string Xsi { get; set; }
@@ -138,6 +139,9 @@ namespace FASTER_Maintenance.Models._17Models
 
         [XmlElement(ElementName = "AutoSelectMission")]
         public string AutoSelectMission { get; set; }
+
+        [XmlElement(ElementName = "queueSizeLogG")]
+        public string RandomMissionOrder { get; set; }
 
         [XmlElement(ElementName = "RandomMissionOrder")]
         public string RandomMissionOrder { get; set; }

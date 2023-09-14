@@ -47,8 +47,11 @@ namespace FASTER.Models
         private int    lobbyIdleTimeout   = 300;
         private bool   autoSelectMission  = true;
         private bool   randomMissionOrder = true;
+        private bool   queueSizeLogG = 1000000; // if a specific players message queue
+                                                // is larger than 1MB and #monitor is running,
+                                                // dump his messages to a logfile for analysis
 
-        //Arma server only 
+        //Arma server only
         private short  verifySignatures         = 2;        // 0 = Disabled ; 1 = Deprecated Activated ; 2 = Activated (Default)
         private bool   drawingInMap             = true;
         private short  disableVoN;                          // 0 = VoN activated ; 1 = VoN Disabled
@@ -87,7 +90,7 @@ namespace FASTER.Models
 
         private string serverCfgContent;
 
-        
+
 
         #region Server Options
         public string PasswordAdmin
@@ -139,7 +142,7 @@ namespace FASTER.Models
                 RaisePropertyChanged("MaxPlayers");
             }
         }
-        
+
         public string Motd
         {
             get => string.Join("\n", motd);
@@ -341,6 +344,16 @@ namespace FASTER.Models
             {
                 lobbyIdleTimeout = value;
                 RaisePropertyChanged("LobbyIdleTimeout");
+            }
+        }
+
+        public int QueueSizeLogG
+        {
+            get => queueSizeLogG;
+            set
+            {
+                queueSizeLogG = value;
+                RaisePropertyChanged("QueueSizeLogG");
             }
         }
 
@@ -612,7 +625,7 @@ namespace FASTER.Models
                 RaisePropertyChanged("Difficulty");
             }
         }
-        
+
         public List<ProfileMission> Missions
         {
             get => _missions;
@@ -630,7 +643,7 @@ namespace FASTER.Models
             }
         }
         #endregion
-        
+
         #region Performances
         public bool MaxMemOverride
         {
@@ -769,6 +782,7 @@ namespace FASTER.Models
                           + $"persistent = {persistent};\t\t\t\t\t// If 1, missions still run on even after the last player disconnected.\r\n"
                           + $"timeStampFormat = \"{timeStampFormat}\";\t\t\t// Set the timestamp format used on each report line in server-side RPT file. Possible values are \"none\" (default),\"short\",\"full\".\r\n"
                           + $"BattlEye = {battlEye};\t\t\t\t\t// Server to use BattlEye system\r\n"
+                          + $"queueSizeLogG = {queueSizeLogG}; \t\t\t\t\t// // if a specific players message queue is larger than 1MB and \#monitor\ is running, dump his messages to a logfile for analysis \r\n"
                           + "\r\n"
                           + "// TIMEOUTS\r\n"
                           + $"disconnectTimeout = {disconnectTimeout}; // Time to wait before disconnecting a user which temporarly lost connection. Range is 5 to 90 seconds.\r\n"
@@ -796,7 +810,7 @@ namespace FASTER.Models
                           + "\r\n"
                           + $"{MissionContentOverride}\t\t\t\t// An empty Missions class means there will be no mission rotation\r\n"
                           + "\r\n"
-                          + "missionWhitelist[] = {};\r\n" 
+                          + "missionWhitelist[] = {};\r\n"
                           + "// An empty whitelist means there is no restriction on what missions' available"
                           + "\r\n"
                           + "\r\n"
