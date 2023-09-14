@@ -46,6 +46,7 @@ namespace FASTER.Models
         private int    lobbyIdleTimeout   = 300;
         private bool   autoSelectMission  = true;
         private bool   randomMissionOrder = true;
+        private int    queueSizeLogG      = 1000000;  // If a specific players message queue is larger than 1MB and #monitor is running, dump his messages to a logfile for analysis
 
         //Arma server only
         private short  verifySignatures         = 0;        // 0 = Disabled (FASTER Default); 1 = Deprecated Activated ; 2 = Activated (Arma Default)
@@ -56,7 +57,6 @@ namespace FASTER.Models
         private bool   skipLobby;                           //Overritten by mission parameters
         private string logFile                  = "server_console.log";
         private short  battlEye                 = 1;        // 0 = Disabled ; 1 = Enabled
-        private int    queueSizeLogG            = 1000000;  // If a specific players message queue is larger than 1MB and #monitor is running, dump his messages to a logfile for analysis
         private string timeStampFormat          = "short";  // Possible values = "none", "short", "full"
         private short  persistent;
         private bool   requiredBuildChecked;

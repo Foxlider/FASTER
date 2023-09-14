@@ -47,9 +47,7 @@ namespace FASTER.Models
         private int    lobbyIdleTimeout   = 300;
         private bool   autoSelectMission  = true;
         private bool   randomMissionOrder = true;
-        private bool   queueSizeLogG = 1000000; // if a specific players message queue
-                                                // is larger than 1MB and #monitor is running,
-                                                // dump his messages to a logfile for analysis
+        private bool   queueSizeLogG = 1000000; // if a specific players message queue is larger than 1MB and #monitor is running, dump his messages to a logfile for analysis
 
         //Arma server only
         private short  verifySignatures         = 2;        // 0 = Disabled ; 1 = Deprecated Activated ; 2 = Activated (Default)
@@ -781,7 +779,6 @@ namespace FASTER.Models
                           + $"vonCodecQuality = {vonCodecQuality};\t\t\t\t// since 1.62.95417 supports range 1-20 //since 1.63.x will supports range 1-30 //8kHz is 0-10, 16kHz is 11-20, 32kHz(48kHz) is 21-30 \r\n"
                           + $"persistent = {persistent};\t\t\t\t\t// If 1, missions still run on even after the last player disconnected.\r\n"
                           + $"timeStampFormat = \"{timeStampFormat}\";\t\t\t// Set the timestamp format used on each report line in server-side RPT file. Possible values are \"none\" (default),\"short\",\"full\".\r\n"
-                          + $"BattlEye = {battlEye};\t\t\t\t\t// Server to use BattlEye system\r\n"
                           + $"queueSizeLogG = {queueSizeLogG}; \t\t\t\t\t// // if a specific players message queue is larger than 1MB and \#monitor\ is running, dump his messages to a logfile for analysis \r\n"
                           + "\r\n"
                           + "// TIMEOUTS\r\n"
