@@ -573,7 +573,6 @@
 
                                         <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.QueueSizeLogG}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Queue Size LogG" Margin="5"/>
                                       </StackPanel>
-                                        </Grid>
                                         <TextBox MinHeight="50" Margin="5" Text="{Binding Path=Profile.ServerCfg.Admins}" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Admins IDs (one per line)"/>
 
                                     </StackPanel>
