@@ -791,7 +791,7 @@ namespace FASTER.Models
                           + $"persistent = {persistent};\t\t\t\t\t// If 1, missions still run on even after the last player disconnected.\r\n"
                           + $"timeStampFormat = \"{timeStampFormat}\";\t\t\t// Set the timestamp format used on each report line in server-side RPT file. Possible values are \"none\" (default),\"short\",\"full\".\r\n"
                           + $"BattlEye = {battlEye};\t\t\t\t\t// Server to use BattlEye system\r\n"
-                          + $"queueSizeLogG = {queueSizeLogG}; \t\t\t\t\t// // if a specific players message queue is larger than 1MB and \#monitor\ is running, dump his messages to a logfile for analysis \r\n"
+                          + $"queueSizeLogG = {queueSizeLogG}; \t\t\t\t\t// if a specific players message queue is larger than 1MB and #monitor is running, dump his messages to a logfile for analysis \r\n"
                           + "\r\n"
                           + "// TIMEOUTS\r\n"
                           + $"disconnectTimeout = {disconnectTimeout}; // Time to wait before disconnecting a user which temporarly lost connection. Range is 5 to 90 seconds.\r\n"
