@@ -13,7 +13,7 @@ namespace FASTER.Models
     internal class LocalMod
     {
         private LocalMod()
-        {}
+        { }
 
         private LocalMod(string name, string path, string author = "Unknown", string website = null)
         {
@@ -23,9 +23,9 @@ namespace FASTER.Models
             Website = website;
         }
 
-        public string Name    { get; set; } = string.Empty;
-        public string Path    { get; set; } = string.Empty;
-        public string Author  { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public string Path { get; set; } = string.Empty;
+        public string Author { get; set; } = string.Empty;
         public string Website { get; set; } = string.Empty;
 
         public static List<LocalMod> GetLocalMods(bool serverPathOnly = false)
@@ -37,7 +37,7 @@ namespace FASTER.Models
             if (serverPathOnly && !string.IsNullOrEmpty(Properties.Settings.Default.serverPath))
             { foldersToSearch.Add(Properties.Settings.Default.serverPath); }
 
-            if (!serverPathOnly && Properties.Settings.Default.localModFolders != null) 
+            if (!serverPathOnly && Properties.Settings.Default.localModFolders != null)
             { foldersToSearch.AddRange(Properties.Settings.Default.localModFolders.Where(folder => folder != null && folder != Properties.Settings.Default.serverPath)); }
 
             if (foldersToSearch.Count <= 0) return localMods;
@@ -54,7 +54,7 @@ namespace FASTER.Models
                                        let website = "Unknown"
                                        select new LocalMod(name, modFolder, author, website));
                 }
-                catch (Exception e) 
+                catch (Exception e)
                 { Crashes.TrackError(e, new Dictionary<string, string> { { "Name", Properties.Settings.Default.steamUserName } }); }
             }
 

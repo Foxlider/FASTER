@@ -21,7 +21,7 @@ namespace FASTER.Views
 
         private void UpdateCancel_Click(object sender, RoutedEventArgs e)
         {
-            ((SteamUpdaterViewModel) DataContext)?.UpdateCancelClick();
+            ((SteamUpdaterViewModel)DataContext)?.UpdateCancelClick();
         }
         private async void Update_Click(object sender, RoutedEventArgs e)
         {
@@ -29,23 +29,23 @@ namespace FASTER.Views
         }
         private void ServerDir_Click(object sender, RoutedEventArgs e)
         {
-            ((SteamUpdaterViewModel) DataContext)?.ServerDirClick();
+            ((SteamUpdaterViewModel)DataContext)?.ServerDirClick();
         }
 
         private void ModStagingDir_Click(object sender, RoutedEventArgs e)
         {
-            ((SteamUpdaterViewModel) DataContext)?.ModStagingDirClick();
+            ((SteamUpdaterViewModel)DataContext)?.ModStagingDirClick();
         }
 
         private void PasswordBox_OnPasswordChanged(object sender, RoutedEventArgs e)
         {
-            if(sender is PasswordBox {IsFocused: true} box)
-                ((SteamUpdaterViewModel) DataContext)?.PasswordChanged(box.Password);
+            if (sender is PasswordBox { IsFocused: true } box)
+                ((SteamUpdaterViewModel)DataContext)?.PasswordChanged(box.Password);
         }
 
         private void Updater_OnLoaded(object sender, RoutedEventArgs e)
         {
-            PasswordBox.Password = ((SteamUpdaterViewModel) DataContext)?.GetPw() ?? string.Empty;
+            PasswordBox.Password = ((SteamUpdaterViewModel)DataContext)?.GetPw() ?? string.Empty;
         }
 
         private void ClientReset_OnClick(object sender, RoutedEventArgs e)

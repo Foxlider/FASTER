@@ -33,8 +33,8 @@ namespace FASTER.Models
 
         public static string ParseFileSize(double fullSize)
         {
-            string[] sizes    = {" B", "KB", "MB", "GB", "TB"};
-            var      order    = 0;
+            string[] sizes = { " B", "KB", "MB", "GB", "TB" };
+            var order = 0;
 
             while (fullSize >= 1024 && order < sizes.Length - 1)
             {
@@ -95,25 +95,25 @@ namespace FASTER.Models
         internal static string GetVersion()
         {
             var assembly = Assembly.GetExecutingAssembly().GetName().Version;
-            
-            if (assembly == null) 
+
+            if (assembly == null)
                 return "UNKNOWN";
-            
+
             string rev = $"{(char)(assembly.Build + 96)}";
-            
-            if (assembly.Build == 0) 
+
+            if (assembly.Build == 0)
                 rev = "ALPHA";
             if (assembly.Revision != 0)
             {
                 string releaseType = (assembly.Revision / 100) switch
-                                     {
-                                         1 => "H",  // HOTFIX
-                                         2 => "RC", // RELEASE CANDIDATE
-                                         5 => "D",  // DEV
-                                         _   => ""    // EMPTY RELEASE TYPE
-                                     };
-                if(releaseType != "")
-                     rev += $" {releaseType}{int.Parse(assembly.Revision.ToString()[1..])}";
+                {
+                    1 => "H",  // HOTFIX
+                    2 => "RC", // RELEASE CANDIDATE
+                    5 => "D",  // DEV
+                    _ => ""    // EMPTY RELEASE TYPE
+                };
+                if (releaseType != "")
+                    rev += $" {releaseType}{int.Parse(assembly.Revision.ToString()[1..])}";
             }
 #if DEBUG
             rev += "-DEV";
@@ -123,7 +123,7 @@ namespace FASTER.Models
                              + $"{rev}";
             return version;
         }
-        
+
         internal static string GetRawVersion()
         {
             var assembly = Assembly.GetExecutingAssembly().GetName().Version;

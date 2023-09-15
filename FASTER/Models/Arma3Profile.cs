@@ -53,8 +53,8 @@ namespace FASTER.Models
         public string ArmaProfileContent
         {
             get => armaProfileContent;
-            set 
-            { 
+            set
+            {
                 armaProfileContent = value;
                 RaisePropertyChanged("ArmaProfileContent");
             }
@@ -325,7 +325,7 @@ namespace FASTER.Models
 
         public string ProcessFile()
         {
-            string output = 
+            string output =
                 "//\r\n" +
                 "// Arma3Profile\r\n" +
                 "//\r\n" +

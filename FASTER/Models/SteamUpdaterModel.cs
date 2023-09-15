@@ -6,7 +6,7 @@ namespace FASTER.Models
     public class SteamUpdaterModel : INotifyPropertyChanged
     {
         private string _output;
-        private bool   _isUpdating;
+        private bool _isUpdating;
         private double _progress;
 
 
@@ -83,7 +83,7 @@ namespace FASTER.Models
                 RaisePropertyChanged(nameof(Progress));
             }
         }
-        
+
         public bool UsingPerfBinaries
         {
             get => Settings.Default.usingPerfBinaries;
@@ -94,7 +94,7 @@ namespace FASTER.Models
                 RaisePropertyChanged(nameof(UsingPerfBinaries));
             }
         }
-        
+
         public bool UsingContactDlc
         {
             get => Settings.Default.usingContactDlc;

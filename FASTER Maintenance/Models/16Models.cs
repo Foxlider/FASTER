@@ -24,7 +24,7 @@ namespace FASTER_Maintenance.Models._16Models
         [XmlElement(ElementName = "WorkshopId")]
         public string WorkshopId { get; set; }
 
-        [XmlElement(ElementName = "Name")]   public string Name   { get; set; }
+        [XmlElement(ElementName = "Name")] public string Name { get; set; }
         [XmlElement(ElementName = "Author")] public string Author { get; set; }
 
         [XmlElement(ElementName = "SteamLastUpdated")]
@@ -37,7 +37,7 @@ namespace FASTER_Maintenance.Models._16Models
         public string PrivateMod { get; set; }
 
         [XmlElement(ElementName = "Status")] public string Status { get; set; }
-        [XmlElement(ElementName = "Size")]   public string Size   { get; set; }
+        [XmlElement(ElementName = "Size")] public string Size { get; set; }
     }
 
     [XmlRoot(ElementName = "SteamModCollection")]
@@ -92,8 +92,8 @@ namespace FASTER_Maintenance.Models._16Models
         public string NoOfHeadlessClients { get; set; }
 
         [XmlElement(ElementName = "Loopback")] public string Loopback { get; set; }
-        [XmlElement(ElementName = "Upnp")]     public string Upnp     { get; set; }
-        [XmlElement(ElementName = "Netlog")]   public string Netlog   { get; set; }
+        [XmlElement(ElementName = "Upnp")] public string Upnp { get; set; }
+        [XmlElement(ElementName = "Netlog")] public string Netlog { get; set; }
 
         [XmlElement(ElementName = "AutoRestartEnabled")]
         public string AutoRestartEnabled { get; set; }
@@ -228,7 +228,7 @@ namespace FASTER_Maintenance.Models._16Models
         public string MapContentMines { get; set; }
 
         [XmlElement(ElementName = "Commands")] public string Commands { get; set; }
-        [XmlElement(ElementName = "VonId")]    public string VonId    { get; set; }
+        [XmlElement(ElementName = "VonId")] public string VonId { get; set; }
         [XmlElement(ElementName = "KilledBy")] public string KilledBy { get; set; }
 
         [XmlElement(ElementName = "Waypoints")]
@@ -249,7 +249,7 @@ namespace FASTER_Maintenance.Models._16Models
         [XmlElement(ElementName = "AiAccuracy")]
         public string AiAccuracy { get; set; }
 
-        [XmlElement(ElementName = "AiSkill")]  public string AiSkill  { get; set; }
+        [XmlElement(ElementName = "AiSkill")] public string AiSkill { get; set; }
         [XmlElement(ElementName = "AiPreset")] public string AiPreset { get; set; }
 
         [XmlElement(ElementName = "MaxPacketLossEnabled")]
@@ -315,7 +315,7 @@ namespace FASTER_Maintenance.Models._16Models
         public string MinErrorToSendNear { get; set; }
 
         [XmlElement(ElementName = "CpuCount")] public string CpuCount { get; set; }
-        [XmlElement(ElementName = "MaxMem")]   public string MaxMem   { get; set; }
+        [XmlElement(ElementName = "MaxMem")] public string MaxMem { get; set; }
 
         [XmlElement(ElementName = "ExtraParams")]
         public string ExtraParams { get; set; }

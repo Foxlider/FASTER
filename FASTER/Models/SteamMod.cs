@@ -25,7 +25,7 @@ namespace FASTER.Models
     public class SteamMod
     {
         private SteamMod()
-        {}
+        { }
 
         public SteamMod(uint workshopId, string name, string author, int steamLastUpdated, bool privateMod = false)
         {
@@ -102,22 +102,22 @@ namespace FASTER.Models
             int steamUpdateTime = 0;
             try
             {
-                if (modInfo != null) 
+                if (modInfo != null)
                 { author = SteamWebApi.GetPlayerSummaries(modInfo.SelectToken("creator").ToString())?.SelectToken("personaname")?.ToString(); }
             }
-            catch 
+            catch
             { author = "Unknown"; }
 
             try
             {
-                if (modInfo?.SelectToken("time_updated") != null) 
+                if (modInfo?.SelectToken("time_updated") != null)
                 { steamUpdateTime = int.Parse(modInfo.SelectToken("time_updated").ToString()); }
             }
-            catch 
+            catch
             { steamUpdateTime = 0; }
 
             var modName = modInfo?.SelectToken("title").ToString();
-            
+
             return modInfo?.SelectToken("creator_appid").ToString() == "107410" ? new Tuple<string, string, int>(modName, author, steamUpdateTime) : null;
         }
     }
