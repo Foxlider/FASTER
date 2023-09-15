@@ -47,7 +47,7 @@ namespace FASTER.Models
         private int    lobbyIdleTimeout   = 300;
         private bool   autoSelectMission  = true;
         private bool   randomMissionOrder = true;
-        private bool   queueSizeLogG = 1000000; // if a specific players message queue is larger than 1MB and #monitor is running, dump his messages to a logfile for analysis
+        private int    queueSizeLogG = 1000000; // if a specific players message queue is larger than 1MB and #monitor is running, dump his messages to a logfile for analysis
 
         //Arma server only
         private short  verifySignatures         = 2;        // 0 = Disabled ; 1 = Deprecated Activated ; 2 = Activated (Default)
