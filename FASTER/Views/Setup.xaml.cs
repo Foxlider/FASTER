@@ -20,13 +20,13 @@ namespace FASTER.Views
     public partial class Setup
     {
         readonly bool convertMods;
-
-
+        
+        
         public Setup()
         {
             InitializeComponent();
             bool wasFirstRun;
-
+            
 
             //Check if configuration can be read. Else, display error message and don't continue
             try
@@ -36,7 +36,7 @@ namespace FASTER.Views
                 DisplaySetupMessage("Could not read your configuration file. Check file before continuing");
                 return;
             }
-
+            
             if (wasFirstRun)
             {
                 Properties.Settings.Default.Upgrade();
@@ -87,7 +87,7 @@ namespace FASTER.Views
             IServerDirBox.Text = Properties.Settings.Default.serverPath;
 
             //Do not skip to mainwindow if it was FirstRun
-            if (wasFirstRun) return;
+            if (wasFirstRun ) return;
 
             try
             {
@@ -110,7 +110,7 @@ namespace FASTER.Views
             }
             catch (Exception e)
             {
-                Crashes.TrackError(e, new Dictionary<string, string> { { "Message", $"Could not start FASTER: \n[{e.GetType()}] {e.Message}\n\n{e.StackTrace}" } });
+                Crashes.TrackError(e, new Dictionary<string, string> { {"Message", $"Could not start FASTER: \n[{ e.GetType()}] { e.Message}\n\n{ e.StackTrace}"}});
                 using EventLog eventLog = new EventLog("Application")
                 { Source = "FASTER" };
                 eventLog.WriteEntry($"Could not start FASTER : \n[{e.GetType()}] {e.Message}\n\n{e.StackTrace}", EventLogEntryType.Error);
@@ -149,7 +149,7 @@ namespace FASTER.Views
         {
             var encryption = Encryption.Instance;
 
-            if (string.IsNullOrEmpty(IModStaging.Text))
+            if(string.IsNullOrEmpty(IModStaging.Text))
             {
                 DisplaySetupMessage("Please enter a valid Mod Staging Directory");
                 return;
@@ -179,7 +179,7 @@ namespace FASTER.Views
 
             if (convertMods)
             { MainWindow.Instance.ConvertMods = true; }
-
+            
             try
             { MainWindow.Instance.Show(); }
             catch (Exception exception)

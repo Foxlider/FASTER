@@ -11,20 +11,20 @@ namespace FASTER.Models
     {
         private ObservableCollection<DeploymentMod> _mods = new ObservableCollection<DeploymentMod>();
         private string _name = "Main";
-
+        
         [XmlElement(Order = 1)]
         // ReSharper disable once UnusedAutoPropertyAccessor.Global
-        public string InstallPath
-        {
-            get => _name;
-            set
+        public string InstallPath 
+        { 
+            get => _name; 
+            set 
             {
                 _name = value;
                 RaisePropertyChanged(nameof(InstallPath));
-            }
+            } 
         }
 
-
+        
 
         [XmlElement(Order = 2, ElementName = "DeployMods")]
         public ObservableCollection<DeploymentMod> DeployMods

@@ -43,7 +43,7 @@ namespace FASTER_Maintenance.Models._17Models
         [XmlElement(ElementName = "HeadlessChecked")]
         public string HeadlessChecked { get; set; }
 
-        [XmlElement(ElementName = "Id")] public string Id { get; set; }
+        [XmlElement(ElementName = "Id")]   public string Id   { get; set; }
         [XmlElement(ElementName = "Name")] public string Name { get; set; }
     }
 
@@ -115,7 +115,7 @@ namespace FASTER_Maintenance.Models._17Models
         public string KickDuplicates { get; set; }
 
         [XmlElement(ElementName = "Loopback")] public string Loopback { get; set; }
-        [XmlElement(ElementName = "Upnp")] public string Upnp { get; set; }
+        [XmlElement(ElementName = "Upnp")]     public string Upnp     { get; set; }
 
         [XmlElement(ElementName = "AllowedFilePatching")]
         public string AllowedFilePatching { get; set; }
@@ -163,7 +163,7 @@ namespace FASTER_Maintenance.Models._17Models
         [XmlElement(ElementName = "SkipLobby")]
         public string SkipLobby { get; set; }
 
-        [XmlElement(ElementName = "LogFile")] public string LogFile { get; set; }
+        [XmlElement(ElementName = "LogFile")]  public string LogFile  { get; set; }
         [XmlElement(ElementName = "BattlEye")] public string BattlEye { get; set; }
 
         [XmlElement(ElementName = "TimeStampFormat")]
@@ -206,7 +206,7 @@ namespace FASTER_Maintenance.Models._17Models
         [XmlElement(ElementName = "CpuCountOverride")]
         public string CpuCountOverride { get; set; }
 
-        [XmlElement(ElementName = "MaxMem")] public string MaxMem { get; set; }
+        [XmlElement(ElementName = "MaxMem")]   public string MaxMem   { get; set; }
         [XmlElement(ElementName = "CpuCount")] public string CpuCount { get; set; }
 
         [XmlElement(ElementName = "ServerCfgContent")]
@@ -346,7 +346,7 @@ namespace FASTER_Maintenance.Models._17Models
         [XmlElement(ElementName = "WorkshopId")]
         public string WorkshopId { get; set; }
 
-        [XmlElement(ElementName = "Name")] public string Name { get; set; }
+        [XmlElement(ElementName = "Name")]   public string Name   { get; set; }
         [XmlElement(ElementName = "Author")] public string Author { get; set; }
 
         [XmlElement(ElementName = "SteamLastUpdated")]
@@ -359,7 +359,7 @@ namespace FASTER_Maintenance.Models._17Models
         public string PrivateMod { get; set; }
 
         [XmlElement(ElementName = "Status")] public string Status { get; set; }
-        [XmlElement(ElementName = "Size")] public string Size { get; set; }
+        [XmlElement(ElementName = "Size")]   public string Size   { get; set; }
     }
 
     [XmlRoot(ElementName = "SteamModCollection")]

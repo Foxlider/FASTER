@@ -22,7 +22,7 @@ namespace FASTER.Models
     public class SteamMod
     {
         private SteamMod()
-        { }
+        {}
 
         public SteamMod(uint workshopId, string name, string author, int steamLastUpdated, bool privateMod = false)
         {

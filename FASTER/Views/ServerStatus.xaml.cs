@@ -31,10 +31,10 @@ namespace FASTER.Views
         public bool Updating
         { get; set; }
 
-        internal object locked = new object();
-        private PerformanceCounter _cpuCounter;
-        private PerformanceCounter _ramCounter;
-
+        internal object             locked = new object();
+        private  PerformanceCounter _cpuCounter;
+        private  PerformanceCounter _ramCounter;
+        
         private ObservableCollection<ProcessSpy> processes = new ObservableCollection<ProcessSpy>();
         readonly long totalRamBytes;
         private TempData td;
@@ -42,14 +42,14 @@ namespace FASTER.Views
         [DllImport("kernel32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         static extern bool GetPhysicallyInstalledSystemMemory(out long totalMemoryInKilobytes);
-
+        
         public ServerStatus()
         {
             InitializeComponent();
             dgProcess.ItemsSource = processes;
 
             Task.Factory.StartNew(StartPerfsCounters);
-
+            
             try
             {
                 //Get Total System Ram
@@ -59,7 +59,7 @@ namespace FASTER.Views
             catch
             {
                 IFlyoutMessage.Content = "Could not get the RAM amount.";
-                IFlyout.IsOpen = true;
+                IFlyout.IsOpen         = true;
             }
             //Format gauges labels
             gaugeRam.LabelFormatter = value => $"{value / 1024:0.00} Gb";
@@ -100,9 +100,9 @@ namespace FASTER.Views
                     Dispatcher?.BeginInvoke(new Action(() =>
                     {
                         gaugeCpu.Value = _cpuCounter.NextValue();
-                        gaugeRam.Value = totalRamBytes > ram
+                        gaugeRam.Value = totalRamBytes > ram 
                             ? Convert.ToInt64((totalRamBytes - ram) / 1024)
-                            : Convert.ToInt64(totalRamBytes / 1024);
+                            : Convert.ToInt64(totalRamBytes         / 1024);
                     }));
                 }
                 Thread.Sleep(1000);
@@ -121,13 +121,13 @@ namespace FASTER.Views
         #region Process Buttons
         private void PlayPause_Click(object sender, RoutedEventArgs e)
         {
-            if (!(((FrameworkElement)e.Source).DataContext is ProcessSpy view)) return;
+            if (!(((FrameworkElement) e.Source).DataContext is ProcessSpy view)) return;
             view.StartStop();
         }
 
         private void KillProcess_Click(object sender, RoutedEventArgs e)
         {
-            if (!(((FrameworkElement)e.Source).DataContext is ProcessSpy view)) return;
+            if (!(((FrameworkElement) e.Source).DataContext is ProcessSpy view)) return;
             view.IsReading = false;
             view.proc.Kill();
             RefreshServers();
@@ -137,7 +137,7 @@ namespace FASTER.Views
         #region Console Viewer
         private void ReadOutput_Click(object sender, RoutedEventArgs e)
         {
-            if (!(((FrameworkElement)e.Source).DataContext is ProcessSpy view)) return;
+            if (!(((FrameworkElement) e.Source).DataContext is ProcessSpy view)) return;
             var s = view.GetOutput();
             IConsoleViewer.Title = $"Process {view.ProcessId}";
             IConsoleViewer.IsOpen = true;
@@ -227,9 +227,9 @@ namespace FASTER.Views
 
     public class ProcessSpy : INotifyPropertyChanged
     {
-        public int ProcessId { get; set; }
-        public string ProcessName { get; set; }
-        public string ProcessCmd { get; set; }
+        public          int     ProcessId   { get; set; }
+        public          string  ProcessName { get; set; }
+        public          string  ProcessCmd  { get; set; }
 
         public bool IsReading
         {
@@ -243,19 +243,19 @@ namespace FASTER.Views
 
         public readonly Process proc;
 
-        public ChartValues<MeasureModel> CPUChartValues { get; set; }
-        public ChartValues<MeasureModel> MemChartValues { get; set; }
-        public double CPUAxisStep { get; set; }
-        public double CPUAxisUnit { get; set; }
-        public Func<double, string> DateTimeFormatter { get; set; }
-        public Func<double, string> MemFormatter { get; set; }
-        public Func<double, string> PercentageFormatter { get; set; }
-        public Brush Color { get; set; }
+        public ChartValues<MeasureModel> CPUChartValues      { get; set; }
+        public ChartValues<MeasureModel> MemChartValues      { get; set; }
+        public double                    CPUAxisStep         { get; set; }
+        public double                    CPUAxisUnit         { get; set; }
+        public Func<double, string>      DateTimeFormatter   { get; set; }
+        public Func<double, string>      MemFormatter        { get; set; }
+        public Func<double, string>      PercentageFormatter { get; set; }
+        public Brush                     Color               { get; set; }
 
-        private PerformanceCounter cpuPerf;
-        private double _axisMax;
-        private double _axisMin;
-        private bool _isReading;
+        private PerformanceCounter         cpuPerf;
+        private          double            _axisMax;
+        private          double            _axisMin;
+        private          bool              _isReading;
         private readonly CancellationToken token;
 
         private string Output;
@@ -263,10 +263,10 @@ namespace FASTER.Views
         public ProcessSpy(Process p)
         {
             //Process Data
-            ProcessId = p.Id;
+            ProcessId   = p.Id;
             ProcessName = p.ProcessName;
-            ProcessCmd = p.ProcessName;
-            proc = p;
+            ProcessCmd  = p.ProcessName;
+            proc        = p;
             proc.EnableRaisingEvents = true;
             proc.OutputDataReceived += DataToString;
 
@@ -290,7 +290,7 @@ namespace FASTER.Views
             CPUAxisUnit = TimeSpan.TicksPerSecond;
 
             //Set the formatter for the labelling
-            DateTimeFormatter = value => new DateTime((long)value).ToString("mm:ss");
+            DateTimeFormatter = value => new DateTime((long) value).ToString("mm:ss");
             MemFormatter = value => $"{value:0} MB";
             PercentageFormatter = value => $"{value:0.00} %";
 
@@ -320,12 +320,12 @@ namespace FASTER.Views
                 OnPropertyChanged(nameof(AxisMin));
             }
         }
-
+        
         public void ReadCPU()
         {
             //Get Performance counters
             cpuPerf = new PerformanceCounter("Process", "% Processor Time", ProcessName, true);
-
+            
             //And now, loop
             while (IsReading)
             {
@@ -333,20 +333,20 @@ namespace FASTER.Views
 
                 //Get current CPU usage
                 try
-                {
+                { 
                     CPUChartValues.Add(new MeasureModel
                     {
                         DateTime = now,
-                        Value = cpuPerf.NextValue()
+                        Value    = cpuPerf.NextValue()
                     });
                 }
                 catch
-                {
+                { 
                     //If the performance counter fails somehow, fill data with 0
                     CPUChartValues.Add(new MeasureModel
                     {
                         DateTime = now,
-                        Value = 0
+                        Value    = 0
                     });
                 }
 
@@ -354,16 +354,16 @@ namespace FASTER.Views
                 MemChartValues.Add(new MeasureModel
                 {
                     DateTime = now,
-                    Value = proc.WorkingSet64 / (1024.0 * 1024.0)
+                    Value    = proc.WorkingSet64/(1024.0*1024.0)
                 });
 
                 //recalculate axes
                 SetAxisLimits(now);
-
+ 
                 //lets only use the last 20 values
-                if (MemChartValues.Count > 20)
+                if (MemChartValues.Count > 20) 
                     MemChartValues.RemoveAt(0);
-                if (CPUChartValues.Count > 20)
+                if (CPUChartValues.Count > 20) 
                     CPUChartValues.RemoveAt(0);
 
                 //Wait 1sec before next measurement
@@ -373,7 +373,7 @@ namespace FASTER.Views
 
         public string GetOutput()
         { return Output; }
-
+ 
         private void SetAxisLimits(DateTime now)
         {
             AxisMax = now.Ticks + TimeSpan.FromSeconds(0).Ticks; // lets force the axis to be 1 second ahead
@@ -383,27 +383,27 @@ namespace FASTER.Views
         public void StartStop()
         {
             IsReading = !IsReading;
-            if (IsReading)
+            if (IsReading) 
                 Task.Factory.StartNew(ReadCPU, token);
         }
 
         #region INotifyPropertyChanged implementation
-
+ 
         public event PropertyChangedEventHandler PropertyChanged;
-
+ 
         protected virtual void OnPropertyChanged(string propertyName = null)
         { PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName)); }
-
+ 
         #endregion
     }
 
     public class TempData : INotifyPropertyChanged
     {
-        public ChartValues<MeasureModel> ChartValues { get; set; }
-        public double AxisStep { get; set; }
-        public double AxisUnit { get; set; }
-        public Func<double, string> DateTimeFormatter { get; set; }
-        public Func<double, string> TempFormatter { get; set; }
+        public ChartValues<MeasureModel> ChartValues       { get; set; }
+        public double                    AxisStep          { get; set; }
+        public double                    AxisUnit          { get; set; }
+        public Func<double, string>      DateTimeFormatter { get; set; }
+        public Func<double, string>      TempFormatter     { get; set; }
         public bool IsReading
         {
             get => _isReading;
@@ -418,7 +418,7 @@ namespace FASTER.Views
         private double _axisMin;
         private double _axisYMax;
         private double _axisYMin = 150;
-        private bool _isReading;
+        private bool   _isReading;
 
         public TempData()
         {
@@ -432,7 +432,7 @@ namespace FASTER.Views
             AxisUnit = TimeSpan.TicksPerSecond;
 
             //Set the formatter for the labelling
-            DateTimeFormatter = value => new DateTime((long)value).ToString("mm:ss");
+            DateTimeFormatter = value => new DateTime((long) value).ToString("mm:ss");
             TempFormatter = value => $"{value:0.00} °C";
 
             //storing values for the CPU Data
@@ -441,8 +441,8 @@ namespace FASTER.Views
         }
         public void StartStop(bool? launch = null)
         {
-            if (launch != null)
-                IsReading = (bool)launch;
+            if (launch != null) 
+                IsReading = (bool) launch;
             else
             { IsReading = !IsReading; }
             if (IsReading)
@@ -454,7 +454,7 @@ namespace FASTER.Views
             while (IsReading)
             {
                 var now = DateTime.Now;
-                using (ManagementObjectSearcher searcher = new ManagementObjectSearcher(@"root\WMI", "SELECT * FROM MSAcpi_ThermalZoneTemperature"))
+                using(ManagementObjectSearcher searcher = new ManagementObjectSearcher(@"root\WMI", "SELECT * FROM MSAcpi_ThermalZoneTemperature"))
                 {
                     var obj = searcher.Get().OfType<ManagementObject>().FirstOrDefault();
                     if (obj == null)
@@ -474,9 +474,9 @@ namespace FASTER.Views
 
                 //recalculate axes
                 SetAxisLimits(now);
-
+ 
                 //lets only use the last 20 values
-                if (ChartValues.Count > 20)
+                if (ChartValues.Count > 20) 
                 { ChartValues.RemoveAt(0); }
 
                 //Wait 1sec before next measurement
@@ -532,7 +532,7 @@ namespace FASTER.Views
 
         #region INotifyPropertyChanged implementation
         public event PropertyChangedEventHandler PropertyChanged;
-
+ 
         protected virtual void OnPropertyChanged(string propertyName = null)
         { PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName)); }
         #endregion
@@ -541,7 +541,7 @@ namespace FASTER.Views
     public class MeasureModel
     {
         public DateTime DateTime { get; set; }
-        public double Value { get; set; }
+        public double   Value    { get; set; }
 
         public override string ToString()
         { return Value.ToString(CultureInfo.InvariantCulture); }

@@ -1,19 +1,19 @@
 ﻿using FASTER.Models;
-using FASTER.Properties;
-using Microsoft.AppCenter.Analytics;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using FASTER.Properties;
+using Microsoft.AppCenter.Analytics;
 
 namespace FASTER.ViewModel
 {
     public class DeploymentViewModel
     {
         public DeploymentViewModel()
-        {
-            if (Settings.Default.Deployments == null)
+        { 
+            if(Settings.Default.Deployments == null)
             {
                 Settings.Default.Deployments = new ArmaDeployment();
                 Settings.Default.Save();
@@ -23,7 +23,7 @@ namespace FASTER.ViewModel
         }
 
         public ArmaDeployment Deployment { get; set; }
-
+        
 
         /// <summary>
         /// Unload data
@@ -55,7 +55,7 @@ namespace FASTER.ViewModel
                     Settings.Default.Save();
                     continue;
                 }
-                mod.UpdateInfos();
+                mod.UpdateInfos(); 
             }
         }
 
@@ -72,7 +72,7 @@ namespace FASTER.ViewModel
                 {"Mod", mod.Name}
             });
 
-            if (!Directory.Exists(Deployment.InstallPath))
+            if(!Directory.Exists(Deployment.InstallPath))
             {
                 DisplayMessage("Arma Install Path is empty.\nMake sure you have entered a valid path before deploying mods.");
                 return;
@@ -206,7 +206,7 @@ namespace FASTER.ViewModel
         {
             try
             {
-                if (Directory.Exists(linkPath))
+                if(Directory.Exists(linkPath))
                     Directory.Delete(linkPath, true);
 
                 Directory.CreateSymbolicLink(linkPath ?? throw new ArgumentNullException(nameof(linkPath)), mod.Path);

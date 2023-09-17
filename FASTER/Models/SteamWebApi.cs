@@ -156,7 +156,7 @@ namespace FASTER.Models
             } while (response != MessageDialogResult.Affirmative && response != MessageDialogResult.Negative);
 
             MainWindow.Instance.SteamUpdaterViewModel.Parameters.Output += "\n\tAuth : Authorizing...";
-
+            
             return response == MessageDialogResult.Affirmative;
         }
 
