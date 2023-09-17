@@ -20,13 +20,13 @@ namespace FASTER.Views
     public partial class Setup
     {
         readonly bool convertMods;
-        
-        
+
+
         public Setup()
         {
             InitializeComponent();
             bool wasFirstRun;
-            
+
 
             //Check if configuration can be read. Else, display error message and don't continue
             try
@@ -36,7 +36,7 @@ namespace FASTER.Views
                 DisplaySetupMessage("Could not read your configuration file. Check file before continuing");
                 return;
             }
-            
+
             if (wasFirstRun)
             {
                 Properties.Settings.Default.Upgrade();
@@ -179,7 +179,7 @@ namespace FASTER.Views
 
             if (convertMods)
             { MainWindow.Instance.ConvertMods = true; }
-            
+
             try
             { MainWindow.Instance.Show(); }
             catch (Exception exception)

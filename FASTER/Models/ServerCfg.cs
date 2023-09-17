@@ -793,6 +793,7 @@ namespace FASTER.Models
                           + $"BattlEye = {battlEye};\t\t\t\t\t// Server to use BattlEye system\r\n"
                           + $"queueSizeLogG = {queueSizeLogG}; \t\t\t\t\t// if a specific players message queue is larger than 1MB and #monitor is running, dump his messages to a logfile for analysis \r\n"
                           + "\r\n"
+                          + "\r\n"
                           + "// TIMEOUTS\r\n"
                           + $"disconnectTimeout = {disconnectTimeout}; // Time to wait before disconnecting a user which temporarly lost connection. Range is 5 to 90 seconds.\r\n"
                           + $"maxDesync = {maxdesync}; // Max desync value until server kick the user\r\n"

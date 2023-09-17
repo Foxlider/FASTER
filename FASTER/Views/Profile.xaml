@@ -571,8 +571,8 @@
                                         <CheckBox IsChecked="{Binding Path=Profile.ServerCfg.KickDuplicates}" Content="Kick Duplicates" Margin="5,2"/>
                                         <CheckBox IsChecked="{Binding Path=Profile.ServerCfg.KickClientOnSlowNetwork}" Content="Kick on Slow Network" Margin="5,2"/>
 
-                                        <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.QueueSizeLogG}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Queue Size LogG" Margin="5"/>
                                       </StackPanel>
+                                        <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.QueueSizeLogG}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Queue Size LogG" Margin="5"/>
                                         <TextBox MinHeight="50" Margin="5" Text="{Binding Path=Profile.ServerCfg.Admins}" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Admins IDs (one per line)"/>
 
                                     </StackPanel>

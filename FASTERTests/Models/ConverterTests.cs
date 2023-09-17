@@ -57,7 +57,7 @@ namespace FASTER.Models.Tests
             SolidColorBrush c2 = _converter.Convert(false, typeof(SolidColorBrush), null, System.Globalization.CultureInfo.InvariantCulture) as SolidColorBrush;
 
             Assert.AreEqual(new SolidColorBrush(Color.FromRgb(190, 17, 0)).Color, c1.Color);
-            Assert.AreEqual(new SolidColorBrush().Color, c2.Color); 
+            Assert.AreEqual(new SolidColorBrush().Color, c2.Color);
         }
 
         [Test()]

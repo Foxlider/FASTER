@@ -34,7 +34,7 @@ namespace FASTER.Views
         internal object             locked = new object();
         private  PerformanceCounter _cpuCounter;
         private  PerformanceCounter _ramCounter;
-        
+
         private ObservableCollection<ProcessSpy> processes = new ObservableCollection<ProcessSpy>();
         readonly long totalRamBytes;
         private TempData td;
@@ -42,14 +42,14 @@ namespace FASTER.Views
         [DllImport("kernel32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         static extern bool GetPhysicallyInstalledSystemMemory(out long totalMemoryInKilobytes);
-        
+
         public ServerStatus()
         {
             InitializeComponent();
             dgProcess.ItemsSource = processes;
 
             Task.Factory.StartNew(StartPerfsCounters);
-            
+
             try
             {
                 //Get Total System Ram
@@ -100,7 +100,7 @@ namespace FASTER.Views
                     Dispatcher?.BeginInvoke(new Action(() =>
                     {
                         gaugeCpu.Value = _cpuCounter.NextValue();
-                        gaugeRam.Value = totalRamBytes > ram 
+                        gaugeRam.Value = totalRamBytes > ram
                             ? Convert.ToInt64((totalRamBytes - ram) / 1024)
                             : Convert.ToInt64(totalRamBytes         / 1024);
                     }));
@@ -320,12 +320,12 @@ namespace FASTER.Views
                 OnPropertyChanged(nameof(AxisMin));
             }
         }
-        
+
         public void ReadCPU()
         {
             //Get Performance counters
             cpuPerf = new PerformanceCounter("Process", "% Processor Time", ProcessName, true);
-            
+
             //And now, loop
             while (IsReading)
             {
@@ -333,7 +333,7 @@ namespace FASTER.Views
 
                 //Get current CPU usage
                 try
-                { 
+                {
                     CPUChartValues.Add(new MeasureModel
                     {
                         DateTime = now,
@@ -341,7 +341,7 @@ namespace FASTER.Views
                     });
                 }
                 catch
-                { 
+                {
                     //If the performance counter fails somehow, fill data with 0
                     CPUChartValues.Add(new MeasureModel
                     {
@@ -359,11 +359,11 @@ namespace FASTER.Views
 
                 //recalculate axes
                 SetAxisLimits(now);
- 
+
                 //lets only use the last 20 values
-                if (MemChartValues.Count > 20) 
+                if (MemChartValues.Count > 20)
                     MemChartValues.RemoveAt(0);
-                if (CPUChartValues.Count > 20) 
+                if (CPUChartValues.Count > 20)
                     CPUChartValues.RemoveAt(0);
 
                 //Wait 1sec before next measurement
@@ -373,7 +373,7 @@ namespace FASTER.Views
 
         public string GetOutput()
         { return Output; }
- 
+
         private void SetAxisLimits(DateTime now)
         {
             AxisMax = now.Ticks + TimeSpan.FromSeconds(0).Ticks; // lets force the axis to be 1 second ahead
@@ -383,17 +383,17 @@ namespace FASTER.Views
         public void StartStop()
         {
             IsReading = !IsReading;
-            if (IsReading) 
+            if (IsReading)
                 Task.Factory.StartNew(ReadCPU, token);
         }
 
         #region INotifyPropertyChanged implementation
- 
+
         public event PropertyChangedEventHandler PropertyChanged;
- 
+
         protected virtual void OnPropertyChanged(string propertyName = null)
         { PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName)); }
- 
+
         #endregion
     }
 
@@ -441,7 +441,7 @@ namespace FASTER.Views
         }
         public void StartStop(bool? launch = null)
         {
-            if (launch != null) 
+            if (launch != null)
                 IsReading = (bool) launch;
             else
             { IsReading = !IsReading; }
@@ -474,9 +474,9 @@ namespace FASTER.Views
 
                 //recalculate axes
                 SetAxisLimits(now);
- 
+
                 //lets only use the last 20 values
-                if (ChartValues.Count > 20) 
+                if (ChartValues.Count > 20)
                 { ChartValues.RemoveAt(0); }
 
                 //Wait 1sec before next measurement
@@ -532,7 +532,7 @@ namespace FASTER.Views
 
         #region INotifyPropertyChanged implementation
         public event PropertyChangedEventHandler PropertyChanged;
- 
+
         protected virtual void OnPropertyChanged(string propertyName = null)
         { PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName)); }
         #endregion

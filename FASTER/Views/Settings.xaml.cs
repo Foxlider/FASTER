@@ -41,7 +41,7 @@ namespace FASTER.Views
             fontPicker.ItemsSource = Fonts.SystemFontFamilies;
             fontPicker.DisplayMemberPath = "Source";
             fontPicker.SelectedItem = Fonts.SystemFontFamilies.FirstOrDefault(t => t.Source == Properties.Settings.Default.font);
-            
+
             Slider.Value = Properties.Settings.Default.CliWorkers;
         }
 
@@ -124,7 +124,7 @@ namespace FASTER.Views
             Properties.Settings.Default.Save();
             Application.Current.Shutdown();
         }
-        
+
         private void Settings_Initialized(object sender, EventArgs e)
         {
             IModUpdatesOnLaunch.IsChecked = Properties.Settings.Default?.checkForModUpdates;
@@ -133,13 +133,13 @@ namespace FASTER.Views
             Slider.Value = Properties.Settings.Default.CliWorkers;
             NumericUpDown.Value = Slider.Value;
         }
-        
+
         private void IModUpdatesOnLaunch_Checked(object sender, RoutedEventArgs e)
         {
             Properties.Settings.Default.checkForModUpdates = IModUpdatesOnLaunch.IsChecked ?? true;
             Properties.Settings.Default.Save();
         }
-        
+
         private void IAppUpdatesOnLaunch_Checked(object sender, RoutedEventArgs e)
         {
             Properties.Settings.Default.checkForAppUpdates = IAppUpdatesOnLaunch.IsChecked ?? true;
@@ -154,7 +154,7 @@ namespace FASTER.Views
 
         private void ISaveSettings_Click(object sender, RoutedEventArgs e)
         {
-            if (!string.IsNullOrEmpty(IAPIKeyBox.Text)) 
+            if (!string.IsNullOrEmpty(IAPIKeyBox.Text))
                 Properties.Settings.Default.SteamAPIKey = IAPIKeyBox.Text;
             Properties.Settings.Default.checkForAppUpdates = IAppUpdatesOnLaunch.IsChecked ?? true;
             Properties.Settings.Default.checkForModUpdates = IModUpdatesOnLaunch.IsChecked ?? true;
