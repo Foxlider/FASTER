@@ -226,6 +226,7 @@ namespace FASTER.Models
         public int ServerModsChecked => ProfileMods.Count(m => m.ServerSideChecked);
         public int ClientModsChecked => ProfileMods.Count(m => m.ClientSideChecked);
         public int HeadlessModsChecked => ProfileMods.Count(m => m.HeadlessChecked);
+		public int OptModsChecked => ProfileMods.Count(m => m.OptChecked);
 
         public string CommandLine => GetCommandLine();
 
@@ -529,6 +530,7 @@ namespace FASTER.Models
             RaisePropertyChanged("ServerModsChecked");
             RaisePropertyChanged("ClientModsChecked");
             RaisePropertyChanged("HeadlessModsChecked");
+			RaisePropertyChanged("OptModsChecked");
         }
 
         private void Class_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -550,6 +552,7 @@ namespace FASTER.Models
         private bool    serverSideChecked;
         private bool    clientSideChecked;
         private bool    headlessChecked;
+		private bool 	optChecked;
         private ushort? loadPriority;
         private bool    isLocal;
         private uint    _id;
@@ -562,7 +565,7 @@ namespace FASTER.Models
             {
                 serverSideChecked = value;
                 RaisePropertyChanged("ServerSideChecked");
-                RaisePropertyChanged("HeadlessModsChecked");
+                RaisePropertyChanged("ServerModsChecked");
             }
         }
         public bool ClientSideChecked
@@ -583,6 +586,17 @@ namespace FASTER.Models
                 headlessChecked = value;
                 RaisePropertyChanged("HeadlessChecked");
                 RaisePropertyChanged("HeadlessModsChecked");
+            }
+        }
+		
+		public bool OptChecked
+        {
+            get => optChecked;
+            set
+            {
+                optChecked = value;
+                RaisePropertyChanged("OptChecked");
+                RaisePropertyChanged("OptModsChecked");
             }
         }
 

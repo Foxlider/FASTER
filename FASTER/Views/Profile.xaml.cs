@@ -55,7 +55,12 @@ namespace FASTER.Views
 
         private void CopyFromHeadless(object sender, RoutedEventArgs e)
         {
-            ((ProfileViewModel) DataContext)?.ModsCopyFrom(((MenuItem)sender).Tag, "Headless");
+            ((ProfileViewModel) DataContext)?.ModsCopyFrom(((MenuItem)sender).Tag, "HC");
+        }
+		
+		private void CopyFromOpt(object sender, RoutedEventArgs e)
+        {
+            ((ProfileViewModel) DataContext)?.ModsCopyFrom(((MenuItem)sender).Tag, "Opt");
         }
 
         private void ModsSelectAll(object sender, RoutedEventArgs e)

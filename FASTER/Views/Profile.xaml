@@ -136,6 +136,11 @@
                                                 <iconPacks:PackIconModern Kind="PageCopy" Margin="5"/>
                                             </MenuItem.Icon>
                                         </MenuItem>
+										<MenuItem Tag="Server" Header="Copy From Optional" Click="CopyFromOpt">
+                                            <MenuItem.Icon>
+                                                <iconPacks:PackIconModern Kind="PageCopy"/>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
                                     </ContextMenu>
                                     <ContextMenu x:Key="ClientContextMenu">
                                         <MenuItem Tag="Client" Header="Select All" Click="ModsSelectAll">
@@ -154,6 +159,11 @@
                                             </MenuItem.Icon>
                                         </MenuItem>
                                         <MenuItem Tag="Client" Header="Copy From Headless" Click="CopyFromHeadless">
+                                            <MenuItem.Icon>
+                                                <iconPacks:PackIconModern Kind="PageCopy"/>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+										 <MenuItem Tag="Client" Header="Copy From Optional" Click="CopyFromOpt">
                                             <MenuItem.Icon>
                                                 <iconPacks:PackIconModern Kind="PageCopy"/>
                                             </MenuItem.Icon>
@@ -180,8 +190,43 @@
                                                 <iconPacks:PackIconModern Kind="PageCopy"/>
                                             </MenuItem.Icon>
                                         </MenuItem>
+										 <MenuItem.Icon>
+                                                <iconPacks:PackIconModern Kind="PageCopy"/>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Tag="HC" Header="Copy From Optional" Click="CopyFromOpt">
+                                            <MenuItem.Icon>
+                                                <iconPacks:PackIconModern Kind="PageCopy"/>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
                                     </ContextMenu>
-
+                                    <ContextMenu x:Key="OptContextMenu">
+                                        <MenuItem Tag="Opt" Header="Select All" Click="ModsSelectAll">
+											<MenuItem.Icon>
+                                                <iconPacks:PackIconModern Kind="CheckmarkThick"/>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Tag="Opt" Header="Select None" Click="ModsSelectNone">
+                                            <MenuItem.Icon>
+                                                <iconPacks:PackIconModern Kind="CheckmarkUncrossed"/>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Tag="Opt" Header="Copy From Server" Click="CopyFromServer">
+                                            <MenuItem.Icon>
+                                                <iconPacks:PackIconModern Kind="PageCopy"/>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Tag="Opt" Header="Copy From Client" Click="CopyFromClient">
+                                            <MenuItem.Icon>
+                                                <iconPacks:PackIconModern Kind="PageCopy"/>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Tag="Opt" Header="Copy From Headless" Click="CopyFromHeadless">
+                                            <MenuItem.Icon>
+                                                <iconPacks:PackIconModern Kind="PageCopy"/>
+                                            </MenuItem.Icon>
+										</MenuItem>	
+                                    </ContextMenu>
                                     <Style TargetType="{x:Type DataGridColumnHeader}" BasedOn="{StaticResource MahApps.Styles.DataGridColumnHeader.Azure}">
                                         <Style.Triggers>
                                             <Trigger Property="Content" Value="Load">
@@ -226,7 +271,7 @@
                                                     </Setter.Value>
                                                 </Setter>
                                             </Trigger>
-                                            <Trigger Property="Content" Value="Headless">
+                                            <Trigger Property="Content" Value="HC">
                                                 <Setter Property="ContextMenu" Value="{StaticResource HeadlessContextMenu}" />
                                                 <Setter Property="ContentTemplate">
                                                     <Setter.Value>
@@ -234,6 +279,20 @@
                                                             <ContentControl Content="{Binding}">
                                                                 <ToolTipService.ToolTip>
                                                                     <ToolTip Content="Mods loaded by the Headless Clients" />
+                                                                </ToolTipService.ToolTip>
+                                                            </ContentControl>
+                                                        </DataTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Trigger>
+											 <Trigger Property="Content" Value="Opt">
+                                                <Setter Property="ContextMenu" Value="{StaticResource OptContextMenu}" />
+                                                <Setter Property="ContentTemplate">
+                                                    <Setter.Value>
+                                                        <DataTemplate>
+                                                            <ContentControl Content="{Binding}">
+                                                                <ToolTipService.ToolTip>
+                                                                    <ToolTip Content="Suggested/Additional/Optional client mods" />
                                                                 </ToolTipService.ToolTip>
                                                             </ContentControl>
                                                         </DataTemplate>
@@ -271,10 +330,17 @@
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
                                     </DataGridTemplateColumn>
-                                    <DataGridTemplateColumn Header="Headless" Width="auto">
+                                    <DataGridTemplateColumn Header="HC" Width="auto">
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate DataType="models:ProfileMod">
                                                 <CheckBox IsChecked="{Binding HeadlessChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+									<DataGridTemplateColumn Header="Opt" Width="auto">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate DataType="models:ProfileMod">
+                                                <CheckBox IsChecked="{Binding OptChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center"/>
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
                                     </DataGridTemplateColumn>
@@ -286,10 +352,12 @@
                                     <ColumnDefinition/>
                                     <ColumnDefinition/>
                                     <ColumnDefinition/>
+									<ColumnDefinition/>
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Text="{Binding Path=Profile.ServerModsChecked, StringFormat={}ServerSide : {0} mods}" Grid.Column="0"/>
                                 <TextBlock Text="{Binding Path=Profile.ClientModsChecked, StringFormat={}ClientSide : {0} mods}" Grid.Column="1"/>
                                 <TextBlock Text="{Binding Path=Profile.HeadlessModsChecked, StringFormat={}Headless Client : {0} mods}" Grid.Column="2"/>
+								<TextBlock Text="{Binding Path=Profile.OptModsChecked, StringFormat={}Optional : {0} mods}" Grid.Column="3"/>
                             </Grid>
                             <Grid Grid.Row="3" Margin="0">
                                 <Grid.ColumnDefinitions>
@@ -462,7 +530,7 @@
                                     <ComboBox SelectedItem="{Binding Path=Profile.ArmaProfile.Waypoints, UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="Waypoints" Grid.Column="2" Grid.Row="7" ItemsSource="{Binding Path=FadeOutStrings}" mah:TextBoxHelper.UseFloatingWatermark="True" Margin="3"/>
                                     <ComboBox SelectedItem="{Binding Path=Profile.ArmaProfile.WeaponInfo, UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="Weapon Infos" Grid.Column="0" Grid.Row="8" ItemsSource="{Binding Path=FadeOutStrings}" mah:TextBoxHelper.UseFloatingWatermark="True" Margin="3"/>
                                     <ComboBox SelectedItem="{Binding Path=Profile.ArmaProfile.StanceIndicator, UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="Stance Indicator" Grid.Column="1" Grid.Row="8" ItemsSource="{Binding Path=FadeOutStrings}" mah:TextBoxHelper.UseFloatingWatermark="True" Margin="3"/>
-
+									<ComboBox SelectedItem="{Binding Path=Profile.ArmaProfile.ForcedDifficulty, UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="Forced Difficulty" Grid.Column="1" Grid.Row="8" ItemsSource="{Binding Path=FadeOutStrings}" mah:TextBoxHelper.UseFloatingWatermark="True" Margin="3"/>
                                     <StackPanel Grid.Column="0" Grid.Row="10" Margin="3,0" >
                                         <mah:NumericUpDown Value="{Binding Profile.ArmaProfile.SkillAi, UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="AI Skill" VerticalAlignment="Center" Minimum="0" Maximum="1" Interval=".01" TextAlignment="Right"/>
                                         <Slider Maximum="1"  Style="{StaticResource MahApps.Styles.Slider.Flat}" AutoToolTipPlacement="TopLeft" Value="{Binding Profile.ArmaProfile.SkillAi, UpdateSourceTrigger=PropertyChanged}" TickPlacement="BottomRight" IsSnapToTickEnabled="True" TickFrequency=".01" ToolTip="AI Skill" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="AI Skill" Margin="0,5" SmallChange=".01" LargeChange="0.1" AutoToolTipPrecision="2" />
@@ -586,6 +654,7 @@
                                                 <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.BriefingTimeOut}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Briefing Idle Timeout" Margin="1"/>
                                                 <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.VotingTimeOut}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Voting Timeout" Margin="1"/>
                                                 <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.ArmaUnitsTimeout}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Arma Units Timeout" Margin="1"/>
+												<mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.QueueSizeLogG}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Queue Size LogG" Margin="1"/>
                                             </StackPanel>
                                             
                                         </Grid>
