@@ -226,7 +226,7 @@ namespace FASTER.ViewModel
             { Task.Run(() => mod.UpdateInfos()); }
         }
 		
-		public async Task UpdateSelectedMods()
+        public async Task UpdateSelectedMods()
         {
             MainWindow.Instance.NavigateToConsole();
             var ans = await MainWindow.Instance.SteamUpdaterViewModel.RunModsUpdater(new ObservableCollection<ArmaMod>(ModsCollection.ArmaMods.Where(m => m.IsSelected)));

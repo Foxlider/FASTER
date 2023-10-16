@@ -360,7 +360,7 @@ namespace FASTER.ViewModel
                 return;
             }
 			
-			var clientMods = Profile.ProfileMods.Where(p => p.ClientSideChecked).ToList();
+            var clientMods = Profile.ProfileMods.Where(p => p.ClientSideChecked).ToList();
             var optionalMods = Profile.ProfileMods.Where(p => p.OptChecked).ToList();
             var steamMods = clientMods.Union(optionalMods).ToList();
 

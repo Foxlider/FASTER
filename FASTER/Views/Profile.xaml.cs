@@ -58,7 +58,7 @@ namespace FASTER.Views
             ((ProfileViewModel) DataContext)?.ModsCopyFrom(((MenuItem)sender).Tag, "HC");
         }
 		
-		private void CopyFromOpt(object sender, RoutedEventArgs e)
+        private void CopyFromOpt(object sender, RoutedEventArgs e)
         {
             ((ProfileViewModel) DataContext)?.ModsCopyFrom(((MenuItem)sender).Tag, "Opt");
         }

@@ -226,7 +226,7 @@ namespace FASTER.Models
         public int ServerModsChecked => ProfileMods.Count(m => m.ServerSideChecked);
         public int ClientModsChecked => ProfileMods.Count(m => m.ClientSideChecked);
         public int HeadlessModsChecked => ProfileMods.Count(m => m.HeadlessChecked);
-		public int OptModsChecked => ProfileMods.Count(m => m.OptChecked);
+        public int OptModsChecked => ProfileMods.Count(m => m.OptChecked);
 
         public string CommandLine => GetCommandLine();
 
@@ -530,7 +530,7 @@ namespace FASTER.Models
             RaisePropertyChanged("ServerModsChecked");
             RaisePropertyChanged("ClientModsChecked");
             RaisePropertyChanged("HeadlessModsChecked");
-			RaisePropertyChanged("OptModsChecked");
+            RaisePropertyChanged("OptModsChecked");
         }
 
         private void Class_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -552,7 +552,7 @@ namespace FASTER.Models
         private bool    serverSideChecked;
         private bool    clientSideChecked;
         private bool    headlessChecked;
-		private bool 	optChecked;
+        private bool 	optChecked;
         private ushort? loadPriority;
         private bool    isLocal;
         private uint    _id;
