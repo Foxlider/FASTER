@@ -9,7 +9,7 @@ namespace FASTER_Maintenance.Models._17Models
     public class ArrayOfString
     {
         [XmlElement(ElementName = "string")]
-		public string String { get; set; }
+        public string String { get; set; }
 
         [XmlAttribute(AttributeName = "xsi", Namespace = "http://www.w3.org/2000/xmlns/")]
         public string Xsi { get; set; }
@@ -166,10 +166,10 @@ namespace FASTER_Maintenance.Models._17Models
         public string IgnoreMissionLoadErrors { get; set; }
 		
 		[XmlElement(ElementName = "ArmaUnitsTimeout")]
-        public string IgnoreMissionLoadErrors { get; set; }
+        public string ArmaUnitsTimeout { get; set; }
 		
-		[XmlElement(ElementName = "QueueSizeLogG")]
-        public string IgnoreMissionLoadErrors { get; set; }
+        [XmlElement(ElementName = "QueueSizeLogG")]
+        public string QueueSizeLogG { get; set; }
 
         [XmlElement(ElementName = "VerifySignatures")]
         public string VerifySignatures { get; set; }
@@ -183,7 +183,8 @@ namespace FASTER_Maintenance.Models._17Models
         [XmlElement(ElementName = "VonCodecQuality")]
         public string VonCodecQuality { get; set; }
 
-        [XmlElement(ElementName = "VonCodec")] public string VonCodec { get; set; }
+        [XmlElement(ElementName = "VonCodec")]
+		public string VonCodec { get; set; }
 
         [XmlElement(ElementName = "SkipLobby")]
         public string SkipLobby { get; set; }
@@ -218,12 +219,14 @@ namespace FASTER_Maintenance.Models._17Models
         [XmlElement(ElementName = "MissionContentOverride")]
         public string MissionContentOverride { get; set; }
 
-        [XmlElement(ElementName = "AutoInit")] public string AutoInit { get; set; }
+        [XmlElement(ElementName = "AutoInit")]
+		public string AutoInit { get; set; }
 
         [XmlElement(ElementName = "Difficulty")]
         public string Difficulty { get; set; }
 
-        [XmlElement(ElementName = "Missions")] public Missions Missions { get; set; }
+        [XmlElement(ElementName = "Missions")]
+		public Missions Missions { get; set; }
 
         [XmlElement(ElementName = "MaxMemOverride")]
         public string MaxMemOverride { get; set; }
@@ -259,7 +262,8 @@ namespace FASTER_Maintenance.Models._17Models
         [XmlElement(ElementName = "DetectedMines")]
         public string DetectedMines { get; set; }
 
-        [XmlElement(ElementName = "Commands")] public string Commands { get; set; }
+        [XmlElement(ElementName = "Commands")]
+		public string Commands { get; set; }
 
         [XmlElement(ElementName = "Waypoints")]
         public string Waypoints { get; set; }
@@ -291,7 +295,8 @@ namespace FASTER_Maintenance.Models._17Models
         [XmlElement(ElementName = "DeathMessages")]
         public string DeathMessages { get; set; }
 
-        [XmlElement(ElementName = "VonID")] public string VonID { get; set; }
+        [XmlElement(ElementName = "VonID")]
+		public string VonID { get; set; }
 
         [XmlElement(ElementName = "MapContentFriendly")]
         public string MapContentFriendly { get; set; }
@@ -314,7 +319,8 @@ namespace FASTER_Maintenance.Models._17Models
         [XmlElement(ElementName = "AiLevelPreset")]
         public string AiLevelPreset { get; set; }
 
-        [XmlElement(ElementName = "SkillAi")] public string SkillAi { get; set; }
+        [XmlElement(ElementName = "SkillAi")]
+		public string SkillAi { get; set; }
 
         [XmlElement(ElementName = "PrecisionAi")]
         public string PrecisionAi { get; set; }

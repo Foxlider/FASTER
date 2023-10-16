@@ -423,7 +423,7 @@ namespace FASTER.Models
             }
         }
 		
-		public int ArmaUnitsTimeout
+        public int ArmaUnitsTimeout
         {
             get => armaUnitsTimeout;
             set
@@ -433,7 +433,7 @@ namespace FASTER.Models
             }
         }
 		
-		 public int QueueSizeLogG
+        public int QueueSizeLogG
         {
             get => queueSizeLogG;
             set

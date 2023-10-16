@@ -104,7 +104,7 @@ namespace FASTER.Models
         private string _status = "Not Installed";
         private long   _size;
         private bool   _isLoading;
-		private bool   _isSelected;
+        private bool   _isSelected;
 
         
         public uint   WorkshopId       
@@ -211,7 +211,7 @@ namespace FASTER.Models
             }
         }
 		
-		[XmlIgnore]
+        [XmlIgnore]
         public bool IsSelected
         {
             get => _isSelected;

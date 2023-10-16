@@ -503,7 +503,7 @@ namespace FASTER.ViewModel
                     case "HC":
                         {
                             if (from == "Server") mod.HeadlessChecked = mod.ServerSideChecked;
-							if (from == "Client") mod.HeadlessChecked = mod.ClientSideChecked;
+                            if (from == "Client") mod.HeadlessChecked = mod.ClientSideChecked;
                             if (from == "Opt") mod.HeadlessChecked = mod.OptChecked;
                             break;
                         }

@@ -136,7 +136,7 @@
                                                 <iconPacks:PackIconModern Kind="PageCopy" Margin="5"/>
                                             </MenuItem.Icon>
                                         </MenuItem>
-										<MenuItem Tag="Server" Header="Copy From Optional" Click="CopyFromOpt">
+                                        <MenuItem Tag="Server" Header="Copy From Optional" Click="CopyFromOpt">
                                             <MenuItem.Icon>
                                                 <iconPacks:PackIconModern Kind="PageCopy"/>
                                             </MenuItem.Icon>
@@ -162,7 +162,7 @@
                                             <MenuItem.Icon>
                                                 <iconPacks:PackIconModern Kind="PageCopy"/>
                                             </MenuItem.Icon>
-                                        </MenuItem>
+                                         </MenuItem>
 										 <MenuItem Tag="Client" Header="Copy From Optional" Click="CopyFromOpt">
                                             <MenuItem.Icon>
                                                 <iconPacks:PackIconModern Kind="PageCopy"/>

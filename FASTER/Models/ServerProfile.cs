@@ -589,7 +589,7 @@ namespace FASTER.Models
             }
         }
 		
-		public bool OptChecked
+        public bool OptChecked
         {
             get => optChecked;
             set
