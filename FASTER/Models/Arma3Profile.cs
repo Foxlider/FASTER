@@ -41,6 +41,7 @@ namespace FASTER.Models
         private ushort autoReport = 0;
         private ushort multipleSaves = 0;
         private ushort tacticalPing = 1;
+		private ushort forcedDifficulty = 3;
 
         private ushort aiLevelPreset = 3;
 
@@ -147,6 +148,16 @@ namespace FASTER.Models
             {
                 stanceIndicator = (ushort)Array.IndexOf(ProfileCfgArrays.FadeOutStrings, value);
                 RaisePropertyChanged("StanceIndicator");
+            }
+        }
+		
+		public string ForcedDifficulty
+        {
+            get => ProfileCfgArrays.FadeOutStrings[forcedDifficulty];
+            set
+            {
+                forcedDifficulty = (ushort)Array.IndexOf(ProfileCfgArrays.FadeOutStrings, value);
+                RaisePropertyChanged("ForcedDifficulty");
             }
         }
 
@@ -348,6 +359,7 @@ namespace FASTER.Models
                 "\t\t\t/* Personal awareness */\r\n" +
                 $"\t\t\tweaponInfo = {weaponInfo};\t\t\t// Weapon info (0 = never, 1 = fade out, 2 = always)\r\n" +
                 $"\t\t\tstanceIndicator = {stanceIndicator};\t// Stance indicator (0 = never, 1 = fade out, 2 = always)\r\n" +
+				$"\t\t\tforcedDifficulty = {forcedDifficulty};\t// Forced difficulty (0 = Recruit, 1 = Regular, 2 = Veteran, 3 = Custom)\r\n" +
                 $"\t\t\tstaminaBar = {staminaBar};\t\t\t// Stamina bar\r\n" +
                 $"\t\t\tweaponCrosshair = {weaponCrosshair};\t// Weapon crosshair\r\n" +
                 $"\t\t\tvisionAid = {visionAid};\t\t\t// Vision aid\r\n" +
