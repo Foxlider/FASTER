@@ -41,7 +41,7 @@ namespace FASTER.Models
         private ushort autoReport = 0;
         private ushort multipleSaves = 0;
         private ushort tacticalPing = 1;
-		private ushort forcedDifficulty = 3;
+        private ushort forcedDifficulty = 3;
 
         private ushort aiLevelPreset = 3;
 

@@ -156,6 +156,7 @@ namespace FASTER.ViewModel
             {
                 {"Name", Properties.Settings.Default.steamUserName}
             });
+		}	
         public void OpenModPage(ArmaMod mod)
         {
             if (mod == null)
