@@ -13,6 +13,7 @@ namespace FASTER.Models
 
         public static string[] AiPresetStrings { get; } = { "Low", "Normal", "High", "Custom" };
         public static string[] ThirdPersonStrings { get; } = { "Disabled", "Enabled", "Vehicles Only" };
+        public static string[] ForcedDifficultyStrings { get; } = { "Recruit", "Regular", "Veteran", "Custom" };
     }
 
     [Serializable]
@@ -153,10 +154,10 @@ namespace FASTER.Models
 		
 		public string ForcedDifficulty
         {
-            get => ProfileCfgArrays.FadeOutStrings[forcedDifficulty];
+            get => ProfileCfgArrays.ForcedDifficultyStrings[forcedDifficulty];
             set
             {
-                forcedDifficulty = (ushort)Array.IndexOf(ProfileCfgArrays.FadeOutStrings, value);
+                forcedDifficulty = (ushort)Array.IndexOf(ProfileCfgArrays.ForcedDifficultyStrings, value);
                 RaisePropertyChanged("ForcedDifficulty");
             }
         }
