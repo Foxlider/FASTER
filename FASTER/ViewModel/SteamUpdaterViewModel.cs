@@ -155,7 +155,7 @@ namespace FASTER.ViewModel
                 {233783, "Arma 3 Alpha Dedicated Server binary Linux (internal)"},
                 {233784, "Arma 3 Server Profiling - WINDOWS Depot"},
                 {233785, "Arma 3 Server - Profiler - LINUX Depot"},
-                {233787, "Arma 3 Server Creator DLC - GM"},
+                {233792, "Arma 3 Server Creator DLC - GM"},
                 {233788, "Arma 3 Server Creator DLC - SPE"},
                 {233793, "Arma 3 Server Creator DLC - CSLA"},
                 {233794, "Arma 3 Server Creator DLC - SOGPF"},
