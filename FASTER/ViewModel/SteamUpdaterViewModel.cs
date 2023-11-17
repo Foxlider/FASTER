@@ -148,17 +148,18 @@ namespace FASTER.ViewModel
             
             uint appId = 233780;
             Dictionary<uint, string> depotsIDs = new()
+            //Find a way to update automatically with depot changes
             {
                 {233781, "Arma 3 Alpha Dedicated Server Content (internal)"},
                 {233782, "Arma 3 Alpha Dedicated Server binary Windows (internal)"},
                 {233783, "Arma 3 Alpha Dedicated Server binary Linux (internal)"},
                 {233784, "Arma 3 Server Profiling - WINDOWS Depot"},
                 {233785, "Arma 3 Server - Profiler - LINUX Depot"},
-                {233787, "Arma 3 Server Creator DLC - GM"},
+                {233792, "Arma 3 Server Creator DLC - GM"},
                 {233788, "Arma 3 Server Creator DLC - SPE"},
-                {233789, "Arma 3 Server Creator DLC - CSLA"},
-                {233790, "Arma 3 Server Creator DLC - SOGPF"},
-                {233791, "Arma 3 Server Creator DLC - WS"},
+                {233793, "Arma 3 Server Creator DLC - CSLA"},
+                {233794, "Arma 3 Server Creator DLC - SOGPF"},
+                {233795, "Arma 3 Server Creator DLC - WS"},
             };
 
             //IReadOnlyList<Depot> depotsList;

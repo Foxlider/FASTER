@@ -236,7 +236,7 @@ namespace FASTER.ViewModel
             
             var links = Directory.EnumerateDirectories(armaPath).Select(d => new DirectoryInfo(d)).Where(d => d.Attributes.HasFlag(FileAttributes.ReparsePoint));
             uint MissingMods = 0;
-            foreach (ProfileMod profileMod in Profile.ProfileMods.Where(m => m.ClientSideChecked || m.HeadlessChecked || m.ServerSideChecked))
+            foreach (ProfileMod profileMod in Profile.ProfileMods.Where(m => m.ServerSideChecked || m.ClientSideChecked || m.HeadlessChecked || m.OptChecked))
             {
                 if (!links.Any(l => l.Name == $"@{Functions.SafeName(profileMod.Name)}"))
                     MissingMods++;
@@ -359,7 +359,10 @@ namespace FASTER.ViewModel
                 MainWindow.Instance.IFlyoutMessage.Content = $"The SteamCMD path does not exist :\n{Properties.Settings.Default.modStagingDirectory}";
                 return;
             }
-            var steamMods = Profile.ProfileMods.Where(p => p.ClientSideChecked).ToList();
+			
+            var clientMods = Profile.ProfileMods.Where(p => p.ClientSideChecked).ToList();
+            var optionalMods = Profile.ProfileMods.Where(p => p.OptChecked).ToList();
+            var steamMods = clientMods.Union(optionalMods).ToList();
 
             foreach (var line in steamMods)
             {
@@ -407,9 +410,10 @@ namespace FASTER.ViewModel
             }
         }
         
-        public ObservableCollection<string> LimitedDistanceStrings { get; } = new ObservableCollection<string>(ProfileCfgArrays.LimitedDistanceStrings);
-        public ObservableCollection<string> AiPresetStrings        { get; } = new ObservableCollection<string>(ProfileCfgArrays.AiPresetStrings);
-        public ObservableCollection<string> ThirdPersonStrings     { get; } = new ObservableCollection<string>(ProfileCfgArrays.ThirdPersonStrings);
+        public ObservableCollection<string> LimitedDistanceStrings   { get; } = new ObservableCollection<string>(ProfileCfgArrays.LimitedDistanceStrings);
+        public ObservableCollection<string> AiPresetStrings          { get; } = new ObservableCollection<string>(ProfileCfgArrays.AiPresetStrings);
+        public ObservableCollection<string> ThirdPersonStrings       { get; } = new ObservableCollection<string>(ProfileCfgArrays.ThirdPersonStrings);
+		public ObservableCollection<string> ForcedDifficultyStrings  { get; } = new ObservableCollection<string>(ProfileCfgArrays.ForcedDifficultyStrings);
         
         public void LoadData()
         {
@@ -486,19 +490,29 @@ namespace FASTER.ViewModel
                     case "Server":
                         {
                             if (from == "Client") mod.ServerSideChecked = mod.ClientSideChecked;
-                            if (from == "Headless") mod.ServerSideChecked = mod.HeadlessChecked;
+                            if (from == "HC") mod.ServerSideChecked = mod.HeadlessChecked;
+                            if (from == "Opt") mod.ServerSideChecked = mod.OptChecked;
                             break;
                         }
                     case "Client":
                         {
                             if (from == "Server") mod.ClientSideChecked = mod.ServerSideChecked;
-                            if (from == "Headless") mod.ClientSideChecked = mod.HeadlessChecked;
+                            if (from == "HC") mod.ClientSideChecked = mod.HeadlessChecked;
+                            if (from == "Opt") mod.ClientSideChecked = mod.OptChecked;
                             break;
                         }
-                    case "Headless":
+                    case "HC":
                         {
-                            if (from == "Client") mod.HeadlessChecked = mod.ClientSideChecked;
                             if (from == "Server") mod.HeadlessChecked = mod.ServerSideChecked;
+                            if (from == "Client") mod.HeadlessChecked = mod.ClientSideChecked;
+                            if (from == "Opt") mod.HeadlessChecked = mod.OptChecked;
+                            break;
+                        }
+                    case "Opt":
+                        {
+                            if (from == "Server") mod.OptChecked = mod.ServerSideChecked;
+                            if (from == "Client") mod.OptChecked = mod.ClientSideChecked;
+                            if (from == "HC") mod.OptChecked = mod.HeadlessChecked;
                             break;
                         }
                 }
@@ -517,8 +531,11 @@ namespace FASTER.ViewModel
                     case "Client":
                         mod.ClientSideChecked = select;
                         break;
-                    case "Headless":
+                    case "HC":
                         mod.HeadlessChecked = select;
+                        break;
+					case "Opt":
+                        mod.OptChecked = select;
                         break;
                 }
             }

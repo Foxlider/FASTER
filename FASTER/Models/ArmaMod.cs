@@ -104,6 +104,7 @@ namespace FASTER.Models
         private string _status = "Not Installed";
         private long   _size;
         private bool   _isLoading;
+        private bool   _isSelected;
 
         
         public uint   WorkshopId       
@@ -209,8 +210,18 @@ namespace FASTER.Models
                 RaisePropertyChanged("IsLoading");
             }
         }
+		
+        [XmlIgnore]
+        public bool IsSelected
+        {
+            get => _isSelected;
+            set
+            {
+                _isSelected = value;
+                RaisePropertyChanged("IsSelected");
+            }
+        }
         
-
         internal void CheckModSize()
         {
             IsLoading = true;

@@ -10,12 +10,14 @@ namespace FASTER_Maintenance.Models._16Models
     [XmlInclude(typeof(Value))]
     public class Setting
     {
-        [XmlAttribute(AttributeName = "name")] public string Name { get; set; }
+        [XmlAttribute(AttributeName = "name")]
+		public string Name { get; set; }
 
         [XmlAttribute(AttributeName = "serializeAs")]
         public string SerializeAs { get; set; }
 
-        [XmlElement(ElementName = "value")] public object Value { get; set; }
+        [XmlElement(ElementName = "value")]
+		public object Value { get; set; }
     }
 
     [XmlRoot(ElementName = "SteamMod")]
@@ -58,7 +60,8 @@ namespace FASTER_Maintenance.Models._16Models
     [XmlRoot(ElementName = "ServerProfile")]
     public class ServerProfile
     {
-        [XmlElement(ElementName = "SafeName")] public string SafeName { get; set; }
+        [XmlElement(ElementName = "SafeName")]
+		public string SafeName { get; set; }
 
         [XmlElement(ElementName = "DisplayName")]
         public string DisplayName { get; set; }
@@ -69,7 +72,8 @@ namespace FASTER_Maintenance.Models._16Models
         [XmlElement(ElementName = "Executable")]
         public string Executable { get; set; }
 
-        [XmlElement(ElementName = "Password")] public string Password { get; set; }
+        [XmlElement(ElementName = "Password")]
+		public string Password { get; set; }
 
         [XmlElement(ElementName = "AdminPassword")]
         public string AdminPassword { get; set; }
@@ -77,7 +81,8 @@ namespace FASTER_Maintenance.Models._16Models
         [XmlElement(ElementName = "MaxPlayers")]
         public string MaxPlayers { get; set; }
 
-        [XmlElement(ElementName = "Port")] public string Port { get; set; }
+        [XmlElement(ElementName = "Port")]
+		public string Port { get; set; }
 
         [XmlElement(ElementName = "HeadlessClientEnabled")]
         public string HeadlessClientEnabled { get; set; }
@@ -172,12 +177,14 @@ namespace FASTER_Maintenance.Models._16Models
         [XmlElement(ElementName = "MissionsClass")]
         public string MissionsClass { get; set; }
 
-        [XmlElement(ElementName = "Missions")] public string Missions { get; set; }
+        [XmlElement(ElementName = "Missions")]
+		public string Missions { get; set; }
 
         [XmlElement(ElementName = "PersistentBattlefield")]
         public string PersistentBattlefield { get; set; }
 
-        [XmlElement(ElementName = "AutoInit")] public string AutoInit { get; set; }
+        [XmlElement(ElementName = "AutoInit")]
+		public string AutoInit { get; set; }
 
         [XmlElement(ElementName = "DifficultyPreset")]
         public string DifficultyPreset { get; set; }
@@ -279,7 +286,8 @@ namespace FASTER_Maintenance.Models._16Models
         [XmlElement(ElementName = "MaxPingEnabled")]
         public string MaxPingEnabled { get; set; }
 
-        [XmlElement(ElementName = "MaxPing")] public string MaxPing { get; set; }
+        [XmlElement(ElementName = "MaxPing")]
+		public string MaxPing { get; set; }
 
         [XmlElement(ElementName = "MaxDesyncEnabled")]
         public string MaxDesyncEnabled { get; set; }
