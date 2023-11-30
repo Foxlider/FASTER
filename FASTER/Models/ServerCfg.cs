@@ -50,11 +50,13 @@ namespace FASTER.Models
         private int    roleTimeOut = 90; 	 	// These are BI base figues
         private int    votingTimeOut = 60; 	 	//
         private int    debriefingTimeOut = 45; //
+
         private bool   LogObjectNotFound = true;			// logging enabled
         private bool   SkipDescriptionParsing = false;		// parse description.ext
         private bool   ignoreMissionLoadErrors = false;		// do not ingore errors
+        private int    queueSizeLogG = 1000000;             // if a specific players message queueis larger than 1MB and '#monitor' is running, dump his messages to a logfile for analysis
+
         private int    armaUnitsTimeout = 30; 				// Defines how long the player will be stuck connecting and wait for armaUnits data. Player will be notified if timeout elapsed and no units data was received
-		private int	   queueSizeLogG = 1000000; 			// if a specific players message queueis larger than 1MB and '#monitor' is running, dump his messages to a logfile for analysis
 
         //Arma server only
         private short  verifySignatures         = 0;        // 0 = Disabled (FASTER Default); 1 = Deprecated Activated ; 2 = Activated (Arma Default)
@@ -422,6 +424,16 @@ namespace FASTER.Models
             }
         }
 
+        public int QueueSizeLogG
+        {
+            get => queueSizeLogG;
+            set
+            {
+                queueSizeLogG = value;
+                RaisePropertyChanged("QueueSizeLogG");
+            }
+        }
+
         public int ArmaUnitsTimeout
         {
             get => armaUnitsTimeout;
@@ -429,16 +441,6 @@ namespace FASTER.Models
             {
                 armaUnitsTimeout = value;
                 RaisePropertyChanged("ArmaUnitsTimeout");
-            }
-        }
-		
-		 public int QueueSizeLogG
-        {
-            get => queueSizeLogG;
-            set
-            {
-                queueSizeLogG = value;
-                RaisePropertyChanged("QueueSizeLogG");
             }
         }
 
