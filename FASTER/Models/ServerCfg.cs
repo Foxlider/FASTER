@@ -51,10 +51,10 @@ namespace FASTER.Models
         private int    votingTimeOut = 60; 	 	//
         private int    debriefingTimeOut = 45; //
 
-        private string  LogObjectNotFound = 1;			// logging enabled
-        private string  SkipDescriptionParsing = 0;		// parse description.ext
-        private string  ignoreMissionLoadErrors = 0;    // do not ingore errors
-        private int     queueSizeLogG = 1000000;        // if a specific players message queueis larger than 1MB and '#monitor' is running, dump his messages to a logfile for analysis
+        private int    LogObjectNotFound = 1;           // logging enabled
+        private int    SkipDescriptionParsing = 0;     // parse description.ext
+        private int    ignoreMissionLoadErrors = 0;    // do not ingore errors
+        private int    queueSizeLogG = 1000000;       // if a specific players message queueis larger than 1MB and '#monitor' is running, dump his messages to a logfile for analysis
 
         private int    armaUnitsTimeout = 30;           // Defines how long the player will be stuck connecting and wait for armaUnits data. Player will be notified if timeout elapsed and no units data was received
 
@@ -394,7 +394,7 @@ namespace FASTER.Models
             }
         }
 
-        public string logObjectNotFound
+        public int logObjectNotFound
         {
             get => LogObjectNotFound;
             set
@@ -404,7 +404,7 @@ namespace FASTER.Models
             }
         }
 
-        public string skipDescriptionParsing
+        public int skipDescriptionParsing
         {
             get => SkipDescriptionParsing;
             set
@@ -414,7 +414,7 @@ namespace FASTER.Models
             }
         }
 
-        public string IgnoreMissionLoadErrors
+        public int IgnoreMissionLoadErrors
         {
             get => ignoreMissionLoadErrors;
             set
