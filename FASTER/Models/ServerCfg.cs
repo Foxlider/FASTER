@@ -51,12 +51,12 @@ namespace FASTER.Models
         private int    votingTimeOut = 60; 	 	//
         private int    debriefingTimeOut = 45; //
 
-        private bool   LogObjectNotFound = true;			// logging enabled
-        private bool   SkipDescriptionParsing = false;		// parse description.ext
-        private bool   ignoreMissionLoadErrors = false;		// do not ingore errors
-        private int    queueSizeLogG = 1000000;             // if a specific players message queueis larger than 1MB and '#monitor' is running, dump his messages to a logfile for analysis
+        private string  LogObjectNotFound = 1;			// logging enabled
+        private string  SkipDescriptionParsing = 0;		// parse description.ext
+        private string  ignoreMissionLoadErrors = 0;    // do not ingore errors
+        private int     queueSizeLogG = 1000000;        // if a specific players message queueis larger than 1MB and '#monitor' is running, dump his messages to a logfile for analysis
 
-        private int    armaUnitsTimeout = 30; 				// Defines how long the player will be stuck connecting and wait for armaUnits data. Player will be notified if timeout elapsed and no units data was received
+        private int    armaUnitsTimeout = 30;           // Defines how long the player will be stuck connecting and wait for armaUnits data. Player will be notified if timeout elapsed and no units data was received
 
         //Arma server only
         private short  verifySignatures         = 0;        // 0 = Disabled (FASTER Default); 1 = Deprecated Activated ; 2 = Activated (Arma Default)
@@ -394,7 +394,7 @@ namespace FASTER.Models
             }
         }
 
-        public bool logObjectNotFound
+        public string logObjectNotFound
         {
             get => LogObjectNotFound;
             set
@@ -404,7 +404,7 @@ namespace FASTER.Models
             }
         }
 
-        public bool skipDescriptionParsing
+        public string skipDescriptionParsing
         {
             get => SkipDescriptionParsing;
             set
@@ -414,7 +414,7 @@ namespace FASTER.Models
             }
         }
 
-        public bool IgnoreMissionLoadErrors
+        public string IgnoreMissionLoadErrors
         {
             get => ignoreMissionLoadErrors;
             set
