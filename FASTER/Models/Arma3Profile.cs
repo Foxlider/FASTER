@@ -10,7 +10,7 @@ namespace FASTER.Models
         public static string[] LimitedDistanceStrings { get; } = { "Never", "Limited Distance", "Always" };
         public static string[] FadeOutStrings { get; } = { "Never", "Fade Out", "Always" };
         public static string[] EnabledStrings { get; } = { "Disabled", "Enabled" };
-        public static string[] TacticalPingStrings { get; } = { "Disabled", "3D only", "Map only", "Enabled" };
+        public static string[] TacticalPingStrings { get; } = { "Disabled", "3D only", "Map only", "Both" };
 
         public static string[] AiPresetStrings { get; } = { "Low", "Normal", "High", "Custom" };
         public static string[] ThirdPersonStrings { get; } = { "Disabled", "Enabled", "Vehicles Only" };
@@ -357,7 +357,7 @@ namespace FASTER.Models
                 $"\t\t\tdetectedMines = {detectedMines};\t\t// Detected mines (0 = never, 1 = limited distance, 2 = always)\r\n" +
                 $"\t\t\tcommands = {commands};\t\t\t// Commands (0 = never, 1 = fade out, 2 = always)\r\n" +
                 $"\t\t\twaypoints = {waypoints};\t\t\t// Waypoints (0 = never, 1 = fade out, 2 = always)\r\n" +
-                $"\t\t\ttacticalPing = {tacticalPing};\t\t// Tactical ping (0 = disable, 1 = 3D scene only, 2 = map, but not in 3D scene, 3 = enabled)\r\n" +
+                $"\t\t\ttacticalPing = {tacticalPing};\t\t// Tactical ping (0 = disable, 1 = In 3D scene, 2 = On map, 3 = Both)\r\n" +
                 "\t\t\t/* Personal awareness */\r\n" +
                 $"\t\t\tweaponInfo = {weaponInfo};\t\t\t// Weapon info (0 = never, 1 = fade out, 2 = always)\r\n" +
                 $"\t\t\tstanceIndicator = {stanceIndicator};\t// Stance indicator (0 = never, 1 = fade out, 2 = always)\r\n" +
