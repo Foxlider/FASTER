@@ -170,22 +170,22 @@
                                         </MenuItem>
                                     </ContextMenu>
                                     <ContextMenu x:Key="HeadlessContextMenu">
-                                        <MenuItem Tag="Headless" Header="Select All" Click="ModsSelectAll">
+                                        <MenuItem Tag="HC" Header="Select All" Click="ModsSelectAll">
                                             <MenuItem.Icon>
                                                 <iconPacks:PackIconModern Kind="CheckmarkThick"/>
                                             </MenuItem.Icon>
                                         </MenuItem>
-                                        <MenuItem Tag="Headless" Header="Select None" Click="ModsSelectNone">
+                                        <MenuItem Tag="HC" Header="Select None" Click="ModsSelectNone">
                                             <MenuItem.Icon>
                                                 <iconPacks:PackIconModern Kind="CheckmarkUncrossed"/>
                                             </MenuItem.Icon>
                                         </MenuItem>
-                                        <MenuItem Tag="Headless" Header="Copy From Server" Click="CopyFromServer">
+                                        <MenuItem Tag="HC" Header="Copy From Server" Click="CopyFromServer">
                                             <MenuItem.Icon>
                                                 <iconPacks:PackIconModern Kind="PageCopy"/>
                                             </MenuItem.Icon>
                                         </MenuItem>
-                                        <MenuItem Tag="Headless" Header="Copy From Client" Click="CopyFromClient">
+                                        <MenuItem Tag="HC" Header="Copy From Client" Click="CopyFromClient">
                                             <MenuItem.Icon>
                                                 <iconPacks:PackIconModern Kind="PageCopy"/>
                                             </MenuItem.Icon>
