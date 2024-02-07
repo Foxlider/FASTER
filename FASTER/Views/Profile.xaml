@@ -312,14 +312,14 @@
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
                                     </DataGridTemplateColumn>
-                                    <DataGridTemplateColumn Header="Server" Width="auto">
+                                    <DataGridTemplateColumn Header="Server Only" Width="auto">
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate DataType="models:ProfileMod">
                                                 <CheckBox IsChecked="{Binding ServerSideChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center"/>
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
                                     </DataGridTemplateColumn>
-                                    <DataGridTemplateColumn Header="Client" Width="auto">
+                                    <DataGridTemplateColumn Header="Client + Server" Width="auto">
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate DataType="models:ProfileMod">
                                                 <CheckBox IsChecked="{Binding ClientSideChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center"/>
