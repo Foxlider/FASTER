@@ -212,7 +212,7 @@
                                                     </Setter.Value>
                                                 </Setter>
                                             </Trigger>
-                                            <Trigger Property="Content" Value="Client + Server">
+                                            <Trigger Property="Content" Value="Client">
                                                 <Setter Property="ContextMenu" Value="{StaticResource ClientContextMenu}" />
                                                 <Setter Property="ContentTemplate">
                                                     <Setter.Value>
