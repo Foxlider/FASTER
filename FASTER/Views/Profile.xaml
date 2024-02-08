@@ -71,27 +71,27 @@
                                 <RowDefinition Height="auto"/>
                             </Grid.RowDefinitions>
                             <StackPanel Orientation="Horizontal" Panel.ZIndex="1">
-                                <Button Margin="0, 5" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Padding="5,3" Click="LoadFromFile_Click">
+                                <Button Margin="0, 5" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Padding="5,5" Click="LoadFromFile_Click">
                                     <StackPanel Orientation="Horizontal">
                                         <iconPacks:PackIconModern Kind="PageXml"/>
                                         <TextBlock Text="Load from File" Margin="10,0"/>
                                     </StackPanel>
                                 </Button>
-                                <Button Margin="5, 5" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Padding="5,3" Click="CopyModKeys_Click">
+                                <Button Margin="5, 5" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Padding="5,5" Click="CopyModKeys_Click">
                                     <StackPanel Orientation="Horizontal">
                                         <iconPacks:PackIconModern Kind="PageCopy"/>
                                         <TextBlock Text="Copy Mods Keys" Margin="10,0"/>
                                     </StackPanel>
                                 </Button>
-                                <Button Margin="5, 5" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}"
-                                        BorderThickness="0" Padding="5,3" Click="ClearModKeys_Click">
+                                <Button Margin="5,5" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}"
+                                        BorderThickness="0" Padding="5,5" Click="ClearModKeys_Click">
                                     <StackPanel Orientation="Horizontal">
                                         <iconPacks:PackIconModern Kind="PageDelete" />
                                         <TextBlock Text="Clear Keys" Margin="10,0" />
                                     </StackPanel>
                                 </Button>
                                 <Canvas>
-                                    <Expander Header="DLCs" Margin="3" mah:ControlsHelper.ContentCharacterCasing="Normal" Background="{Binding Mode=OneWay, Source={StaticResource MahApps.Brushes.Menu.Background}}">
+                                    <Expander Header="DLCs" Margin="5" mah:ControlsHelper.ContentCharacterCasing="Normal" Background="{Binding Mode=OneWay, Source={StaticResource MahApps.Brushes.Menu.Background}}">
                                         <StackPanel Orientation="Vertical">
                                             <CheckBox IsChecked="{Binding Profile.ContactDLCChecked}" Content="Contact DLC" Margin="10,3" Width="105" HorizontalAlignment="Left"/>
                                             <CheckBox IsChecked="{Binding Profile.GMDLCChecked}" Content="GM DLC" Margin="10,3" HorizontalAlignment="Left"/>
