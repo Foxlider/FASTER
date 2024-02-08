@@ -53,12 +53,12 @@ namespace FASTER.Views
             Functions.OpenBrowser("https://github.com/Foxlider/FASTER");
         }
 
-        private void IForumsButton_Click(object sender, RoutedEventArgs e)
+        private void IWikiButton_Click(object sender, RoutedEventArgs e)
         {
-            Analytics.TrackEvent("About - Clicked Forums", new Dictionary<string, string> {
+            Analytics.TrackEvent("About - Clicked Wiki", new Dictionary<string, string> {
                 { "Name", Properties.Settings.Default.steamUserName }
             });
-            Functions.OpenBrowser("https://forums.bohemia.net/forums/topic/224359-foxs-arma-server-tool-extended-rewrite-faster/");
+            Functions.OpenBrowser("https://github.com/Foxlider/FASTER/wiki");
         }
 
         private void IDonateButton_Click(object sender, RoutedEventArgs e)
