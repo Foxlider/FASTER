@@ -367,7 +367,8 @@ namespace FASTER.ViewModel
             foreach (var line in steamMods)
             {
                 try
-                { mods.AddRange(Directory.GetFiles(Path.Combine(Properties.Settings.Default.modStagingDirectory, line.Id.ToString()), "*.bikey", SearchOption.AllDirectories)); }
+                { mods.AddRange(Directory.GetDirectories(Path.Combine(Properties.Settings.Default.modStagingDirectory, line.Id.ToString()))
+				.SelectMany(subDir => Directory.GetFiles(subDir, "*bikey", SearchOption.TopDirectoryOnly))); }
                 catch (DirectoryNotFoundException)
                 { /*there was no directory*/ }
             }
