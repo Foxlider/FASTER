@@ -368,7 +368,7 @@ namespace FASTER.ViewModel
             {
                 try
                 { mods.AddRange(Directory.GetDirectories(Path.Combine(Properties.Settings.Default.modStagingDirectory, line.Id.ToString()))
-				.SelectMany(subDir => Directory.GetFiles(subDir, "*bikey", SearchOption.TopDirectoryOnly))); }
+				.SelectMany(subDir => Directory.GetFiles(subDir, "*.bikey", SearchOption.TopDirectoryOnly))); }
                 catch (DirectoryNotFoundException)
                 { /*there was no directory*/ }
             }
