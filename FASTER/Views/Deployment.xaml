@@ -40,7 +40,7 @@
                 <Button Content="Deploy All" Click="DeployAll_Click" Margin="5, 0" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0"/>
                 <Button Content="Clean" Click="ClearAll_Click" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" Margin="5, 0" BorderThickness="0"/>
             </StackPanel>
-            
+
             <!--<Canvas>
                 <Expander>
                     Here will be the list of arma instances available for deployment in 1.9
@@ -92,7 +92,7 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                
+
                 <DataGridTemplateColumn Header="Info" CanUserSort="False" CanUserResize="False">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>

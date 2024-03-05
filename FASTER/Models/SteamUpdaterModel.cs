@@ -83,7 +83,7 @@ namespace FASTER.Models
                 RaisePropertyChanged(nameof(Progress));
             }
         }
-        
+
         public bool UsingPerfBinaries
         {
             get => Settings.Default.usingPerfBinaries;
@@ -94,7 +94,7 @@ namespace FASTER.Models
                 RaisePropertyChanged(nameof(UsingPerfBinaries));
             }
         }
-        
+
         public bool UsingContactDlc
         {
             get => Settings.Default.usingContactDlc;

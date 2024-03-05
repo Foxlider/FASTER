@@ -44,7 +44,7 @@ namespace FASTER.Views
         {
             ((ModsViewModel) DataContext)?.DeleteSelectedMods();
         }
-		
+
         private void OpenModPage(object sender, RoutedEventArgs e)
         {
             var mod = ((FrameworkElement) sender).DataContext as ArmaMod;
