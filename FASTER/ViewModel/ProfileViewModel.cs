@@ -414,6 +414,8 @@ namespace FASTER.ViewModel
         public ObservableCollection<string> AiPresetStrings          { get; } = new ObservableCollection<string>(ProfileCfgArrays.AiPresetStrings);
         public ObservableCollection<string> ThirdPersonStrings       { get; } = new ObservableCollection<string>(ProfileCfgArrays.ThirdPersonStrings);
         public ObservableCollection<string> ForcedDifficultyStrings  { get; } = new ObservableCollection<string>(ProfileCfgArrays.ForcedDifficultyStrings);
+        public ObservableCollection<string> TacticalPingStrings      { get; } = new ObservableCollection<string>(ProfileCfgArrays.TacticalPingStrings);
+
 
         public void LoadData()
         {
