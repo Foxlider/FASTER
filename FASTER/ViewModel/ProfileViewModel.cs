@@ -156,7 +156,7 @@ namespace FASTER.ViewModel
 
             LaunchHCs();
             #endif
-            
+
         }
 
         /// <summary>
@@ -203,7 +203,7 @@ namespace FASTER.ViewModel
             var menuItem = MainWindow.Instance.IServerProfilesMenu.Items.Cast<ToggleButton>().FirstOrDefault(p => p.Name == Profile.Id);
             if(menuItem != null)
                 MainWindow.Instance.IServerProfilesMenu.Items.Remove(menuItem);
-            
+
             MainWindow.Instance.NavigateToConsole();
         }
 
@@ -227,13 +227,13 @@ namespace FASTER.ViewModel
             { DisplayMessage("Could not write the config files. Please ensure the server is not running and retry."); }
 
             var armaPath = Path.GetDirectoryName(Profile.Executable);
-            
+
             if(string.IsNullOrWhiteSpace(armaPath))
             {
                 DisplayMessage("Arma executable is empty. Select the correct executable before saving your profile.");
                 return;
             }
-            
+
             var links = Directory.EnumerateDirectories(armaPath).Select(d => new DirectoryInfo(d)).Where(d => d.Attributes.HasFlag(FileAttributes.ReparsePoint));
             uint MissingMods = 0;
             foreach (ProfileMod profileMod in Profile.ProfileMods.Where(m => m.ServerSideChecked || m.ClientSideChecked || m.HeadlessChecked || m.OptChecked))
@@ -241,7 +241,7 @@ namespace FASTER.ViewModel
                 if (!links.Any(l => l.Name == $"@{Functions.SafeName(profileMod.Name)}"))
                     MissingMods++;
             }
-            
+
 
             var index = Properties.Settings.Default.Profiles.FindIndex(p => p.Id == Profile.Id);  
             if (index != -1)
@@ -359,7 +359,7 @@ namespace FASTER.ViewModel
                 MainWindow.Instance.IFlyoutMessage.Content = $"The SteamCMD path does not exist :\n{Properties.Settings.Default.modStagingDirectory}";
                 return;
             }
-			
+
             var clientMods = Profile.ProfileMods.Where(p => p.ClientSideChecked).ToList();
             var optionalMods = Profile.ProfileMods.Where(p => p.OptChecked).ToList();
             var steamMods = clientMods.Union(optionalMods).ToList();
@@ -410,13 +410,14 @@ namespace FASTER.ViewModel
                 }
             }
         }
-        
+
         public ObservableCollection<string> LimitedDistanceStrings   { get; } = new ObservableCollection<string>(ProfileCfgArrays.LimitedDistanceStrings);
         public ObservableCollection<string> AiPresetStrings          { get; } = new ObservableCollection<string>(ProfileCfgArrays.AiPresetStrings);
         public ObservableCollection<string> ThirdPersonStrings       { get; } = new ObservableCollection<string>(ProfileCfgArrays.ThirdPersonStrings);
-		public ObservableCollection<string> ForcedDifficultyStrings  { get; } = new ObservableCollection<string>(ProfileCfgArrays.ForcedDifficultyStrings);
+        public ObservableCollection<string> ForcedDifficultyStrings  { get; } = new ObservableCollection<string>(ProfileCfgArrays.ForcedDifficultyStrings);
         public ObservableCollection<string> TacticalPingStrings      { get; } = new ObservableCollection<string>(ProfileCfgArrays.TacticalPingStrings);
-        
+
+
         public void LoadData()
         {
             var modlist = new List<ProfileMod>();
@@ -433,7 +434,7 @@ namespace FASTER.ViewModel
                 { existingMod.Name = mod.Name; }
                 modlist.Add(existingMod);
             }
-            
+
             Profile.ProfileMods = modlist;
 
             LoadMissions();
@@ -445,7 +446,7 @@ namespace FASTER.ViewModel
             if (index != -1)
             { Properties.Settings.Default.Profiles[index] = Profile; }
         }
-        
+
         internal void LoadMissions()
         {
             if (!Directory.Exists(Path.Combine(Profile.ArmaPath, "mpmissions"))) return;

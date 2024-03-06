@@ -23,7 +23,7 @@ namespace FASTER.ViewModel
         }
 
         public ArmaDeployment Deployment { get; set; }
-        
+
 
         /// <summary>
         /// Unload data

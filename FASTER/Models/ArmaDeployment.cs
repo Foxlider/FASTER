@@ -141,6 +141,7 @@ namespace FASTER.Models
                 RaisePropertyChanged("Author");
             }
         }
+
         public string Path
         {
             get => _path;
@@ -170,6 +171,7 @@ namespace FASTER.Models
                 RaisePropertyChanged(nameof(Status));
             }
         }
+
         public bool Marked
         {
             get => marked;

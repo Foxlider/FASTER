@@ -226,7 +226,7 @@ namespace FASTER.ViewModel
             foreach (ArmaMod mod in ModsCollection.ArmaMods)
             { Task.Run(() => mod.UpdateInfos()); }
         }
-		
+
         public async Task UpdateSelectedMods()
         {
             MainWindow.Instance.NavigateToConsole();
