@@ -488,31 +488,31 @@ namespace FASTER.ViewModel
             {
                 switch (to.ToString())
                 {
-                    case "SO":
+                    case "Server Only":
                         {
-                            if (from == "CS") mod.ServerSideChecked = mod.ClientSideChecked;
+                            if (from == "Client + Server") mod.ServerSideChecked = mod.ClientSideChecked;
                             if (from == "HC") mod.ServerSideChecked = mod.HeadlessChecked;
                             if (from == "Opt") mod.ServerSideChecked = mod.OptChecked;
                             break;
                         }
-                    case "CS":
+                    case "Client + Server":
                         {
-                            if (from == "SO") mod.ClientSideChecked = mod.ServerSideChecked;
+                            if (from == "Server Only") mod.ClientSideChecked = mod.ServerSideChecked;
                             if (from == "HC") mod.ClientSideChecked = mod.HeadlessChecked;
                             if (from == "Opt") mod.ClientSideChecked = mod.OptChecked;
                             break;
                         }
                     case "HC":
                         {
-                            if (from == "SO") mod.HeadlessChecked = mod.ServerSideChecked;
-                            if (from == "CS") mod.HeadlessChecked = mod.ClientSideChecked;
+                            if (from == "Server Only") mod.HeadlessChecked = mod.ServerSideChecked;
+                            if (from == "Client + Server") mod.HeadlessChecked = mod.ClientSideChecked;
                             if (from == "Opt") mod.HeadlessChecked = mod.OptChecked;
                             break;
                         }
                     case "Opt":
                         {
-                            if (from == "SO") mod.OptChecked = mod.ServerSideChecked;
-                            if (from == "CS") mod.OptChecked = mod.ClientSideChecked;
+                            if (from == "Server Only") mod.OptChecked = mod.ServerSideChecked;
+                            if (from == "Client + Server") mod.OptChecked = mod.ClientSideChecked;
                             if (from == "HC") mod.OptChecked = mod.HeadlessChecked;
                             break;
                         }
@@ -526,10 +526,10 @@ namespace FASTER.ViewModel
             {
                 switch (to.ToString())
                 {
-                    case "SO":
+                    case "Server Only":
                         mod.ServerSideChecked = select;
                         break;
-                    case "CS":
+                    case "Client + Server":
                         mod.ClientSideChecked = select;
                         break;
                     case "HC":

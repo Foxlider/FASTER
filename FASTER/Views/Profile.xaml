@@ -116,54 +116,54 @@
 
 
                                     <ContextMenu x:Key="ServerContextMenu">
-                                        <MenuItem Tag="Server" Header="Select All" Click="ModsSelectAll">
+                                        <MenuItem Tag="Server Only" Header="Select All" Click="ModsSelectAll">
                                             <MenuItem.Icon>
                                                 <iconPacks:PackIconModern Kind="CheckmarkThick" Margin="5"/>
                                             </MenuItem.Icon>
                                         </MenuItem>
-                                        <MenuItem Tag="Server" Header="Select None" Click="ModsSelectNone">
+                                        <MenuItem Tag="Server Only" Header="Select None" Click="ModsSelectNone">
                                             <MenuItem.Icon>
                                                 <iconPacks:PackIconModern Kind="CheckmarkUncrossed" Margin="5"/>
                                             </MenuItem.Icon>
                                         </MenuItem>
-                                        <MenuItem Tag="Server" Header="Copy From Client" Click="CopyFromClient">
+                                        <MenuItem Tag="Server Only" Header="Copy From Client" Click="CopyFromClient">
                                             <MenuItem.Icon>
                                                 <iconPacks:PackIconModern Kind="PageCopy" Margin="5"/>
                                             </MenuItem.Icon>
                                         </MenuItem>
-                                        <MenuItem Tag="Server" Header="Copy From Headless" Click="CopyFromHeadless">
+                                        <MenuItem Tag="Server Only" Header="Copy From Headless" Click="CopyFromHeadless">
                                             <MenuItem.Icon>
                                                 <iconPacks:PackIconModern Kind="PageCopy" Margin="5"/>
                                             </MenuItem.Icon>
                                         </MenuItem>
-                                        <MenuItem Tag="Server" Header="Copy From Optional" Click="CopyFromOpt">
+                                        <MenuItem Tag="Server Only" Header="Copy From Optional" Click="CopyFromOpt">
                                             <MenuItem.Icon>
                                                 <iconPacks:PackIconModern Kind="PageCopy"/>
                                             </MenuItem.Icon>
                                         </MenuItem>
                                     </ContextMenu>
                                     <ContextMenu x:Key="ClientContextMenu">
-                                        <MenuItem Tag="Client" Header="Select All" Click="ModsSelectAll">
+                                        <MenuItem Tag="Client + Server" Header="Select All" Click="ModsSelectAll">
                                             <MenuItem.Icon>
                                                 <iconPacks:PackIconModern Kind="CheckmarkThick"/>
                                             </MenuItem.Icon>
                                         </MenuItem>
-                                        <MenuItem Tag="Client" Header="Select None" Click="ModsSelectNone">
+                                        <MenuItem Tag="Client + Server" Header="Select None" Click="ModsSelectNone">
                                             <MenuItem.Icon>
                                                 <iconPacks:PackIconModern Kind="CheckmarkUncrossed"/>
                                             </MenuItem.Icon>
                                         </MenuItem>
-                                        <MenuItem Tag="Client" Header="Copy From Server" Click="CopyFromServer">
+                                        <MenuItem Tag="Client + Server" Header="Copy From Server" Click="CopyFromServer">
                                             <MenuItem.Icon>
                                                 <iconPacks:PackIconModern Kind="PageCopy"/>
                                             </MenuItem.Icon>
                                         </MenuItem>
-                                        <MenuItem Tag="Client" Header="Copy From Headless" Click="CopyFromHeadless">
+                                        <MenuItem Tag="Client + Server" Header="Copy From Headless" Click="CopyFromHeadless">
                                             <MenuItem.Icon>
                                                 <iconPacks:PackIconModern Kind="PageCopy"/>
                                             </MenuItem.Icon>
                                          </MenuItem>
-										 <MenuItem Tag="Client" Header="Copy From Optional" Click="CopyFromOpt">
+                                        <MenuItem Tag="Client + Server" Header="Copy From Optional" Click="CopyFromOpt">
                                             <MenuItem.Icon>
                                                 <iconPacks:PackIconModern Kind="PageCopy"/>
                                             </MenuItem.Icon>
@@ -239,7 +239,7 @@
                                                     </Setter.Value>
                                                 </Setter>
                                             </Trigger>
-                                            <Trigger Property="Content" Value="SO">
+                                            <Trigger Property="Content" Value="Server Only">
                                                 <Setter Property="ContextMenu" Value="{StaticResource ServerContextMenu}" />
                                                 <Setter Property="ContentTemplate">
                                                     <Setter.Value>
@@ -253,7 +253,7 @@
                                                     </Setter.Value>
                                                 </Setter>
                                             </Trigger>
-                                            <Trigger Property="Content" Value="CS">
+                                            <Trigger Property="Content" Value="Client + Server">
                                                 <Setter Property="ContextMenu" Value="{StaticResource ClientContextMenu}" />
                                                 <Setter Property="ContentTemplate">
                                                     <Setter.Value>
@@ -312,14 +312,14 @@
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
                                     </DataGridTemplateColumn>
-                                    <DataGridTemplateColumn Header="SO" Width="auto">
+                                    <DataGridTemplateColumn Header="Server Only" Width="auto">
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate DataType="models:ProfileMod">
                                                 <CheckBox IsChecked="{Binding ServerSideChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center"/>
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
                                     </DataGridTemplateColumn>
-                                    <DataGridTemplateColumn Header="CS" Width="auto">
+                                    <DataGridTemplateColumn Header="Client + Server" Width="auto">
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate DataType="models:ProfileMod">
                                                 <CheckBox IsChecked="{Binding ClientSideChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center"/>
