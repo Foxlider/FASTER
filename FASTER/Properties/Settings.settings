@@ -88,5 +88,8 @@
     </Setting>
     <Setting Name="usingSPEDlc" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
-  </Settings>
+    </Setting>
+    <Setting Name="usingRFDlc" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
 </SettingsFile>

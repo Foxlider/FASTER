@@ -60,6 +60,7 @@ namespace FASTER.Models
         private bool _cslaDlcChecked;
         private bool _wsDlcChecked;
         private bool _speDlcChecked;
+        private bool _rfDlcChecked;
         private bool _enableHT = true;
         private bool _enableRanking;
 
@@ -199,6 +200,16 @@ namespace FASTER.Models
             {
                 _speDlcChecked = value;
                 RaisePropertyChanged(nameof(SPEDLCChecked));
+            }
+        }
+
+        public bool RFDLCChecked
+        {
+            get => _rfDlcChecked;
+            set
+            {
+                _rfDlcChecked = value;
+                RaisePropertyChanged(nameof(RFDLCChecked));
             }
         }
 
@@ -483,6 +494,10 @@ namespace FASTER.Models
             if (SPEDLCChecked)
             {
                 _ = mods.Append("spe;");
+            }
+            if (RFDLCChecked)
+            {
+                _ = mods.Append("rf;");
             }
             if (!string.IsNullOrWhiteSpace(playerMods))
             {

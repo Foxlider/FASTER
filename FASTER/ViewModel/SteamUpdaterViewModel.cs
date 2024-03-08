@@ -138,7 +138,7 @@ namespace FASTER.ViewModel
             Analytics.TrackEvent("Updater - Clicked Update", new Dictionary<string, string>
             {
                 {"Name", Properties.Settings.Default.steamUserName},
-                {"DLCs", $"{(Parameters.UsingGMDlc ? "GM " : "")}{(Parameters.UsingCSLADlc? "CSLA " : "")}{(Parameters.UsingPFDlc ? "SOG " : "")}{(Parameters.UsingWSDlc ? "WS " : "")}{(Parameters.UsingSPEDlc ? "SPE " : "")}"},
+                {"DLCs", $"{(Parameters.UsingGMDlc ? "GM " : "")}{(Parameters.UsingCSLADlc? "CSLA " : "")}{(Parameters.UsingPFDlc ? "SOG " : "")}{(Parameters.UsingWSDlc ? "WS " : "")}{(Parameters.UsingSPEDlc ? "SPE " : "")}{(Parameters.UsingSPEDlc ? "RF " : "")}"},
                 {"Branch", $"{(Parameters.UsingPerfBinaries? "Profiling" : "Public")}"}
             });
 
@@ -160,6 +160,7 @@ namespace FASTER.ViewModel
                 {233793, "Arma 3 Server Creator DLC - CSLA"},
                 {233794, "Arma 3 Server Creator DLC - SOGPF"},
                 {233795, "Arma 3 Server Creator DLC - WS"},
+                {2647760, "Arma 3 Server Creator DLC - RF"},
             };
 
             //IReadOnlyList<Depot> depotsList;
@@ -248,6 +249,15 @@ namespace FASTER.ViewModel
                 Parameters.Output += "\nChecking Arma 3 Server Creator DLC - SPE...";
                 depotsDownload.Add((
                     depotsIDs.FirstOrDefault(d => d.Value == "Arma 3 Server Creator DLC - SPE").Key,
+                    "creatordlc",
+                    null));
+            }
+
+            if (Parameters.UsingRFDlc)
+            {
+                Parameters.Output += "\nChecking Arma 3 Server Creator DLC - RF...";
+                depotsDownload.Add((
+                    depotsIDs.FirstOrDefault(d => d.Value == "Arma 3 Server Creator DLC - RF").Key,
                     "creatordlc",
                     null));
             }
