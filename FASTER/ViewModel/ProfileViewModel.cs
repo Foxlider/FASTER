@@ -490,12 +490,12 @@ namespace FASTER.ViewModel
                 {
                     case "Server Only":
                         {
-                            if (from == "Client + Server") mod.ServerSideChecked = mod.ClientSideChecked;
+                            if (from == "Server + Client") mod.ServerSideChecked = mod.ClientSideChecked;
                             if (from == "HC") mod.ServerSideChecked = mod.HeadlessChecked;
                             if (from == "Opt") mod.ServerSideChecked = mod.OptChecked;
                             break;
                         }
-                    case "Client + Server":
+                    case "Server + Client":
                         {
                             if (from == "Server Only") mod.ClientSideChecked = mod.ServerSideChecked;
                             if (from == "HC") mod.ClientSideChecked = mod.HeadlessChecked;
@@ -505,14 +505,14 @@ namespace FASTER.ViewModel
                     case "HC":
                         {
                             if (from == "Server Only") mod.HeadlessChecked = mod.ServerSideChecked;
-                            if (from == "Client + Server") mod.HeadlessChecked = mod.ClientSideChecked;
+                            if (from == "Server + Client") mod.HeadlessChecked = mod.ClientSideChecked;
                             if (from == "Opt") mod.HeadlessChecked = mod.OptChecked;
                             break;
                         }
                     case "Opt":
                         {
                             if (from == "Server Only") mod.OptChecked = mod.ServerSideChecked;
-                            if (from == "Client + Server") mod.OptChecked = mod.ClientSideChecked;
+                            if (from == "Server + Client") mod.OptChecked = mod.ClientSideChecked;
                             if (from == "HC") mod.OptChecked = mod.HeadlessChecked;
                             break;
                         }
@@ -529,7 +529,7 @@ namespace FASTER.ViewModel
                     case "Server Only":
                         mod.ServerSideChecked = select;
                         break;
-                    case "Client + Server":
+                    case "Server + Client":
                         mod.ClientSideChecked = select;
                         break;
                     case "HC":

@@ -45,7 +45,7 @@ namespace FASTER.Views
 
         private void CopyFromClient(object sender, RoutedEventArgs e)
         {
-            ((ProfileViewModel) DataContext)?.ModsCopyFrom(((MenuItem)sender).Tag, "Client + Server");
+            ((ProfileViewModel) DataContext)?.ModsCopyFrom(((MenuItem)sender).Tag, "Server + Client");
         }
 
         private void CopyFromServer(object sender, RoutedEventArgs e)

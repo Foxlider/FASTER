@@ -143,27 +143,27 @@
                                         </MenuItem>
                                     </ContextMenu>
                                     <ContextMenu x:Key="ClientContextMenu">
-                                        <MenuItem Tag="Client + Server" Header="Select All" Click="ModsSelectAll">
+                                        <MenuItem Tag="Server + Client" Header="Select All" Click="ModsSelectAll">
                                             <MenuItem.Icon>
                                                 <iconPacks:PackIconModern Kind="CheckmarkThick"/>
                                             </MenuItem.Icon>
                                         </MenuItem>
-                                        <MenuItem Tag="Client + Server" Header="Select None" Click="ModsSelectNone">
+                                        <MenuItem Tag="Server + Client" Header="Select None" Click="ModsSelectNone">
                                             <MenuItem.Icon>
                                                 <iconPacks:PackIconModern Kind="CheckmarkUncrossed"/>
                                             </MenuItem.Icon>
                                         </MenuItem>
-                                        <MenuItem Tag="Client + Server" Header="Copy From Server" Click="CopyFromServer">
+                                        <MenuItem Tag="Server + Client" Header="Copy From Server" Click="CopyFromServer">
                                             <MenuItem.Icon>
                                                 <iconPacks:PackIconModern Kind="PageCopy"/>
                                             </MenuItem.Icon>
                                         </MenuItem>
-                                        <MenuItem Tag="Client + Server" Header="Copy From Headless" Click="CopyFromHeadless">
+                                        <MenuItem Tag="Server + Client" Header="Copy From Headless" Click="CopyFromHeadless">
                                             <MenuItem.Icon>
                                                 <iconPacks:PackIconModern Kind="PageCopy"/>
                                             </MenuItem.Icon>
                                          </MenuItem>
-                                        <MenuItem Tag="Client + Server" Header="Copy From Optional" Click="CopyFromOpt">
+                                        <MenuItem Tag="Server + Client" Header="Copy From Optional" Click="CopyFromOpt">
                                             <MenuItem.Icon>
                                                 <iconPacks:PackIconModern Kind="PageCopy"/>
                                             </MenuItem.Icon>
@@ -253,7 +253,7 @@
                                                     </Setter.Value>
                                                 </Setter>
                                             </Trigger>
-                                            <Trigger Property="Content" Value="Client + Server">
+                                            <Trigger Property="Content" Value="Server + Client">
                                                 <Setter Property="ContextMenu" Value="{StaticResource ClientContextMenu}" />
                                                 <Setter Property="ContentTemplate">
                                                     <Setter.Value>
@@ -319,7 +319,7 @@
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
                                     </DataGridTemplateColumn>
-                                    <DataGridTemplateColumn Header="Client + Server" Width="auto">
+                                    <DataGridTemplateColumn Header="Server + Client" Width="auto">
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate DataType="models:ProfileMod">
                                                 <CheckBox IsChecked="{Binding ClientSideChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center"/>
