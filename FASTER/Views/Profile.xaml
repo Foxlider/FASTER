@@ -260,7 +260,7 @@
                                                         <DataTemplate>
                                                             <ContentControl Content="{Binding}">
                                                                 <ToolTipService.ToolTip>
-                                                                    <ToolTip Content="Loaded by Client and Server" />
+                                                                    <ToolTip Content="Loaded by both Server and Client" />
                                                                 </ToolTipService.ToolTip>
                                                             </ContentControl>
                                                         </DataTemplate>
