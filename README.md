@@ -77,16 +77,16 @@ A complete Documentation is available on the [GitHub Wiki](https://github.com/Fo
   <summary>Screenshots below</summary> 
    
   Main Menu 
-  ![MainMenu](https://i.imgur.com/IzCnEu1.png)
+  ![MainMenu](https://user-images.githubusercontent.com/19773387/147384230-3da8cb8d-4a3a-4ae2-90f4-3fc90a3954ad.png)
   
   Profile Mods Menu 
-  ![Profile Mods Menu](https://i.imgur.com/TZ8837d.png)
+  ![Profile Mods Menu](https://private-user-images.githubusercontent.com/78136088/316247430-2488268d-9a55-44cc-9010-c306c5056a33.PNG?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MTEyMDQwMTksIm5iZiI6MTcxMTIwMzcxOSwicGF0aCI6Ii83ODEzNjA4OC8zMTYyNDc0MzAtMjQ4ODI2OGQtOWE1NS00NGNjLTkwMTAtYzMwNmM1MDU2YTMzLlBORz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDAzMjMlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQwMzIzVDE0MjE1OVomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTQxODRkOGZiOGNhN2E1ZDJkYjE5ODY1YzIyZTNiMmZjMGMyZjk4ZGZlMWYwYjMzM2IwMTVhN2YzNDUwYmQ5NDkmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.sum-WMePl76xam_FsJjLCys6c0Eo041wTrE2Hmjnm_M)
   
-  Steam Mods Menu 
-  ![Steam Mods Menu](https://i.imgur.com/IzalCN1.png)
+  Mods Menu 
+  ![Steam Mods Menu](https://user-images.githubusercontent.com/19773387/147383857-ab63ab77-aeef-42ad-8b51-e0708096fbf9.png)
   
   Profile Menu 
-  ![Profile Menu](https://i.imgur.com/BUUVuF1.png)
+  ![Profile Menu](https://user-images.githubusercontent.com/19773387/95013037-d0c0cc80-063d-11eb-8ca1-ba3f445e5461.png)
    
 </details>
   
