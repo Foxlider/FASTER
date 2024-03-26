@@ -172,7 +172,6 @@ namespace FASTER.Models
             }
         }
 
-
         public string ApiKey
         {
             get => !string.IsNullOrEmpty(Settings.Default.SteamAPIKey)
