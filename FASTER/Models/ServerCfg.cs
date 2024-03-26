@@ -431,7 +431,7 @@ namespace FASTER.Models
                 RaisePropertyChanged("ArmaUnitsTimeout");
             }
         }
-		
+
 		 public int QueueSizeLogG
         {
             get => queueSizeLogG;

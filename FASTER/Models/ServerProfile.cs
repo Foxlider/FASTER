@@ -100,6 +100,7 @@ namespace FASTER.Models
                 RaisePropertyChanged("Name");
             }
         }
+
         public string Executable
         {
             get => _executable;
@@ -508,7 +509,7 @@ namespace FASTER.Models
 
         private string GetCommandLine()
         {
-            
+
 
             string config = Path.Combine(ArmaPath, "Servers", Id, "server_config.cfg");
             string basic  = Path.Combine(ArmaPath, "Servers", Id, "server_basic.cfg");
@@ -603,7 +604,7 @@ namespace FASTER.Models
                 RaisePropertyChanged("HeadlessModsChecked");
             }
         }
-		
+
         public bool OptChecked
         {
             get => optChecked;

@@ -71,27 +71,27 @@
                                 <RowDefinition Height="auto"/>
                             </Grid.RowDefinitions>
                             <StackPanel Orientation="Horizontal" Panel.ZIndex="1">
-                                <Button Margin="0, 5" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Padding="5,3" Click="LoadFromFile_Click">
+                                <Button Margin="0, 5" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Padding="5,5" Click="LoadFromFile_Click">
                                     <StackPanel Orientation="Horizontal">
                                         <iconPacks:PackIconModern Kind="PageXml"/>
                                         <TextBlock Text="Load from File" Margin="10,0"/>
                                     </StackPanel>
                                 </Button>
-                                <Button Margin="5, 5" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Padding="5,3" Click="CopyModKeys_Click">
+                                <Button Margin="5, 5" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Padding="5,5" Click="CopyModKeys_Click">
                                     <StackPanel Orientation="Horizontal">
                                         <iconPacks:PackIconModern Kind="PageCopy"/>
                                         <TextBlock Text="Copy Mods Keys" Margin="10,0"/>
                                     </StackPanel>
                                 </Button>
-                                <Button Margin="5, 5" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}"
-                                        BorderThickness="0" Padding="5,3" Click="ClearModKeys_Click">
+                                <Button Margin="5,5" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}"
+                                        BorderThickness="0" Padding="5,5" Click="ClearModKeys_Click">
                                     <StackPanel Orientation="Horizontal">
                                         <iconPacks:PackIconModern Kind="PageDelete" />
                                         <TextBlock Text="Clear Keys" Margin="10,0" />
                                     </StackPanel>
                                 </Button>
                                 <Canvas>
-                                    <Expander Header="DLCs" Margin="3" mah:ControlsHelper.ContentCharacterCasing="Normal" Background="{Binding Mode=OneWay, Source={StaticResource MahApps.Brushes.Menu.Background}}">
+                                    <Expander Header="DLCs" Margin="5" mah:ControlsHelper.ContentCharacterCasing="Normal" Background="{Binding Mode=OneWay, Source={StaticResource MahApps.Brushes.Menu.Background}}">
                                         <StackPanel Orientation="Vertical">
                                             <CheckBox IsChecked="{Binding Profile.ContactDLCChecked}" Content="Contact DLC" Margin="10,3" Width="105" HorizontalAlignment="Left"/>
                                             <CheckBox IsChecked="{Binding Profile.GMDLCChecked}" Content="GM DLC" Margin="10,3" HorizontalAlignment="Left"/>
@@ -117,54 +117,54 @@
 
 
                                     <ContextMenu x:Key="ServerContextMenu">
-                                        <MenuItem Tag="Server" Header="Select All" Click="ModsSelectAll">
+                                        <MenuItem Tag="Server Only" Header="Select All" Click="ModsSelectAll">
                                             <MenuItem.Icon>
                                                 <iconPacks:PackIconModern Kind="CheckmarkThick" Margin="5"/>
                                             </MenuItem.Icon>
                                         </MenuItem>
-                                        <MenuItem Tag="Server" Header="Select None" Click="ModsSelectNone">
+                                        <MenuItem Tag="Server Only" Header="Select None" Click="ModsSelectNone">
                                             <MenuItem.Icon>
                                                 <iconPacks:PackIconModern Kind="CheckmarkUncrossed" Margin="5"/>
                                             </MenuItem.Icon>
                                         </MenuItem>
-                                        <MenuItem Tag="Server" Header="Copy From Client" Click="CopyFromClient">
+                                        <MenuItem Tag="Server Only" Header="Copy From Client" Click="CopyFromClient">
                                             <MenuItem.Icon>
                                                 <iconPacks:PackIconModern Kind="PageCopy" Margin="5"/>
                                             </MenuItem.Icon>
                                         </MenuItem>
-                                        <MenuItem Tag="Server" Header="Copy From Headless" Click="CopyFromHeadless">
+                                        <MenuItem Tag="Server Only" Header="Copy From Headless" Click="CopyFromHeadless">
                                             <MenuItem.Icon>
                                                 <iconPacks:PackIconModern Kind="PageCopy" Margin="5"/>
                                             </MenuItem.Icon>
                                         </MenuItem>
-                                        <MenuItem Tag="Server" Header="Copy From Optional" Click="CopyFromOpt">
+                                        <MenuItem Tag="Server Only" Header="Copy From Optional" Click="CopyFromOpt">
                                             <MenuItem.Icon>
                                                 <iconPacks:PackIconModern Kind="PageCopy"/>
                                             </MenuItem.Icon>
                                         </MenuItem>
                                     </ContextMenu>
                                     <ContextMenu x:Key="ClientContextMenu">
-                                        <MenuItem Tag="Client" Header="Select All" Click="ModsSelectAll">
+                                        <MenuItem Tag="Server + Client" Header="Select All" Click="ModsSelectAll">
                                             <MenuItem.Icon>
                                                 <iconPacks:PackIconModern Kind="CheckmarkThick"/>
                                             </MenuItem.Icon>
                                         </MenuItem>
-                                        <MenuItem Tag="Client" Header="Select None" Click="ModsSelectNone">
+                                        <MenuItem Tag="Server + Client" Header="Select None" Click="ModsSelectNone">
                                             <MenuItem.Icon>
                                                 <iconPacks:PackIconModern Kind="CheckmarkUncrossed"/>
                                             </MenuItem.Icon>
                                         </MenuItem>
-                                        <MenuItem Tag="Client" Header="Copy From Server" Click="CopyFromServer">
+                                        <MenuItem Tag="Server + Client" Header="Copy From Server" Click="CopyFromServer">
                                             <MenuItem.Icon>
                                                 <iconPacks:PackIconModern Kind="PageCopy"/>
                                             </MenuItem.Icon>
                                         </MenuItem>
-                                        <MenuItem Tag="Client" Header="Copy From Headless" Click="CopyFromHeadless">
+                                        <MenuItem Tag="Server + Client" Header="Copy From Headless" Click="CopyFromHeadless">
                                             <MenuItem.Icon>
                                                 <iconPacks:PackIconModern Kind="PageCopy"/>
                                             </MenuItem.Icon>
                                          </MenuItem>
-										 <MenuItem Tag="Client" Header="Copy From Optional" Click="CopyFromOpt">
+                                        <MenuItem Tag="Server + Client" Header="Copy From Optional" Click="CopyFromOpt">
                                             <MenuItem.Icon>
                                                 <iconPacks:PackIconModern Kind="PageCopy"/>
                                             </MenuItem.Icon>
@@ -240,28 +240,28 @@
                                                     </Setter.Value>
                                                 </Setter>
                                             </Trigger>
-                                            <Trigger Property="Content" Value="Server">
+                                            <Trigger Property="Content" Value="Server Only">
                                                 <Setter Property="ContextMenu" Value="{StaticResource ServerContextMenu}" />
                                                 <Setter Property="ContentTemplate">
                                                     <Setter.Value>
                                                         <DataTemplate>
                                                             <ContentControl Content="{Binding}">
                                                                 <ToolTipService.ToolTip>
-                                                                    <ToolTip Content="Mods loaded for Server only"/>
+                                                                    <ToolTip Content="Loaded by Server only"/>
                                                                 </ToolTipService.ToolTip>
                                                             </ContentControl>
                                                         </DataTemplate>
                                                     </Setter.Value>
                                                 </Setter>
                                             </Trigger>
-                                            <Trigger Property="Content" Value="Client">
+                                            <Trigger Property="Content" Value="Server + Client">
                                                 <Setter Property="ContextMenu" Value="{StaticResource ClientContextMenu}" />
                                                 <Setter Property="ContentTemplate">
                                                     <Setter.Value>
                                                         <DataTemplate>
                                                             <ContentControl Content="{Binding}">
                                                                 <ToolTipService.ToolTip>
-                                                                    <ToolTip Content="Mods used by the clients" />
+                                                                    <ToolTip Content="Loaded by both Server and Client" />
                                                                 </ToolTipService.ToolTip>
                                                             </ContentControl>
                                                         </DataTemplate>
@@ -275,7 +275,7 @@
                                                         <DataTemplate>
                                                             <ContentControl Content="{Binding}">
                                                                 <ToolTipService.ToolTip>
-                                                                    <ToolTip Content="Mods loaded by the Headless Clients" />
+                                                                    <ToolTip Content="Loaded by Headless Clients" />
                                                                 </ToolTipService.ToolTip>
                                                             </ContentControl>
                                                         </DataTemplate>
@@ -313,14 +313,14 @@
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
                                     </DataGridTemplateColumn>
-                                    <DataGridTemplateColumn Header="Server" Width="auto">
+                                    <DataGridTemplateColumn Header="Server Only" Width="auto">
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate DataType="models:ProfileMod">
                                                 <CheckBox IsChecked="{Binding ServerSideChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center"/>
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
                                     </DataGridTemplateColumn>
-                                    <DataGridTemplateColumn Header="Client" Width="auto">
+                                    <DataGridTemplateColumn Header="Server + Client" Width="auto">
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate DataType="models:ProfileMod">
                                                 <CheckBox IsChecked="{Binding ClientSideChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center"/>
@@ -646,7 +646,7 @@
                                                 <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.ArmaUnitsTimeout}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Arma Units Timeout" Margin="5"/>
                                                 <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.QueueSizeLogG}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Queue Size LogG" Margin="5"/>
                                             </StackPanel>
-											
+
                                         <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.SteamProtocolMaxDataSize}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Steam Protocol Max Data Size" Margin="5"/>
 
                                         <TextBox MinHeight="50" Margin="5" Text="{Binding Path=Profile.ServerCfg.Admins}" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Admins IDs (one per line)"/>
