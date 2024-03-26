@@ -99,6 +99,7 @@
                                             <CheckBox IsChecked="{Binding Profile.CSLADLCChecked}" Content="CSLA DLC" Margin="10,3" HorizontalAlignment="Left"/>
                                             <CheckBox IsChecked="{Binding Profile.WSDLCChecked}" Content="Western Sahara DLC" Margin="10,3" HorizontalAlignment="Left"/>
                                             <CheckBox IsChecked="{Binding Profile.SPEDLCChecked}" Content="Spearhead 1944 DLC" Margin="10,3" HorizontalAlignment="Left"/>
+                                            <CheckBox IsChecked="{Binding Profile.RFDLCChecked}" Content="Reaction Forces DLC" Margin="10,3" HorizontalAlignment="Left"/>
                                         </StackPanel>
                                     </Expander>
                                 </Canvas>

@@ -161,6 +161,16 @@ namespace FASTER.Models
             }
         }
 
+        public bool UsingRFDlc
+        {
+            get => Settings.Default.usingRFDlc;
+            set
+            {
+                Settings.Default.usingRFDlc = value;
+                Settings.Default.Save();
+                RaisePropertyChanged(nameof(UsingRFDlc));
+            }
+        }
 
         public string ApiKey
         {

@@ -118,6 +118,8 @@
                               Margin="10,3" HorizontalAlignment="Left" />
                     <CheckBox IsChecked="{Binding Parameters.UsingSPEDlc}" Content="Spearhead 1944 DLC"
                               Margin="10,3" HorizontalAlignment="Left"/>
+                    <CheckBox IsChecked="{Binding Parameters.UsingRFDlc}" Content="Reaction Forces DLC"
+                              Margin="10,3" HorizontalAlignment="Left"/>
                 </StackPanel>
                 <Button Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Grid.Row="4" Content="Update" Margin="10" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Click="Update_Click"/>
             </Grid>
