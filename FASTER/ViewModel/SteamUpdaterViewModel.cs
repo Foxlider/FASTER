@@ -160,7 +160,7 @@ namespace FASTER.ViewModel
                 {233793, "Arma 3 Server Creator DLC - CSLA"},
                 {233794, "Arma 3 Server Creator DLC - SOGPF"},
                 {233795, "Arma 3 Server Creator DLC - WS"},
-                {2647760, "Arma 3 Server Creator DLC - RF"},
+                {233799, "Arma 3 Server Creator DLC - RF"},
             };
 
             //IReadOnlyList<Depot> depotsList;
