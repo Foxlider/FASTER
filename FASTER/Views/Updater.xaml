@@ -54,7 +54,7 @@
                     <Label Margin="2" Content="Mod Installer Settings"/>
                     <Separator/>
                 </StackPanel>
-                
+
                 <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="5,10">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />

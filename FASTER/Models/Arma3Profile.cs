@@ -153,7 +153,7 @@ namespace FASTER.Models
             }
         }
 		
-		public string ForcedDifficulty
+        public string ForcedDifficulty
         {
             get => ProfileCfgArrays.ForcedDifficultyStrings[forcedDifficulty];
             set
@@ -361,7 +361,7 @@ namespace FASTER.Models
                 "\t\t\t/* Personal awareness */\r\n" +
                 $"\t\t\tweaponInfo = {weaponInfo};\t\t\t// Weapon info (0 = never, 1 = fade out, 2 = always)\r\n" +
                 $"\t\t\tstanceIndicator = {stanceIndicator};\t// Stance indicator (0 = never, 1 = fade out, 2 = always)\r\n" +
-				$"\t\t\tforcedDifficulty = {forcedDifficulty};\t// Forced difficulty (0 = Recruit, 1 = Regular, 2 = Veteran, 3 = Custom)\r\n" +
+                $"\t\t\tforcedDifficulty = {forcedDifficulty};\t// Forced difficulty (0 = Recruit, 1 = Regular, 2 = Veteran, 3 = Custom)\r\n" +
                 $"\t\t\tstaminaBar = {staminaBar};\t\t\t// Stamina bar\r\n" +
                 $"\t\t\tweaponCrosshair = {weaponCrosshair};\t// Weapon crosshair\r\n" +
                 $"\t\t\tvisionAid = {visionAid};\t\t\t// Vision aid\r\n" +

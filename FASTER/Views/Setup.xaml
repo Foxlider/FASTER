@@ -13,7 +13,7 @@
                  Title="FASTER - Initial Setup"
                  Width="400"
                  SizeToContent="Height"
-    
+
                  WindowStartupLocation="CenterScreen">
     <StackPanel>
         <StackPanel Orientation="Vertical">
@@ -63,6 +63,6 @@
                 <TextBlock Name="IFlyoutSetupMessage" HorizontalAlignment="Center"  VerticalAlignment="Center" TextWrapping="WrapWithOverflow" Text="TEXT" TextAlignment="Center"/>
             </mah:Flyout>
         </Grid>
-        
+
     </StackPanel>
 </mah:MetroWindow>

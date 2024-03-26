@@ -88,7 +88,7 @@ namespace FASTER.Models
         { PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property)); }
     }
 
-    
+
     [Serializable] 
     public class ArmaMod : INotifyPropertyChanged
     {
@@ -106,7 +106,7 @@ namespace FASTER.Models
         private bool   _isLoading;
         private bool   _isSelected;
 
-        
+
         public uint   WorkshopId       
         { 
             get => _workshopId;
@@ -136,6 +136,7 @@ namespace FASTER.Models
                 RaisePropertyChanged("Author");
             }
         }
+
         public string Path
         {
             get => _path;
@@ -145,6 +146,7 @@ namespace FASTER.Models
                 RaisePropertyChanged("Path");
             }
         }
+
         public ulong SteamLastUpdated
         {
             get => _steamLastUpdated;
@@ -154,6 +156,7 @@ namespace FASTER.Models
                 RaisePropertyChanged("SteamLasttUpdated");
             }
         }
+
         public ulong  LocalLastUpdated
         {
             get => _localLastUpdated;
@@ -163,6 +166,7 @@ namespace FASTER.Models
                 RaisePropertyChanged("LocalLastUpdated");
             }
         }
+
         public bool   PrivateMod
         {
             get => _privateMod;
@@ -172,6 +176,7 @@ namespace FASTER.Models
                 RaisePropertyChanged("PrivateMod");
             }
         }
+
         public bool   IsLocal
         {
             get => _isLocal;
@@ -181,6 +186,7 @@ namespace FASTER.Models
                 RaisePropertyChanged("IsLocal");
             }
         }
+
         public string Status
         {
             get => _status;
@@ -190,6 +196,7 @@ namespace FASTER.Models
                 RaisePropertyChanged("Status");
             }
         }
+
         public long   Size
         {
             get => _size;
@@ -210,7 +217,7 @@ namespace FASTER.Models
                 RaisePropertyChanged("IsLoading");
             }
         }
-		
+
         [XmlIgnore]
         public bool IsSelected
         {
@@ -221,7 +228,7 @@ namespace FASTER.Models
                 RaisePropertyChanged("IsSelected");
             }
         }
-        
+
         internal void CheckModSize()
         {
             IsLoading = true;
@@ -232,7 +239,7 @@ namespace FASTER.Models
                 IsLoading = false;
                 return;
             }
-            
+
             var ChildProcess = Task.Factory.StartNew(() => GetDirectorySize(Path));
             Size      = ChildProcess.Result;
             IsLoading = false;
@@ -251,7 +258,7 @@ namespace FASTER.Models
             IsLoading = true;
 
             UpdateInfos(false);
-            
+
             Path = System.IO.Path.Combine(Properties.Settings.Default.modStagingDirectory, WorkshopId.ToString());
             if (!Directory.Exists(Path))
                 Directory.CreateDirectory(Path);
@@ -275,7 +282,7 @@ namespace FASTER.Models
                     LocalLastUpdated = (ulong) ts.TotalSeconds;
                     break;
             }
-                
+
             IsLoading = false;
         }
 
