@@ -90,7 +90,7 @@ jobs:
 
     # Pub
     - name: Publish the application $env:Runtime
-      run: dotnet publish --configuration $env:Configuration -a $env:Runtime --self-contained true /p:useapphost=true --output .\Release_Nightly ./FASTER/FASTER.csproj
+      run: dotnet publish --configuration $env:Configuration -a $env:Runtime --self-contained true /p:useapphost=true --output .\Release_Nightly_$env:Runtime ./FASTER/FASTER.csproj
       env:
         Runtime: ${{ matrix.runtime }}
                  
@@ -99,8 +99,8 @@ jobs:
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4.3.1
       with:
-        name: Release_Nightly_$env:Runtime
-        path: .\Release_Nightly
+        name: Release_Nightly_${{ env.Runtime }}
+        path: .\Release_Nightly_${{ env.Runtime }}
       env:
         Runtime: ${{ matrix.runtime }}
         
