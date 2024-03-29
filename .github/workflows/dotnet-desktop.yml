@@ -84,7 +84,7 @@ jobs:
 
     # Build
     - name: Build the application
-      run: dotnet build --configuration $env:Configuration -a $env:Runtime./FASTER/FASTER.csproj
+      run: dotnet build --configuration $env:Configuration -a $env:Runtime ./FASTER/FASTER.csproj
       env:
         Runtime: ${{ matrix.runtime }}
 
