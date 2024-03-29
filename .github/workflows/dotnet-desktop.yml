@@ -50,7 +50,7 @@ jobs:
 
     strategy:
       matrix:
-        configuration: [Debug, Release]
+        configuration: [Release]
 
     runs-on: windows-latest  # For a list of available runner types, refer to
                              # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idruns-on
@@ -87,7 +87,17 @@ jobs:
 
     # Restore the application to populate the obj folder with RuntimeIdentifiers
     - name: Restore the application
-      run: msbuild $env:Solution_Name /t:Restore /p:Configuration=$env:Configuration
+      run: dotnet restore
+
+    # Build
+    - name: Build the application
+      run: dotnet build --configuration $env:Configuration -r win-x64
+      env:
+        Configuration: ${{ matrix.configuration }}
+
+    # Pub
+    - name: Publish the application
+      run: dotnet publish --configuration $env:Configuration -r win-x64 --self-contained true /p:useapphost=true --output .\Release_Nightly_x64
       env:
         Configuration: ${{ matrix.configuration }}
         
@@ -97,7 +107,7 @@ jobs:
         # Filename for archive
         filename: nightly_x64.zip
         # Base path for archive files
-        path: .
+        path: .\Release_Nightly_x64
           
 
     # Upload the MSIX package: https://github.com/marketplace/actions/upload-a-build-artifact
