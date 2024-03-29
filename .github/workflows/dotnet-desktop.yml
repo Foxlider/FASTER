@@ -78,6 +78,8 @@ jobs:
       uses: microsoft/setup-msbuild@v2
       with:
         msbuild-architecture: x64
+        vs-version: '[17.0, 18.0)' #VS 2022
+        
 
     # Execute all unit tests in the solution
     - name: Execute unit tests
