@@ -100,7 +100,7 @@ jobs:
       uses: actions/upload-artifact@v4.3.1
       with:
         name: Release_Nightly_${{ env.Runtime }}
-        path: .\Release_Nightly_${{ env.Runtime }}
+        path: .\FASTER_Nightly_${{ env.Runtime }}
       env:
         Runtime: ${{ matrix.runtime }}
         
