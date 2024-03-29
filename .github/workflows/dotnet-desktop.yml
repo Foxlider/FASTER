@@ -88,18 +88,30 @@ jobs:
         Configuration: ${{ matrix.configuration }}
 
     # Pub
-    - name: Publish the application
-      run: dotnet publish --configuration $env:Configuration --self-contained true /p:useapphost=true --output .\Release_Nightly_x64
+    - name: Publish the application x64
+      run: dotnet publish --configuration $env:Configuration -r win-x64 --self-contained true /p:useapphost=true --output .\Release_Nightly_x64
+      env:
+        Configuration: ${{ matrix.configuration }}
+    - name: Publish the application x86
+      run: dotnet publish --configuration $env:Configuration -r win-x86 --self-contained true /p:useapphost=true --output .\Release_Nightly_x86
       env:
         Configuration: ${{ matrix.configuration }}
         
-    - name: Zip Release
+    - name: Zip Release x64
       uses: TheDoctor0/zip-release@0.7.6
       with:
         # Filename for archive
         filename: nightly_x64.zip
         # Base path for archive files
         path: .\Release_Nightly_x64
+        
+    - name: Zip Release x86
+      uses: TheDoctor0/zip-release@0.7.6
+      with:
+        # Filename for archive
+        filename: nightly_x86.zip
+        # Base path for archive files
+        path: .\Release_Nightly_x86
           
 
     # Upload the MSIX package: https://github.com/marketplace/actions/upload-a-build-artifact
@@ -108,3 +120,10 @@ jobs:
       with:
         name: Nightly Zip Package
         path: nightly_x64.zip
+        
+    # Upload the MSIX package: https://github.com/marketplace/actions/upload-a-build-artifact
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: Nightly Zip Package
+        path: nightly_x86.zip
