@@ -91,13 +91,13 @@ jobs:
 
     # Build
     - name: Build the application
-      run: dotnet build --configuration $env:Configuration -r win-x64
+      run: dotnet build --configuration $env:Configuration
       env:
         Configuration: ${{ matrix.configuration }}
 
     # Pub
     - name: Publish the application
-      run: dotnet publish --configuration $env:Configuration -r win-x64 --self-contained true /p:useapphost=true --output .\Release_Nightly_x64
+      run: dotnet publish --configuration $env:Configuration --self-contained true /p:useapphost=true --output .\Release_Nightly_x64
       env:
         Configuration: ${{ matrix.configuration }}
         
