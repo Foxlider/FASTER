@@ -50,12 +50,13 @@ jobs:
 
     strategy:
       matrix:
-        configuration: [Release]
+        runtime: [x64, x86]
 
     runs-on: windows-latest  # For a list of available runner types, refer to
                              # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idruns-on
 
     env:
+      Configuration: Release
       Solution_Name: FASTER                         # Replace with your solution name, i.e. MyWpfApp.sln.
       Test_Project_Path: FASTERTests\FASTERTests.csproj                # Replace with the path to your test project, i.e. MyWpfApp.Tests\MyWpfApp.Tests.csproj.
       Wap_Project_Directory: FASTER    # Replace with the Wap project directory relative to the solution, i.e. MyWpfApp.Package.
@@ -83,43 +84,25 @@ jobs:
 
     # Build
     - name: Build the application
-      run: dotnet build --configuration $env:Configuration ./FASTER/FASTER.csproj
+      run: dotnet build --configuration $env:Configuration -a $env:Runtime./FASTER/FASTER.csproj
       env:
-        Configuration: ${{ matrix.configuration }}
+        Runtime: ${{ matrix.runtime }}
 
     # Pub
     - name: Publish the application x64
-      run: dotnet publish --configuration $env:Configuration -r win-x64 --self-contained true /p:useapphost=true --output .\Release_Nightly_x64 ./FASTER/FASTER.csproj
+      run: dotnet publish --configuration $env:Configuration -a $env:Runtime --self-contained true /p:useapphost=true --output .\Release_Nightly_$env:Runtime ./FASTER/FASTER.csproj
       env:
-        Configuration: ${{ matrix.configuration }}
-    #- name: Publish the application x86
-    #  run: dotnet publish --configuration $env:Configuration -r win-x86 --self-contained true /p:useapphost=true --output .\Release_Nightly_x86
-    #  env:
-    #    Configuration: ${{ matrix.configuration }}
-        
-    - name: Zip Release x64
-      uses: TheDoctor0/zip-release@0.7.6
-      with:
-        # Filename for archive
-        filename: nightly_x64.zip
-        # Base path for archive files
-        path: .\Release_Nightly_x64
-        
-    #- name: Zip Release x86
-    #  uses: TheDoctor0/zip-release@0.7.6
-    #  with:
-    #    # Filename for archive
-    #    filename: nightly_x86.zip
-    #    # Base path for archive files
-    #    path: .\Release_Nightly_x86
-          
+        Runtime: ${{ matrix.runtime }}
+                 
 
     # Upload the MSIX package: https://github.com/marketplace/actions/upload-a-build-artifact
     - name: Upload build artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4.3.1
       with:
-        name: Nightly Zip Package
-        path: nightly_x64.zip
+        name: Release_Nightly_$env:Runtime
+        path: .\Release_Nightly_$env:Runtime
+      env:
+        Runtime: ${{ matrix.runtime }}
         
     # Upload the MSIX package: https://github.com/marketplace/actions/upload-a-build-artifact
     #- name: Upload build artifacts
