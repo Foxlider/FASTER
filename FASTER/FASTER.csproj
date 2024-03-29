@@ -1,10 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net7.0-windows</TargetFramework>
+    <TargetFramework>net8.0-windows</TargetFramework>
     <PublishSingleFile Condition="'$(Configuration)' == 'Release'">true</PublishSingleFile>
     <PublishReadyToRun>true</PublishReadyToRun>
-    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract> 
     <PublishReadyToRunComposite>false</PublishReadyToRunComposite>
@@ -23,12 +22,12 @@
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>FASTERKey.snk</AssemblyOriginatorKeyFile>
     <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
-    <CodeAnalysisRuleSet>..\.sonarlint\foxlider_fastercsharp.ruleset</CodeAnalysisRuleSet>
     <EnableNETAnalyzers>false</EnableNETAnalyzers>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <NoWarn>1701;1702;NU1701;CS8002</NoWarn>
-    <PlatformTarget>x64</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>none</DebugType>
     <DebugSymbols>false</DebugSymbols>
     <Optimize>True</Optimize>
@@ -48,9 +47,6 @@
   <ItemGroup>
     <None Remove="Resources\FASTER.ico" />
     <None Remove="Resources\FasterSplash.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <AdditionalFiles Include="..\.sonarlint\foxlider_faster\CSharp\SonarLint.xml" Link="SonarLint.xml" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Autoupdater.NET.Official" Version="1.8.2" />
