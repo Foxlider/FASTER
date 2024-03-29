@@ -89,8 +89,8 @@ jobs:
         Runtime: ${{ matrix.runtime }}
 
     # Pub
-    - name: Publish the application x64
-      run: dotnet publish --configuration $env:Configuration -a $env:Runtime --self-contained true /p:useapphost=true --output .\Release_Nightly_$env:Runtime ./FASTER/FASTER.csproj
+    - name: Publish the application $env:Runtime
+      run: dotnet publish --configuration $env:Configuration -a $env:Runtime --self-contained true /p:useapphost=true --output .\Release_Nightly ./FASTER/FASTER.csproj
       env:
         Runtime: ${{ matrix.runtime }}
                  
@@ -100,7 +100,7 @@ jobs:
       uses: actions/upload-artifact@v4.3.1
       with:
         name: Release_Nightly_$env:Runtime
-        path: .\Release_Nightly_$env:Runtime
+        path: .\Release_Nightly
       env:
         Runtime: ${{ matrix.runtime }}
         
