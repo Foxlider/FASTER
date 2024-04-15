@@ -44,7 +44,7 @@ namespace FASTER.Models
         private ushort tacticalPing = 1;
 
         private ushort aiLevelPreset = 3;
-		private double skillAi = 0.5;
+        private double skillAi = 0.5;
         private double precisionAi = 0.5;
 
         private string armaProfileContent;
