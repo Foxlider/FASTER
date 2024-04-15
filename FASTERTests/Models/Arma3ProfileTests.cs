@@ -38,7 +38,6 @@ namespace FASTER.Models.Tests
             Assert.IsTrue(ProfileCfgArrays.EnabledStrings.Contains(_p.AutoReport));
             Assert.IsTrue(ProfileCfgArrays.EnabledStrings.Contains(_p.MultipleSaves));
             Assert.IsTrue(ProfileCfgArrays.TacticalPingStrings.Contains(_p.TacticalPing));
-            Assert.IsTrue(ProfileCfgArrays.ForcedDifficultyStrings.Contains(_p.ForcedDifficulty));
             Assert.IsFalse(string.IsNullOrWhiteSpace(_p.ArmaProfileContent));
             Assert.IsNotNull(_p.PrecisionAi);
             Assert.IsNotNull(_p.SkillAi);
@@ -71,7 +70,6 @@ namespace FASTER.Models.Tests
             Assert.DoesNotThrow(() => _p.AutoReport = ProfileCfgArrays.EnabledStrings[0]);
             Assert.DoesNotThrow(() => _p.MultipleSaves = ProfileCfgArrays.EnabledStrings[0]);
             Assert.DoesNotThrow(() => _p.TacticalPing = ProfileCfgArrays.TacticalPingStrings[0]);
-            Assert.DoesNotThrow(() => _p.ForcedDifficulty = ProfileCfgArrays.ForcedDifficultyStrings[0]);
             Assert.DoesNotThrow(() => _p.SkillAi = 0.5);
             Assert.DoesNotThrow(() => _p.PrecisionAi = 0.5);
         }
