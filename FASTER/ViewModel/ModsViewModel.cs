@@ -136,6 +136,7 @@ namespace FASTER.ViewModel
 
             ModsCollection.DeleteSteamMod(mod.WorkshopId);
         }
+
         internal void DeleteSelectedMods()
         {
             var selectedArmaMods = new List<ArmaMod>(ModsCollection.ArmaMods.Where(m => m.IsSelected));
@@ -156,7 +157,13 @@ namespace FASTER.ViewModel
             {
                 {"Name", Properties.Settings.Default.steamUserName}
             });
-		}	
+            var copyArmaMods = new List<ArmaMod>(ModsCollection.ArmaMods);
+            foreach (var mod in copyArmaMods)
+            {
+                DeleteMod(mod);
+            }
+        }
+	
         public void OpenModPage(ArmaMod mod)
         {
             if (mod == null)
