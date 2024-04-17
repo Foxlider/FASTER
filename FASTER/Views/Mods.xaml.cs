@@ -77,9 +77,9 @@ namespace FASTER.Views
             ((ModsViewModel) DataContext)?.CheckForUpdates();
         }
 
-        private async void UpdateAll_Click(object sender, RoutedEventArgs e)
+        private void UpdateAll_Click(object sender, RoutedEventArgs e)
         {
-            await ((ModsViewModel) DataContext)?.UpdateAll();
+            ((ModsViewModel) DataContext)?.UpdateAll();
         }
 		
 		private async void DeleteAll_Click(object sender, RoutedEventArgs e)

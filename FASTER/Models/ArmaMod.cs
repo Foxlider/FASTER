@@ -62,20 +62,20 @@ namespace FASTER.Models
 
         public void DeleteSteamMod(uint workshopId)
         {
-            
+
 
             try
             {
                 var currentProfiles = ReloadMods();
                 var item            = currentProfiles.ArmaMods.FirstOrDefault(x => x.WorkshopId == workshopId);
-                
+
                 if (item != null)
                 {
                     if(Directory.Exists(item.Path))
                         Directory.Delete(item.Path, true);
                     currentProfiles.ArmaMods.Remove(item);
                 }
-                
+
                 Properties.Settings.Default.Save();
             }
             catch
@@ -107,7 +107,7 @@ namespace FASTER.Models
         private bool   _isSelected;
 
 
-        public uint   WorkshopId       
+        public uint   WorkshopId
         { 
             get => _workshopId;
             set
@@ -245,7 +245,6 @@ namespace FASTER.Models
             IsLoading = false;
         }
 
-
         internal async Task UpdateModAsync()
         {
             if (IsLocal)
@@ -285,7 +284,6 @@ namespace FASTER.Models
 
             IsLoading = false;
         }
-
 
         internal void UpdateInfos(bool checkFileSize = true)
         {
