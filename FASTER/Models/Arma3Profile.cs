@@ -10,9 +10,10 @@ namespace FASTER.Models
         public static string[] LimitedDistanceStrings { get; } = { "Never", "Limited Distance", "Always" };
         public static string[] FadeOutStrings { get; } = { "Never", "Fade Out", "Always" };
         public static string[] EnabledStrings { get; } = { "Disabled", "Enabled" };
-
+        public static string[] TacticalPingStrings { get; } = { "Disabled", "3D only", "Map only", "Both" };
         public static string[] AiPresetStrings { get; } = { "Low", "Normal", "High", "Custom" };
         public static string[] ThirdPersonStrings { get; } = { "Disabled", "Enabled", "Vehicles Only" };
+		public static string[] ForcedDifficultyStrings { get; } = { "Recruit", "Regular", "Veteran", "Custom" };
     }
 
     [Serializable]
@@ -43,10 +44,8 @@ namespace FASTER.Models
         private ushort tacticalPing = 1;
 
         private ushort aiLevelPreset = 3;
-
         private double skillAi = 0.5;
         private double precisionAi = 0.5;
-
 
         private string armaProfileContent;
 
@@ -282,10 +281,10 @@ namespace FASTER.Models
 
         public string TacticalPing
         {
-            get => ProfileCfgArrays.EnabledStrings[tacticalPing];
+            get => ProfileCfgArrays.TacticalPingStrings[tacticalPing];
             set
             {
-                tacticalPing = (ushort)Array.IndexOf(ProfileCfgArrays.EnabledStrings, value);
+                tacticalPing = (ushort)Array.IndexOf(ProfileCfgArrays.TacticalPingStrings, value);
                 RaisePropertyChanged("TacticalPing");
             }
         }
@@ -338,30 +337,30 @@ namespace FASTER.Models
                 "\t\t\t/* Simulation */\r\n" +
                 $"\t\t\treducedDamage = {reducedDamage};\t\t// Reduced damage\r\n" +
                 "\t\t\t/* Situational awareness */\r\n" +
-                $"\t\t\tgroupIndicators = {groupIndicators};\t// Group indicators (0 = never, 1 = limited distance, 2 = always)\r\n" +
-                $"\t\t\tfriendlyTags = {friendlyTags};\t\t// Friendly name tags (0 = never, 1 = limited distance, 2 = always)\r\n" +
+                $"\t\t\tgroupIndicators = {groupIndicators};\t\t// Group indicators (0 = never, 1 = limited distance, 2 = always)\r\n" +
+                $"\t\t\tfriendlyTags = {friendlyTags};\t\t\t// Friendly name tags (0 = never, 1 = limited distance, 2 = always)\r\n" +
                 $"\t\t\tenemyTags = {enemyTags};\t\t\t// Enemy name tags (0 = never, 1 = limited distance, 2 = always)\r\n" +
                 $"\t\t\tdetectedMines = {detectedMines};\t\t// Detected mines (0 = never, 1 = limited distance, 2 = always)\r\n" +
                 $"\t\t\tcommands = {commands};\t\t\t// Commands (0 = never, 1 = fade out, 2 = always)\r\n" +
                 $"\t\t\twaypoints = {waypoints};\t\t\t// Waypoints (0 = never, 1 = fade out, 2 = always)\r\n" +
-                $"\t\t\ttacticalPing = {tacticalPing};\t\t// Tactical ping (0 = disable, 1 = enable)\r\n" +
+                $"\t\t\ttacticalPing = {tacticalPing};\t\t\t// Tactical ping (0 = disable, 1 = In 3D scene, 2 = On map, 3 = Both)\r\n" +
                 "\t\t\t/* Personal awareness */\r\n" +
                 $"\t\t\tweaponInfo = {weaponInfo};\t\t\t// Weapon info (0 = never, 1 = fade out, 2 = always)\r\n" +
-                $"\t\t\tstanceIndicator = {stanceIndicator};\t// Stance indicator (0 = never, 1 = fade out, 2 = always)\r\n" +
+                $"\t\t\tstanceIndicator = {stanceIndicator};\t\t// Stance indicator (0 = never, 1 = fade out, 2 = always)\r\n" +
                 $"\t\t\tstaminaBar = {staminaBar};\t\t\t// Stamina bar\r\n" +
-                $"\t\t\tweaponCrosshair = {weaponCrosshair};\t// Weapon crosshair\r\n" +
+                $"\t\t\tweaponCrosshair = {weaponCrosshair};\t\t// Weapon crosshair\r\n" +
                 $"\t\t\tvisionAid = {visionAid};\t\t\t// Vision aid\r\n" +
                 "\t\t\t/* View */\r\n" +
-                $"\t\t\tthirdPersonView = {thirdPersonView};\t// 3rd person view\r\n" +
-                $"\t\t\tcameraShake = {cameraShake};\t\t// Camera shake\r\n" +
+                $"\t\t\tthirdPersonView = {thirdPersonView};\t\t// 3rd person view\r\n" +
+                $"\t\t\tcameraShake = {cameraShake};\t\t\t// Camera shake\r\n" +
                 "\t\t\t/* Multiplayer */\r\n" +
                 $"\t\t\tscoreTable = {scoreTable};\t\t\t// Score table\r\n" +
                 $"\t\t\tdeathMessages = {deathMessages};\t\t// Killed by\r\n" +
-                $"\t\t\tvonID = {vonID};\t\t\t\t// VoN ID\r\n" +
+                $"\t\t\tvonID = {vonID};\t\t\t// VoN ID\r\n" +
                 "\t\t\t/* Misc */\r\n" +
-                $"\t\t\tmapContentFriendly = {mapContentFriendly};\t// Map friendlies\t\t(0 = disabled, 1 = enabled) // since  Arma 3 v1.68\r\n" +
-                $"\t\t\tmapContentEnemy = {mapContentEnemy};    // Map Enemies\t\t\t(0 = disabled, 1 = enabled) // since  Arma 3 v1.68\r\n" +
-                $"\t\t\tmapContentMines = {mapContentMines};    // Map Mines \t\t\t(0 = disabled, 1 = enabled) // since  Arma 3 v1.68\r\n" +
+                $"\t\t\tmapContentFriendly = {mapContentFriendly};\t\t// Map friendlies\t\t(0 = disabled, 1 = enabled) // since  Arma 3 v1.68\r\n" +
+                $"\t\t\tmapContentEnemy = {mapContentEnemy};\t\t// Map Enemies\t\t(0 = disabled, 1 = enabled) // since  Arma 3 v1.68\r\n" +
+                $"\t\t\tmapContentMines = {mapContentMines};\t\t// Map Mines \t\t(0 = disabled, 1 = enabled) // since  Arma 3 v1.68\r\n" +
                 $"\t\t\tautoReport = {autoReport};\t\t\t// (former autoSpot) Automatic reporting of spotted enemied by players only. This doesn't have any effect on AIs.\r\n" +
                 $"\t\t\tmultipleSaves = {multipleSaves};\t\t// Multiple saves\r\n" +
                 "\t\t};\r\n" +

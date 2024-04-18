@@ -207,13 +207,13 @@ namespace FASTER.Models
                           + $"MaxBandwidth = {maxBandwidth};\t\t// Bandwidth the server is guaranteed to never have. This value helps the server to estimate bandwidth available.\r\n"
                           + "\r\n"
                           + $"MaxMsgSend = {maxMsgSend};\t\t\t// Maximum number of messages that can be sent in one simulation cycle. Increasing this value can decrease lag on high upload bandwidth servers. Default: 128\r\n"
-                          + $"MaxSizeGuaranteed = {maxSizeGuaranteed};\t\t// Maximum size of guaranteed packet in bytes (without headers). Small messages are packed to larger frames. Guaranteed messages are used for non-repetitive events like shooting. Default: 512\r\n"
+                          + $"MaxSizeGuaranteed = {maxSizeGuaranteed};\t\t\t// Maximum size of guaranteed packet in bytes (without headers). Small messages are packed to larger frames. Guaranteed messages are used for non-repetitive events like shooting. Default: 512\r\n"
                           + $"MaxSizeNonguaranteed = {maxSizeNonguaranteed};\t\t// Maximum size of non-guaranteed packet in bytes (without headers). Non-guaranteed messages are used for repetitive updates like soldier or vehicle position. Increasing this value may improve bandwidth requirement, but it may increase lag. Default: 256\r\n"
                           + "\r\n"
                           + $"MinErrorToSend = {minErrorToSend.ToString(CultureInfo.InvariantCulture)};\t\t\t// Minimal error to send updates across network. Using a smaller value can make units observed by binoculars or sniper rifle to move smoother. Default: 0.001\r\n"
                           + $"MinErrorToSendNear = {minErrorToSendNear.ToString(CultureInfo.InvariantCulture)};\t\t// Minimal error to send updates across network for near units. Using larger value can reduce traffic sent for near units. Used to control client to server traffic as well. Default: 0.01\r\n"
                           + "\r\n"
-                          + $"MaxCustomFileSize = {maxCustomFileSize * 1000};\t\t\t// (bytes) Users with custom face or custom sound larger than this size are kicked when trying to connect.\r\n" 
+                          + $"MaxCustomFileSize = {maxCustomFileSize * 1000};\t\t// (bytes) Users with custom face or custom sound larger than this size are kicked when trying to connect.\r\n" 
                           + $"class sockets{{ maxPacketSize = {maxPacketSize};}};";
             return output;
         }

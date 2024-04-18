@@ -81,7 +81,7 @@ namespace FASTER_Maintenance
 
         private static void SteamCmdCleanup()
         {
-            Console.WriteLine("\n\nUNHANDLED YET ! PLEASE CONATCT THE DEV FOR AN UPDATE.");
+            Console.WriteLine("\n\nUNHANDLED YET ! PLEASE CONTACT THE DEV FOR AN UPDATE.");
             _exitCode = 1;
         }
 

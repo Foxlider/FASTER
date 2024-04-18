@@ -7,8 +7,9 @@ FASTER Supported Versions.
 | Version | Supported          |
 | ------- | ------------------ |
 | < 1.6x  | :x:                |
-| 1.7x    | :warning:          |
-| 1.8x    | :heavy_check_mark: |
+| 1.7x    | :x:                |
+| 1.8x    | :warning:          |
+| 1.9x    | :heavy_check_mark: |
 
 > :x:  : Not supported  
 > :heavy_check_mark: : Supported  

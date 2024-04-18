@@ -41,7 +41,7 @@ namespace FASTER.Views
             fontPicker.ItemsSource = Fonts.SystemFontFamilies;
             fontPicker.DisplayMemberPath = "Source";
             fontPicker.SelectedItem = Fonts.SystemFontFamilies.FirstOrDefault(t => t.Source == Properties.Settings.Default.font);
-            
+
             Slider.Value = Properties.Settings.Default.CliWorkers;
         }
 
@@ -133,13 +133,13 @@ namespace FASTER.Views
             Slider.Value = Properties.Settings.Default.CliWorkers;
             NumericUpDown.Value = Slider.Value;
         }
-        
+
         private void IModUpdatesOnLaunch_Checked(object sender, RoutedEventArgs e)
         {
             Properties.Settings.Default.checkForModUpdates = IModUpdatesOnLaunch.IsChecked ?? true;
             Properties.Settings.Default.Save();
         }
-        
+
         private void IAppUpdatesOnLaunch_Checked(object sender, RoutedEventArgs e)
         {
             Properties.Settings.Default.checkForAppUpdates = IAppUpdatesOnLaunch.IsChecked ?? true;

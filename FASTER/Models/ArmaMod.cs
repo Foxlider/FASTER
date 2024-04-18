@@ -62,20 +62,20 @@ namespace FASTER.Models
 
         public void DeleteSteamMod(uint workshopId)
         {
-            
+
 
             try
             {
                 var currentProfiles = ReloadMods();
                 var item            = currentProfiles.ArmaMods.FirstOrDefault(x => x.WorkshopId == workshopId);
-                
+
                 if (item != null)
                 {
                     if(Directory.Exists(item.Path))
                         Directory.Delete(item.Path, true);
                     currentProfiles.ArmaMods.Remove(item);
                 }
-                
+
                 Properties.Settings.Default.Save();
             }
             catch
@@ -88,7 +88,7 @@ namespace FASTER.Models
         { PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property)); }
     }
 
-    
+
     [Serializable] 
     public class ArmaMod : INotifyPropertyChanged
     {
@@ -104,9 +104,10 @@ namespace FASTER.Models
         private string _status = "Not Installed";
         private long   _size;
         private bool   _isLoading;
+        private bool   _isSelected;
 
-        
-        public uint   WorkshopId       
+
+        public uint   WorkshopId
         { 
             get => _workshopId;
             set
@@ -135,6 +136,7 @@ namespace FASTER.Models
                 RaisePropertyChanged("Author");
             }
         }
+
         public string Path
         {
             get => _path;
@@ -144,6 +146,7 @@ namespace FASTER.Models
                 RaisePropertyChanged("Path");
             }
         }
+
         public ulong SteamLastUpdated
         {
             get => _steamLastUpdated;
@@ -153,6 +156,7 @@ namespace FASTER.Models
                 RaisePropertyChanged("SteamLasttUpdated");
             }
         }
+
         public ulong  LocalLastUpdated
         {
             get => _localLastUpdated;
@@ -162,6 +166,7 @@ namespace FASTER.Models
                 RaisePropertyChanged("LocalLastUpdated");
             }
         }
+
         public bool   PrivateMod
         {
             get => _privateMod;
@@ -171,6 +176,7 @@ namespace FASTER.Models
                 RaisePropertyChanged("PrivateMod");
             }
         }
+
         public bool   IsLocal
         {
             get => _isLocal;
@@ -180,6 +186,7 @@ namespace FASTER.Models
                 RaisePropertyChanged("IsLocal");
             }
         }
+
         public string Status
         {
             get => _status;
@@ -189,6 +196,7 @@ namespace FASTER.Models
                 RaisePropertyChanged("Status");
             }
         }
+
         public long   Size
         {
             get => _size;
@@ -209,7 +217,17 @@ namespace FASTER.Models
                 RaisePropertyChanged("IsLoading");
             }
         }
-        
+
+        [XmlIgnore]
+        public bool IsSelected
+        {
+            get => _isSelected;
+            set
+            {
+                _isSelected = value;
+                RaisePropertyChanged("IsSelected");
+            }
+        }
 
         internal void CheckModSize()
         {
@@ -221,12 +239,11 @@ namespace FASTER.Models
                 IsLoading = false;
                 return;
             }
-            
+
             var ChildProcess = Task.Factory.StartNew(() => GetDirectorySize(Path));
             Size      = ChildProcess.Result;
             IsLoading = false;
         }
-
 
         internal async Task UpdateModAsync()
         {
@@ -240,7 +257,7 @@ namespace FASTER.Models
             IsLoading = true;
 
             UpdateInfos(false);
-            
+
             Path = System.IO.Path.Combine(Properties.Settings.Default.modStagingDirectory, WorkshopId.ToString());
             if (!Directory.Exists(Path))
                 Directory.CreateDirectory(Path);
@@ -264,10 +281,9 @@ namespace FASTER.Models
                     LocalLastUpdated = (ulong) ts.TotalSeconds;
                     break;
             }
-                
+
             IsLoading = false;
         }
-
 
         internal void UpdateInfos(bool checkFileSize = true)
         {

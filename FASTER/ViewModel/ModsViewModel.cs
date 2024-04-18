@@ -6,6 +6,7 @@ using Microsoft.AppCenter.Analytics;
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -135,14 +136,34 @@ namespace FASTER.ViewModel
 
             ModsCollection.DeleteSteamMod(mod.WorkshopId);
         }
-        internal void DeleteAllMods()
+
+        internal void DeleteSelectedMods()
         {
+            var selectedArmaMods = new List<ArmaMod>(ModsCollection.ArmaMods.Where(m => m.IsSelected));
+            foreach (var mod in selectedArmaMods)
+            {
+                DeleteMod(mod);
+            }
+        }
+
+        internal async Task DeleteAllMods()
+        {
+            var answer = await DialogCoordinator.ShowInputAsync(this, "Are you sure you want to delete all mods?", "Write \"yes\" and press OK if you wish to continue.");
+
+            if (string.IsNullOrEmpty(answer) || !answer.Equals("yes"))
+                return;
+
+            Analytics.TrackEvent("Mods - Clicked DeleteAllMods", new Dictionary<string, string>
+            {
+                {"Name", Properties.Settings.Default.steamUserName}
+            });
             var copyArmaMods = new List<ArmaMod>(ModsCollection.ArmaMods);
             foreach (var mod in copyArmaMods)
             {
                 DeleteMod(mod);
             }
         }
+	
         public void OpenModPage(ArmaMod mod)
         {
             if (mod == null)
@@ -211,6 +232,14 @@ namespace FASTER.ViewModel
         {
             foreach (ArmaMod mod in ModsCollection.ArmaMods)
             { Task.Run(() => mod.UpdateInfos()); }
+        }
+
+        public async Task UpdateSelectedMods()
+        {
+            MainWindow.Instance.NavigateToConsole();
+            var ans = await MainWindow.Instance.SteamUpdaterViewModel.RunModsUpdater(new ObservableCollection<ArmaMod>(ModsCollection.ArmaMods.Where(m => m.IsSelected)));
+            if (ans == UpdateState.LoginFailed)
+                DisplayMessage("Steam Login Failed");
         }
 
         public async Task UpdateAll()

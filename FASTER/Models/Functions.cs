@@ -110,7 +110,7 @@ namespace FASTER.Models
                                          1 => "H",  // HOTFIX
                                          2 => "RC", // RELEASE CANDIDATE
                                          5 => "D",  // DEV
-                                         _   => ""    // EMPTY RELEASE TYPE
+                                         _ => ""    // EMPTY RELEASE TYPE
                                      };
                 if(releaseType != "")
                      rev += $" {releaseType}{int.Parse(assembly.Revision.ToString()[1..])}";

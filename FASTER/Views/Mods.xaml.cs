@@ -35,23 +35,14 @@ namespace FASTER.Views
             ((ModsViewModel) DataContext)?.UnloadData();
         }
 
-        private async void UpdateMod(object sender, RoutedEventArgs e)
+        private async void UpdateSelectedMods(object sender, RoutedEventArgs e)
         {
-            if (((FrameworkElement) sender).DataContext is not ArmaMod mod)
-                return;
-            
-            await mod.UpdateModAsync();
+            await ((ModsViewModel) DataContext)?.UpdateSelectedMods();
         }
 
-        private void DeleteMod(object sender, RoutedEventArgs e)
+        private void DeleteSelectedMods(object sender, RoutedEventArgs e)
         {
-            var mod = ((FrameworkElement) sender).DataContext as ArmaMod;
-            ((ModsViewModel) DataContext)?.DeleteMod(mod);
-        }
-
-        private void DeleteAllMods(object sender, RoutedEventArgs e)
-        {
-            ((ModsViewModel)DataContext)?.DeleteAllMods();
+            ((ModsViewModel) DataContext)?.DeleteSelectedMods();
         }
 
         private void OpenModPage(object sender, RoutedEventArgs e)
@@ -86,9 +77,14 @@ namespace FASTER.Views
             ((ModsViewModel) DataContext)?.CheckForUpdates();
         }
 
-        private async void UpdateAll_Click(object sender, RoutedEventArgs e)
+        private void UpdateAll_Click(object sender, RoutedEventArgs e)
         {
-            await ((ModsViewModel) DataContext)?.UpdateAll();
+            ((ModsViewModel) DataContext)?.UpdateAll();
+        }
+		
+		private async void DeleteAll_Click(object sender, RoutedEventArgs e)
+        {
+            await ((ModsViewModel) DataContext)?.DeleteAllMods();
         }
     }
 }

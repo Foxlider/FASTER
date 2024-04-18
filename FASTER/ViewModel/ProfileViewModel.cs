@@ -156,7 +156,7 @@ namespace FASTER.ViewModel
 
             LaunchHCs();
             #endif
-            
+
         }
 
         /// <summary>
@@ -203,7 +203,7 @@ namespace FASTER.ViewModel
             var menuItem = MainWindow.Instance.IServerProfilesMenu.Items.Cast<ToggleButton>().FirstOrDefault(p => p.Name == Profile.Id);
             if(menuItem != null)
                 MainWindow.Instance.IServerProfilesMenu.Items.Remove(menuItem);
-            
+
             MainWindow.Instance.NavigateToConsole();
         }
 
@@ -227,21 +227,21 @@ namespace FASTER.ViewModel
             { DisplayMessage("Could not write the config files. Please ensure the server is not running and retry."); }
 
             var armaPath = Path.GetDirectoryName(Profile.Executable);
-            
+
             if(string.IsNullOrWhiteSpace(armaPath))
             {
                 DisplayMessage("Arma executable is empty. Select the correct executable before saving your profile.");
                 return;
             }
-            
+
             var links = Directory.EnumerateDirectories(armaPath).Select(d => new DirectoryInfo(d)).Where(d => d.Attributes.HasFlag(FileAttributes.ReparsePoint));
             uint MissingMods = 0;
-            foreach (ProfileMod profileMod in Profile.ProfileMods.Where(m => m.ClientSideChecked || m.HeadlessChecked || m.ServerSideChecked))
+            foreach (ProfileMod profileMod in Profile.ProfileMods.Where(m => m.ServerSideChecked || m.ClientSideChecked || m.HeadlessChecked || m.OptChecked))
             {
                 if (!links.Any(l => l.Name == $"@{Functions.SafeName(profileMod.Name)}"))
                     MissingMods++;
             }
-            
+
 
             var index = Properties.Settings.Default.Profiles.FindIndex(p => p.Id == Profile.Id);  
             if (index != -1)
@@ -359,12 +359,16 @@ namespace FASTER.ViewModel
                 MainWindow.Instance.IFlyoutMessage.Content = $"The SteamCMD path does not exist :\n{Properties.Settings.Default.modStagingDirectory}";
                 return;
             }
-            var steamMods = Profile.ProfileMods.Where(p => p.ClientSideChecked).ToList();
+
+            var clientMods = Profile.ProfileMods.Where(p => p.ClientSideChecked).ToList();
+            var optionalMods = Profile.ProfileMods.Where(p => p.OptChecked).ToList();
+            var steamMods = clientMods.Union(optionalMods).ToList();
 
             foreach (var line in steamMods)
             {
                 try
-                { mods.AddRange(Directory.GetFiles(Path.Combine(Properties.Settings.Default.modStagingDirectory, line.Id.ToString()), "*.bikey", SearchOption.AllDirectories)); }
+                { mods.AddRange(Directory.GetDirectories(Path.Combine(Properties.Settings.Default.modStagingDirectory, line.Id.ToString()))
+				.SelectMany(subDir => Directory.GetFiles(subDir, "*.bikey", SearchOption.TopDirectoryOnly))); }
                 catch (DirectoryNotFoundException)
                 { /*there was no directory*/ }
             }
@@ -406,11 +410,14 @@ namespace FASTER.ViewModel
                 }
             }
         }
-        
-        public ObservableCollection<string> LimitedDistanceStrings { get; } = new ObservableCollection<string>(ProfileCfgArrays.LimitedDistanceStrings);
-        public ObservableCollection<string> AiPresetStrings        { get; } = new ObservableCollection<string>(ProfileCfgArrays.AiPresetStrings);
-        public ObservableCollection<string> ThirdPersonStrings     { get; } = new ObservableCollection<string>(ProfileCfgArrays.ThirdPersonStrings);
-        
+
+        public ObservableCollection<string> LimitedDistanceStrings   { get; } = new ObservableCollection<string>(ProfileCfgArrays.LimitedDistanceStrings);
+        public ObservableCollection<string> AiPresetStrings          { get; } = new ObservableCollection<string>(ProfileCfgArrays.AiPresetStrings);
+	public ObservableCollection<string> ForcedDifficultyString       { get; } = new ObservableCollection<string> { "Recruit", "Regular", "Veteran", "Custom" };
+        public ObservableCollection<string> ThirdPersonStrings       { get; } = new ObservableCollection<string>(ProfileCfgArrays.ThirdPersonStrings);
+        public ObservableCollection<string> TacticalPingStrings      { get; } = new ObservableCollection<string>(ProfileCfgArrays.TacticalPingStrings);
+
+
         public void LoadData()
         {
             var modlist = new List<ProfileMod>();
@@ -427,7 +434,7 @@ namespace FASTER.ViewModel
                 { existingMod.Name = mod.Name; }
                 modlist.Add(existingMod);
             }
-            
+
             Profile.ProfileMods = modlist;
 
             LoadMissions();
@@ -439,7 +446,7 @@ namespace FASTER.ViewModel
             if (index != -1)
             { Properties.Settings.Default.Profiles[index] = Profile; }
         }
-        
+
         internal void LoadMissions()
         {
             if (!Directory.Exists(Path.Combine(Profile.ArmaPath, "mpmissions"))) return;
@@ -483,22 +490,32 @@ namespace FASTER.ViewModel
             {
                 switch (to.ToString())
                 {
-                    case "Server":
+                    case "Server Only":
                         {
-                            if (from == "Client") mod.ServerSideChecked = mod.ClientSideChecked;
-                            if (from == "Headless") mod.ServerSideChecked = mod.HeadlessChecked;
+                            if (from == "Server + Client") mod.ServerSideChecked = mod.ClientSideChecked;
+                            if (from == "HC") mod.ServerSideChecked = mod.HeadlessChecked;
+                            if (from == "Opt") mod.ServerSideChecked = mod.OptChecked;
                             break;
                         }
-                    case "Client":
+                    case "Server + Client":
                         {
-                            if (from == "Server") mod.ClientSideChecked = mod.ServerSideChecked;
-                            if (from == "Headless") mod.ClientSideChecked = mod.HeadlessChecked;
+                            if (from == "Server Only") mod.ClientSideChecked = mod.ServerSideChecked;
+                            if (from == "HC") mod.ClientSideChecked = mod.HeadlessChecked;
+                            if (from == "Opt") mod.ClientSideChecked = mod.OptChecked;
                             break;
                         }
-                    case "Headless":
+                    case "HC":
                         {
-                            if (from == "Client") mod.HeadlessChecked = mod.ClientSideChecked;
-                            if (from == "Server") mod.HeadlessChecked = mod.ServerSideChecked;
+                            if (from == "Server Only") mod.HeadlessChecked = mod.ServerSideChecked;
+                            if (from == "Server + Client") mod.HeadlessChecked = mod.ClientSideChecked;
+                            if (from == "Opt") mod.HeadlessChecked = mod.OptChecked;
+                            break;
+                        }
+                    case "Opt":
+                        {
+                            if (from == "Server Only") mod.OptChecked = mod.ServerSideChecked;
+                            if (from == "Server + Client") mod.OptChecked = mod.ClientSideChecked;
+                            if (from == "HC") mod.OptChecked = mod.HeadlessChecked;
                             break;
                         }
                 }
@@ -511,14 +528,17 @@ namespace FASTER.ViewModel
             {
                 switch (to.ToString())
                 {
-                    case "Server":
+                    case "Server Only":
                         mod.ServerSideChecked = select;
                         break;
-                    case "Client":
+                    case "Server + Client":
                         mod.ClientSideChecked = select;
                         break;
-                    case "Headless":
+                    case "HC":
                         mod.HeadlessChecked = select;
+                        break;
+					case "Opt":
+                        mod.OptChecked = select;
                         break;
                 }
             }

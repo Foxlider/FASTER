@@ -32,7 +32,7 @@ namespace FASTER.ViewModel
         {
             Parameters = new SteamUpdaterModel();
         }
-        
+
         private static readonly Lazy<SteamUpdaterViewModel>
             lazy =
                 new(() => new SteamUpdaterViewModel(new SteamUpdaterModel()));
@@ -57,16 +57,16 @@ namespace FASTER.ViewModel
         private bool _updaterFaulted;
 
         public SteamUpdaterModel Parameters { get; set; }
-        
-        
+
+
         public IDialogCoordinator DialogCoordinator { get; set; }
         private CancellationTokenSource tokenSource = new();
 
         public bool IsDownloading => DownloadTasks.Count > 0 || IsLoggingIn || IsDlOverride;
 
         private BindingList<Task> DownloadTasks { get; } = new BindingList<Task>();
-        
-        
+
+
         public bool UpdaterOnline
         {
             get => _updaterOnline;
@@ -145,7 +145,7 @@ namespace FASTER.ViewModel
             Parameters.IsUpdating = true;
             Parameters.Output     = "Starting Update...";
             Parameters.Output += "\nPlease don't quit this page or cancel the download\nThis might take a while...";
-            
+
             uint appId = 233780;
             Dictionary<uint, string> depotsIDs = new()
             //Find a way to update automatically with depot changes
@@ -179,7 +179,7 @@ namespace FASTER.ViewModel
             //    Parameters.Output += "\n\n /!\\ Could not retrieve depots list. PLease retry later or check your internet connection\nAlternatively, clear the sentry folder and try again.";
             //    return;
             //}
-            
+
             List<(uint id, string branch, string pass)> depotsDownload = new();
 
             Parameters.Output += "\nChecking Shared Content...";
@@ -190,8 +190,8 @@ namespace FASTER.ViewModel
                 null));
 
             Parameters.Output += "\nChecking Executables...";
-            
-            
+
+
             // Downloading depot 233782 fow Windows from branch public
             depotsDownload.Add((
                 depotsIDs.FirstOrDefault(d => d.Value == "Arma 3 Alpha Dedicated Server binary Windows (internal)").Key,
@@ -205,7 +205,7 @@ namespace FASTER.ViewModel
                     depotsIDs.FirstOrDefault(d => d.Value == "Arma 3 Server Profiling - WINDOWS Depot").Key,
                     "profiling",
                     "CautionSpecialProfilingAndTestingBranchArma3"));
-            
+
 
             //Downloading mods
             if (Parameters.UsingGMDlc)
@@ -410,7 +410,7 @@ namespace FASTER.ViewModel
 
         public async Task<int> RunModsUpdater(ObservableCollection<ArmaMod> mods)
         {
-            
+
             tokenSource = new CancellationTokenSource();
             if(!await SteamLogin())
             { 
@@ -501,13 +501,13 @@ namespace FASTER.ViewModel
 
             Parameters.Output += "\nAlmost there...";
             await maxThread.WaitAsync();
-            
-            
+
+
             Parameters.Output += "\nMods updated !";
             IsDlOverride = false;
             return UpdateState.Success;
         }
-        
+
         internal async Task<bool> SteamLogin()
         {
             IsLoggingIn = true;
@@ -554,13 +554,13 @@ namespace FASTER.ViewModel
                     return false;
                 }
             }
-            
+
             SteamContentClient = new SteamContentClient(SteamClient, Properties.Settings.Default.CliWorkers);
             Parameters.Output += "\nConnected !";
             IsLoggingIn = false;
             return SteamClient.IsConnected;
         }
-        
+
         internal bool SteamReset()
         {
             Parameters.Output += "\nDisconnecting...";
@@ -608,9 +608,9 @@ namespace FASTER.ViewModel
 
             if (tokenSource.IsCancellationRequested)
                 tokenSource = new CancellationTokenSource();
-            
+
             Task downloadTask = downloadHandler.DownloadToFolderAsync(targetDir, tokenSource.Token);
-            
+
 
             Parameters.Output += "\nOK.";
 
@@ -619,7 +619,7 @@ namespace FASTER.ViewModel
             Parameters.Progress = 0;
             Parameters.Output += $"\nDownloading {downloadHandler.TotalFileCount} files with total size of {Functions.ParseFileSize(downloadHandler.TotalFileSize)}...";
             Parameters.Output += $"\nVerifying Install...";
-            
+
             while (!downloadTask.IsCompleted && !downloadTask.IsCanceled && !tokenSource.Token.IsCancellationRequested && !skipDownload)
             {
 
@@ -644,7 +644,7 @@ namespace FASTER.ViewModel
 
             if (downloadTask.IsCanceled)
             {
-                
+
                 Parameters.Output += "\nTask Cancelled";
                 Parameters.Progress = 0;
                 await downloadHandler.DisposeAsync();
@@ -677,7 +677,7 @@ namespace FASTER.ViewModel
         {
             if (targetDir == null)
                 return;
-            
+
             if (!Directory.Exists(targetDir))
                 Directory.CreateDirectory(targetDir);
 
@@ -693,11 +693,11 @@ namespace FASTER.ViewModel
             downloadHandler.DownloadComplete      += (_, _) => Parameters.Output += "\n    Download completed";
 
             Task downloadTask = downloadHandler.DownloadToFolderAsync(targetDir, tokenSource.Token);
-            
+
             Parameters.Output += "\n    OK.";
 
             DownloadTasks.Add(downloadTask);
-            
+
             Parameters.Output += $"\n    Downloading {downloadHandler.TotalFileCount} files with total size of {Functions.ParseFileSize(downloadHandler.TotalFileSize)}...";
             Parameters.Progress = 0;
             while (!downloadTask.IsCompleted && !downloadTask.IsCanceled && !tokenSource.IsCancellationRequested)

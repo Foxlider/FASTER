@@ -45,17 +45,22 @@ namespace FASTER.Views
 
         private void CopyFromClient(object sender, RoutedEventArgs e)
         {
-            ((ProfileViewModel) DataContext)?.ModsCopyFrom(((MenuItem)sender).Tag, "Client");
+            ((ProfileViewModel) DataContext)?.ModsCopyFrom(((MenuItem)sender).Tag, "Server + Client");
         }
 
         private void CopyFromServer(object sender, RoutedEventArgs e)
         {
-            ((ProfileViewModel) DataContext)?.ModsCopyFrom(((MenuItem)sender).Tag, "Server");
+            ((ProfileViewModel) DataContext)?.ModsCopyFrom(((MenuItem)sender).Tag, "Server Only");
         }
 
         private void CopyFromHeadless(object sender, RoutedEventArgs e)
         {
-            ((ProfileViewModel) DataContext)?.ModsCopyFrom(((MenuItem)sender).Tag, "Headless");
+            ((ProfileViewModel) DataContext)?.ModsCopyFrom(((MenuItem)sender).Tag, "HC");
+        }
+		
+        private void CopyFromOpt(object sender, RoutedEventArgs e)
+        {
+            ((ProfileViewModel) DataContext)?.ModsCopyFrom(((MenuItem)sender).Tag, "Opt");
         }
 
         private void ModsSelectAll(object sender, RoutedEventArgs e)
