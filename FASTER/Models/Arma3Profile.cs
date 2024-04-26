@@ -41,7 +41,7 @@ namespace FASTER.Models
         private ushort mapContentMines = 1;
         private ushort autoReport = 0;
         private ushort multipleSaves = 0;
-        private ushort tacticalPing = 1;
+        private int tacticalPing = 1;
 
         private ushort aiLevelPreset = 3;
         private double skillAi = 0.5;
@@ -284,7 +284,7 @@ namespace FASTER.Models
             get => ProfileCfgArrays.TacticalPingStrings[tacticalPing];
             set
             {
-                tacticalPing = (ushort)Array.IndexOf(ProfileCfgArrays.TacticalPingStrings, value);
+                tacticalPing = (int)Array.IndexOf(ProfileCfgArrays.TacticalPingStrings, value);
                 RaisePropertyChanged("TacticalPing");
             }
         }
