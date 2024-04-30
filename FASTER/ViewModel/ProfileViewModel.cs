@@ -537,7 +537,7 @@ namespace FASTER.ViewModel
                     case "HC":
                         mod.HeadlessChecked = select;
                         break;
-					case "Opt":
+                    case "Opt":
                         mod.OptChecked = select;
                         break;
                 }

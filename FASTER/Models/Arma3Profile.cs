@@ -13,7 +13,7 @@ namespace FASTER.Models
         public static string[] TacticalPingStrings { get; } = { "Disabled", "3D only", "Map only", "Both" };
         public static string[] AiPresetStrings { get; } = { "Low", "Normal", "High", "Custom" };
         public static string[] ThirdPersonStrings { get; } = { "Disabled", "Enabled", "Vehicles Only" };
-		public static string[] ForcedDifficultyStrings { get; } = { "Recruit", "Regular", "Veteran", "Custom" };
+        public static string[] ForcedDifficultyStrings { get; } = { "Recruit", "Regular", "Veteran", "Custom" };
     }
 
     [Serializable]

@@ -54,7 +54,7 @@ namespace FASTER.Models
         private bool   SkipDescriptionParsing   = false;     // parse description.ext
         private bool   ignoreMissionLoadErrors  = false;     // do not ingore errors
         private int    armaUnitsTimeout         = 30; 	     // Defines how long the player will be stuck connecting and wait for armaUnits data. Player will be notified if timeout elapsed and no units data was received
-        private int	   queueSizeLogG            = 1000000; 	 // if a specific players message queue is larger than 1MB and '#monitor' is running, dump his messages to a logfile for analysis
+        private int    queueSizeLogG            = 1000000; 	 // if a specific players message queue is larger than 1MB and '#monitor' is running, dump his messages to a logfile for analysis
         private string forcedDifficulty         = "Custom";  // By default forcedDifficulty is only applying Custom
 
 
