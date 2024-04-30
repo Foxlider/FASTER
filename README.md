@@ -85,17 +85,8 @@ A complete Documentation is available on the [GitHub Wiki](https://github.com/Fo
   Mods Menu
   ![Mods Menu](https://imgur.com/VivCLM3.png)
 
-  Missions Menu
-  ![Mission Menu](https://imgur.com/jDz5a0g.png)
-
   Server Menu
   ![Profile Menu](https://imgur.com/1GuLqu2.png)
-
-  Server Advanced Menu
-  ![Server Advanced Menu](https://imgur.com/j6GJecK.png)
-
-  Performance Menu
-  ![Performance Menu](https://imgur.com/Ylj6SQn.png)
 
 </details>
 
