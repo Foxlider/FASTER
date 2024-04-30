@@ -77,25 +77,25 @@ A complete Documentation is available on the [GitHub Wiki](https://github.com/Fo
   <summary>Screenshots below</summary> 
 
   Main Menu
-  ![MainMenu](https://imgur.com/Izf9Kmm)
+  ![MainMenu](https://imgur.com/Izf9Kmm.png)
 
   Profile Mods Menu
-  ![Profile Mods Menu](https://imgur.com/D8LqSO6)
+  ![Profile Mods Menu](https://imgur.com/D8LqSO6.png)
 
   Mods Menu
-  ![Mods Menu](https://imgur.com/VivCLM3)
+  ![Mods Menu](https://imgur.com/VivCLM3.png)
 
   Missions Menu
-  ![Mission Menu](https://imgur.com/jDz5a0g)
+  ![Mission Menu](https://imgur.com/jDz5a0g.png)
 
   Server Menu
-  ![Profile Menu](https://imgur.com/1GuLqu2)
+  ![Profile Menu](https://imgur.com/1GuLqu2.png)
 
   Server Advanced Menu
-  ![Server Advanced Menu](https://imgur.com/j6GJecK)
+  ![Server Advanced Menu](https://imgur.com/j6GJecK.png)
 
   Performance Menu
-  ![Performance Menu](https://imgur.com/Ylj6SQn)
+  ![Performance Menu](https://imgur.com/Ylj6SQn.png)
 
 </details>
 
