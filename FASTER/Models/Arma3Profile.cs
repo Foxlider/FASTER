@@ -284,7 +284,7 @@ namespace FASTER.Models
             get => ProfileCfgArrays.TacticalPingStrings[tacticalPing];
             set
             {
-                tacticalPing = (int)Array.IndexOf(ProfileCfgArrays.TacticalPingStrings, value);
+                tacticalPing = Array.IndexOf(ProfileCfgArrays.TacticalPingStrings, value);
                 RaisePropertyChanged("TacticalPing");
             }
         }
