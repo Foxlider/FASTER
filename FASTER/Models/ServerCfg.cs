@@ -35,21 +35,21 @@ namespace FASTER.Models
         private double voteThreshold            = 0.33;
         private int    voteMissionPlayers       = 3;
         private short  kickduplicate            = 1;        // 1 = active ; 0=disabled
-        private bool   loopback;
-        private bool   upnp = true;
+        private bool   loopback;                            // Adding this option will force server into LAN mode
+        private bool   upnp                     = false;    // False by default due to 600s slow down if not set-up right. Thus in such case is recommended to disable it.
         private short  allowedFilePatching;                 // 0 = no clients; 1= HC only; 2= All Clients
-        private int    disconnectTimeout        = 90;       //timeout in seconds
-        private int    maxdesync                = 150;
-        private int    maxping                  = 200;
-        private int    maxpacketloss            = 50;
+        private int    disconnectTimeout        = 90;       // Server wait time before disconnecting client after loss of active traffic connection, range 5 to 90 seconds.
+        private int    maxdesync                = 150;      // Max desync value until server kick the user
+        private int    maxping                  = 200;      // Max ping value until server kick the user
+        private int    maxpacketloss            = 50;       // Max packetloss value until server kick the user
         private bool   kickClientOnSlowNetwork;
         private int    lobbyIdleTimeout         = 300;
         private bool   autoSelectMission        = true;
         private bool   randomMissionOrder       = true;
-        private int    briefingTimeOut          = 60; 	     //
-        private int    roleTimeOut              = 90; 	 	 // These are BI base figues
-        private int    votingTimeOut            = 60; 	 	 //
-        private int    debriefingTimeOut        = 45;        //
+        private int    briefingTimeOut          = 60; 	     // <-
+        private int    roleTimeOut              = 90; 	 	 // <- These are BI base figues
+        private int    votingTimeOut            = 60; 	 	 // <-
+        private int    debriefingTimeOut        = 45;        // <-
         private bool   LogObjectNotFound        = true;      // logging enabled
         private bool   SkipDescriptionParsing   = false;     // parse description.ext
         private bool   ignoreMissionLoadErrors  = false;     // do not ingore errors
@@ -59,19 +59,19 @@ namespace FASTER.Models
 
 
         //Arma server only
-        private short  verifySignatures         = 0;        // 0 = Disabled (FASTER Default); 1 = Deprecated Activated ; 2 = Activated (Arma Default)
+        private short  verifySignatures         = 0;         // 0 = Disabled (FASTER Default); 1 = Deprecated Activated ; 2 = Activated (Arma Default)
         private bool   drawingInMap             = true;
-        private short  disableVoN;                          // 0 = VoN activated ; 1 = VoN Disabled
-        private int    vonCodecQuality          = 3;        // 8kHz is 0-10, 16kHz is 11-20, 32kHz is 21-30 (and 48kHz with OPUS enabled)
-        private short  vonCodec;                            // 0 = SPEEX ; 1 = OPUS
-        private bool   skipLobby;                           //Overritten by mission parameters
+        private short  disableVoN;                           // 0 = VoN activated ; 1 = VoN Disabled
+        private int    vonCodecQuality          = 3;         // 8kHz is 0-10, 16kHz is 11-20, 32kHz is 21-30 (and 48kHz with OPUS enabled)
+        private short  vonCodec;                             // 0 = SPEEX ; 1 = OPUS
+        private bool   skipLobby;                            //Overritten by mission parameters
         private string logFile                  = "server_console.log";
-        private short  battlEye                 = 1;        // 0 = Disabled ; 1 = Enabled
-        private string timeStampFormat          = "short";  // Possible values = "none", "short", "full"
+        private short  battlEye                 = 1;         // 0 = Disabled ; 1 = Enabled
+        private string timeStampFormat          = "short";   // Possible values = "none", "short", "full"
         private short  persistent;
         private bool   requiredBuildChecked;
-        private int    requiredBuild            = 999999999;
-        private int    steamProtocolMaxDataSize = 10000;    // BI Default value is 1024. Increasing this value is dangerous for older routers as it will cause UDP packets to be fragmented. Though increasing this value can help with modulier length limit in a3 launcher.
+        private int    requiredBuild            = 999999999; // Minimum required client version. Clients with version lower than requiredBuild will not be able to connect
+        private int    steamProtocolMaxDataSize = 10000;     // BI Default value is 1024. Increasing this value is dangerous for older routers as it will cause UDP packets to be fragmented. Though increasing this value can help with modulier length limit in a3 launcher.
 
         //Scripting
         private string serverCommandPassword;
