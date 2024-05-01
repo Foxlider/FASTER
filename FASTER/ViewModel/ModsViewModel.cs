@@ -163,7 +163,7 @@ namespace FASTER.ViewModel
                 DeleteMod(mod);
             }
         }
-	
+
         public void OpenModPage(ArmaMod mod)
         {
             if (mod == null)

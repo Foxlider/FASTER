@@ -13,39 +13,39 @@ namespace FASTER.Models
         public static string[] TacticalPingStrings { get; } = { "Disabled", "3D only", "Map only", "Both" };
         public static string[] AiPresetStrings { get; } = { "Low", "Normal", "High", "Custom" };
         public static string[] ThirdPersonStrings { get; } = { "Disabled", "Enabled", "Vehicles Only" };
-		public static string[] ForcedDifficultyStrings { get; } = { "Recruit", "Regular", "Veteran", "Custom" };
+        public static string[] ForcedDifficultyStrings { get; } = { "Recruit", "Regular", "Veteran", "Custom" };
     }
 
     [Serializable]
     public class Arma3Profile : INotifyPropertyChanged
     {
-        private ushort reducedDamage = 0;
-        private ushort groupIndicators = 2;
-        private ushort friendlyTags = 1;
-        private ushort enemyTags = 0;
-        private ushort detectedMines = 1;
-        private ushort commands = 1;
-        private ushort waypoints = 1;
-        private ushort weaponInfo = 2;
-        private ushort stanceIndicator = 2;
-        private ushort staminaBar = 1;
-        private ushort weaponCrosshair = 1;
-        private ushort visionAid = 0;
-        private ushort thirdPersonView = 1;
-        private ushort cameraShake = 1;
-        private ushort scoreTable = 1;
-        private ushort deathMessages = 1;
-        private ushort vonID = 1;
+        private ushort reducedDamage      = 0;
+        private ushort groupIndicators    = 2;
+        private ushort friendlyTags       = 1;
+        private ushort enemyTags          = 0;
+        private ushort detectedMines      = 1;
+        private ushort commands           = 1;
+        private ushort waypoints          = 1;
+        private ushort weaponInfo         = 2;
+        private ushort stanceIndicator    = 2;
+        private ushort staminaBar         = 1;
+        private ushort weaponCrosshair    = 1;
+        private ushort visionAid          = 0;
+        private ushort thirdPersonView    = 1;
+        private ushort cameraShake        = 1;
+        private ushort scoreTable         = 1;
+        private ushort deathMessages      = 1;
+        private ushort vonID              = 1;
         private ushort mapContentFriendly = 1;
-        private ushort mapContentEnemy = 1;
-        private ushort mapContentMines = 1;
-        private ushort autoReport = 0;
-        private ushort multipleSaves = 0;
-        private ushort tacticalPing = 1;
+        private ushort mapContentEnemy    = 1;
+        private ushort mapContentMines    = 1;
+        private ushort autoReport         = 0;
+        private ushort multipleSaves      = 0;
+        private int tacticalPing          = 1;
 
-        private ushort aiLevelPreset = 3;
-        private double skillAi = 0.5;
-        private double precisionAi = 0.5;
+        private ushort aiLevelPreset      = 3;
+        private double skillAi            = 0.5;
+        private double precisionAi        = 0.5;
 
         private string armaProfileContent;
 
@@ -284,7 +284,7 @@ namespace FASTER.Models
             get => ProfileCfgArrays.TacticalPingStrings[tacticalPing];
             set
             {
-                tacticalPing = (ushort)Array.IndexOf(ProfileCfgArrays.TacticalPingStrings, value);
+                tacticalPing = Array.IndexOf(ProfileCfgArrays.TacticalPingStrings, value);
                 RaisePropertyChanged("TacticalPing");
             }
         }

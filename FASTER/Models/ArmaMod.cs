@@ -108,7 +108,7 @@ namespace FASTER.Models
 
 
         public uint   WorkshopId
-        { 
+        {
             get => _workshopId;
             set
             {
