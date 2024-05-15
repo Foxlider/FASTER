@@ -47,14 +47,10 @@ namespace FASTER.Models
         private bool   autoSelectMission        = true;
         private bool   randomMissionOrder       = true;
         private int    briefingTimeOut          = 60; 	     // <-
-        private int    roleTimeOut              = 90; 	 	 // <- These are BI base figues
-        private int    votingTimeOut            = 60; 	 	 // <-
+        private int    roleTimeOut              = 90;        // <- These are BI base figues
+        private int    votingTimeOut            = 60;        // <-
         private int    debriefingTimeOut        = 45;        // <-
-        private bool   LogObjectNotFound        = true;      // logging enabled
-        private bool   SkipDescriptionParsing   = false;     // parse description.ext
-        private bool   ignoreMissionLoadErrors  = false;     // do not ingore errors
         private int    armaUnitsTimeout         = 30; 	     // Defines how long the player will be stuck connecting and wait for armaUnits data. Player will be notified if timeout elapsed and no units data was received
-        private int    queueSizeLogG            = 1000000; 	 // if a specific players message queue is larger than 1MB and '#monitor' is running, dump his messages to a logfile for analysis
         private string forcedDifficulty         = "Custom";  // By default forcedDifficulty is only applying Custom
 
 
@@ -97,7 +93,53 @@ namespace FASTER.Models
 
         private string serverCfgContent;
 
+    public class AdvancedOptions
+	{
+        private bool   LogObjectNotFound       = true;       // logging enabled
+        private bool   SkipDescriptionParsing  = false;      // parse description.ext
+        private bool   ignoreMissionLoadErrors = false;      // do not ingore errors
+        private int    queueSizeLogG           = 1000000;    // if a specific players message queue is larger than 1MB and '#monitor' is running, dump his messages to a logfile for analysis
 
+        public bool LogObjectNotFound
+        {
+            get => LogObjectNotFound;
+            set
+            {
+                LogObjectNotFound = value;
+                RaisePropertyChanged("logObjectNotFound");
+            }
+        }
+
+        public bool SkipDescriptionParsing
+        {
+            get => SkipDescriptionParsing;
+            set
+            {
+                SkipDescriptionParsing = value;
+                RaisePropertyChanged("skipDescriptionParsing");
+            }
+        }
+
+        public bool IgnoreMissionLoadErrors
+        {
+            get => ignoreMissionLoadErrors;
+            set
+            {
+                ignoreMissionLoadErrors = value;
+                RaisePropertyChanged("IgnoreMissionLoadErrors");
+            }
+        }
+
+        public int QueueSizeLogG
+        {
+            get => queueSizeLogG;
+            set
+            {
+                queueSizeLogG = value;
+                RaisePropertyChanged("QueueSizeLogG");
+            }
+        }	
+	}
 
         #region Server Options
         public string PasswordAdmin
@@ -394,36 +436,6 @@ namespace FASTER.Models
             }
         }
 
-        public bool logObjectNotFound
-        {
-            get => LogObjectNotFound;
-            set
-            {
-                LogObjectNotFound = value;
-                RaisePropertyChanged("logObjectNotFound");
-            }
-        }
-
-        public bool skipDescriptionParsing
-        {
-            get => SkipDescriptionParsing;
-            set
-            {
-                SkipDescriptionParsing = value;
-                RaisePropertyChanged("skipDescriptionParsing");
-            }
-        }
-
-        public bool IgnoreMissionLoadErrors
-        {
-            get => ignoreMissionLoadErrors;
-            set
-            {
-                ignoreMissionLoadErrors = value;
-                RaisePropertyChanged("IgnoreMissionLoadErrors");
-            }
-        }
-
         public int ArmaUnitsTimeout
         {
             get => armaUnitsTimeout;
@@ -431,16 +443,6 @@ namespace FASTER.Models
             {
                 armaUnitsTimeout = value;
                 RaisePropertyChanged("ArmaUnitsTimeout");
-            }
-        }
-
-		 public int QueueSizeLogG
-        {
-            get => queueSizeLogG;
-            set
-            {
-                queueSizeLogG = value;
-                RaisePropertyChanged("QueueSizeLogG");
             }
         }
 
@@ -893,8 +895,8 @@ namespace FASTER.Models
                           + $"timeStampFormat = \"{timeStampFormat}\";\t\t// Set the timestamp format used on each report line in server-side RPT file. Possible values are \"none\" (default),\"short\",\"full\".\r\n"
                           + $"BattlEye = {battlEye};\t\t\t\t// Server to use BattlEye system\r\n"
                           + $"queueSizeLogG = {queueSizeLogG};\t\t\t// If a specific players message queue is larger than 1MB and #monitor is running, dump his messages to a logfile for analysis \r\n"
-                          + $"LogObjectNotFound = {logObjectNotFound};\t\t// When false to skip logging 'Server: Object not found messages'.\r\n"
-                          + $"SkipDescriptionParsing = {skipDescriptionParsing};\t\t// When true to skip parsing of description.ext/mission.sqm. Will show pbo filename instead of configured missionName. OverviewText and such won't work, but loading the mission list is a lot faster when there are many missions \r\n"
+                          + $"LogObjectNotFound = {LogObjectNotFound};\t\t// When false to skip logging 'Server: Object not found messages'.\r\n"
+                          + $"SkipDescriptionParsing = {SkipDescriptionParsing};\t\t// When true to skip parsing of description.ext/mission.sqm. Will show pbo filename instead of configured missionName. OverviewText and such won't work, but loading the mission list is a lot faster when there are many missions \r\n"
                           + $"ignoreMissionLoadErrors = {ignoreMissionLoadErrors};\t\t// When set to true, the mission will load no matter the amount of loading errors. If set to false, the server will abort mission's loading and return to mission selection.\r\n"
                           + $"forcedDifficulty = {forcedDifficulty};\t\t\t// Forced difficulty (Recruit, Regular, Veteran, Custom)\r\n"
                           + "\r\n"
