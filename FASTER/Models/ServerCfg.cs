@@ -99,7 +99,7 @@ namespace FASTER.Models
         private bool   logObjectNotFound       = true;       // logging enabled
         private bool   skipDescriptionParsing  = false;      // parse description.ext
         private bool   ignoreMissionLoadErrors = false;      // do not ingore errors
-        private int    queueSizeLogG           = 1000000;    // if a specific players message queue is larger than 1MB and '#monitor' is running, dump his messages to a logfile for analysis
+        private int    queueSizeLogG           = 0;          // if a specific players message queue is larger than <Value> and '#monitor' is running, dump his messages to a logfile for analysis
 
             public bool LogObjectNotFound
         {
@@ -119,7 +119,7 @@ namespace FASTER.Models
                 skipDescriptionParsing = value;
                 RaisePropertyChanged("SkipDescriptionParsing");
             }
-        }       
+        }
 
             public bool IgnoreMissionLoadErrors
         {
@@ -146,7 +146,7 @@ namespace FASTER.Models
             {
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
             }
-	}
+    }
         #region Server Options
         public string PasswordAdmin
         {
@@ -900,7 +900,7 @@ namespace FASTER.Models
                           + $"persistent = {persistent};\t\t\t\t// If 1, missions still run on even after the last player disconnected.\r\n"
                           + $"timeStampFormat = \"{timeStampFormat}\";\t\t// Set the timestamp format used on each report line in server-side RPT file. Possible values are \"none\" (default),\"short\",\"full\".\r\n"
                           + $"BattlEye = {battlEye};\t\t\t\t// Server to use BattlEye system\r\n"
-                          + $"queueSizeLogG = {AdvancedOptions.QueueSizeLogG};\t\t\t// If a specific players message queue is larger than 1MB and #monitor is running, dump his messages to a logfile for analysis \r\n"
+                          + $"queueSizeLogG = {AdvancedOptions.QueueSizeLogG};\t\t\t// If a specific players message queue is larger than Value number and #monitor is running, dump his messages to a logfile for analysis \r\n"
                           + $"LogObjectNotFound = {AdvancedOptions.LogObjectNotFound};\t\t// When false to skip logging 'Server: Object not found messages'.\r\n"
                           + $"SkipDescriptionParsing = {AdvancedOptions.SkipDescriptionParsing};\t\t// When true to skip parsing of description.ext/mission.sqm. Will show pbo filename instead of configured missionName. OverviewText and such won't work, but loading the mission list is a lot faster when there are many missions \r\n"
                           + $"ignoreMissionLoadErrors = {AdvancedOptions.IgnoreMissionLoadErrors};\t\t// When set to true, the mission will load no matter the amount of loading errors. If set to false, the server will abort mission's loading and return to mission selection.\r\n"
