@@ -93,9 +93,11 @@ namespace FASTER.Models
 
         private string serverCfgContent;
 
+        private object AdvancedOptions;
+
     [Serializable]
     public class AdvancedOptions : INotifyPropertyChanged
-	{
+    {
         private bool   logObjectNotFound       = true;       // logging enabled
         private bool   skipDescriptionParsing  = false;      // parse description.ext
         private bool   ignoreMissionLoadErrors = false;      // do not ingore errors
@@ -147,6 +149,7 @@ namespace FASTER.Models
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
             }
     }
+
         #region Server Options
         public string PasswordAdmin
         {
