@@ -92,7 +92,6 @@ namespace FASTER.Models
         private string commandLineParams;
 
         private string serverCfgContent;
-
         private object AdvancedOptions;
 
     [Serializable]
@@ -142,12 +141,12 @@ namespace FASTER.Models
                 RaisePropertyChanged("QueueSizeLogG");
             }
         }
-            public event PropertyChangedEventHandler PropertyChanged;
-
-            private void RaisePropertyChanged(string property)
-            {
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
-            }
+        public event PropertyChangedEventHandler PropertyChanged;
+		
+        private void RaisePropertyChanged(string property)
+        {
+            PropertyChanged(this, new PropertyChangedEventArgs(property));
+        }
     }
 
         #region Server Options
