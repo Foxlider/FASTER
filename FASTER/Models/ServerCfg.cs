@@ -92,7 +92,6 @@ namespace FASTER.Models
         private string commandLineParams;
 
         private string serverCfgContent;
-        private object AdvancedOptions;
 
     [Serializable]
     public class AdvancedOptions : INotifyPropertyChanged
@@ -142,7 +141,7 @@ namespace FASTER.Models
             }
         }
         public event PropertyChangedEventHandler PropertyChanged;
-		
+
         private void RaisePropertyChanged(string property)
         {
             PropertyChanged(this, new PropertyChangedEventArgs(property));
@@ -822,6 +821,11 @@ namespace FASTER.Models
             }
         }
 
+        public object QueueSizeLogG { get; set; }
+        public object IgnoreMissionLoadErrors { get; set; }
+        public object LogObjectNotFound { get; set; }
+        public object SkipDescriptionParsing { get; set; }
+
         public ServerCfg()
         {
             if(string.IsNullOrWhiteSpace(serverCfgContent))
@@ -902,10 +906,10 @@ namespace FASTER.Models
                           + $"persistent = {persistent};\t\t\t\t// If 1, missions still run on even after the last player disconnected.\r\n"
                           + $"timeStampFormat = \"{timeStampFormat}\";\t\t// Set the timestamp format used on each report line in server-side RPT file. Possible values are \"none\" (default),\"short\",\"full\".\r\n"
                           + $"BattlEye = {battlEye};\t\t\t\t// Server to use BattlEye system\r\n"
-                          + $"queueSizeLogG = {AdvancedOptions.QueueSizeLogG};\t\t\t// If a specific players message queue is larger than Value number and #monitor is running, dump his messages to a logfile for analysis \r\n"
-                          + $"LogObjectNotFound = {AdvancedOptions.LogObjectNotFound};\t\t// When false to skip logging 'Server: Object not found messages'.\r\n"
-                          + $"SkipDescriptionParsing = {AdvancedOptions.SkipDescriptionParsing};\t\t// When true to skip parsing of description.ext/mission.sqm. Will show pbo filename instead of configured missionName. OverviewText and such won't work, but loading the mission list is a lot faster when there are many missions \r\n"
-                          + $"ignoreMissionLoadErrors = {AdvancedOptions.IgnoreMissionLoadErrors};\t\t// When set to true, the mission will load no matter the amount of loading errors. If set to false, the server will abort mission's loading and return to mission selection.\r\n"
+                          + $"queueSizeLogG = {QueueSizeLogG};\t\t\t// If a specific players message queue is larger than Value number and #monitor is running, dump his messages to a logfile for analysis \r\n"
+                          + $"LogObjectNotFound = {LogObjectNotFound};\t\t// When false to skip logging 'Server: Object not found messages'.\r\n"
+                          + $"SkipDescriptionParsing = {SkipDescriptionParsing};\t\t// When true to skip parsing of description.ext/mission.sqm. Will show pbo filename instead of configured missionName. OverviewText and such won't work, but loading the mission list is a lot faster when there are many missions \r\n"
+                          + $"ignoreMissionLoadErrors = {IgnoreMissionLoadErrors};\t\t// When set to true, the mission will load no matter the amount of loading errors. If set to false, the server will abort mission's loading and return to mission selection.\r\n"
                           + $"forcedDifficulty = {forcedDifficulty};\t\t\t// Forced difficulty (Recruit, Regular, Veteran, Custom)\r\n"
                           + "\r\n"
                           + "// TIMEOUTS\r\n"
