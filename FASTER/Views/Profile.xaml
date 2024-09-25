@@ -58,6 +58,18 @@
                                     <Button Content="{iconPacks:Material Kind=FolderOpen}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="1" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" Height="auto" Margin="5,5,0,5" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Padding="3" Click="SelectServerFile"/>
                                 </Grid>
                                 <mah:NumericUpDown Value="{Binding Profile.Port, UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Port" ToolTip="Port for ArmaServer"/>
+                                <StackPanel Background="{Binding Mode=OneWay, Source={StaticResource MahApps.Brushes.Menu.Background}}">
+                                    <TextBlock Text="DLC's" Margin="10,10" HorizontalAlignment="Left" mah:TextBoxHelper.UseFloatingWatermark="True"  ToolTip="DLCs for ArmaServer"/>
+                                    <CheckBox IsChecked="{Binding Profile.ContactDLCChecked}" Content="Contact DLC" Margin="10,3" Width="105" HorizontalAlignment="Left"/>
+                                    <CheckBox IsChecked="{Binding Profile.GMDLCChecked}" Content="GM DLC" Margin="10,3" HorizontalAlignment="Left"/>
+                                    <CheckBox IsChecked="{Binding Profile.PFDLCChecked}" Content="Prairie Fire DLC" Margin="10,3" Width="105" HorizontalAlignment="Left"/>
+                                    <CheckBox IsChecked="{Binding Profile.CSLADLCChecked}" Content="CSLA DLC" Margin="10,3" HorizontalAlignment="Left"/>
+                                    <CheckBox IsChecked="{Binding Profile.WSDLCChecked}" Content="Western Sahara DLC" Margin="10,3" HorizontalAlignment="Left"/>
+                                    <CheckBox IsChecked="{Binding Profile.SPEDLCChecked}" Content="Spearhead 1944 DLC" Margin="10,3" HorizontalAlignment="Left"/>
+                                    <CheckBox IsChecked="{Binding Profile.RFDLCChecked}" Content="Reaction Forces DLC" Margin="10,3" HorizontalAlignment="Left"/>
+                                    <StackPanel Height="10"/>
+                                </StackPanel>
+                               
                             </StackPanel>
                         </GroupBox>
                     </StackPanel>
@@ -90,7 +102,7 @@
                                         <TextBlock Text="Clear Keys" Margin="10,0" />
                                     </StackPanel>
                                 </Button>
-                                <Canvas>
+                                <!--<Canvas>
                                     <Expander Header="DLCs" Margin="5" mah:ControlsHelper.ContentCharacterCasing="Normal" Background="{Binding Mode=OneWay, Source={StaticResource MahApps.Brushes.Menu.Background}}">
                                         <StackPanel Orientation="Vertical">
                                             <CheckBox IsChecked="{Binding Profile.ContactDLCChecked}" Content="Contact DLC" Margin="10,3" Width="105" HorizontalAlignment="Left"/>
@@ -102,7 +114,7 @@
                                             <CheckBox IsChecked="{Binding Profile.RFDLCChecked}" Content="Reaction Forces DLC" Margin="10,3" HorizontalAlignment="Left"/>
                                         </StackPanel>
                                     </Expander>
-                                </Canvas>
+                                </Canvas>-->
                             </StackPanel>
                             <DataGrid Grid.Row="1" ItemsSource="{Binding Path=Profile.FilteredProfileMods, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" CanUserReorderColumns="False" CanUserSortColumns="True" AutoGenerateColumns="False" CanUserAddRows="False">
                                 <DataGrid.Resources>
