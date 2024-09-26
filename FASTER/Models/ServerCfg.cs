@@ -21,12 +21,12 @@ namespace FASTER.Models
         private string       passwordAdmin;
         private string       password;
         private string       hostname;
-        private int          maxPlayers = 32;
-        private List<string> motd       = new();
+        private int          maxPlayers         = 32;
+        private List<string> motd               = new();
         private int          motdInterval;
-        private List<string> admins          = new();
-        private List<string> headlessClients = new();
-        private List<string> localClient     = new();
+        private List<string> admins             = new();
+        private List<string> headlessClients    = new();
+        private List<string> localClient        = new();
         private bool         headlessClientEnabled;
         private bool         votingEnabled;
         private bool         netlogEnabled;
@@ -53,7 +53,6 @@ namespace FASTER.Models
         private int    armaUnitsTimeout         = 30; 	     // Defines how long the player will be stuck connecting and wait for armaUnits data. Player will be notified if timeout elapsed and no units data was received
         private string forcedDifficulty         = "Custom";  // By default forcedDifficulty is only applying Custom
 
-
         //Arma server only
         private short  verifySignatures         = 0;         // 0 = Disabled (FASTER Default); 1 = Deprecated Activated ; 2 = Activated (Arma Default)
         private bool   drawingInMap             = true;
@@ -74,14 +73,14 @@ namespace FASTER.Models
         private string doubleIdDetected;
         private string onUserConnected;
         private string onUserDisconnected;
-        private string onHackedData = "kick (_this select 0)";
+        private string onHackedData             = "kick (_this select 0)";
         private string onDifferentData;
-        private string onUnsignedData = "kick (_this select 0)";
+        private string onUnsignedData           = "kick (_this select 0)";
         private string onUserKicked;
 
         private bool                 missionSelectorChecked;
         private string               missionContentOverride;
-        private List<ProfileMission> _missions = new();
+        private List<ProfileMission> _missions  = new();
         private bool                 autoInit;
         private string               difficulty = "Custom";
 
@@ -92,61 +91,6 @@ namespace FASTER.Models
         private string commandLineParams;
 
         private string serverCfgContent;
-
-    [Serializable]
-    public class AdvancedOptions : INotifyPropertyChanged
-    {
-        private bool   logObjectNotFound       = true;       // logging enabled
-        private bool   skipDescriptionParsing  = false;      // parse description.ext
-        private bool   ignoreMissionLoadErrors = false;      // do not ingore errors
-        private int    queueSizeLogG           = 0;          // if a specific players message queue is larger than <Value> and '#monitor' is running, dump his messages to a logfile for analysis
-
-            public bool LogObjectNotFound
-        {
-            get => logObjectNotFound;
-            set
-            {
-                logObjectNotFound = value;
-                RaisePropertyChanged("LogObjectNotFound");
-            }
-        }
-
-            public bool SkipDescriptionParsing
-        {
-            get => skipDescriptionParsing;
-            set
-            {
-                skipDescriptionParsing = value;
-                RaisePropertyChanged("SkipDescriptionParsing");
-            }
-        }
-
-            public bool IgnoreMissionLoadErrors
-        {
-            get => ignoreMissionLoadErrors;
-            set
-            {
-                ignoreMissionLoadErrors = value;
-                RaisePropertyChanged("IgnoreMissionLoadErrors");
-            }
-        }
-
-            public int QueueSizeLogG
-        {
-            get => queueSizeLogG;
-            set
-            {
-                queueSizeLogG = value;
-                RaisePropertyChanged("QueueSizeLogG");
-            }
-        }
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void RaisePropertyChanged(string property)
-        {
-            PropertyChanged(this, new PropertyChangedEventArgs(property));
-        }
-    }
 
         #region Server Options
         public string PasswordAdmin
@@ -820,18 +764,94 @@ namespace FASTER.Models
                 RaisePropertyChanged("ServerCfgContent");
             }
         }
-
-        public object QueueSizeLogG { get; set; }
-        public object IgnoreMissionLoadErrors { get; set; }
-        public object LogObjectNotFound { get; set; }
-        public object SkipDescriptionParsing { get; set; }
-
+        
         public ServerCfg()
         {
             if(string.IsNullOrWhiteSpace(serverCfgContent))
             { ServerCfgContent = ProcessFile(); }
         }
 
+        public object LogObjectNotFound { get; private set; }
+        public object SkipDescriptionParsing { get; private set; }
+        public object IgnoreMissionLoadErrors { get; private set; }
+        public object QueueSizeLogG { get; private set; }
+
+    [Serializable]
+    public class AdvancedOptions : INotifyPropertyChanged
+    {
+        private bool   logObjectNotFound       = true;       // logging enabled
+        private bool   skipDescriptionParsing  = false;      // Parse description.ext
+        private bool   ignoreMissionLoadErrors = false;      // Do not ingore errors
+        private int    queueSizeLogG           = 0;          // If a specific players message queue is larger than <Value> and '#monitor' is running, dump his messages to a logfile for analysis
+
+            public bool LogObjectNotFound
+        {
+            get => logObjectNotFound;
+            set
+            {
+                logObjectNotFound = value;
+                RaisePropertyChanged("LogObjectNotFound");
+            }
+        }
+
+            public bool SkipDescriptionParsing
+        {
+            get => skipDescriptionParsing;
+            set
+            {
+                skipDescriptionParsing = value;
+                RaisePropertyChanged("SkipDescriptionParsing");
+            }
+        }
+
+            public bool IgnoreMissionLoadErrors
+        {
+            get => ignoreMissionLoadErrors;
+            set
+            {
+                ignoreMissionLoadErrors = value;
+                RaisePropertyChanged("IgnoreMissionLoadErrors");
+            }
+        }
+
+            public int QueueSizeLogG
+        {
+            get => queueSizeLogG;
+            set
+            {
+                queueSizeLogG = value;
+                RaisePropertyChanged("QueueSizeLogG");
+            }
+        }
+		
+		private string advancedOptionsContent;    
+
+        public string AdvancedOptionsContent
+        {
+            get => AdvancedOptionsContent;
+            set
+            {
+                AdvancedOptionsContent = value;
+                RaisePropertyChanged("AdvancedOptionsContent");
+            }
+        }
+
+        public Advancedoptions()
+        {
+            if(string.IsNullOrWhiteSpace(AdvancedOptionsContent))
+            { AdvancedOptionsContent = ProcessFile(); }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void RaisePropertyChanged(string property)
+        {
+            if (PropertyChanged == null) return;
+            PropertyChanged(this, new PropertyChangedEventArgs(property));
+			if(property != "AdvancedOptionsContent") AdvancedOptionsContent = ProcessFile();
+        }
+	}
+	
         private void Item_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             RaisePropertyChanged("MissionChecked");
@@ -902,7 +922,7 @@ namespace FASTER.Models
                           + $"disableVoN = {disableVoN};\t\t\t\t// If set to 1, Voice over Net will not be available\r\n"
                           + $"vonCodec = {vonCodec};\t\t\t\t// If set to 1 then it uses IETF standard OPUS codec, if to 0 then it uses SPEEX codec (since Arma 3 update 1.58+)  \r\n"
                           + $"skipLobby = {(skipLobby ? "1" : "0")};\t\t\t\t// Overridden by mission parameters\r\n"
-                          + $"vonCodecQuality = {vonCodecQuality};\t\t\t// since 1.62.95417 supports range 1-20 //since 1.63.x will supports range 1-30 //8kHz is 0-10, 16kHz is 11-20, 32kHz(48kHz) is 21-30 \r\n"
+                          + $"vonCodecQuality = {vonCodecQuality};\t\t\t// Since 1.62.95417 supports range 1-20 //since 1.63.x will supports range 1-30 //8kHz is 0-10, 16kHz is 11-20, 32kHz(48kHz) is 21-30 \r\n"
                           + $"persistent = {persistent};\t\t\t\t// If 1, missions still run on even after the last player disconnected.\r\n"
                           + $"timeStampFormat = \"{timeStampFormat}\";\t\t// Set the timestamp format used on each report line in server-side RPT file. Possible values are \"none\" (default),\"short\",\"full\".\r\n"
                           + $"BattlEye = {battlEye};\t\t\t\t// Server to use BattlEye system\r\n"
@@ -931,9 +951,9 @@ namespace FASTER.Models
                           + $"doubleIdDetected = \"{doubleIdDetected}\";\t\t\t//\r\n"
                           + "\r\n"
                           + "// SIGNATURE VERIFICATION\r\n"
-                          + $"onUnsignedData = \"{onUnsignedData}\";\t// unsigned data detected\r\n"
-                          + $"onHackedData = \"{onHackedData}\";\t// tampering of the signature detected\r\n"
-                          + $"onDifferentData = \"{onDifferentData}\";\t\t\t// data with a valid signature, but different version than the one present on server detected\r\n"
+                          + $"onUnsignedData = \"{onUnsignedData}\";\t// Unsigned data detected\r\n"
+                          + $"onHackedData = \"{onHackedData}\";\t// Tampering of the signature detected\r\n"
+                          + $"onDifferentData = \"{onDifferentData}\";\t\t\t// Data with a valid signature, but different version than the one present on server detected\r\n"
                           + "\r\n"
                           + "\r\n"
                           + "// MISSIONS CYCLE (see below)\r\n"
