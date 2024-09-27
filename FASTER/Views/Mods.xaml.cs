@@ -4,6 +4,7 @@ using FASTER.ViewModel;
 using System;
 using System.Windows;
 using MahApps.Metro.Controls.Dialogs;
+using System.Threading.Tasks;
 
 namespace FASTER.Views
 {
@@ -85,6 +86,11 @@ namespace FASTER.Views
 		private async void DeleteAll_Click(object sender, RoutedEventArgs e)
         {
             await ((ModsViewModel) DataContext)?.DeleteAllMods();
+        }
+
+        private async void PurgeAndReinstall_Click(object sender, RoutedEventArgs e)
+        {
+            await ((ModsViewModel) DataContext)?.PurgeAndReinstall();
         }
     }
 }
