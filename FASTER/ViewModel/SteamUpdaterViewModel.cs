@@ -481,7 +481,7 @@ namespace FASTER.ViewModel
 
                     sw.Stop();
                     mod.Status = ArmaModStatus.UpToDate;
-                    var nx = new DateTime(1970, 1, 1);
+                    var nx = DateTime.UnixEpoch;
                     var ts = DateTime.UtcNow - nx;
                     mod.LocalLastUpdated = (ulong) ts.TotalSeconds;
 
