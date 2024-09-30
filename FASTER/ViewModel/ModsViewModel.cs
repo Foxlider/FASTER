@@ -165,34 +165,38 @@ namespace FASTER.ViewModel
             }
         }
 
-        internal async Task PurgeAndReinstall()
+        internal void PurgeAndReinstall(ArmaMod mod)
+        {
+            if (mod == null || mod.IsLocal)
+                return;
+
+            DeleteMod(mod);
+            ModsCollection.AddSteamMod(mod);
+
+            DisplayMessage($"Purged and reinstalled {mod.Name}");
+        }
+
+        internal async Task PurgeAndReinstallAll()
         {
             var answer = await DialogCoordinator.ShowInputAsync(this, "Are you sure you want to purge and reinstall all mods?", "Write \"yes\" and press OK if you wish to continue.");
 
             if (string.IsNullOrEmpty(answer) || !answer.Equals("yes"))
                 return;
 
-            Analytics.TrackEvent("Mods - Clicked PurgeAndReinstall", new Dictionary<string, string>
+            Analytics.TrackEvent("Mods - Clicked PurgeAndReinstallAll", new Dictionary<string, string>
             {
                 {"Name", Properties.Settings.Default.steamUserName}
             });
 
-            IList<ArmaMod> copyArmaMods = new List<ArmaMod>(ModsCollection.ArmaMods.Where(x => !x.IsLocal));
+            var copyArmaMods = new List<ArmaMod>(ModsCollection.ArmaMods.Where(x => !x.IsLocal));
 
             foreach (var mod in copyArmaMods)
-            {
                 DeleteMod(mod);
-                ModsCollection.AddSteamMod(mod);
-            }
-            
-            await UpdateAll();
 
-            // we want all the mods re added and updated before we redeploy them
             foreach (var mod in copyArmaMods)
-            {
-                DeploymentViewModel model = new();
-                model.DeployMod(new DeploymentMod(mod));
-            }
+                ModsCollection.AddSteamMod(mod);
+
+            DisplayMessage("Purged and reinstalled all mods");
         }
 
         public void OpenModPage(ArmaMod mod)

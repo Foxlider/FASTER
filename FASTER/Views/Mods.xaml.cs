@@ -58,6 +58,12 @@ namespace FASTER.Views
             ((ModsViewModel) DataContext)?.OpenModFolder(mod);
         }
 
+        private void PurgeAndReinstallMod(object sender, RoutedEventArgs e)
+        {
+            var mod = ((FrameworkElement) sender).DataContext as ArmaMod;
+            ((ModsViewModel) DataContext)?.PurgeAndReinstall(mod);
+        }
+
         private async void AddSteamMod_Click(object sender, RoutedEventArgs e)
         {
             await ((ModsViewModel) DataContext)?.AddSteamMod();
@@ -88,9 +94,9 @@ namespace FASTER.Views
             await ((ModsViewModel) DataContext)?.DeleteAllMods();
         }
 
-        private async void PurgeAndReinstall_Click(object sender, RoutedEventArgs e)
+        private async void PurgeAndReinstallAll_Click(object sender, RoutedEventArgs e)
         {
-            await ((ModsViewModel) DataContext)?.PurgeAndReinstall();
+            await ((ModsViewModel) DataContext)?.PurgeAndReinstallAll();
         }
     }
 }
