@@ -188,13 +188,14 @@ namespace FASTER.ViewModel
                 {"Name", Properties.Settings.Default.steamUserName}
             });
 
+            // Stores a copy of the mods that are not local so they can be readded
             var copyArmaMods = new List<ArmaMod>(ModsCollection.ArmaMods.Where(x => !x.IsLocal));
 
             foreach (var mod in copyArmaMods)
+            {
                 DeleteMod(mod);
-
-            foreach (var mod in copyArmaMods)
                 ModsCollection.AddSteamMod(mod);
+            }
 
             DisplayMessage("Purged and reinstalled all mods");
         }
