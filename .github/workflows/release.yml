@@ -2,10 +2,23 @@ name: "Release Generator"
 
 # after successful analysis on the main branch, a new pre-release is generated
 on:
+  #Makes a Nighly release on a new commit. 
   workflow_run:
     workflows: [Code Analysis]
     types: [completed]
     branches: [master]
+  
+  #Makes a Release on tag
+  push:
+    # Sequence of patterns matched against refs/tags
+    tags:
+      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+  workflow_dispatch: # ReleaseGen can be triggered manually
+
+env:
+  IS_TAG: ${{ github.ref_type == 'tag' }}
+  ZIP_NAME: ${{ github.ref_type == 'tag' && 'Release_' || 'Release_Nightly_' }}
+  ZIP_PATH: ${{ github.ref_type == 'tag' && 'FASTER_' || 'FASTER_Nightly_' }}
 
 jobs:
 
@@ -53,8 +66,8 @@ jobs:
         Runtime: ${{ matrix.runtime }}
 
     # Pub
-    - name: Publish the application $env:Runtime
-      run: dotnet publish --configuration $env:Configuration -a $env:Runtime --self-contained true /p:useapphost=true --output .\Release_Nightly_$env:Runtime ./FASTER/FASTER.csproj
+    - name: Publish the application ${{ matrix.runtime }}
+      run: dotnet publish --configuration $env:Configuration -a $env:Runtime --self-contained true /p:useapphost=true --output .\$env:ZIP_NAME$env:Runtime ./FASTER/FASTER.csproj
       env:
         Runtime: ${{ matrix.runtime }}
                  
@@ -68,16 +81,27 @@ jobs:
     #   env:
     #     Runtime: ${{ matrix.runtime }}
 
+    - name: get-net-sdk-project-versions-action
+      uses: kzrnm/get-net-sdk-project-versions-action@v2.0.0
+      id: get-version
+      with:
+        proj-path: ./FASTER/FASTER.csproj
+
+    - name: Set Version
+      id: set_version
+      run: echo "VERSION=$([[ ${{ env.IS_TAG }} == 'true' ]] && echo '${{ github.ref }}' || echo '${{ steps.get-version.outputs.version }}')" >> $GITHUB_ENV
+
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
       with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
+        tag_name: ${{ env.VERSION }}
+        release_name: ${{ env.IS_TAG == 'true' && 'Release' || 'PreRelease' }} ${{ env.VERSION }}
         draft: false
-        prerelease: true
+        prerelease: ${{ env.IS_TAG == 'false' }}
+
     #Upload Artifacts
     - name: Upload Release Asset
       id: upload-release-asset 
@@ -87,7 +111,7 @@ jobs:
         Runtime: ${{ matrix.runtime }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-        asset_path: .\FASTER_Nightly_${{ env.Runtime }}.zip
-        asset_name: Release_Nightly_${{ env.Runtime }}.zip
+        asset_path: .\${{ env.ZIP_PATH}}${{ env.Runtime }}.zip
+        asset_name: ${{ env.ZIP_NAME}}${{ env.Runtime }}.zip
         asset_content_type: application/zip
         
