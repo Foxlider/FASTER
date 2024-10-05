@@ -11,7 +11,7 @@ on:
 jobs:
   analyzeQL:
     name: Analyze with CodeQL
-    runs-on: [ubuntu-latest]
+    runs-on: [windows-latest]
 
     permissions:
       # required for all workflows
