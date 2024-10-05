@@ -16,4 +16,5 @@ jobs:
           identifier: Foxlider.FASTER
           installers-regex: 'Release_x64.zip'
           max-versions-to-keep: 5
-          token: ${{ secrets.WINGET_TOKEN }} # Classic Personal Access Token with [public_repo, workflow] scopes
+          # Classic Personal Access Token with [public_repo, workflow] scopes
+          token: ${{ secrets.WINGET_TOKEN }} 
