@@ -11,7 +11,8 @@ on:
 jobs:
   analyzeQL:
     name: Analyze with CodeQL
-    runs-on: [windows-latest]
+    # runs-on: [windows-latest] # may cause Out of Memory errors
+    runs-on: [self-hosted]
 
     permissions:
       # required for all workflows
