@@ -1,0 +1,93 @@
+name: "Release Generator"
+
+# after successful analysis on the main branch, a new pre-release is generated
+on:
+  workflow_run:
+    workflows: [Code Analysis]
+    types: [completed]
+    branches: [master]
+
+jobs:
+
+  # BUILD APP
+  build:
+
+    strategy:
+      matrix:
+        runtime: [x64, x86]
+
+    runs-on: windows-latest  # For a list of available runner types, refer to
+                             # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idruns-on
+
+    env:
+      Configuration: Release
+      Solution_Name: FASTER                         # Replace with your solution name, i.e. MyWpfApp.sln.
+      Test_Project_Path: FASTERTests\FASTERTests.csproj                # Replace with the path to your test project, i.e. MyWpfApp.Tests\MyWpfApp.Tests.csproj.
+      Wap_Project_Directory: FASTER    # Replace with the Wap project directory relative to the solution, i.e. MyWpfApp.Package.
+      Wap_Project_Path: FASTER.App.Package\FASTER.Package.wapproj                   # Replace with the path to your Wap project, i.e. MyWpf.App.Package\MyWpfApp.Package.wapproj.
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    # Install the .NET Core workload
+    - name: Install .NET Core
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{vars.DOTNET_VERSION}}
+
+    # Execute all unit tests in the solution
+    - name: Execute unit tests
+      run: dotnet test
+
+    # Restore the application to populate the obj folder with RuntimeIdentifiers
+    - name: Restore the application
+      run: dotnet restore
+
+    # Build
+    - name: Build the application
+      run: dotnet build --configuration $env:Configuration -a $env:Runtime ./FASTER/FASTER.csproj
+      env:
+        Runtime: ${{ matrix.runtime }}
+
+    # Pub
+    - name: Publish the application $env:Runtime
+      run: dotnet publish --configuration $env:Configuration -a $env:Runtime --self-contained true /p:useapphost=true --output .\Release_Nightly_$env:Runtime ./FASTER/FASTER.csproj
+      env:
+        Runtime: ${{ matrix.runtime }}
+                 
+
+    # Upload the MSIX package: https://github.com/marketplace/actions/upload-a-build-artifact
+    # - name: Upload build artifacts
+    #   uses: actions/upload-artifact@v4
+    #   with:
+    #     name: Release_Nightly_${{ env.Runtime }}
+    #     path: .\FASTER_Nightly_${{ env.Runtime }}
+    #   env:
+    #     Runtime: ${{ matrix.runtime }}
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        draft: false
+        prerelease: true
+    #Upload Artifacts
+    - name: Upload Release Asset
+      id: upload-release-asset 
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        Runtime: ${{ matrix.runtime }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+        asset_path: .\FASTER_Nightly_${{ env.Runtime }}.zip
+        asset_name: Release_Nightly_${{ env.Runtime }}.zip
+        asset_content_type: application/zip
+        
