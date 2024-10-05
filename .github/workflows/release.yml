@@ -90,7 +90,13 @@ jobs:
 
     - name: Set Version
       id: set_version
-      run: echo "VERSION=$([[ ${{ env.IS_TAG }} == 'true' ]] && echo '${{ github.ref }}' || echo '${{ steps.get-version.outputs.version }}')" >> $GITHUB_ENV
+      run: |
+        if ($env:IS_TAG -eq "true") {
+          echo "VERSION=$env:GITHUB_REF" >> $env:GITHUB_ENV
+        } else {
+          echo "VERSION=${{ steps.get-version.outputs.version }}" >> $env:GITHUB_ENV
+        }
+      shell: pwsh
 
     - name: Create Release
       id: create_release

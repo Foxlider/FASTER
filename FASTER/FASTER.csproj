@@ -23,7 +23,6 @@
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>FASTERKey.snk</AssemblyOriginatorKeyFile>
     <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
-    <CodeAnalysisRuleSet>..\.sonarlint\foxlider_fastercsharp.ruleset</CodeAnalysisRuleSet>
     <EnableNETAnalyzers>false</EnableNETAnalyzers>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -48,9 +47,6 @@
   <ItemGroup>
     <None Remove="Resources\FASTER.ico" />
     <None Remove="Resources\FasterSplash.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <AdditionalFiles Include="..\.sonarlint\foxlider_faster\CSharp\SonarLint.xml" Link="SonarLint.xml" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Autoupdater.NET.Official" Version="1.8.2" />
