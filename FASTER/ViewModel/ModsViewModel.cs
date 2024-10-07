@@ -26,7 +26,7 @@ namespace FASTER.ViewModel
 
         internal void DisplayMessage(string msg)
         {
-            MainWindow.Instance.IFlyout.IsOpen         = true;
+            MainWindow.Instance.IFlyout.IsOpen = true;
             MainWindow.Instance.IFlyoutMessage.Content = msg;
         }
 
@@ -62,7 +62,7 @@ namespace FASTER.ViewModel
             var mod = new ArmaMod
             {
                 WorkshopId = modIDOut,
-                Path       = Path.Combine(Properties.Settings.Default.modStagingDirectory, modID),
+                Path = Path.Combine(Properties.Settings.Default.modStagingDirectory, modID),
                 IsLocal = false
             };
 
@@ -107,7 +107,8 @@ namespace FASTER.ViewModel
                     continue;
                 }
 
-                await Task.Factory.StartNew(() => {
+                await Task.Factory.StartNew(() =>
+                {
                     Directory.CreateSymbolicLink(newPath, oldPath);
                     var progressDone = oldPaths.IndexOf(oldPath);
                     progress.SetMessage($"Copying mod from {oldPath}\n{progressDone} / {progress.Maximum}");
@@ -164,6 +165,41 @@ namespace FASTER.ViewModel
             }
         }
 
+        internal void PurgeAndReinstall(ArmaMod mod)
+        {
+            if (mod == null || mod.IsLocal)
+                return;
+
+            DeleteMod(mod);
+            ModsCollection.AddSteamMod(mod);
+
+            DisplayMessage($"Purged and reinstalled {mod.Name}");
+        }
+
+        internal async Task PurgeAndReinstallAll()
+        {
+            var answer = await DialogCoordinator.ShowInputAsync(this, "Are you sure you want to purge and reinstall all mods?", "Write \"yes\" and press OK if you wish to continue.");
+
+            if (string.IsNullOrEmpty(answer) || !answer.Equals("yes"))
+                return;
+
+            Analytics.TrackEvent("Mods - Clicked PurgeAndReinstallAll", new Dictionary<string, string>
+            {
+                {"Name", Properties.Settings.Default.steamUserName}
+            });
+
+            // Stores a copy of the mods that are not local so they can be readded
+            var copyArmaMods = new List<ArmaMod>(ModsCollection.ArmaMods.Where(x => !x.IsLocal));
+
+            foreach (var mod in copyArmaMods)
+            {
+                DeleteMod(mod);
+                ModsCollection.AddSteamMod(mod);
+            }
+
+            DisplayMessage("Purged and reinstalled all mods");
+        }
+
         public void OpenModPage(ArmaMod mod)
         {
             if (mod == null)
@@ -178,7 +214,7 @@ namespace FASTER.ViewModel
                 try
                 {
                     url = url.Replace("&", "^&");
-                    Process.Start(new ProcessStartInfo("cmd", $"/c start {url}") {CreateNoWindow = true});
+                    Process.Start(new ProcessStartInfo("cmd", $"/c start {url}") { CreateNoWindow = true });
                 }
                 catch
                 { DisplayMessage($"Could not open \"{url}\""); }
@@ -205,7 +241,7 @@ namespace FASTER.ViewModel
                     continue;
                 }
 
-                if(!await Task.Run(() => extractedMod.IsOnWorkshop()))
+                if (!await Task.Run(() => extractedMod.IsOnWorkshop()))
                     continue;
 
                 ModsCollection.AddSteamMod(extractedMod);
@@ -223,7 +259,7 @@ namespace FASTER.ViewModel
             ProcessStartInfo startInfo = new()
             {
                 Arguments = mod.Path,
-                FileName  = "explorer.exe"
+                FileName = "explorer.exe"
             };
 
             Process.Start(startInfo);
@@ -251,7 +287,7 @@ namespace FASTER.ViewModel
 
             MainWindow.Instance.NavigateToConsole();
             var ans = await MainWindow.Instance.SteamUpdaterViewModel.RunModsUpdater(ModsCollection.ArmaMods);
-            if(ans == UpdateState.LoginFailed) 
+            if (ans == UpdateState.LoginFailed)
                 DisplayMessage("Steam Login Failed");
         }
     }
