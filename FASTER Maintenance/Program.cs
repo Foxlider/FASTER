@@ -176,7 +176,7 @@ namespace FASTER_Maintenance
                     }
                     Console.WriteLine($"\tRead config from '{selected}\\user.config'");
 
-                    var servers = conf16.UserSettings.Settings.Setting.FirstOrDefault(s => s.Name == "Servers");
+                    var servers = conf16.UserSettings.Settings.Setting.Find(s => s.Name == "Servers");
                     conf16.UserSettings.Settings.Setting.Remove(servers);
                     conf17.UserSettings = new Models._17Models.UserSettings { Settings = new Models._17Models.Settings { Setting = conf16.UserSettings.Settings.Setting } };
                     Console.WriteLine("\tConverted standard values to 1.7");

@@ -200,7 +200,7 @@ namespace FASTER.Models
             {
                 headlessClientEnabled = value;
                 RaisePropertyChanged("HeadlessClientEnabled");
-                if (value && !headlessClients.Any(e => e.Length > 0))
+                if (value && !headlessClients.Exists(e => e.Length > 0))
                 { HeadlessClients = "127.0.0.1"; }
             }
         }
@@ -686,7 +686,7 @@ namespace FASTER.Models
 
                 bool isEqual = _missions.Count == value.Count
                             && !( from mission in value
-                                  let local = _missions.FirstOrDefault(m => m.Path == mission.Path)
+                                  let local = _missions.Find(m => m.Path == mission.Path)
                                   where local == null || local.MissionChecked != mission.MissionChecked
                                   select mission ).Any();
 
@@ -966,8 +966,8 @@ namespace FASTER.Models
                           + "\r\n"
                           + "\r\n"
                           + "// HEADLESS CLIENT\r\n"
-                          + $"{(headlessClientEnabled && !headlessClients.Any(string.IsNullOrWhiteSpace) ? $"headlessClients[] =  { "{\n\t\"" + string.Join("\",\n\t \"", headlessClients) + "\"\n}" };\r\n" : "")}"
-                          + $"{(headlessClientEnabled && !localClient.Any(string.IsNullOrWhiteSpace)? $"localClient[] =  { "{\n\t\"" + string.Join("\",\n\t \"", localClient) + "\"\n}" };" : "")}";
+                          + $"{(headlessClientEnabled && !headlessClients.Exists(string.IsNullOrWhiteSpace) ? $"headlessClients[] =  { "{\n\t\"" + string.Join("\",\n\t \"", headlessClients) + "\"\n}" };\r\n" : "")}"
+                          + $"{(headlessClientEnabled && !localClient.Exists(string.IsNullOrWhiteSpace)? $"localClient[] =  { "{\n\t\"" + string.Join("\",\n\t \"", localClient) + "\"\n}" };" : "")}";
             return output;
         }
 

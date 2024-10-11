@@ -462,7 +462,7 @@ namespace FASTER.Models
             {
                 p.GenerateNewId();
 
-                if (p.Name.EndsWith(")") && p.Name.Contains('(') && int.TryParse(p.Name.Substring(p.Name.Length - 2, 1), out _))
+                if (p.Name.EndsWith(')') && p.Name.Contains('(') && int.TryParse(p.Name.Substring(p.Name.Length - 2, 1), out _))
                 {
                     var i   = p.Name.IndexOf('(');
                     var j   = p.Name.Length;

@@ -80,9 +80,9 @@ namespace FASTER.ViewModel
                 return;
 
             var oldPaths = new List<string>();
-            if (!Path.GetFileName(localPath).StartsWith("@") && Directory.GetDirectories(localPath).Where((file) => Path.GetFileName(file).StartsWith("@")).ToList().Count > 0)
+            if (!Path.GetFileName(localPath).StartsWith('@') && Directory.GetDirectories(localPath).Where((file) => Path.GetFileName(file).StartsWith('@')).ToList().Count > 0)
             {
-                oldPaths = Directory.GetDirectories(localPath).Where((file) => Path.GetFileName(file).StartsWith("@")).ToList();
+                oldPaths = Directory.GetDirectories(localPath).Where((file) => Path.GetFileName(file).StartsWith('@')).ToList();
             }
             else
             {

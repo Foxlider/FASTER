@@ -1,0 +1,20 @@
+name: Publish
+
+on:
+  release:
+    types: [released]
+
+jobs:
+
+  winget:
+    runs-on: windows-latest
+    steps:
+      # Requires forked winget-pkgs: https://github.com/microsoft/winget-pkgs to the same account as this project
+      - name: Submit to WinGet
+        uses: vedantmgoyal2009/winget-releaser@v2
+        with:
+          identifier: Foxlider.FASTER
+          installers-regex: 'Release_x64.zip'
+          max-versions-to-keep: 5
+          # Classic Personal Access Token with [public_repo, workflow] scopes
+          token: ${{ secrets.WINGET_TOKEN }} 
