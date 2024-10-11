@@ -26,7 +26,7 @@ using System.Windows.Threading;
 
 namespace FASTER.ViewModel
 {
-    public sealed class SteamUpdaterViewModel : INotifyPropertyChanged
+    public sealed class SteamUpdaterViewModel : INotifyPropertyChanged, IDisposable
     {
         public SteamUpdaterViewModel()
         {
@@ -747,6 +747,11 @@ namespace FASTER.ViewModel
         {
             if (PropertyChanged == null) return;
             PropertyChanged(this, new PropertyChangedEventArgs(property));
+        }
+
+        public void Dispose()
+        {
+            tokenSource.Dispose();
         }
     }
 
