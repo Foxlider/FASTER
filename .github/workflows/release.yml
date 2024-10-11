@@ -72,28 +72,28 @@ jobs:
       env:
         Runtime: ${{ matrix.runtime }}
     
-        # Zip the folder
+    # Zip the folder
     - name: Zip the application folder
       run: Compress-Archive -Path .\$env:ZIP_NAME$env:Runtime\* -DestinationPath .\$env:ZIP_NAME$env:Runtime.zip
       shell: pwsh
       env:
         Runtime: ${{ matrix.runtime }}
 
-    # Upload the MSIX package: https://github.com/marketplace/actions/upload-a-build-artifact
-    # - name: Upload build artifacts
-    #   uses: actions/upload-artifact@v4
-    #   with:
-    #     name: Release_Nightly_${{ env.Runtime }}
-    #     path: .\FASTER_Nightly_${{ env.Runtime }}
-    #   env:
-    #     Runtime: ${{ matrix.runtime }}
-
+    # Get version number
     - name: get-net-sdk-project-versions-action
       uses: kzrnm/get-net-sdk-project-versions-action@v2.0.0
       id: get-version
       with:
         proj-path: ./FASTER/FASTER.csproj
 
+    # Get Changes between Tags
+    - name: 📋 Get Changes between Tags
+      id: get-changes
+      uses: simbo/changes-between-tags-action@v1
+      with:
+        tag-pattern: '^v?[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$'
+    
+    # Set Version Number to environment
     - name: Set Version
       id: set_version
       run: |
@@ -104,6 +104,7 @@ jobs:
         }
       shell: pwsh
 
+    #Create Release
     - name: Create Release
       if: env.IS_RELEASE == 'true'
       id: create_release
@@ -113,10 +114,11 @@ jobs:
       with:
         tag_name: 'v${{ env.VERSION }}'
         release_name: 'Release v${{ env.VERSION }}'
+        body: ${{ steps.get-changes.outputs.changes }}
         draft: false
         prerelease: ${{ env.IS_RELEASE == 'false' }}
 
-    #Upload Artifacts
+    # Upload Artifacts
     - name: Upload Release Asset
       if: env.IS_RELEASE == 'true'
       id: upload-release-asset 
@@ -129,7 +131,8 @@ jobs:
         asset_path: .\${{ env.ZIP_NAME}}${{ env.Runtime }}.zip
         asset_name: ${{ env.ZIP_NAME}}${{ env.Runtime }}.zip
         asset_content_type: application/zip
-
+    
+    # Create Nightly Release
     - name: Create Nightly Release
       uses: andelf/nightly-release@main
       env:
@@ -138,5 +141,6 @@ jobs:
       with:
         tag_name: nightly
         name: 'FASTER Nightly Release v${{ env.VERSION }}'
+        body: ${{ steps.get-changes.outputs.changes }}
         prerelease: true
         files: .\${{ env.ZIP_NAME}}${{ env.Runtime }}.zip
