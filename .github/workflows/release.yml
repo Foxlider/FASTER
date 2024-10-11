@@ -87,11 +87,63 @@ jobs:
         proj-path: ./FASTER/FASTER.csproj
 
     # Get Changes between Tags
-    - name: 📋 Get Changes between Tags
+    - name: Generate Changeslog
       id: get-changes
-      uses: simbo/changes-between-tags-action@v1
-      with:
-        tag-pattern: '^v?[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$'
+      run: |
+        Write-Output "::group::Collecting Changes between Tags..."
+
+        # Set options from inputs
+        $tagPattern = "^v?\d\.\d+([a-zA-Z]|\.\d+([a-zA-Z])?)?"
+        $linePrefix = "- "
+
+        # Fetch all tags from origin
+        git fetch origin --tags --force
+
+        # Get tags that match the pattern and sort them using version sorting in reverse
+        $tags = git tag --sort=committerdate -l | Select-String -Pattern $tagPattern | Sort-Object -Descending || ""
+
+        # Count the found tags
+        $countTags = ($tags -split "`n").Count
+
+        # Exit with error if no tags are found
+        if ($tags -eq "" -or $countTags -le 0) {
+            Write-Output "::error title=no tags found::changes-between-tags action could not find any tags to work with"
+            exit 1
+        }
+
+        # Take the first tag as latestTag
+        $latestTag = ($tags -split "`n")[0]
+
+        $range = "$latestTag" + "..@"
+
+        # Get changes for range
+        $changes = git log --pretty=reference --no-decorate $range
+
+        
+        # If set, add a prefix to every commit message
+        # if ($linePrefix) {
+        #   $changes = $changes -replace "^(.*)$", "$linePrefix`$1  \r\n"
+        # }
+
+        # Set outputs
+        $changesOutput = @"
+        changes<<EOF
+        $changes
+        EOF
+        tag=$latestTag
+        ref=${gitRef:-N/A}
+        "@
+        $changesOutput | Out-File -Append -FilePath $env:GITHUB_OUTPUT
+
+        # Log the results
+        Write-Output "tag: $latestTag"
+        Write-Output "ref: ${gitRef:-N/A}"
+        Write-Output "changes:"
+        Write-Output $changes
+
+        # End log grouping
+        Write-Output "::endgroup::"
+      shell: pwsh
     
     # Set Version Number to environment
     - name: Set Version
