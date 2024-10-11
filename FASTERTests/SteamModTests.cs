@@ -12,11 +12,11 @@ namespace FASTER.Models.Tests
         [Test()]
         public void SteamIdFromUrlTest()
         {
-            Assert.AreEqual(463939057, SteamMod.SteamIdFromUrl("https://steamcommunity.com/workshop/filedetails/?id=463939057"));
-            Assert.AreEqual(463939057, SteamMod.SteamIdFromUrl("https://steamcommunity.com/workshop/filedetails/?id=463939057&l=french"));
-            Assert.AreEqual(463939057, SteamMod.SteamIdFromUrl("https://steamcommunity.com/sharedfiles/filedetails/?l=german&id=463939057"));
-            Assert.AreEqual(463939057, SteamMod.SteamIdFromUrl("https://steamcommunity.com/workshop/filedetails/?l=french&id=463939057"));
-            Assert.AreEqual(463939057, SteamMod.SteamIdFromUrl("https://steamcommunity.com/workshop/filedetails/?l=english&id=463939057&l=french"));
+            Assert.That(SteamMod.SteamIdFromUrl("https://steamcommunity.com/workshop/filedetails/?id=463939057"), Is.EqualTo(463939057));
+            Assert.That(SteamMod.SteamIdFromUrl("https://steamcommunity.com/workshop/filedetails/?id=463939057&l=french"), Is.EqualTo(463939057));
+            Assert.That(SteamMod.SteamIdFromUrl("https://steamcommunity.com/sharedfiles/filedetails/?l=german&id=463939057"), Is.EqualTo(463939057));
+            Assert.That(SteamMod.SteamIdFromUrl("https://steamcommunity.com/workshop/filedetails/?l=french&id=463939057"), Is.EqualTo(463939057));
+            Assert.That(SteamMod.SteamIdFromUrl("https://steamcommunity.com/workshop/filedetails/?l=english&id=463939057&l=french"), Is.EqualTo(463939057));
         }
 
 
@@ -26,9 +26,9 @@ namespace FASTER.Models.Tests
             Tuple<string, string, int> expected = new Tuple<string, string, int>("ace", "acemod", 1577907553);
             Tuple<string, string, int> res = null;
             Assert.DoesNotThrow(() => { res = SteamMod.GetModInfo(463939057); });
-            Assert.AreEqual(expected.Item1, res.Item1, "The expected mod name was wrong");
-            Assert.AreEqual(expected.Item2, res.Item2, "The expected creator name was wrong");
-            Assert.GreaterOrEqual(res.Item3, expected.Item3, "The expected update time was wrong");
+            Assert.That(res.Item1, Is.EqualTo(expected.Item1), "The expected mod name was wrong");
+            Assert.That(res.Item2, Is.EqualTo(expected.Item2), "The expected creator name was wrong");
+            Assert.That(res.Item3, Is.GreaterThanOrEqualTo(expected.Item3), "The expected update time was wrong");
         }
     }
 
@@ -48,10 +48,10 @@ namespace FASTER.Models.Tests
                 File.WriteAllText(fullPath, _armaProfileContent);
 
             var modList = ModUtilities.ParseModsFromArmaProfileFile(fullPath);
-            Assert.IsNotNull(modList);
-            Assert.AreEqual(1, modList.Count);
-            Assert.AreEqual("CBA_A3", modList[0].Name);
-            Assert.AreEqual(ModUtilities.GetCompareString("@CBA_A3"), ModUtilities.GetCompareString(modList[0].Name));
+            Assert.That(modList, Is.Not.Null);
+            Assert.That(modList.Count, Is.EqualTo(1));
+            Assert.That(modList[0].Name, Is.EqualTo("CBA_A3"));
+            Assert.That(ModUtilities.GetCompareString(modList[0].Name), Is.EqualTo(ModUtilities.GetCompareString("@CBA_A3")));
 
             if (File.Exists(fullPath))
                 File.Delete(fullPath);
@@ -65,15 +65,15 @@ namespace FASTER.Models.Tests
                 File.WriteAllText(fullPath, _armaBugProfileContent);
 
             var modList = ModUtilities.ParseModsFromArmaProfileFile(fullPath);
-            Assert.IsNotNull(modList);
-            Assert.AreEqual(68, modList.Count);
-            Assert.AreEqual(65, modList.FindAll(mod => !mod.IsLocal).Count);
-            Assert.AreEqual(3, modList.FindAll(mod => mod.IsLocal).Count);
+            Assert.That(modList, Is.Not.Null);
+            Assert.That(modList.Count, Is.EqualTo(68));
+            Assert.That(modList.FindAll(mod => !mod.IsLocal).Count, Is.EqualTo(65));
+            Assert.That(modList.FindAll(mod => mod.IsLocal).Count, Is.EqualTo(3));
 
             var mod = modList.Find(m => m.Name == "A3 Thermal Improvement");
-            Assert.IsNotNull(mod);
-            Assert.IsTrue(mod.IsLocal);
-            Assert.AreEqual(ModUtilities.GetCompareString("@A3_Thermal_Improvement"), ModUtilities.GetCompareString(mod.Name));
+            Assert.That(mod, Is.Not.Null);
+            Assert.That(mod.IsLocal);
+            Assert.That(ModUtilities.GetCompareString(mod.Name), Is.EqualTo(ModUtilities.GetCompareString("@A3_Thermal_Improvement")));
 
             if (File.Exists(fullPath))
                 File.Delete(fullPath);

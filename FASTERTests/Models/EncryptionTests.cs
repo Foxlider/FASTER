@@ -9,14 +9,14 @@ namespace FASTER.Models.Tests
         public void EncryptDataTest()
         {
             Assert.DoesNotThrow(() => Encryption.Instance.EncryptData("SomeText"));
-            Assert.AreNotEqual("SomeText", Encryption.Instance.EncryptData("SomeText"));
+            Assert.That(Encryption.Instance.EncryptData("SomeText"), Is.EqualTo("SomeText"));
         }
 
         [Test()]
         public void DecryptDataTest()
         {
             var encrypted = Encryption.Instance.EncryptData("SomeText");
-            Assert.AreEqual("SomeText", Encryption.Instance.DecryptData(encrypted));
+            Assert.That(Encryption.Instance.DecryptData(encrypted), Is.EqualTo("SomeText"));
         }
     }
 }
