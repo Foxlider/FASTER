@@ -121,9 +121,9 @@ jobs:
 
         
         # If set, add a prefix to every commit message
-        # if ($linePrefix) {
-        #   $changes = $changes -replace "^(.*)$", "$linePrefix`$1  \r\n"
-        # }
+        if ($linePrefix) {
+          $changes = $changes -replace "^(.*)$", "$linePrefix`$1"
+        }
 
         # Set outputs
         $EOF = (New-Guid).Guid
@@ -190,8 +190,9 @@ jobs:
         tag_name: nightly
         name: 'FASTER Nightly Release v${{ env.VERSION }}'
         body: | 
-          ## Changelog since release ${{ steps.get-changes.outputs.tag }} :  
+          Changelog since release ${{ steps.get-changes.outputs.tag }} :  
+          ---  
           ${{ steps.get-changes.outputs.changes }}
-          ---
+          ---  
         prerelease: true
         files: .\${{ env.ZIP_NAME}}${{ env.Runtime }}.zip
