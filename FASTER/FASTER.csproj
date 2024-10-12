@@ -28,10 +28,12 @@
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
 		<DebugType>portable</DebugType>
+		<NoWarn>1701;1702;NU1701;CS8002;CS8618;CS8622</NoWarn>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
 		<DebugType>none</DebugType>
+		<NoWarn>1701;1702;NU1701;CS8002;CS8618;CS8622</NoWarn>
 	</PropertyGroup>
 
 	<ItemGroup>
