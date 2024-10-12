@@ -1,86 +1,78 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net7.0-windows</TargetFramework>
-    <PublishSingleFile Condition="'$(Configuration)' == 'Release'">true</PublishSingleFile>
-    <PublishReadyToRun>true</PublishReadyToRun>
-    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
-    <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
-    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
-    <PublishReadyToRunComposite>false</PublishReadyToRunComposite>
-    <UseWPF>true</UseWPF>
-    <Version>1.9.5.3</Version>
-    <Authors>Keelah Fox</Authors>
-    <Company>FoxliCorp.</Company>
-    <Description>Fox's Arma Server Tool Extended Rewrite</Description>
-    <Copyright>Copyright © 2019</Copyright>
-    <PackageProjectUrl>https://forums.bohemia.net/forums/topic/224359-foxs-arma-server-tool-extended-rewrite-faster/</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/Foxlider/FASTER</RepositoryUrl>
-    <ApplicationIcon>Resources\FASTER.ico</ApplicationIcon>
-    <StartupObject>FASTER.App</StartupObject>
-    <ApplicationManifest>Properties\FASTER.manifest</ApplicationManifest>
-    <LangVersion>9.0</LangVersion>
-    <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>FASTERKey.snk</AssemblyOriginatorKeyFile>
-    <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
-    <EnableNETAnalyzers>false</EnableNETAnalyzers>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <NoWarn>1701;1702;NU1701;CS8002</NoWarn>
-    <PlatformTarget>x64</PlatformTarget>
-    <DebugType>none</DebugType>
-    <DebugSymbols>false</DebugSymbols>
-    <Optimize>True</Optimize>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <NoWarn>1701;1702;NU1701;CS8002</NoWarn>
-    <PlatformTarget>x64</PlatformTarget>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
-    <NoWarn>1701;1702;NU1701;CS8002</NoWarn>
-    <PlatformTarget>x86</PlatformTarget>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <NoWarn>1701;1702;NU1701;CS8002</NoWarn>
-    <Optimize>False</Optimize>
-  </PropertyGroup>
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net8.0-windows</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<UseWPF>true</UseWPF>
+		<ApplicationIcon>Resources\FASTER.ico</ApplicationIcon>
+		<ApplicationManifest>Properties\FASTER.manifest</ApplicationManifest>
+		<SignAssembly>True</SignAssembly>
+		<AssemblyOriginatorKeyFile>FASTERKey.snk</AssemblyOriginatorKeyFile>
+		<Authors>Keelah Fox, Jupster, Canno.n</Authors>
+		<Version>1.9.5.3</Version>
+		<Company>FoxliCorp.</Company>
+		<Description>Fox's Arma Server Tool Extended Rewrite</Description>
+		<Copyright>Copyright © 2019</Copyright>
+		<PackageProjectUrl>https://github.com/Foxlider/FASTER</PackageProjectUrl>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<RepositoryUrl>https://github.com/Foxlider/FASTER</RepositoryUrl>
+		<PackageLicenseFile>LICENSE</PackageLicenseFile>
+
+		<PublishReadyToRun>true</PublishReadyToRun>
+		<IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
+		<IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+		<PublishReadyToRunComposite>false</PublishReadyToRunComposite>
+	</PropertyGroup>
+
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<DebugType>portable</DebugType>
+		<NoWarn>1701;1702;NU1701;CS8002;CS8618;CS8622</NoWarn>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<DebugType>none</DebugType>
+		<NoWarn>1701;1702;NU1701;CS8002;CS8618;CS8622</NoWarn>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Resource Include="Resources\FASTER.ico">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+	</ItemGroup>
+	<ItemGroup>
+		<SplashScreen Include="Resources\FasterSplash.png" />
+	</ItemGroup>
+	<ItemGroup>
+		<Compile Update="Properties\Settings.Designer.cs">
+			<DesignTimeSharedInput>True</DesignTimeSharedInput>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Settings.settings</DependentUpon>
+		</Compile>
+	</ItemGroup>
+	<ItemGroup>
+		<None Update="Properties\Settings.settings">
+			<Generator>SettingsSingleFileGenerator</Generator>
+			<LastGenOutput>Settings.Designer.cs</LastGenOutput>
+		</None>
+	</ItemGroup>
   <ItemGroup>
     <None Remove="Resources\FASTER.ico" />
     <None Remove="Resources\FasterSplash.png" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Autoupdater.NET.Official" Version="1.8.2" />
-    <PackageReference Include="BytexDigital.Steam" Version="0.8.2-preview.1688347297" />
+    <PackageReference Include="Autoupdater.NET.Official" Version="1.9.2" />
+    <PackageReference Include="BytexDigital.Steam" Version="0.8.6-preview.1728774783" />
     <PackageReference Include="FontAwesome.WPF" Version="4.7.0.9" />
     <PackageReference Include="LiveCharts.Wpf" Version="0.9.7" />
-    <PackageReference Include="MahApps.Metro" Version="2.4.9" />
-    <PackageReference Include="MahApps.Metro.IconPacks.Material" Version="4.11.0" />
-    <PackageReference Include="MahApps.Metro.IconPacks.Modern" Version="4.11.0" />
+    <PackageReference Include="MahApps.Metro" Version="2.4.10" />
+    <PackageReference Include="MahApps.Metro.IconPacks.Material" Version="5.0.0" />
+    <PackageReference Include="MahApps.Metro.IconPacks.Modern" Version="5.0.0" />
     <PackageReference Include="MahApps.Metro.SimpleChildWindow" Version="2.2.1" />
-    <PackageReference Include="Microsoft.AppCenter.Analytics" Version="5.0.2" />
-    <PackageReference Include="Microsoft.AppCenter.Crashes" Version="5.0.2" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Microsoft.AppCenter.Analytics" Version="5.0.5" />
+    <PackageReference Include="Microsoft.AppCenter.Crashes" Version="5.0.5" />
+    <PackageReference Include="System.Text.Json" Version="8.0.5" />
     <PackageReference Include="WindowsAPICodePack-Shell" Version="1.1.1" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\FASTER.ico">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-  </ItemGroup>
-  <ItemGroup>
-    <SplashScreen Include="Resources\FasterSplash.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Update="Properties\Settings.Designer.cs">
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Update="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
   </ItemGroup>
 </Project>
