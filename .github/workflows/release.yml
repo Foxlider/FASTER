@@ -122,11 +122,20 @@ jobs:
         
         # If set, add a prefix to every commit message
         # if ($linePrefix) {
-        #   $changes = $changes -replace "^(.*)$", "$linePrefix`$1  "
+        #   $changes = $changes -replace "^(.*)$", "$linePrefix`$1  \r\n"
         # }
 
-        # Output changes to $GITHUB_OUTPUT
-        $changes | Out-String | ForEach-Object { Write-Output "changes=$_"; Write-Output "changes=$_"; } >> $GITHUB_OUTPUT
+        # Set outputs
+        Add-Content -Path $env:$GITHUB_OUTPUT -Value "changes<<EOF"
+        Add-Content -Path $env:$GITHUB_OUTPUT -Value $changes
+        Add-Content -Path $env:$GITHUB_OUTPUT -Value "EOF"
+        Add-Content -PATH $env:$GITHUB_OUTPUT -VALUE "tag=$latestTag"
+        Add-Content -Path $env:$GITHUB_OUTPUT -Value "EOF"
+
+        # Log the results
+        Write-Output "tag: $latestTag"
+        Write-Output "changes:"
+        Write-Output $changes
 
         # End log grouping
         Write-Output "::endgroup::"
@@ -181,6 +190,7 @@ jobs:
         tag_name: nightly
         name: 'FASTER Nightly Release v${{ env.VERSION }}'
         body: | 
-          ${{ steps.get-changes.outputs.changes }}
+          'Changelog since release ${{ steps.get-changes.outputs.tag }} : ' 
+          '${{ steps.get-changes.outputs.changes }}'
         prerelease: true
         files: .\${{ env.ZIP_NAME}}${{ env.Runtime }}.zip
