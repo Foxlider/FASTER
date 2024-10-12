@@ -126,11 +126,11 @@ jobs:
         # }
 
         # Set outputs
-        Add-Content -Path $env:$GITHUB_OUTPUT -Value "changes<<EOF"
-        Add-Content -Path $env:$GITHUB_OUTPUT -Value $changes
-        Add-Content -Path $env:$GITHUB_OUTPUT -Value "EOF"
-        Add-Content -PATH $env:$GITHUB_OUTPUT -VALUE "tag=$latestTag"
-        Add-Content -Path $env:$GITHUB_OUTPUT -Value "EOF"
+        $EOF = (New-Guid).Guid
+        "changes<<$EOF" >> $env:GITHUB_OUTPUT
+        $changes >> $env:GITHUB_OUTPUT
+        "$EOF" >> $env:GITHUB_OUTPUT
+        "tag=$latestTag" >> $env:GITHUB_OUTPUT
 
         # Log the results
         Write-Output "tag: $latestTag"
@@ -190,7 +190,8 @@ jobs:
         tag_name: nightly
         name: 'FASTER Nightly Release v${{ env.VERSION }}'
         body: | 
-          'Changelog since release ${{ steps.get-changes.outputs.tag }} : ' 
-          '${{ steps.get-changes.outputs.changes }}'
+          ## Changelog since release ${{ steps.get-changes.outputs.tag }} :  
+          ${{ steps.get-changes.outputs.changes }}
+          ---
         prerelease: true
         files: .\${{ env.ZIP_NAME}}${{ env.Runtime }}.zip
