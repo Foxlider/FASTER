@@ -461,6 +461,11 @@ namespace FASTER.ViewModel
 
                         var downloadHandler = SteamContentClient.GetPublishedFileDataAsync(mod.WorkshopId, manifestId, tokenSource.Token);
                         DownloadForMultiple(downloadHandler.Result, mod.Path).Wait();
+
+                        mod.Status = ArmaModStatus.UpToDate;
+                        var nx = DateTime.UnixEpoch;
+                        var ts = DateTime.UtcNow - nx;
+                        mod.LocalLastUpdated = (ulong)ts.TotalSeconds;
                     }
                     catch (TaskCanceledException)
                     {
@@ -473,17 +478,11 @@ namespace FASTER.ViewModel
                         mod.Status = ArmaModStatus.NotComplete;
                         Parameters.Output += $"\nError: {ex.Message}{(ex.InnerException != null ? $" Inner Exception: {ex.InnerException.Message}" : "")}";
                     }
-
                     sw.Stop();
-                    mod.Status = ArmaModStatus.UpToDate;
-                    var nx = DateTime.UnixEpoch;
-                    var ts = DateTime.UtcNow - nx;
-                    mod.LocalLastUpdated = (ulong) ts.TotalSeconds;
 
                     mod.CheckModSize();
 
                     Parameters.Output += $"\n    Download {mod.WorkshopId} completed, it took {sw.Elapsed.Minutes + sw.Elapsed.Hours*60}m {sw.Elapsed.Seconds}s {sw.Elapsed.Milliseconds}ms";
-
 
                 }, TaskCreationOptions.LongRunning).ContinueWith((_) =>
                 {

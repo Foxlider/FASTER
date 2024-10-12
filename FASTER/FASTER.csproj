@@ -63,6 +63,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Autoupdater.NET.Official" Version="1.9.2" />
+    <PackageReference Include="BytexDigital.Steam" Version="0.8.6-preview.1728774783" />
     <PackageReference Include="FontAwesome.WPF" Version="4.7.0.9" />
     <PackageReference Include="LiveCharts.Wpf" Version="0.9.7" />
     <PackageReference Include="MahApps.Metro" Version="2.4.10" />
@@ -73,8 +74,5 @@
     <PackageReference Include="Microsoft.AppCenter.Crashes" Version="5.0.5" />
     <PackageReference Include="System.Text.Json" Version="8.0.5" />
     <PackageReference Include="WindowsAPICodePack-Shell" Version="1.1.1" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\BytexDigital.Steam\BytexDigital.Steam\BytexDigital.Steam.csproj" />
   </ItemGroup>
 </Project>

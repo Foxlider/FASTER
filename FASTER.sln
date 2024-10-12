@@ -22,8 +22,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FASTERTests", "FASTERTests\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FASTER Maintenance", "FASTER Maintenance\FASTER Maintenance.csproj", "{465FB100-A08C-4E4F-A321-EC85C5C177B3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BytexDigital.Steam", "BytexDigital.Steam\BytexDigital.Steam\BytexDigital.Steam.csproj", "{6E75A863-F718-4374-94B7-97B480F9E274}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -40,10 +38,6 @@ Global
 		{65FDF864-BF9B-414A-A6E6-3473BCFB62BE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{465FB100-A08C-4E4F-A321-EC85C5C177B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{465FB100-A08C-4E4F-A321-EC85C5C177B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6E75A863-F718-4374-94B7-97B480F9E274}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6E75A863-F718-4374-94B7-97B480F9E274}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6E75A863-F718-4374-94B7-97B480F9E274}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6E75A863-F718-4374-94B7-97B480F9E274}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
