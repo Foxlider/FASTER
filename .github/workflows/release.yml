@@ -87,7 +87,7 @@ jobs:
         proj-path: ./FASTER/FASTER.csproj
 
     # Get Changes between Tags
-    - name: Generate Changeslog
+    - name: Generate Changelog
       id: get-changes
       run: |
         Write-Output "::group::Collecting Changes between Tags..."
@@ -188,7 +188,7 @@ jobs:
         Runtime: ${{ matrix.runtime }}
       with:
         tag_name: nightly
-        name: 'FASTER Nightly Release v${{ env.VERSION }}'
+        name: 'Nightly Release v${{ env.VERSION }}'
         body: | 
           Changelog since release ${{ steps.get-changes.outputs.tag }} :  
           ---  
