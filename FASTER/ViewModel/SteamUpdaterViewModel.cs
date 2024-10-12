@@ -26,7 +26,7 @@ using System.Windows.Threading;
 
 namespace FASTER.ViewModel
 {
-    public sealed class SteamUpdaterViewModel : INotifyPropertyChanged
+    public sealed class SteamUpdaterViewModel : INotifyPropertyChanged, IDisposable
     {
         public SteamUpdaterViewModel()
         {
@@ -510,6 +510,8 @@ namespace FASTER.ViewModel
 
         internal async Task<bool> SteamLogin()
         {
+            if (tokenSource.IsCancellationRequested)
+                tokenSource = new CancellationTokenSource();
             IsLoggingIn = true;
             var path = Path.Combine(Path.GetDirectoryName(ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal).FilePath) ?? string.Empty, "sentries");
 
@@ -530,7 +532,7 @@ namespace FASTER.ViewModel
                 Parameters.Output += $"\nConnecting to Steam as {(_steamCredentials.IsAnonymous ? "anonymous" : _steamCredentials.Username)}";
                 SteamClient.MaximumLogonAttempts = 5;
                 try
-                { await SteamClient.ConnectAsync(); }
+                { await SteamClient.ConnectAsync(tokenSource.Token); }
                 catch (SteamClientAlreadyRunningException)
                 { 
                     Parameters.Output += $"\nClient already logged in."; 
@@ -745,6 +747,11 @@ namespace FASTER.ViewModel
         {
             if (PropertyChanged == null) return;
             PropertyChanged(this, new PropertyChangedEventArgs(property));
+        }
+
+        public void Dispose()
+        {
+            tokenSource.Dispose();
         }
     }
 
