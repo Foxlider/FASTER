@@ -125,21 +125,8 @@ jobs:
         #   $changes = $changes -replace "^(.*)$", "$linePrefix`$1  "
         # }
 
-        # Set outputs
-        $changesOutput = @"
-        changes<<EOF
-        $changes
-        EOF
-        tag=$latestTag
-        ref=${gitRef:-N/A}
-        "@
-        $changesOutput | Out-File -Append -FilePath $env:GITHUB_OUTPUT
-
-        # Log the results
-        Write-Output "tag: $latestTag"
-        Write-Output "ref: ${gitRef:-N/A}"
-        Write-Output "changes:"
-        Write-Output $changes
+        # Output changes to $GITHUB_OUTPUT
+        $changes | Out-String | ForEach-Object { Write-Output "changes=$_"; Write-Output "changes=$_"; } >> $GITHUB_OUTPUT
 
         # End log grouping
         Write-Output "::endgroup::"
