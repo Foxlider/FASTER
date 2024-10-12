@@ -122,7 +122,7 @@ jobs:
         
         # If set, add a prefix to every commit message
         # if ($linePrefix) {
-        #   $changes = $changes -replace "^(.*)$", "$linePrefix`$1  \r\n"
+        #   $changes = $changes -replace "^(.*)$", "$linePrefix`$1  "
         # }
 
         # Set outputs
@@ -193,6 +193,7 @@ jobs:
       with:
         tag_name: nightly
         name: 'FASTER Nightly Release v${{ env.VERSION }}'
-        body: ${{ steps.get-changes.outputs.changes }}
+        body: | 
+          ${{ steps.get-changes.outputs.changes }}
         prerelease: true
         files: .\${{ env.ZIP_NAME}}${{ env.Runtime }}.zip
