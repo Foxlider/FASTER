@@ -40,9 +40,14 @@ jobs:
       uses: actions/setup-dotnet@v4.0.0
       with:
         dotnet-version: ${{vars.DOTNET_VERSION}}
-      
+    
     - run: dotnet restore
-    - run: dotnet build ./FASTER.sln --configuration Debug
+
+    - name: Build Solution
+      run: dotnet build ./FASTER.sln --configuration Debug
+
+    - name: Execute unit tests
+      run: dotnet test
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
