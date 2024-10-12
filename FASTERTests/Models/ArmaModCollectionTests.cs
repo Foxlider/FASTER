@@ -36,17 +36,17 @@ namespace FASTER.Models.Tests
         [Test]
         public void TestSteamModGet()
         {
-            Assert.IsFalse(string.IsNullOrEmpty(_mod.Author));
-            Assert.IsFalse(string.IsNullOrEmpty(_mod.Name));
-            Assert.IsFalse(string.IsNullOrEmpty(_mod.Path));
-            Assert.IsFalse(string.IsNullOrEmpty(_mod.Status));
-            Assert.IsNotNull(_mod.Size);
-            Assert.IsNotNull(_mod.LocalLastUpdated);
-            Assert.IsNotNull(_mod.WorkshopId);
-            Assert.IsNotNull(_mod.SteamLastUpdated);
-            Assert.IsNotNull(_mod.PrivateMod);
-            Assert.IsNotNull(_mod.IsLocal);
-            Assert.IsNotNull(_mod.IsLoading);
+            Assert.That(!string.IsNullOrEmpty(_mod.Author));
+            Assert.That(!string.IsNullOrEmpty(_mod.Name));
+            Assert.That(!string.IsNullOrEmpty(_mod.Path));
+            Assert.That(!string.IsNullOrEmpty(_mod.Status));
+            Assert.That(_mod.Size, Is.Not.Null);
+            Assert.That(_mod.LocalLastUpdated, Is.Not.Null);
+            Assert.That(_mod.WorkshopId, Is.Not.Null);
+            Assert.That(_mod.SteamLastUpdated, Is.Not.Null);
+            Assert.That(_mod.PrivateMod, Is.Not.Null);
+            Assert.That(_mod.IsLocal, Is.Not.Null);
+            Assert.That(_mod.IsLoading, Is.Not.Null);
         }
 
         [Test]
