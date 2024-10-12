@@ -12,16 +12,11 @@ using MahApps.Metro.Controls.Dialogs;
 
 using Microsoft.AppCenter.Analytics;
 
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Configuration;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Threading;
 
 namespace FASTER.ViewModel
@@ -446,7 +441,7 @@ namespace FASTER.ViewModel
                     {
                         ManifestId manifestId = default;
                         
-                        if(mod.LocalLastUpdated > mod.SteamLastUpdated)
+                        if(mod.LocalLastUpdated > mod.SteamLastUpdated && mod.Size > 0)
                         {
                             mod.Status = ArmaModStatus.UpToDate;
                             Parameters.Output += $"\n   Mod{mod.WorkshopId} already up to date. Ignoring...";
@@ -611,8 +606,12 @@ namespace FASTER.ViewModel
             if (tokenSource.IsCancellationRequested)
                 tokenSource = new CancellationTokenSource();
 
-            Task downloadTask = downloadHandler.DownloadToFolderAsync(targetDir, tokenSource.Token);
-
+            Task downloadTask = Task.Run(async () =>
+            {
+                await downloadHandler.SetupAsync(targetDir, file => true, tokenSource.Token);
+                await downloadHandler.VerifyAsync(tokenSource.Token);
+                await downloadHandler.DownloadAsync(tokenSource.Token);
+            });
 
             Parameters.Output += "\nOK.";
 
@@ -694,7 +693,12 @@ namespace FASTER.ViewModel
                                                      };
             downloadHandler.DownloadComplete      += (_, _) => Parameters.Output += "\n    Download completed";
 
-            Task downloadTask = downloadHandler.DownloadToFolderAsync(targetDir, tokenSource.Token);
+            Task downloadTask = Task.Run(async () =>
+            {
+                await downloadHandler.SetupAsync(targetDir, file => true, tokenSource.Token);
+                await downloadHandler.VerifyAsync(tokenSource.Token);
+                await downloadHandler.DownloadAsync(tokenSource.Token);
+            });
 
             Parameters.Output += "\n    OK.";
 
