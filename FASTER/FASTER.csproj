@@ -1,5 +1,4 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
 		<TargetFramework>net8.0-windows</TargetFramework>
@@ -58,7 +57,6 @@
 			<LastGenOutput>Settings.Designer.cs</LastGenOutput>
 		</None>
 	</ItemGroup>
-
   <ItemGroup>
     <None Remove="Resources\FASTER.ico" />
     <None Remove="Resources\FasterSplash.png" />

@@ -764,7 +764,7 @@ namespace FASTER.Models
                 RaisePropertyChanged("ServerCfgContent");
             }
         }
-        
+
         public ServerCfg()
         {
             if(string.IsNullOrWhiteSpace(serverCfgContent))
@@ -836,7 +836,7 @@ namespace FASTER.Models
             }
         }
 
-        public Advancedoptions()
+        public AdvancedOptions()
         {
             if(string.IsNullOrWhiteSpace(AdvancedOptionsContent))
             { AdvancedOptionsContent = ProcessFile(); }
