@@ -43,7 +43,8 @@ jobs:
       with:
         dotnet-version: ${{vars.DOTNET_VERSION}}
     
-    - run: dotnet restore
+    - name: Restore Solution
+      run: dotnet restore ./FASTER.sln
 
     - name: Build Solution
       run: dotnet build ./FASTER.sln --configuration Debug

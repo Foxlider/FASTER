@@ -49,14 +49,14 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: ${{vars.DOTNET_VERSION}}
-
-    # Execute all unit tests in the solution
-    - name: Execute unit tests
-      run: dotnet test
-
-    # Restore the application to populate the obj folder with RuntimeIdentifiers
+    
+        # Restore the application to populate the obj folder with RuntimeIdentifiers
     - name: Restore the application
       run: dotnet restore
+    
+      # Execute all unit tests in the solution
+    - name: Execute unit tests
+      run: dotnet test
 
     # Build
     - name: Build the application
