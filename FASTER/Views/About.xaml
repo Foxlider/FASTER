@@ -79,7 +79,7 @@
                         </Button>
                         <Button Grid.Column="2" HorizontalAlignment="Center" Style="{DynamicResource MahApps.Styles.Button.MetroSquare.Accent}" Name="IDiscordButton" Click="IDiscordButton_Click">
                             <StackPanel Orientation="Horizontal">
-                                <iconPacks:PackIconMaterial Kind="Discord" />
+                                <iconPacks:PackIconMaterial Kind="Chat" />
                                 <TextBlock Margin="8 0 0 0" VerticalAlignment="Center">Discord</TextBlock>
                             </StackPanel>
                         </Button>

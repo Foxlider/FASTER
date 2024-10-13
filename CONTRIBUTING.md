@@ -43,9 +43,9 @@ For changes that address core functionality or would require breaking changes (e
 In general, we follow the ["fork-and-pull" Git workflow](https://github.com/susam/gitpr)
 While a bit different, it is generally the same idea.
 
-1. Fork the repository to your own Github account
+1. Fork the repository to your own GitHub account
 2. Clone the project to your machine
-3. Create a branch locally with a succinct but descriptive name. It is preferred to branch from the current update branch that should be named feature/Update-X.Y 
+3. Create a branch locally with a succinct but descriptive name. It is preferred to branch from the current update branch that should be named `feature/shortName`
 4. Commit changes to the branch
 5. Following any formatting and testing guidelines specific to this repo
 6. Push changes to your fork

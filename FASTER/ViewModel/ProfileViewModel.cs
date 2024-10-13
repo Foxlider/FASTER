@@ -199,7 +199,7 @@ namespace FASTER.ViewModel
             { Directory.Delete(Path.Combine(Profile.ArmaPath, "Servers", Profile.Id), true); }
             Properties.Settings.Default.Profiles.Remove(Profile);
             Properties.Settings.Default.Save();
-            MainWindow.Instance.ContentProfileViews.Remove(MainWindow.Instance.ContentProfileViews.FirstOrDefault(p => p.Profile.Id == Profile.Id));
+            MainWindow.Instance.ContentProfileViews.Remove(MainWindow.Instance.ContentProfileViews.Find(p => p.Profile.Id == Profile.Id));
             var menuItem = MainWindow.Instance.IServerProfilesMenu.Items.Cast<ToggleButton>().FirstOrDefault(p => p.Name == Profile.Id);
             if(menuItem != null)
                 MainWindow.Instance.IServerProfilesMenu.Items.Remove(menuItem);
@@ -302,7 +302,7 @@ namespace FASTER.ViewModel
             List<string> notFound = new();
             foreach (var extractedMod in extractedModList)
             {
-                var mod = Profile.ProfileMods.FirstOrDefault(m => m.Id == extractedMod.Id || ModUtilities.GetCompareString(extractedMod.Name) == ModUtilities.GetCompareString(m.Name));
+                var mod = Profile.ProfileMods.Find(m => m.Id == extractedMod.Id || ModUtilities.GetCompareString(extractedMod.Name) == ModUtilities.GetCompareString(m.Name));
                 if (mod != null)
                 {
                     mod.ClientSideChecked = true;
@@ -396,7 +396,7 @@ namespace FASTER.ViewModel
             {
                 foreach (var keyFile in Directory.GetFiles(Path.Combine(Profile.ArmaPath, "keys")))
                 {
-                    if (ignoredKeys.Any(keyFile.Contains))
+                    if (Array.Exists(ignoredKeys, x => keyFile.Contains(x)))
                         continue;
                     try
                     {
@@ -423,7 +423,7 @@ namespace FASTER.ViewModel
             var modlist = new List<ProfileMod>();
             foreach(var mod in Properties.Settings.Default.armaMods.ArmaMods)
             {
-                ProfileMod existingMod = Profile.ProfileMods.FirstOrDefault(m => m.Id == mod.WorkshopId);
+                ProfileMod existingMod = Profile.ProfileMods.Find(m => m.Id == mod.WorkshopId);
                 if (existingMod == null)
                 {
                     var newProfile = new ProfileMod { Name = mod.Name, Id = mod.WorkshopId, IsLocal = mod.IsLocal};
@@ -465,7 +465,7 @@ namespace FASTER.ViewModel
 
             foreach (var mission in newMissions)
             {
-                ProfileMission existingMission = Profile.ServerCfg.Missions.FirstOrDefault(m => m.Path == mission);
+                ProfileMission existingMission = Profile.ServerCfg.Missions.Find(m => m.Path == mission);
                 if (existingMission == null)
                 {
                     var newMission = new ProfileMission { Name = mission.Replace(".pbo", ""), Path = mission };

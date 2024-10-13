@@ -273,7 +273,7 @@ namespace FASTER.Models
                     break;
                 case UpdateState.Success:
                     Status = ArmaModStatus.UpToDate;
-                    var nx = new DateTime(1970, 1, 1);
+                    var nx = DateTime.UnixEpoch;
                     var ts = DateTime.UtcNow - nx;
 
                     LocalLastUpdated = (ulong) ts.TotalSeconds;
