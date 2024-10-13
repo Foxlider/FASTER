@@ -3,6 +3,8 @@ name: "Code Analysis"
 on:
   push: # The master branch must be analyzed on a new commit
     branches: [ master ]
+    tags-ignore:
+      - '*'
   pull_request:
     # Any PR on master must be analyzed
     branches: [ master ]
@@ -41,7 +43,8 @@ jobs:
       with:
         dotnet-version: ${{vars.DOTNET_VERSION}}
     
-    - run: dotnet restore
+    - name: Restore Solution
+      run: dotnet restore ./FASTER.sln
 
     - name: Build Solution
       run: dotnet build ./FASTER.sln --configuration Debug
