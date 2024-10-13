@@ -49,13 +49,10 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: ${{vars.DOTNET_VERSION}}
-
-    - name: Setup MSBuild.exe
-      uses: microsoft/setup-msbuild@v2
     
         # Restore the application to populate the obj folder with RuntimeIdentifiers
     - name: Restore the application
-      run: msbuild FASTER /t:Restore /p:Configuration=$env:Configuration
+      run: dotnet restore
     
       # Execute all unit tests in the solution
     - name: Execute unit tests

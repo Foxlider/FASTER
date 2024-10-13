@@ -43,12 +43,8 @@ jobs:
       with:
         dotnet-version: ${{vars.DOTNET_VERSION}}
     
-    - name: Setup MSBuild.exe
-      uses: microsoft/setup-msbuild@v2
-  
-      # Restore the application to populate the obj folder with RuntimeIdentifiers
-    - name: Restore the application
-      run: msbuild FASTER /t:Restore /p:Configuration=$env:Configuration
+    - name: Restore Solution
+      run: dotnet restore ./FASTER.sln
 
     - name: Build Solution
       run: dotnet build ./FASTER.sln --configuration Debug
