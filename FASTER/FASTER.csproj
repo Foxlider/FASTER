@@ -10,7 +10,7 @@
 		<SignAssembly>True</SignAssembly>
 		<AssemblyOriginatorKeyFile>FASTERKey.snk</AssemblyOriginatorKeyFile>
 		<Authors>Keelah Fox, Jupster, Canno.n</Authors>
-		<Version>1.9.6.0</Version>
+		<Version>1.9.6.1</Version>
 		<Company>FoxliCorp.</Company>
 		<Description>Fox's Arma Server Tool Extended Rewrite</Description>
 		<Copyright>Copyright © 2019</Copyright>

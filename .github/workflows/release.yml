@@ -114,9 +114,18 @@ jobs:
         # Take the first tag as latestTag
         $latestTag = ($tags -split "`n")[0]
 
-        $range = "$latestTag" + "..@"
-
         # Get changes for range
+        # Check if the latest tag is on the last commit
+        $latestCommit = git rev-parse HEAD
+        $latestTagCommit = git rev-list -n 1 $latestTag
+
+        if ($latestCommit -eq $latestTagCommit -and $countTags -gt 1) {
+            # Use the previous tag if the latest tag is on the last commit
+            $latestTag = ($tags -split "`n")[1]
+            
+        }
+
+        $range = "$latestTag" + "..@"
         $changes = git log --pretty=reference --no-decorate $range
 
         
