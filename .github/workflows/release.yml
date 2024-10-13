@@ -27,8 +27,8 @@ jobs:
     if: ( github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'master' ) || startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
     strategy:
       matrix:
-      # runtime: [x64, x86]
-        runtime: [x64]
+        runtime: [x64, x86]
+        # runtime: [x64]
 
     runs-on: windows-latest  # For a list of available runner types, refer to
                              # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idruns-on
@@ -97,6 +97,12 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: build-x64
+        path: ./artifacts
+    
+    - name: Download x86 artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: build-x86
         path: ./artifacts
     
     # Get version number
@@ -200,9 +206,9 @@ jobs:
         prerelease: ${{ env.IS_RELEASE == 'false' }}
 
     # Upload Artifacts
-    - name: Upload Release Asset
+    - name: Upload x64 Release Asset
       if: env.IS_RELEASE == 'true'
-      id: upload-release-asset 
+      id: upload-release-asset_x64
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -210,6 +216,19 @@ jobs:
         upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
         asset_path: ./artifacts/${{ env.ZIP_NAME}}x64.zip
         asset_name: ${{ env.ZIP_NAME}}x64.zip
+        asset_content_type: application/zip
+
+    # Upload Artifacts
+    - name: Upload x86 Release Asset
+      if: env.IS_RELEASE == 'true'
+      id: upload-release-asset_x86
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+        asset_path: ./artifacts/${{ env.ZIP_NAME}}x86.zip
+        asset_name: ${{ env.ZIP_NAME}}x86.zip
         asset_content_type: application/zip
     
     # Create Nightly Release
@@ -227,4 +246,6 @@ jobs:
           ${{ steps.get-changes.outputs.changes }}
           ---  
         prerelease: true
-        files: ./artifacts/${{ env.ZIP_NAME}}x64.zip
+        files: |
+          ./artifacts/${{ env.ZIP_NAME}}x64.zip
+          ./artifacts/${{ env.ZIP_NAME}}x86.zip
