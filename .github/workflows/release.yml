@@ -50,13 +50,13 @@ jobs:
       with:
         dotnet-version: ${{vars.DOTNET_VERSION}}
     
-        # Restore the application to populate the obj folder with RuntimeIdentifiers
-    - name: Restore the application
-      run: dotnet restore
-    
-      # Execute all unit tests in the solution
+    # Execute all unit tests in the solution
     - name: Execute unit tests
       run: dotnet test
+      
+    # Restore the application to populate the obj folder with RuntimeIdentifiers
+    - name: Restore the application
+      run: dotnet restore
 
     # Build
     - name: Build the application
