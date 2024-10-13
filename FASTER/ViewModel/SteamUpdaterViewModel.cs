@@ -12,21 +12,16 @@ using MahApps.Metro.Controls.Dialogs;
 
 using Microsoft.AppCenter.Analytics;
 
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Configuration;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Threading;
 
 namespace FASTER.ViewModel
 {
-    public sealed class SteamUpdaterViewModel : INotifyPropertyChanged
+    public sealed class SteamUpdaterViewModel : INotifyPropertyChanged, IDisposable
     {
         public SteamUpdaterViewModel()
         {
@@ -446,7 +441,7 @@ namespace FASTER.ViewModel
                     {
                         ManifestId manifestId = default;
                         
-                        if(mod.LocalLastUpdated > mod.SteamLastUpdated)
+                        if(mod.LocalLastUpdated > mod.SteamLastUpdated && mod.Size > 0)
                         {
                             mod.Status = ArmaModStatus.UpToDate;
                             Parameters.Output += $"\n   Mod{mod.WorkshopId} already up to date. Ignoring...";
@@ -466,6 +461,11 @@ namespace FASTER.ViewModel
 
                         var downloadHandler = SteamContentClient.GetPublishedFileDataAsync(mod.WorkshopId, manifestId, tokenSource.Token);
                         DownloadForMultiple(downloadHandler.Result, mod.Path).Wait();
+
+                        mod.Status = ArmaModStatus.UpToDate;
+                        var nx = DateTime.UnixEpoch;
+                        var ts = DateTime.UtcNow - nx;
+                        mod.LocalLastUpdated = (ulong)ts.TotalSeconds;
                     }
                     catch (TaskCanceledException)
                     {
@@ -478,17 +478,11 @@ namespace FASTER.ViewModel
                         mod.Status = ArmaModStatus.NotComplete;
                         Parameters.Output += $"\nError: {ex.Message}{(ex.InnerException != null ? $" Inner Exception: {ex.InnerException.Message}" : "")}";
                     }
-
                     sw.Stop();
-                    mod.Status = ArmaModStatus.UpToDate;
-                    var nx = DateTime.UnixEpoch;
-                    var ts = DateTime.UtcNow - nx;
-                    mod.LocalLastUpdated = (ulong) ts.TotalSeconds;
 
                     mod.CheckModSize();
 
                     Parameters.Output += $"\n    Download {mod.WorkshopId} completed, it took {sw.Elapsed.Minutes + sw.Elapsed.Hours*60}m {sw.Elapsed.Seconds}s {sw.Elapsed.Milliseconds}ms";
-
 
                 }, TaskCreationOptions.LongRunning).ContinueWith((_) =>
                 {
@@ -510,6 +504,8 @@ namespace FASTER.ViewModel
 
         internal async Task<bool> SteamLogin()
         {
+            if (tokenSource.IsCancellationRequested)
+                tokenSource = new CancellationTokenSource();
             IsLoggingIn = true;
             var path = Path.Combine(Path.GetDirectoryName(ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal).FilePath) ?? string.Empty, "sentries");
 
@@ -530,7 +526,7 @@ namespace FASTER.ViewModel
                 Parameters.Output += $"\nConnecting to Steam as {(_steamCredentials.IsAnonymous ? "anonymous" : _steamCredentials.Username)}";
                 SteamClient.MaximumLogonAttempts = 5;
                 try
-                { await SteamClient.ConnectAsync(); }
+                { await SteamClient.ConnectAsync(tokenSource.Token); }
                 catch (SteamClientAlreadyRunningException)
                 { 
                     Parameters.Output += $"\nClient already logged in."; 
@@ -609,8 +605,12 @@ namespace FASTER.ViewModel
             if (tokenSource.IsCancellationRequested)
                 tokenSource = new CancellationTokenSource();
 
-            Task downloadTask = downloadHandler.DownloadToFolderAsync(targetDir, tokenSource.Token);
-
+            Task downloadTask = Task.Run(async () =>
+            {
+                await downloadHandler.SetupAsync(targetDir, file => true, tokenSource.Token);
+                await downloadHandler.VerifyAsync(tokenSource.Token);
+                await downloadHandler.DownloadAsync(tokenSource.Token);
+            });
 
             Parameters.Output += "\nOK.";
 
@@ -692,7 +692,12 @@ namespace FASTER.ViewModel
                                                      };
             downloadHandler.DownloadComplete      += (_, _) => Parameters.Output += "\n    Download completed";
 
-            Task downloadTask = downloadHandler.DownloadToFolderAsync(targetDir, tokenSource.Token);
+            Task downloadTask = Task.Run(async () =>
+            {
+                await downloadHandler.SetupAsync(targetDir, file => true, tokenSource.Token);
+                await downloadHandler.VerifyAsync(tokenSource.Token);
+                await downloadHandler.DownloadAsync(tokenSource.Token);
+            });
 
             Parameters.Output += "\n    OK.";
 
@@ -745,6 +750,11 @@ namespace FASTER.ViewModel
         {
             if (PropertyChanged == null) return;
             PropertyChanged(this, new PropertyChangedEventArgs(property));
+        }
+
+        public void Dispose()
+        {
+            tokenSource.Dispose();
         }
     }
 

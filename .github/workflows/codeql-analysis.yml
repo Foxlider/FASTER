@@ -3,6 +3,8 @@ name: "Code Analysis"
 on:
   push: # The master branch must be analyzed on a new commit
     branches: [ master ]
+    tags-ignore:
+      - '*'
   pull_request:
     # Any PR on master must be analyzed
     branches: [ master ]
@@ -40,29 +42,80 @@ jobs:
       uses: actions/setup-dotnet@v4.0.0
       with:
         dotnet-version: ${{vars.DOTNET_VERSION}}
-      
-    - run: dotnet restore
-    - run: dotnet build ./FASTER.sln --configuration Debug
+    
+    - name: Restore Solution
+      run: dotnet restore ./FASTER.sln
+
+    - name: Build Solution
+      run: dotnet build ./FASTER.sln --configuration Debug
+
+    - name: Execute unit tests
+      run: dotnet test
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
 
   AnalysisSonar:
     name: Analyze with SonarCloud
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     permissions:
       pull-requests: write # allows SonarCloud to decorate PRs with analysis results
 
-    steps:
-      - name: Analyze with SonarCloud
+    # steps: # DOES NOT SCAN FOR SOME REASON ?
+    #   - name: Analyze with SonarCloud
 
-        # You can pin the exact commit or the version.
-        uses: SonarSource/sonarcloud-github-action@v3
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+    #     # You can pin the exact commit or the version.
+    #     uses: SonarSource/sonarcloud-github-action@v3
+    #     env:
+    #       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+    #     with:
+    #       # Additional arguments for the SonarScanner CLI
+    #       args:
+    #         -Dsonar.projectKey=Foxlider_FASTER
+    #         -Dsonar.organization=foxlicorp
+    #       projectBaseDir: .
+
+
+    steps:
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
         with:
-          # Additional arguments for the SonarScanner CLI
-          args:
-            -Dsonar.projectKey=Foxlider_FASTER
-            -Dsonar.organization=foxlicorp
-          projectBaseDir: .
+          java-version: 17
+          distribution: 'zulu' # Alternative distribution options are available.
+          
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+          
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v4
+        with:
+          path: ~\sonar\cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+          
+      - name: Cache SonarCloud scanner
+        id: cache-sonar-scanner
+        uses: actions/cache@v4
+        with:
+          path: .\.sonar\scanner
+          key: ${{ runner.os }}-sonar-scanner
+          restore-keys: ${{ runner.os }}-sonar-scanner
+          
+      - name: Install SonarCloud scanner
+        if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
+        shell: pwsh
+        run: |
+          New-Item -Path .\.sonar\scanner -ItemType Directory
+          dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
+          
+      - name: Build and analyze
+        env:
+          GITHUB_TOKEN: ${{ secrets.PR_DECORATION }}  # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        shell: pwsh
+        run: |
+          .\.sonar\scanner\dotnet-sonarscanner begin /k:"Foxlider_FASTER" /o:"foxlicorp" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
+          dotnet build
+          .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+         

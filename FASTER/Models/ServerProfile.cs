@@ -114,7 +114,7 @@ namespace FASTER.Models
             }
         }
 
-        public string ArmaPath => Path.GetDirectoryName(_executable);
+        public string ArmaPath => Path.GetDirectoryName(_executable) ?? string.Empty;
 
         public int Port 
         { 

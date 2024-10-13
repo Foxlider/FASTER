@@ -16,20 +16,20 @@ namespace FASTER.Models.Tests
         [Test()]
         public void BasicCfgGetTest()
         {
-            Assert.IsNotNull(_cfg.BasicContent);
-            Assert.IsNotNull(_cfg.MaxBandwidth);
-            Assert.IsNotNull(_cfg.MaxCustomFileSize);
-            Assert.IsNotNull(_cfg.MaxMsgSend);
-            Assert.IsNotNull(_cfg.MaxPacketSize);
-            Assert.IsNotNull(_cfg.MaxSizeGuaranteed);
-            Assert.IsNotNull(_cfg.MaxSizeNonGuaranteed);
-            Assert.IsNotNull(_cfg.MinBandwidth);
-            Assert.IsNotNull(_cfg.MinErrorToSend);
-            Assert.IsNotNull(_cfg.MinErrorToSend);
-            Assert.IsNotNull(_cfg.MinErrorToSendNear);
-            Assert.AreEqual("Custom", _cfg.PerfPreset);
-            Assert.IsNotNull(_cfg.TerrainGrid);
-            Assert.IsNotNull(_cfg.ViewDistance);
+            Assert.That(_cfg.BasicContent, Is.Not.Null);
+            Assert.That(_cfg.MaxBandwidth, Is.Not.Null);
+            Assert.That(_cfg.MaxCustomFileSize, Is.Not.Null);
+            Assert.That(_cfg.MaxMsgSend, Is.Not.Null);
+            Assert.That(_cfg.MaxPacketSize, Is.Not.Null);
+            Assert.That(_cfg.MaxSizeGuaranteed, Is.Not.Null);
+            Assert.That(_cfg.MaxSizeNonGuaranteed, Is.Not.Null);
+            Assert.That(_cfg.MinBandwidth, Is.Not.Null);
+            Assert.That(_cfg.MinErrorToSend, Is.Not.Null);
+            Assert.That(_cfg.MinErrorToSend, Is.Not.Null);
+            Assert.That(_cfg.MinErrorToSendNear, Is.Not.Null);
+            Assert.That(_cfg.PerfPreset, Is.EqualTo("Custom"));
+            Assert.That(_cfg.TerrainGrid, Is.Not.Null);
+            Assert.That(_cfg.ViewDistance, Is.Not.Null);
         }
 
         [Test()]
