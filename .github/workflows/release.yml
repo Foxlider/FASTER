@@ -24,7 +24,7 @@ jobs:
 
   # BUILD APP
   build:
-    if: ( github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main' ) || startsWith(github.ref, 'refs/tags/v')
+    if: ( github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'master' ) || startsWith(github.ref, 'refs/tags/v')
     strategy:
       matrix:
         # runtime: [x64, x86]
