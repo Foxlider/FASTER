@@ -24,7 +24,7 @@ jobs:
 
   # BUILD APP
   build:
-
+    if: ( github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main' ) || startsWith(github.ref, 'refs/tags/v')
     strategy:
       matrix:
         # runtime: [x64, x86]
@@ -43,8 +43,6 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
 
     # Install the .NET Core workload
     - name: Install .NET Core
@@ -68,7 +66,7 @@ jobs:
 
     # Pub
     - name: Publish the application ${{ matrix.runtime }}
-      run: dotnet publish --configuration $env:Configuration -a $env:Runtime --self-contained true /p:useapphost=true --output .\$env:ZIP_NAME$env:Runtime ./FASTER/FASTER.csproj
+      run: dotnet publish --configuration $env:Configuration -a $env:Runtime --self-contained true -p:PublishSingleFile=true /p:useapphost=true --output .\$env:ZIP_NAME$env:Runtime ./FASTER/FASTER.csproj
       env:
         Runtime: ${{ matrix.runtime }}
     
@@ -79,6 +77,28 @@ jobs:
       env:
         Runtime: ${{ matrix.runtime }}
 
+    - name: Upload artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: build-${{ matrix.runtime }}
+        path: .\${{ env.ZIP_NAME}}${{ matrix.runtime }}.zip
+
+  release:
+    needs: build
+    runs-on: windows-latest
+    steps:
+
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0 # required for tags history processing
+
+    - name: Download x64 artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: build-x64
+        path: ./artifacts
+    
     # Get version number
     - name: get-net-sdk-project-versions-action
       uses: kzrnm/get-net-sdk-project-versions-action@v2.0.0
@@ -186,11 +206,10 @@ jobs:
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        Runtime: ${{ matrix.runtime }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-        asset_path: .\${{ env.ZIP_NAME}}${{ env.Runtime }}.zip
-        asset_name: ${{ env.ZIP_NAME}}${{ env.Runtime }}.zip
+        asset_path: ./artifacts/${{ env.ZIP_NAME}}x64.zip
+        asset_name: ${{ env.ZIP_NAME}}x64.zip
         asset_content_type: application/zip
     
     # Create Nightly Release
@@ -199,7 +218,6 @@ jobs:
       uses: andelf/nightly-release@main
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        Runtime: ${{ matrix.runtime }}
       with:
         tag_name: nightly
         name: 'Nightly Release v${{ env.VERSION }}'
@@ -209,4 +227,4 @@ jobs:
           ${{ steps.get-changes.outputs.changes }}
           ---  
         prerelease: true
-        files: .\${{ env.ZIP_NAME}}${{ env.Runtime }}.zip
+        files: ./artifacts/${{ env.ZIP_NAME}}x64.zip
