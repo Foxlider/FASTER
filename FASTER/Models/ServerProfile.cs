@@ -61,6 +61,7 @@ namespace FASTER.Models
         private bool _wsDlcChecked;
         private bool _speDlcChecked;
         private bool _rfDlcChecked;
+        private bool _efDlcChecked;
         private bool _enableHT = true;
         private bool _enableRanking;
 
@@ -211,6 +212,16 @@ namespace FASTER.Models
             {
                 _rfDlcChecked = value;
                 RaisePropertyChanged(nameof(RFDLCChecked));
+            }
+        }
+
+        public bool EFDLCChecked
+        {
+            get => _efDlcChecked;
+            set
+            {
+                _efDlcChecked = value;
+                RaisePropertyChanged(nameof(EFDLCChecked));
             }
         }
 
@@ -503,6 +514,10 @@ namespace FASTER.Models
             if (!string.IsNullOrWhiteSpace(playerMods))
             {
                 _ = mods.Append($"{playerMods};");
+            }
+            if (EFDLCChecked)
+            {
+                _ = mods.Append("ef;");
             }
             return !string.IsNullOrWhiteSpace(mods.ToString()) ? $" \"-mod={mods}\"" : "";
         }
