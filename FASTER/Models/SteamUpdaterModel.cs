@@ -172,6 +172,17 @@ namespace FASTER.Models
             }
         }
 
+        public bool UsingEFDlc
+        {
+            get => Settings.Default.usingEFDlc;
+            set
+            {
+                Settings.Default.usingEFDlc = value;
+                Settings.Default.Save();
+                RaisePropertyChanged(nameof(UsingEFDlc));
+            }
+        }
+
         public string ApiKey
         {
             get => !string.IsNullOrEmpty(Settings.Default.SteamAPIKey)
