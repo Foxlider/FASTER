@@ -21,6 +21,9 @@
             "Harkness31",
             "Ace",
             "bojothebigman",
+            "EmPtY.zip",
+            "OverlordZorn",
+            "Jupster",
         };
 
         /// <summary>
