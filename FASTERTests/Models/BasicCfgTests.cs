@@ -30,6 +30,7 @@ namespace FASTER.Models.Tests
             Assert.That(_cfg.PerfPreset, Is.EqualTo("Custom"));
             Assert.That(_cfg.TerrainGrid, Is.Not.Null);
             Assert.That(_cfg.ViewDistance, Is.Not.Null);
+            Assert.That(_cfg.Language, Is.Not.Null);
         }
 
         [Test()]

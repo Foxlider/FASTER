@@ -14,6 +14,8 @@ namespace FASTER.Models
     [Serializable]
     public class BasicCfg : INotifyPropertyChanged
     {
+        private string language     = "English";
+        
         private uint   viewDistance = 2000;
         private double terrainGrid  = 25;
 
@@ -39,6 +41,16 @@ namespace FASTER.Models
             }
         }
 
+        public string Language
+        {
+            get => language;
+            set
+            {
+                language = value;
+                RaisePropertyChanged("Language");
+            }
+        }
+        
         public uint ViewDistance
         {
             get => viewDistance;
@@ -191,7 +203,7 @@ namespace FASTER.Models
         public string ProcessFile()
         {
             string output = "// These options are created by default\r\n"
-                          + "language=\"English\";\r\n"
+                          + $"language=\"{language}\";\r\n"
                           + "adapter=-1;\r\n"
                           + "3D_Performance=1.000000;\r\n"
                           + "Resolution_W=800;\r\n"
