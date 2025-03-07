@@ -30,6 +30,7 @@ namespace FASTER.Models
         private ushort maxPacketSize        = 1400;
 
         private string basicContent;
+        private string a3cfgContent;
 
         public string BasicContent
         {
@@ -38,6 +39,16 @@ namespace FASTER.Models
             {
                 basicContent = value;
                 RaisePropertyChanged("BasicContent");
+            }
+        }
+        
+        public string Arma3CfgContent
+        {
+            get => a3cfgContent;
+            set
+            {
+                a3cfgContent = value;
+                RaisePropertyChanged("Arma3CfgContent");
             }
         }
 
@@ -198,9 +209,12 @@ namespace FASTER.Models
         }
 
         public BasicCfg()
-        { BasicContent = ProcessFile(); }
+        { 
+            BasicContent = ProcessBasicFile();
+            Arma3CfgContent = ProcessArma3CfgFile();
+        }
 
-        public string ProcessFile()
+        public string ProcessBasicFile()
         {
             string output = "// These options are created by default\r\n"
                           + $"language=\"{language}\";\r\n"
@@ -229,6 +243,14 @@ namespace FASTER.Models
                           + $"class sockets{{ maxPacketSize = {maxPacketSize};}};";
             return output;
         }
+        
+        public string ProcessArma3CfgFile()
+        {
+            string output = "steamLanguage=\"\";\r\n"
+                    + $"language=\"{language}\";\r\n";
+
+            return output;
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -236,7 +258,11 @@ namespace FASTER.Models
         {
             if (PropertyChanged == null) return;
             PropertyChanged(this, new PropertyChangedEventArgs(property));
-            if (property != "BasicContent") BasicContent = ProcessFile();
+            if (property != "BasicContent" && property != "Arma3CfgContent")
+            {
+                BasicContent = ProcessBasicFile();
+                Arma3CfgContent = ProcessArma3CfgFile();
+            }
         }
     }
 }
