@@ -58,7 +58,7 @@
                                     <Button Content="{iconPacks:Material Kind=FolderOpen}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="1" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" Height="auto" Margin="5,5,0,5" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Padding="3" Click="SelectServerFile"/>
                                 </Grid>
                                 <mah:NumericUpDown Value="{Binding Profile.Port, UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Port" ToolTip="Port for ArmaServer"/>
-                                <TextBox Text="{Binding Path=Profile.BasicCfg.Language, UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="Server Language" mah:TextBoxHelper.UseFloatingWatermark="True" />
+                                <TextBox Text="{Binding Path=Profile.BasicCfg.Language, UpdateSourceTrigger=PropertyChanged}" Margin="0 5" mah:TextBoxHelper.Watermark="Server Language" mah:TextBoxHelper.UseFloatingWatermark="True" />
                             </StackPanel>
                         </GroupBox>
                         <StackPanel Height="10"/>
