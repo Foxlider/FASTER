@@ -65,6 +65,7 @@ namespace FASTER.Models
         private bool _enableHT = true;
         private bool _enableRanking;
         private bool _enableHugePages;
+        private bool _loadMissionToMemory;
 
         private List<ProfileMod> _profileMods = new List<ProfileMod>();
         private string _profileModsFilter = "";
@@ -249,6 +250,16 @@ namespace FASTER.Models
             {
                 _enableHugePages = value;
                 RaisePropertyChanged("EnableHugePages");
+            }
+        }
+        
+        public bool EnableLoadMissionToMemory
+        {
+            get => _loadMissionToMemory;
+            set
+            {
+                _loadMissionToMemory = value;
+                RaisePropertyChanged("EnableLoadMissionToMemory");
             }
         }
         
@@ -615,6 +626,7 @@ namespace FASTER.Models
                 $"{(ServerCfg.CpuCountOverride ? $" -cpuCount={ServerCfg.CpuCount}" : "")}",
                 $"{(EnableHugePages ? " -hugePages" : "")}",
                 $"{(EnableExtraThreads ? $" -exThreads={_exThreads}" : "")}",
+                $"{(EnableLoadMissionToMemory ? $" -loadMissionToMemory" : "")}",
                 $"{(ServerCfg.EnableCustomBePath && !string.IsNullOrWhiteSpace(ServerCfg.CustomBePath) && Path.Exists(ServerCfg.CustomBePath) ? $" -bePath=\"{ServerCfg.CustomBePath}\"" : "")}",
                 $"{(!string.IsNullOrWhiteSpace(ServerCfg.CommandLineParameters) ? $" {ServerCfg.CommandLineParameters}" : "")}"
             };

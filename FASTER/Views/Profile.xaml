@@ -868,6 +868,8 @@
                                 <RowDefinition Height="auto"/>
                                 <RowDefinition Height="20"/>
                                 <RowDefinition Height="auto"/>
+                                <RowDefinition Height="20"/>
+                                <RowDefinition Height="auto"/>
                             </Grid.RowDefinitions>
                             <mah:NumericUpDown Grid.Row="0" Grid.Column="0" Value="{Binding Profile.BasicCfg.MinBandwidth, UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="MinBandwidth" mah:TextBoxHelper.UseFloatingWatermark="True" Minimum="0" Maximum="18446744073709551615" Interval="1" Margin="3"/>
                             <mah:NumericUpDown Grid.Row="0" Grid.Column="1" Value="{Binding Profile.BasicCfg.MaxPacketSize, UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="MaxPacketSize" mah:TextBoxHelper.UseFloatingWatermark="True" Minimum="0" Maximum="4294967295" Interval="1" Margin="3"/>
@@ -925,22 +927,20 @@
                                     <ColumnDefinition/>
                                 </Grid.ColumnDefinitions>
                                 <CheckBox Grid.Column="0"
-                                          Margin="10 10"
                                           Visibility="{Binding Path=Profile.EnableExtraThreads, Converter={StaticResource BoolToVis}}"
                                           IsChecked="{Binding Path=Profile.ExThreadGeometry, UpdateSourceTrigger=PropertyChanged}" 
                                           Content="Geometry"/>
                                 <CheckBox Grid.Column="1"
-                                          Margin="10 0"
                                           Visibility="{Binding Path=Profile.EnableExtraThreads, Converter={StaticResource BoolToVis}}"
                                           IsChecked="{Binding Path=Profile.ExThreadTextures, UpdateSourceTrigger=PropertyChanged}" 
                                           Content="Textures"/>
                                 <CheckBox Grid.Column="2"
-                                          Margin="10 0"
                                           Visibility="{Binding Path=Profile.EnableExtraThreads, Converter={StaticResource BoolToVis}}"
                                           IsChecked="{Binding Path=Profile.ExThreadFiles, UpdateSourceTrigger=PropertyChanged}" 
                                           Content="Files"/>
                             </Grid>
-                            <TextBox Text="{Binding Profile.ServerCfg.CommandLineParameters, UpdateSourceTrigger=PropertyChanged}" Grid.Row="14" Grid.Column="0" Grid.ColumnSpan="3" Margin="3,5" mah:TextBoxHelper.Watermark="Command Line Arguments" mah:TextBoxHelper.UseFloatingWatermark="True"/>
+                            <CheckBox Grid.Row="14" Grid.Column="0" Margin="3,5" IsChecked="{Binding Path=Profile.EnableLoadMissionToMemory, UpdateSourceTrigger=PropertyChanged}" Content="Load Mission To Memory"/>
+                            <TextBox Text="{Binding Profile.ServerCfg.CommandLineParameters, UpdateSourceTrigger=PropertyChanged}" Grid.Row="16" Grid.Column="0" Grid.ColumnSpan="3" Margin="3,5" mah:TextBoxHelper.Watermark="Command Line Arguments" mah:TextBoxHelper.UseFloatingWatermark="True"/>
                         </Grid>
                     </GroupBox>
                     <Grid Grid.Row="1">
