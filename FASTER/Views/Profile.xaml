@@ -143,7 +143,7 @@
                                                 <iconPacks:PackIconModern Kind="CheckmarkUncrossed" Margin="5"/>
                                             </MenuItem.Icon>
                                         </MenuItem>
-                                        <MenuItem Tag="Server Only" Header="Copy From Client" Click="CopyFromClient">
+                                        <MenuItem Tag="Server Only" Header="Copy From Server + Client" Click="CopyFromClient">
                                             <MenuItem.Icon>
                                                 <iconPacks:PackIconModern Kind="PageCopy" Margin="5"/>
                                             </MenuItem.Icon>
@@ -170,7 +170,7 @@
                                                 <iconPacks:PackIconModern Kind="CheckmarkUncrossed"/>
                                             </MenuItem.Icon>
                                         </MenuItem>
-                                        <MenuItem Tag="Server + Client" Header="Copy From Server" Click="CopyFromServer">
+                                        <MenuItem Tag="Server + Client" Header="Copy From Server Only" Click="CopyFromServer">
                                             <MenuItem.Icon>
                                                 <iconPacks:PackIconModern Kind="PageCopy"/>
                                             </MenuItem.Icon>
@@ -197,12 +197,12 @@
                                                 <iconPacks:PackIconModern Kind="CheckmarkUncrossed"/>
                                             </MenuItem.Icon>
                                         </MenuItem>
-                                        <MenuItem Tag="HC" Header="Copy From Server" Click="CopyFromServer">
+                                        <MenuItem Tag="HC" Header="Copy From Server Only" Click="CopyFromServer">
                                             <MenuItem.Icon>
                                                 <iconPacks:PackIconModern Kind="PageCopy"/>
                                             </MenuItem.Icon>
                                         </MenuItem>
-                                        <MenuItem Tag="HC" Header="Copy From Client" Click="CopyFromClient">
+                                        <MenuItem Tag="HC" Header="Copy From Server + Client" Click="CopyFromClient">
                                             <MenuItem.Icon>
                                                 <iconPacks:PackIconModern Kind="PageCopy"/>
                                             </MenuItem.Icon>
@@ -224,12 +224,12 @@
                                                 <iconPacks:PackIconModern Kind="CheckmarkUncrossed"/>
                                             </MenuItem.Icon>
                                         </MenuItem>
-                                        <MenuItem Tag="Opt" Header="Copy From Server" Click="CopyFromServer">
+                                        <MenuItem Tag="Opt" Header="Copy From Server Only" Click="CopyFromServer">
                                             <MenuItem.Icon>
                                                 <iconPacks:PackIconModern Kind="PageCopy"/>
                                             </MenuItem.Icon>
                                         </MenuItem>
-                                        <MenuItem Tag="Opt" Header="Copy From Client" Click="CopyFromClient">
+                                        <MenuItem Tag="Opt" Header="Copy From Server + Client" Click="CopyFromClient">
                                             <MenuItem.Icon>
                                                 <iconPacks:PackIconModern Kind="PageCopy"/>
                                             </MenuItem.Icon>
