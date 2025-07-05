@@ -428,12 +428,14 @@ namespace FASTER.Models
             Name = name;
             Executable = Path.Combine(Properties.Settings.Default.serverPath, "arma3server_x64.exe");
             ServerCfg = new ServerCfg(){ Hostname = name};
+            AdvancedOptions = new AdvancedOptions();
             ArmaProfile = new Arma3Profile();
             BasicCfg = new BasicCfg();
             ServerCfg.ServerCfgContent = ServerCfg.ProcessFile();
+			ServerCfg.AdvancedOptionsContent = AdvancedOptions.ProcessFile();
             ArmaProfile.ArmaProfileContent = ArmaProfile.ProcessFile();
             BasicCfg.BasicContent = BasicCfg.ProcessFile();
-
+            ServerCfg.AdvancedOptionsContent = AdvancedOptions.ProcessFile();
             if (createFolder)
             { Directory.CreateDirectory(Path.Combine(Properties.Settings.Default.serverPath, "Servers", Id)); }
         }
@@ -446,6 +448,7 @@ namespace FASTER.Models
             ArmaProfile = new Arma3Profile();
             BasicCfg    = new BasicCfg();
             ServerCfg.ServerCfgContent = ServerCfg.ProcessFile();
+            ServerCfg.AdvancedOptionsContent = AdvancedOptions.ProcessFile();		
             ArmaProfile.ArmaProfileContent = ArmaProfile.ProcessFile();
             BasicCfg.BasicContent = BasicCfg.ProcessFile();
         }

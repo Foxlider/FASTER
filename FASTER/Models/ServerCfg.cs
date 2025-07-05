@@ -771,11 +771,6 @@ namespace FASTER.Models
             { ServerCfgContent = ProcessFile(); }
         }
 
-        public object LogObjectNotFound { get; private set; }
-        public object SkipDescriptionParsing { get; private set; }
-        public object IgnoreMissionLoadErrors { get; private set; }
-        public object QueueSizeLogG { get; private set; }
-
     [Serializable]
     public class AdvancedOptions : INotifyPropertyChanged
     {
@@ -824,7 +819,7 @@ namespace FASTER.Models
             }
         }
 		
-		private string advancedOptionsContent;    
+		private string advancedOptionsContent;
 
         public string AdvancedOptionsContent
         {
@@ -842,16 +837,6 @@ namespace FASTER.Models
             { AdvancedOptionsContent = ProcessFile(); }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void RaisePropertyChanged(string property)
-        {
-            if (PropertyChanged == null) return;
-            PropertyChanged(this, new PropertyChangedEventArgs(property));
-			if(property != "AdvancedOptionsContent") AdvancedOptionsContent = ProcessFile();
-        }
-	}
-	
         private void Item_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             RaisePropertyChanged("MissionChecked");
@@ -1025,4 +1010,5 @@ namespace FASTER.Models
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
         }
     }
+  }
 }
