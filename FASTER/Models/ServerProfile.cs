@@ -432,7 +432,7 @@ namespace FASTER.Models
             ArmaProfile = new Arma3Profile();
             BasicCfg = new BasicCfg();
             ServerCfg.ServerCfgContent = ServerCfg.ProcessFile();
-			ServerCfg.AdvancedOptionsContent = AdvancedOptions.ProcessFile();
+            ServerCfg.AdvancedOptionsContent = AdvancedOptions.ProcessFile();
             ArmaProfile.ArmaProfileContent = ArmaProfile.ProcessFile();
             BasicCfg.BasicContent = BasicCfg.ProcessFile();
             ServerCfg.AdvancedOptionsContent = AdvancedOptions.ProcessFile();
