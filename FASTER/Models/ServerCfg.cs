@@ -53,7 +53,7 @@ namespace FASTER.Models
         private int    armaUnitsTimeout         = 30; 	     // Defines how long the player will be stuck connecting and wait for armaUnits data. Player will be notified if timeout elapsed and no units data was received
         private string forcedDifficulty         = "Custom";  // By default forcedDifficulty is only applying Custom
 
-        //Arma server only
+        //Arma Server Only
         private short  verifySignatures         = 0;         // 0 = Disabled (FASTER Default); 1 = Deprecated Activated ; 2 = Activated (Arma Default)
         private bool   drawingInMap             = true;
         private short  disableVoN;                           // 0 = VoN activated ; 1 = VoN Disabled
@@ -78,12 +78,14 @@ namespace FASTER.Models
         private string onUnsignedData           = "kick (_this select 0)";
         private string onUserKicked;
 
+        //Mision Settings
         private bool                 missionSelectorChecked;
         private string               missionContentOverride;
         private List<ProfileMission> _missions  = new();
         private bool                 autoInit;
         private string               difficulty = "Custom";
 
+        //Performance
         private bool   maxMemOverride;
         private uint   maxMem = 1024;
         private bool   cpuCountOverride;
@@ -283,7 +285,7 @@ namespace FASTER.Models
             set
             {
                 allowedFilePatching = (short)Array.IndexOf(ServerCfgArrays.AllowFilePatchingStrings, value);
-                RaisePropertyChanged("Password");
+                RaisePropertyChanged("AllowedFilePatching");
             }
         }
 
@@ -776,7 +778,7 @@ namespace FASTER.Models
     {
         private bool   logObjectNotFound       = true;       // logging enabled
         private bool   skipDescriptionParsing  = false;      // Parse description.ext
-        private bool   ignoreMissionLoadErrors = false;      // Do not ingore errors
+        private bool   ignoreMissionLoadErrors = false;      // Do not ignore errors
         private int    queueSizeLogG           = 0;          // If a specific players message queue is larger than <Value> and '#monitor' is running, dump his messages to a logfile for analysis
 
             public bool LogObjectNotFound
