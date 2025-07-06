@@ -25,7 +25,7 @@ namespace FASTER.Models
             var currentProfiles                      = Properties.Settings.Default.Profiles;
             var p = new ServerProfile(profileName);
             p.ServerCfg.ServerCfgContent             = p.ServerCfg.ProcessFile();
-            p.ServerCfg.ServerCfgContent             = p.AdvancedOptions.ProcessFile();
+            p.ServerCfg.AdvancedOptionsContent       = p.AdvancedOptions.ProcessFile();
             p.BasicCfg.BasicContent                  = p.BasicCfg.ProcessFile();
             p.ArmaProfile.ArmaProfileContent         = p.ArmaProfile.ProcessFile();
             currentProfiles.Add(p);
