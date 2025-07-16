@@ -17,7 +17,9 @@ namespace FASTER.ViewModel
     public class ModsViewModel
     {
         public ModsViewModel()
-        { ModsCollection = Properties.Settings.Default.armaMods ?? new ArmaModCollection(); }
+        { 
+            ModsCollection = Properties.Settings.Default.armaMods ?? new ArmaModCollection(); 
+        }
 
         public ArmaModCollection ModsCollection { get; set; }
 
