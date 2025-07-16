@@ -13,7 +13,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.github\workflows\codeql-analysis.yml = .github\workflows\codeql-analysis.yml
 		FASTER_Version.xml = FASTER_Version.xml
 		NuGet.Config = NuGet.Config
+		.github\workflows\publish.yml = .github\workflows\publish.yml
 		README.md = README.md
+		.github\workflows\release.yml = .github\workflows\release.yml
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FASTERTests", "FASTERTests\FASTERTests.csproj", "{65FDF864-BF9B-414A-A6E6-3473BCFB62BE}"

@@ -43,6 +43,8 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v4
+      with:
+        submodules: false
 
     # Install the .NET Core workload
     - name: Install .NET Core
@@ -91,6 +93,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
       with:
+        submodules: false
         fetch-depth: 0 # required for tags history processing
 
     - name: Download x64 artifact
