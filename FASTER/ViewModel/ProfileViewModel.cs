@@ -391,7 +391,7 @@ namespace FASTER.ViewModel
 
         internal async Task ClearModKeys()
         {
-            var ignoredKeys = new[] {"a3.bikey", "a3c.bikey", "gm.bikey", "ws.bikey", "csla.bikey", "vn.bikey", "spe.bikey", "rf.bikey" };
+            var ignoredKeys = new[] {"a3.bikey", "a3c.bikey", "gm.bikey", "ws.bikey", "csla.bikey", "vn.bikey", "spe.bikey", "rf.bikey", "ef.bikey" };
             if (Directory.Exists(Path.Combine(Profile.ArmaPath, "keys")))
             {
                 foreach (var keyFile in Directory.GetFiles(Path.Combine(Profile.ArmaPath, "keys")))

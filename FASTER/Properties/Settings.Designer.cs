@@ -382,5 +382,20 @@ namespace FASTER.Properties {
                 this["usingRFDlc"] = value;
             }
         }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool usingEFDlc
+        {
+            get
+            {
+                return ((bool)(this["usingEFDlc"]));
+            }
+            set
+            {
+                this["usingEFDlc"] = value;
+            }
+        }
     }
 }

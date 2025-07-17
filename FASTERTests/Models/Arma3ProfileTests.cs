@@ -14,33 +14,33 @@ namespace FASTER.Models.Tests
         [Test()]
         public void Arma3ProfileCorrectData()
         {
-            Assert.IsTrue(ProfileCfgArrays.AiPresetStrings.Contains(_p.AiLevelPreset));
-            Assert.IsTrue(ProfileCfgArrays.ThirdPersonStrings.Contains(_p.ThirdPersonView));
-            Assert.IsTrue(ProfileCfgArrays.EnabledStrings.Contains(_p.ReducedDamage));
-            Assert.IsTrue(ProfileCfgArrays.LimitedDistanceStrings.Contains(_p.GroupIndicators));
-            Assert.IsTrue(ProfileCfgArrays.LimitedDistanceStrings.Contains(_p.FriendlyTags));
-            Assert.IsTrue(ProfileCfgArrays.LimitedDistanceStrings.Contains(_p.EnemyTags));
-            Assert.IsTrue(ProfileCfgArrays.LimitedDistanceStrings.Contains(_p.DetectedMines));
-            Assert.IsTrue(ProfileCfgArrays.FadeOutStrings.Contains(_p.Commands));
-            Assert.IsTrue(ProfileCfgArrays.FadeOutStrings.Contains(_p.Waypoints));
-            Assert.IsTrue(ProfileCfgArrays.FadeOutStrings.Contains(_p.WeaponInfo));
-            Assert.IsTrue(ProfileCfgArrays.FadeOutStrings.Contains(_p.StanceIndicator));
-            Assert.IsTrue(ProfileCfgArrays.EnabledStrings.Contains(_p.StaminaBar));
-            Assert.IsTrue(ProfileCfgArrays.EnabledStrings.Contains(_p.WeaponCrosshair));
-            Assert.IsTrue(ProfileCfgArrays.EnabledStrings.Contains(_p.VisionAid));
-            Assert.IsTrue(ProfileCfgArrays.EnabledStrings.Contains(_p.CameraShake));
-            Assert.IsTrue(ProfileCfgArrays.EnabledStrings.Contains(_p.ScoreTable));
-            Assert.IsTrue(ProfileCfgArrays.EnabledStrings.Contains(_p.DeathMessages));
-            Assert.IsTrue(ProfileCfgArrays.EnabledStrings.Contains(_p.VonID));
-            Assert.IsTrue(ProfileCfgArrays.EnabledStrings.Contains(_p.MapContentEnemy));
-            Assert.IsTrue(ProfileCfgArrays.EnabledStrings.Contains(_p.MapContentFriendly));
-            Assert.IsTrue(ProfileCfgArrays.EnabledStrings.Contains(_p.MapContentMines));
-            Assert.IsTrue(ProfileCfgArrays.EnabledStrings.Contains(_p.AutoReport));
-            Assert.IsTrue(ProfileCfgArrays.EnabledStrings.Contains(_p.MultipleSaves));
-            Assert.IsTrue(ProfileCfgArrays.TacticalPingStrings.Contains(_p.TacticalPing));
-            Assert.IsFalse(string.IsNullOrWhiteSpace(_p.ArmaProfileContent));
-            Assert.IsNotNull(_p.PrecisionAi);
-            Assert.IsNotNull(_p.SkillAi);
+            Assert.That(ProfileCfgArrays.AiPresetStrings.Contains(_p.AiLevelPreset));
+            Assert.That(ProfileCfgArrays.ThirdPersonStrings.Contains(_p.ThirdPersonView));
+            Assert.That(ProfileCfgArrays.EnabledStrings.Contains(_p.ReducedDamage));
+            Assert.That(ProfileCfgArrays.LimitedDistanceStrings.Contains(_p.GroupIndicators));
+            Assert.That(ProfileCfgArrays.LimitedDistanceStrings.Contains(_p.FriendlyTags));
+            Assert.That(ProfileCfgArrays.LimitedDistanceStrings.Contains(_p.EnemyTags));
+            Assert.That(ProfileCfgArrays.LimitedDistanceStrings.Contains(_p.DetectedMines));
+            Assert.That(ProfileCfgArrays.FadeOutStrings.Contains(_p.Commands));
+            Assert.That(ProfileCfgArrays.FadeOutStrings.Contains(_p.Waypoints));
+            Assert.That(ProfileCfgArrays.FadeOutStrings.Contains(_p.WeaponInfo));
+            Assert.That(ProfileCfgArrays.FadeOutStrings.Contains(_p.StanceIndicator));
+            Assert.That(ProfileCfgArrays.EnabledStrings.Contains(_p.StaminaBar));
+            Assert.That(ProfileCfgArrays.EnabledStrings.Contains(_p.WeaponCrosshair));
+            Assert.That(ProfileCfgArrays.EnabledStrings.Contains(_p.VisionAid));
+            Assert.That(ProfileCfgArrays.EnabledStrings.Contains(_p.CameraShake));
+            Assert.That(ProfileCfgArrays.EnabledStrings.Contains(_p.ScoreTable));
+            Assert.That(ProfileCfgArrays.EnabledStrings.Contains(_p.DeathMessages));
+            Assert.That(ProfileCfgArrays.EnabledStrings.Contains(_p.VonID));
+            Assert.That(ProfileCfgArrays.EnabledStrings.Contains(_p.MapContentEnemy));
+            Assert.That(ProfileCfgArrays.EnabledStrings.Contains(_p.MapContentFriendly));
+            Assert.That(ProfileCfgArrays.EnabledStrings.Contains(_p.MapContentMines));
+            Assert.That(ProfileCfgArrays.EnabledStrings.Contains(_p.AutoReport));
+            Assert.That(ProfileCfgArrays.EnabledStrings.Contains(_p.MultipleSaves));
+            Assert.That(ProfileCfgArrays.TacticalPingStrings.Contains(_p.TacticalPing));
+            Assert.That(!string.IsNullOrWhiteSpace(_p.ArmaProfileContent));
+            Assert.That(_p.PrecisionAi, Is.Not.Null);
+            Assert.That(_p.SkillAi, Is.Not.Null);
         }
 
         [Test()]

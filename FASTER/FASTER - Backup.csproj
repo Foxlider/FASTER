@@ -21,7 +21,6 @@
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>FASTERKey.snk</AssemblyOriginatorKeyFile>
     <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
-    <CodeAnalysisRuleSet>..\.sonarlint\foxlider_fastercsharp.ruleset</CodeAnalysisRuleSet>
     <EnableNETAnalyzers>false</EnableNETAnalyzers>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

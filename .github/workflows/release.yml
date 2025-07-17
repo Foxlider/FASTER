@@ -1,0 +1,233 @@
+name: "Release Generator"
+
+# after successful analysis on the main branch, a new pre-release is generated
+on:
+  #Makes a Nighly release on a new commit. 
+  workflow_run:
+    workflows: [Code Analysis]
+    types: [completed]
+    branches: [master]
+  
+  #Makes a Release on tag
+  push:
+    # Sequence of patterns matched against refs/tags
+    tags:
+      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+  workflow_dispatch: # ReleaseGen can be triggered manually
+
+env:
+  IS_RELEASE: ${{ github.ref_type == 'tag' }}
+  ZIP_NAME: ${{ github.ref_type == 'tag' && 'Release_' || 'Release_Nightly_' }}
+  ZIP_PATH: ${{ github.ref_type == 'tag' && 'FASTER_' || 'FASTER_Nightly_' }}
+
+jobs:
+
+  # BUILD APP
+  build:
+    if: ( github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'master' ) || startsWith(github.ref, 'refs/tags/v')
+    strategy:
+      matrix:
+        # runtime: [x64, x86]
+        runtime: [x64]
+
+    runs-on: windows-latest  # For a list of available runner types, refer to
+                             # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idruns-on
+
+    env:
+      Configuration: Release
+      Solution_Name: FASTER                         # Replace with your solution name, i.e. MyWpfApp.sln.
+      Test_Project_Path: FASTERTests\FASTERTests.csproj                # Replace with the path to your test project, i.e. MyWpfApp.Tests\MyWpfApp.Tests.csproj.
+      Wap_Project_Directory: FASTER    # Replace with the Wap project directory relative to the solution, i.e. MyWpfApp.Package.
+      Wap_Project_Path: FASTER.App.Package\FASTER.Package.wapproj                   # Replace with the path to your Wap project, i.e. MyWpf.App.Package\MyWpfApp.Package.wapproj.
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        submodules: true
+
+    # Install the .NET Core workload
+    - name: Install .NET Core
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{env.DOTNET_VERSION}}
+    
+    # Execute all unit tests in the solution
+    - name: Execute unit tests
+      run: dotnet test
+      
+    # Restore the application to populate the obj folder with RuntimeIdentifiers
+    - name: Restore the application
+      run: dotnet restore
+
+    # Build
+    - name: Build the application
+      run: dotnet build --configuration $env:Configuration -a $env:Runtime ./FASTER/FASTER.csproj
+      env:
+        Runtime: ${{ matrix.runtime }}
+
+    # Pub
+    - name: Publish the application ${{ matrix.runtime }}
+      run: dotnet publish --configuration $env:Configuration -a $env:Runtime --self-contained true -p:PublishSingleFile=true /p:useapphost=true --output .\$env:ZIP_NAME$env:Runtime ./FASTER/FASTER.csproj
+      env:
+        Runtime: ${{ matrix.runtime }}
+    
+    # Zip the folder
+    - name: Zip the application folder
+      run: Compress-Archive -Path .\$env:ZIP_NAME$env:Runtime\* -DestinationPath .\$env:ZIP_NAME$env:Runtime.zip
+      shell: pwsh
+      env:
+        Runtime: ${{ matrix.runtime }}
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-${{ matrix.runtime }}
+        path: .\${{ env.ZIP_NAME}}${{ matrix.runtime }}.zip
+
+  release:
+    needs: build
+    runs-on: windows-latest
+    steps:
+
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        submodules: true
+        fetch-depth: 0 # required for tags history processing
+
+    - name: Download x64 artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: build-x64
+        path: ./artifacts
+    
+    # Get version number
+    - name: get-net-sdk-project-versions-action
+      uses: kzrnm/get-net-sdk-project-versions-action@v2.0.0
+      id: get-version
+      with:
+        proj-path: ./FASTER/FASTER.csproj
+
+    # Get Changes between Tags
+    - name: Generate Changelog
+      id: get-changes
+      run: |
+        Write-Output "::group::Collecting Changes between Tags..."
+
+        # Set options from inputs
+        $tagPattern = "^v?\d\.\d+([a-zA-Z]|\.\d+([a-zA-Z])?)?"
+        $linePrefix = "- "
+
+        # Fetch all tags from origin
+        git fetch origin --tags --force
+
+        # Get tags that match the pattern and sort them using version sorting in reverse
+        $tags = git tag --sort=committerdate -l | Select-String -Pattern $tagPattern | Sort-Object -Descending || ""
+
+        # Count the found tags
+        $countTags = ($tags -split "`n").Count
+
+        # Exit with error if no tags are found
+        if ($tags -eq "" -or $countTags -le 0) {
+            Write-Output "::error title=no tags found::changes-between-tags action could not find any tags to work with"
+            exit 1
+        }
+
+        # Take the first tag as latestTag
+        $latestTag = ($tags -split "`n")[0]
+
+        # Get changes for range
+        # Check if the latest tag is on the last commit
+        $latestCommit = git rev-parse HEAD
+        $latestTagCommit = git rev-list -n 1 $latestTag
+
+        if ($latestCommit -eq $latestTagCommit -and $countTags -gt 1) {
+            # Use the previous tag if the latest tag is on the last commit
+            $latestTag = ($tags -split "`n")[1]
+            
+        }
+
+        $range = "$latestTag" + "..@"
+        $changes = git log --pretty=reference --no-decorate $range
+
+        
+        # If set, add a prefix to every commit message
+        if ($linePrefix) {
+          $changes = $changes -replace "^(.*)$", "$linePrefix`$1"
+        }
+
+        # Set outputs
+        $EOF = (New-Guid).Guid
+        "changes<<$EOF" >> $env:GITHUB_OUTPUT
+        $changes >> $env:GITHUB_OUTPUT
+        "$EOF" >> $env:GITHUB_OUTPUT
+        "tag=$latestTag" >> $env:GITHUB_OUTPUT
+
+        # Log the results
+        Write-Output "tag: $latestTag"
+        Write-Output "changes:"
+        Write-Output $changes
+
+        # End log grouping
+        Write-Output "::endgroup::"
+      shell: pwsh
+    
+    # Set Version Number to environment
+    - name: Set Version
+      id: set_version
+      run: |
+        if ($env:IS_RELEASE -eq "true") {
+          echo "VERSION=$env:GITHUB_REF" >> $env:GITHUB_ENV
+        } else {
+          echo "VERSION=${{ steps.get-version.outputs.version }}" >> $env:GITHUB_ENV
+        }
+      shell: pwsh
+
+    #Create Release
+    - name: Create Release
+      if: env.IS_RELEASE == 'true'
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+      with:
+        tag_name: '${{ env.VERSION }}'
+        release_name: 'Release ${{ env.VERSION }}'
+        body: | 
+          Changelog since release ${{ steps.get-changes.outputs.tag }} :  
+          ---  
+          ${{ steps.get-changes.outputs.changes }}
+          ---  
+        draft: false
+        prerelease: ${{ env.IS_RELEASE == 'false' }}
+
+    # Upload Artifacts
+    - name: Upload Release Asset
+      if: env.IS_RELEASE == 'true'
+      id: upload-release-asset 
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+        asset_path: ./artifacts/${{ env.ZIP_NAME}}x64.zip
+        asset_name: ${{ env.ZIP_NAME}}x64.zip
+        asset_content_type: application/zip
+    
+    # Create Nightly Release
+    - name: Create Nightly Release
+      if: env.IS_RELEASE == 'false'
+      uses: andelf/nightly-release@main
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: nightly
+        name: 'Nightly Release v${{ env.VERSION }}'
+        body: | 
+          Changelog since release ${{ steps.get-changes.outputs.tag }} :  
+          ---  
+          ${{ steps.get-changes.outputs.changes }}
+          ---  
+        prerelease: true
+        files: ./artifacts/${{ env.ZIP_NAME}}x64.zip

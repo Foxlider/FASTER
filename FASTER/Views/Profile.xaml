@@ -71,6 +71,7 @@
                                 <CheckBox IsChecked="{Binding Profile.WSDLCChecked}" Content="Western Sahara DLC" Margin="10,3" HorizontalAlignment="Left"/>
                                 <CheckBox IsChecked="{Binding Profile.SPEDLCChecked}" Content="Spearhead 1944 DLC" Margin="10,3" HorizontalAlignment="Left"/>
                                 <CheckBox IsChecked="{Binding Profile.RFDLCChecked}" Content="Reaction Forces DLC" Margin="10,3" HorizontalAlignment="Left"/>
+                                <CheckBox IsChecked="{Binding Profile.EFDLCChecked}" Content="Expeditionary Forces DLC" Margin="10,3" HorizontalAlignment="Left"/>
                                 <StackPanel Height="10"/>
                             </StackPanel>
                         </GroupBox>
@@ -114,6 +115,7 @@
                                             <CheckBox IsChecked="{Binding Profile.WSDLCChecked}" Content="Western Sahara DLC" Margin="10,3" HorizontalAlignment="Left"/>
                                             <CheckBox IsChecked="{Binding Profile.SPEDLCChecked}" Content="Spearhead 1944 DLC" Margin="10,3" HorizontalAlignment="Left"/>
                                             <CheckBox IsChecked="{Binding Profile.RFDLCChecked}" Content="Reaction Forces DLC" Margin="10,3" HorizontalAlignment="Left"/>
+                                            <CheckBox IsChecked="{Binding Profile.EFDLCChecked}" Content="Expeditionary Forces DLC" Margin="10,3" HorizontalAlignment="Left"/>
                                         </StackPanel>
                                     </Expander>
                                 </Canvas>-->
