@@ -1,4 +1,4 @@
-﻿<mah:MetroWindow
+<mah:MetroWindow
     x:Class="FASTER.MainWindow"
     
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -42,9 +42,9 @@
         </Grid.ColumnDefinitions>
         <Grid Grid.Column="0">
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"></RowDefinition>
-                <RowDefinition></RowDefinition>
-                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
             <!--Menu Column - Main Items-->
@@ -52,7 +52,7 @@
                 <StackPanel.Effect>
                     <DropShadowEffect BlurRadius="5" RenderingBias="Performance" ShadowDepth="0"/>
                 </StackPanel.Effect>
-                <Label  Content="Main" Margin="10,10,0,0" FontWeight="Bold"/>
+                <Label Content="Main" Margin="10,10,0,0" FontWeight="Bold"/>
                 <ListBox Name="IMainMenuItems" HorizontalAlignment="Stretch">
                     <ToggleButton Name="navSteamUpdater" Style="{StaticResource MahApps.Styles.ToggleButton.WindowCommands}" Click="ToggleButton_Click">
                         <DockPanel Width="180">
@@ -82,17 +82,16 @@
             </StackPanel>
 
             <!--Menu Column - Server Profiles-->
-            <StackPanel Grid.Row="1">
-                <StackPanel.Effect>
-                    <DropShadowEffect BlurRadius="5" RenderingBias="Performance" ShadowDepth="0"/>
-                </StackPanel.Effect>
-                <Separator />
-                <!--<ListBoxItem Margin="2,5" Style="{StaticResource MahApps.Styles.ListBoxItem.HamburgerMenuSeparator}"/>-->
-                <DockPanel>
+            <Grid Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <DockPanel Grid.Row="0">
                     <Label Content="Server Profiles" DockPanel.Dock="Left" Margin="10,5" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                     <Button HorizontalAlignment="Right" Margin="10,0" Click="INewServerProfileButton_Click" Content="{iconPacks:Modern Kind=Add}" Name="INewServerProfileButton" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Height="25" Width="25" VerticalAlignment="Center" Padding="0"/>
                 </DockPanel>
-                <ListBox Name="IServerProfilesMenu" HorizontalAlignment="Stretch" Margin="0,0,0,2" ScrollViewer.VerticalScrollBarVisibility="Auto" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch">
+                <ListBox Grid.Row="1" Name="IServerProfilesMenu" HorizontalAlignment="Stretch" Margin="0,0,0,2" ScrollViewer.VerticalScrollBarVisibility="Auto" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch">
                     <ListBox.Resources>
                         <ContextMenu x:Key="ProfileContextMenu">
                             <MenuItem Header="Clone" Click="MenuItemClone_Click">
@@ -115,7 +114,7 @@
                         </Style>
                     </ListBox.ItemContainerStyle>
                 </ListBox>
-            </StackPanel>
+            </Grid>
 
             <!--Menu Column - Other Items-->
             <StackPanel Grid.Row="2" TextElement.FontSize="13">
@@ -123,7 +122,6 @@
                     <DropShadowEffect BlurRadius="5" RenderingBias="Performance" ShadowDepth="0"/>
                 </StackPanel.Effect>
                 <Separator/>
-                <!--<ListBoxItem Margin="2,5" Style="{StaticResource MahApps.Styles.ListBoxItem.HamburgerMenuSeparator}"/>-->
                 <Label Content="Other" Margin="10,5" FontWeight="Bold"/>
                 <ListBox Name="IOtherMenuItems" HorizontalAlignment="Stretch" Margin="0,1">
                     <ToggleButton Name="navSettings" Style="{StaticResource MahApps.Styles.ToggleButton.WindowCommands}" Click="ToggleButton_Click">
