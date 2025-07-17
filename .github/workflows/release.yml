@@ -43,12 +43,14 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v4
+      with:
+        submodules: true
 
     # Install the .NET Core workload
     - name: Install .NET Core
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: ${{vars.DOTNET_VERSION}}
+        dotnet-version: ${{env.DOTNET_VERSION}}
     
     # Execute all unit tests in the solution
     - name: Execute unit tests
@@ -91,6 +93,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
       with:
+        submodules: true
         fetch-depth: 0 # required for tags history processing
 
     - name: Download x64 artifact
