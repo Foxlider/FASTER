@@ -1,0 +1,3 @@
+[submodule "BytexDigital.Steam"]
+	path = BytexDigital.Steam
+	url = https://github.com/liamcannon/BytexDigital.Steam.git

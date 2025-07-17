@@ -43,12 +43,14 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v4
+      with:
+        submodules: true
 
     # Install the .NET Core workload
     - name: Install .NET Core
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: ${{vars.DOTNET_VERSION}}
+        dotnet-version: ${{env.DOTNET_VERSION}}
     
     # Execute all unit tests in the solution
     - name: Execute unit tests
@@ -78,7 +80,7 @@ jobs:
         Runtime: ${{ matrix.runtime }}
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: build-${{ matrix.runtime }}
         path: .\${{ env.ZIP_NAME}}${{ matrix.runtime }}.zip
@@ -91,10 +93,11 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
       with:
+        submodules: true
         fetch-depth: 0 # required for tags history processing
 
     - name: Download x64 artifact
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v4
       with:
         name: build-x64
         path: ./artifacts
