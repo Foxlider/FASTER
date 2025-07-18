@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 
 namespace FASTER.Models
@@ -93,6 +94,8 @@ namespace FASTER.Models
         private uint   maxMem = 1024;
         private bool   cpuCountOverride;
         private ushort cpuCount;
+        private bool   bePathOverride;
+        private string bePath;
         private string commandLineParams;
 
         private string serverCfgContent;
@@ -770,6 +773,16 @@ namespace FASTER.Models
             }
         }
 
+        public bool EnableCustomBePath
+        {
+            get => bePathOverride;
+            set
+            {
+                bePathOverride = value;
+                RaisePropertyChanged("EnableCustomBePath");
+            }
+        }
+        
         public uint MaxMem
         {
             get => maxMem;
@@ -777,6 +790,16 @@ namespace FASTER.Models
             {
                 maxMem = value;
                 RaisePropertyChanged("MaxMem");
+            }
+        }
+        
+        public string CustomBePath
+        {
+            get => bePath;
+            set
+            {
+                bePath = value;
+                RaisePropertyChanged("CustomBePath");
             }
         }
 

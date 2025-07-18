@@ -349,6 +349,16 @@ namespace FASTER.ViewModel
             { MessageBox.Show("Please enter a valid arma3server executable location"); }
         }
 
+        internal void SelectCustomBePath()
+        {
+            var path = MainWindow.Instance.SelectFolder(Properties.Settings.Default.serverPath);
+
+            if (path == null)
+                return;
+
+            Profile.ServerCfg.CustomBePath = path;
+        }
+        
         internal async Task CopyModKeys()
         {
             var mods = new List<string>();

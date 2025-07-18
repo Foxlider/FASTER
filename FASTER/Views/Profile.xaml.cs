@@ -107,6 +107,11 @@ namespace FASTER.Views
         {
             ((ProfileViewModel) DataContext)?.SelectServerFile();
         }
+        
+        private void SelectCustomBePath(object sender, RoutedEventArgs e)
+        {
+            ((ProfileViewModel) DataContext)?.SelectCustomBePath();
+        }
 
         private void OpenProfileLocation(object sender, RoutedEventArgs e)
         {
