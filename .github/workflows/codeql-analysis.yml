@@ -33,7 +33,8 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
-        submodules: true
+        submodules: recursive
+        token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v3
