@@ -23,7 +23,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FASTERTests", "FASTERTests\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FASTER Maintenance", "FASTER Maintenance\FASTER Maintenance.csproj", "{465FB100-A08C-4E4F-A321-EC85C5C177B3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BytexDigital.Steam", "BytexDigital.Steam\BytexDigital.Steam\BytexDigital.Steam.csproj", "{22F5B346-B3B2-302D-9D68-35A2DFCE2081}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BytexDigital.Steam", "BytexDigital.Steam\BytexDigital.Steam.csproj", "{22F5B346-B3B2-302D-9D68-35A2DFCE2081}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
