@@ -30,6 +30,10 @@ jobs:
         language: [ 'csharp' ]
 
     steps:
+    - name: List files for debugging
+      run: |
+        ls -R
+
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
