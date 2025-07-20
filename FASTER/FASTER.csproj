@@ -1,9 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
-		<TargetFramework>net9.0-windows</TargetFramework>
-		<EnableWindowsTargeting>true</EnableWindowsTargeting>
-		<Version>1.9.7.1</Version>
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
+        <TargetFramework>net8.0-windows</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <UseWPF>true</UseWPF>
@@ -12,6 +10,7 @@
         <SignAssembly>True</SignAssembly>
         <AssemblyOriginatorKeyFile>FASTERKey.snk</AssemblyOriginatorKeyFile>
         <Authors>Keelah Fox, Jupster, Canno.n</Authors>
+        <Version>1.9.7.2</Version>
         <Company>FoxliCorp.</Company>
         <Description>Fox's Arma Server Tool Extended Rewrite</Description>
         <Copyright>Copyright © 2019</Copyright>
