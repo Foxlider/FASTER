@@ -39,12 +39,12 @@ jobs:
       uses: github/codeql-action/init@v3
       with:
         languages: ${{ matrix.language }}
-        
+
     - name: Setup .NET Core SDK
       uses: actions/setup-dotnet@v4.0.0
       with:
         dotnet-version: ${{env.DOTNET_VERSION}}
-    
+
     - name: Restore Solution
       run: dotnet restore ./FASTER.sln
 
