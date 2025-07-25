@@ -25,7 +25,7 @@ namespace FASTER.Models
             var currentProfiles                      = Properties.Settings.Default.Profiles;
             var p = new ServerProfile(profileName);
             p.ServerCfg.ServerCfgContent             = p.ServerCfg.ProcessFile();
-            p.ServerCfg.AdvancedOptionsContent       = p.AdvancedOptions.ProcessFile();
+            p.AdvancedOptions.AdvancedOptionsContent = p.AdvancedOptions.ProcessFile();
             p.BasicCfg.BasicContent                  = p.BasicCfg.ProcessFile();
             p.ArmaProfile.ArmaProfileContent         = p.ArmaProfile.ProcessFile();
             currentProfiles.Add(p);
@@ -73,7 +73,7 @@ namespace FASTER.Models
         private bool _profileModsFilterIsRegex = false;
         private bool _profileModsFilterIsInvalid = false;
         private ServerCfg _serverCfg;
-        private ServerCfg _advancedOptions;
+        private AdvancedOptions _advancedOptions;
         private Arma3Profile _armaProfile;
         private BasicCfg _basicCfg;
 
@@ -393,7 +393,7 @@ namespace FASTER.Models
             }
         }
 		
-        public ServerCfg AdvancedOptions
+        public AdvancedOptions AdvancedOptions
         {
             get => _advancedOptions;
             set
@@ -443,7 +443,7 @@ namespace FASTER.Models
             ArmaProfile = new Arma3Profile();
             BasicCfg = new BasicCfg();
             ServerCfg.ServerCfgContent = ServerCfg.ProcessFile();
-            ServerCfg.AdvancedOptionsContent = AdvancedOptions.ProcessFile();
+            AdvancedOptions.AdvancedOptionsContent = AdvancedOptions.ProcessFile();
             ArmaProfile.ArmaProfileContent = ArmaProfile.ProcessFile();
             BasicCfg.BasicContent = BasicCfg.ProcessFile();
             if (createFolder)
@@ -454,11 +454,12 @@ namespace FASTER.Models
         {
             _id  = $"_{Guid.NewGuid():N}";
             Name = _id;
-            ServerCfg   = new ServerCfg(){ Hostname = Name};
-            ArmaProfile = new Arma3Profile();
-            BasicCfg    = new BasicCfg();
+            ServerCfg       = new ServerCfg(){ Hostname = Name};
+            ArmaProfile     = new Arma3Profile();
+            BasicCfg        = new BasicCfg();
+            AdvancedOptions = new AdvancedOptions();
             ServerCfg.ServerCfgContent = ServerCfg.ProcessFile();
-            ServerCfg.AdvancedOptionsContent = AdvancedOptions.ProcessFile();		
+            AdvancedOptions.AdvancedOptionsContent = AdvancedOptions.ProcessFile();		
             ArmaProfile.ArmaProfileContent = ArmaProfile.ProcessFile();
             BasicCfg.BasicContent = BasicCfg.ProcessFile();
         }
@@ -543,8 +544,9 @@ namespace FASTER.Models
         {
 
 
-            string config = Path.Combine(ArmaPath, "Servers", Id, "server_config.cfg");
-            string basic  = Path.Combine(ArmaPath, "Servers", Id, "server_basic.cfg");
+            string config   = Path.Combine(ArmaPath, "Servers", Id, "server_config.cfg");
+            string advanced = Path.Combine(ArmaPath, "Servers", Id, "server_advanced.cfg");
+            string basic    = Path.Combine(ArmaPath, "Servers", Id, "server_basic.cfg");
 
             string playerMods = string.Join(";", ProfileMods.Where(m => m.ClientSideChecked).OrderBy(m => m.LoadPriority).Select(m => $"@{Functions.SafeName(m.Name)}"));
             string serverMods = string.Join(";", ProfileMods.Where(m => m.ServerSideChecked).OrderBy(m => m.LoadPriority).Select(m => $"@{Functions.SafeName(m.Name)}"));
@@ -552,6 +554,7 @@ namespace FASTER.Models
             {
                 $"-port={Port}",
                 $" \"-config={config}\"",
+                $" \"-advanced={advanced}\"",
                 $" \"-cfg={basic}\"",
                 $" \"-profiles={Path.Combine(ArmaPath, "Servers", Id)}\"",
                 $" -name={Id}",
