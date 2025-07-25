@@ -14,8 +14,8 @@ namespace FASTER.Models
     [Serializable]
     public class BasicCfg : INotifyPropertyChanged
     {
-        private uint   viewDistance         = 2000;
-        private double terrainGrid          = 25;
+        private uint   viewDistance = 2000;
+        private double terrainGrid  = 25;
 
         private ushort maxMsgSend           = 128;
         private ushort maxSizeGuaranteed    = 256;
@@ -158,10 +158,10 @@ namespace FASTER.Models
                 MaxMsgSend           = 256;
                 MaxSizeGuaranteed    = 512;
                 MaxSizeNonGuaranteed = 256;
-                MinErrorToSend       = 0.001;
-                MinErrorToSendNear   = 0.01;
-                MaxPacketSize        = 1400;
-                MaxCustomFileSize    = 160;
+                MinErrorToSend     = 0.001;
+                MinErrorToSendNear = 0.01;
+                MaxPacketSize      = 1400;
+                MaxCustomFileSize  = 160;
 
 
                 switch ((short)Array.IndexOf(BasicCfgArrays.PerfPresets, value))
@@ -177,8 +177,8 @@ namespace FASTER.Models
                         MinBandwidth = 250000000;
                         break;
                     case 4:
-                        MaxMsgSend   = 512;
-                        MinBandwidth = 1000000000;
+                        MaxMsgSend           = 512;
+                        MinBandwidth         = 1000000000;
                         break;
                 }
                 RaisePropertyChanged("PerfPreset");

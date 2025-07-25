@@ -22,14 +22,13 @@ namespace FASTER.Models
 
         internal static void AddServerProfile(string profileName)
         {
-            var currentProfiles                      = Properties.Settings.Default.Profiles;
+            var currentProfiles = Properties.Settings.Default.Profiles;
             var p = new ServerProfile(profileName);
-            p.ServerCfg.ServerCfgContent             = p.ServerCfg.ProcessFile();
-            p.ServerCfg.AdvancedOptionsContent       = p.AdvancedOptions.ProcessFile();
-            p.BasicCfg.BasicContent                  = p.BasicCfg.ProcessFile();
-            p.ArmaProfile.ArmaProfileContent         = p.ArmaProfile.ProcessFile();
+            p.ServerCfg.ServerCfgContent     = p.ServerCfg.ProcessFile();
+            p.BasicCfg.BasicContent          = p.BasicCfg.ProcessFile();
+            p.ArmaProfile.ArmaProfileContent = p.ArmaProfile.ProcessFile();
             currentProfiles.Add(p);
-            Properties.Settings.Default.Profiles     = currentProfiles;
+            Properties.Settings.Default.Profiles = currentProfiles;
             Properties.Settings.Default.Save();
             MainWindow.Instance.LoadServerProfiles();
         }
@@ -73,7 +72,6 @@ namespace FASTER.Models
         private bool _profileModsFilterIsRegex = false;
         private bool _profileModsFilterIsInvalid = false;
         private ServerCfg _serverCfg;
-        private ServerCfg _advancedOptions;
         private Arma3Profile _armaProfile;
         private BasicCfg _basicCfg;
 
@@ -380,8 +378,8 @@ namespace FASTER.Models
             }
         }
 
-        public ServerCfg ServerCfg
-        {
+        public ServerCfg ServerCfg 
+        { 
             get => _serverCfg;
             set
             {
@@ -390,19 +388,6 @@ namespace FASTER.Models
                 _serverCfg                  =  value;
                 _serverCfg.PropertyChanged  += Class_PropertyChanged;
                 RaisePropertyChanged("ServerCfg");
-            }
-        }
-		
-        public ServerCfg AdvancedOptions
-        {
-            get => _advancedOptions;
-            set
-            {
-                if(_advancedOptions != null)
-                    _advancedOptions.PropertyChanged -= Class_PropertyChanged;
-                _advancedOptions                  =  value;
-                _advancedOptions.PropertyChanged  += Class_PropertyChanged;
-                RaisePropertyChanged("AdvancedOptions");
             }
         }
 
@@ -439,14 +424,12 @@ namespace FASTER.Models
             Name = name;
             Executable = Path.Combine(Properties.Settings.Default.serverPath, "arma3server_x64.exe");
             ServerCfg = new ServerCfg(){ Hostname = name};
-            AdvancedOptions = new AdvancedOptions();
             ArmaProfile = new Arma3Profile();
             BasicCfg = new BasicCfg();
             ServerCfg.ServerCfgContent = ServerCfg.ProcessFile();
-            ServerCfg.AdvancedOptionsContent = AdvancedOptions.ProcessFile();
             ArmaProfile.ArmaProfileContent = ArmaProfile.ProcessFile();
             BasicCfg.BasicContent = BasicCfg.ProcessFile();
-            ServerCfg.AdvancedOptionsContent = AdvancedOptions.ProcessFile();
+
             if (createFolder)
             { Directory.CreateDirectory(Path.Combine(Properties.Settings.Default.serverPath, "Servers", Id)); }
         }
@@ -459,7 +442,6 @@ namespace FASTER.Models
             ArmaProfile = new Arma3Profile();
             BasicCfg    = new BasicCfg();
             ServerCfg.ServerCfgContent = ServerCfg.ProcessFile();
-            ServerCfg.AdvancedOptionsContent = AdvancedOptions.ProcessFile();		
             ArmaProfile.ArmaProfileContent = ArmaProfile.ProcessFile();
             BasicCfg.BasicContent = BasicCfg.ProcessFile();
         }
