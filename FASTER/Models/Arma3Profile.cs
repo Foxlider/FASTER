@@ -41,7 +41,7 @@ namespace FASTER.Models
         private ushort mapContentMines    = 1;
         private ushort autoReport         = 0;
         private ushort multipleSaves      = 0;
-        private int tacticalPing          = 1;
+        private int    tacticalPing       = 1;
 
         private ushort aiLevelPreset      = 3;
         private double skillAi            = 0.5;
