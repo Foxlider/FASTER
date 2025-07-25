@@ -33,18 +33,22 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
-        submodules: true
+        submodules: recursive
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Init & update submodules
+      run: git submodule update --init --recursive
 
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v3
       with:
         languages: ${{ matrix.language }}
-        
+
     - name: Setup .NET Core SDK
       uses: actions/setup-dotnet@v4.0.0
       with:
         dotnet-version: ${{env.DOTNET_VERSION}}
-    
+
     - name: Restore Solution
       run: dotnet restore ./FASTER.sln
 
