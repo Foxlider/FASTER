@@ -64,6 +64,8 @@ namespace FASTER.Models
         private bool _efDlcChecked;
         private bool _enableHT = true;
         private bool _enableRanking;
+        private bool _enableHugePages;
+        private bool _loadMissionToMemory;
 
         private List<ProfileMod> _profileMods = new List<ProfileMod>();
         private string _profileModsFilter = "";
@@ -75,6 +77,12 @@ namespace FASTER.Models
         private Arma3Profile _armaProfile;
         private BasicCfg _basicCfg;
 
+        private bool _enableExThreads;
+        private bool _exThreadGeometry;
+        private bool _exThreadTextures;
+        private bool _exThreadFiles;
+        private byte _exThreads = 0;
+        
         //PUBLIC VAR DECLARATIONS
         public string Id
         {
@@ -233,6 +241,75 @@ namespace FASTER.Models
                 _enableHT = value;
                 RaisePropertyChanged("EnableHyperThreading");
             }
+        }
+        
+        public bool EnableHugePages
+        {
+            get => _enableHugePages;
+            set
+            {
+                _enableHugePages = value;
+                RaisePropertyChanged("EnableHugePages");
+            }
+        }
+        
+        public bool EnableLoadMissionToMemory
+        {
+            get => _loadMissionToMemory;
+            set
+            {
+                _loadMissionToMemory = value;
+                RaisePropertyChanged("EnableLoadMissionToMemory");
+            }
+        }
+        
+        public bool EnableExtraThreads
+        {
+            get => _enableExThreads;
+            set
+            {
+                _enableExThreads = value;
+                RaisePropertyChanged("EnableExtraThreads");
+            }
+        }
+        
+        public bool ExThreadGeometry
+        {
+            get => _exThreadGeometry;
+            set
+            {
+                _exThreadGeometry = value;
+                RaisePropertyChanged("ExThreadGeometry");
+            }
+        }
+        
+        public bool ExThreadTextures
+        {
+            get => _exThreadTextures;
+            set
+            {
+                _exThreadTextures = value;
+                RaisePropertyChanged("ExThreadTextures");
+            }
+        }
+        
+        public bool ExThreadFiles
+        {
+            get => _exThreadFiles;
+            set
+            {
+                _exThreadFiles = value;
+                RaisePropertyChanged("ExThreadFiles");
+            }
+        }
+
+        public void ProcessExThreads() 
+        {
+            _exThreads = (byte)(
+                (_exThreadFiles    ? 1 : 0) |
+                (_exThreadTextures ? 2 : 0) |
+                (_exThreadGeometry ? 4 : 0)
+            );
         }
 
         public bool RankingChecked
@@ -547,6 +624,10 @@ namespace FASTER.Models
                 $"{(ServerCfg.AutoInit ? " -autoInit" : "")}",
                 $"{(ServerCfg.MaxMemOverride ? $" -maxMem={ServerCfg.MaxMem}" : "")}",
                 $"{(ServerCfg.CpuCountOverride ? $" -cpuCount={ServerCfg.CpuCount}" : "")}",
+                $"{(EnableHugePages ? " -hugePages" : "")}",
+                $"{(EnableExtraThreads ? $" -exThreads={_exThreads}" : "")}",
+                $"{(EnableLoadMissionToMemory ? $" -loadMissionToMemory" : "")}",
+                $"{(ServerCfg.EnableCustomBePath && !string.IsNullOrWhiteSpace(ServerCfg.CustomBePath) && Path.Exists(ServerCfg.CustomBePath) ? $" -bePath=\"{ServerCfg.CustomBePath}\"" : "")}",
                 $"{(!string.IsNullOrWhiteSpace(ServerCfg.CommandLineParameters) ? $" {ServerCfg.CommandLineParameters}" : "")}"
             };
 
@@ -571,6 +652,11 @@ namespace FASTER.Models
         public event PropertyChangedEventHandler PropertyChanged;
         internal void RaisePropertyChanged(string property)
         {
+            if (property == "ExThreadGeometry" || property == "ExThreadTextures" || property == "ExThreadFiles")
+            {
+                ProcessExThreads();
+            }
+            
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
             if(property != "CommandLine")
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CommandLine)));
