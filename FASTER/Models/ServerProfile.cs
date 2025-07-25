@@ -25,7 +25,8 @@ namespace FASTER.Models
             var currentProfiles = Properties.Settings.Default.Profiles;
             var p = new ServerProfile(profileName);
             p.ServerCfg.ServerCfgContent     = p.ServerCfg.ProcessFile();
-            p.BasicCfg.BasicContent          = p.BasicCfg.ProcessFile();
+            p.BasicCfg.BasicContent          = p.BasicCfg.ProcessBasicFile();
+            p.BasicCfg.Arma3CfgContent       = p.BasicCfg.ProcessArma3CfgFile();
             p.ArmaProfile.ArmaProfileContent = p.ArmaProfile.ProcessFile();
             currentProfiles.Add(p);
             Properties.Settings.Default.Profiles = currentProfiles;
@@ -428,7 +429,8 @@ namespace FASTER.Models
             BasicCfg = new BasicCfg();
             ServerCfg.ServerCfgContent = ServerCfg.ProcessFile();
             ArmaProfile.ArmaProfileContent = ArmaProfile.ProcessFile();
-            BasicCfg.BasicContent = BasicCfg.ProcessFile();
+            BasicCfg.BasicContent = BasicCfg.ProcessBasicFile();
+            BasicCfg.Arma3CfgContent = BasicCfg.ProcessArma3CfgFile();
 
             if (createFolder)
             { Directory.CreateDirectory(Path.Combine(Properties.Settings.Default.serverPath, "Servers", Id)); }
@@ -443,7 +445,8 @@ namespace FASTER.Models
             BasicCfg    = new BasicCfg();
             ServerCfg.ServerCfgContent = ServerCfg.ProcessFile();
             ArmaProfile.ArmaProfileContent = ArmaProfile.ProcessFile();
-            BasicCfg.BasicContent = BasicCfg.ProcessFile();
+            BasicCfg.BasicContent = BasicCfg.ProcessBasicFile();
+            BasicCfg.Arma3CfgContent = BasicCfg.ProcessArma3CfgFile();
         }
 
         public void GenerateNewId()

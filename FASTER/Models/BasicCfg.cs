@@ -14,6 +14,8 @@ namespace FASTER.Models
     [Serializable]
     public class BasicCfg : INotifyPropertyChanged
     {
+        private string language     = "English";
+        
         private uint   viewDistance = 2000;
         private double terrainGrid  = 25;
 
@@ -28,6 +30,7 @@ namespace FASTER.Models
         private ushort maxPacketSize        = 1400;
 
         private string basicContent;
+        private string a3cfgContent;
 
         public string BasicContent
         {
@@ -38,7 +41,27 @@ namespace FASTER.Models
                 RaisePropertyChanged("BasicContent");
             }
         }
+        
+        public string Arma3CfgContent
+        {
+            get => a3cfgContent;
+            set
+            {
+                a3cfgContent = value;
+                RaisePropertyChanged("Arma3CfgContent");
+            }
+        }
 
+        public string Language
+        {
+            get => language;
+            set
+            {
+                language = value;
+                RaisePropertyChanged("Language");
+            }
+        }
+        
         public uint ViewDistance
         {
             get => viewDistance;
@@ -186,12 +209,15 @@ namespace FASTER.Models
         }
 
         public BasicCfg()
-        { BasicContent = ProcessFile(); }
+        { 
+            BasicContent = ProcessBasicFile();
+            Arma3CfgContent = ProcessArma3CfgFile();
+        }
 
-        public string ProcessFile()
+        public string ProcessBasicFile()
         {
             string output = "// These options are created by default\r\n"
-                          + "language=\"English\";\r\n"
+                          + $"language=\"{language}\";\r\n"
                           + "adapter=-1;\r\n"
                           + "3D_Performance=1.000000;\r\n"
                           + "Resolution_W=800;\r\n"
@@ -217,6 +243,14 @@ namespace FASTER.Models
                           + $"class sockets{{ maxPacketSize = {maxPacketSize};}};";
             return output;
         }
+        
+        public string ProcessArma3CfgFile()
+        {
+            string output = "steamLanguage=\"\";\r\n"
+                    + $"language=\"{language}\";\r\n";
+
+            return output;
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -224,7 +258,11 @@ namespace FASTER.Models
         {
             if (PropertyChanged == null) return;
             PropertyChanged(this, new PropertyChangedEventArgs(property));
-            if (property != "BasicContent") BasicContent = ProcessFile();
+            if (property != "BasicContent" && property != "Arma3CfgContent")
+            {
+                BasicContent = ProcessBasicFile();
+                Arma3CfgContent = ProcessArma3CfgFile();
+            }
         }
     }
 }

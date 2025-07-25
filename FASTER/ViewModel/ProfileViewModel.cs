@@ -212,9 +212,11 @@ namespace FASTER.ViewModel
             string config        = Path.Combine(Profile.ArmaPath, "Servers", Profile.Id, "server_config.cfg");
             string basic         = Path.Combine(Profile.ArmaPath, "Servers", Profile.Id, "server_basic.cfg");
             string serverProfile = Path.Combine(Profile.ArmaPath, "Servers", Profile.Id, "users", Profile.Id, $"{Profile.Id}.Arma3Profile");
+            string arma3Cfg      = Path.Combine(Profile.ArmaPath, "Servers", Profile.Id, "users", Environment.UserName, $"Arma3.cfg"); 
 
             //Creating profile directory
             Directory.CreateDirectory(Path.Combine(Profile.ArmaPath, "Servers", Profile.Id, "users", Profile.Id));
+            Directory.CreateDirectory(Path.Combine(Profile.ArmaPath, "Servers", Profile.Id, "users", Environment.UserName));
 
             //Writing files
             try
@@ -222,6 +224,7 @@ namespace FASTER.ViewModel
                 File.WriteAllLines(config,        Profile.ServerCfg.ServerCfgContent.Replace("\r", "").Split('\n'));
                 File.WriteAllLines(basic,         Profile.BasicCfg.BasicContent.Replace("\r", "").Split('\n'));
                 File.WriteAllLines(serverProfile, Profile.ArmaProfile.ArmaProfileContent.Replace("\r", "").Split('\n'));
+                File.WriteAllLines(arma3Cfg,      Profile.BasicCfg.Arma3CfgContent.Replace("\r", "").Split('\n'));
             }
             catch
             { DisplayMessage("Could not write the config files. Please ensure the server is not running and retry."); }
