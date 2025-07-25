@@ -821,14 +821,14 @@ namespace FASTER.Models
             }
         }
 		
-		private string AdvancedOptionsContent;
+		private string advancedOptionsContent;
 
         public string AdvancedOptionsContent
         {
             get => advancedOptionsContent;
             set
             {
-                AdvancedOptionsContent = value;
+                advancedOptionsContent = value;
                 RaisePropertyChanged("AdvancedOptionsContent");
             }
         }
