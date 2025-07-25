@@ -210,6 +210,7 @@ namespace FASTER.ViewModel
         internal void SaveProfile()
         {
             string config        = Path.Combine(Profile.ArmaPath, "Servers", Profile.Id, "server_config.cfg");
+            string advanced      = Path.Combine(Profile.ArmaPath, "servers", Profile.Id, "Server_advanced
             string basic         = Path.Combine(Profile.ArmaPath, "Servers", Profile.Id, "server_basic.cfg");
             string serverProfile = Path.Combine(Profile.ArmaPath, "Servers", Profile.Id, "users", Profile.Id, $"{Profile.Id}.Arma3Profile");
 
