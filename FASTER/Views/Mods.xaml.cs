@@ -4,6 +4,7 @@ using FASTER.ViewModel;
 using System;
 using System.Windows;
 using MahApps.Metro.Controls.Dialogs;
+using System.Threading.Tasks;
 
 namespace FASTER.Views
 {
@@ -57,6 +58,12 @@ namespace FASTER.Views
             ((ModsViewModel) DataContext)?.OpenModFolder(mod);
         }
 
+        private void PurgeAndReinstallMod(object sender, RoutedEventArgs e)
+        {
+            var mod = ((FrameworkElement) sender).DataContext as ArmaMod;
+            ((ModsViewModel) DataContext)?.PurgeAndReinstall(mod);
+        }
+
         private async void AddSteamMod_Click(object sender, RoutedEventArgs e)
         {
             await ((ModsViewModel) DataContext)?.AddSteamMod();
@@ -85,6 +92,11 @@ namespace FASTER.Views
 		private async void DeleteAll_Click(object sender, RoutedEventArgs e)
         {
             await ((ModsViewModel) DataContext)?.DeleteAllMods();
+        }
+
+        private async void PurgeAndReinstallAll_Click(object sender, RoutedEventArgs e)
+        {
+            await ((ModsViewModel) DataContext)?.PurgeAndReinstallAll();
         }
     }
 }

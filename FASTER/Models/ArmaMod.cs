@@ -62,8 +62,6 @@ namespace FASTER.Models
 
         public void DeleteSteamMod(uint workshopId)
         {
-
-
             try
             {
                 var currentProfiles = ReloadMods();
