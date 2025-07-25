@@ -189,7 +189,8 @@ namespace FASTER.ViewModel
             if (!Directory.Exists(Path.Combine(path, "Servers", profile)))
             { return false; }
 
-            return File.Exists(Path.Combine(path, "Servers", profile, "server_config.cfg")) 
+            return File.Exists(Path.Combine(path, "Servers", profile, "server_config.cfg"))
+                && File.Exists(Path.Combine(path, "Servers", profile, "server_advanced.cfg"))
                 && File.Exists(Path.Combine(path, "Servers", profile, "server_basic.cfg"));
         }
 
@@ -210,7 +211,7 @@ namespace FASTER.ViewModel
         internal void SaveProfile()
         {
             string config        = Path.Combine(Profile.ArmaPath, "Servers", Profile.Id, "server_config.cfg");
-            string advanced      = Path.Combine(Profile.ArmaPath, "servers", Profile.Id, "Server_advanced
+            string advanced      = Path.Combine(Profile.ArmaPath, "Servers", Profile.Id, "server_advanced");
             string basic         = Path.Combine(Profile.ArmaPath, "Servers", Profile.Id, "server_basic.cfg");
             string serverProfile = Path.Combine(Profile.ArmaPath, "Servers", Profile.Id, "users", Profile.Id, $"{Profile.Id}.Arma3Profile");
 
@@ -221,6 +222,7 @@ namespace FASTER.ViewModel
             try
             {
                 File.WriteAllLines(config,        Profile.ServerCfg.ServerCfgContent.Replace("\r", "").Split('\n'));
+                File.WriteAllLines(advanced,      Profile.AdvancedOptions.AdvancedOptionsContent.Replace("\r", "").Split('\n'));
                 File.WriteAllLines(basic,         Profile.BasicCfg.BasicContent.Replace("\r", "").Split('\n'));
                 File.WriteAllLines(serverProfile, Profile.ArmaProfile.ArmaProfileContent.Replace("\r", "").Split('\n'));
             }
