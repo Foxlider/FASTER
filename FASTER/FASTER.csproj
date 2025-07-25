@@ -1,64 +1,64 @@
 <Project Sdk="Microsoft.NET.Sdk">
-	<PropertyGroup>
-		<OutputType>WinExe</OutputType>
-		<TargetFramework>net9.0-windows</TargetFramework>
-		<EnableWindowsTargeting>true</EnableWindowsTargeting>
-		<Nullable>enable</Nullable>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<UseWPF>true</UseWPF>
-		<ApplicationIcon>Resources\FASTER.ico</ApplicationIcon>
-		<ApplicationManifest>Properties\FASTER.manifest</ApplicationManifest>
-		<SignAssembly>True</SignAssembly>
-		<AssemblyOriginatorKeyFile>FASTERKey.snk</AssemblyOriginatorKeyFile>
-		<Authors>Keelah Fox, Jupster, Canno.n</Authors>
-		<Version>1.9.7.1</Version>
-		<Company>FoxliCorp.</Company>
-		<Description>Fox's Arma Server Tool Extended Rewrite</Description>
-		<Copyright>Copyright © 2019</Copyright>
-		<PackageProjectUrl>https://github.com/Foxlider/FASTER</PackageProjectUrl>
-		<PackageReadmeFile>README.md</PackageReadmeFile>
-		<RepositoryUrl>https://github.com/Foxlider/FASTER</RepositoryUrl>
-		<PackageLicenseFile>LICENSE</PackageLicenseFile>
-		
-		<PublishReadyToRun>true</PublishReadyToRun>
-		<IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
-		<IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
-		<PublishReadyToRunComposite>false</PublishReadyToRunComposite>
-	</PropertyGroup>
+    <PropertyGroup>
+        <OutputType>WinExe</OutputType>
+        <TargetFramework>net8.0-windows</TargetFramework>
+        <EnableWindowsTargeting>true</EnableWindowsTargeting>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <UseWPF>true</UseWPF>
+        <ApplicationIcon>Resources\FASTER.ico</ApplicationIcon>
+        <ApplicationManifest>Properties\FASTER.manifest</ApplicationManifest>
+        <SignAssembly>True</SignAssembly>
+        <AssemblyOriginatorKeyFile>FASTERKey.snk</AssemblyOriginatorKeyFile>
+        <Authors>Keelah Fox, Jupster, Canno.n</Authors>
+        <Version>1.9.7.2</Version>
+        <Company>FoxliCorp.</Company>
+        <Description>Fox's Arma Server Tool Extended Rewrite</Description>
+        <Copyright>Copyright © 2019</Copyright>
+        <PackageProjectUrl>https://github.com/Foxlider/FASTER</PackageProjectUrl>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <RepositoryUrl>https://github.com/Foxlider/FASTER</RepositoryUrl>
+        <PackageLicenseFile>LICENSE</PackageLicenseFile>
+
+        <PublishReadyToRun>true</PublishReadyToRun>
+        <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
+        <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+        <PublishReadyToRunComposite>false</PublishReadyToRunComposite>
+    </PropertyGroup>
 
 
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-		<DebugType>portable</DebugType>
-		<NoWarn>1701;1702;NU1701;CS8002;CS8618;CS8622</NoWarn>
-	</PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+        <DebugType>portable</DebugType>
+        <NoWarn>1701;1702;NU1701;CS8002;CS8618;CS8622</NoWarn>
+    </PropertyGroup>
 
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-		<DebugType>none</DebugType>
-		<NoWarn>1701;1702;NU1701;CS8002;CS8618;CS8622</NoWarn>
-	</PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+        <DebugType>none</DebugType>
+        <NoWarn>1701;1702;NU1701;CS8002;CS8618;CS8622</NoWarn>
+    </PropertyGroup>
 
-	<ItemGroup>
-		<Resource Include="Resources\FASTER.ico">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Resource>
-	</ItemGroup>
-	<ItemGroup>
-		<SplashScreen Include="Resources\FasterSplash.png" />
-	</ItemGroup>
-	<ItemGroup>
-		<Compile Update="Properties\Settings.Designer.cs">
-			<DesignTimeSharedInput>True</DesignTimeSharedInput>
-			<AutoGen>True</AutoGen>
-			<DependentUpon>Settings.settings</DependentUpon>
-		</Compile>
-	</ItemGroup>
-	<ItemGroup>
-		<None Update="Properties\Settings.settings">
-			<Generator>SettingsSingleFileGenerator</Generator>
-			<LastGenOutput>Settings.Designer.cs</LastGenOutput>
-		</None>
-	</ItemGroup>
-  <ItemGroup>
+    <ItemGroup>
+        <Resource Include="Resources\FASTER.ico">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Resource>
+    </ItemGroup>
+    <ItemGroup>
+        <SplashScreen Include="Resources\FasterSplash.png" />
+    </ItemGroup>
+    <ItemGroup>
+        <Compile Update="Properties\Settings.Designer.cs">
+            <DesignTimeSharedInput>True</DesignTimeSharedInput>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>Settings.settings</DependentUpon>
+        </Compile>
+    </ItemGroup>
+    <ItemGroup>
+        <None Update="Properties\Settings.settings">
+            <Generator>SettingsSingleFileGenerator</Generator>
+            <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+        </None>
+    </ItemGroup>
+    <ItemGroup>
     <None Remove="Resources\FASTER.ico" />
     <None Remove="Resources\FasterSplash.png" />
   </ItemGroup>
