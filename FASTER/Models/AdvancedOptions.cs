@@ -18,7 +18,7 @@ namespace FASTER.Models
             set
             {
                 logObjectNotFound = value;
-                RaisePropertyChanged(nameof("LogObjectNotFound"));
+                RaisePropertyChanged(nameof(LogObjectNotFound));
             }
         }
 
@@ -28,7 +28,7 @@ namespace FASTER.Models
             set
             {
                 skipDescriptionParsing = value;
-                RaisePropertyChanged(nameof("SkipDescriptionParsing"));
+                RaisePropertyChanged(nameof(SkipDescriptionParsing));
             }
         }
 
@@ -38,7 +38,7 @@ namespace FASTER.Models
             set
             {
                 ignoreMissionLoadErrors = value;
-                RaisePropertyChanged(nameof("IgnoreMissionLoadErrors"));
+                RaisePropertyChanged(nameof(IgnoreMissionLoadErrors));
             }
         }
 
@@ -48,7 +48,7 @@ namespace FASTER.Models
             set
             {
                 queueSizeLogG = value;
-                RaisePropertyChanged(nameof("QueueSizeLogG"));
+                RaisePropertyChanged(nameof(QueueSizeLogG));
             }
         }
 
@@ -58,7 +58,7 @@ namespace FASTER.Models
             set
             {
                 advancedOptionsContent = value;
-                RaisePropertyChanged(nameof("AdvancedOptionsContent"));
+                RaisePropertyChanged(nameof(AdvancedOptionsContent));
             }
         }
 
