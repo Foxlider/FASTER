@@ -245,7 +245,6 @@ namespace FASTER.ViewModel
                     MissingMods++;
             }
 
-
             var index = Properties.Settings.Default.Profiles.FindIndex(p => p.Id == Profile.Id);  
             if (index != -1)
             { Properties.Settings.Default.Profiles[index] = Profile; }
@@ -256,7 +255,6 @@ namespace FASTER.ViewModel
 
             if (MissingMods > 0)
                 DisplayMessage($"{MissingMods} mods were not found in the Arma directory.\nMake sure you have deployed the correct mods");
-
         }
 
         public ObservableCollection<string> FadeOutStrings         { get; } = new ObservableCollection<string>(ProfileCfgArrays.FadeOutStrings);
@@ -355,51 +353,82 @@ namespace FASTER.ViewModel
         internal async Task CopyModKeys()
         {
             var mods = new List<string>();
+            var failedMods = new List<string>();
 
-            if (!Directory.Exists(Properties.Settings.Default.modStagingDirectory))
+            string stagingDir = Properties.Settings.Default.modStagingDirectory;
+            string keysDir = Path.Combine(Profile.ArmaPath, "keys");
+
+            if (!Directory.Exists(stagingDir))
             {
                 MainWindow.Instance.IFlyout.IsOpen         = true;
-                MainWindow.Instance.IFlyoutMessage.Content = $"The SteamCMD path does not exist :\n{Properties.Settings.Default.modStagingDirectory}";
+                MainWindow.Instance.IFlyoutMessage.Content = $"The SteamCMD path does not exist:\n{stagingDir}";
                 return;
             }
 
             var clientMods = Profile.ProfileMods.Where(p => p.ClientSideChecked).ToList();
             var optionalMods = Profile.ProfileMods.Where(p => p.OptChecked).ToList();
-            var steamMods = clientMods.Union(optionalMods).ToList();
+            var steamMods = clientMods.Union(optionalMods).Distinct().ToList();
 
-            foreach (var line in steamMods)
+            foreach (var mod in steamMods)
             {
+                string modPath = Path.Combine(stagingDir, mod.Id.ToString());
+
                 try
-                { mods.AddRange(Directory.GetDirectories(Path.Combine(Properties.Settings.Default.modStagingDirectory, line.Id.ToString()))
-				.SelectMany(subDir => Directory.GetFiles(subDir, "*.bikey", SearchOption.TopDirectoryOnly))); }
+                {
+                if (!Directory.Exists(modPath))
+                {
+                    failedMods.Add(mod.Name);
+                    continue;
+                }
+                mods.AddRange(Directory.GetDirectories(modPath)
+				.SelectMany(subDir => Directory.GetFiles(subDir, "*.bikey", SearchOption.TopDirectoryOnly)));
+                }
                 catch (DirectoryNotFoundException)
-                { /*there was no directory*/ }
+                {
+                    failedMods.Add(mod.Name);
+                }
+                catch (IOException)
+                {
+                    failedMods.Add(mod.Name);
+                }
             }
 
             await ClearModKeys();
 
-            Directory.CreateDirectory(Path.Combine(Profile.ArmaPath, "keys"));
-
-            foreach (var link in mods)
+            Directory.CreateDirectory(keysDir);
+            foreach (var link in mods.Distinct())
             {
-                try { File.Copy(link, Path.Combine(Profile.ArmaPath, "keys", Path.GetFileName(link)), true); }
+                try { File.Copy(link, Path.Combine(keysDir, Path.GetFileName(link)), true); }
                 catch (IOException)
                 {
                     MainWindow.Instance.IFlyout.IsOpen         = true;
                     MainWindow.Instance.IFlyoutMessage.Content = $"Some keys could not be copied : {Path.GetFileName(link)}";
                 }
             }
+
+            if (failedMods.Count > 0)
+            {
+                DisplayMessage("Failed to read keys for these mods:\n" + string.Join("\n", failedMods.Distinct()));
+            }
+            else
+            {
+                DisplayMessage("All mod keys copied successfully.");
+            }
+
             await Task.Delay(1000);
-        }
+	    }
 
         internal async Task ClearModKeys()
         {
             var ignoredKeys = new[] {"a3.bikey", "a3c.bikey", "gm.bikey", "ws.bikey", "csla.bikey", "vn.bikey", "spe.bikey", "rf.bikey", "ef.bikey" };
-            if (Directory.Exists(Path.Combine(Profile.ArmaPath, "keys")))
+            string keysDir = Path.Combine(Profile.ArmaPath, "keys");
+
+            if (Directory.Exists(keysDir))
             {
-                foreach (var keyFile in Directory.GetFiles(Path.Combine(Profile.ArmaPath, "keys")))
+                foreach (var keyFile in Directory.GetFiles(keysDir))
                 {
-                    if (Array.Exists(ignoredKeys, x => keyFile.Contains(x)))
+                    var fileName = Path.GetFileName(keyFile);
+                    if (ignoredKeys.Contains(fileName))
                         continue;
                     try
                     {
@@ -408,7 +437,7 @@ namespace FASTER.ViewModel
                     catch (Exception)
                     {
                         MainWindow.Instance.IFlyout.IsOpen         = true;
-                        MainWindow.Instance.IFlyoutMessage.Content = $"Some keys could not be cleared : {Path.GetFileName(keyFile)}";
+                        MainWindow.Instance.IFlyoutMessage.Content = $"Some keys could not be cleared : {fileName}";
                     }
                 }
             }
