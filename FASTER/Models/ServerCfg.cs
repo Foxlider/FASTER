@@ -779,12 +779,6 @@ namespace FASTER.Models
             RaisePropertyChanged("MissionContentOverride");
         }
 
-        // Grab Advanced output
-        public AdvancedOptions AdvancedOptions { get; set; } = new();
-
-        // Optional convenience property to expose the raw content
-        public string AdvancedOptionsContent => AdvancedOptions.AdvancedOptionsContent;
-
         public string ProcessFile()
         {
             if (!missionSelectorChecked)
@@ -807,7 +801,6 @@ namespace FASTER.Models
                 { MissionContentOverride = compiledMission; }
             }
 
-            public string GenerateCfgFile()
             {
             string output = "//\r\n"
                           + "// server.cfg\r\n"
@@ -893,7 +886,6 @@ namespace FASTER.Models
                           + "// HEADLESS CLIENT\r\n"
                           + $"{(headlessClientEnabled && !headlessClients.Exists(string.IsNullOrWhiteSpace) ? $"headlessClients[] =  { "{\n\t\"" + string.Join("\",\n\t \"", headlessClients) + "\"\n}" };\r\n" : "")}"
                           + $"{(headlessClientEnabled && !localClient.Exists(string.IsNullOrWhiteSpace)? $"localClient[] =  { "{\n\t\"" + string.Join("\",\n\t \"", localClient) + "\"\n}" };" : "")}";
-                   output + = AdvancedOptionsContent;
             return output;
             }
         }
