@@ -9,7 +9,7 @@ namespace FASTER.Models
         private bool   logObjectNotFound       = true;       // logging enabled
         private bool   skipDescriptionParsing  = false;      // Parse description.ext
         private bool   ignoreMissionLoadErrors = false;      // Do not ignore errors
-        private int    queueSizeLogG           = 0;          // If a specific players message queue is larger than <Value> and '#monitor' is running, dump his messages to a logfile for analysis
+        private int    queueSizeLogG           = 0;          // If a specific players message queue is larger than <Value> and '#monitor' is running, dump the messages to a logfile for analysis
         private string advancedOptionsContent;
 
         public bool LogObjectNotFound
