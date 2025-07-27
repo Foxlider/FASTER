@@ -649,9 +649,9 @@
                                         <ComboBox SelectedItem="{Binding Path=Profile.ServerCfg.VerifySignatures}" ItemsSource="{Binding Path=VerifySignatures}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Verify Signatures" Margin="5"/>
                                         <CheckBox IsChecked="{Binding Path=Profile.ServerCfg.KickDuplicates}" Content="Kick Duplicates" Margin="5,2"/>
                                         <CheckBox IsChecked="{Binding Path=Profile.ServerCfg.KickClientOnSlowNetwork}" Content="Kick on Slow Network" Margin="5,2"/>
-                                        <CheckBox IsChecked="{Binding Path=Profile.ServerCfg.LogObjectNotFound}" Content="Log Object Not Found" Margin="5,2"/>
-                                        <CheckBox IsChecked="{Binding Path=Profile.ServerCfg.SkipDescriptionParsing}" Content="Skip Description Parsing" Margin="5,2"/>
-                                        <CheckBox IsChecked="{Binding Path=Profile.ServerCfg.IgnoreMissionLoadErrors}" Content="Ignore Mission Load Errors" Margin="5,2"/>
+                                        <CheckBox IsChecked="{Binding Path=Profile.AdvancedOptions.LogObjectNotFound}" Content="Log Object Not Found" Margin="5,2"/>
+                                        <CheckBox IsChecked="{Binding Path=Profile.AdvancedOptions.SkipDescriptionParsing}" Content="Skip Description Parsing" Margin="5,2"/>
+                                        <CheckBox IsChecked="{Binding Path=Profile.AdvancedOptions.IgnoreMissionLoadErrors}" Content="Ignore Mission Load Errors" Margin="5,2"/>
 
                                             <StackPanel>
                                                 <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.LobbyIdleTimeout}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Lobby Idle Timeout" Margin="5"/>
@@ -660,7 +660,7 @@
                                                 <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.BriefingTimeOut}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Briefing Idle Timeout" Margin="5"/>
                                                 <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.VotingTimeOut}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Voting Timeout" Margin="5"/>
                                                 <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.ArmaUnitsTimeout}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Arma Units Timeout" Margin="5"/>
-                                                <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.QueueSizeLogG}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Queue Size LogG" Margin="5"/>
+                                                <mah:NumericUpDown Value="{Binding Path=Profile.AdvancedOptions.QueueSizeLogG}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Queue Size LogG" Margin="5"/>
                                             </StackPanel>
 
                                         <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.SteamProtocolMaxDataSize}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Steam Protocol Max Data Size" Margin="5"/>
