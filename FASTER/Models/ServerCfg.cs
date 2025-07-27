@@ -801,7 +801,6 @@ namespace FASTER.Models
                 { MissionContentOverride = compiledMission; }
             }
 
-            {
             string output = "//\r\n"
                           + "// server.cfg\r\n"
                           + "//\r\n"
@@ -887,8 +886,8 @@ namespace FASTER.Models
                           + $"{(headlessClientEnabled && !headlessClients.Exists(string.IsNullOrWhiteSpace) ? $"headlessClients[] =  { "{\n\t\"" + string.Join("\",\n\t \"", headlessClients) + "\"\n}" };\r\n" : "")}"
                           + $"{(headlessClientEnabled && !localClient.Exists(string.IsNullOrWhiteSpace)? $"localClient[] =  { "{\n\t\"" + string.Join("\",\n\t \"", localClient) + "\"\n}" };" : "")}";
             return output;
-            }
         }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         private void RaisePropertyChanged(string property)
