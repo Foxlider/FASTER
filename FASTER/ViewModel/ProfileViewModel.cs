@@ -355,13 +355,10 @@ namespace FASTER.ViewModel
             var mods = new List<string>();
             var failedMods = new List<string>();
 
-            string stagingDir = Properties.Settings.Default.modStagingDirectory;
-            string keysDir = Path.Combine(Profile.ArmaPath, "keys");
-
-            if (!Directory.Exists(stagingDir))
+            if (!Directory.Exists(Properties.Settings.Default.modStagingDirectory))
             {
                 MainWindow.Instance.IFlyout.IsOpen         = true;
-                MainWindow.Instance.IFlyoutMessage.Content = $"The SteamCMD path does not exist:\n{stagingDir}";
+                MainWindow.Instance.IFlyoutMessage.Content = $"The SteamCMD path does not exist:\n{Properties.Settings.Default.modStagingDirectory}";
                 return;
             }
 
@@ -369,36 +366,30 @@ namespace FASTER.ViewModel
             var optionalMods = Profile.ProfileMods.Where(p => p.OptChecked).ToList();
             var steamMods = clientMods.Union(optionalMods).Distinct().ToList();
 
-            foreach (var mod in steamMods)
+            foreach (var line in steamMods)
             {
-                string modPath = Path.Combine(stagingDir, mod.Id.ToString());
-
                 try
                 {
-                if (!Directory.Exists(modPath))
+                if (!Directory.Exists(Properties.Settings.Default.modStagingDirectory))
                 {
-                    failedMods.Add(mod.Name);
+                    failedMods.Add(line.Name);
                     continue;
                 }
-                mods.AddRange(Directory.GetDirectories(modPath)
+                mods.AddRange(Directory.GetDirectories(Path.Combine(Properties.Settings.Default.modStagingDirectory, line.Id.ToString()))
 				.SelectMany(subDir => Directory.GetFiles(subDir, "*.bikey", SearchOption.TopDirectoryOnly)));
                 }
                 catch (DirectoryNotFoundException)
                 {
-                    failedMods.Add(mod.Name);
-                }
-                catch (IOException)
-                {
-                    failedMods.Add(mod.Name);
+                    failedMods.Add(line.Name);
                 }
             }
 
             await ClearModKeys();
 
-            Directory.CreateDirectory(keysDir);
+            Directory.CreateDirectory(Path.Combine(Profile.ArmaPath, "keys"));
             foreach (var link in mods.Distinct())
             {
-                try { File.Copy(link, Path.Combine(keysDir, Path.GetFileName(link)), true); }
+                try { File.Copy(link, Path.Combine(Profile.ArmaPath, "keys", Path.GetFileName(link)), true); }
                 catch (IOException)
                 {
                     MainWindow.Instance.IFlyout.IsOpen         = true;
@@ -421,11 +412,10 @@ namespace FASTER.ViewModel
         internal async Task ClearModKeys()
         {
             var ignoredKeys = new[] {"a3.bikey", "a3c.bikey", "gm.bikey", "ws.bikey", "csla.bikey", "vn.bikey", "spe.bikey", "rf.bikey", "ef.bikey" };
-            string keysDir = Path.Combine(Profile.ArmaPath, "keys");
 
-            if (Directory.Exists(keysDir))
+            if (Directory.Exists(Path.Combine(Profile.ArmaPath, "keys")))
             {
-                foreach (var keyFile in Directory.GetFiles(keysDir))
+                foreach (var keyFile in Directory.GetFiles((Path.Combine(Profile.ArmaPath, "keys"))))
                 {
                     var fileName = Path.GetFileName(keyFile);
                     if (ignoredKeys.Contains(fileName))
@@ -437,7 +427,7 @@ namespace FASTER.ViewModel
                     catch (Exception)
                     {
                         MainWindow.Instance.IFlyout.IsOpen         = true;
-                        MainWindow.Instance.IFlyoutMessage.Content = $"Some keys could not be cleared : {fileName}";
+                        MainWindow.Instance.IFlyoutMessage.Content = $"Some keys could not be cleared : {Path.GetFileName(keyFile)}";
                     }
                 }
             }
