@@ -885,6 +885,7 @@ namespace FASTER.Models
                           + "// HEADLESS CLIENT\r\n"
                           + $"{(headlessClientEnabled && !headlessClients.Exists(string.IsNullOrWhiteSpace) ? $"headlessClients[] =  { "{\n\t\"" + string.Join("\",\n\t \"", headlessClients) + "\"\n}" };\r\n" : "")}"
                           + $"{(headlessClientEnabled && !localClient.Exists(string.IsNullOrWhiteSpace)? $"localClient[] =  { "{\n\t\"" + string.Join("\",\n\t \"", localClient) + "\"\n}" };" : "")}";
+                          + "\r\n"
             return output;
         }
 
@@ -901,7 +902,7 @@ namespace FASTER.Models
     [Serializable]
     public class ProfileMission : INotifyPropertyChanged
     {
-        private bool missionChecked;
+        private bool   missionChecked;
         private string name;
         private string path;
 
