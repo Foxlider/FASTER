@@ -458,7 +458,7 @@ namespace FASTER.ViewModel
                             return;
                         }
 
-                        if (!SteamClient.Credentials.IsAnonymous) //IS SYNC NEABLED
+                        if (!SteamClient.Credentials.IsAnonymous) //IS SYNC ENABLED
                         {
                             Parameters.Output += $"\n   Getting manifest for {mod.WorkshopId}";
                             manifestId = SteamContentClient.GetPublishedFileDetailsAsync(mod.WorkshopId).Result.hcontent_file;
