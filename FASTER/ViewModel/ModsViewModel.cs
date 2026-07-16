@@ -230,10 +230,16 @@ namespace FASTER.ViewModel
 
             Process.Start(startInfo);
         }
-        public void CheckForUpdates()
+        public async Task CheckForUpdates()
         {
+            Logger.Log("CheckForUpdates started.");
             foreach (ArmaMod mod in ModsCollection.ArmaMods)
-            { Task.Run(() => mod.UpdateInfos()); }
+            {
+                Logger.Log($"  Checking mod {mod.WorkshopId} ({mod.Name})...");
+                await Task.Run(() => mod.UpdateInfos());
+                await Task.Delay(300);
+            }
+            Logger.Log("CheckForUpdates finished.");
         }
 
         public async Task UpdateSelectedMods()
@@ -253,8 +259,117 @@ namespace FASTER.ViewModel
 
             MainWindow.Instance.NavigateToConsole();
             var ans = await MainWindow.Instance.SteamUpdaterViewModel.RunModsUpdater(ModsCollection.ArmaMods);
-            if(ans == UpdateState.LoginFailed) 
+            if(ans == UpdateState.LoginFailed)
                 DisplayMessage("Steam Login Failed");
+        }
+
+        public void PurgeAndReinstallMod(ArmaMod mod)
+        {
+            if (mod == null) return;
+
+            Logger.Log($"PurgeAndReinstallMod: {mod.WorkshopId} ({mod.Name}) path={mod.Path}");
+            try
+            {
+                if (Directory.Exists(mod.Path))
+                {
+                    Directory.Delete(mod.Path, true);
+                    Logger.Log($"  Deleted folder: {mod.Path}");
+                }
+                else
+                    Logger.Log($"  Folder not found, skipping delete: {mod.Path}");
+            }
+            catch (Exception ex)
+            {
+                Logger.Log($"  ERROR deleting folder: {ex.Message}");
+                DisplayMessage($"Could not delete folder for mod {mod.WorkshopId}");
+            }
+
+            mod.Status           = ArmaModStatus.UpdateRequired;
+            mod.LocalLastUpdated = 0;
+            mod.Size             = 0;
+            Properties.Settings.Default.Save();
+        }
+
+        public void PurgeAndReinstallSelectedMods()
+        {
+            var selectedMods = new List<ArmaMod>(ModsCollection.ArmaMods.Where(m => m.IsSelected && !m.IsLocal));
+            foreach (var mod in selectedMods)
+                PurgeAndReinstallMod(mod);
+        }
+
+        public async Task PurgeAndReinstallAll()
+        {
+            var answer = await DialogCoordinator.ShowInputAsync(this, "Are you sure you want to purge all mods?", "Write \"yes\" and press OK to delete all folders in the Mod Staging Directory and re-download everything.");
+
+            if (string.IsNullOrEmpty(answer) || !answer.Equals("yes"))
+                return;
+
+            Analytics.TrackEvent("Mods - Clicked PurgeAndReinstallAll", new Dictionary<string, string>
+            {
+                {"Name", Properties.Settings.Default.steamUserName}
+            });
+
+            var stagingDir = Properties.Settings.Default.modStagingDirectory;
+            Logger.Log($"PurgeAndReinstallAll: staging dir={stagingDir}");
+            if (Directory.Exists(stagingDir))
+            {
+                foreach (var dir in Directory.GetDirectories(stagingDir))
+                {
+                    try
+                    {
+                        Directory.Delete(dir, true);
+                        Logger.Log($"  Deleted: {dir}");
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Log($"  ERROR deleting {dir}: {ex.Message}");
+                        DisplayMessage($"Could not delete folder: {dir}");
+                    }
+                }
+            }
+            else
+                Logger.Log("  Staging dir does not exist, nothing deleted.");
+
+            foreach (var mod in ModsCollection.ArmaMods.Where(m => !m.IsLocal).ToList())
+            {
+                mod.Status           = ArmaModStatus.UpdateRequired;
+                mod.LocalLastUpdated = 0;
+                mod.Size             = 0;
+                Logger.Log($"  Reset mod {mod.WorkshopId} ({mod.Name})");
+            }
+            Properties.Settings.Default.Save();
+
+            Logger.Log("PurgeAndReinstallAll: launching UpdateAll...");
+            MainWindow.Instance.NavigateToConsole();
+            var ans = await MainWindow.Instance.SteamUpdaterViewModel.RunModsUpdater(ModsCollection.ArmaMods);
+            if (ans == UpdateState.LoginFailed)
+                DisplayMessage("Steam Login Failed");
+        }
+
+        public async Task PurgeUnusedMods()
+        {
+            var usedIds = Properties.Settings.Default.Profiles
+                .SelectMany(p => p.ProfileMods ?? Enumerable.Empty<ProfileMod>())
+                .Select(m => m.Id)
+                .ToHashSet();
+
+            var unusedMods = ModsCollection.ArmaMods
+                .Where(m => !m.IsLocal && !usedIds.Contains(m.WorkshopId))
+                .ToList();
+
+            if (unusedMods.Count == 0)
+            {
+                DisplayMessage("No unused mods found.");
+                return;
+            }
+
+            var result = await DialogCoordinator.ShowInputAsync(this,
+                "Purge Unused Mods",
+                $"Found {unusedMods.Count} unused mod(s). Type \"yes\" to confirm deletion.");
+            if (result?.ToLower() != "yes") return;
+
+            foreach (var mod in unusedMods)
+                DeleteMod(mod);
         }
     }
 }

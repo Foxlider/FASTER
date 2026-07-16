@@ -1,4 +1,4 @@
-﻿
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -64,6 +64,13 @@ namespace FASTER.Models
         private bool _efDlcChecked;
         private bool _enableHT = true;
         private bool _enableRanking;
+        private bool _hugePages = false;
+        private string _bePath = "";
+        private string _keysFolder = "";
+        private int _exThreads = 0;
+        private bool _loadMissionToMemory = false;
+        private int _limitFPS = 0;
+        private bool _enableSteamLogs = false;
 
         private List<ProfileMod> _profileMods = new List<ProfileMod>();
         private string _profileModsFilter = "";
@@ -94,7 +101,14 @@ namespace FASTER.Models
                 _name = value;
                 if (MainWindow.HasLoaded())
                 {
-                    var menuItem = MainWindow.Instance.IServerProfilesMenu.Items.Cast<ToggleButton>().FirstOrDefault(p => p.Name == _id);
+                    ToggleButton menuItem = null;
+                    foreach (var item in MainWindow.Instance.IServerProfilesMenu.Items)
+                    {
+                        ToggleButton tb = item is System.Windows.Controls.DockPanel dp
+                            ? dp.Children.OfType<ToggleButton>().FirstOrDefault()
+                            : item as ToggleButton;
+                        if (tb?.Name == _id) { menuItem = tb; break; }
+                    }
                     if (menuItem != null)
                     { menuItem.Content = _name; }
                 }
@@ -245,6 +259,76 @@ namespace FASTER.Models
             }
         }
 
+        public bool HugePages
+        {
+            get => _hugePages;
+            set
+            {
+                _hugePages = value;
+                RaisePropertyChanged(nameof(HugePages));
+            }
+        }
+
+        public string BePath
+        {
+            get => _bePath;
+            set
+            {
+                _bePath = value;
+                RaisePropertyChanged(nameof(BePath));
+            }
+        }
+
+        public string KeysFolder
+        {
+            get => _keysFolder;
+            set
+            {
+                _keysFolder = value;
+                RaisePropertyChanged(nameof(KeysFolder));
+            }
+        }
+
+        public int ExThreads
+        {
+            get => _exThreads;
+            set
+            {
+                _exThreads = value;
+                RaisePropertyChanged(nameof(ExThreads));
+            }
+        }
+
+        public bool LoadMissionToMemory
+        {
+            get => _loadMissionToMemory;
+            set
+            {
+                _loadMissionToMemory = value;
+                RaisePropertyChanged(nameof(LoadMissionToMemory));
+            }
+        }
+
+        public int LimitFPS
+        {
+            get => _limitFPS;
+            set
+            {
+                _limitFPS = value;
+                RaisePropertyChanged(nameof(LimitFPS));
+            }
+        }
+
+        public bool EnableSteamLogs
+        {
+            get => _enableSteamLogs;
+            set
+            {
+                _enableSteamLogs = value;
+                RaisePropertyChanged(nameof(EnableSteamLogs));
+            }
+        }
+
         //Current logic to count the checked mods
         public int ServerModsChecked => ProfileMods.Count(m => m.ServerSideChecked);
         public int ClientModsChecked => ProfileMods.Count(m => m.ClientSideChecked);
@@ -271,7 +355,7 @@ namespace FASTER.Models
             }
         }
 
-        public List<ProfileMod> FilteredProfileMods
+        public IReadOnlyList<ProfileMod> FilteredProfileMods
         {
             get
             {
@@ -281,7 +365,7 @@ namespace FASTER.Models
                     {
                         ProfileModsFilterIsInvalid = false;
                     }
-                    return new List<ProfileMod>(_profileMods);
+                    return _profileMods.AsReadOnly();
                 }
 
                 var pattern = ProfileModsFilter;
@@ -547,6 +631,13 @@ namespace FASTER.Models
                 $"{(ServerCfg.AutoInit ? " -autoInit" : "")}",
                 $"{(ServerCfg.MaxMemOverride ? $" -maxMem={ServerCfg.MaxMem}" : "")}",
                 $"{(ServerCfg.CpuCountOverride ? $" -cpuCount={ServerCfg.CpuCount}" : "")}",
+                $"{(HugePages ? " -hugePages" : "")}",
+                $"{(!string.IsNullOrWhiteSpace(BePath) ? $" \"-bepath={BePath}\"" : "")}",
+                $"{(!string.IsNullOrWhiteSpace(KeysFolder) ? $" \"-keysFolder={KeysFolder}\"" : "")}",
+                $"{(ExThreads > 0 ? $" -exThreads={ExThreads}" : "")}",
+                $"{(LoadMissionToMemory ? " -loadMissionToMemory" : "")}",
+                $"{(LimitFPS > 0 ? $" -limitFPS={LimitFPS}" : "")}",
+                $"{(EnableSteamLogs ? " -enableSteamLogs" : "")}",
                 $"{(!string.IsNullOrWhiteSpace(ServerCfg.CommandLineParameters) ? $" {ServerCfg.CommandLineParameters}" : "")}"
             };
 

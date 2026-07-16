@@ -444,6 +444,7 @@
                                 <RowDefinition Height="auto"/>
                                 <RowDefinition Height="auto"/>
                                 <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
                             </Grid.RowDefinitions>
 
                             <mah:ToggleSwitch Content="Mission selector override" IsOn="{Binding Path=Profile.ServerCfg.MissionChecked}" Margin="5,0"/>
@@ -491,6 +492,7 @@
                                 <CheckBox Content="AutoSelect Mission" IsChecked="{Binding Path=Profile.ServerCfg.AutoSelectMission}" Margin="5" HorizontalAlignment="Left"/>
                                 <CheckBox Content="Random Order" IsChecked="{Binding Path=Profile.ServerCfg.RandomMissionOrder}" Margin="5" HorizontalAlignment="Right"/>
                             </Grid>
+                            <TextBox Grid.Row="5" Text="{Binding Path=Profile.ServerCfg.MissionHTTPDownloadBaseURL, UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="missionHTTPDownloadBaseURL" Margin="5,3"/>
                         </Grid>
                     </GroupBox>
                     <GroupBox Grid.Column="1" Grid.Row="0" Header="Difficulty Settings" Margin="4, 0, 5, 0">
@@ -820,6 +822,23 @@
                                         <mah:NumericUpDown Grid.Row="2" Value="{Binding Path=Profile.ServerCfg.MotdInterval, UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Delay Between Messages" Margin="10,0,10,5" Minimum="0" HorizontalAlignment="Left"/>
                                     </Grid>
                                 </GroupBox>
+
+                                <!-- ANTIFLOOD TILE -->
+                                <Expander Header="AntiFlood Settings">
+                                    <Expander.Style>
+                                        <Style TargetType="Expander" BasedOn="{StaticResource MahApps.Styles.Expander}">
+                                            <Setter Property="Margin" Value="5"/>
+                                            <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Window.Background}"></Setter>
+                                        </Style>
+                                    </Expander.Style>
+                                    <StackPanel>
+                                        <CheckBox IsChecked="{Binding Path=Profile.ServerCfg.AntiFloodEnabled}" Content="Enable AntiFlood" Margin="5,3"/>
+                                        <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.AntiFloodCycleTime}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Cycle Time" Minimum="1" Margin="5"/>
+                                        <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.AntiFloodCycleLimit}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Cycle Limit" Minimum="1" Margin="5"/>
+                                        <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.AntiFloodCycleHardLimit}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Cycle Hard Limit" Minimum="1" Margin="5"/>
+                                        <CheckBox IsChecked="{Binding Path=Profile.ServerCfg.AntiFloodEnableKick}" Content="Enable Kick" Margin="5,3"/>
+                                    </StackPanel>
+                                </Expander>
                             </StackPanel>
                         </Grid>
                     </ScrollViewer>
@@ -860,8 +879,18 @@
                                 <RowDefinition Height="auto"/>
                                 <RowDefinition Height="10"/>
                                 <RowDefinition Height="auto"/>
+                                <RowDefinition Height="10"/>
+                                <RowDefinition Height="auto"/>
                                 <RowDefinition Height="40"/>
                                 <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="10"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="10"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="10"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="10"/>
                                 <RowDefinition Height="auto"/>
                                 <RowDefinition Height="20"/>
                                 <RowDefinition Height="auto"/>
@@ -882,12 +911,35 @@
                             <ComboBox Grid.Row="6" Grid.Column="1" SelectedItem="{Binding Path=Profile.BasicCfg.TerrainGrid, UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="Terrain Grid" mah:TextBoxHelper.UseFloatingWatermark="True" ItemsSource="{Binding TerrainGrids}" Margin="3"/>
                             <mah:NumericUpDown Grid.Row="6" Grid.Column="2" Value="{Binding Profile.BasicCfg.ViewDistance, UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="Server View Distance" mah:TextBoxHelper.UseFloatingWatermark="True" Minimum="0" Maximum="50000" Interval="1" Margin="3,3,3,3"/>
 
-                            <CheckBox Grid.Row="8" Grid.Column="0" Margin="3,5" IsChecked="{Binding Path=Profile.ServerCfg.MaxMemOverride, UpdateSourceTrigger=PropertyChanged}" Content="Force Maximum Memory"/>
-                            <CheckBox Grid.Row="8" Grid.Column="1" Margin="3,5" IsChecked="{Binding Path=Profile.EnableHyperThreading, UpdateSourceTrigger=PropertyChanged}" Content="Enable Hyper Threading"/>
-                            <CheckBox Grid.Row="8" Grid.Column="2" Margin="3,5" IsChecked="{Binding Path=Profile.ServerCfg.CpuCountOverride, UpdateSourceTrigger=PropertyChanged}" Content="Force CPU Count"/>
-                            <mah:NumericUpDown Grid.Row="9" Grid.Column="0" Value="{Binding Profile.ServerCfg.MaxMem, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding Path=Profile.ServerCfg.MaxMemOverride, Converter={StaticResource BoolToVis}}" mah:TextBoxHelper.Watermark="Maximum Memory (MB)" mah:TextBoxHelper.UseFloatingWatermark="True" Minimum="1024" Maximum="128000" Interval="1" Margin="3,3,3,-11"/>
-                            <mah:NumericUpDown Grid.Row="9" Grid.Column="2" Value="{Binding Profile.ServerCfg.CpuCount, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding Path=Profile.ServerCfg.CpuCountOverride, Converter={StaticResource BoolToVis}}" mah:TextBoxHelper.Watermark="CPU Core Count" mah:TextBoxHelper.UseFloatingWatermark="True" Minimum="1" Maximum="34" Interval="1" Margin="3,3,3,-11"/>
-                            <TextBox Text="{Binding Profile.ServerCfg.CommandLineParameters, UpdateSourceTrigger=PropertyChanged}" Grid.Row="11" Grid.Column="0" Grid.ColumnSpan="3" Margin="3,5" mah:TextBoxHelper.Watermark="Command Line Arguments" mah:TextBoxHelper.UseFloatingWatermark="True"/>
+                            <ComboBox Grid.Row="8" Grid.Column="0" SelectedItem="{Binding Path=Profile.BasicCfg.Language, UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="Server Language" mah:TextBoxHelper.UseFloatingWatermark="True" ItemsSource="{Binding Languages}" Margin="3"/>
+
+                            <CheckBox Grid.Row="10" Grid.Column="0" Margin="3,5" IsChecked="{Binding Path=Profile.ServerCfg.MaxMemOverride, UpdateSourceTrigger=PropertyChanged}" Content="Force Maximum Memory"/>
+                            <CheckBox Grid.Row="10" Grid.Column="1" Margin="3,5" IsChecked="{Binding Path=Profile.EnableHyperThreading, UpdateSourceTrigger=PropertyChanged}" Content="Enable Hyper Threading"/>
+                            <CheckBox Grid.Row="10" Grid.Column="2" Margin="3,5" IsChecked="{Binding Path=Profile.ServerCfg.CpuCountOverride, UpdateSourceTrigger=PropertyChanged}" Content="Force CPU Count"/>
+                            <mah:NumericUpDown Grid.Row="11" Grid.Column="0" Value="{Binding Profile.ServerCfg.MaxMem, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding Path=Profile.ServerCfg.MaxMemOverride, Converter={StaticResource BoolToVis}}" mah:TextBoxHelper.Watermark="Maximum Memory (MB)" mah:TextBoxHelper.UseFloatingWatermark="True" Minimum="1024" Maximum="128000" Interval="1" Margin="3,3,3,-11"/>
+                            <mah:NumericUpDown Grid.Row="11" Grid.Column="2" Value="{Binding Profile.ServerCfg.CpuCount, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding Path=Profile.ServerCfg.CpuCountOverride, Converter={StaticResource BoolToVis}}" mah:TextBoxHelper.Watermark="CPU Core Count" mah:TextBoxHelper.UseFloatingWatermark="True" Minimum="1" Maximum="34" Interval="1" Margin="3,3,3,-11"/>
+                            <CheckBox Grid.Row="13" Grid.Column="0" Margin="3,5" IsChecked="{Binding Path=Profile.HugePages, UpdateSourceTrigger=PropertyChanged}" Content="-hugePages"/>
+                            <CheckBox Grid.Row="13" Grid.Column="1" Margin="3,5" IsChecked="{Binding Path=Profile.LoadMissionToMemory, UpdateSourceTrigger=PropertyChanged}" Content="-loadMissionToMemory"/>
+                            <CheckBox Grid.Row="13" Grid.Column="2" Margin="3,5" IsChecked="{Binding Path=Profile.EnableSteamLogs, UpdateSourceTrigger=PropertyChanged}" Content="-enableSteamLogs"/>
+                            <Grid Grid.Row="15" Grid.Column="0" Grid.ColumnSpan="2">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition Width="auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBox Grid.Column="0" Text="{Binding Path=Profile.BePath, UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="-bePath (BattlEye directory)" Margin="3,3,0,3"/>
+                                <Button Grid.Column="1" Content="{iconPacks:Material Kind=FolderOpen}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" Height="auto" Margin="5,3,3,3" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Padding="3" Click="SelectBePath"/>
+                            </Grid>
+                            <mah:NumericUpDown Grid.Row="15" Grid.Column="2" Value="{Binding Profile.ExThreads, UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="-exThreads (0=off)" mah:TextBoxHelper.UseFloatingWatermark="True" Minimum="0" Maximum="7" Interval="1" Margin="3"/>
+                            <Grid Grid.Row="17" Grid.Column="0" Grid.ColumnSpan="2">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition Width="auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBox Grid.Column="0" Text="{Binding Path=Profile.KeysFolder, UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="-keysFolder (Keys directory)" Margin="3,3,0,3"/>
+                                <Button Grid.Column="1" Content="{iconPacks:Material Kind=FolderOpen}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" Height="auto" Margin="5,3,3,3" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Padding="3" Click="SelectKeysFolder"/>
+                            </Grid>
+                            <mah:NumericUpDown Grid.Row="19" Grid.Column="0" Value="{Binding Profile.LimitFPS, UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="-limitFPS (0=off, max 200)" mah:TextBoxHelper.UseFloatingWatermark="True" Minimum="0" Maximum="200" Interval="1" Margin="3"/>
+                            <TextBox Text="{Binding Profile.ServerCfg.CommandLineParameters, UpdateSourceTrigger=PropertyChanged}" Grid.Row="21" Grid.Column="0" Grid.ColumnSpan="3" Margin="3,5" mah:TextBoxHelper.Watermark="Command Line Arguments" mah:TextBoxHelper.UseFloatingWatermark="True"/>
                         </Grid>
                     </GroupBox>
                     <Grid Grid.Row="1">
