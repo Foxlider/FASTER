@@ -17,7 +17,7 @@ on:
 env:
   DOTNET_VERSION: '8.0.x'
   IS_RELEASE: ${{ github.ref_type == 'tag' }}
-  ZIP_NAME: ${{ github.ref_type == 'tag' && 'Release_' || 'FASTER_' }}
+  ZIP_NAME: ${{ github.ref_type == 'tag' && 'Release_' || 'Release_Nightly_' }}
   ZIP_PATH: ${{ github.ref_type == 'tag' && 'FASTER_' || 'FASTER_Nightly_' }}
 
 jobs:
@@ -239,12 +239,12 @@ jobs:
       uses: softprops/action-gh-release@v2
       with:
         tag_name: nightly
-        name: 'FASTER v${{ env.VERSION }}'
+        name: 'Nightly Release v${{ env.VERSION }}'
         draft: false
         body: |
           Changelog since release ${{ steps.get-changes.outputs.tag }} :
           ---
           ${{ steps.get-changes.outputs.changes }}
           ---
-        prerelease: false
+        prerelease: true
         files: ./artifacts/${{ env.ZIP_NAME}}x64.zip
