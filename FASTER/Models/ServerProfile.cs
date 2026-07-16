@@ -355,7 +355,7 @@ namespace FASTER.Models
             }
         }
 
-        public List<ProfileMod> FilteredProfileMods
+        public IReadOnlyList<ProfileMod> FilteredProfileMods
         {
             get
             {
@@ -365,7 +365,7 @@ namespace FASTER.Models
                     {
                         ProfileModsFilterIsInvalid = false;
                     }
-                    return new List<ProfileMod>(_profileMods);
+                    return _profileMods.AsReadOnly();
                 }
 
                 var pattern = ProfileModsFilter;
