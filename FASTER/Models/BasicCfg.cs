@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Globalization;
 using System.Xml.Serialization;
+using Newtonsoft.Json;
 
 namespace FASTER.Models
 {
