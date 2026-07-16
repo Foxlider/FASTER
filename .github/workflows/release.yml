@@ -2,29 +2,29 @@ name: "Release Generator"
 
 # after successful analysis on the main branch, a new pre-release is generated
 on:
-  #Makes a Nighly release on a new commit. 
+  #Makes a Nightly release after a successful build on master
   workflow_run:
-    workflows: [Code Analysis]
+    workflows: [Build]
     types: [completed]
     branches: [master]
-  
+
   #Makes a Release on tag
   push:
-    # Sequence of patterns matched against refs/tags
     tags:
       - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
   workflow_dispatch: # ReleaseGen can be triggered manually
 
 env:
+  DOTNET_VERSION: '8.0.x'
   IS_RELEASE: ${{ github.ref_type == 'tag' }}
-  ZIP_NAME: ${{ github.ref_type == 'tag' && 'Release_' || 'Release_Nightly_' }}
+  ZIP_NAME: ${{ github.ref_type == 'tag' && 'Release_' || 'FASTER_' }}
   ZIP_PATH: ${{ github.ref_type == 'tag' && 'FASTER_' || 'FASTER_Nightly_' }}
 
 jobs:
 
   # BUILD APP
   build:
-    if: ( github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'master' ) || startsWith(github.ref, 'refs/tags/v')
+    if: ( github.event.workflow_run.conclusion == 'success' ) || startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
     strategy:
       matrix:
         # runtime: [x64, x86]
@@ -88,6 +88,8 @@ jobs:
   release:
     needs: build
     runs-on: windows-latest
+    permissions:
+      contents: write
     steps:
 
     - name: Checkout
@@ -157,10 +159,16 @@ jobs:
           $changes = $changes -replace "^(.*)$", "$linePrefix`$1"
         }
 
+        # Truncate changelog to avoid exceeding env var limits (max ~32k)
+        $changesStr = $changes -join "`n"
+        if ($changesStr.Length -gt 20000) {
+          $changesStr = $changesStr.Substring(0, 20000) + "`n...(truncated)"
+        }
+
         # Set outputs
         $EOF = (New-Guid).Guid
         "changes<<$EOF" >> $env:GITHUB_OUTPUT
-        $changes >> $env:GITHUB_OUTPUT
+        $changesStr >> $env:GITHUB_OUTPUT
         "$EOF" >> $env:GITHUB_OUTPUT
         "tag=$latestTag" >> $env:GITHUB_OUTPUT
 
@@ -215,19 +223,28 @@ jobs:
         asset_name: ${{ env.ZIP_NAME}}x64.zip
         asset_content_type: application/zip
     
+    # Delete existing nightly release and tag so it can be recreated cleanly
+    - name: Delete existing nightly release and tag
+      if: env.IS_RELEASE == 'false'
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        gh release delete nightly --yes --repo ${{ github.repository }} || true
+        git push origin :refs/tags/nightly || true
+      shell: bash
+
     # Create Nightly Release
     - name: Create Nightly Release
       if: env.IS_RELEASE == 'false'
-      uses: andelf/nightly-release@main
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: softprops/action-gh-release@v2
       with:
         tag_name: nightly
-        name: 'Nightly Release v${{ env.VERSION }}'
-        body: | 
-          Changelog since release ${{ steps.get-changes.outputs.tag }} :  
-          ---  
+        name: 'FASTER v${{ env.VERSION }}'
+        draft: false
+        body: |
+          Changelog since release ${{ steps.get-changes.outputs.tag }} :
+          ---
           ${{ steps.get-changes.outputs.changes }}
-          ---  
-        prerelease: true
+          ---
+        prerelease: false
         files: ./artifacts/${{ env.ZIP_NAME}}x64.zip
