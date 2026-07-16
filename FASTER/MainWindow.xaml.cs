@@ -165,11 +165,27 @@ namespace FASTER
             Application.Current.Shutdown();
         }
 
+        private static IEnumerable<ToggleButton> GetProfileToggleButtons(System.Windows.Controls.ListBox menu)
+        {
+            foreach (var item in menu.Items)
+            {
+                if (item is System.Windows.Controls.DockPanel dp)
+                {
+                    var tb = dp.Children.OfType<ToggleButton>().FirstOrDefault();
+                    if (tb != null) yield return tb;
+                }
+                else if (item is ToggleButton t)
+                {
+                    yield return t;
+                }
+            }
+        }
+
         private void ToggleButton_Click(object sender, RoutedEventArgs e)
         {
             var list = new List<ToggleButton>();
             list.AddRange(IMainMenuItems.Items.Cast<ToggleButton>().Where(i => i.IsChecked == true));
-            list.AddRange(IServerProfilesMenu.Items.Cast<ToggleButton>().Where(i => i.IsChecked == true));
+            list.AddRange(GetProfileToggleButtons(IServerProfilesMenu).Where(i => i.IsChecked == true));
             list.AddRange(IOtherMenuItems.Items.Cast<ToggleButton>().Where(i => i.IsChecked == true));
 
             if (sender is not ToggleButton nav || !NavEnabled) return;
@@ -177,13 +193,13 @@ namespace FASTER
             //Don't navigate if same menu is clicked
             if (nav == lastNavButton) return;
 
-            
+
 
             //Clear selected Buttons
             IServerProfilesMenu.SelectedItem = null;
             foreach (var item in list.Where(item => item.Name != nav.Name))
             { item.IsChecked = false; }
-                
+
             nav.IsChecked = true;
             lastNavButton = nav;
 
@@ -216,7 +232,7 @@ namespace FASTER
                     MainContent.Content = ContentAbout;
                     break;
                 default:
-                    if (IServerProfilesMenu.Items.Cast<ToggleButton>().FirstOrDefault(p => p.Name == nav.Name) != null)
+                    if (GetProfileToggleButtons(IServerProfilesMenu).FirstOrDefault(p => p.Name == nav.Name) != null)
                     {
                         var profile = new Profile();
                         MainContent.Content = profile;
@@ -259,6 +275,14 @@ namespace FASTER
             }
         }
 
+        private ToggleButton GetSelectedProfileToggleButton()
+        {
+            var selected = IServerProfilesMenu.SelectedItem;
+            if (selected is System.Windows.Controls.DockPanel dp)
+                return dp.Children.OfType<ToggleButton>().FirstOrDefault();
+            return selected as ToggleButton;
+        }
+
         private void MenuItemClone_Click(object sender, RoutedEventArgs e)
         {
             if (IServerProfilesMenu.SelectedIndex == -1)
@@ -266,15 +290,16 @@ namespace FASTER
 
             try
             {
+                var selectedBtn = GetSelectedProfileToggleButton();
                 var temp = Properties.Settings.Default.Profiles.FirstOrDefault(s =>
-                    s.Id == ((ToggleButton) IServerProfilesMenu.SelectedItem).Name);
+                    s.Id == selectedBtn?.Name);
                 if (temp == null)
                 {
                     DisplayMessage("Could not find the selected profile.");
                     return;
                 }
 
-                ServerProfile serverProfile = temp.Clone(); 
+                ServerProfile serverProfile = temp.Clone();
                 ServerProfileCollection.AddServerProfile(serverProfile);
             }
             catch (Exception err)
@@ -291,8 +316,9 @@ namespace FASTER
 
             try
             {
+                var selectedBtn = GetSelectedProfileToggleButton();
                 var temp = Properties.Settings.Default.Profiles.FirstOrDefault(s =>
-                    s.Id == ((ToggleButton)IServerProfilesMenu.SelectedItem).Name);
+                    s.Id == selectedBtn?.Name);
                 if (temp == null)
                 {
                     DisplayMessage("Could not find the selected profile.");
@@ -435,16 +461,86 @@ namespace FASTER
                     HorizontalContentAlignment = HorizontalAlignment.Left,
                 };
                 newItem.SetValue(TextOptions.TextFormattingModeProperty, TextFormattingMode.Display);
-                Dispatcher?.Invoke(() => { IServerProfilesMenu.Items.Add(newItem); });
+
+                var profileId = profile.Id;
+
+                var btnUp = new System.Windows.Controls.Button
+                {
+                    Content = "▲",
+                    FontSize = 10,
+                    Width = 18,
+                    Height = 18,
+                    Padding = new Thickness(0),
+                    Margin = new Thickness(0, 0, 1, 0),
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Style = (Style)FindResource("MahApps.Styles.Button.MetroSquare"),
+                    BorderThickness = new Thickness(0),
+                    ToolTip = "Move Up",
+                };
+                btnUp.Click += (s, e) => { e.Handled = true; MoveProfileUp(profileId); };
+
+                var btnDown = new System.Windows.Controls.Button
+                {
+                    Content = "▼",
+                    FontSize = 10,
+                    Width = 18,
+                    Height = 18,
+                    Padding = new Thickness(0),
+                    Margin = new Thickness(0, 0, 2, 0),
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Style = (Style)FindResource("MahApps.Styles.Button.MetroSquare"),
+                    BorderThickness = new Thickness(0),
+                    ToolTip = "Move Down",
+                };
+                btnDown.Click += (s, e) => { e.Handled = true; MoveProfileDown(profileId); };
+
+                var rowPanel = new System.Windows.Controls.DockPanel
+                {
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
+                    LastChildFill = true,
+                };
+                System.Windows.Controls.DockPanel.SetDock(btnUp,   System.Windows.Controls.Dock.Right);
+                System.Windows.Controls.DockPanel.SetDock(btnDown, System.Windows.Controls.Dock.Right);
+                rowPanel.Children.Add(btnDown);
+                rowPanel.Children.Add(btnUp);
+                rowPanel.Children.Add(newItem);
+
+                Dispatcher?.Invoke(() => { IServerProfilesMenu.Items.Add(rowPanel); });
 
                 newItem.Click += ToggleButton_Click;
 
-                if (ContentProfileViews.Any(tab => profile.Id == tab.Profile.Id)) 
+                if (ContentProfileViews.Any(tab => profile.Id == tab.Profile.Id))
                     continue;
 
                 var p = new ProfileViewModel(profile);
                 ContentProfileViews.Add(p);
             }
+        }
+
+        private void MoveProfileUp(string profileId)
+        {
+            var profiles = Properties.Settings.Default.Profiles;
+            int idx = profiles.FindIndex(p => p.Id == profileId);
+            if (idx <= 0) return;
+            var item = profiles[idx];
+            profiles.RemoveAt(idx);
+            profiles.Insert(idx - 1, item);
+            Properties.Settings.Default.Profiles = profiles;
+            Properties.Settings.Default.Save();
+            LoadServerProfiles();
+        }
+
+        private void MoveProfileDown(string profileId)
+        {
+            var profiles = Properties.Settings.Default.Profiles;
+            int idx = profiles.FindIndex(p => p.Id == profileId);
+            if (idx < 0 || idx >= profiles.Count - 1) return;
+            var item = profiles[idx];
+            profiles.RemoveAt(idx);
+            profiles.Insert(idx + 1, item);
+            Properties.Settings.Default.Profiles = profiles;
+            Properties.Settings.Default.Save();
+            LoadServerProfiles();
         }
 
         private async Task ModConversion()
