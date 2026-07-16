@@ -332,9 +332,7 @@ namespace FASTER
                 DisplayMessage("An error occured while cloning your profile");
                 Crashes.TrackError(err, new Dictionary<string, string> { { "Name", Properties.Settings.Default.steamUserName } });
             }
-
         }
-
 
         private void OpenModStagingLocation_Click(object sender, RoutedEventArgs e)
         {
