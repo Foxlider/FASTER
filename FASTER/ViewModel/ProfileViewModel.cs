@@ -34,6 +34,7 @@ namespace FASTER.ViewModel
         public ObservableCollection<string> MissionDifficulties { get; } = new ObservableCollection<string> { "Recruit", "Regular", "Veteran", "Custom" };
         public ObservableCollection<string> PerfPresets         { get; } = new ObservableCollection<string>(BasicCfgArrays.PerfPresets);
         public ObservableCollection<double> TerrainGrids        { get; } = new ObservableCollection<double>(BasicCfgArrays.TerrainGrids);
+        public ObservableCollection<string> Languages           { get; } = new ObservableCollection<string>(BasicCfgArrays.Languages);
 
         internal void DisplayMessage(string msg)
         {
@@ -320,6 +321,54 @@ namespace FASTER.ViewModel
             {
                 DisplayMessage($"Some mods in the preset were not found: \n{string.Join("\n\t", notFound)}");
             }
+        }
+
+        internal void SelectBePath()
+        {
+            var dialog = new CommonOpenFileDialog
+            {
+                Title                     = "Select the BattlEye directory",
+                IsFolderPicker            = true,
+                AddToMostRecentlyUsedList = false,
+                AllowNonFileSystemItems   = false,
+                EnsureFileExists          = false,
+                EnsurePathExists          = true,
+                EnsureReadOnly            = false,
+                EnsureValidNames          = true,
+                Multiselect               = false,
+                ShowPlacesList            = true
+            };
+
+            if (dialog.ShowDialog() != CommonFileDialogResult.Ok) return;
+
+            if (dialog.FileName != null)
+            { Profile.BePath = dialog.FileName; }
+            else
+            { MessageBox.Show("Please enter a valid BattlEye directory"); }
+        }
+
+        internal void SelectKeysFolder()
+        {
+            var dialog = new CommonOpenFileDialog
+            {
+                Title                     = "Select the keys directory",
+                IsFolderPicker            = true,
+                AddToMostRecentlyUsedList = false,
+                AllowNonFileSystemItems   = false,
+                EnsureFileExists          = false,
+                EnsurePathExists          = true,
+                EnsureReadOnly            = false,
+                EnsureValidNames          = true,
+                Multiselect               = false,
+                ShowPlacesList            = true
+            };
+
+            if (dialog.ShowDialog() != CommonFileDialogResult.Ok) return;
+
+            if (dialog.FileName != null)
+            { Profile.KeysFolder = dialog.FileName; }
+            else
+            { MessageBox.Show("Please enter a valid keys directory"); }
         }
 
         internal void SelectServerFile()

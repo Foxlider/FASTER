@@ -518,7 +518,8 @@ namespace FASTER.ViewModel
                         mod.CheckModSize();
                         Parameters.Output += $"\n    Download {mod.WorkshopId} completed, it took {sw.Elapsed.Minutes + sw.Elapsed.Hours*60}m {sw.Elapsed.Seconds}s {sw.Elapsed.Milliseconds}ms";
                     }
-                    catch (Exception ex)
+
+                    if (!SteamClient.Credentials.IsAnonymous)
                     {
                         Logger.Log($"  UNHANDLED ERROR in task for {mod.WorkshopId}: {ex.GetType().Name}: {ex.Message}\n  StackTrace: {ex.StackTrace}");
                     }

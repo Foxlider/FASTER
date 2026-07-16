@@ -50,8 +50,8 @@ namespace FASTER.Models
         private int    roleTimeOut              = 90; 	 	 // <- These are BI base figues
         private int    votingTimeOut            = 60; 	 	 // <-
         private int    debriefingTimeOut        = 45;        // <-
-        private bool   LogObjectNotFound        = true;      // logging enabled
-        private bool   SkipDescriptionParsing   = false;     // parse description.ext
+        private bool   _logObjectNotFound        = true;      // logging enabled
+        private bool   _skipDescriptionParsing   = false;     // parse description.ext
         private bool   ignoreMissionLoadErrors  = false;     // do not ingore errors
         private int    armaUnitsTimeout         = 30; 	     // Defines how long the player will be stuck connecting and wait for armaUnits data. Player will be notified if timeout elapsed and no units data was received
         private int    queueSizeLogG            = 1000000; 	 // if a specific players message queue is larger than 1MB and '#monitor' is running, dump his messages to a logfile for analysis
@@ -88,6 +88,14 @@ namespace FASTER.Models
         private List<ProfileMission> _missions = new();
         private bool                 autoInit;
         private string               difficulty = "Custom";
+        private string               _missionHTTPDownloadBaseURL = "";
+
+        // AntiFlood (Arma 2.18+)
+        private bool _antiFloodEnabled        = false;
+        private int  _antiFloodCycleTime      = 5;
+        private int  _antiFloodCycleLimit     = 5;
+        private int  _antiFloodCycleHardLimit = 10;
+        private int  _antiFloodEnableKick     = 0;  // 0 = disabled, 1 = enabled
 
         private bool   maxMemOverride;
         private uint   maxMem = 1024;
@@ -106,7 +114,7 @@ namespace FASTER.Models
             set
             {
                 passwordAdmin = value;
-                RaisePropertyChanged("PasswordAdmin");
+                RaisePropertyChanged(nameof(PasswordAdmin));
             }
         }
 
@@ -116,7 +124,7 @@ namespace FASTER.Models
             set
             {
                 password = value;
-                RaisePropertyChanged("Password");
+                RaisePropertyChanged(nameof(Password));
             }
         }
 
@@ -126,7 +134,7 @@ namespace FASTER.Models
             set
             {
                 serverCommandPassword = value;
-                RaisePropertyChanged("ServerCommandPassword");
+                RaisePropertyChanged(nameof(ServerCommandPassword));
             }
         }
 
@@ -136,7 +144,7 @@ namespace FASTER.Models
             set
             {
                 hostname = value;
-                RaisePropertyChanged("Hostname");
+                RaisePropertyChanged(nameof(Hostname));
             }
         }
 
@@ -146,7 +154,7 @@ namespace FASTER.Models
             set
             {
                 maxPlayers = value;
-                RaisePropertyChanged("MaxPlayers");
+                RaisePropertyChanged(nameof(MaxPlayers));
             }
         }
 
@@ -156,7 +164,7 @@ namespace FASTER.Models
             set
             {
                 motd = value.Replace("\r", "").Split('\n').ToList();
-                RaisePropertyChanged("Motd");
+                RaisePropertyChanged(nameof(Motd));
             }
         }
 
@@ -166,7 +174,7 @@ namespace FASTER.Models
             set
             {
                 motdInterval = value;
-                RaisePropertyChanged("MotdInterval");
+                RaisePropertyChanged(nameof(MotdInterval));
             }
         }
 
@@ -176,7 +184,7 @@ namespace FASTER.Models
             set
             {
                 admins = value.Replace("\r", "").Split('\n').ToList();
-                RaisePropertyChanged("Admins");
+                RaisePropertyChanged(nameof(Admins));
             }
         }
 
@@ -186,7 +194,7 @@ namespace FASTER.Models
             set
             {
                 headlessClients = value.Replace("\r", "").Split('\n').ToList();
-                RaisePropertyChanged("HeadlessClients");
+                RaisePropertyChanged(nameof(HeadlessClients));
             }
         }
 
@@ -196,7 +204,7 @@ namespace FASTER.Models
             set
             {
                 localClient = value.Split('\n').ToList();
-                RaisePropertyChanged("LocalClient");
+                RaisePropertyChanged(nameof(LocalClient));
             }
         }
 
@@ -206,7 +214,7 @@ namespace FASTER.Models
             set
             {
                 headlessClientEnabled = value;
-                RaisePropertyChanged("HeadlessClientEnabled");
+                RaisePropertyChanged(nameof(HeadlessClientEnabled));
                 if (value && !headlessClients.Exists(e => e.Length > 0))
                 { HeadlessClients = "127.0.0.1"; }
             }
@@ -218,7 +226,7 @@ namespace FASTER.Models
             set
             {
                 votingEnabled = value;
-                RaisePropertyChanged("VotingEnabled");
+                RaisePropertyChanged(nameof(VotingEnabled));
             }
         }
 
@@ -228,7 +236,7 @@ namespace FASTER.Models
             set
             {
                 netlogEnabled = value;
-                RaisePropertyChanged("NetLogEnabled");
+                RaisePropertyChanged(nameof(NetLogEnabled));
             }
         }
         #endregion
@@ -240,7 +248,7 @@ namespace FASTER.Models
             set
             {
                 voteThreshold = value;
-                RaisePropertyChanged("VoteThreshold");
+                RaisePropertyChanged(nameof(VoteThreshold));
             }
         }
 
@@ -250,7 +258,7 @@ namespace FASTER.Models
             set
             {
                 voteMissionPlayers = value;
-                RaisePropertyChanged("VoteMissionPlayers");
+                RaisePropertyChanged(nameof(VoteMissionPlayers));
             }
         }
 
@@ -260,7 +268,7 @@ namespace FASTER.Models
             set
             {
                 kickduplicate = value ? (short)1 : (short)0;
-                RaisePropertyChanged("KickDuplicates");
+                RaisePropertyChanged(nameof(KickDuplicates));
             }
         }
 
@@ -270,7 +278,7 @@ namespace FASTER.Models
             set
             {
                 loopback = value;
-                RaisePropertyChanged("Loopback");
+                RaisePropertyChanged(nameof(Loopback));
             }
         }
 
@@ -280,7 +288,7 @@ namespace FASTER.Models
             set
             {
                 upnp = value;
-                RaisePropertyChanged("Upnp");
+                RaisePropertyChanged(nameof(Upnp));
             }
         }
 
@@ -290,7 +298,7 @@ namespace FASTER.Models
             set
             {
                 allowedFilePatching = (short)Array.IndexOf(ServerCfgArrays.AllowFilePatchingStrings, value);
-                RaisePropertyChanged("Password");
+                RaisePropertyChanged(nameof(AllowedFilePatching));
             }
         }
 
@@ -300,7 +308,7 @@ namespace FASTER.Models
             set
             {
                 disconnectTimeout = value;
-                RaisePropertyChanged("DisconnectTimeout");
+                RaisePropertyChanged(nameof(DisconnectTimeout));
             }
         }
 
@@ -310,7 +318,7 @@ namespace FASTER.Models
             set
             {
                 maxdesync = value;
-                RaisePropertyChanged("MaxDesync");
+                RaisePropertyChanged(nameof(MaxDesync));
             }
         }
 
@@ -320,7 +328,7 @@ namespace FASTER.Models
             set
             {
                 maxping = value;
-                RaisePropertyChanged("MaxPing");
+                RaisePropertyChanged(nameof(MaxPing));
             }
         }
 
@@ -330,7 +338,7 @@ namespace FASTER.Models
             set
             {
                 maxpacketloss = value;
-                RaisePropertyChanged("MaxPacketLoss");
+                RaisePropertyChanged(nameof(MaxPacketLoss));
             }
         }
 
@@ -340,7 +348,7 @@ namespace FASTER.Models
             set
             {
                 kickClientOnSlowNetwork = value;
-                RaisePropertyChanged("KickClientOnSlowNetwork");
+                RaisePropertyChanged(nameof(KickClientOnSlowNetwork));
             }
         }
 
@@ -350,7 +358,7 @@ namespace FASTER.Models
             set
             {
                 lobbyIdleTimeout = value;
-                RaisePropertyChanged("LobbyIdleTimeout");
+                RaisePropertyChanged(nameof(LobbyIdleTimeout));
             }
         }
 
@@ -360,7 +368,7 @@ namespace FASTER.Models
             set
             {
                 briefingTimeOut = value;
-                RaisePropertyChanged("BriefingTimeOut");
+                RaisePropertyChanged(nameof(BriefingTimeOut));
             }
         }
 
@@ -370,7 +378,7 @@ namespace FASTER.Models
             set
             {
                 roleTimeOut = value;
-                RaisePropertyChanged("RoleTimeOut");
+                RaisePropertyChanged(nameof(RoleTimeOut));
             }
         }
 
@@ -380,7 +388,7 @@ namespace FASTER.Models
             set
             {
                 votingTimeOut = value;
-                RaisePropertyChanged("VotingTimeOut");
+                RaisePropertyChanged(nameof(VotingTimeOut));
             }
         }
 
@@ -390,27 +398,27 @@ namespace FASTER.Models
             set
             {
                 debriefingTimeOut = value;
-                RaisePropertyChanged("DebriefingTimeOut");
+                RaisePropertyChanged(nameof(DebriefingTimeOut));
             }
         }
 
         public bool logObjectNotFound
         {
-            get => LogObjectNotFound;
+            get => _logObjectNotFound;
             set
             {
-                LogObjectNotFound = value;
-                RaisePropertyChanged("logObjectNotFound");
+                _logObjectNotFound = value;
+                RaisePropertyChanged(nameof(logObjectNotFound));
             }
         }
 
         public bool skipDescriptionParsing
         {
-            get => SkipDescriptionParsing;
+            get => _skipDescriptionParsing;
             set
             {
-                SkipDescriptionParsing = value;
-                RaisePropertyChanged("skipDescriptionParsing");
+                _skipDescriptionParsing = value;
+                RaisePropertyChanged(nameof(skipDescriptionParsing));
             }
         }
 
@@ -420,7 +428,7 @@ namespace FASTER.Models
             set
             {
                 ignoreMissionLoadErrors = value;
-                RaisePropertyChanged("IgnoreMissionLoadErrors");
+                RaisePropertyChanged(nameof(IgnoreMissionLoadErrors));
             }
         }
 
@@ -430,7 +438,7 @@ namespace FASTER.Models
             set
             {
                 armaUnitsTimeout = value;
-                RaisePropertyChanged("ArmaUnitsTimeout");
+                RaisePropertyChanged(nameof(ArmaUnitsTimeout));
             }
         }
 
@@ -440,7 +448,7 @@ namespace FASTER.Models
             set
             {
                 queueSizeLogG = value;
-                RaisePropertyChanged("QueueSizeLogG");
+                RaisePropertyChanged(nameof(QueueSizeLogG));
             }
         }
 
@@ -450,7 +458,7 @@ namespace FASTER.Models
             set
             {
                 forcedDifficulty = value;
-                RaisePropertyChanged("ForcedDifficulty");
+                RaisePropertyChanged(nameof(ForcedDifficulty));
             }
         }
 
@@ -460,7 +468,7 @@ namespace FASTER.Models
             set
             {
                 autoSelectMission = value;
-                RaisePropertyChanged("AutoSelectMission");
+                RaisePropertyChanged(nameof(AutoSelectMission));
             }
         }
 
@@ -470,7 +478,67 @@ namespace FASTER.Models
             set
             {
                 randomMissionOrder = value;
-                RaisePropertyChanged("RandomMissionOrder");
+                RaisePropertyChanged(nameof(RandomMissionOrder));
+            }
+        }
+
+        public string MissionHTTPDownloadBaseURL
+        {
+            get => _missionHTTPDownloadBaseURL;
+            set
+            {
+                _missionHTTPDownloadBaseURL = value;
+                RaisePropertyChanged(nameof(MissionHTTPDownloadBaseURL));
+            }
+        }
+
+        public bool AntiFloodEnabled
+        {
+            get => _antiFloodEnabled;
+            set
+            {
+                _antiFloodEnabled = value;
+                RaisePropertyChanged(nameof(AntiFloodEnabled));
+            }
+        }
+
+        public int AntiFloodCycleTime
+        {
+            get => _antiFloodCycleTime;
+            set
+            {
+                _antiFloodCycleTime = value;
+                RaisePropertyChanged(nameof(AntiFloodCycleTime));
+            }
+        }
+
+        public int AntiFloodCycleLimit
+        {
+            get => _antiFloodCycleLimit;
+            set
+            {
+                _antiFloodCycleLimit = value;
+                RaisePropertyChanged(nameof(AntiFloodCycleLimit));
+            }
+        }
+
+        public int AntiFloodCycleHardLimit
+        {
+            get => _antiFloodCycleHardLimit;
+            set
+            {
+                _antiFloodCycleHardLimit = value;
+                RaisePropertyChanged(nameof(AntiFloodCycleHardLimit));
+            }
+        }
+
+        public bool AntiFloodEnableKick
+        {
+            get => _antiFloodEnableKick == 1;
+            set
+            {
+                _antiFloodEnableKick = value ? 1 : 0;
+                RaisePropertyChanged(nameof(AntiFloodEnableKick));
             }
         }
         #endregion
@@ -482,7 +550,7 @@ namespace FASTER.Models
             set
             {
                 verifySignatures = (short)Array.IndexOf(ServerCfgArrays.VerifySignaturesStrings, value);
-                RaisePropertyChanged("VerifySignatures");
+                RaisePropertyChanged(nameof(VerifySignatures));
             }
         }
 
@@ -492,7 +560,7 @@ namespace FASTER.Models
             set
             {
                 drawingInMap = value;
-                RaisePropertyChanged("DrawinginMap");
+                RaisePropertyChanged(nameof(DrawingInMap));
             }
         }
 
@@ -502,7 +570,7 @@ namespace FASTER.Models
             set
             {
                 disableVoN = value ? (short)0 : (short)1;
-                RaisePropertyChanged("VonActivated");
+                RaisePropertyChanged(nameof(VonActivated));
             }
         }
 
@@ -512,7 +580,7 @@ namespace FASTER.Models
             set
             {
                 vonCodecQuality = value;
-                RaisePropertyChanged("VonCodecQuality");
+                RaisePropertyChanged(nameof(VonCodecQuality));
             }
         }
 
@@ -522,7 +590,7 @@ namespace FASTER.Models
             set
             {
                 vonCodec = (short)Array.IndexOf(ServerCfgArrays.VonCodecStrings, value);
-                RaisePropertyChanged("VonCodec");
+                RaisePropertyChanged(nameof(VonCodec));
             }
         }
 
@@ -532,7 +600,7 @@ namespace FASTER.Models
             set
             {
                 skipLobby = value;
-                RaisePropertyChanged("SkipLobby");
+                RaisePropertyChanged(nameof(SkipLobby));
             }
         }
 
@@ -542,7 +610,7 @@ namespace FASTER.Models
             set
             {
                 logFile = value;
-                RaisePropertyChanged("LogFile");
+                RaisePropertyChanged(nameof(LogFile));
             }
         }
 
@@ -552,7 +620,7 @@ namespace FASTER.Models
             set
             {
                 battlEye = value ? (short)1 : (short)0;
-                RaisePropertyChanged("BattlEye");
+                RaisePropertyChanged(nameof(BattlEye));
             }
         }
 
@@ -562,7 +630,7 @@ namespace FASTER.Models
             set
             {
                 timeStampFormat = value;
-                RaisePropertyChanged("TimeStampFormat");
+                RaisePropertyChanged(nameof(TimeStampFormat));
             }
         }
 
@@ -574,7 +642,7 @@ namespace FASTER.Models
                 persistent = value ? (short)1 : (short)0;
                 if (!value)
                     AutoInit = false;
-                RaisePropertyChanged("Persistent");
+                RaisePropertyChanged(nameof(Persistent));
             }
         }
 
@@ -584,7 +652,7 @@ namespace FASTER.Models
             set
             {
                 requiredBuildChecked = value;
-                RaisePropertyChanged("RequiredBuildChecked");
+                RaisePropertyChanged(nameof(RequiredBuildChecked));
             }
         }
 
@@ -594,7 +662,7 @@ namespace FASTER.Models
             set
             {
                 requiredBuild = value;
-                RaisePropertyChanged("RequiredBuild");
+                RaisePropertyChanged(nameof(RequiredBuild));
             }
         }
 
@@ -604,7 +672,7 @@ namespace FASTER.Models
             set
             {
                 steamProtocolMaxDataSize = value;
-                RaisePropertyChanged("SteamProtocolMaxDataSize");
+                RaisePropertyChanged(nameof(SteamProtocolMaxDataSize));
             }
         }
         #endregion
@@ -617,7 +685,7 @@ namespace FASTER.Models
             set
             {
                 doubleIdDetected = value;
-                RaisePropertyChanged("DoubleIdDetected");
+                RaisePropertyChanged(nameof(DoubleIdDetected));
             }
         }
 
@@ -627,7 +695,7 @@ namespace FASTER.Models
             set
             {
                 onUserConnected = value;
-                RaisePropertyChanged("OnUserConnected");
+                RaisePropertyChanged(nameof(OnUserConnected));
             }
         }
 
@@ -637,7 +705,7 @@ namespace FASTER.Models
             set
             {
                 onUserDisconnected = value;
-                RaisePropertyChanged("OnUserDisconnected");
+                RaisePropertyChanged(nameof(OnUserDisconnected));
             }
         }
 
@@ -647,7 +715,7 @@ namespace FASTER.Models
             set
             {
                 onHackedData = value;
-                RaisePropertyChanged("OnHackedData");
+                RaisePropertyChanged(nameof(OnHackedData));
             }
         }
 
@@ -657,7 +725,7 @@ namespace FASTER.Models
             set
             {
                 onDifferentData = value;
-                RaisePropertyChanged("OnDifferentData");
+                RaisePropertyChanged(nameof(OnDifferentData));
             }
         }
 
@@ -667,7 +735,7 @@ namespace FASTER.Models
             set
             {
                 onUnsignedData = value;
-                RaisePropertyChanged("OnUnsignedData");
+                RaisePropertyChanged(nameof(OnUnsignedData));
             }
         }
 
@@ -677,7 +745,7 @@ namespace FASTER.Models
             set
             {
                 onUserKicked = value;
-                RaisePropertyChanged("OnUserKicked");
+                RaisePropertyChanged(nameof(OnUserKicked));
             }
         }
         #endregion
@@ -689,7 +757,7 @@ namespace FASTER.Models
             set
             {
                 missionSelectorChecked = value;
-                RaisePropertyChanged("MissionChecked");
+                RaisePropertyChanged(nameof(MissionChecked));
             }
         }
 
@@ -699,7 +767,7 @@ namespace FASTER.Models
             set
             {
                 missionContentOverride = value;
-                RaisePropertyChanged("MissionContentOverride");
+                RaisePropertyChanged(nameof(MissionContentOverride));
             }
         }
 
@@ -709,7 +777,7 @@ namespace FASTER.Models
             set
             {
                 autoInit = value;
-                RaisePropertyChanged("AutoInit");
+                RaisePropertyChanged(nameof(AutoInit));
             }
         }
 
@@ -719,7 +787,7 @@ namespace FASTER.Models
             set
             {
                 difficulty = value;
-                RaisePropertyChanged("Difficulty");
+                RaisePropertyChanged(nameof(Difficulty));
             }
         }
 
@@ -740,7 +808,7 @@ namespace FASTER.Models
                 if (!isEqual)
                 {
                     _missions = value;
-                    RaisePropertyChanged("Missions");
+                    RaisePropertyChanged(nameof(Missions));
                 }
 
                 //Adding the trigger to count checked mods
@@ -756,7 +824,7 @@ namespace FASTER.Models
             set
             {
                 maxMemOverride = value;
-                RaisePropertyChanged("MaxMemOverride");
+                RaisePropertyChanged(nameof(MaxMemOverride));
             }
         }
 
@@ -766,7 +834,7 @@ namespace FASTER.Models
             set
             {
                 cpuCountOverride = value;
-                RaisePropertyChanged("CpuCountOverride");
+                RaisePropertyChanged(nameof(CpuCountOverride));
             }
         }
 
@@ -776,7 +844,7 @@ namespace FASTER.Models
             set
             {
                 maxMem = value;
-                RaisePropertyChanged("MaxMem");
+                RaisePropertyChanged(nameof(MaxMem));
             }
         }
 
@@ -786,7 +854,7 @@ namespace FASTER.Models
             set
             {
                 cpuCount = value;
-                RaisePropertyChanged("CpuCount");
+                RaisePropertyChanged(nameof(CpuCount));
             }
         }
 
@@ -796,7 +864,7 @@ namespace FASTER.Models
             set
             {
                 commandLineParams = value;
-                RaisePropertyChanged("CommandLineParameters");
+                RaisePropertyChanged(nameof(CommandLineParameters));
             }
         }
 
@@ -808,7 +876,7 @@ namespace FASTER.Models
             set
             {
                 serverCfgContent = value;
-                RaisePropertyChanged("ServerCfgContent");
+                RaisePropertyChanged(nameof(ServerCfgContent));
             }
         }
 
@@ -820,8 +888,8 @@ namespace FASTER.Models
 
         private void Item_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            RaisePropertyChanged("MissionChecked");
-            RaisePropertyChanged("MissionContentOverride");
+            RaisePropertyChanged(nameof(MissionChecked));
+            RaisePropertyChanged(nameof(MissionContentOverride));
         }
 
         public string ProcessFile()
@@ -893,10 +961,9 @@ namespace FASTER.Models
                           + $"timeStampFormat = \"{timeStampFormat}\";\t\t// Set the timestamp format used on each report line in server-side RPT file. Possible values are \"none\" (default),\"short\",\"full\".\r\n"
                           + $"BattlEye = {battlEye};\t\t\t\t// Server to use BattlEye system\r\n"
                           + $"queueSizeLogG = {queueSizeLogG};\t\t\t// If a specific players message queue is larger than 1MB and #monitor is running, dump his messages to a logfile for analysis \r\n"
-                          + $"LogObjectNotFound = {logObjectNotFound};\t\t// When false to skip logging 'Server: Object not found messages'.\r\n"
-                          + $"SkipDescriptionParsing = {skipDescriptionParsing};\t\t// When true to skip parsing of description.ext/mission.sqm. Will show pbo filename instead of configured missionName. OverviewText and such won't work, but loading the mission list is a lot faster when there are many missions \r\n"
+                          + $"class AdvancedOptions\r\n{{\r\n\tLogObjectNotFound = {logObjectNotFound};\t\t// When false to skip logging 'Server: Object not found messages'.\r\n\tSkipDescriptionParsing = {skipDescriptionParsing};\t\t// When true to skip parsing of description.ext/mission.sqm. Will show pbo filename instead of configured missionName. OverviewText and such won't work, but loading the mission list is a lot faster when there are many missions.\r\n}};\r\n"
                           + $"ignoreMissionLoadErrors = {ignoreMissionLoadErrors};\t\t// When set to true, the mission will load no matter the amount of loading errors. If set to false, the server will abort mission's loading and return to mission selection.\r\n"
-                          + $"forcedDifficulty = {forcedDifficulty};\t\t\t// Forced difficulty (Recruit, Regular, Veteran, Custom)\r\n"
+                          + $"forcedDifficulty = \"{forcedDifficulty}\";\t\t\t// Forced difficulty (Recruit, Regular, Veteran, Custom)\r\n"
                           + "\r\n"
                           + "// TIMEOUTS\r\n"
                           + $"disconnectTimeout = {disconnectTimeout};\t\t\t// Time to wait before disconnecting a user which temporarly lost connection. Range is 5 to 90 seconds.\r\n"
@@ -925,6 +992,7 @@ namespace FASTER.Models
                           + "// MISSIONS CYCLE (see below)\r\n"
                           + $"randomMissionOrder = {randomMissionOrder};\t\t// Randomly iterate through Missions list\r\n"
                           + $"autoSelectMission = {autoSelectMission};\t\t\t// Server auto selects next mission in cycle\r\n"
+                          + (!string.IsNullOrWhiteSpace(MissionHTTPDownloadBaseURL) ? $"missionHTTPDownloadBaseURL = \"{MissionHTTPDownloadBaseURL}\";\r\n" : "")
                           + "\r\n"
                           + $"{MissionContentOverride}\t\t\t\t\t// An empty Missions class means there will be no mission rotation\r\n"
                           + "\r\n"
@@ -933,7 +1001,8 @@ namespace FASTER.Models
                           + "\r\n"
                           + "// HEADLESS CLIENT\r\n"
                           + $"{(headlessClientEnabled && !headlessClients.Exists(string.IsNullOrWhiteSpace) ? $"headlessClients[] =  { "{\n\t\"" + string.Join("\",\n\t \"", headlessClients) + "\"\n}" };\r\n" : "")}"
-                          + $"{(headlessClientEnabled && !localClient.Exists(string.IsNullOrWhiteSpace)? $"localClient[] =  { "{\n\t\"" + string.Join("\",\n\t \"", localClient) + "\"\n}" };" : "")}";
+                          + $"{(headlessClientEnabled && !localClient.Exists(string.IsNullOrWhiteSpace)? $"localClient[] =  { "{\n\t\"" + string.Join("\",\n\t \"", localClient) + "\"\n}" };" : "")}"
+                          + (AntiFloodEnabled ? $"class AntiFlood\r\n{{\r\n\tcycleTime = {AntiFloodCycleTime};\r\n\tcycleLimit = {AntiFloodCycleLimit};\r\n\tcycleHardLimit = {AntiFloodCycleHardLimit};\r\n\tenableKick = {_antiFloodEnableKick};\r\n}};\r\n" : "");
             return output;
         }
 
@@ -960,7 +1029,7 @@ namespace FASTER.Models
             set
             {
                 missionChecked = value;
-                RaisePropertyChanged("MissionChecked");
+                RaisePropertyChanged(nameof(MissionChecked));
             }
         }
 
@@ -970,7 +1039,7 @@ namespace FASTER.Models
             set
             {
                 name = value;
-                RaisePropertyChanged("Name");
+                RaisePropertyChanged(nameof(Name));
             }
         }
 
@@ -980,7 +1049,7 @@ namespace FASTER.Models
             set
             {
                 path = value;
-                RaisePropertyChanged("Path");
+                RaisePropertyChanged(nameof(Path));
             }
         }
 

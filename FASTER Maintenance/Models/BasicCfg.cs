@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Globalization;
+using Newtonsoft.Json;
 
 // ReSharper disable once CheckNamespace
 namespace FASTER.Models
@@ -125,6 +126,7 @@ namespace FASTER.Models
             }
         }
 
+        [JsonIgnore]
         public string PerfPreset
         {
             get => "Custom";
