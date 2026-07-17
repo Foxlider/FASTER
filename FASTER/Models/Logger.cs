@@ -21,7 +21,12 @@ namespace FASTER.Models
                 Directory.CreateDirectory(Path.GetDirectoryName(LogPath)!);
                 File.AppendAllText(LogPath, $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {message}{Environment.NewLine}");
             }
-            catch { }
+            catch
+            {
+                // Logging failures are intentionally ignored — a broken log file
+                // (e.g. disk full, permissions, file locked by another process)
+                // must never crash the app or interrupt the calling code.
+            }
         }
     }
 }
