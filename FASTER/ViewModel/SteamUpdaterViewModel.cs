@@ -519,7 +519,7 @@ namespace FASTER.ViewModel
                         Parameters.Output += $"\n    Download {mod.WorkshopId} completed, it took {sw.Elapsed.Minutes + sw.Elapsed.Hours*60}m {sw.Elapsed.Seconds}s {sw.Elapsed.Milliseconds}ms";
                     }
 
-                    if (!SteamClient.Credentials.IsAnonymous)
+                    catch (Exception ex)
                     {
                         Logger.Log($"  UNHANDLED ERROR in task for {mod.WorkshopId}: {ex.GetType().Name}: {ex.Message}\n  StackTrace: {ex.StackTrace}");
                     }
