@@ -1,5 +1,4 @@
-﻿
-using FASTER.Models;
+﻿using FASTER.Models;
 
 using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
