@@ -19,6 +19,7 @@ namespace FASTER.Models
             try
             {
                 Directory.CreateDirectory(Path.GetDirectoryName(LogPath)!);
+                // TODO: Consider log rotation when file exceeds 10MB to prevent unbounded growth
                 File.AppendAllText(LogPath, $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {message}{Environment.NewLine}");
             }
             catch

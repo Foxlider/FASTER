@@ -12,6 +12,7 @@ namespace FASTER.Models
     {
         internal static void Attach(IDownloadHandler handler)
         {
+            if (handler == null) return;  // ← null guard
             if (handler is DefaultDownloadHandler ddh)
                 ddh.Logger = new FasterLoggerAdapter();
         }

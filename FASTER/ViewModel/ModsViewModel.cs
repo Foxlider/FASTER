@@ -301,7 +301,7 @@ namespace FASTER.ViewModel
         {
             var answer = await DialogCoordinator.ShowInputAsync(this, "Are you sure you want to purge all mods?", "Write \"yes\" and press OK to delete all folders in the Mod Staging Directory and re-download everything.");
 
-            if (string.IsNullOrEmpty(answer) || !answer.Equals("yes"))
+            if (string.IsNullOrEmpty(answer?.Trim()) || !answer.Trim().Equals("yes", StringComparison.OrdinalIgnoreCase))
                 return;
 
             Analytics.TrackEvent("Mods - Clicked PurgeAndReinstallAll", new Dictionary<string, string>
