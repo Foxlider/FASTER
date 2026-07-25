@@ -326,7 +326,8 @@ namespace FASTER
                 }
 
                 ContentProfileViews.FirstOrDefault(p => p.Profile.Id == temp.Id)?.DeleteProfile();
-                ServerProfileCollection.AddServerProfile(serverProfile);
+                // Something like this needs to be added here and then defined so it reloads the page on deleting profile
+				// ServerProfileCollection.RemoveServerProfile(temp.Id);
             }
             catch (Exception err)
             {
