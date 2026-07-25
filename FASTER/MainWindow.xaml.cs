@@ -326,10 +326,11 @@ namespace FASTER
                 }
 
                 ContentProfileViews.FirstOrDefault(p => p.Profile.Id == temp.Id)?.DeleteProfile();
+                ServerProfileCollection.AddServerProfile(serverProfile);
             }
             catch (Exception err)
             {
-                DisplayMessage("An error occured while cloning your profile");
+                DisplayMessage("An error occured while deleting your profile");
                 Crashes.TrackError(err, new Dictionary<string, string> { { "Name", Properties.Settings.Default.steamUserName } });
             }
         }
