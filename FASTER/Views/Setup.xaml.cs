@@ -20,6 +20,7 @@ namespace FASTER.Views
     public partial class Setup
     {
         readonly bool convertMods;
+        readonly string legacySteamCmdPathForConversion = string.Empty;
 
 
         public Setup()
@@ -68,6 +69,7 @@ namespace FASTER.Views
             if (Properties.Settings.Default.armaMods == null)
             {
                 //We just updated to 1.8
+                legacySteamCmdPathForConversion = Properties.Settings.Default.steamCMDPath;
                 Properties.Settings.Default.armaMods = new ArmaModCollection();
                 Properties.Settings.Default.Save();
                 convertMods = true;
@@ -82,7 +84,7 @@ namespace FASTER.Views
             ISteamUserBox.Text = Properties.Settings.Default.steamUserName;
             var installId = AppCenter.GetInstallIdAsync().Result;
             AppCenter.SetUserId($"{installId}_{Properties.Settings.Default.steamUserName}");
-            ISteamPassBox.Password = Encryption.Instance.DecryptData(Properties.Settings.Default.steamPassword);
+            ISteamCmdDirBox.Text = MainWindow.Instance.SteamUpdaterViewModel.Parameters.SteamCmdDirectory;
             IModStaging.Text = Properties.Settings.Default.modStagingDirectory;
             IServerDirBox.Text = Properties.Settings.Default.serverPath;
 
@@ -138,6 +140,8 @@ namespace FASTER.Views
             { IModStaging.Text = path; }
             else if (Equals(sender, IServerDirButton))
             { IServerDirBox.Text = path; }
+            else if (Equals(sender, ISteamCmdDirButton))
+            { ISteamCmdDirBox.Text = path; }
         }
 
         private void APIKeyButton_Click(object sender, RoutedEventArgs e)
@@ -147,8 +151,6 @@ namespace FASTER.Views
 
         private void IContinueButton_Click(object sender, RoutedEventArgs e)
         {
-            var encryption = Encryption.Instance;
-
             if(string.IsNullOrEmpty(IModStaging.Text))
             {
                 DisplaySetupMessage("Please enter a valid Mod Staging Directory");
@@ -162,23 +164,26 @@ namespace FASTER.Views
             }
 
             var settings = Properties.Settings.Default;
+            var updaterParameters = MainWindow.Instance.SteamUpdaterViewModel.Parameters;
+            updaterParameters.SteamCmdDirectory = ISteamCmdDirBox.Text;
             settings.serverPath = IServerDirBox.Text;
             settings.modStagingDirectory = IModStaging.Text;
             settings.steamUserName = ISteamUserBox.Text;
-            settings.steamPassword = encryption.EncryptData(ISteamPassBox.Password);
             if (!string.IsNullOrEmpty(IApiKeyBox.Text))
                 Properties.Settings.Default.SteamAPIKey = IApiKeyBox.Text;
             settings.firstRun = false;
             settings.Save();
 
-            MainWindow.Instance.SteamUpdaterViewModel.Parameters.ModStagingDirectory = settings.modStagingDirectory;
-            MainWindow.Instance.SteamUpdaterViewModel.Parameters.ApiKey = settings.SteamAPIKey;
-            MainWindow.Instance.SteamUpdaterViewModel.Parameters.InstallDirectory = settings.serverPath;
-            MainWindow.Instance.SteamUpdaterViewModel.Parameters.Username = settings.steamUserName;
-            MainWindow.Instance.SteamUpdaterViewModel.Parameters.Password = settings.steamPassword;
+            updaterParameters.ModStagingDirectory = settings.modStagingDirectory;
+            updaterParameters.ApiKey = settings.SteamAPIKey;
+            updaterParameters.InstallDirectory = settings.serverPath;
+            updaterParameters.Username = settings.steamUserName;
 
             if (convertMods)
-            { MainWindow.Instance.ConvertMods = true; }
+            {
+                MainWindow.Instance.LegacySteamCmdPathForConversion = legacySteamCmdPathForConversion;
+                MainWindow.Instance.ConvertMods = true;
+            }
 
             try
             { MainWindow.Instance.Show(); }

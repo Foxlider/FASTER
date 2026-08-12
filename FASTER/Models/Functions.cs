@@ -15,8 +15,17 @@ namespace FASTER.Models
             if (!Directory.Exists(Properties.Settings.Default.serverPath))
                 Properties.Settings.Default.serverPath = string.Empty;
 
-            if (!Directory.Exists(Properties.Settings.Default.steamCMDPath))
-                Properties.Settings.Default.steamCMDPath = string.Empty;
+            if (!string.IsNullOrWhiteSpace(Properties.Settings.Default.steamCMDPath))
+            {
+                try
+                {
+                    Properties.Settings.Default.steamCMDPath = Path.GetFullPath(Properties.Settings.Default.steamCMDPath);
+                }
+                catch (Exception)
+                {
+                    Properties.Settings.Default.steamCMDPath = string.Empty;
+                }
+            }
         }
 
         public static string ParseFileSize(long size)

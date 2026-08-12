@@ -28,6 +28,8 @@ Thanks go out to all the guys who helped the developpment and those who will tes
 ##### **PREREQUISITES**
 
 - Steam account with valid copy of Arma 3.
+- Windows 10 version 1809 / Windows Server 2019 or newer (SteamCMD automation uses the native Windows pseudo console).
+- An internet connection for FASTER to install and run Valve's official SteamCMD. The SteamCMD location is configurable; when the executable is missing, FASTER downloads and bootstraps it automatically.
 - Basic understanding of Arma 3 dedicated servers.
 
 
@@ -45,6 +47,18 @@ Thanks go out to all the guys who helped the developpment and those who will tes
   - Supports Steam Guard and Mobile Auth
   - Import mod presets from Arma 3 Launcher
   - Check for mod updates on app launch
+
+###### SteamCMD update workflow
+
+FASTER now delegates both server and Workshop downloads to Valve's official SteamCMD. Select one mutually exclusive server branch in the updater before starting a server update: Public, Contact, Creator DLC, or Profiling. Creator DLC installs that branch's complete server payload; SteamCMD cannot reproduce the old mix-and-match depot checkboxes through its supported `app_update` workflow.
+
+When a Steam username is configured, server updates use that account and the session-only password. If the username is blank, the free dedicated-server package falls back to anonymous login.
+
+Workshop downloads require signing in with a Steam account that owns Arma 3. Steam Guard or Mobile Auth may prompt during login, and SteamCMD reuses its protected login cache for later runs. The Steam Web API key is optional and is used only to look up Workshop metadata and update timestamps—it does not authenticate downloads or grant an Arma 3 license.
+
+SteamCMD downloads Workshop items into its own content cache. After each successful item download, FASTER copies the complete item into the configured mod staging directory and then atomically replaces the previous staged version, so an interrupted copy does not leave a partially updated mod.
+
+Because SteamCMD keeps its own resumable Workshop cache, allow enough disk space for both that cache and the staged mod copies (roughly twice the Workshop payload in the worst case).
 
 - Multiple Server Profiles
   - Save and load multiple server presets

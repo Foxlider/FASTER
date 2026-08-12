@@ -1,7 +1,5 @@
 ﻿using AutoUpdaterDotNET;
 
-using BytexDigital.Steam.ContentDelivery;
-
 using ControlzEx.Theming;
 
 using FASTER.Models;
@@ -41,8 +39,6 @@ namespace FASTER.Views
             fontPicker.ItemsSource = Fonts.SystemFontFamilies;
             fontPicker.DisplayMemberPath = "Source";
             fontPicker.SelectedItem = Fonts.SystemFontFamilies.FirstOrDefault(t => t.Source == Properties.Settings.Default.font);
-
-            Slider.Value = Properties.Settings.Default.CliWorkers;
         }
 
         private void IUpdateBtnOK_Click(object sender, RoutedEventArgs e)
@@ -130,8 +126,6 @@ namespace FASTER.Views
             IModUpdatesOnLaunch.IsChecked = Properties.Settings.Default?.checkForModUpdates;
             IAppUpdatesOnLaunch.IsChecked = Properties.Settings.Default?.checkForAppUpdates;
             IAPIKeyBox.Text = Properties.Settings.Default?.SteamAPIKey ?? string.Empty;
-            Slider.Value = Properties.Settings.Default.CliWorkers;
-            NumericUpDown.Value = Slider.Value;
         }
 
         private void IModUpdatesOnLaunch_Checked(object sender, RoutedEventArgs e)
@@ -199,16 +193,5 @@ namespace FASTER.Views
             Properties.Settings.Default.Save();
         }
 
-        private void RangeBase_OnValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-
-            if ((sender is Slider slider) && !slider.IsLoaded)
-                return;
-
-            Properties.Settings.Default.CliWorkers = Convert.ToUInt16(e.NewValue);
-            NumericUpDown.Value = e.NewValue;
-            if (MainWindow.Instance.SteamUpdaterViewModel.SteamContentClient != null)
-                MainWindow.Instance.SteamUpdaterViewModel.SteamContentClient = new SteamContentClient(MainWindow.Instance.SteamUpdaterViewModel.SteamClient, Properties.Settings.Default.CliWorkers);
-        }
     }
 }

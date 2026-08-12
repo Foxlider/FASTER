@@ -1,12 +1,5 @@
-using BytexDigital.Steam.ContentDelivery;
-using BytexDigital.Steam.ContentDelivery.Exceptions;
-using BytexDigital.Steam.ContentDelivery.Models;
-using BytexDigital.Steam.ContentDelivery.Models.Downloading;
-using BytexDigital.Steam.Core;
-using BytexDigital.Steam.Core.Exceptions;
-using BytexDigital.Steam.Core.Structs;
-
 using FASTER.Models;
+using FASTER.Services.SteamCmd;
 
 using MahApps.Metro.Controls.Dialogs;
 
@@ -14,59 +7,74 @@ using Microsoft.AppCenter.Analytics;
 
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Configuration;
 using System.Diagnostics;
 using System.IO;
+using System.Windows;
 using System.Windows.Threading;
 
 namespace FASTER.ViewModel
 {
     public sealed class SteamUpdaterViewModel : INotifyPropertyChanged, IDisposable
     {
+        private const int MaximumConsoleCharacters = 200_000;
+        private static readonly Lazy<SteamUpdaterViewModel> Lazy =
+            new(() => new SteamUpdaterViewModel(new SteamUpdaterModel()));
+
+        private static readonly string LogFilePath = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            "FASTER", "Logs", "SteamCmd.log");
+
+        private readonly SemaphoreSlim _operationGate = new(1, 1);
+        private readonly WorkshopContentMirror _contentMirror = new();
+        private readonly DispatcherTimer _statusTimer;
+        private readonly object _logGate = new();
+
+        private CancellationTokenSource _tokenSource = new();
+        private SteamCmdClient? _steamCmdClient;
+        private StreamWriter? _logWriter;
+        private string _sessionPassword = string.Empty;
+        private string? _lastProgressMessage;
+        private bool _isBusy;
+        private bool _updaterOnline;
+        private bool _updaterFaulted;
+        private bool _disposed;
+
         public SteamUpdaterViewModel()
+            : this(new SteamUpdaterModel())
         {
-            Parameters = new SteamUpdaterModel();
         }
-
-        private static readonly Lazy<SteamUpdaterViewModel>
-            lazy =
-                new(() => new SteamUpdaterViewModel(new SteamUpdaterModel()));
-
-        public static SteamUpdaterViewModel Instance => lazy.Value;
 
         private SteamUpdaterViewModel(SteamUpdaterModel model)
         {
-            Parameters                =  model;
-            DownloadTasks.ListChanged += (_, _) => RaisePropertyChanged(nameof(IsDownloading));
-            var timer = new DispatcherTimer
+            Parameters = model;
+            MigrateLegacyPasswordToSession();
+
+            _statusTimer = new DispatcherTimer
             {
-                Interval = TimeSpan.FromSeconds(1)
+                Interval = TimeSpan.FromSeconds(1),
+                IsEnabled = true
             };
-            timer.Tick += Timer_Tick;
-            timer.IsEnabled = true;
+            _statusTimer.Tick += Timer_Tick;
         }
 
-        private bool _isLoggingIn;
-        private bool _isDlOverride;
-        private bool _updaterOnline;
-        private bool _updaterFaulted;
+        public static SteamUpdaterViewModel Instance => Lazy.Value;
 
-        public SteamUpdaterModel Parameters { get; set; }
+        public SteamUpdaterModel Parameters { get; }
 
+        public IDialogCoordinator DialogCoordinator { get; set; } = null!;
 
-        public IDialogCoordinator DialogCoordinator { get; set; }
-        private CancellationTokenSource tokenSource = new();
+        public bool IsDownloading => _isBusy;
 
-        public bool IsDownloading => DownloadTasks.Count > 0 || IsLoggingIn || IsDlOverride;
-
-        private BindingList<Task> DownloadTasks { get; } = new BindingList<Task>();
-
+        public bool CanConfigureUpdater => !_isBusy;
 
         public bool UpdaterOnline
         {
             get => _updaterOnline;
-            set
+            private set
             {
+                if (_updaterOnline == value)
+                    return;
+
                 _updaterOnline = value;
                 RaisePropertyChanged(nameof(UpdaterOnline));
             }
@@ -75,704 +83,832 @@ namespace FASTER.ViewModel
         public bool UpdaterFaulted
         {
             get => _updaterFaulted;
-            set
+            private set
             {
+                if (_updaterFaulted == value)
+                    return;
+
                 _updaterFaulted = value;
                 RaisePropertyChanged(nameof(UpdaterFaulted));
             }
         }
 
-        public bool IsLoggingIn
-        {
-            get => _isLoggingIn;
-            set
-            {
-                _isLoggingIn = value;
-                RaisePropertyChanged(nameof(IsLoggingIn));
-                RaisePropertyChanged(nameof(IsDownloading));
-            }
-        }
-
-        public bool IsDlOverride
-        {
-            get => _isDlOverride;
-            set
-            {
-                _isDlOverride = value;
-                RaisePropertyChanged(nameof(IsDlOverride));
-                RaisePropertyChanged(nameof(IsDownloading));
-            }
-        }
-
-        internal SteamClient SteamClient;
-        internal SteamContentClient SteamContentClient;
-
         public void PasswordChanged(string password)
         {
-            Parameters.Password = Encryption.Instance.EncryptData(password);
+            _sessionPassword = password ?? string.Empty;
         }
 
-        private void Timer_Tick(object sender, EventArgs e)
-        {
-            if (SteamClient == null)
-            {
-                UpdaterFaulted = false;
-                UpdaterOnline = false;
-                return;
-            }
-
-            UpdaterFaulted = SteamClient.IsFaulted;
-            UpdaterOnline = SteamClient.IsConnected;
-        }
-
-        internal string GetPw()
-        { return Encryption.Instance.DecryptData(Parameters.Password); }
+        internal string GetPw() => _sessionPassword;
 
         public async Task UpdateClick()
         {
             Analytics.TrackEvent("Updater - Clicked Update", new Dictionary<string, string>
             {
-                {"Name", Properties.Settings.Default.steamUserName},
-                {"DLCs", $"{(Parameters.UsingGMDlc ? "GM " : "")}{(Parameters.UsingCSLADlc? "CSLA " : "")}{(Parameters.UsingPFDlc ? "SOG " : "")}{(Parameters.UsingWSDlc ? "WS " : "")}{(Parameters.UsingSPEDlc ? "SPE " : "")}{(Parameters.UsingRFDlc ? "RF " : "")}{(Parameters.UsingEFDlc ? "EF " : "")}"},
-                {"Branch", $"{(Parameters.UsingPerfBinaries? "Profiling" : "Public")}"}
+                {"Name", Parameters.Username ?? string.Empty},
+                {"Branch", Parameters.ServerBranch}
             });
 
-            Parameters.IsUpdating = true;
-            Parameters.Output     = "Starting Update...";
-            Parameters.Output += "\nPlease don't quit this page or cancel the download\nThis might take a while...";
+            Parameters.Output = "Starting the Arma 3 server update through SteamCMD...";
+            int result = await RunServerUpdater(Parameters.InstallDirectory, Parameters.ServerBranch);
 
-            uint appId = 233780;
-            Dictionary<uint, string> depotsIDs = new()
-            //Find a way to update automatically with depot changes
-            {
-                {233781, "Arma 3 Alpha Dedicated Server Content (internal)"},
-                {233782, "Arma 3 Alpha Dedicated Server binary Windows (internal)"},
-                {233783, "Arma 3 Alpha Dedicated Server binary Linux (internal)"},
-                {233784, "Arma 3 Server Profiling - WINDOWS Depot"},
-                {233785, "Arma 3 Server - Profiler - LINUX Depot"},
-                {233792, "Arma 3 Server Creator DLC - GM"},
-                {233788, "Arma 3 Server Creator DLC - SPE"},
-                {233793, "Arma 3 Server Creator DLC - CSLA"},
-                {233794, "Arma 3 Server Creator DLC - SOGPF"},
-                {233795, "Arma 3 Server Creator DLC - WS"},
-                {233799, "Arma 3 Server Creator DLC - RF"},
-                {233798, "Arma 3 Server Creator DLC - EF"},
-            };
-
-            //IReadOnlyList<Depot> depotsList;
-                
-            //try
-            //{ depotsList = await GetAppDepots(appId); }
-            //catch
-            //{
-            //    Parameters.Output += "\n\n /!\\ Something went wrong while getting the depots list. Check login/password and your internet connexion.\nAlternatively, clear the sentry folder and try again.";
-            //    return;
-            //}
-                
-            
-            //if(depotsList == null || depotsList.Count == 0)
-            //{
-            //    Parameters.Output += "\n\n /!\\ Could not retrieve depots list. PLease retry later or check your internet connection\nAlternatively, clear the sentry folder and try again.";
-            //    return;
-            //}
-
-            List<(uint id, string branch, string pass)> depotsDownload = new();
-
-            Parameters.Output += "\nChecking Shared Content...";
-            //Downloading Depot 233781 from either branch contact or public
-            depotsDownload.Add((
-                depotsIDs.FirstOrDefault(d => d.Value == "Arma 3 Alpha Dedicated Server Content (internal)").Key, 
-                Parameters.UsingContactDlc ? "contact" : "public", 
-                null));
-
-            Parameters.Output += "\nChecking Executables...";
-
-
-            // Downloading depot 233782 fow Windows from branch public
-            depotsDownload.Add((
-                depotsIDs.FirstOrDefault(d => d.Value == "Arma 3 Alpha Dedicated Server binary Windows (internal)").Key,
-                "public",
-                null));
-
-
-            //Download depot 233784 for windows in branch profiling
-            if (Parameters.UsingPerfBinaries)
-                depotsDownload.Add((
-                    depotsIDs.FirstOrDefault(d => d.Value == "Arma 3 Server Profiling - WINDOWS Depot").Key,
-                    "profiling",
-                    "CautionSpecialProfilingAndTestingBranchArma3"));
-
-
-            //Downloading mods
-            if (Parameters.UsingGMDlc)
-            {
-                Parameters.Output += "\nChecking Arma 3 Server Creator DLC - GM...";
-                depotsDownload.Add((
-                    depotsIDs.FirstOrDefault(d => d.Value == "Arma 3 Server Creator DLC - GM").Key,
-                    "creatordlc",
-                    null));
-            }
-
-            if (Parameters.UsingCSLADlc)
-            {
-                Parameters.Output += "\nChecking Arma 3 Server Creator DLC - CSLA...";
-                depotsDownload.Add((
-                    depotsIDs.FirstOrDefault(d => d.Value == "Arma 3 Server Creator DLC - CSLA").Key,
-                    "creatordlc",
-                    null));
-            }
-
-            if (Parameters.UsingPFDlc)
-            {
-                Parameters.Output += "\nChecking Arma 3 Server Creator DLC - SOGPF...";
-                depotsDownload.Add((
-                    depotsIDs.FirstOrDefault(d => d.Value == "Arma 3 Server Creator DLC - SOGPF").Key,
-                    "creatordlc",
-                    null));
-            }
-
-            if (Parameters.UsingWSDlc)
-            {
-                Parameters.Output += "\nChecking Arma 3 Server Creator DLC - Western Sahara...";
-                depotsDownload.Add((
-                    depotsIDs.FirstOrDefault(d => d.Value == "Arma 3 Server Creator DLC - WS").Key,
-                    "creatordlc",
-                    null));
-            }
-
-            if (Parameters.UsingSPEDlc)
-            {
-                Parameters.Output += "\nChecking Arma 3 Server Creator DLC - SPE...";
-                depotsDownload.Add((
-                    depotsIDs.FirstOrDefault(d => d.Value == "Arma 3 Server Creator DLC - SPE").Key,
-                    "creatordlc",
-                    null));
-            }
-
-            if (Parameters.UsingRFDlc)
-            {
-                Parameters.Output += "\nChecking Arma 3 Server Creator DLC - RF...";
-                depotsDownload.Add((
-                    depotsIDs.FirstOrDefault(d => d.Value == "Arma 3 Server Creator DLC - RF").Key,
-                    "creatordlc",
-                    null));
-            }
-
-            if (Parameters.UsingEFDlc)
-            {
-                Parameters.Output += "\nChecking Arma 3 Server Creator DLC - EF...";
-                depotsDownload.Add((
-                    depotsIDs.FirstOrDefault(d => d.Value == "Arma 3 Server Creator DLC - EF").Key,
-                    "creatordlc",
-                    null));
-            }
-
-            await RunServerUpdater(Parameters.InstallDirectory, appId, depotsDownload);
-
-            Parameters.Output += "\n\nAll Done ! ";
+            if (result == UpdateState.Success)
+                AppendOutput("Server update completed.");
         }
 
         public void UpdateCancelClick()
         {
-            Parameters.Output     += "\nUpdate Cancelled.";
-            Parameters.IsUpdating =  false;
+            if (!_isBusy)
+                return;
 
-            tokenSource.Cancel();
+            AppendOutput("Cancellation requested. SteamCMD will exit after a short grace period.");
+            _tokenSource.Cancel();
+
+            SteamCmdClient? client = _steamCmdClient;
+            if (client != null)
+            {
+                _ = Task.Run(async () =>
+                {
+                    try
+                    {
+                        await client.CancelAsync();
+                    }
+                    catch (Exception exception)
+                    {
+                        AppendOutput($"SteamCMD cancellation warning: {exception.Message}");
+                    }
+                });
+            }
         }
 
         public void ModStagingDirClick()
         {
             string path = MainWindow.Instance.SelectFolder(Parameters.ModStagingDirectory);
-
-            if (path == null) 
-                return;
-
-            Parameters.ModStagingDirectory = path;
+            if (!string.IsNullOrWhiteSpace(path))
+                Parameters.ModStagingDirectory = path;
         }
 
         public void ServerDirClick()
         {
             string path = MainWindow.Instance.SelectFolder(Parameters.InstallDirectory);
-
-            if (path == null)
-                return;
-
-            Parameters.InstallDirectory = path;
+            if (!string.IsNullOrWhiteSpace(path))
+                Parameters.InstallDirectory = path;
         }
 
-        internal async Task<int> RunServerUpdater(string path, uint appId, List<(uint id, string branch, string pass)> depots)
+        public void SteamCmdDirClick()
+        {
+            if (_isBusy)
+            {
+                AppendOutput("SteamCMD's directory cannot be changed while an update is running.");
+                return;
+            }
+
+            string path = MainWindow.Instance.SelectFolder(Parameters.SteamCmdDirectory);
+            if (string.IsNullOrWhiteSpace(path))
+                return;
+
+            Parameters.SteamCmdDirectory = path;
+            DisposeSteamCmdClient();
+            RefreshSteamCmdStatus();
+        }
+
+        public async Task<bool> PrepareSteamCmdAsync()
+        {
+            if (!await TryBeginOperationAsync())
+                return false;
+
+            try
+            {
+                await EnsureSteamCmdInstalledAsync(CreateProgressReporter(), _tokenSource.Token);
+                AppendOutput("SteamCMD is ready.");
+                return true;
+            }
+            catch (OperationCanceledException)
+            {
+                AppendOutput("SteamCMD preparation was cancelled.");
+                return false;
+            }
+            catch (Exception exception)
+            {
+                UpdaterFaulted = true;
+                AppendOutput($"SteamCMD preparation failed: {exception.Message}");
+                return false;
+            }
+            finally
+            {
+                EndOperation();
+            }
+        }
+
+        public bool ResetSteamCmd()
+        {
+            if (_isBusy || _steamCmdClient?.IsRunning == true)
+            {
+                AppendOutput("Cancel the active update before resetting SteamCMD.");
+                return false;
+            }
+
+            try
+            {
+                _steamCmdClient?.Reset();
+                DisposeSteamCmdClient();
+                UpdaterFaulted = false;
+                RefreshSteamCmdStatus();
+                AppendOutput("SteamCMD process state was reset. Cached login and downloaded content were kept.");
+                return true;
+            }
+            catch (Exception exception)
+            {
+                UpdaterFaulted = true;
+                AppendOutput($"SteamCMD reset failed: {exception.Message}");
+                return false;
+            }
+        }
+
+        internal async Task<int> RunServerUpdater(string path, string branchName)
         {
             if (string.IsNullOrWhiteSpace(path))
+            {
+                AppendOutput("Select a server install directory before updating.");
+                return UpdateState.Cancelled;
+            }
+
+            if (!TryParseServerBranch(branchName, out SteamCmdServerBranch branch))
+            {
+                AppendOutput($"Unsupported SteamCMD server branch: {branchName}");
+                return UpdateState.Error;
+            }
+
+            if (!await TryBeginOperationAsync())
                 return UpdateState.Cancelled;
 
-            if (!Directory.Exists(path))
-                Directory.CreateDirectory(path);
-            tokenSource = new CancellationTokenSource();
-
-            if (!await SteamLogin())
-                return UpdateState.LoginFailed;
-
-            Stopwatch sw = Stopwatch.StartNew();
-
-            foreach (var depot in depots)
+            Stopwatch stopwatch = Stopwatch.StartNew();
+            try
             {
-                try
-                {
-                    ManifestId manifestId;
-                    manifestId = await SteamContentClient.GetDepotManifestIdAsync(appId, depot.id, depot.branch, depot.pass);
+                SteamCmdClient client = await EnsureSteamCmdInstalledAsync(CreateProgressReporter(), _tokenSource.Token);
+                AppendOutput($"Updating Arma 3 Dedicated Server ({branchName})...");
 
-                    Parameters.Output += $"\n\nFetching informations of app {appId}, depot {depot.id} from Steam ({depots.IndexOf(depot)+1}/{depots.Count})... ";
-                    var downloadHandler = await SteamContentClient.GetAppDataAsync(appId, depot.id, manifestId, tokenSource.Token);
+                string username = Parameters.Username?.Trim() ?? string.Empty;
+                string password = username.Length == 0 ? string.Empty : _sessionPassword;
 
-                    await Download(downloadHandler, path);
-                }
-                catch (ArgumentException ex)
+                // App 233780 can be updated anonymously, but prefer the configured
+                // account whenever one is supplied. Besides honoring the updater UI,
+                // this keeps the authenticated SteamCMD session ready for Workshop
+                // content that requires the account's Arma 3 entitlement. A blank
+                // username deliberately retains SteamCMD's anonymous fallback.
+                SteamCmdServerUpdateResult result = await client.UpdateServerAsync(
+                    username,
+                    password,
+                    path,
+                    branch,
+                    RequestGuardResponseAsync,
+                    CreateProgressReporter(),
+                    _tokenSource.Token);
+
+                if (result.Cancelled)
                 {
-                    if(ex.Message.Contains("'tasks'"))
-                        Parameters.Output += "\nSkipped...";
-                    else
-                    {
-                        throw;
-                    }
+                    AppendOutput("Server update cancelled.");
+                    return UpdateState.Cancelled;
                 }
-                catch (Exception ex)
+
+                if (!result.Success)
                 {
-                    Parameters.Output += $"\nError: {ex.Message}{(ex.InnerException != null ? $" Inner Exception: {ex.InnerException.Message}" : "")}";
+                    AppendOutput(FormatSteamCmdFailure("Server update failed", result.Error, result.ExitCode));
                     return UpdateState.Error;
                 }
-            }
-            sw.Stop();
-            Parameters.Output += $"\nDone in {sw.Elapsed.Hours}h {sw.Elapsed.Minutes}m {sw.Elapsed.Seconds}s {sw.Elapsed.Milliseconds}ms";
 
-            return 0;
+                Parameters.Progress = 100;
+                AppendOutput($"Server files verified in {FormatElapsed(stopwatch.Elapsed)}.");
+                return UpdateState.Success;
+            }
+            catch (OperationCanceledException)
+            {
+                AppendOutput("Server update cancelled.");
+                return UpdateState.Cancelled;
+            }
+            catch (SteamCmdAuthenticationException exception)
+            {
+                AppendOutput($"Steam login failed: {exception.Message}");
+                return UpdateState.LoginFailed;
+            }
+            catch (Exception exception)
+            {
+                UpdaterFaulted = true;
+                AppendOutput($"Server update failed: {exception.Message}");
+                return UpdateState.Error;
+            }
+            finally
+            {
+                stopwatch.Stop();
+                EndOperation();
+            }
         }
 
         public async Task<int> RunModUpdater(ulong modId, string path)
         {
-            tokenSource = new CancellationTokenSource();
+            if (modId == 0)
+                return UpdateState.Error;
 
-            try
+            if (string.IsNullOrWhiteSpace(Parameters.Username))
             {
-                //if(SteamClient is {IsConnected: true})
-                //{
-                //    SteamClient?.Shutdown();
-                //    SteamClient?.Dispose();
-                //    SteamClient = null;
-                //}
-                if (!await SteamLogin())
-                    return UpdateState.LoginFailed;
-            }
-            catch(Exception)
-            {
+                AppendOutput("A Steam account that owns Arma 3 is required for Workshop downloads. An API key is not a download login.");
                 return UpdateState.LoginFailed;
             }
 
-            Stopwatch sw = Stopwatch.StartNew();
+            if (!await TryBeginOperationAsync())
+                return UpdateState.Cancelled;
 
+            Stopwatch stopwatch = Stopwatch.StartNew();
             try
             {
-                ManifestId manifestId = default;
+                SteamCmdClient client = await EnsureSteamCmdInstalledAsync(CreateProgressReporter(), _tokenSource.Token);
+                AppendOutput($"Downloading Workshop item {modId} through SteamCMD...");
 
-                Parameters.Output += $"\nFetching mod {modId} infos... ";
+                SteamCmdWorkshopBatchResult batch = await client.DownloadWorkshopItemsAsync(
+                    Parameters.Username,
+                    _sessionPassword,
+                    new[] {modId},
+                    RequestGuardResponseAsync,
+                    CreateProgressReporter(),
+                    _tokenSource.Token);
 
-                if (!SteamClient.Credentials.IsAnonymous) //IS SYNC ENABLED
+                if (batch.Cancelled)
+                    return UpdateState.Cancelled;
+
+                SteamCmdWorkshopItemResult? item = batch.Items.FirstOrDefault(result => result.WorkshopId == modId);
+                if (item == null || !item.Success)
                 {
-                    manifestId = (await SteamContentClient.GetPublishedFileDetailsAsync(modId)).hcontent_file;
-                    Manifest manifest = await SteamContentClient.GetManifestAsync(107410, 107410, manifestId);
-
-                    SyncDeleteRemovedFiles(path, manifest);
+                    string? error = item?.Error ?? batch.Error;
+                    AppendOutput(FormatSteamCmdFailure($"Workshop item {modId} failed", error, batch.ExitCode));
+                    return IsLoginFailure(error) ? UpdateState.LoginFailed : UpdateState.Error;
                 }
 
-                Parameters.Output += $"\nAttempting to start download of item {modId}... ";
+                string stagingRoot = GetStagingRoot(path, modId);
+                await _contentMirror.MirrorAsync(item.SourcePath, stagingRoot, modId, _tokenSource.Token);
 
-                var downloadHandler = await SteamContentClient.GetPublishedFileDataAsync(modId, manifestId, tokenSource.Token);
-
-                await Download(downloadHandler, path);
+                Parameters.Progress = 100;
+                AppendOutput($"Workshop item {modId} was staged in {FormatElapsed(stopwatch.Elapsed)}.");
+                return UpdateState.Success;
             }
-            catch (TaskCanceledException)
+            catch (OperationCanceledException)
             {
-                sw.Stop();
-                SteamClient.Shutdown();
-                SteamClient.Dispose();
-                SteamClient = null;
+                AppendOutput($"Workshop item {modId} was cancelled.");
                 return UpdateState.Cancelled;
             }
-            catch (Exception ex)
+            catch (SteamCmdAuthenticationException exception)
             {
-                sw.Stop();
-                Parameters.Output += $"\nError: {ex.Message}{(ex.InnerException != null ? $" Inner Exception: {ex.InnerException.Message}" : "")}";
-                SteamClient.Shutdown();
-                SteamClient.Dispose();
-                SteamClient = null;
+                AppendOutput($"Steam login failed: {exception.Message}");
+                return UpdateState.LoginFailed;
+            }
+            catch (Exception exception)
+            {
+                AppendOutput($"Workshop item {modId} failed: {exception.Message}");
                 return UpdateState.Error;
             }
-
-            sw.Stop();
-            Parameters.Output += $"\nDownload completed, it took {sw.Elapsed.Minutes + sw.Elapsed.Hours * 60}m {sw.Elapsed.Seconds}s {sw.Elapsed.Milliseconds}ms";
-            return UpdateState.Success;
+            finally
+            {
+                stopwatch.Stop();
+                EndOperation();
+            }
         }
-
 
         public async Task<int> RunModsUpdater(ObservableCollection<ArmaMod> mods)
         {
+            ArgumentNullException.ThrowIfNull(mods);
 
-            tokenSource = new CancellationTokenSource();
-            if(!await SteamLogin())
-            { 
-                IsLoggingIn = false;
+            List<ArmaMod> candidates = mods.Where(mod => !mod.IsLocal).ToList();
+            if (candidates.Count == 0)
+            {
+                Parameters.Progress = 0;
+                AppendOutput("No downloadable Workshop mods were selected.");
+                return UpdateState.Cancelled;
+            }
+
+            List<ArmaMod> pending = new();
+
+            foreach (ArmaMod mod in candidates)
+            {
+                if (mod.LocalLastUpdated > mod.SteamLastUpdated && mod.Size > 0)
+                {
+                    mod.Status = ArmaModStatus.UpToDate;
+                    AppendOutput($"Workshop item {mod.WorkshopId} is already up to date.");
+                }
+                else
+                {
+                    pending.Add(mod);
+                }
+            }
+
+            if (pending.Count == 0)
+            {
+                Parameters.Progress = 100;
+                AppendOutput("All selected Workshop mods are already up to date.");
+                return UpdateState.Success;
+            }
+
+            if (string.IsNullOrWhiteSpace(Parameters.Username))
+            {
+                foreach (ArmaMod mod in pending)
+                    mod.Status = ArmaModStatus.NotComplete;
+
+                AppendOutput("A Steam account that owns Arma 3 is required for Workshop downloads. An API key is not a download login.");
                 return UpdateState.LoginFailed;
             }
 
-            Parameters.Output += "\nAdding mods to download list...";
-
-            SemaphoreSlim maxThread = new(1);
-            var  ml = mods.Where(m => !m.IsLocal).ToList();
-            uint finished = 0;
-            IsDlOverride = true;
-
-            foreach (ArmaMod mod in ml)
+            string stagingRoot;
+            try
             {
-                await maxThread.WaitAsync();
+                stagingRoot = SteamCmdCommandBuilder.ValidateAndNormalizePath(
+                    Parameters.ModStagingDirectory,
+                    nameof(Parameters.ModStagingDirectory));
+                Directory.CreateDirectory(stagingRoot);
+            }
+            catch (Exception exception) when (exception is ArgumentException or IOException or UnauthorizedAccessException)
+            {
+                foreach (ArmaMod mod in pending)
+                    mod.Status = ArmaModStatus.NotComplete;
 
-                _ = Task.Factory.StartNew(() =>
+                AppendOutput($"The mod staging directory is unavailable: {exception.Message}");
+                return UpdateState.Error;
+            }
+
+            if (!await TryBeginOperationAsync())
+                return UpdateState.Cancelled;
+
+            try
+            {
+                SteamCmdClient client = await EnsureSteamCmdInstalledAsync(CreateProgressReporter(), _tokenSource.Token);
+                List<ulong> workshopIds = pending.Select(mod => (ulong)mod.WorkshopId).Distinct().ToList();
+                Dictionary<ulong, int> positions = workshopIds
+                    .Select((id, index) => (id, index))
+                    .ToDictionary(entry => entry.id, entry => entry.index);
+
+                AppendOutput($"Downloading {workshopIds.Count} Workshop item(s) in one SteamCMD session...");
+
+                IProgress<SteamCmdProgress> progress = new Progress<SteamCmdProgress>(update =>
                 {
-                    if (!Directory.Exists(mod.Path))
-                        Directory.CreateDirectory(mod.Path);
+                    ReportSteamCmdProgress(update);
+                    if (update.WorkshopId is ulong id && update.Percentage is double itemPercentage &&
+                        positions.TryGetValue(id, out int index))
+                    {
+                        Parameters.Progress = Math.Clamp(
+                            (index + Math.Clamp(itemPercentage, 0, 100) / 100d) / workshopIds.Count * 100d,
+                            0,
+                            100);
+                    }
+                });
 
-                    if (tokenSource.Token.IsCancellationRequested)
+                SteamCmdWorkshopBatchResult batch = await client.DownloadWorkshopItemsAsync(
+                    Parameters.Username,
+                    _sessionPassword,
+                    workshopIds,
+                    RequestGuardResponseAsync,
+                    progress,
+                    _tokenSource.Token);
+
+                Dictionary<ulong, SteamCmdWorkshopItemResult> results = batch.Items
+                    .GroupBy(item => item.WorkshopId)
+                    .ToDictionary(group => group.Key, group => group.Last());
+
+                int completed = 0;
+                int failed = 0;
+                foreach (ArmaMod mod in pending)
+                {
+                    if (!results.TryGetValue(mod.WorkshopId, out SteamCmdWorkshopItemResult? item) || !item.Success)
                     {
                         mod.Status = ArmaModStatus.NotComplete;
-                        return;
+                        failed++;
+                        string? error = item?.Error ?? batch.Error ?? "SteamCMD returned no result for this item.";
+                        if (!batch.Cancelled || !string.Equals(error, "Cancelled.", StringComparison.OrdinalIgnoreCase))
+                            AppendOutput($"Workshop item {mod.WorkshopId} failed: {error}");
+                        Parameters.Progress = (completed + failed) / (double)pending.Count * 100d;
+                        continue;
                     }
-                    Parameters.Output += $"\n   Starting {mod.WorkshopId}";
 
-                    Stopwatch sw = Stopwatch.StartNew();
                     try
                     {
-                        ManifestId manifestId = default;
-                        
-                        if(mod.LocalLastUpdated > mod.SteamLastUpdated && mod.Size > 0)
-                        {
-                            mod.Status = ArmaModStatus.UpToDate;
-                            Parameters.Output += $"\n   Mod{mod.WorkshopId} already up to date. Ignoring...";
-                            return;
-                        }
+                        // Once SteamCMD has reported a complete item, promote it even if
+                        // cancellation stopped the rest of the batch. The mirror swaps the
+                        // old target only after the new copy is complete, so this preserves
+                        // every successful download without exposing partial staged content.
+                        string target = await _contentMirror.MirrorAsync(
+                            item.SourcePath,
+                            stagingRoot,
+                            mod.WorkshopId,
+                            CancellationToken.None);
 
-                        if (!SteamClient.Credentials.IsAnonymous) //IS SYNC NEABLED
-                        {
-                            Parameters.Output += $"\n   Getting manifest for {mod.WorkshopId}";
-                            manifestId = SteamContentClient.GetPublishedFileDetailsAsync(mod.WorkshopId).Result.hcontent_file;
-                            Manifest manifest = SteamContentClient.GetManifestAsync(107410, 107410, manifestId).Result;
-                            Parameters.Output += $"\n   Manifest retrieved {mod.WorkshopId}";
-                            SyncDeleteRemovedFiles(mod.Path, manifest);
-                        }
-
-                        Parameters.Output += $"\n    Attempting to start download of item {mod.WorkshopId}... ";
-
-                        var downloadHandler = SteamContentClient.GetPublishedFileDataAsync(mod.WorkshopId, manifestId, tokenSource.Token);
-                        DownloadForMultiple(downloadHandler.Result, mod.Path).Wait();
-
+                        mod.Path = target;
                         mod.Status = ArmaModStatus.UpToDate;
-                        var nx = DateTime.UnixEpoch;
-                        var ts = DateTime.UtcNow - nx;
-                        mod.LocalLastUpdated = (ulong)ts.TotalSeconds;
+                        mod.LocalLastUpdated = (ulong)(DateTime.UtcNow - DateTime.UnixEpoch).TotalSeconds;
+                        await Task.Run(mod.CheckModSize, CancellationToken.None);
+                        completed++;
+                        Parameters.Progress = (completed + failed) / (double)pending.Count * 100d;
+                        AppendOutput($"Workshop item {mod.WorkshopId} downloaded and staged ({completed + failed}/{pending.Count}).");
                     }
-                    catch (TaskCanceledException)
+                    catch (Exception exception)
                     {
-                        sw.Stop();
                         mod.Status = ArmaModStatus.NotComplete;
+                        failed++;
+                        Parameters.Progress = (completed + failed) / (double)pending.Count * 100d;
+                        AppendOutput($"Workshop item {mod.WorkshopId} downloaded, but staging failed: {exception.Message}");
                     }
-                    catch (Exception ex)
-                    {
-                        sw.Stop();
-                        mod.Status = ArmaModStatus.NotComplete;
-                        Parameters.Output += $"\nError: {ex.Message}{(ex.InnerException != null ? $" Inner Exception: {ex.InnerException.Message}" : "")}";
-                    }
-                    sw.Stop();
-
-                    mod.CheckModSize();
-
-                    Parameters.Output += $"\n    Download {mod.WorkshopId} completed, it took {sw.Elapsed.Minutes + sw.Elapsed.Hours*60}m {sw.Elapsed.Seconds}s {sw.Elapsed.Milliseconds}ms";
-
-                }, TaskCreationOptions.LongRunning).ContinueWith((_) =>
-                {
-                    finished += 1;
-                    Parameters.Output += $"\n   Thread {mod.WorkshopId} complete  ({finished} / {ml.Count})";
-                    Parameters.Progress = finished * ml.Count / 100.00;
-                    maxThread.Release();
-                });
-            }
-
-            Parameters.Output += "\nAlmost there...";
-            await maxThread.WaitAsync();
-
-
-            Parameters.Output += "\nMods updated !";
-            IsDlOverride = false;
-            return UpdateState.Success;
-        }
-
-        internal async Task<bool> SteamLogin()
-        {
-            if (tokenSource.IsCancellationRequested)
-                tokenSource = new CancellationTokenSource();
-            IsLoggingIn = true;
-            var path = Path.Combine(Path.GetDirectoryName(ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal).FilePath) ?? string.Empty, "sentries");
-
-            SteamCredentials _steamCredentials = new(Parameters.Username, Encryption.Instance.DecryptData(Parameters.Password));
-
-            if (SteamClient == null || SteamClient.Credentials.Username != _steamCredentials.Username || SteamClient.Credentials.Password != _steamCredentials.Password)
-            { 
-                SteamClient = new SteamClient(_steamCredentials, new AuthCodeProvider(_steamCredentials.Username, path));
-                SteamClient.InternalClientAttemptingConnect += () => Parameters.Output += "\n\tClient : Attempting connect..";
-                SteamClient.InternalClientConnected         += () => Parameters.Output += "\n\tClient : Connected";
-                SteamClient.InternalClientDisconnected      += () => Parameters.Output += "\n\tClient : Disconnected";
-                SteamClient.InternalClientLoggedOn          += () => Parameters.Output += "\n\tClient : Logged on";
-                SteamClient.InternalClientLoggedOff         += () => Parameters.Output += "\n\tClient : Logged off";
-            }
-
-            if (!SteamClient.IsConnected || SteamClient.IsFaulted)
-            {
-                Parameters.Output += $"\nConnecting to Steam as {(_steamCredentials.IsAnonymous ? "anonymous" : _steamCredentials.Username)}";
-                SteamClient.MaximumLogonAttempts = 5;
-                try
-                { await SteamClient.ConnectAsync(tokenSource.Token); }
-                catch (SteamClientAlreadyRunningException)
-                { 
-                    Parameters.Output += $"\nClient already logged in."; 
-                    IsLoggingIn = false;
-                    return false;
                 }
-                catch (Exception ex)
+
+                if (batch.Cancelled || _tokenSource.IsCancellationRequested)
                 {
-                    Parameters.Output += $"\nFailed! Error: {ex.Message}";
-                    SteamClient.Shutdown();
-                    SteamClient.Dispose();
-                    SteamClient = null;
-
-                    if (ex.GetBaseException() is SteamAuthenticationException)
-                    {
-                        Parameters.Output += "\nWarning: The logon may have failed due to expired sentry-data."
-                                             + $"\nIf you are sure that the provided username and password are correct, consider deleting the token file for the user \"{SteamClient?.Credentials.Username}\" in the sentries directory."
-                                             + $"{path}";
-                    }
-                    IsLoggingIn = false;
-                    return false;
+                    AppendOutput(
+                        $"Mod update cancelled. {completed} completed item(s) were staged; " +
+                        $"{failed} item(s) were unfinished or failed.");
+                    return UpdateState.Cancelled;
                 }
+
+                if (failed > 0 || !batch.Success)
+                {
+                    string? error = batch.Error ?? results.Values.FirstOrDefault(item => !item.Success)?.Error;
+                    AppendOutput($"Mod update finished with {failed} failure(s). Successful items were kept.");
+                    return IsLoginFailure(error) && completed == 0 ? UpdateState.LoginFailed : UpdateState.Error;
+                }
+
+                Parameters.Progress = 100;
+                AppendOutput($"All {completed} mod(s) were updated successfully.");
+                return UpdateState.Success;
             }
-
-            SteamContentClient = new SteamContentClient(SteamClient, Properties.Settings.Default.CliWorkers);
-            Parameters.Output += "\nConnected !";
-            IsLoggingIn = false;
-            return SteamClient.IsConnected;
-        }
-
-        internal bool SteamReset()
-        {
-            Parameters.Output += "\nDisconnecting...";
-            SteamClient.Shutdown();
-            SteamClient.Dispose();
-            SteamClient = null;
-            Parameters.Output += "\nDisconnected.";
-            return SteamClient == null;
-        }
-
-        private void SyncDeleteRemovedFiles(string targetDir, Manifest manifest)
-        {
-            Console.WriteLine("Checking for unnecessary files in target directory...");
-
-            foreach (var localFilePath in Directory.GetFiles(targetDir, "*", SearchOption.AllDirectories))
+            catch (OperationCanceledException)
             {
-                var relativeLocalPath = Path.GetRelativePath(targetDir, localFilePath);
+                foreach (ArmaMod mod in pending.Where(mod => mod.Status != ArmaModStatus.UpToDate))
+                    mod.Status = ArmaModStatus.NotComplete;
 
-                if (manifest.Files.Any(x => string.Equals(x.FileName, relativeLocalPath, StringComparison.InvariantCultureIgnoreCase)))
-                    continue;
-
-                Console.WriteLine($"Deleting local file {relativeLocalPath}");
-                File.Delete(localFilePath);
+                AppendOutput("Mod update cancelled before the batch completed.");
+                return UpdateState.Cancelled;
             }
-        }
-
-
-        private async Task Download(IDownloadHandler downloadHandler, string targetDir)
-        {
-            ulong downloadedSize = 0;
-            bool skipDownload = false;
-            downloadHandler.FileVerified          += (_, args) => Parameters.Output += $"{(args.RequiresDownload ? $"\nFile verified : {args.ManifestFile.FileName} ({Functions.ParseFileSize(args.ManifestFile.TotalSize)})" : "")}";
-            downloadHandler.VerificationCompleted += (_, args) => {
-                Parameters.Output += $"\nVerification completed, {args.QueuedFiles.Count} files queued for download. ({args.QueuedFiles.Sum(f => (double)f.TotalSize)} bytes)"; 
-                if (args.QueuedFiles.Count == 0) 
-                    {skipDownload = true; } 
-                };
-            downloadHandler.FileDownloaded        += (_, args) =>
-                                                     {
-                                                         downloadedSize    += args.TotalSize;
-                                                         Parameters.Output += $"\nProgress {downloadHandler.TotalProgress * 100:00.00}% ({Functions.ParseFileSize(downloadedSize)} / {Functions.ParseFileSize(downloadHandler.TotalFileSize)})";
-                                                         Parameters.Progress = downloadHandler.TotalProgress * 100;
-                                                     };
-            downloadHandler.DownloadComplete      += (_, _) => Parameters.Output += "\nDownload completed";
-
-            if (tokenSource.IsCancellationRequested)
-                tokenSource = new CancellationTokenSource();
-
-            Task downloadTask = Task.Run(async () =>
+            catch (SteamCmdAuthenticationException exception)
             {
-                await downloadHandler.SetupAsync(targetDir, file => true, tokenSource.Token);
-                await downloadHandler.VerifyAsync(tokenSource.Token);
-                await downloadHandler.DownloadAsync(tokenSource.Token);
-            });
+                foreach (ArmaMod mod in pending)
+                    mod.Status = ArmaModStatus.NotComplete;
 
-            Parameters.Output += "\nOK.";
-
-            DownloadTasks.Add(downloadTask);
-
-            Parameters.Progress = 0;
-            Parameters.Output += $"\nDownloading {downloadHandler.TotalFileCount} files with total size of {Functions.ParseFileSize(downloadHandler.TotalFileSize)}...";
-            Parameters.Output += $"\nVerifying Install...";
-
-            while (!downloadTask.IsCompleted && !downloadTask.IsCanceled && !tokenSource.Token.IsCancellationRequested && !skipDownload)
-            {
-
-                var delayTask = Task.Delay(500, tokenSource.Token);
-                await Task.WhenAny(delayTask, downloadTask);
-
-                if (tokenSource.Token.IsCancellationRequested)
-                    Parameters.Output += "\nTask cancellation requested";
-                Parameters.Output += $"\nProgress {downloadHandler.TotalProgress * 100:00.00}%";
-                Parameters.Progress = downloadHandler.TotalProgress * 100;
+                AppendOutput($"Steam login failed: {exception.Message}");
+                return UpdateState.LoginFailed;
             }
-
-            if (skipDownload)
+            catch (Exception exception)
             {
-                Parameters.Output += "\nSkipping Download...";
-                Parameters.Progress = 0;
-                await downloadHandler.DisposeAsync();
-                DownloadTasks.Remove(downloadTask);
-                return;
-            }
+                foreach (ArmaMod mod in pending.Where(mod => mod.Status != ArmaModStatus.UpToDate))
+                    mod.Status = ArmaModStatus.NotComplete;
 
-
-            if (downloadTask.IsCanceled)
-            {
-
-                Parameters.Output += "\nTask Cancelled";
-                Parameters.Progress = 0;
-                await downloadHandler.DisposeAsync();
-                DownloadTasks.Remove(downloadTask);
-                return;
-            }
-
-            try
-            { await downloadTask; }
-            catch (TaskCanceledException)
-            {
-                Parameters.Output += "\nTask Cancelled";
-                Parameters.Progress = 0;
-                throw;
-            }
-            catch (ArgumentException)
-            {
-                Parameters.Output += $"\nSkipping download : No tasks ";
-                Parameters.Progress = 0;
+                AppendOutput($"Mod update failed: {exception.Message}");
+                return UpdateState.Error;
             }
             finally
             {
-                DownloadTasks.Remove(downloadTask);
-                await downloadHandler.DisposeAsync();
-                downloadTask.Dispose();
-            }
-        }
-
-        private async Task DownloadForMultiple(IDownloadHandler downloadHandler, string targetDir)
-        {
-            if (targetDir == null)
-                return;
-
-            if (!Directory.Exists(targetDir))
-                Directory.CreateDirectory(targetDir);
-
-            tokenSource.Token.ThrowIfCancellationRequested();
-            ulong downloadedSize = 0;
-            downloadHandler.FileVerified          += (_, args) => Parameters.Output += $"{(args.RequiresDownload ? $"\n    File verified : {args.ManifestFile.FileName} ({Functions.ParseFileSize(args.ManifestFile.TotalSize)})" : "")}";
-            downloadHandler.VerificationCompleted += (_, args) => Parameters.Output += $"\n    Verification completed, {args.QueuedFiles.Count} files queued for download. ({args.QueuedFiles.Sum(f => (double)f.TotalSize)} bytes)";
-            downloadHandler.FileDownloaded        += (_, args) =>
-                                                     {
-                                                         downloadedSize    += args.TotalSize;
-                                                         Parameters.Output += $"\n    Progress {downloadHandler.TotalProgress * 100:00.00}% ({Functions.ParseFileSize(downloadedSize)} / {Functions.ParseFileSize(downloadHandler.TotalFileSize)})";
-                                                     };
-            downloadHandler.DownloadComplete      += (_, _) => Parameters.Output += "\n    Download completed";
-
-            Task downloadTask = Task.Run(async () =>
-            {
-                await downloadHandler.SetupAsync(targetDir, file => true, tokenSource.Token);
-                await downloadHandler.VerifyAsync(tokenSource.Token);
-                await downloadHandler.DownloadAsync(tokenSource.Token);
-            });
-
-            Parameters.Output += "\n    OK.";
-
-            DownloadTasks.Add(downloadTask);
-
-            Parameters.Output += $"\n    Downloading {downloadHandler.TotalFileCount} files with total size of {Functions.ParseFileSize(downloadHandler.TotalFileSize)}...";
-            Parameters.Progress = 0;
-            while (!downloadTask.IsCompleted && !downloadTask.IsCanceled && !tokenSource.IsCancellationRequested)
-            {
-
-                var delayTask = Task.Delay(500, tokenSource.Token);
-                await Task.WhenAny(delayTask, downloadTask);
-
-                if (tokenSource.IsCancellationRequested)
-                    Parameters.Output += "\n    Task cancellation requested";
-            }
-
-            if (downloadTask.IsCanceled)
-            {
-                Parameters.Output += "\n    Task Cancelled";
-                DownloadTasks.Remove(downloadTask);
-                await downloadHandler.DisposeAsync();
-                return;
-            }
-
-            try
-            { await downloadTask; }
-            catch (TaskCanceledException)
-            {
-                Parameters.Output += "\n    Task Cancelled";
-                throw;
-            }
-            finally
-            {
-                DownloadTasks.Remove(downloadTask);
-                await downloadHandler.DisposeAsync();
-                downloadTask.Dispose();
+                EndOperation();
             }
         }
 
         public async Task<string> SteamGuardInput()
-        { return await DialogCoordinator.ShowInputAsync(this, "Steam Guard", "Please enter your 2FA code"); }
+        {
+            EnsureDialogCoordinator();
+            return await DialogCoordinator.ShowInputAsync(this, "Steam Guard", "Enter the Steam Guard code") ?? string.Empty;
+        }
 
         public async Task<MessageDialogResult> SteamGuardInputPhone()
-        { return await DialogCoordinator.ShowMessageAsync(this, "Steam Guard", "Press OK after accepting authentification on mobile\nOr press Cancel to enter a 2FA Code", MessageDialogStyle.AffirmativeAndNegative); }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void RaisePropertyChanged(string property)
         {
-            if (PropertyChanged == null) return;
-            PropertyChanged(this, new PropertyChangedEventArgs(property));
+            EnsureDialogCoordinator();
+            return await DialogCoordinator.ShowMessageAsync(
+                this,
+                "Steam Guard",
+                "Approve the login in the Steam mobile app, then press OK. Press Cancel to enter a code instead.",
+                MessageDialogStyle.AffirmativeAndNegative);
         }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public void Dispose()
         {
-            tokenSource.Dispose();
+            if (_disposed)
+                return;
+
+            _disposed = true;
+            _statusTimer.Stop();
+            _statusTimer.Tick -= Timer_Tick;
+            _tokenSource.Cancel();
+            DisposeSteamCmdClient();
+            _tokenSource.Dispose();
+
+            lock (_logGate)
+            {
+                _logWriter?.Dispose();
+                _logWriter = null;
+            }
         }
+
+        private void MigrateLegacyPasswordToSession()
+        {
+            string encryptedPassword = Properties.Settings.Default.steamPassword;
+            if (string.IsNullOrWhiteSpace(encryptedPassword))
+                return;
+
+            _sessionPassword = Encryption.Instance.DecryptData(encryptedPassword) ?? string.Empty;
+            Properties.Settings.Default.steamPassword = string.Empty;
+            Properties.Settings.Default.Save();
+        }
+
+        private async Task<bool> TryBeginOperationAsync()
+        {
+            if (_disposed)
+                throw new ObjectDisposedException(nameof(SteamUpdaterViewModel));
+
+            if (!await _operationGate.WaitAsync(0))
+            {
+                AppendOutput("Another SteamCMD operation is already running.");
+                return false;
+            }
+
+            _tokenSource.Dispose();
+            _tokenSource = new CancellationTokenSource();
+            _lastProgressMessage = null;
+            _isBusy = true;
+            Parameters.IsUpdating = true;
+            Parameters.Progress = 0;
+            UpdaterFaulted = false;
+            RaisePropertyChanged(nameof(IsDownloading));
+            RaisePropertyChanged(nameof(CanConfigureUpdater));
+            return true;
+        }
+
+        private void EndOperation()
+        {
+            Parameters.IsUpdating = false;
+            _isBusy = false;
+            RaisePropertyChanged(nameof(IsDownloading));
+            RaisePropertyChanged(nameof(CanConfigureUpdater));
+            RefreshSteamCmdStatus();
+            _operationGate.Release();
+        }
+
+        private async Task<SteamCmdClient> EnsureSteamCmdInstalledAsync(
+            IProgress<SteamCmdProgress> progress,
+            CancellationToken cancellationToken)
+        {
+            SteamCmdClient client = GetOrCreateSteamCmdClient();
+            if (!client.IsInstalled)
+                AppendOutput($"Installing Valve SteamCMD in {client.RootDirectory}...");
+
+            await client.EnsureInstalledAsync(progress, cancellationToken);
+            UpdaterOnline = client.IsInstalled;
+            UpdaterFaulted = false;
+            return client;
+        }
+
+        private SteamCmdClient GetOrCreateSteamCmdClient()
+        {
+            string root = SteamCmdCommandBuilder.ValidateAndNormalizePath(
+                Parameters.SteamCmdDirectory,
+                nameof(Parameters.SteamCmdDirectory));
+
+            if (_steamCmdClient != null &&
+                !string.Equals(_steamCmdClient.RootDirectory, root, StringComparison.OrdinalIgnoreCase))
+            {
+                if (_steamCmdClient.IsRunning)
+                    throw new InvalidOperationException("SteamCMD's directory cannot be changed during an active operation.");
+
+                DisposeSteamCmdClient();
+            }
+
+            return _steamCmdClient ??= new SteamCmdClient(root);
+        }
+
+        private IProgress<SteamCmdProgress> CreateProgressReporter() =>
+            new Progress<SteamCmdProgress>(ReportSteamCmdProgress);
+
+        private void ReportSteamCmdProgress(SteamCmdProgress progress)
+        {
+            // Every event is written here first, unfiltered, so the raw SteamCMD
+            // chatter suppressed from the UI below is still available for troubleshooting.
+            LogSteamCmdProgress(progress);
+
+            if (progress.Percentage is double percentage)
+                Parameters.Progress = Math.Clamp(percentage, 0, 100);
+
+            // Raw SteamCMD output and per-chunk percentage lines can generate
+            // thousands of UI updates during a large Workshop collection. The
+            // structured status/error messages retain the useful information;
+            // percentages are represented by the progress bar.
+            if (progress.Kind == SteamCmdProgressKind.Output ||
+                (progress.Percentage is > 0 &&
+                 progress.Kind is SteamCmdProgressKind.DownloadingWorkshopItem or SteamCmdProgressKind.UpdatingServer))
+            {
+                return;
+            }
+
+            if (!string.IsNullOrWhiteSpace(progress.Message) && progress.Message != _lastProgressMessage)
+            {
+                _lastProgressMessage = progress.Message;
+                AppendOutput(progress.Message);
+            }
+        }
+
+        private async Task<string> RequestGuardResponseAsync(
+            SteamCmdGuardChallenge challenge,
+            CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            Dispatcher? dispatcher = Application.Current?.Dispatcher;
+            if (dispatcher != null && !dispatcher.CheckAccess())
+            {
+                return await dispatcher
+                    .InvokeAsync(() => ShowGuardPromptAsync(challenge, cancellationToken))
+                    .Task
+                    .Unwrap();
+            }
+
+            return await ShowGuardPromptAsync(challenge, cancellationToken);
+        }
+
+        private async Task<string> ShowGuardPromptAsync(
+            SteamCmdGuardChallenge challenge,
+            CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            EnsureDialogCoordinator();
+
+            if (challenge.Kind == SteamCmdGuardChallengeKind.MobileConfirmation)
+            {
+                MessageDialogResult response = await SteamGuardInputPhone();
+                if (response == MessageDialogResult.Affirmative)
+                    return string.Empty;
+            }
+
+            return await DialogCoordinator.ShowInputAsync(
+                       this,
+                       "Steam Guard",
+                       string.IsNullOrWhiteSpace(challenge.Prompt) ? "Enter the Steam Guard code" : challenge.Prompt)
+                   ?? string.Empty;
+        }
+
+        private void EnsureDialogCoordinator()
+        {
+            if (DialogCoordinator == null)
+                throw new SteamCmdAuthenticationException("Steam Guard input is required, but the updater dialog is not available.");
+        }
+
+        private string GetStagingRoot(string requestedTarget, ulong workshopId)
+        {
+            if (!string.IsNullOrWhiteSpace(requestedTarget))
+            {
+                string fullTarget = Path.TrimEndingDirectorySeparator(Path.GetFullPath(requestedTarget));
+                if (string.Equals(
+                        Path.GetFileName(fullTarget),
+                        workshopId.ToString(),
+                        StringComparison.OrdinalIgnoreCase) &&
+                    Path.GetDirectoryName(fullTarget) is string parent)
+                {
+                    return parent;
+                }
+            }
+
+            return Parameters.ModStagingDirectory;
+        }
+
+        private static bool TryParseServerBranch(string? branchName, out SteamCmdServerBranch branch)
+        {
+            switch (branchName?.Trim().ToLowerInvariant())
+            {
+                case "public":
+                case "stable":
+                    branch = SteamCmdServerBranch.Public;
+                    return true;
+                case "contact":
+                    branch = SteamCmdServerBranch.Contact;
+                    return true;
+                case "creatordlc":
+                    branch = SteamCmdServerBranch.CreatorDlc;
+                    return true;
+                case "profiling":
+                    branch = SteamCmdServerBranch.Profiling;
+                    return true;
+                default:
+                    branch = default;
+                    return false;
+            }
+        }
+
+        private static bool IsLoginFailure(string? error)
+        {
+            if (string.IsNullOrWhiteSpace(error))
+                return false;
+
+            return error.Contains("login", StringComparison.OrdinalIgnoreCase) ||
+                   error.Contains("password", StringComparison.OrdinalIgnoreCase) ||
+                   error.Contains("Steam Guard", StringComparison.OrdinalIgnoreCase) ||
+                   error.Contains("authentication", StringComparison.OrdinalIgnoreCase) ||
+                   error.Contains("account", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static string FormatSteamCmdFailure(string prefix, string? error, int? exitCode)
+        {
+            string detail = string.IsNullOrWhiteSpace(error) ? "SteamCMD did not report success." : error;
+            return exitCode.HasValue
+                       ? $"{prefix}: {detail} (exit code {exitCode.Value})"
+                       : $"{prefix}: {detail}";
+        }
+
+        private static string FormatElapsed(TimeSpan elapsed) =>
+            $"{(int)elapsed.TotalMinutes}m {elapsed.Seconds}s";
+
+        private void Timer_Tick(object? sender, EventArgs e)
+        {
+            if (!_disposed)
+                RefreshSteamCmdStatus();
+        }
+
+        private void RefreshSteamCmdStatus()
+        {
+            try
+            {
+                // IsInstalled also checks the readiness marker written after
+                // SteamCMD has completed its first self-update. An executable
+                // left behind by an interrupted bootstrap is not ready yet.
+                UpdaterOnline = GetOrCreateSteamCmdClient().IsInstalled;
+            }
+            catch
+            {
+                UpdaterOnline = false;
+            }
+        }
+
+        private void DisposeSteamCmdClient()
+        {
+            _steamCmdClient?.Dispose();
+            _steamCmdClient = null;
+        }
+
+        private void LogSteamCmdProgress(SteamCmdProgress progress)
+        {
+            string percentageSuffix = progress.Percentage is double percentage
+                ? $" ({percentage:0.##}%)"
+                : string.Empty;
+            string line = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff} [{progress.Kind}] {progress.Message}{percentageSuffix}";
+
+            lock (_logGate)
+            {
+                try
+                {
+                    bool firstWrite = _logWriter == null;
+                    _logWriter ??= CreateLogWriter();
+                    if (firstWrite)
+                        AppendOutput($"Detailed SteamCMD logging is being written to {LogFilePath}");
+                    _logWriter.WriteLine(line);
+                }
+                catch (IOException)
+                {
+                }
+                catch (UnauthorizedAccessException)
+                {
+                }
+            }
+        }
+
+        private static StreamWriter CreateLogWriter()
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(LogFilePath)!);
+            return new StreamWriter(LogFilePath, append: true) { AutoFlush = true };
+        }
+
+        private void AppendOutput(string message)
+        {
+            if (string.IsNullOrWhiteSpace(message))
+                return;
+
+            Dispatcher? dispatcher = Application.Current?.Dispatcher;
+            if (dispatcher != null && !dispatcher.CheckAccess())
+            {
+                _ = dispatcher.BeginInvoke(() => AppendOutput(message));
+                return;
+            }
+
+            string cleanMessage = message.Replace("\r\n", "\n").Replace('\r', '\n').Trim('\n');
+            string output = string.IsNullOrEmpty(Parameters.Output)
+                ? cleanMessage
+                : $"{Parameters.Output}\n{cleanMessage}";
+            if (output.Length > MaximumConsoleCharacters)
+            {
+                int firstLineBreak = output.IndexOf(
+                    '\n',
+                    output.Length - MaximumConsoleCharacters);
+                output = "[Earlier SteamCMD output was trimmed]\n" +
+                         output[(firstLineBreak >= 0 ? firstLineBreak + 1 : output.Length - MaximumConsoleCharacters)..];
+            }
+
+            Parameters.Output = output;
+        }
+
+        private void RaisePropertyChanged(string property) =>
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
     }
 
     public static class UpdateState
     {
-        public const int Success     = 0;
-        public const int Error       = 1;
+        public const int Success = 0;
+        public const int Error = 1;
         public const int LoginFailed = 2;
-        public const int Cancelled   = 3;
+        public const int Cancelled = 3;
     }
 }

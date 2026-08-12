@@ -1,5 +1,7 @@
 ﻿using FASTER.Properties;
+using System;
 using System.ComponentModel;
+using System.IO;
 
 namespace FASTER.Models
 {
@@ -32,15 +34,34 @@ namespace FASTER.Models
             }
         }
 
-        public string Password
+        public string SteamCmdDirectory
         {
-            get => Settings.Default.steamPassword;
+            get
+            {
+                if (string.IsNullOrWhiteSpace(Settings.Default.steamCMDPath))
+                {
+                    Settings.Default.steamCMDPath = GetDefaultSteamCmdDirectory();
+                    Settings.Default.Save();
+                }
+
+                return Settings.Default.steamCMDPath;
+            }
             set
             {
-                Settings.Default.steamPassword = value;
+                Settings.Default.steamCMDPath = string.IsNullOrWhiteSpace(value)
+                    ? GetDefaultSteamCmdDirectory()
+                    : value.Trim();
                 Settings.Default.Save();
-                RaisePropertyChanged(nameof(Password));
+                RaisePropertyChanged(nameof(SteamCmdDirectory));
             }
+        }
+
+        private static string GetDefaultSteamCmdDirectory()
+        {
+            return Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "FASTER",
+                "SteamCMD");
         }
 
         public string ModStagingDirectory
@@ -84,102 +105,40 @@ namespace FASTER.Models
             }
         }
 
-        public bool UsingPerfBinaries
+        public string ServerBranch
         {
-            get => Settings.Default.usingPerfBinaries;
-            set
+            get
             {
-                Settings.Default.usingPerfBinaries = value;
-                Settings.Default.Save();
-                RaisePropertyChanged(nameof(UsingPerfBinaries));
-            }
-        }
+                string? branch = Settings.Default.serverBranch?.Trim().ToLowerInvariant();
+                if (branch is not ("public" or "contact" or "creatordlc" or "profiling"))
+                {
+                    // Migrate the old independent depot toggles to SteamCMD's
+                    // mutually-exclusive whole-app branches. Profiling takes
+                    // precedence, followed by Contact and Creator DLC.
+                    branch = Settings.Default.usingPerfBinaries
+                        ? "profiling"
+                        : Settings.Default.usingContactDlc
+                            ? "contact"
+                            : Settings.Default.usingGMDlc || Settings.Default.usingPFDlc ||
+                              Settings.Default.usingCSLADlc || Settings.Default.usingWSDlc ||
+                              Settings.Default.usingSPEDlc || Settings.Default.usingRFDlc ||
+                              Settings.Default.usingEFDlc
+                                ? "creatordlc"
+                                : "public";
+                    Settings.Default.serverBranch = branch;
+                    Settings.Default.Save();
+                }
 
-        public bool UsingContactDlc
-        {
-            get => Settings.Default.usingContactDlc;
-            set
-            {
-                Settings.Default.usingContactDlc = value;
-                Settings.Default.Save();
-                RaisePropertyChanged(nameof(UsingContactDlc));
+                return branch;
             }
-        }
-
-        public bool UsingGMDlc
-        {
-            get => Settings.Default.usingGMDlc;
             set
             {
-                Settings.Default.usingGMDlc = value;
+                string? branch = value?.Trim().ToLowerInvariant();
+                Settings.Default.serverBranch = branch is "public" or "contact" or "creatordlc" or "profiling"
+                    ? branch
+                    : "public";
                 Settings.Default.Save();
-                RaisePropertyChanged(nameof(UsingGMDlc));
-            }
-        }
-
-        public bool UsingPFDlc
-        {
-            get => Settings.Default.usingPFDlc;
-            set
-            {
-                Settings.Default.usingPFDlc = value;
-                Settings.Default.Save();
-                RaisePropertyChanged(nameof(UsingPFDlc));
-            }
-        }
-
-        public bool UsingCSLADlc
-        {
-            get => Settings.Default.usingCSLADlc;
-            set
-            {
-                Settings.Default.usingCSLADlc = value;
-                Settings.Default.Save();
-                RaisePropertyChanged(nameof(UsingCSLADlc));
-            }
-        }
-
-        public bool UsingWSDlc
-        {
-            get => Settings.Default.usingWSDlc;
-            set
-            {
-                Settings.Default.usingWSDlc = value;
-                Settings.Default.Save();
-                RaisePropertyChanged(nameof(UsingWSDlc));
-            }
-        }
-
-        public bool UsingSPEDlc
-        {
-            get => Settings.Default.usingSPEDlc;
-            set
-            {
-                Settings.Default.usingSPEDlc = value;
-                Settings.Default.Save();
-                RaisePropertyChanged(nameof(UsingSPEDlc));
-            }
-        }
-
-        public bool UsingRFDlc
-        {
-            get => Settings.Default.usingRFDlc;
-            set
-            {
-                Settings.Default.usingRFDlc = value;
-                Settings.Default.Save();
-                RaisePropertyChanged(nameof(UsingRFDlc));
-            }
-        }
-
-        public bool UsingEFDlc
-        {
-            get => Settings.Default.usingEFDlc;
-            set
-            {
-                Settings.Default.usingEFDlc = value;
-                Settings.Default.Save();
-                RaisePropertyChanged(nameof(UsingEFDlc));
+                RaisePropertyChanged(nameof(ServerBranch));
             }
         }
 
