@@ -133,7 +133,7 @@ namespace FASTER.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Stable")]
+        [global::System.Configuration.DefaultSettingValueAttribute("public")]
         public string serverBranch {
             get {
                 return ((string)(this["serverBranch"]));
@@ -266,18 +266,6 @@ namespace FASTER.Properties {
             }
             set {
                 this["Deployments"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("10")]
-        public ushort CliWorkers {
-            get {
-                return ((ushort)(this["CliWorkers"]));
-            }
-            set {
-                this["CliWorkers"] = value;
             }
         }
         

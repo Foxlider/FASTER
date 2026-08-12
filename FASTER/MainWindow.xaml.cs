@@ -30,6 +30,7 @@ namespace FASTER
     public partial class MainWindow
     {
         internal bool ConvertMods { get; set; }
+        internal string LegacySteamCmdPathForConversion { get; set; } = string.Empty;
         internal string Version;
         internal bool NavEnabled = true;
 
@@ -160,8 +161,7 @@ namespace FASTER
         private void MetroWindow_Closing(object sender, CancelEventArgs e)
         {
             Properties.Settings.Default.Save();
-            SteamUpdaterViewModel.Instance.SteamClient?.Shutdown();
-            SteamUpdaterViewModel.Instance.SteamClient?.Dispose();
+            SteamUpdaterViewModel.Instance.Dispose();
             Application.Current.Shutdown();
         }
 
@@ -451,13 +451,16 @@ namespace FASTER
         {
             var properties    = Properties.Settings.Default;
             var modStagingDir = properties.modStagingDirectory;
+            string legacySteamCmdRoot = string.IsNullOrWhiteSpace(LegacySteamCmdPathForConversion)
+                ? properties.steamCMDPath
+                : LegacySteamCmdPathForConversion;
 
             var controller = await this.ShowProgressAsync("Please wait...", "Checking Drive Space...");
             controller.Maximum = properties.steamMods.SteamMods.Count;
             var progress = 0;
 
             long fullzize = 0;
-            foreach (var mod in properties.steamMods.SteamMods.Select(m => Path.Combine(Properties.Settings.Default.steamCMDPath, "steamapps", "workshop", "content", "107410", m.WorkshopId.ToString())).Concat(properties.localMods.Select(m => m.Path)))
+            foreach (var mod in properties.steamMods.SteamMods.Select(m => Path.Combine(legacySteamCmdRoot, "steamapps", "workshop", "content", "107410", m.WorkshopId.ToString())).Concat(properties.localMods.Select(m => m.Path)))
             {
                 if(!Directory.Exists(mod))
                     continue;
@@ -494,7 +497,7 @@ namespace FASTER
             foreach (var steamMod in properties.steamMods.SteamMods)
             {
                 var newPath = Path.Combine(modStagingDir,                            steamMod.WorkshopId.ToString());
-                var oldPath = Path.Combine(Properties.Settings.Default.steamCMDPath, "steamapps", "workshop", "content", "107410", steamMod.WorkshopId.ToString());
+                var oldPath = Path.Combine(legacySteamCmdRoot, "steamapps", "workshop", "content", "107410", steamMod.WorkshopId.ToString());
                 if (!Directory.Exists(newPath))
                     Directory.CreateDirectory(newPath);
 
