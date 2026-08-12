@@ -39,7 +39,6 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
                     <RowDefinition/>
                 </Grid.RowDefinitions>
                 <StackPanel Grid.ColumnSpan="10">
@@ -61,16 +60,7 @@
                     <Button Name="IOpenLogFile" Grid.Column="1" Content="Open Log File" Click="IOpenLogFile_Click" Style="{DynamicResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Padding="8,2" Height="24"/>
                 </Grid>
 
-                <Grid Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Margin="10,20">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
-                    <controls:NumericUpDown Name="NumericUpDown" Margin="0,0,10,0" Grid.Column="0" IsReadOnly="True" HorizontalAlignment="Left" Style="{StaticResource MahApps.Styles.NumericUpDown.DataGrid}" controls:TextBoxHelper.Watermark="Updater Worker Count" controls:TextBoxHelper.UseFloatingWatermark="True"/>
-                    <Slider Name="Slider" Grid.Column="1" IsSnapToTickEnabled="True" Minimum="1" Maximum="50" SmallChange="1" LargeChange="0" ValueChanged="RangeBase_OnValueChanged"/>
-                </Grid>
-
-                <Grid Grid.Row="5" Grid.ColumnSpan="2" Grid.Column="0" Margin="5,10">
+                <Grid Grid.Row="4" Grid.ColumnSpan="2" Grid.Column="0" Margin="5,10">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
                         <ColumnDefinition Width="auto"/>
@@ -79,7 +69,7 @@
                     <Button Grid.Column="1" Name="IAPIKeyButton" Content="{iconPacks:Material Kind=Web}" Style="{DynamicResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" VerticalAlignment="Stretch" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" Margin="5" Padding="2" Click="APIKeyButton_Click"/>
                 </Grid>
 
-                <Grid Grid.Row="6" Grid.ColumnSpan="4" Grid.Column="0">
+                <Grid Grid.Row="5" Grid.ColumnSpan="4" Grid.Column="0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
                         <ColumnDefinition/>

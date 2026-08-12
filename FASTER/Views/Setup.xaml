@@ -21,7 +21,14 @@
                Welcome to FASTER - an unoffical Arma 3 server updater. Use the form below to setup a few options.
             </TextBlock>
             <TextBox x:Name="ISteamUserBox" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Steam Username" Margin="10"/>
-            <PasswordBox x:Name="ISteamPassBox" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Steam Password" Style="{StaticResource MahApps.Styles.PasswordBox.Button.Revealed}" Margin="10"/>
+            <Grid Margin="5,10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBox x:Name="ISteamCmdDirBox" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="SteamCMD Directory" Margin="5"/>
+                <Button Grid.Column="1" Name="ISteamCmdDirButton" Content="{iconPacks:Modern Kind=Folder}" Style="{DynamicResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" VerticalAlignment="Stretch" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" Margin="5" Padding="0" Click="DirButton_Click"/>
+            </Grid>
             <Separator Margin="10"/>
             <Grid Margin="5,10">
                 <Grid.ColumnDefinitions>
