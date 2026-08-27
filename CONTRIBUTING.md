@@ -55,4 +55,4 @@ The changes will be added to the version when the current update is merged back 
 
 ## Getting Help
 
-Join us in the [FASTER Community](https://discord.gg/2BUuZa3) and post your question there in the correct category with a descriptive tag.
+Join us in the [FASTER Community](https://discord.gg/SJxnTNuNJN) and post your question there in the correct category with a descriptive tag.
