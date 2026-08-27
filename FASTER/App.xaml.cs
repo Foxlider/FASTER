@@ -1,10 +1,12 @@
-﻿
+﻿using FASTER.Models;
+
 using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 
 using System;
 using System.Globalization;
+using System.Threading.Tasks;
 using System.Windows;
 using ControlzEx.Theming;
 
@@ -18,6 +20,21 @@ namespace FASTER
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
+
+            AppDomain.CurrentDomain.UnhandledException += (_, args) =>
+                Logger.Log($"[FATAL] Unhandled exception (CLR): {args.ExceptionObject}");
+
+            DispatcherUnhandledException += (_, args) =>
+            {
+                Logger.Log($"[FATAL] Unhandled dispatcher exception: {args.Exception}");
+                args.Handled = true;
+            };
+
+            TaskScheduler.UnobservedTaskException += (_, args) =>
+            {
+                Logger.Log($"[FATAL] Unobserved task exception: {args.Exception}");
+                args.SetObserved();
+            };
 
             var countryCode = RegionInfo.CurrentRegion.TwoLetterISORegionName;
             var userID = AppCenter.GetInstallIdAsync();

@@ -7,6 +7,8 @@ using ControlzEx.Theming;
 using FASTER.Models;
 
 using System;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -129,6 +131,7 @@ namespace FASTER.Views
         {
             IModUpdatesOnLaunch.IsChecked = Properties.Settings.Default?.checkForModUpdates;
             IAppUpdatesOnLaunch.IsChecked = Properties.Settings.Default?.checkForAppUpdates;
+            IEnableDebugLog.IsChecked = Properties.Settings.Default?.enableDebugLog;
             IAPIKeyBox.Text = Properties.Settings.Default?.SteamAPIKey ?? string.Empty;
             Slider.Value = Properties.Settings.Default.CliWorkers;
             NumericUpDown.Value = Slider.Value;
@@ -146,6 +149,22 @@ namespace FASTER.Views
             Properties.Settings.Default.Save();
         }
 
+        private void IEnableDebugLog_Checked(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default.enableDebugLog = IEnableDebugLog.IsChecked ?? false;
+            Properties.Settings.Default.Save();
+            Logger.Log("Debug logging enabled.");
+        }
+
+        private void IOpenLogFile_Click(object sender, RoutedEventArgs e)
+        {
+            var path = Logger.LogFilePath;
+            if (File.Exists(path))
+                Process.Start(new ProcessStartInfo(path) { UseShellExecute = true });
+            else
+                MainWindow.Instance.DisplayMessage($"No log file found at:\n{path}");
+        }
+
         private void IUpdateApp_OnClick(object sender, RoutedEventArgs e)
         { AutoUpdater.Start("https://raw.githubusercontent.com/Foxlider/FASTER/master/FASTER_Version.xml"); }
 
@@ -158,6 +177,7 @@ namespace FASTER.Views
                 Properties.Settings.Default.SteamAPIKey = IAPIKeyBox.Text;
             Properties.Settings.Default.checkForAppUpdates = IAppUpdatesOnLaunch.IsChecked ?? true;
             Properties.Settings.Default.checkForModUpdates = IModUpdatesOnLaunch.IsChecked ?? true;
+            Properties.Settings.Default.enableDebugLog = IEnableDebugLog.IsChecked ?? false;
             Properties.Settings.Default.Save();
         }
 

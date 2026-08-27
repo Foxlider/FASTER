@@ -72,9 +72,9 @@ namespace FASTER.Views
             await ((ModsViewModel)DataContext)?.OpenLauncherFile();
         }
 
-        private void CheckForUpdates_Click(object sender, RoutedEventArgs e)
+        private async void CheckForUpdates_Click(object sender, RoutedEventArgs e)
         {
-            ((ModsViewModel) DataContext)?.CheckForUpdates();
+            await ((ModsViewModel) DataContext)?.CheckForUpdates();
         }
 
         private void UpdateAll_Click(object sender, RoutedEventArgs e)
@@ -85,6 +85,21 @@ namespace FASTER.Views
 		private async void DeleteAll_Click(object sender, RoutedEventArgs e)
         {
             await ((ModsViewModel) DataContext)?.DeleteAllMods();
+        }
+
+        private async void PurgeAndReinstallAll_Click(object sender, RoutedEventArgs e)
+        {
+            await ((ModsViewModel) DataContext)?.PurgeAndReinstallAll();
+        }
+
+        private void PurgeAndReinstallSelected_Click(object sender, RoutedEventArgs e)
+        {
+            ((ModsViewModel) DataContext)?.PurgeAndReinstallSelectedMods();
+        }
+
+        private async void PurgeUnusedMods_Click(object sender, RoutedEventArgs e)
+        {
+            await ((ModsViewModel) DataContext)?.PurgeUnusedMods();
         }
     }
 }
