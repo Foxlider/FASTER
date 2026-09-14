@@ -201,11 +201,9 @@ namespace FASTER.ViewModel
             Properties.Settings.Default.Profiles.Remove(Profile);
             Properties.Settings.Default.Save();
             MainWindow.Instance.ContentProfileViews.Remove(MainWindow.Instance.ContentProfileViews.Find(p => p.Profile.Id == Profile.Id));
-            var menuItem = MainWindow.Instance.IServerProfilesMenu.Items.Cast<ToggleButton>().FirstOrDefault(p => p.Name == Profile.Id);
-            if(menuItem != null)
-                MainWindow.Instance.IServerProfilesMenu.Items.Remove(menuItem);
 
             MainWindow.Instance.NavigateToConsole();
+            MainWindow.Instance.LoadServerProfiles();
         }
 
         internal void SaveProfile()
