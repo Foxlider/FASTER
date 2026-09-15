@@ -1,14 +1,31 @@
 # .github/dependabot.yml
 version: 2
+
 updates:
+
+  # GitHub Actions
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
       day: "monday"
     open-pull-requests-limit: 10
     labels:
       - "dependencies"
       - "github-actions"
+      - "ci"
     commit-message:
       prefix: "chore(actions)"
+
+  # NuGet packages
+  - package-ecosystem: "nuget"
+    directory: "/Faster"
+    schedule:
+      interval: "monthly"
+      day: "monday"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+      - "nuget"
+    commit-message:
+      prefix: "chore(nuget)"
