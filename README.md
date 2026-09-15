@@ -39,7 +39,7 @@ Thanks go out to all the guys who helped the developpment and those who will tes
   - Automated Update process
 
 - SteamCMD Automation
-  - Install and update Arma 3 Server (Stable, Dev, DLCs)
+  - Install and update Arma 3 Server (Stable, Performance, DLCs)
   - Install, update and manage Arma 3 Workshop mods
   - Import installed Steam Mods
   - Supports Steam Guard and Mobile Auth
