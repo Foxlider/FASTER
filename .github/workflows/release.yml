@@ -105,7 +105,7 @@ jobs:
         path: ./artifacts
     
     - name: get-net-sdk-project-versions-action
-      uses: kzrnm/get-net-sdk-project-versions-action@a87bd04ef7a3ec0a469fb5b93cbfe8a9c2e08048 # v2.0.0
+      uses: kzrnm/get-net-sdk-project-versions-action@c33b25a7eeaf70f65fc346fac2306d7d2ada2d66 # v2.0.0
       id: get-version
       with:
         proj-path: ./FASTER/FASTER.csproj
