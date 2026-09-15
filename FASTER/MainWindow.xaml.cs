@@ -184,9 +184,9 @@ namespace FASTER
         private void ToggleButton_Click(object sender, RoutedEventArgs e)
         {
             var list = new List<ToggleButton>();
-            list.AddRange(IMainMenuItems.Items.Cast<ToggleButton>().Where(i => i.IsChecked == true));
-            list.AddRange(GetProfileToggleButtons(IServerProfilesMenu).Where(i => i.IsChecked == true));
-            list.AddRange(IOtherMenuItems.Items.Cast<ToggleButton>().Where(i => i.IsChecked == true));
+            list.AddRange(IMainMenuItems.Items.Cast<ToggleButton>().Where(i => i.IsChecked.GetValueOrDefault()));
+            list.AddRange(GetProfileToggleButtons(IServerProfilesMenu).Where(i => i.IsChecked.GetValueOrDefault()));
+            list.AddRange(IOtherMenuItems.Items.Cast<ToggleButton>().Where(i => i.IsChecked.GetValueOrDefault()));
 
             if (sender is not ToggleButton nav || !NavEnabled) return;
 
