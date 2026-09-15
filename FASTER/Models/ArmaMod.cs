@@ -83,7 +83,7 @@ namespace FASTER.Models
         }
 
 
-        public event PropertyChangedEventHandler? PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
         private void RaisePropertyChanged(string property)
         { PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property)); }
     }
@@ -376,7 +376,7 @@ namespace FASTER.Models
             return a.Select(name => new FileInfo(name)).Select(info => info.Length).Sum();
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         internal void RaisePropertyChanged(string property)
         {

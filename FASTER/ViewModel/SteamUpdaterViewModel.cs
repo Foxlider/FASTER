@@ -857,7 +857,7 @@ namespace FASTER.ViewModel
         public async Task<MessageDialogResult> SteamGuardInputPhone()
         { return await DialogCoordinator.ShowMessageAsync(this, "Steam Guard", "Press OK after accepting authentification on mobile\nOr press Cancel to enter a 2FA Code", MessageDialogStyle.AffirmativeAndNegative); }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         private void RaisePropertyChanged(string property)
         {
