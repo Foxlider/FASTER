@@ -2,7 +2,6 @@
 version: 2
 
 updates:
-
   # GitHub Actions
   - package-ecosystem: "github-actions"
     directory: "/"
@@ -15,10 +14,15 @@ updates:
       - "github-actions"
     commit-message:
       prefix: "chore(actions)"
+    groups:
+      actions-minor-patch:
+        update-types:
+          - "minor"
+          - "patch"
 
   # NuGet packages
   - package-ecosystem: "nuget"
-    directory: "/Faster"
+    directory: "/"
     schedule:
       interval: "weekly"
       day: "monday"
@@ -28,3 +32,8 @@ updates:
       - "nuget"
     commit-message:
       prefix: "chore(nuget)"
+    groups:
+      nuget-minor-patch:
+        update-types:
+          - "minor"
+          - "patch"
