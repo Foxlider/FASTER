@@ -483,88 +483,88 @@ namespace FASTER.ViewModel
         }
 
         private async Task DownloadModAsync(ArmaMod mod)
-    {
-    Logger.Log($"  Task started: {mod.WorkshopId} ({mod.Name}), path={mod.Path}");
-    try
-    {
-        if (!Directory.Exists(mod.Path))
         {
-            Logger.Log($"  Creating dir: {mod.Path}");
-            Directory.CreateDirectory(mod.Path);
+            Logger.Log($"  Task started: {mod.WorkshopId} ({mod.Name}), path={mod.Path}");
+            try
+            {
+                if (!Directory.Exists(mod.Path))
+                {
+                    Logger.Log($"  Creating dir: {mod.Path}");
+                    Directory.CreateDirectory(mod.Path);
+                }
+
+                if (tokenSource.Token.IsCancellationRequested)
+                {
+                    Logger.Log($"  Cancellation requested before {mod.WorkshopId}, skipping.");
+                    return;
+                }
+                Parameters.Output += $"\n   Starting {mod.WorkshopId}";
+
+                Stopwatch sw = Stopwatch.StartNew();
+                try
+                {
+                    await DownloadModContentAsync(mod);
+                }
+                catch (TaskCanceledException)
+                {
+                   Logger.Log($"  {mod.WorkshopId} task cancelled.");
+                   sw.Stop();
+                   mod.Status = ArmaModStatus.NotComplete;
+                }
+                catch (Exception ex)
+                {
+                    Logger.Log($"  ERROR downloading {mod.WorkshopId}: {ex.GetType().Name}: {ex.Message}{(ex.InnerException != null ? $" | Inner: {ex.InnerException.Message}" : "")}\n  StackTrace: {ex.StackTrace}");
+                    sw.Stop();
+                    mod.Status = ArmaModStatus.NotComplete;
+                    Parameters.Output += $"\nError: {ex.Message}{(ex.InnerException != null ? $" Inner Exception: {ex.InnerException.Message}" : "")}";
+                }
+                sw.Stop();
+
+                mod.CheckModSize();
+                Parameters.Output += $"\n    Download {mod.WorkshopId} completed, it took {sw.Elapsed.Minutes + sw.Elapsed.Hours*60}m {sw.Elapsed.Seconds}s {sw.Elapsed.Milliseconds}ms";
+            }
+            catch (Exception ex)
+            {
+                Logger.Log($"  UNHANDLED ERROR in task for {mod.WorkshopId}: {ex.GetType().Name}: {ex.Message}\n  StackTrace: {ex.StackTrace}");
+            }
         }
 
-        if (tokenSource.Token.IsCancellationRequested)
+        private async Task DownloadModContentAsync(ArmaMod mod)
         {
-            Logger.Log($"  Cancellation requested before {mod.WorkshopId}, skipping.");
-            return;
+            ManifestId manifestId = default;
+
+            if (mod.LocalLastUpdated > mod.SteamLastUpdated && mod.Size > 0)
+            {
+                mod.Status = ArmaModStatus.UpToDate;
+                Parameters.Output += $"\n   Mod{mod.WorkshopId} already up to date. Ignoring...";
+                Logger.Log($"  {mod.WorkshopId} already up to date, skipping.");
+                return;
+            }
+
+            if (!SteamClient.Credentials.IsAnonymous)
+            {
+                Logger.Log($"  Getting manifest for {mod.WorkshopId}");
+                Parameters.Output += $"\n   Getting manifest for {mod.WorkshopId}";
+                manifestId = (await SteamContentClient.GetPublishedFileDetailsAsync(mod.WorkshopId)).hcontent_file;
+                Manifest manifest = await SteamContentClient.GetManifestAsync(107410, 107410, manifestId);
+                Parameters.Output += $"\n   Manifest retrieved {mod.WorkshopId}";
+                Logger.Log($"  Manifest retrieved for {mod.WorkshopId}, syncing deleted files...");
+                SyncDeleteRemovedFiles(mod.Path, manifest);
+            }
+
+           Logger.Log($"  Requesting download handler for {mod.WorkshopId}");
+           Parameters.Output += $"\n    Attempting to start download of item {mod.WorkshopId}... ";
+
+           var downloadHandler = await SteamContentClient.GetPublishedFileDataAsync(mod.WorkshopId, manifestId, tokenSource.Token);
+           Logger.Log($"  Download handler obtained for {mod.WorkshopId}, starting download...");
+           await DownloadForMultiple(downloadHandler, mod.Path);
+           Logger.Log($"  Download complete for {mod.WorkshopId}");
+
+           mod.Status = ArmaModStatus.UpToDate;
+           var nx = DateTime.UnixEpoch;
+           var ts = DateTime.UtcNow - nx;
+           mod.LocalLastUpdated = (ulong)ts.TotalSeconds;
         }
-        Parameters.Output += $"\n   Starting {mod.WorkshopId}";
-
-        Stopwatch sw = Stopwatch.StartNew();
-        try
-        {
-            await DownloadModContentAsync(mod);
-        }
-        catch (TaskCanceledException)
-        {
-            Logger.Log($"  {mod.WorkshopId} task cancelled.");
-            sw.Stop();
-            mod.Status = ArmaModStatus.NotComplete;
-        }
-        catch (Exception ex)
-        {
-            Logger.Log($"  ERROR downloading {mod.WorkshopId}: {ex.GetType().Name}: {ex.Message}{(ex.InnerException != null ? $" | Inner: {ex.InnerException.Message}" : "")}\n  StackTrace: {ex.StackTrace}");
-            sw.Stop();
-            mod.Status = ArmaModStatus.NotComplete;
-            Parameters.Output += $"\nError: {ex.Message}{(ex.InnerException != null ? $" Inner Exception: {ex.InnerException.Message}" : "")}";
-        }
-        sw.Stop();
-
-        mod.CheckModSize();
-        Parameters.Output += $"\n    Download {mod.WorkshopId} completed, it took {sw.Elapsed.Minutes + sw.Elapsed.Hours*60}m {sw.Elapsed.Seconds}s {sw.Elapsed.Milliseconds}ms";
-    }
-    catch (Exception ex)
-    {
-        Logger.Log($"  UNHANDLED ERROR in task for {mod.WorkshopId}: {ex.GetType().Name}: {ex.Message}\n  StackTrace: {ex.StackTrace}");
-    }
-}
-
-private async Task DownloadModContentAsync(ArmaMod mod)
-{
-    ManifestId manifestId = default;
-
-    if (mod.LocalLastUpdated > mod.SteamLastUpdated && mod.Size > 0)
-    {
-        mod.Status = ArmaModStatus.UpToDate;
-        Parameters.Output += $"\n   Mod{mod.WorkshopId} already up to date. Ignoring...";
-        Logger.Log($"  {mod.WorkshopId} already up to date, skipping.");
-        return;
-    }
-
-    if (!SteamClient.Credentials.IsAnonymous)
-    {
-        Logger.Log($"  Getting manifest for {mod.WorkshopId}");
-        Parameters.Output += $"\n   Getting manifest for {mod.WorkshopId}";
-        manifestId = (await SteamContentClient.GetPublishedFileDetailsAsync(mod.WorkshopId)).hcontent_file;
-        Manifest manifest = await SteamContentClient.GetManifestAsync(107410, 107410, manifestId);
-        Parameters.Output += $"\n   Manifest retrieved {mod.WorkshopId}";
-        Logger.Log($"  Manifest retrieved for {mod.WorkshopId}, syncing deleted files...");
-        SyncDeleteRemovedFiles(mod.Path, manifest);
-    }
-
-    Logger.Log($"  Requesting download handler for {mod.WorkshopId}");
-    Parameters.Output += $"\n    Attempting to start download of item {mod.WorkshopId}... ";
-
-    var downloadHandler = await SteamContentClient.GetPublishedFileDataAsync(mod.WorkshopId, manifestId, tokenSource.Token);
-    Logger.Log($"  Download handler obtained for {mod.WorkshopId}, starting download...");
-    await DownloadForMultiple(downloadHandler, mod.Path);
-    Logger.Log($"  Download complete for {mod.WorkshopId}");
-
-    mod.Status = ArmaModStatus.UpToDate;
-    var nx = DateTime.UnixEpoch;
-    var ts = DateTime.UtcNow - nx;
-    mod.LocalLastUpdated = (ulong)ts.TotalSeconds;
-}
 
         internal async Task<bool> SteamLogin()
         {
@@ -603,7 +603,7 @@ private async Task DownloadModContentAsync(ArmaMod mod)
                 {
                     Logger.Log($"SteamLogin: ConnectAsync failed: {ex.GetType().Name}: {ex.Message}\nStackTrace: {ex.StackTrace}");
                     Parameters.Output += $"\nFailed! Error: {ex.Message}";
-                    var savedUsername = SteamClient?.Credentials.Username;
+                    var savedUsername = SteamClient.Credentials.Username;
                     SteamClient.Shutdown();
                     SteamClient.Dispose();
                     SteamClient = null;
