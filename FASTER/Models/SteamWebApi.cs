@@ -84,9 +84,13 @@ namespace FASTER.Models
             // Display the status.
             Console.WriteLine((response)?.StatusCode);
 
-            return response == null
-                       ? null
-                       : JObject.Parse(response.Content.ReadAsStringAsync().Result);
+            if (response == null)
+                return null;
+
+            if (!response.IsSuccessStatusCode)
+                throw new HttpRequestException($"Steam API returned HTTP {(int)response.StatusCode} {response.StatusCode}. Please check your Steam API Key in Settings.");
+
+            return JObject.Parse(response.Content.ReadAsStringAsync().Result);
 
             // Return the response
         }

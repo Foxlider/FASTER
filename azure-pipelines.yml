@@ -6,39 +6,59 @@
 trigger:
 - master
 
+pr:
+- master
+
 pool:
-  vmImage: 'windows-2019'
+  vmImage: 'windows-2022'
 
 variables:
   buildConfiguration: 'Release'
 
 steps:
+- checkout: self
+  submodules: recursive
+  displayName: 'Checkout (with submodules)'
+
 - task: UseDotNet@2
-  displayName: 'Use DotNet 3.0'
+  displayName: 'Use DotNet 8.0'
   inputs:
     packageType: 'sdk'
-    version: '3.x'
+    version: '8.0.x'
     includePreviewVersions: false
 
 - task: DotNetCoreCLI@2
   displayName: 'Dotnet Restore'
   inputs:
     command: 'restore'
+    projects: 'FASTER.sln'
     feedsToUse: 'select'
 
-- task: SonarCloudPrepare@1
+- task: SonarCloudPrepare@4
   inputs:
     SonarCloud: 'SonarCloud'
     organization: 'foxlicorp'
-    scannerMode: 'MSBuild'
+    scannerMode: 'dotnet'
     projectKey: 'FASTER_App'
     projectName: 'FASTER_App'
     projectVersion: '$(Build.BuildNumber)'
-    
-- script: dotnet build --configuration $(buildConfiguration)
+
+- script: dotnet build --configuration $(buildConfiguration) --no-restore
   displayName: 'Dotnet Build $(buildConfiguration)'
 
-- task: SonarCloudAnalyze@1
+- task: DotNetCoreCLI@2
+  displayName: 'Dotnet Test (with coverage)'
+  inputs:
+    command: 'test'
+    projects: 'FASTERTests/FASTERTests.csproj'
+    arguments: '--configuration $(buildConfiguration) --no-restore --no-build --collect:"Code Coverage"'
+
+- task: SonarCloudAnalyze@4
+
+- task: SonarCloudPublish@4
+  displayName: 'Publish SonarCloud Quality Gate result'
+  inputs:
+    pollingTimeoutSec: '300'
 
 - task: DotNetCoreCLI@2
   displayName: 'Dotnet Publish $(buildConfiguration) x64'
@@ -48,17 +68,9 @@ steps:
     arguments: '--configuration $(BuildConfiguration) -r win-x64 --self-contained true --output $(Build.ArtifactStagingDirectory)\Release_x64'
     zipAfterPublish: True
 
-- task: DotNetCoreCLI@2
-  displayName: 'Dotnet Publish $(buildConfiguration) x86'
-  inputs:
-    command: publish
-    publishWebProjects: False
-    arguments: '--configuration $(BuildConfiguration) -r win-x86 --self-contained true --output $(Build.ArtifactStagingDirectory)\Release_x86'
-    zipAfterPublish: True
-
-- task: PublishBuildArtifacts@1
+- task: PublishPipelineArtifact@1
   displayName: 'Publish artifacts'
   inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-    ArtifactName: 'FASTER_master_build'
-    publishLocation: 'Container'
+    targetPath: '$(Build.ArtifactStagingDirectory)'
+    artifact: 'FASTER_master_build'
+    publishLocation: 'pipeline'

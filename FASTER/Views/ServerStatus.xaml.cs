@@ -531,7 +531,7 @@ namespace FASTER.Views
         }
 
         #region INotifyPropertyChanged implementation
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
  
         protected virtual void OnPropertyChanged(string propertyName = null)
         { PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName)); }

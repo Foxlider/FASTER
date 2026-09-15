@@ -51,6 +51,12 @@
             <Button ToolTip="Delete All"
                     Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Padding="7,5"
                     Content="{iconPacks:Modern Kind=Delete}" Click="DeleteAll_Click" RenderTransformOrigin="0.258,42.716" />
+            <Button ToolTip="Purge &amp; Reinstall All (deletes mod folders and marks all Steam mods for re-download)"
+                    Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Padding="7,5"
+                    Content="{iconPacks:Material Kind=Nuke}" Click="PurgeAndReinstallAll_Click" />
+            <Button ToolTip="Purge Unused Mods (removes mods not assigned to any server profile)"
+                    Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Padding="7,5"
+                    Content="{iconPacks:Material Kind=Broom}" Click="PurgeUnusedMods_Click" />
         </StackPanel>
         <Grid Grid.Row="0" Grid.Column="1">
             <Grid.Effect>
@@ -83,7 +89,12 @@
 					    <MenuItem.Icon>
 						    <iconPacks:PackIconMaterial Kind="Delete" Margin="5"/>
 					    </MenuItem.Icon>
-					</MenuItem>	
+					</MenuItem>
+                    <MenuItem Tag="PurgeAndReinstall" Header="Purge &amp; Reinstall" Click="PurgeAndReinstallSelected_Click">
+                        <MenuItem.Icon>
+                            <iconPacks:PackIconMaterial Kind="Nuke" Margin="5"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
                 </ContextMenu>
             </DataGrid.ContextMenu>
             <DataGrid.Effect>

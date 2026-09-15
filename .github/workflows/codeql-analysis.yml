@@ -10,6 +10,9 @@ on:
     branches: [ master ]
   workflow_dispatch: # CodeQL can be triggered manually
 
+env:
+  DOTNET_VERSION: '8.0.x'
+
 jobs:
   analyzeQL:
     name: Analyze with CodeQL

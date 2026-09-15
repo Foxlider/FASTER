@@ -11,7 +11,7 @@
         <SignAssembly>True</SignAssembly>
         <AssemblyOriginatorKeyFile>FASTERKey.snk</AssemblyOriginatorKeyFile>
         <Authors>Keelah Fox, Jupster, Canno.n</Authors>
-        <Version>1.9.7.2</Version>
+        <Version>1.9.7.3</Version>
         <Company>FoxliCorp.</Company>
         <Description>Fox's Arma Server Tool Extended Rewrite</Description>
         <Copyright>Copyright © 2019</Copyright>
@@ -63,7 +63,7 @@
     <None Remove="Resources\FasterSplash.png" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Autoupdater.NET.Official" Version="1.9.2" />
+    <PackageReference Include="Autoupdater.NET.Official" Version="1.9.3" />
     <PackageReference Include="FontAwesome.WPF" Version="4.7.0.9" />
     <PackageReference Include="LiveCharts.Wpf" Version="0.9.7" />
     <PackageReference Include="MahApps.Metro" Version="2.4.10" />
