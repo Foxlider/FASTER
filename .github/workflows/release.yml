@@ -1,6 +1,5 @@
 name: "Release Generator"
 
-# after successful analysis on the main branch, a new pre-release is generated
 on:
   #Makes a Nightly release after a successful build on master
   workflow_run:
@@ -105,7 +104,7 @@ jobs:
         path: ./artifacts
     
     - name: get-net-sdk-project-versions-action
-      uses: kzrnm/get-net-sdk-project-versions-action@c33b25a7eeaf70f65fc346fac2306d7d2ada2d66 # v2.0.0
+      uses: kzrnm/get-net-sdk-project-versions-action@7d62715f5720ec339d39ab4a43b365391ad96db9 # v3.1.0
       id: get-version
       with:
         proj-path: ./FASTER/FASTER.csproj
@@ -195,33 +194,18 @@ jobs:
     #Create Release
     - name: Create Release
       if: env.IS_RELEASE == 'true'
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+      uses: softprops/action-gh-release@e598afbe1493e6b1bafb1f389cabb956eab91231 # v3.0.3
       with:
-        tag_name: '${{ env.VERSION }}'
-        release_name: 'Release ${{ env.VERSION }}'
-        body: | 
-          Changelog since release ${{ steps.get-changes.outputs.tag }} :  
-          ---  
+        tag_name: ${{ env.VERSION }}
+        name: 'Release ${{ env.VERSION }}'
+        body: |
+          Changelog since release ${{ steps.get-changes.outputs.tag }} :
+          ---
           ${{ steps.get-changes.outputs.changes }}
-          ---  
+          ---
         draft: false
-        prerelease: ${{ env.IS_RELEASE == 'false' }}
-
-    # Upload Artifacts
-    - name: Upload Release Asset
-      if: env.IS_RELEASE == 'true'
-      id: upload-release-asset 
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-        asset_path: ./artifacts/${{ env.ZIP_NAME}}x64.zip
-        asset_name: ${{ env.ZIP_NAME}}x64.zip
-        asset_content_type: application/zip
+        prerelease: false
+        files: ./artifacts/${{ env.ZIP_NAME}}x64.zip
     
     # Delete existing nightly release and tag so it can be recreated cleanly
     - name: Delete existing nightly release and tag
@@ -236,7 +220,7 @@ jobs:
     # Create Nightly Release
     - name: Create Nightly Release
       if: env.IS_RELEASE == 'false'
-      uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65 # v2.6.2
+      uses: softprops/action-gh-release@e598afbe1493e6b1bafb1f389cabb956eab91231 # v3.0.3
       with:
         tag_name: nightly
         name: 'Nightly Release v${{ env.VERSION }}'
