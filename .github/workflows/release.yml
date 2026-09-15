@@ -235,7 +235,7 @@ jobs:
     # Create Nightly Release
     - name: Create Nightly Release
       if: env.IS_RELEASE == 'false'
-      uses: softprops/action-gh-release@v2
+      uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65 # v2.6.2
       with:
         tag_name: nightly
         name: 'Nightly Release v${{ env.VERSION }}'
