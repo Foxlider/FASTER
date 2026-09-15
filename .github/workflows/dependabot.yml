@@ -7,13 +7,12 @@ updates:
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "monthly"
+      interval: "weekly"
       day: "monday"
     open-pull-requests-limit: 10
     labels:
       - "dependencies"
       - "github-actions"
-      - "ci"
     commit-message:
       prefix: "chore(actions)"
 
@@ -21,7 +20,7 @@ updates:
   - package-ecosystem: "nuget"
     directory: "/Faster"
     schedule:
-      interval: "monthly"
+      interval: "weekly"
       day: "monday"
     open-pull-requests-limit: 10
     labels:
