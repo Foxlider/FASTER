@@ -13,6 +13,9 @@ on:
       - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
   workflow_dispatch: # ReleaseGen can be triggered manually
 
+permissions:
+  contents: read
+
 env:
   DOTNET_VERSION: '8.0.x'
   IS_RELEASE: ${{ github.ref_type == 'tag' }}
