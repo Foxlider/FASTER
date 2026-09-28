@@ -20,8 +20,8 @@ namespace FASTER.Models
         private double terrainGrid  = 25;
 
         private ushort maxMsgSend           = 128;
-        private ushort maxSizeGuaranteed    = 256;
-        private ushort maxSizeNonguaranteed = 512;
+        private ushort maxSizeGuaranteed    = 512;
+        private ushort maxSizeNonguaranteed = 256;
         private ulong  minBandwidth         = 131072;
         private ulong  maxBandwidth         = int.MaxValue;
         private double minErrorToSend       = 0.001;
