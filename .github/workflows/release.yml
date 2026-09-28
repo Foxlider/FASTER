@@ -23,7 +23,7 @@ jobs:
 
   # BUILD APP
   build:
-    if: ( github.event.workflow_run.conclusion == 'success' ) || startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
+    if: ( github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' ) || startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
     strategy:
       matrix:
         # runtime: [x64, x86]
@@ -44,6 +44,7 @@ jobs:
       uses: actions/checkout@v4
       with:
         submodules: true
+        ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
     # Install the .NET Core workload
     - name: Install .NET Core
@@ -96,6 +97,7 @@ jobs:
       with:
         submodules: true
         fetch-depth: 0 # required for tags history processing
+        ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
     - name: Download x64 artifact
       uses: actions/download-artifact@v4
@@ -160,7 +162,7 @@ jobs:
         # Truncate changelog to avoid exceeding env var limits (max ~32k)
         $changesStr = $changes -join "`n"
         if ($changesStr.Length -gt 20000) {
-          $truncationWarning = "`n⚠️ **Note:** Changelog truncated at 20,000 characters. See [full commit history](https://github.com/Foxlider/FASTER/releases/latest/{{ github.repository }}/commits/${{ github.ref }})"
+          $truncationWarning = "`n⚠️ **Note:** Changelog truncated at 20,000 characters. See [full commit history](https://github.com/${{ github.repository }}/commits/${{ github.ref_name }})"
           $changesStr = $changesStr.Substring(0, 20000) + "`n`n...(truncated)`n" + $truncationWarning
         }
 
@@ -185,7 +187,7 @@ jobs:
       id: set_version
       run: |
         if ($env:IS_RELEASE -eq "true") {
-          echo "VERSION=$env:GITHUB_REF" >> $env:GITHUB_ENV
+          echo "VERSION=$env:GITHUB_REF_NAME" >> $env:GITHUB_ENV
         } else {
           echo "VERSION=${{ steps.get-version.outputs.version }}" >> $env:GITHUB_ENV
         }
