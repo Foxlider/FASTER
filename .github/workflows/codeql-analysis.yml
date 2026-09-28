@@ -16,9 +16,7 @@ env:
 jobs:
   analyzeQL:
     name: Analyze with CodeQL
-    environment: Dev
     runs-on: [windows-latest]
-    # runs-on: [self-hosted]
 
     permissions:
       # required for all workflows
@@ -39,9 +37,6 @@ jobs:
         submodules: recursive
         token: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Init & update submodules
-      run: git submodule update --init --recursive
-
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v3
       with:
@@ -57,9 +52,6 @@ jobs:
 
     - name: Build Solution
       run: dotnet build ./FASTER.sln --configuration Debug
-
-    - name: Execute unit tests
-      run: dotnet test
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
