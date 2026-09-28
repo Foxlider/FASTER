@@ -203,7 +203,7 @@ namespace FASTER.Models
             get => string.Join("\n", localClient);
             set
             {
-                localClient = value.Split('\n').ToList();
+                localClient = value.Replace("\r", "").Split('\n').ToList();
                 RaisePropertyChanged(nameof(LocalClient));
             }
         }
@@ -982,6 +982,7 @@ namespace FASTER.Models
                           + $"onUserConnected = \"{onUserConnected}\";\t\t\t//\r\n"
                           + $"onUserDisconnected = \"{onUserDisconnected}\";\t\t\t//\r\n"
                           + $"doubleIdDetected = \"{doubleIdDetected}\";\t\t\t//\r\n"
+						  + $"onUserKicked = \"{onUserKicked}\";\t\t\t\t//\r\n"
                           + "\r\n"
                           + "// SIGNATURE VERIFICATION\r\n"
                           + $"onUnsignedData = \"{onUnsignedData}\";\t// unsigned data detected\r\n"
