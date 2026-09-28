@@ -42,16 +42,17 @@ steps:
     projectKey: 'FASTER_App'
     projectName: 'FASTER_App'
     projectVersion: '$(Build.BuildNumber)'
+    extraProperties: |
+      sonar.cs.vscoveragexml.reportsPaths=$(Agent.TempDirectory)\coverage.xml
 
 - script: dotnet build --configuration $(buildConfiguration) --no-restore
   displayName: 'Dotnet Build $(buildConfiguration)'
 
-- task: DotNetCoreCLI@2
+- script: dotnet tool update --global dotnet-coverage
+  displayName: 'Install dotnet-coverage'
+
+- script: dotnet-coverage collect "dotnet test FASTERTests/FASTERTests.csproj --configuration $(buildConfiguration) --no-restore --no-build" -f xml -o "$(Agent.TempDirectory)\coverage.xml"
   displayName: 'Dotnet Test (with coverage)'
-  inputs:
-    command: 'test'
-    projects: 'FASTERTests/FASTERTests.csproj'
-    arguments: '--configuration $(buildConfiguration) --no-restore --no-build --collect:"Code Coverage"'
 
 - task: SonarCloudAnalyze@4.2.6
 
