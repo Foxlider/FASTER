@@ -234,3 +234,20 @@ jobs:
           ---
         prerelease: true
         files: ./artifacts/${{ env.ZIP_NAME}}x64.zip
+
+  # PUBLISH TO WINGET (tagged releases only)
+  winget:
+    needs: release
+    if: github.ref_type == 'tag'
+    runs-on: windows-latest
+    steps:
+      # Requires forked winget-pkgs: https://github.com/microsoft/winget-pkgs to the same account as this project
+      - name: Submit to WinGet
+        uses: vedantmgoyal9/winget-releaser@4ffc7888bffd451b357355dc214d43bb9f23917e #v2
+        with:
+          identifier: Foxlider.FASTER
+          installers-regex: 'Release_x64.zip'
+          max-versions-to-keep: 5
+          release-tag: ${{ github.ref_name }}
+          # Classic Personal Access Token with [public_repo, workflow] scopes
+          token: ${{ secrets.WINGET_TOKEN }}
