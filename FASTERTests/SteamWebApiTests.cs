@@ -8,6 +8,7 @@ namespace FASTER.Models.Tests
     public class SteamWebApiTests
     {
         [Test()]
+		[Category("Network")]
         public void GetSingleFileDetailsTest()
         {
             var res = SteamWebApi.GetSingleFileDetails(463939057);

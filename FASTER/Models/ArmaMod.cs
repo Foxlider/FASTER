@@ -105,6 +105,14 @@ namespace FASTER.Models
         private long   _size;
         private bool   _isLoading;
         private bool   _isSelected;
+        private static bool _apiKeyWarningShown = false;
+
+        private static bool TryShowApiKeyWarning()
+        {
+            if (_apiKeyWarningShown) return false;
+            _apiKeyWarningShown = true;
+            return true;
+        }
 
 
         public uint   WorkshopId
@@ -337,6 +345,12 @@ namespace FASTER.Models
                 success = true;
             } while (failNum < 3 && !success);
 
+            if (!success && TryShowApiKeyWarning())
+            {
+                MainWindow.Instance?.Dispatcher.Invoke(() =>
+                    MainWindow.Instance.DisplayMessage("Could not fetch mod info. Please check your Steam API Key in Settings."));
+            }
+
             if (checkFileSize)
                 CheckModSize();
 
@@ -362,7 +376,7 @@ namespace FASTER.Models
             return a.Select(name => new FileInfo(name)).Select(info => info.Length).Sum();
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         internal void RaisePropertyChanged(string property)
         {

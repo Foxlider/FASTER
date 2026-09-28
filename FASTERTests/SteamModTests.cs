@@ -21,6 +21,7 @@ namespace FASTER.Models.Tests
 
 
         [Test()]
+		[Category("Network")]
         public void GetModInfoTest()
         {
             Tuple<string, string, int> expected = new Tuple<string, string, int>("ace", "acemod", 1577907553);
