@@ -15,7 +15,7 @@ public static class ModUtilities
     // We're parsing to ArmaMod instead of ProfileMod because there's more info on the ArmaMod object and we can thus re-use this function
     public static List<ArmaMod> ParseModsFromArmaProfileFile(string filePath)
     {
-        if (!File.Exists(filePath)) // This should never happen, but it pays to be safe.
+        if (!File.Exists(filePath))
             return new List<ArmaMod>();
         var lines = File.ReadAllText(filePath);
 
