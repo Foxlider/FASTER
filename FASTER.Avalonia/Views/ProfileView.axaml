@@ -485,7 +485,7 @@
       </TabItem>
     </TabControl>
     <Grid Grid.Row="1" ColumnDefinitions="*,Auto">
-      <StackPanel Grid.Column="0" HorizontalAlignment="Left" Margin="8,10" Orientation="Horizontal" Spacing="6">
+      <StackPanel Grid.Column="0" HorizontalAlignment="Left" Margin="5,10,8,10" Orientation="Horizontal" Spacing="6">
         <Button Classes="accent" ToolTip.Tip="Save Profile" Click="SaveProfile">
           <materialIcons:MaterialIcon Kind="ContentSave" Width="18" Height="18" />
         </Button>

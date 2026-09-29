@@ -94,7 +94,7 @@
     <Setter Property="Foreground" Value="White" />
     <Setter Property="FontWeight" Value="Bold" />
     <Setter Property="FontSize" Value="13" />
-    <Setter Property="Padding" Value="8,5" />
+    <Setter Property="Padding" Value="8,5,8,2" />
   </Style>
   <Style Selector="TextBlock.card-title">
     <Setter Property="FontWeight" Value="Bold" />
@@ -149,6 +149,7 @@
     <Setter Property="Background" Value="#CC119EDA" />
     <Setter Property="Foreground" Value="White" />
     <Setter Property="FontWeight" Value="Bold" />
+    <Setter Property="MinHeight" Value="0" />
     <Setter Property="Padding" Value="8,5,8,2" />
   </Style>
   <Style Selector="Expander.bar /template/ ToggleButton#ExpanderHeader:pointerover">
