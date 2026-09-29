@@ -222,7 +222,7 @@ namespace FASTER.ViewModel
         /// </summary>
         /// <param name="mod"></param>
         /// <param name="linkPath"></param>
-        private void LinkMod(DeploymentMod mod, string linkPath)
+        private bool LinkMod(DeploymentMod mod, string linkPath)
         {
             Logger.Log($"LinkMod: {mod.Name} ({mod.WorkshopId}) -> {linkPath}");
             try
