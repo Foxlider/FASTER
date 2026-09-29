@@ -37,10 +37,13 @@
         <Grid Grid.Row="1" RowDefinitions="Auto,*">
           <DockPanel Grid.Row="0" Margin="8,4">
             <TextBlock Text="Server Profiles" FontWeight="Bold" FontSize="14" VerticalAlignment="Center" />
-            <Button Name="AddProfileButton" Classes="accent" Content="+" FontWeight="Bold"
-                    FontSize="20" Width="28" Height="28" Padding="0,3,0,0"
+            <Button Name="AddProfileButton" Classes="accent"
+                    Width="28" Height="28" Padding="0"
                     HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
-                    HorizontalAlignment="Right" Click="AddProfileButton_Click" />
+                    HorizontalAlignment="Right" VerticalAlignment="Center"
+                    Click="AddProfileButton_Click" ToolTip.Tip="New profile">
+              <materialIcons:MaterialIcon Kind="Plus" Width="18" Height="18" />
+            </Button>
           </DockPanel>
           <ListBox Grid.Row="1" Name="ProfilesList" Classes="side" ItemsSource="{Binding Profiles}"
                    Margin="8,0,8,4" SelectionChanged="ProfilesList_SelectionChanged">
