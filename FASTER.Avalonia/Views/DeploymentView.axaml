@@ -11,9 +11,10 @@
   <Grid RowDefinitions="Auto,*">
     <DockPanel Margin="10,10,5,5">
       <Grid DockPanel.Dock="Left" ColumnDefinitions="*,Auto">
-        <TextBox Grid.Column="0" IsReadOnly="True" Text="{Binding Deployment.InstallPath}"
+        <TextBox Grid.Column="0" x:Name="InstallDirBox" IsReadOnly="True" Text="{Binding Deployment.InstallPath}"
                  Watermark="Install Directory" />
-        <Button Grid.Column="1" Classes="accent" Margin="5,0" Padding="8,2" Click="InstallFolder_Click">
+        <Button Grid.Column="1" Classes="accent" Margin="5,0" Padding="8,2" Click="InstallFolder_Click"
+                Height="{Binding #InstallDirBox.Bounds.Height}" VerticalAlignment="Center">
           <materialIcons:MaterialIcon Kind="Folder" Width="18" Height="18" />
         </Button>
       </Grid>
