@@ -22,7 +22,7 @@ public partial class ServerStatusView : UserControl
 
     private readonly ObservableCollection<double> _cpuHistory = new();
     private readonly DispatcherTimer _timer = new() { Interval = TimeSpan.FromMilliseconds(500) };
-    private static readonly int[] s_intervalsMs = [250, 500, 1000, 2000, 5000];
+    private static readonly int[] s_intervalsMs = [100, 250, 500, 1000, 2000, 5000];
 
     public ServerStatusView()
     {

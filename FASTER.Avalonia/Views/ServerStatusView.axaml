@@ -11,8 +11,9 @@
     <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="8" Margin="0,0,0,8"
                 HorizontalAlignment="Right" VerticalAlignment="Center">
       <TextBlock Text="Refresh interval" VerticalAlignment="Center" />
-      <ComboBox x:Name="IntervalBox" SelectedIndex="1" SelectionChanged="IntervalBox_SelectionChanged"
+      <ComboBox x:Name="IntervalBox" SelectedIndex="2" SelectionChanged="IntervalBox_SelectionChanged"
                 MinWidth="110">
+        <ComboBoxItem Content="100 ms" />
         <ComboBoxItem Content="250 ms" />
         <ComboBoxItem Content="500 ms" />
         <ComboBoxItem Content="1 s" />
