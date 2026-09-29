@@ -34,7 +34,7 @@ namespace FASTER.Models
         {
             ArmaModCollection currentMods = new();
 
-            if (Properties.Settings.Default.steamMods != null)
+            if (Properties.Settings.Default.armaMods != null)
                 currentMods = Properties.Settings.Default.armaMods;
 
             return currentMods;
