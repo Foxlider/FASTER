@@ -231,7 +231,9 @@ namespace FASTER.ViewModel
                 File.WriteAllLines(serverProfile, Profile.ArmaProfile.ArmaProfileContent.Replace("\r", "").Split('\n'));
             }
             catch
-            { DisplayMessage("Could not write the config files. Please ensure the server is not running and retry."); }
+            { DisplayMessage("Could not write the config files. Please ensure the server is not running and retry."); 
+            return;
+            }
 
             if(string.IsNullOrWhiteSpace(armaPath))
             {

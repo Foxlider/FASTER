@@ -7,7 +7,7 @@ namespace FASTER.Models.Tests
     {
         BasicCfg _cfg;
 
-        [OneTimeSetUp]
+        [SetUp]
         public void SetUp()
         { _cfg = new BasicCfg(); }
 
