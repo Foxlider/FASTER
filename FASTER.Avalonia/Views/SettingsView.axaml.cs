@@ -29,6 +29,7 @@ public partial class SettingsView : UserControl
         ThemeBox.SelectedIndex = settings.Theme.StartsWith("Dark", StringComparison.OrdinalIgnoreCase) ? 0 : 1;
         ModUpdatesBox.IsChecked = settings.CheckForModUpdates;
         AppUpdatesBox.IsChecked = settings.CheckForAppUpdates;
+        AnalyticsBox.IsChecked = settings.EnableAnalytics;
         ApiKeyBox.Text = settings.SteamAPIKey;
         WorkersSlider.Value = settings.CliWorkers;
         WorkersCount.Value = (decimal)settings.CliWorkers;
@@ -53,6 +54,12 @@ public partial class SettingsView : UserControl
     private void AppUpdatesBox_Changed(object? sender, RoutedEventArgs e)
     {
         AppSettings.Current.CheckForAppUpdates = AppUpdatesBox.IsChecked ?? true;
+        AppSettings.Current.Save();
+    }
+
+    private void AnalyticsBox_Changed(object? sender, RoutedEventArgs e)
+    {
+        AppSettings.Current.EnableAnalytics = AnalyticsBox.IsChecked ?? true;
         AppSettings.Current.Save();
     }
 

@@ -6,6 +6,9 @@ using ControlzEx.Theming;
 
 using FASTER.Models;
 
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
+
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -131,6 +134,7 @@ namespace FASTER.Views
         {
             IModUpdatesOnLaunch.IsChecked = AppSettings.Current?.CheckForModUpdates;
             IAppUpdatesOnLaunch.IsChecked = AppSettings.Current?.CheckForAppUpdates;
+            IShareAnalytics.IsChecked = AppSettings.Current?.EnableAnalytics;
             IEnableDebugLog.IsChecked = AppSettings.Current?.EnableDebugLog;
             IAPIKeyBox.Text = AppSettings.Current?.SteamAPIKey ?? string.Empty;
             if (Slider != null)
@@ -150,6 +154,14 @@ namespace FASTER.Views
         {
             AppSettings.Current.CheckForAppUpdates = IAppUpdatesOnLaunch.IsChecked ?? true;
             AppSettings.Current.Save();
+        }
+
+        private void IShareAnalytics_Checked(object sender, RoutedEventArgs e)
+        {
+            AppSettings.Current.EnableAnalytics = IShareAnalytics.IsChecked ?? true;
+            AppSettings.Current.Save();
+            _ = Analytics.SetEnabledAsync(AppSettings.Current.EnableAnalytics);
+            _ = Crashes.SetEnabledAsync(AppSettings.Current.EnableAnalytics);
         }
 
         private void IEnableDebugLog_Checked(object sender, RoutedEventArgs e)
@@ -180,6 +192,7 @@ namespace FASTER.Views
                 AppSettings.Current.SteamAPIKey = IAPIKeyBox.Text;
             AppSettings.Current.CheckForAppUpdates = IAppUpdatesOnLaunch.IsChecked ?? true;
             AppSettings.Current.CheckForModUpdates = IModUpdatesOnLaunch.IsChecked ?? true;
+            AppSettings.Current.EnableAnalytics = IShareAnalytics.IsChecked ?? true;
             AppSettings.Current.EnableDebugLog = IEnableDebugLog.IsChecked ?? false;
             AppSettings.Current.Save();
         }

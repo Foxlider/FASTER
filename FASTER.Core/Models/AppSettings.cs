@@ -67,6 +67,7 @@ public sealed class AppSettings
     public bool UsingRFDlc { get; set; } = false;
     public bool UsingEFDlc { get; set; } = false;
     public bool EnableDebugLog { get; set; } = false;
+    public bool EnableAnalytics { get; set; } = true;
 
     public void Save()
     {
@@ -115,6 +116,7 @@ public sealed class AppSettings
         UsingRFDlc = fresh.UsingRFDlc;
         UsingEFDlc = fresh.UsingEFDlc;
         EnableDebugLog = fresh.EnableDebugLog;
+        EnableAnalytics = fresh.EnableAnalytics;
     }
 
     public void Reset()
@@ -166,6 +168,7 @@ public sealed class AppSettings
         UsingRFDlc = source.UsingRFDlc;
         UsingEFDlc = source.UsingEFDlc;
         EnableDebugLog = source.EnableDebugLog;
+        EnableAnalytics = source.EnableAnalytics;
     }
 
     private static bool s_loading;

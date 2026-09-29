@@ -42,9 +42,14 @@ namespace FASTER
             ThemeManager.Current.ThemeSyncMode = ThemeSyncMode.SyncAll;
             ThemeManager.Current.ChangeTheme(Current, AppSettings.Current.Theme);
 
+            var analyticsEnabled = AppSettings.Current.EnableAnalytics;
+            _ = Analytics.SetEnabledAsync(analyticsEnabled);
+            _ = Crashes.SetEnabledAsync(analyticsEnabled);
+            if (!analyticsEnabled)
+                return;
+
             AppCenter.SetCountryCode(countryCode);
             AppCenter.SetUserId($"{Environment.UserName}_{Environment.MachineName}_{Environment.UserDomainName}_{userID}");
-            _ = Analytics.SetEnabledAsync(true);
             AppCenter.Start("257a7dac-e53c-4bec-b672-b6b939ed5d1e", typeof(Analytics), typeof(Crashes));
         }
     }

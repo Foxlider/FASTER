@@ -40,6 +40,7 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition/>
                 </Grid.RowDefinitions>
                 <StackPanel Grid.ColumnSpan="10">
@@ -50,8 +51,9 @@
 
                 <CheckBox Name="IModUpdatesOnLaunch" Grid.ColumnSpan="2" Grid.Row="1" Grid.Column="0" Content="Check for Steam Mod Updates on Launch" Click="IModUpdatesOnLaunch_Checked" IsChecked="True" Margin="10,0,10,10"/>
                 <CheckBox Name="IAppUpdatesOnLaunch" Grid.ColumnSpan="2" Grid.Row="2" Grid.Column="0" Content="Auto Update FASTER on Launch" Click="IAppUpdatesOnLaunch_Checked" IsChecked="False" Margin="10,0,10,10"/>
+                <CheckBox Name="IShareAnalytics" Grid.ColumnSpan="2" Grid.Row="3" Grid.Column="0" Content="Share anonymous usage analytics" Click="IShareAnalytics_Checked" IsChecked="True" Margin="10,0,10,10" ToolTip="Send anonymous usage events and crash reports to help improve FASTER"/>
 
-                <Grid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="4" Margin="10,2">
+                <Grid Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="4" Margin="10,2">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
@@ -61,7 +63,7 @@
                     <Button Name="IOpenLogFile" Grid.Column="1" Content="Open Log File" Click="IOpenLogFile_Click" Style="{DynamicResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Padding="8,2" Height="24"/>
                 </Grid>
 
-                <Grid Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Margin="10,20">
+                <Grid Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Margin="10,20">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition/>
@@ -73,7 +75,7 @@
                     </StackPanel>
                 </Grid>
 
-                <Grid Grid.Row="5" Grid.ColumnSpan="2" Grid.Column="0" Margin="5,10">
+                <Grid Grid.Row="6" Grid.ColumnSpan="2" Grid.Column="0" Margin="5,10">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
                         <ColumnDefinition Width="auto"/>

@@ -13,6 +13,9 @@
                 IsCheckedChanged="ModUpdatesBox_Changed" />
       <CheckBox x:Name="AppUpdatesBox" Content="Check for app updates on launch"
                 IsCheckedChanged="AppUpdatesBox_Changed" />
+      <CheckBox x:Name="AnalyticsBox" Content="Share anonymous usage analytics"
+                ToolTip.Tip="Send anonymous usage events and crash reports to help improve FASTER"
+                IsCheckedChanged="AnalyticsBox_Changed" />
       <TextBlock Text="Steam API key" />
       <Grid ColumnDefinitions="*,Auto">
         <TextBox Grid.Column="0" x:Name="ApiKeyBox" />

@@ -198,4 +198,18 @@ public class ProfileFilterTests
         profile.ProfileModsFilter = "CBA";
         Assert.That(profile.FilteredProfileMods.Count, Is.EqualTo(2));
     }
+
+    [Test]
+    public void EnvironmentPropertiesAlwaysHaveOsName()
+    {
+        var props = AnalyticsInfo.GetEnvironmentProperties();
+        Assert.That(props["OS"], Is.Not.Empty);
+        if (OperatingSystem.IsLinux())
+        {
+            Assert.That(props["Kernel"], Is.Not.Empty);
+            Assert.That(props["Distro"], Is.Not.Empty);
+            Assert.That(props["Session Type"], Is.Not.Empty);
+            Assert.That(props["Desktop"], Is.Not.Empty);
+        }
+    }
 }

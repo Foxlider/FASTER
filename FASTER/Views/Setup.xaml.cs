@@ -1,4 +1,5 @@
 ﻿using FASTER.Models;
+using FASTER.Services;
 
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
@@ -96,14 +97,8 @@ namespace FASTER.Views
                 MainWindow.Instance.Version = $"{asmVersion.Major}."
                                + $"{asmVersion.Minor}"
                                + $"{rev}";
-                Analytics.TrackEvent("Setup - Launching", new Dictionary<string, string> {
-                    { "Name", AppSettings.Current.SteamUserName },
-                    { "Version", MainWindow.Instance.Version },
-                    { "Region", RegionInfo.CurrentRegion.TwoLetterISORegionName},
-                    { "CPU Architecture", Environment.Is64BitOperatingSystem ? "x64" : "x86" },
-                    { "OS Version", Environment.OSVersion.VersionString },
-                    { "Machine Name", Environment.MachineName }
-                });
+                if (AppSettings.Current.EnableAnalytics)
+                    Analytics.TrackEvent("Setup - Launching", GetLaunchProperties());
                 MainWindow.Instance.Show();
             }
             catch (Exception e)
@@ -123,6 +118,21 @@ namespace FASTER.Views
         {
             IFlyoutSetupMessage.Text = message;
             IFlyoutSetup.IsOpen = true;
+        }
+
+        private static Dictionary<string, string> GetLaunchProperties()
+        {
+            var props = new Dictionary<string, string> {
+                { "Name", AppSettings.Current.SteamUserName },
+                { "Version", MainWindow.Instance.Version },
+                { "Region", RegionInfo.CurrentRegion.TwoLetterISORegionName},
+                { "CPU Architecture", Environment.Is64BitOperatingSystem ? "x64" : "x86" },
+                { "OS Version", Environment.OSVersion.VersionString },
+                { "Machine Name", Environment.MachineName }
+            };
+            foreach (var pair in AnalyticsInfo.GetEnvironmentProperties())
+                props[pair.Key] = pair.Value;
+            return props;
         }
 
         // Opens folder select dialog when clicking certain buttons
