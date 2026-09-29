@@ -121,7 +121,7 @@ namespace FASTER.Models
             set
             {
                 _workshopId = value;
-                RaisePropertyChanged("WorkshopID");
+                RaisePropertyChanged("WorkshopId");
             }
         }
 
@@ -161,7 +161,7 @@ namespace FASTER.Models
             set
             {
                 _steamLastUpdated = value;
-                RaisePropertyChanged("SteamLasttUpdated");
+                RaisePropertyChanged("SteamLastUpdated");
             }
         }
 
