@@ -91,8 +91,6 @@ public sealed class MainViewModel : INotifyPropertyChanged
         => Dispatcher.UIThread.Post(() =>
         {
             StatusMessage = message;
-            if (message.Contains('\n'))
-                IsMessageExpanded = true;
         });
 
     public void AppendUpdaterOutput(string text)

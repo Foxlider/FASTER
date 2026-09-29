@@ -4,34 +4,51 @@
              x:Class="FASTER.Avalonia.App"
              RequestedThemeVariant="Dark">
   <Application.Resources>
+    <ResourceDictionary>
     <Color x:Key="SystemAccentColor">#119EDA</Color>
     <Color x:Key="SystemAccentColorLight1">#2AA9E2</Color>
     <Color x:Key="SystemAccentColorDark1">#086F9E</Color>
     <SolidColorBrush x:Key="FasterAccent">#119EDA</SolidColorBrush>
     <SolidColorBrush x:Key="FasterAccentHover">#1FA7E3</SolidColorBrush>
     <SolidColorBrush x:Key="FasterAccentPressed">#086F9E</SolidColorBrush>
-    <SolidColorBrush x:Key="FasterSelectedRow">#196E92</SolidColorBrush>
-    <SolidColorBrush x:Key="FasterWindowBackground">#252525</SolidColorBrush>
-    <SolidColorBrush x:Key="FasterCardBorder">#454545</SolidColorBrush>
-    <SolidColorBrush x:Key="FasterTextBoxBackground">#333333</SolidColorBrush>
-    <SolidColorBrush x:Key="FasterTextBoxBorder">#767676</SolidColorBrush>
-    <SolidColorBrush x:Key="FasterButtonBackground">#333333</SolidColorBrush>
-    <SolidColorBrush x:Key="FasterButtonBorder">#555555</SolidColorBrush>
-    <SolidColorBrush x:Key="FasterButtonHover">#3E3E3E</SolidColorBrush>
-    <SolidColorBrush x:Key="FasterText">White</SolidColorBrush>
-    <SolidColorBrush x:Key="FasterMutedText">#B9B9B9</SolidColorBrush>
-    <SolidColorBrush x:Key="FasterWatermark">#9D9D9D</SolidColorBrush>
-    <SolidColorBrush x:Key="FasterDisabledText">#7F7F7F</SolidColorBrush>
+    <ResourceDictionary.ThemeDictionaries>
+      <ResourceDictionary x:Key="Dark">
+        <SolidColorBrush x:Key="FasterSelectedRow">#196E92</SolidColorBrush>
+        <SolidColorBrush x:Key="FasterWindowBackground">#252525</SolidColorBrush>
+        <SolidColorBrush x:Key="FasterCardBorder">#454545</SolidColorBrush>
+        <SolidColorBrush x:Key="FasterTextBoxBackground">#333333</SolidColorBrush>
+        <SolidColorBrush x:Key="FasterTextBoxBorder">#767676</SolidColorBrush>
+        <SolidColorBrush x:Key="FasterButtonBackground">#333333</SolidColorBrush>
+        <SolidColorBrush x:Key="FasterButtonBorder">#555555</SolidColorBrush>
+        <SolidColorBrush x:Key="FasterButtonHover">#3E3E3E</SolidColorBrush>
+        <SolidColorBrush x:Key="FasterText">White</SolidColorBrush>
+        <SolidColorBrush x:Key="FasterMutedText">#B9B9B9</SolidColorBrush>
+        <SolidColorBrush x:Key="FasterDisabledText">#7F7F7F</SolidColorBrush>
+        <SolidColorBrush x:Key="FasterGridHeaderBackground">#1E1E1E</SolidColorBrush>
+        <SolidColorBrush x:Key="FasterGridLines">#454545</SolidColorBrush>
+      </ResourceDictionary>
+      <ResourceDictionary x:Key="Light">
+        <SolidColorBrush x:Key="FasterSelectedRow">#B9E4F6</SolidColorBrush>
+        <SolidColorBrush x:Key="FasterWindowBackground">#FFFFFF</SolidColorBrush>
+        <SolidColorBrush x:Key="FasterCardBorder">#D0D0D0</SolidColorBrush>
+        <SolidColorBrush x:Key="FasterTextBoxBackground">#FFFFFF</SolidColorBrush>
+        <SolidColorBrush x:Key="FasterTextBoxBorder">#888888</SolidColorBrush>
+        <SolidColorBrush x:Key="FasterButtonBackground">#E5E5E5</SolidColorBrush>
+        <SolidColorBrush x:Key="FasterButtonBorder">#B0B0B0</SolidColorBrush>
+        <SolidColorBrush x:Key="FasterButtonHover">#D4D4D4</SolidColorBrush>
+        <SolidColorBrush x:Key="FasterText">#202020</SolidColorBrush>
+        <SolidColorBrush x:Key="FasterMutedText">#595959</SolidColorBrush>
+        <SolidColorBrush x:Key="FasterDisabledText">#767676</SolidColorBrush>
+        <SolidColorBrush x:Key="FasterGridHeaderBackground">#E5E5E5</SolidColorBrush>
+        <SolidColorBrush x:Key="FasterGridLines">#D0D0D0</SolidColorBrush>
+      </ResourceDictionary>
+    </ResourceDictionary.ThemeDictionaries>
     <SolidColorBrush x:Key="FasterConsoleBackground">Black</SolidColorBrush>
-    <SolidColorBrush x:Key="FasterGridHeaderBackground">#1E1E1E</SolidColorBrush>
-    <SolidColorBrush x:Key="FasterGridLines">#333333</SolidColorBrush>
-    <!-- MahApps keeps list selection dark gray, so mute the Fluent accent selection. -->
-    <SolidColorBrush x:Key="SystemControlHighlightListAccentLowBrush">#454545</SolidColorBrush>
-    <SolidColorBrush x:Key="SystemControlHighlightListAccentMediumBrush">#555555</SolidColorBrush>
-    <SolidColorBrush x:Key="SystemControlHighlightListAccentHighBrush">#333333</SolidColorBrush>
+      </ResourceDictionary>
   </Application.Resources>
   <Application.Styles>
-    <FluentTheme />
+    <FluentTheme DensityStyle="Compact" />
+    <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml" />
     <materialIcons:MaterialIconStyles />
     <StyleInclude Source="/Styles/FASTERTheme.axaml" />
   </Application.Styles>

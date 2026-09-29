@@ -1,37 +1,54 @@
 <UserControl x:CompileBindings="False" xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="FASTER.Avalonia.Views.SettingsView">
-  <ScrollViewer>
-    <StackPanel Margin="16" Spacing="10" MaxWidth="600">
-      <TextBlock Text="Settings" FontSize="24" FontWeight="Bold" />
-      <TextBlock Text="Theme" />
-      <ComboBox x:Name="ThemeBox" SelectionChanged="ThemeBox_SelectionChanged">
-        <ComboBoxItem Content="Dark" />
-        <ComboBoxItem Content="Light" />
-      </ComboBox>
-      <CheckBox x:Name="ModUpdatesBox" Content="Check for mod updates on launch"
-                IsCheckedChanged="ModUpdatesBox_Changed" />
-      <CheckBox x:Name="AppUpdatesBox" Content="Check for app updates on launch"
-                IsCheckedChanged="AppUpdatesBox_Changed" />
-      <CheckBox x:Name="AnalyticsBox" Content="Share anonymous usage analytics"
-                ToolTip.Tip="Send anonymous usage events and crash reports to help improve FASTER"
-                IsCheckedChanged="AnalyticsBox_Changed" />
-      <TextBlock Text="Steam API key" />
-      <Grid ColumnDefinitions="*,Auto">
-        <TextBox Grid.Column="0" x:Name="ApiKeyBox" />
-        <Button Grid.Column="1" Content="Get key" Margin="8,0,0,0" Click="ApiKeyButton_Click" />
+  <ScrollViewer HorizontalScrollBarVisibility="Disabled">
+  <StackPanel Margin="5">
+    <Border Classes="card" Margin="5">
+      <Grid RowDefinitions="Auto,Auto,Auto,Auto">
+        <StackPanel><TextBlock Classes="section-title" Text="Program Settings" /><Separator /></StackPanel>
+        <Border Grid.Row="1" Margin="10">
+          <StackPanel Spacing="10">
+            <CheckBox x:Name="ModUpdatesBox" Content="Check for Steam Mod Updates on Launch" IsCheckedChanged="ModUpdatesBox_Changed" />
+            <CheckBox x:Name="AppUpdatesBox" Content="Auto Update FASTER on Launch" IsCheckedChanged="AppUpdatesBox_Changed" />
+            <CheckBox x:Name="AnalyticsBox" Content="Share anonymous usage analytics" IsCheckedChanged="AnalyticsBox_Changed"
+                      ToolTip.Tip="Send anonymous usage events and crash reports to help improve FASTER" />
+            <StackPanel Margin="0,10" Spacing="4">
+              <TextBlock Text="Updater Worker Count" />
+              <Grid ColumnDefinitions="*,Auto">
+                <Slider x:Name="WorkersSlider" Minimum="1" Maximum="50" TickFrequency="1" IsSnapToTickEnabled="True"
+                        ValueChanged="WorkersSlider_Changed" VerticalAlignment="Center" />
+                <TextBlock Grid.Column="1" Text="{Binding #WorkersSlider.Value, StringFormat={}{0:0} / 50}"
+                           VerticalAlignment="Center" Margin="8,0,0,0" Foreground="{DynamicResource FasterMutedText}" />
+              </Grid>
+            </StackPanel>
+            <StackPanel Spacing="4">
+              <TextBlock Text="Steam API Key" />
+              <Grid ColumnDefinitions="*,Auto">
+                <TextBox x:Name="ApiKeyBox" />
+                <Button Grid.Column="1" Classes="accent" Content="Get key" Margin="5,0,0,0" Click="ApiKeyButton_Click" />
+              </Grid>
+            </StackPanel>
+          </StackPanel>
+        </Border>
+        <TextBlock Grid.Row="2" x:Name="UpdateMessage" TextWrapping="Wrap" Margin="10,0" />
+        <Grid Grid.Row="3" ColumnDefinitions="*,*,*" Margin="10" ColumnSpacing="5">
+          <Button Classes="accent" Content="Reset FASTER" HorizontalAlignment="Stretch" Click="Reset_Click" />
+          <Button Grid.Column="1" Classes="accent" Content="Update FASTER" HorizontalAlignment="Stretch" Click="CheckUpdate_Click" />
+          <Button Grid.Column="2" Classes="accent" Content="Save Settings" HorizontalAlignment="Stretch" Click="Save_Click" />
+        </Grid>
       </Grid>
-      <TextBlock Text="Download workers" />
-      <Grid ColumnDefinitions="*,Auto">
-        <Slider Grid.Column="0" x:Name="WorkersSlider" Minimum="1" Maximum="50" ValueChanged="WorkersSlider_Changed" VerticalAlignment="Center" />
-        <TextBlock Grid.Column="1" Text="{Binding #WorkersSlider.Value, StringFormat={}{0:0} / 50}" VerticalAlignment="Center" Margin="8,0,0,0" Opacity="0.75" FontSize="11" />
+    </Border>
+    <Border Classes="card" Margin="5">
+      <Grid RowDefinitions="Auto,Auto">
+        <StackPanel><TextBlock Classes="section-title" Text="Appearance" /><Separator /></StackPanel>
+        <Grid Grid.Row="1" ColumnDefinitions="Auto,*" Margin="10" VerticalAlignment="Center">
+          <TextBlock Text="Theme" VerticalAlignment="Center" Margin="5" />
+          <ComboBox Grid.Column="1" x:Name="ThemeBox" HorizontalAlignment="Stretch" Margin="5" SelectionChanged="ThemeBox_SelectionChanged">
+            <ComboBoxItem Content="Dark" /><ComboBoxItem Content="Light" />
+          </ComboBox>
+        </Grid>
       </Grid>
-      <TextBlock x:Name="UpdateMessage" TextWrapping="Wrap" />
-      <WrapPanel>
-        <Button Classes="accent" Content="Save" Margin="0,0,8,0" Click="Save_Click" />
-        <Button Classes="accent" Content="Check for app update" Margin="0,0,8,0" Click="CheckUpdate_Click" />
-        <Button Content="Reset FASTER" Click="Reset_Click" />
-      </WrapPanel>
-    </StackPanel>
+    </Border>
+  </StackPanel>
   </ScrollViewer>
 </UserControl>

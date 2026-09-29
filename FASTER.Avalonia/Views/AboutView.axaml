@@ -1,15 +1,50 @@
 <UserControl x:CompileBindings="False" xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:icons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              x:Class="FASTER.Avalonia.Views.AboutView">
-  <StackPanel Margin="16" Spacing="10" MaxWidth="600">
-    <TextBlock Text="FASTER" FontSize="24" FontWeight="Bold" />
-    <TextBlock x:Name="VersionLabel" />
-    <TextBlock Text="Fox's Arma Server Tool Extended Rewrite: manage Arma 3 dedicated servers, SteamCMD updates and Workshop mods." TextWrapping="Wrap" />
-    <WrapPanel>
-      <Button Content="Discord" Margin="0,0,8,0" Click="Discord_Click" />
-      <Button Content="GitHub" Margin="0,0,8,0" Click="GitHub_Click" />
-      <Button Content="Wiki" Margin="0,0,8,0" Click="Wiki_Click" />
-      <Button Content="Donate" Click="Donate_Click" />
-    </WrapPanel>
-  </StackPanel>
+  <Grid RowDefinitions="*,Auto" ColumnDefinitions="*,*">
+    <Border Classes="card" Grid.ColumnSpan="2" Margin="10">
+      <Grid RowDefinitions="Auto,*">
+        <TextBlock Classes="card-header" Text="About FASTER" />
+        <ScrollViewer Grid.Row="1">
+          <Grid RowDefinitions="Auto,Auto,Auto,*" Margin="16">
+            <TextBlock x:Name="VersionLabel" HorizontalAlignment="Right" Margin="0,0,0,16" />
+            <TextBlock Grid.Row="1" TextWrapping="Wrap" Foreground="{DynamicResource FasterMutedText}"
+                       Text="Fox's Arma Server Tool Extended Rewrite: manage Arma 3 dedicated servers, Steam updates and Workshop mods. Based on Flax's server tool, rewritten in C# and extended with cross-platform support." />
+            <TextBlock Grid.Row="2" Margin="0,12,0,0" TextWrapping="Wrap" Foreground="{DynamicResource FasterMutedText}"
+                       Text="Thanks go out to Flax for his amazing server tool and programming. Also to BI for giving us an awesome game to play with and break." />
+            <TextBlock Grid.Row="3" Margin="0,24,0,0" TextWrapping="Wrap" TextAlignment="Center" VerticalAlignment="Bottom"
+                       Text="THIS TOOL IS IN NO WAY AFFILIATED WITH BOHEMIA INTERACTIVE AND ITS DEVELOPERS" />
+          </Grid>
+        </ScrollViewer>
+      </Grid>
+    </Border>
+    <Border Classes="card" Grid.Row="1" Margin="10,5,5,10">
+      <Grid RowDefinitions="*,Auto" ColumnDefinitions="*,*">
+        <icons:MaterialIcon Kind="Headset" Width="110" Height="110" Margin="10" />
+        <StackPanel Grid.Column="1" Margin="16" Spacing="8">
+          <TextBlock Text="Support" />
+          <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource FasterMutedText}"
+                     Text="Come and discuss the tool, make suggestions or report issues using one of these channels:" />
+        </StackPanel>
+        <UniformGrid Grid.Row="1" Grid.ColumnSpan="2" Columns="3" Margin="8">
+          <Button Content="GitHub" Click="GitHub_Click" HorizontalAlignment="Stretch" Margin="2" />
+          <Button Content="Wiki" Click="Wiki_Click" HorizontalAlignment="Stretch" Margin="2" />
+          <Button Content="Discord" Click="Discord_Click" HorizontalAlignment="Stretch" Margin="2" />
+        </UniformGrid>
+      </Grid>
+    </Border>
+    <Border Classes="card" Grid.Row="1" Grid.Column="1" Margin="5,5,10,10">
+      <Grid RowDefinitions="*,Auto" ColumnDefinitions="*,*">
+        <icons:MaterialIcon Kind="Github" Width="110" Height="110" Margin="10" />
+        <StackPanel Grid.Column="1" Margin="16" Spacing="8">
+          <TextBlock Text="Open Source" />
+          <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource FasterMutedText}"
+                     Text="This project is completely open source. Star the project on GitHub, or contribute if you can!" />
+        </StackPanel>
+        <Button Grid.Row="1" Grid.ColumnSpan="2" Content="Liking the app? Consider supporting me!"
+                HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Margin="10" Click="Donate_Click" />
+      </Grid>
+    </Border>
+  </Grid>
 </UserControl>

@@ -27,6 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <AvaloniaResource Include="../FASTER/Resources/FASTER.ico" Link="Assets/FASTER.ico" />
     <ProjectReference Include="..\FASTER.Core\FASTER.Core.csproj" />
   </ItemGroup>
 

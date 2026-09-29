@@ -11,7 +11,11 @@ using Avalonia.Threading;
 using FASTER.Services;
 
 using LiveChartsCore;
+using LiveChartsCore.Defaults;
 using LiveChartsCore.SkiaSharpView;
+using LiveChartsCore.SkiaSharpView.Painting;
+
+using SkiaSharp;
 
 namespace FASTER.Avalonia.Views;
 
@@ -20,6 +24,9 @@ public partial class ServerStatusView : UserControl
     private readonly ISystemMetrics _metrics =
         OperatingSystem.IsWindows() ? new WindowsSystemMetrics() : new LinuxSystemMetrics();
 
+    private readonly ObservableValue _cpuValue = new(0);
+    private readonly ObservableValue _ramValue = new(0);
+
     private readonly ObservableCollection<double> _cpuHistory = new();
     private readonly DispatcherTimer _timer = new() { Interval = TimeSpan.FromMilliseconds(500) };
     private static readonly int[] s_intervalsMs = [100, 250, 500, 1000, 2000, 5000];
@@ -27,22 +34,46 @@ public partial class ServerStatusView : UserControl
     public ServerStatusView()
     {
         InitializeComponent();
+        CpuGauge.Series = CreateGauge(_cpuValue);
+        RamGauge.Series = CreateGauge(_ramValue);
         CpuChart.Series = new ISeries[]
         {
             new LineSeries<double>
             {
                 Values = _cpuHistory,
                 Fill = null,
+                Stroke = new SolidColorPaint(SKColor.Parse("#119EDA"), 2),
                 GeometrySize = 0,
                 LineSmoothness = 0
             }
         };
         CpuChart.XAxes = new[] { new Axis { IsVisible = false } };
-        CpuChart.YAxes = new[] { new Axis { MinLimit = 0, MaxLimit = 100 } };
+        CpuChart.YAxes = new[] { new Axis { MinLimit = 0, MaxLimit = 100, LabelsPaint = new SolidColorPaint(SKColors.Gray) } };
         _timer.Tick += (_, _) => Refresh();
         _timer.Start();
         RefreshServers();
     }
+
+    private static ISeries[] CreateGauge(ObservableValue value) =>
+    [
+        new PieSeries<ObservableValue>
+        {
+            Values = new[] { value },
+            InnerRadius = 60,
+            MaxRadialColumnWidth = 18,
+            Fill = new SolidColorPaint(SKColor.Parse("#119EDA")),
+            Stroke = null
+        },
+        new PieSeries<ObservableValue>
+        {
+            Values = new[] { new ObservableValue(100) },
+            IsFillSeries = true,
+            InnerRadius = 60,
+            MaxRadialColumnWidth = 18,
+            Fill = new SolidColorPaint(SKColors.Gray.WithAlpha(70)),
+            Stroke = null
+        }
+    ];
 
     private void Refresh()
     {
@@ -53,10 +84,11 @@ public partial class ServerStatusView : UserControl
             ulong available = _metrics.GetAvailableMemoryBytes();
             ulong used = total > available ? total - available : 0;
 
-            CpuBar.Value = cpu;
+            _cpuValue.Value = Math.Clamp(cpu, 0, 100);
             CpuLabel.Text = $"{cpu:F1} %";
-            RamBar.Value = total > 0 ? (double)used / total * 100 : 0;
-            RamLabel.Text = $"{used / 1024 / 1024} / {total / 1024 / 1024} MB";
+            _ramValue.Value = total > 0 ? (double)used / total * 100 : 0;
+            RamPercentLabel.Text = total > 0 ? $"{_ramValue.Value:F1} %" : "Unavailable";
+            RamLabel.Text = total > 0 ? $"{used / 1024 / 1024} / {total / 1024 / 1024} MB" : "Unavailable";
 
             _cpuHistory.Add(cpu);
             while (_cpuHistory.Count > 60)
@@ -64,7 +96,12 @@ public partial class ServerStatusView : UserControl
         }
         catch
         {
-            // Counters can fail on some machines; the view simply keeps old values.
+            // Do not present stale measurements as live readings.
+            CpuLabel.Text = "Unavailable";
+            RamPercentLabel.Text = "Unavailable";
+            RamLabel.Text = "Unavailable";
+            _cpuValue.Value = 0;
+            _ramValue.Value = 0;
         }
     }
 

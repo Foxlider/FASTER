@@ -7,54 +7,46 @@
   <UserControl.Resources>
     <converters:FolderSizeConverter x:Key="SizeConverter" />
   </UserControl.Resources>
-  <Grid RowDefinitions="Auto,Auto,Auto,*" Margin="8">
-    <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="8" Margin="0,0,0,8"
-                HorizontalAlignment="Right" VerticalAlignment="Center">
-      <TextBlock Text="Refresh interval" VerticalAlignment="Center" />
-      <ComboBox x:Name="IntervalBox" SelectedIndex="2" SelectionChanged="IntervalBox_SelectionChanged"
-                MinWidth="110">
-        <ComboBoxItem Content="100 ms" />
-        <ComboBoxItem Content="250 ms" />
-        <ComboBoxItem Content="500 ms" />
-        <ComboBoxItem Content="1 s" />
-        <ComboBoxItem Content="2 s" />
-        <ComboBoxItem Content="5 s" />
-      </ComboBox>
-    </StackPanel>
-    <Grid Grid.Row="1" ColumnDefinitions="*,*" Margin="0,0,0,8">
-      <StackPanel Grid.Column="0" Margin="0,0,8,0" Spacing="4">
-        <TextBlock Text="CPU" FontWeight="Bold" />
-        <ProgressBar x:Name="CpuBar" Minimum="0" Maximum="100" Height="20" />
-        <TextBlock x:Name="CpuLabel" Text="0 %" />
-      </StackPanel>
-      <StackPanel Grid.Column="1" Margin="8,0,0,0" Spacing="4">
-        <TextBlock Text="Memory" FontWeight="Bold" />
-        <ProgressBar x:Name="RamBar" Minimum="0" Maximum="100" Height="20" />
-        <TextBlock x:Name="RamLabel" Text="0 B" />
-      </StackPanel>
+  <Grid RowDefinitions="*,Auto,2*,Auto" Margin="5">
+    <Grid ColumnDefinitions="*,*" RowDefinitions="*,Auto,Auto" MinHeight="150">
+      <lvc:PieChart x:Name="CpuGauge" InitialRotation="180" MaxAngle="180" MaxValue="100" TooltipPosition="Hidden" />
+      <lvc:PieChart Grid.Column="1" x:Name="RamGauge" InitialRotation="180" MaxAngle="180" MaxValue="100" TooltipPosition="Hidden" />
+      <TextBlock Grid.Row="0" x:Name="CpuLabel" Text="Unavailable" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,15" FontSize="24" />
+      <TextBlock Grid.Row="0" Grid.Column="1" x:Name="RamPercentLabel" Text="Unavailable" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,15" FontSize="24" />
+      <TextBlock Grid.Row="1" Text="CPU Usage" HorizontalAlignment="Center" FontWeight="Bold" />
+      <TextBlock Grid.Row="1" Grid.Column="1" Text="Memory Usage" HorizontalAlignment="Center" FontWeight="Bold" />
+      <TextBlock Grid.Row="2" Grid.Column="1" x:Name="RamLabel" HorizontalAlignment="Center" Margin="0,4" Foreground="{DynamicResource FasterMutedText}" />
     </Grid>
-    <lvc:CartesianChart Grid.Row="2" Height="160" x:Name="CpuChart"
-                        TooltipPosition="Hidden" />
-    <Grid Grid.Row="3" RowDefinitions="Auto,*">
-      <WrapPanel Margin="0,8">
-        <Button Classes="accent" Content="Rescan" Margin="0,0,8,0" Click="Rescan_Click" />
+    <Expander Grid.Row="1" Classes="bar" Header="Additional Gauges" HorizontalAlignment="Stretch" Margin="5">
+      <Grid RowDefinitions="*,Auto">
+        <lvc:CartesianChart Height="120" x:Name="CpuChart" TooltipPosition="Hidden" />
+        <TextBlock Grid.Row="1" Text="CPU usage history · CPU temperature unavailable" HorizontalAlignment="Center" Margin="5" />
+      </Grid>
+    </Expander>
+    <dg:DataGrid Grid.Row="2" x:Name="ProcessGrid" AutoGenerateColumns="False" CanUserSortColumns="True" Margin="10,5">
+      <dg:DataGrid.Columns>
+        <dg:DataGridTextColumn Header="Process ID" Binding="{Binding Id}" IsReadOnly="True" />
+        <dg:DataGridTextColumn Header="Name" Binding="{Binding ProcessName}" Width="*" IsReadOnly="True" />
+        <dg:DataGridTextColumn Header="Memory" Binding="{Binding WorkingSet64, Converter={StaticResource SizeConverter}}" IsReadOnly="True" />
+        <dg:DataGridTemplateColumn Header="" CanUserSort="False" CanUserResize="False">
+          <dg:DataGridTemplateColumn.CellTemplate>
+            <DataTemplate><Button Classes="accent" Content="Kill" Click="KillProcess_Click" /></DataTemplate>
+          </dg:DataGridTemplateColumn.CellTemplate>
+        </dg:DataGridTemplateColumn>
+      </dg:DataGrid.Columns>
+    </dg:DataGrid>
+    <Grid Grid.Row="3" ColumnDefinitions="Auto,*,Auto" Margin="10,5">
+      <StackPanel Orientation="Horizontal" Spacing="5">
+        <Button Classes="accent" Content="Rescan" Click="Rescan_Click" />
         <Button Classes="accent" Content="Kill all" Click="KillAll_Click" />
-      </WrapPanel>
-      <dg:DataGrid Grid.Row="1" x:Name="ProcessGrid" AutoGenerateColumns="False"
-                   CanUserSortColumns="True" Margin="0,8,0,0">
-        <dg:DataGrid.Columns>
-          <dg:DataGridTextColumn Header="PID" Binding="{Binding Id}" IsReadOnly="True" />
-          <dg:DataGridTextColumn Header="NAME" Binding="{Binding ProcessName}" Width="*" IsReadOnly="True" />
-          <dg:DataGridTextColumn Header="MEMORY" Binding="{Binding WorkingSet64, Converter={StaticResource SizeConverter}}" IsReadOnly="True" />
-          <dg:DataGridTemplateColumn Header="" CanUserSort="False" CanUserResize="False">
-            <dg:DataGridTemplateColumn.CellTemplate>
-              <DataTemplate>
-                <Button Classes="accent" Content="Kill" Click="KillProcess_Click" />
-              </DataTemplate>
-            </dg:DataGridTemplateColumn.CellTemplate>
-          </dg:DataGridTemplateColumn>
-        </dg:DataGrid.Columns>
-      </dg:DataGrid>
+      </StackPanel>
+      <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8">
+        <TextBlock Text="Refresh interval" VerticalAlignment="Center" />
+        <ComboBox x:Name="IntervalBox" SelectedIndex="2" SelectionChanged="IntervalBox_SelectionChanged" MinWidth="90">
+          <ComboBoxItem Content="100 ms" /><ComboBoxItem Content="250 ms" /><ComboBoxItem Content="500 ms" />
+          <ComboBoxItem Content="1 s" /><ComboBoxItem Content="2 s" /><ComboBoxItem Content="5 s" />
+        </ComboBox>
+      </StackPanel>
     </Grid>
   </Grid>
 </UserControl>

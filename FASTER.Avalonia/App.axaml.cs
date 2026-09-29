@@ -13,7 +13,13 @@ public partial class App : Application
 {
     public static MainViewModel Main { get; } = new MainViewModel();
 
-    public override void Initialize() => AvaloniaXamlLoader.Load(this);
+    public override void Initialize()
+    {
+        AvaloniaXamlLoader.Load(this);
+        RequestedThemeVariant = FASTER.Models.AppSettings.Current.Theme.StartsWith("Light", StringComparison.OrdinalIgnoreCase)
+            ? global::Avalonia.Styling.ThemeVariant.Light
+            : global::Avalonia.Styling.ThemeVariant.Dark;
+    }
 
     public override void OnFrameworkInitializationCompleted()
     {

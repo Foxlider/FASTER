@@ -9,8 +9,8 @@
     <converters:BoolNegationConverter x:Key="Not" />
   </UserControl.Resources>
   <Grid RowDefinitions="Auto,*">
-    <DockPanel Margin="10,10,5,5">
-      <Grid DockPanel.Dock="Left" ColumnDefinitions="*,Auto">
+    <Grid ColumnDefinitions="*,Auto" Margin="10,10,5,5">
+      <Grid Grid.Column="0" ColumnDefinitions="*,Auto">
         <TextBox Grid.Column="0" x:Name="InstallDirBox" IsReadOnly="True" Text="{Binding Deployment.InstallPath}"
                  Watermark="Install Directory" />
         <Button Grid.Column="1" Classes="accent" Margin="5,0" Padding="8,2" Click="InstallFolder_Click"
@@ -18,11 +18,11 @@
           <materialIcons:MaterialIcon Kind="Folder" Width="18" Height="18" />
         </Button>
       </Grid>
-      <StackPanel DockPanel.Dock="Right" HorizontalAlignment="Right" Orientation="Horizontal">
+      <StackPanel Grid.Column="1" HorizontalAlignment="Right" Orientation="Horizontal">
         <Button Classes="accent" Content="Deploy All" Click="DeployAll_Click" Margin="5,0" />
         <Button Classes="accent" Content="Clean" Click="ClearAll_Click" Margin="5,0" />
       </StackPanel>
-    </DockPanel>
+    </Grid>
     <dg:DataGrid Grid.Row="1" Margin="10,5,10,10"
                  ItemsSource="{Binding Deployment.DeployMods}"
                  CanUserReorderColumns="False" CanUserSortColumns="True" AutoGenerateColumns="False">
