@@ -233,8 +233,6 @@ namespace FASTER.ViewModel
             catch
             { DisplayMessage("Could not write the config files. Please ensure the server is not running and retry."); }
 
-            var armaPath = Path.GetDirectoryName(Profile.Executable);
-
             if(string.IsNullOrWhiteSpace(armaPath))
             {
                 DisplayMessage("Arma executable is empty. Select the correct executable before saving your profile.");

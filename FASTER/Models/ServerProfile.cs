@@ -552,10 +552,6 @@ namespace FASTER.Models
                 {
                     p.Name = $"{p.Name} (2)";
                 }
-                else
-                {
-                    p.Name = $"{p.Name} (2)";
-                }
             }
             else
             {
