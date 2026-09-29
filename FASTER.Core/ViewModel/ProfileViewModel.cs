@@ -162,7 +162,7 @@ namespace FASTER.ViewModel
         {
             if (Directory.Exists(Path.Combine(Profile.ArmaPath, "Servers", Profile.Id)))
             { Directory.Delete(Path.Combine(Profile.ArmaPath, "Servers", Profile.Id), true); }
-            AppSettings.Current.Profiles.Remove(Profile);
+            AppSettings.Current.Profiles?.Remove(Profile);
             AppSettings.Current.Save();
             Ui.Current.RemoveProfileUi(Profile.Id);
 
@@ -214,8 +214,8 @@ namespace FASTER.ViewModel
             }
 
 
-            var index = AppSettings.Current.Profiles.FindIndex(p => p.Id == Profile.Id);
-            if (index != -1)
+            var index = AppSettings.Current.Profiles?.FindIndex(p => p.Id == Profile.Id) ?? -1;
+            if (index != -1 && AppSettings.Current.Profiles != null)
             { AppSettings.Current.Profiles[index] = Profile; }
 
             AppSettings.Current.Save();
@@ -262,7 +262,8 @@ namespace FASTER.ViewModel
                 {
                     mod.ClientSideChecked = true;
                     mod.LoadPriority = loadPriority;
-                    loadPriority += 1;
+                    if (loadPriority != null)
+                        loadPriority++;
                 }
                 else
                 {
@@ -375,18 +376,22 @@ namespace FASTER.ViewModel
         public void LoadData()
         {
             var modlist = new List<ProfileMod>();
-            foreach (var mod in AppSettings.Current.ArmaMods.ArmaMods)
+            var armaMods = AppSettings.Current.ArmaMods;
+            if (armaMods != null)
             {
-                ProfileMod existingMod = Profile.ProfileMods.Find(m => m.Id == mod.WorkshopId);
-                if (existingMod == null)
+                foreach (var mod in armaMods.ArmaMods)
                 {
-                    var newProfile = new ProfileMod { Name = mod.Name, Id = mod.WorkshopId, IsLocal = mod.IsLocal };
-                    modlist.Add(newProfile);
-                    continue;
+                    ProfileMod? existingMod = Profile.ProfileMods.Find(m => m.Id == mod.WorkshopId);
+                    if (existingMod == null)
+                    {
+                        var newProfile = new ProfileMod { Name = mod.Name, Id = mod.WorkshopId, IsLocal = mod.IsLocal };
+                        modlist.Add(newProfile);
+                        continue;
+                    }
+                    else //refresh mods names
+                    { existingMod.Name = mod.Name; }
+                    modlist.Add(existingMod);
                 }
-                else //refresh mods names
-                { existingMod.Name = mod.Name; }
-                modlist.Add(existingMod);
             }
 
             Profile.ProfileMods = modlist;
@@ -396,8 +401,8 @@ namespace FASTER.ViewModel
 
         public void UnloadData()
         {
-            var index = AppSettings.Current.Profiles.FindIndex(p => p.Id == Profile.Id);
-            if (index != -1)
+            var index = AppSettings.Current.Profiles?.FindIndex(p => p.Id == Profile.Id) ?? -1;
+            if (index != -1 && AppSettings.Current.Profiles != null)
             { AppSettings.Current.Profiles[index] = Profile; }
         }
 
@@ -419,7 +424,7 @@ namespace FASTER.ViewModel
 
             foreach (var mission in newMissions)
             {
-                ProfileMission existingMission = Profile.ServerCfg.Missions.Find(m => m.Path == mission);
+                ProfileMission? existingMission = Profile.ServerCfg.Missions.Find(m => m.Path == mission);
                 if (existingMission == null)
                 {
                     var newMission = new ProfileMission { Name = mission.Replace(".pbo", ""), Path = mission };

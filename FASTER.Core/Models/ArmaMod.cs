@@ -34,7 +34,7 @@ namespace FASTER.Models
         {
             ArmaModCollection currentMods = new();
 
-            if (AppSettings.Current.SteamMods != null)
+            if (AppSettings.Current.SteamMods != null && AppSettings.Current.ArmaMods != null)
                 currentMods = AppSettings.Current.ArmaMods;
 
             return currentMods;
@@ -83,7 +83,7 @@ namespace FASTER.Models
         }
 
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
         private void RaisePropertyChanged(string property)
         { PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property)); }
     }
@@ -96,7 +96,7 @@ namespace FASTER.Models
         private uint _workshopId;
         private string _name = string.Empty;
         private string _author = string.Empty;
-        private string _path;
+        private string _path = string.Empty;
         private ulong _steamLastUpdated;
         private ulong _localLastUpdated;
         private bool _privateMod;
@@ -329,14 +329,14 @@ namespace FASTER.Models
 
                 try
                 {
-                    var creatorDetails = SteamWebApi.GetPlayerSummaries(modDetails.creator.ToString()).ToObject<SteamApiPlayerInfo>();
-                    Author = creatorDetails == null ? "Unknown" : creatorDetails.personaname;
+                    var creatorDetails = SteamWebApi.GetPlayerSummaries(modDetails.creator.ToString())?.ToObject<SteamApiPlayerInfo>();
+                    Author = creatorDetails?.personaname ?? "Unknown";
                 }
                 catch
                 { Author = "Unknown"; }
 
                 SteamLastUpdated = modDetails.time_updated;
-                Name = modDetails.title;
+                Name = modDetails.title ?? string.Empty;
 
                 if (SteamLastUpdated > LocalLastUpdated && Status != ArmaModStatus.NotComplete)
                     Status = ArmaModStatus.UpdateRequired;
@@ -358,7 +358,7 @@ namespace FASTER.Models
         {
             try
             {
-                var infos = SteamWebApi.GetSingleFileDetails(WorkshopId).ToObject<SteamApiFileDetails>();
+                var infos = SteamWebApi.GetSingleFileDetails(WorkshopId)?.ToObject<SteamApiFileDetails>();
                 return infos?.result == 1;
             }
             catch

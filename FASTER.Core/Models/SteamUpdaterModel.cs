@@ -4,7 +4,7 @@ namespace FASTER.Models
 {
     public class SteamUpdaterModel : INotifyPropertyChanged
     {
-        private string _output;
+        private string _output = string.Empty;
         private bool _isUpdating;
         private double _progress;
 
@@ -195,7 +195,7 @@ namespace FASTER.Models
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         private void RaisePropertyChanged(string property)
         {

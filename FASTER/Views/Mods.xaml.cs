@@ -18,7 +18,7 @@ namespace FASTER.Views
             this.Dispatcher.ShutdownStarted += DispatcherOnShutdownStarted;
         }
 
-        private void DispatcherOnShutdownStarted(object sender, EventArgs e)
+        private void DispatcherOnShutdownStarted(object? sender, EventArgs e)
         {
             ((ModsViewModel)DataContext)?.UnloadData();
         }
@@ -47,12 +47,14 @@ namespace FASTER.Views
         private void OpenModPage(object sender, RoutedEventArgs e)
         {
             var mod = ((FrameworkElement)sender).DataContext as ArmaMod;
+            if (mod == null) return;
             ((ModsViewModel)DataContext)?.OpenModPage(mod);
         }
 
         private void OpenModFolder(object sender, RoutedEventArgs e)
         {
             var mod = ((FrameworkElement)sender).DataContext as ArmaMod;
+            if (mod == null) return;
             ((ModsViewModel)DataContext)?.OpenModFolder(mod);
         }
 

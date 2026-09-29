@@ -109,7 +109,7 @@ public class ModelTests
     {
         var encrypted = Encryption.Instance.EncryptData("SomeText");
         Assert.That(encrypted, Is.Not.EqualTo("SomeText"));
-        Assert.That(Encryption.Instance.DecryptData(encrypted), Is.EqualTo("SomeText"));
+        Assert.That(Encryption.Instance.DecryptData(encrypted!), Is.EqualTo("SomeText"));
     }
 
     [Test]

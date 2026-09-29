@@ -346,7 +346,15 @@ namespace FASTER.ViewModel
 
         public async Task PurgeUnusedMods()
         {
-            var usedIds = AppSettings.Current.Profiles
+            // Without profiles there is no usage data, so bail out instead of treating every mod as unused.
+            var profiles = AppSettings.Current.Profiles;
+            if (profiles == null)
+            {
+                DisplayMessage("No profiles found, cannot determine unused mods.");
+                return;
+            }
+
+            var usedIds = profiles
                 .SelectMany(p => p.ProfileMods ?? Enumerable.Empty<ProfileMod>())
                 .Where(m => m.ServerSideChecked || m.ClientSideChecked || m.HeadlessChecked || m.OptChecked)
                 .Select(m => m.Id)

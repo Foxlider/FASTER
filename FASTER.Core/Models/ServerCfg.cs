@@ -18,9 +18,9 @@ namespace FASTER.Models
     public class ServerCfg : INotifyPropertyChanged
     {
         //Server Options
-        private string passwordAdmin;
-        private string password;
-        private string hostname;
+        private string passwordAdmin = string.Empty;
+        private string password = string.Empty;
+        private string hostname = string.Empty;
         private int maxPlayers = 32;
         private List<string> motd = new();
         private int motdInterval;
@@ -74,17 +74,17 @@ namespace FASTER.Models
         private int steamProtocolMaxDataSize = 10000;     // BI Default value is 1024. Increasing this value is dangerous for older routers as it will cause UDP packets to be fragmented. Though increasing this value can help with modulier length limit in a3 launcher.
 
         //Scripting
-        private string serverCommandPassword;
-        private string doubleIdDetected;
-        private string onUserConnected;
-        private string onUserDisconnected;
+        private string serverCommandPassword = string.Empty;
+        private string doubleIdDetected = string.Empty;
+        private string onUserConnected = string.Empty;
+        private string onUserDisconnected = string.Empty;
         private string onHackedData = "kick (_this select 0)";
-        private string onDifferentData;
+        private string onDifferentData = string.Empty;
         private string onUnsignedData = "kick (_this select 0)";
-        private string onUserKicked;
+        private string onUserKicked = string.Empty;
 
         private bool missionSelectorChecked;
-        private string missionContentOverride;
+        private string missionContentOverride = string.Empty;
         private List<ProfileMission> _missions = new();
         private bool                 autoInit;
         private string               difficulty = "Custom";
@@ -101,9 +101,9 @@ namespace FASTER.Models
         private uint maxMem = 1024;
         private bool cpuCountOverride;
         private ushort cpuCount;
-        private string commandLineParams;
+        private string commandLineParams = string.Empty;
 
-        private string serverCfgContent;
+        private string serverCfgContent = string.Empty;
 
 
 
@@ -886,7 +886,7 @@ namespace FASTER.Models
             { ServerCfgContent = ProcessFile(); }
         }
 
-        private void Item_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void Item_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             RaisePropertyChanged(nameof(MissionChecked));
             RaisePropertyChanged(nameof(MissionContentOverride));
@@ -1021,8 +1021,8 @@ namespace FASTER.Models
     public class ProfileMission : INotifyPropertyChanged
     {
         private bool missionChecked;
-        private string name;
-        private string path;
+        private string name = string.Empty;
+        private string path = string.Empty;
 
         public bool MissionChecked
         {
@@ -1054,7 +1054,7 @@ namespace FASTER.Models
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         private void RaisePropertyChanged(string property)
         {

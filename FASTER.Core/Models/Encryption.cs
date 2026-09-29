@@ -8,7 +8,7 @@ namespace FASTER.Models
     public class Encryption
     {
         private static readonly Aes Crypt = Aes.Create();
-        private static Encryption _instance;
+        private static Encryption? _instance;
 
         public static Encryption Instance => _instance ??= new Encryption();
 
@@ -35,7 +35,7 @@ namespace FASTER.Models
             Crypt.IV = TruncateHash("", Crypt.BlockSize / 8);
         }
 
-        public string EncryptData(string plaintext)
+        public string? EncryptData(string plaintext)
         {
             try
             {
@@ -58,7 +58,7 @@ namespace FASTER.Models
             { return null; }
         }
 
-        public string DecryptData(string encryptedtext)
+        public string? DecryptData(string encryptedtext)
         {
             try
             {
@@ -99,7 +99,10 @@ namespace FASTER.Models
                     });
                     powershell?.WaitForExit();
                     var output = powershell?.StandardOutput.ReadToEnd();
-                    return output?.Replace("\r", "").Split('\n')[3];
+                    var lines = output?.Replace("\r", "").Split('\n');
+                    if (lines != null && lines.Length > 3)
+                        return lines[3];
+                    return "UNKNOWN-DEVICE";
                 }
 
                 // No WMI outside Windows, fall back to the OS machine id.

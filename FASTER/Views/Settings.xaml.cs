@@ -25,7 +25,7 @@ namespace FASTER.Views
     /// </summary>
     public partial class Settings
     {
-        UpdateInfoEventArgs _args;
+        UpdateInfoEventArgs? _args;
 
         private MainWindow MetroWindow { get; set; }
 
@@ -51,7 +51,7 @@ namespace FASTER.Views
         {
             try
             {
-                if (AutoUpdater.DownloadUpdate(_args) && Application.Current.MainWindow != null)
+                if (_args != null && AutoUpdater.DownloadUpdate(_args) && Application.Current.MainWindow != null)
                 { Application.Current.MainWindow.Close(); }
             }
             catch (Exception exception)
@@ -133,8 +133,11 @@ namespace FASTER.Views
             IAppUpdatesOnLaunch.IsChecked = AppSettings.Current?.CheckForAppUpdates;
             IEnableDebugLog.IsChecked = AppSettings.Current?.EnableDebugLog;
             IAPIKeyBox.Text = AppSettings.Current?.SteamAPIKey ?? string.Empty;
-            Slider.Value = AppSettings.Current.CliWorkers;
-            NumericUpDown.Value = Slider.Value;
+            if (Slider != null)
+            {
+                Slider.Value = AppSettings.Current?.CliWorkers ?? Slider.Value;
+                NumericUpDown.Value = Slider.Value;
+            }
         }
 
         private void IModUpdatesOnLaunch_Checked(object sender, RoutedEventArgs e)
@@ -227,8 +230,10 @@ namespace FASTER.Views
 
             AppSettings.Current.CliWorkers = Convert.ToUInt16(e.NewValue);
             NumericUpDown.Value = e.NewValue;
-            if (MainWindow.Instance.SteamUpdaterViewModel.SteamContentClient != null)
-                MainWindow.Instance.SteamUpdaterViewModel.SteamContentClient = new SteamContentClient(MainWindow.Instance.SteamUpdaterViewModel.SteamClient, AppSettings.Current.CliWorkers);
+            var updaterVm = MainWindow.Instance.SteamUpdaterViewModel;
+            if (updaterVm.SteamContentClient == null || updaterVm.SteamClient == null)
+                return;
+            updaterVm.SteamContentClient = new SteamContentClient(updaterVm.SteamClient, AppSettings.Current.CliWorkers);
         }
     }
 }

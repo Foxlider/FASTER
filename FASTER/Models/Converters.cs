@@ -38,7 +38,7 @@ namespace FASTER.Models
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        { return null; }
+        { return default!; }
 
         #endregion
     }

@@ -34,8 +34,8 @@ namespace FASTER.Views
         { get; set; }
 
         internal object locked = new object();
-        private PerformanceCounter _cpuCounter;
-        private PerformanceCounter _ramCounter;
+        private PerformanceCounter? _cpuCounter;
+        private PerformanceCounter? _ramCounter;
 
         private ObservableCollection<ProcessSpy> processes = new ObservableCollection<ProcessSpy>();
         readonly long totalRamBytes;
@@ -98,10 +98,10 @@ namespace FASTER.Views
             {
                 lock (locked)
                 {
-                    var ram = _ramCounter.NextValue();
+                    var ram = _ramCounter?.NextValue() ?? 0;
                     Dispatcher?.BeginInvoke(new Action(() =>
                     {
-                        gaugeCpu.Value = _cpuCounter.NextValue();
+                        gaugeCpu.Value = _cpuCounter?.NextValue() ?? 0;
                         gaugeRam.Value = totalRamBytes > ram
                             ? Convert.ToInt64((totalRamBytes - ram) / 1024)
                             : Convert.ToInt64(totalRamBytes / 1024);
@@ -254,13 +254,13 @@ namespace FASTER.Views
         public Func<double, string> PercentageFormatter { get; set; }
         public Brush Color { get; set; }
 
-        private PerformanceCounter cpuPerf;
+        private PerformanceCounter? cpuPerf;
         private double _axisMax;
         private double _axisMin;
         private bool _isReading;
         private readonly CancellationToken token;
 
-        private string Output;
+        private string? Output;
 
         public ProcessSpy(Process p)
         {
@@ -339,7 +339,7 @@ namespace FASTER.Views
                     CPUChartValues.Add(new MeasureModel
                     {
                         DateTime = now,
-                        Value = cpuPerf.NextValue()
+                        Value = cpuPerf?.NextValue() ?? 0
                     });
                 }
                 catch
@@ -373,7 +373,7 @@ namespace FASTER.Views
             }
         }
 
-        public string GetOutput()
+        public string? GetOutput()
         { return Output; }
 
         private void SetAxisLimits(DateTime now)
@@ -391,9 +391,9 @@ namespace FASTER.Views
 
         #region INotifyPropertyChanged implementation
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected virtual void OnPropertyChanged(string propertyName = null)
+        protected virtual void OnPropertyChanged(string? propertyName = null)
         { PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName)); }
 
         #endregion
@@ -461,7 +461,10 @@ namespace FASTER.Views
                     var obj = searcher.Get().OfType<ManagementObject>().FirstOrDefault();
                     if (obj == null)
                         return;
-                    var temperature = float.Parse(obj["CurrentTemperature"].ToString());
+                    var raw = obj["CurrentTemperature"]?.ToString();
+                    if (string.IsNullOrEmpty(raw))
+                        return;
+                    var temperature = float.Parse(raw);
                     // Convert the value to celsius degrees
                     temperature = (temperature - (float)2732.0) / (float)10.0;
                     if (temperature >= AxisYMax) AxisYMax = temperature + 1;
@@ -535,7 +538,7 @@ namespace FASTER.Views
         #region INotifyPropertyChanged implementation
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected virtual void OnPropertyChanged(string propertyName = null)
+        protected virtual void OnPropertyChanged(string? propertyName = null)
         { PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName)); }
         #endregion
     }

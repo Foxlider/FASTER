@@ -38,7 +38,7 @@ namespace FASTER.Models
             }
             catch
             {
-                // Logging failures are intentionally ignored — a broken log file
+                // Logging failures are intentionally ignored. A broken log file
                 // (e.g. disk full, permissions, file locked by another process)
                 // must never crash the app or interrupt the calling code.
             }

@@ -34,7 +34,13 @@ public static class ModUtilities
             var modIdS = modId.ToString();
             if (modIdNode != null)
             {
-                modIdS = modIdNode.Attributes?.GetNamedItem("href")?.Value.Split("?id=")[1].Split('"')[0] ?? modIdS;
+                var href = modIdNode.Attributes?.GetNamedItem("href")?.Value;
+                if (!string.IsNullOrEmpty(href))
+                {
+                    var idParts = href.Split("?id=");
+                    if (idParts.Length > 1)
+                        modIdS = idParts[1].Split('"')[0] ?? modIdS;
+                }
                 uint.TryParse(modIdS, out modId);
             }
 

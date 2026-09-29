@@ -41,7 +41,9 @@ namespace FASTER.Services
         public void RemoveProfileUi(string profileId)
         {
             var window = MainWindow.Instance;
-            window.ContentProfileViews.Remove(window.ContentProfileViews.Find(p => p.Profile.Id == profileId));
+            var existing = window.ContentProfileViews.Find(p => p.Profile.Id == profileId);
+            if (existing != null)
+                window.ContentProfileViews.Remove(existing);
             var outer = FindProfileMenuEntry(profileId).Outer;
             if (outer != null)
                 window.IServerProfilesMenu.Items.Remove(outer);

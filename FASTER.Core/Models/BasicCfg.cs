@@ -30,7 +30,7 @@ namespace FASTER.Models
         private ushort maxPacketSize = 1400;
 
         private string _language = "English";
-        private string basicContent;
+        private string basicContent = string.Empty;
 
         public string Language
         {

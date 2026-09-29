@@ -4,6 +4,9 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <!-- NU1903 cannot be fixed by bumping: the vulnerable SQLitePCLRaw comes transitively from the retired AppCenter SDK, and the advisory lists no patched version. AppCenter uses it only for local telemetry buffering, so suppress. -->
+    <NoWarn>$(NoWarn);NU1903</NoWarn>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <LangVersion>14.0</LangVersion>
     <AssemblyName>FASTER.Core</AssemblyName>
     <RootNamespace>FASTER</RootNamespace>

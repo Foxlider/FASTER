@@ -23,7 +23,7 @@ namespace FASTER.Models
 
         public static void AddServerProfile(string profileName)
         {
-            var currentProfiles = AppSettings.Current.Profiles;
+            var currentProfiles = AppSettings.Current.Profiles ?? new ServerProfileCollection();
             var p = new ServerProfile(profileName);
             p.ServerCfg.ServerCfgContent = p.ServerCfg.ProcessFile();
             p.BasicCfg.BasicContent = p.BasicCfg.ProcessFile();
@@ -36,7 +36,7 @@ namespace FASTER.Models
 
         public static void AddServerProfile(ServerProfile profile)
         {
-            var currentProfiles = AppSettings.Current.Profiles;
+            var currentProfiles = AppSettings.Current.Profiles ?? new ServerProfileCollection();
             profile.GenerateNewId();
             currentProfiles.Add(profile);
             AppSettings.Current.Profiles = currentProfiles;
@@ -49,9 +49,9 @@ namespace FASTER.Models
     public class ServerProfile : INotifyPropertyChanged
     {
         //PRIVATE VARS DECLARATION
-        private string _id;
-        private string _name;
-        private string _executable;
+        private string _id = string.Empty;
+        private string _name = string.Empty;
+        private string _executable = string.Empty;
         private int _port = 2302;
         private int _headlessNum;
         private bool _missionOverride;
@@ -79,9 +79,9 @@ namespace FASTER.Models
         private bool _profileModsFilterIsWholeWord = false;
         private bool _profileModsFilterIsRegex = false;
         private bool _profileModsFilterIsInvalid = false;
-        private ServerCfg _serverCfg;
-        private Arma3Profile _armaProfile;
-        private BasicCfg _basicCfg;
+        private ServerCfg _serverCfg = new();
+        private Arma3Profile _armaProfile = new();
+        private BasicCfg _basicCfg = new();
 
         //PUBLIC VAR DECLARATIONS
         public string Id
@@ -546,7 +546,7 @@ namespace FASTER.Models
         public ServerProfile Clone()
         {
             string serialized = Newtonsoft.Json.JsonConvert.SerializeObject(this);
-            ServerProfile p = Newtonsoft.Json.JsonConvert.DeserializeObject<ServerProfile>(serialized);
+            ServerProfile? p = Newtonsoft.Json.JsonConvert.DeserializeObject<ServerProfile>(serialized);
 
             if (p != null)
             {
@@ -657,7 +657,7 @@ namespace FASTER.Models
 
 
         //This is used to trigger PropertyChanged to count each checked mod
-        private void Item_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void Item_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             RaisePropertyChanged("ServerModsChecked");
             RaisePropertyChanged("ClientModsChecked");
@@ -665,11 +665,11 @@ namespace FASTER.Models
             RaisePropertyChanged("OptModsChecked");
         }
 
-        private void Class_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void Class_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         { RaisePropertyChanged("CommandLine"); }
 
         //INOTIFYPROPERTYCHANGED
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
         public void RaisePropertyChanged(string property)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
@@ -688,7 +688,7 @@ namespace FASTER.Models
         private ushort? loadPriority;
         private bool isLocal;
         private uint _id;
-        private string name;
+        private string name = string.Empty;
 
         public bool ServerSideChecked
         {
@@ -774,7 +774,7 @@ namespace FASTER.Models
         public override string ToString()
         { return $"{_id} {name}"; }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         private void RaisePropertyChanged(string property)
         { PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property)); }

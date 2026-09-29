@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 
 namespace FASTER.Services;
 
@@ -10,6 +11,7 @@ public interface ISystemMetrics
     ulong GetAvailableMemoryBytes();
 }
 
+[SupportedOSPlatform("windows")]
 public sealed class WindowsSystemMetrics : ISystemMetrics
 {
     private readonly PerformanceCounter _cpuCounter = new("Processor", "% Processor Time", "_Total");

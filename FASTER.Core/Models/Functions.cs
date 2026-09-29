@@ -121,7 +121,7 @@ namespace FASTER.Models
         public static string GetRawVersion()
         {
             var assembly = Assembly.GetExecutingAssembly().GetName().Version;
-            return assembly.ToString();
+            return assembly?.ToString() ?? "UNKNOWN";
         }
     }
 }

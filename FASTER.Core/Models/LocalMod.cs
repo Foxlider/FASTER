@@ -19,7 +19,7 @@ namespace FASTER.Models
             Name = name;
             Path = path;
             Author = author;
-            Website = website;
+            Website = website ?? string.Empty;
         }
 
         public string Name { get; set; } = string.Empty;

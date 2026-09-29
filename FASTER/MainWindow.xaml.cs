@@ -33,14 +33,14 @@ namespace FASTER
         internal string Version;
         internal bool NavEnabled = true;
 
-        private ToggleButton lastNavButton;
+        private ToggleButton? lastNavButton;
 
         #region INSTANCES
-        private static MainWindow _instance;
+        private static MainWindow? _instance;
         public static MainWindow Instance => _instance ??= new MainWindow();
 
-        private SteamUpdaterViewModel _steamUpdaterVM;
-        Updater _steamUpdater;
+        private SteamUpdaterViewModel? _steamUpdaterVM;
+        Updater? _steamUpdater;
         public Updater ContentSteamUpdater
         {
             get => _steamUpdater ??= new Updater();
@@ -53,63 +53,63 @@ namespace FASTER
         }
 
 
-        private Mods _mods;
+        private Mods? _mods;
         public Mods ContentSteamMods
         {
             get => _mods ??= new Mods();
             set => _mods = value;
         }
 
-        ModsViewModel _modsVM;
+        ModsViewModel? _modsVM;
         public ModsViewModel ModsViewModel
         {
             get => _modsVM ??= new ModsViewModel();
             set => _modsVM = value;
         }
 
-        Deployment _deploy;
+        Deployment? _deploy;
         public Deployment ContentDeploy
         {
             get => _deploy ??= new Deployment();
             set => _deploy = value;
         }
 
-        DeploymentViewModel _deployVM;
+        DeploymentViewModel? _deployVM;
         public DeploymentViewModel DeployViewModel
         {
             get => _deployVM ??= new DeploymentViewModel();
             set => _deployVM = value;
         }
 
-        ServerStatus _serverStatus;
+        ServerStatus? _serverStatus;
         public ServerStatus ContentServerStatus
         {
             get => _serverStatus ??= new ServerStatus();
             set => _serverStatus = value;
         }
 
-        Settings _settings;
+        Settings? _settings;
         public Settings ContentSettings
         {
             get => _settings ??= new Settings(this);
             set => _settings = value;
         }
 
-        About _about;
+        About? _about;
         public About ContentAbout
         {
             get => _about ??= new About();
             set => _about = value;
         }
 
-        Profile _profile;
+        Profile? _profile;
         public Profile ContentProfile
         {
             get => _profile ??= new Profile();
             set => _profile = value;
         }
 
-        private List<ProfileViewModel> _profileViews;
+        private List<ProfileViewModel>? _profileViews;
 
         internal List<ProfileViewModel> ContentProfileViews
         {
@@ -279,7 +279,7 @@ namespace FASTER
             }
         }
 
-        private ToggleButton GetSelectedProfileToggleButton()
+        private ToggleButton? GetSelectedProfileToggleButton()
         {
             var selected = IServerProfilesMenu.SelectedItem;
             if (selected is System.Windows.Controls.DockPanel dp)
@@ -295,7 +295,7 @@ namespace FASTER
             try
             {
                 var selectedBtn = GetSelectedProfileToggleButton();
-                var temp = AppSettings.Current.Profiles.FirstOrDefault(s =>
+                var temp = AppSettings.Current.Profiles?.FirstOrDefault(s =>
                     s.Id == selectedBtn?.Name);
                 if (temp == null)
                 {
@@ -321,7 +321,7 @@ namespace FASTER
             try
             {
                 var selectedBtn = GetSelectedProfileToggleButton();
-                var temp = AppSettings.Current.Profiles.FirstOrDefault(s =>
+                var temp = AppSettings.Current.Profiles?.FirstOrDefault(s =>
                     s.Id == selectedBtn?.Name);
                 if (temp == null)
                 {
@@ -520,6 +520,7 @@ namespace FASTER
         private void MoveProfileUp(string profileId)
         {
             var profiles = AppSettings.Current.Profiles;
+            if (profiles == null) return;
             int idx = profiles.FindIndex(p => p.Id == profileId);
             if (idx <= 0) return;
             var item = profiles[idx];
@@ -533,6 +534,7 @@ namespace FASTER
         private void MoveProfileDown(string profileId)
         {
             var profiles = AppSettings.Current.Profiles;
+            if (profiles == null) return;
             int idx = profiles.FindIndex(p => p.Id == profileId);
             if (idx < 0 || idx >= profiles.Count - 1) return;
             var item = profiles[idx];
@@ -549,11 +551,11 @@ namespace FASTER
             var modStagingDir = properties.ModStagingDirectory;
 
             var controller = await this.ShowProgressAsync("Please wait...", "Checking Drive Space...");
-            controller.Maximum = properties.SteamMods.SteamMods.Count;
+            controller.Maximum = properties.SteamMods?.SteamMods.Count ?? 0;
             var progress = 0;
 
             long fullzize = 0;
-            foreach (var mod in properties.SteamMods.SteamMods.Select(m => Path.Combine(AppSettings.Current.SteamCMDPath, "steamapps", "workshop", "content", "107410", m.WorkshopId.ToString())).Concat(properties.LocalMods.Select(m => m.Path)))
+            foreach (var mod in (properties.SteamMods?.SteamMods.Select(m => Path.Combine(AppSettings.Current.SteamCMDPath, "steamapps", "workshop", "content", "107410", m.WorkshopId.ToString())) ?? Enumerable.Empty<string>()).Concat(properties.LocalMods?.Select(m => m.Path) ?? Enumerable.Empty<string>()))
             {
                 if (!Directory.Exists(mod))
                     continue;
@@ -565,6 +567,12 @@ namespace FASTER
             }
 
             var drive = DriveInfo.GetDrives().FirstOrDefault(d => d.Name == Path.GetPathRoot(modStagingDir));
+
+            if (drive == null)
+            {
+                await controller.CloseAsync();
+                return;
+            }
 
             if (drive.AvailableFreeSpace < fullzize)
             {
@@ -587,7 +595,7 @@ namespace FASTER
             }
 
 
-            foreach (var steamMod in properties.SteamMods.SteamMods)
+            foreach (var steamMod in properties.SteamMods?.SteamMods ?? Enumerable.Empty<SteamMod>())
             {
                 var newPath = Path.Combine(modStagingDir, steamMod.WorkshopId.ToString());
                 var oldPath = Path.Combine(AppSettings.Current.SteamCMDPath, "steamapps", "workshop", "content", "107410", steamMod.WorkshopId.ToString());
@@ -607,7 +615,7 @@ namespace FASTER
                     SteamLastUpdated = Convert.ToUInt64(steamMod.SteamLastUpdated),
                     Status = ArmaModStatus.UpdateRequired
                 };
-                await Task.Run(() => properties.ArmaMods.AddSteamMod(newMod));
+                await Task.Run(() => properties.ArmaMods?.AddSteamMod(newMod));
                 progress += 1;
                 controller.SetMessage($"Converting Steam Mods... {progress} / {controller.Maximum}");
                 controller.SetProgress(progress);
@@ -646,7 +654,7 @@ namespace FASTER
                     IsLocal = true,
                     Status = ArmaModStatus.Local
                 };
-                await Task.Run(() => properties.ArmaMods.AddSteamMod(newMod));
+                await Task.Run(() => properties.ArmaMods?.AddSteamMod(newMod));
                 progress += 1;
                 controller.SetMessage($"Converting Local Mods... {progress} / {controller.Maximum}");
                 controller.SetProgress(progress * 100.0 / controller.Maximum);
@@ -663,7 +671,8 @@ namespace FASTER
                 foreach (var file in Directory.EnumerateFiles(oldPath, "*", SearchOption.AllDirectories))
                 {
                     var newFile = file.Replace(oldPath, newPath);
-                    if (!Directory.Exists(Path.GetDirectoryName(newFile))) Directory.CreateDirectory(Path.GetDirectoryName(newFile));
+                    var dir = Path.GetDirectoryName(newFile);
+                    if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir)) Directory.CreateDirectory(dir);
 
                     await CopyFileAsync(file, newFile);
                 }
@@ -686,7 +695,7 @@ namespace FASTER
         }
 
         // Opens Folder select dialog and returns selected path
-        public string SelectFolder(string defaultFolder = "")
+        public string? SelectFolder(string defaultFolder = "")
         {
             var dlg = new CommonOpenFileDialog
             {

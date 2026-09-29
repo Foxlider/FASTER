@@ -41,8 +41,11 @@ namespace FASTER.ViewModel
         /// </summary>
         public void LoadData()
         {
-            Deployment = AppSettings.Current.Deployments;
-            foreach (var mod in AppSettings.Current.ArmaMods.ArmaMods)
+            Deployment = AppSettings.Current.Deployments ?? new ArmaDeployment();
+            var armaMods = AppSettings.Current.ArmaMods;
+            if (armaMods == null)
+                return;
+            foreach (var mod in armaMods.ArmaMods)
             {
                 if (Deployment.DeployMods.Any(m => m.WorkshopId == mod.WorkshopId))
                     continue;
@@ -51,7 +54,7 @@ namespace FASTER.ViewModel
             }
             foreach (var mod in Deployment.DeployMods.ToArray())
             {
-                if (AppSettings.Current.ArmaMods.ArmaMods.All(m => m.WorkshopId != mod.WorkshopId))
+                if (armaMods.ArmaMods.All(m => m.WorkshopId != mod.WorkshopId))
                 {
                     Deployment.DeployMods.Remove(mod);
                     AppSettings.Current.Save();

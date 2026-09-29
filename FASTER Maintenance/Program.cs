@@ -87,6 +87,13 @@ namespace FASTER_Maintenance
 
         private static void SetEnvVar()
         {
+            if (!OperatingSystem.IsWindowsVersionAtLeast(6, 1))
+            {
+                Console.WriteLine("Folder selection requires Windows.");
+                _exitCode = 103;
+                return;
+            }
+
             using var fbd = new FolderBrowserDialog
             {
                 SelectedPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
@@ -490,6 +497,13 @@ namespace FASTER_Maintenance
 
         private static void BackupSettings()
         {
+            if (!OperatingSystem.IsWindowsVersionAtLeast(6, 1))
+            {
+                Console.WriteLine("Folder selection requires Windows.");
+                _exitCode = 103;
+                return;
+            }
+
             using var fbd = new FolderBrowserDialog
             {
                 SelectedPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),

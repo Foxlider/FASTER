@@ -88,12 +88,13 @@ namespace FASTER.Views
 
             try
             {
-                string rev = $"{(char)(Assembly.GetExecutingAssembly().GetName().Version.Build + 96)}";
+                var asmVersion = Assembly.GetExecutingAssembly().GetName().Version!;
+                string rev = $"{(char)(asmVersion.Build + 96)}";
 #if DEBUG
                 rev += "-DEV";
 #endif
-                MainWindow.Instance.Version = $"{Assembly.GetExecutingAssembly().GetName().Version.Major}."
-                               + $"{Assembly.GetExecutingAssembly().GetName().Version.Minor}"
+                MainWindow.Instance.Version = $"{asmVersion.Major}."
+                               + $"{asmVersion.Minor}"
                                + $"{rev}";
                 Analytics.TrackEvent("Setup - Launching", new Dictionary<string, string> {
                     { "Name", AppSettings.Current.SteamUserName },
@@ -127,7 +128,7 @@ namespace FASTER.Views
         // Opens folder select dialog when clicking certain buttons
         private void DirButton_Click(object sender, RoutedEventArgs e)
         {
-            string path = MainWindow.Instance.SelectFolder();
+            string? path = MainWindow.Instance.SelectFolder();
 
             if (string.IsNullOrEmpty(path)) return;
 
@@ -162,7 +163,7 @@ namespace FASTER.Views
             settings.ServerPath = IServerDirBox.Text;
             settings.ModStagingDirectory = IModStaging.Text;
             settings.SteamUserName = ISteamUserBox.Text;
-            settings.SteamPassword = encryption.EncryptData(ISteamPassBox.Password);
+            settings.SteamPassword = encryption.EncryptData(ISteamPassBox.Password) ?? string.Empty;
             if (!string.IsNullOrEmpty(IApiKeyBox.Text))
                 AppSettings.Current.SteamAPIKey = IApiKeyBox.Text;
             settings.FirstRun = false;

@@ -84,7 +84,7 @@ namespace FASTER.Models
             if (AppSettings.Current.SteamMods == null) return currentSteamMods;
 
             AppSettings.Current.Reload();
-            currentSteamMods = AppSettings.Current.SteamMods?.SteamMods;
+            currentSteamMods = AppSettings.Current.SteamMods?.SteamMods ?? new();
 
             return currentSteamMods;
         }
@@ -93,18 +93,18 @@ namespace FASTER.Models
         {
             var uri = new Uri(modUrl);
             var modID = System.Web.HttpUtility.ParseQueryString(uri.Query).Get("id");
-            return uint.Parse(modID);
+            return uint.Parse(modID ?? string.Empty);
         }
 
-        public static Tuple<string, string, int> GetModInfo(uint modId)
+        public static Tuple<string, string, int>? GetModInfo(uint modId)
         {
             var modInfo = SteamWebApi.GetSingleFileDetails(modId);
-            string author = null;
+            string? author = null;
             int steamUpdateTime = 0;
             try
             {
                 if (modInfo != null)
-                { author = SteamWebApi.GetPlayerSummaries(modInfo.SelectToken("creator").ToString())?.SelectToken("personaname")?.ToString(); }
+                { author = SteamWebApi.GetPlayerSummaries(modInfo.SelectToken("creator")?.ToString() ?? string.Empty)?.SelectToken("personaname")?.ToString(); }
             }
             catch
             { author = "Unknown"; }
@@ -112,14 +112,14 @@ namespace FASTER.Models
             try
             {
                 if (modInfo?.SelectToken("time_updated") != null)
-                { steamUpdateTime = int.Parse(modInfo.SelectToken("time_updated").ToString()); }
+                { steamUpdateTime = int.Parse(modInfo.SelectToken("time_updated")?.ToString() ?? "0"); }
             }
             catch
             { steamUpdateTime = 0; }
 
-            var modName = modInfo?.SelectToken("title").ToString();
+            var modName = modInfo?.SelectToken("title")?.ToString();
 
-            return modInfo?.SelectToken("creator_appid").ToString() == "107410" ? new Tuple<string, string, int>(modName, author, steamUpdateTime) : null;
+            return modInfo?.SelectToken("creator_appid")?.ToString() == "107410" ? new Tuple<string, string, int>(modName ?? string.Empty, author ?? "Unknown", steamUpdateTime) : null;
         }
     }
 }

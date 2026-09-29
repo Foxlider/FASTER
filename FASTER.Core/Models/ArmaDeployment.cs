@@ -54,11 +54,11 @@ namespace FASTER.Models
     public class DeploymentMod : INotifyPropertyChanged
     {
         private bool marked;
-        private string _path;
-        private string _name;
-        private string _author;
+        private string _path = string.Empty;
+        private string _name = string.Empty;
+        private string _author = string.Empty;
         private uint _workshopId;
-        private string _status;
+        private string _status = string.Empty;
         private long _size;
         private bool _isLocal;
 
@@ -90,7 +90,7 @@ namespace FASTER.Models
 
         public void UpdateInfos()
         {
-            var originalMod = AppSettings.Current.ArmaMods.ArmaMods.FirstOrDefault(m => m.WorkshopId == WorkshopId);
+            var originalMod = AppSettings.Current.ArmaMods?.ArmaMods.FirstOrDefault(m => m.WorkshopId == WorkshopId);
             if (originalMod == null)
                 return;
 

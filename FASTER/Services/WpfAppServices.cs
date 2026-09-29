@@ -80,7 +80,7 @@ namespace FASTER.Services
                 dialog.Filters.Add(new CommonFileDialogFilter("Arma 3 Server Executable", filter));
 
             if (dialog.ShowDialog() != CommonFileDialogResult.Ok) return Task.FromResult<string?>(null);
-            return Task.FromResult(dialog.FileName);
+            return Task.FromResult<string?>(dialog.FileName);
         }
 
         public Task<string?> PickModPresetFileAsync()
@@ -91,6 +91,6 @@ namespace FASTER.Services
         }
 
         public Task<string?> PickFolderAsync(string current)
-            => Task.FromResult(MainWindow.Instance.SelectFolder(current));
+            => Task.FromResult<string?>(MainWindow.Instance.SelectFolder(current));
     }
 }

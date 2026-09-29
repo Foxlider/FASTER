@@ -13,7 +13,7 @@ public partial class ProgressDialog : Window, IProgressDialog
 
     public ProgressDialog() => InitializeComponent();
 
-    public new double Maximum
+    public double Maximum
     {
         get => Bar.Maximum;
         set => Dispatcher.UIThread.Post(() => Bar.Maximum = value);

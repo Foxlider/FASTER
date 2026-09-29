@@ -16,7 +16,7 @@ namespace FASTER.Views
             this.Dispatcher.ShutdownStarted += DispatcherOnShutdownStarted;
         }
 
-        private void DispatcherOnShutdownStarted(object sender, EventArgs e)
+        private void DispatcherOnShutdownStarted(object? sender, EventArgs e)
         {
             ((ProfileViewModel)DataContext)?.UnloadData();
         }

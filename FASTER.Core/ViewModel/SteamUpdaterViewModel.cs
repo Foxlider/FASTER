@@ -102,12 +102,12 @@ namespace FASTER.ViewModel
             }
         }
 
-        internal SteamClient SteamClient;
-        internal SteamContentClient SteamContentClient;
+        internal SteamClient? SteamClient;
+        internal SteamContentClient? SteamContentClient;
 
         public void PasswordChanged(string password)
         {
-            Parameters.Password = Encryption.Instance.EncryptData(password);
+            Parameters.Password = Encryption.Instance.EncryptData(password) ?? string.Empty;
         }
 
         private void Timer_Tick()
@@ -123,7 +123,7 @@ namespace FASTER.ViewModel
             UpdaterOnline = SteamClient.IsConnected;
         }
 
-        internal string GetPw()
+        internal string? GetPw()
         { return Encryption.Instance.DecryptData(Parameters.Password); }
 
         public async Task UpdateClick()
@@ -174,7 +174,7 @@ namespace FASTER.ViewModel
             //    return;
             //}
 
-            List<(uint id, string branch, string pass)> depotsDownload = new();
+            List<(uint id, string branch, string? pass)> depotsDownload = new();
 
             Parameters.Output += "\nChecking Shared Content...";
             //Downloading Depot 233781 from either branch contact or public
@@ -302,7 +302,7 @@ namespace FASTER.ViewModel
             assign(path);
         }
 
-        internal async Task<int> RunServerUpdater(string path, uint appId, List<(uint id, string branch, string pass)> depots)
+        internal async Task<int> RunServerUpdater(string path, uint appId, List<(uint id, string branch, string? pass)> depots)
         {
             if (string.IsNullOrWhiteSpace(path))
                 return UpdateState.Cancelled;
@@ -314,6 +314,10 @@ namespace FASTER.ViewModel
             if (!await SteamLogin())
                 return UpdateState.LoginFailed;
 
+            var contentClient = SteamContentClient;
+            if (contentClient == null)
+                return UpdateState.Error;
+
             Stopwatch sw = Stopwatch.StartNew();
 
             foreach (var depot in depots)
@@ -321,10 +325,11 @@ namespace FASTER.ViewModel
                 try
                 {
                     ManifestId manifestId;
-                    manifestId = await SteamContentClient.GetDepotManifestIdAsync(appId, depot.id, depot.branch, depot.pass);
+                    // The client declares branchPassword non-nullable but defaults it to null and null-checks it internally, so a null depot password is valid here.
+                    manifestId = await contentClient.GetDepotManifestIdAsync(appId, depot.id, depot.branch, depot.pass!);
 
                     Parameters.Output += $"\n\nFetching informations of app {appId}, depot {depot.id} from Steam ({depots.IndexOf(depot) + 1}/{depots.Count})... ";
-                    var downloadHandler = await SteamContentClient.GetAppDataAsync(appId, depot.id, manifestId, tokenSource.Token);
+                    var downloadHandler = await contentClient.GetAppDataAsync(appId, depot.id, manifestId, tokenSource.Token);
 
                     await Download(downloadHandler, path);
                 }
@@ -377,25 +382,30 @@ namespace FASTER.ViewModel
 
                 Parameters.Output += $"\nFetching mod {modId} infos... ";
 
-                if (!SteamClient.Credentials.IsAnonymous) //IS SYNC ENABLED
+                var client = SteamClient;
+                var contentClient = SteamContentClient;
+                if (client == null || contentClient == null)
+                    return UpdateState.LoginFailed;
+
+                if (!client.Credentials.IsAnonymous) //IS SYNC ENABLED
                 {
-                    manifestId = (await SteamContentClient.GetPublishedFileDetailsAsync(modId)).hcontent_file;
-                    Manifest manifest = await SteamContentClient.GetManifestAsync(107410, 107410, manifestId);
+                    manifestId = (await contentClient.GetPublishedFileDetailsAsync(modId)).hcontent_file;
+                    Manifest manifest = await contentClient.GetManifestAsync(107410, 107410, manifestId);
 
                     SyncDeleteRemovedFiles(path, manifest);
                 }
 
                 Parameters.Output += $"\nAttempting to start download of item {modId}... ";
 
-                var downloadHandler = await SteamContentClient.GetPublishedFileDataAsync(modId, manifestId, tokenSource.Token);
+                var downloadHandler = await contentClient.GetPublishedFileDataAsync(modId, manifestId, tokenSource.Token);
 
                 await Download(downloadHandler, path);
             }
             catch (TaskCanceledException)
             {
                 sw.Stop();
-                SteamClient.Shutdown();
-                SteamClient.Dispose();
+                SteamClient?.Shutdown();
+                SteamClient?.Dispose();
                 SteamClient = null;
                 return UpdateState.Cancelled;
             }
@@ -403,8 +413,8 @@ namespace FASTER.ViewModel
             {
                 sw.Stop();
                 Parameters.Output += $"\nError: {ex.Message}{(ex.InnerException != null ? $" Inner Exception: {ex.InnerException.Message}" : "")}";
-                SteamClient.Shutdown();
-                SteamClient.Dispose();
+                SteamClient?.Shutdown();
+                SteamClient?.Dispose();
                 SteamClient = null;
                 return UpdateState.Error;
             }
@@ -542,12 +552,17 @@ namespace FASTER.ViewModel
                 return;
             }
 
-            if (!SteamClient.Credentials.IsAnonymous)
+            var client = SteamClient;
+            var contentClient = SteamContentClient;
+            if (client == null || contentClient == null)
+                return;
+
+            if (!client.Credentials.IsAnonymous)
             {
                 Logger.Log($"  Getting manifest for {mod.WorkshopId}");
                 Parameters.Output += $"\n   Getting manifest for {mod.WorkshopId}";
-                manifestId = (await SteamContentClient.GetPublishedFileDetailsAsync(mod.WorkshopId)).hcontent_file;
-                Manifest manifest = await SteamContentClient.GetManifestAsync(107410, 107410, manifestId);
+                manifestId = (await contentClient.GetPublishedFileDetailsAsync(mod.WorkshopId)).hcontent_file;
+                Manifest manifest = await contentClient.GetManifestAsync(107410, 107410, manifestId);
                 Parameters.Output += $"\n   Manifest retrieved {mod.WorkshopId}";
                 Logger.Log($"  Manifest retrieved for {mod.WorkshopId}, syncing deleted files...");
                 SyncDeleteRemovedFiles(mod.Path, manifest);
@@ -556,7 +571,7 @@ namespace FASTER.ViewModel
            Logger.Log($"  Requesting download handler for {mod.WorkshopId}");
            Parameters.Output += $"\n    Attempting to start download of item {mod.WorkshopId}... ";
 
-           var downloadHandler = await SteamContentClient.GetPublishedFileDataAsync(mod.WorkshopId, manifestId, tokenSource.Token);
+           var downloadHandler = await contentClient.GetPublishedFileDataAsync(mod.WorkshopId, manifestId, tokenSource.Token);
            Logger.Log($"  Download handler obtained for {mod.WorkshopId}, starting download...");
            await DownloadForMultiple(downloadHandler, mod.Path);
            Logger.Log($"  Download complete for {mod.WorkshopId}");
@@ -575,7 +590,7 @@ namespace FASTER.ViewModel
             IsLoggingIn = true;
             var path = Path.Combine(Path.GetDirectoryName(AppSettings.SettingsPath) ?? string.Empty, "sentries");
 
-            SteamCredentials _steamCredentials = new(Parameters.Username, Encryption.Instance.DecryptData(Parameters.Password));
+            SteamCredentials _steamCredentials = new(Parameters.Username, Encryption.Instance.DecryptData(Parameters.Password) ?? string.Empty);
 
             if (SteamClient == null || SteamClient.Credentials.Username != _steamCredentials.Username || SteamClient.Credentials.Password != _steamCredentials.Password)
             {
@@ -587,12 +602,19 @@ namespace FASTER.ViewModel
                 SteamClient.InternalClientLoggedOff += () => Parameters.Output += "\n\tClient : Logged off";
             }
 
-            if (!SteamClient.IsConnected || SteamClient.IsFaulted)
+            var client = SteamClient;
+            if (client == null)
+            {
+                IsLoggingIn = false;
+                return false;
+            }
+
+            if (!client.IsConnected || client.IsFaulted)
             {
                 Parameters.Output += $"\nConnecting to Steam as {(_steamCredentials.IsAnonymous ? "anonymous" : _steamCredentials.Username)}";
-                SteamClient.MaximumLogonAttempts = 5;
+                client.MaximumLogonAttempts = 5;
                 try
-                { await SteamClient.ConnectAsync(tokenSource.Token); }
+                { await client.ConnectAsync(tokenSource.Token); }
                 catch (SteamClientAlreadyRunningException)
                 {
                     Logger.Log("SteamLogin: SteamClientAlreadyRunningException - client already running");
@@ -604,9 +626,9 @@ namespace FASTER.ViewModel
                 {
                     Logger.Log($"SteamLogin: ConnectAsync failed: {ex.GetType().Name}: {ex.Message}\nStackTrace: {ex.StackTrace}");
                     Parameters.Output += $"\nFailed! Error: {ex.Message}";
-                    var savedUsername = SteamClient.Credentials.Username;
-                    SteamClient.Shutdown();
-                    SteamClient.Dispose();
+                    var savedUsername = client.Credentials.Username;
+                    client.Shutdown();
+                    client.Dispose();
                     SteamClient = null;
 
                     if (ex.GetBaseException() is SteamAuthenticationException)
@@ -621,18 +643,18 @@ namespace FASTER.ViewModel
             }
 
             Logger.Log($"SteamLogin: creating SteamContentClient with {AppSettings.Current.CliWorkers} workers");
-            SteamContentClient = new SteamContentClient(SteamClient, AppSettings.Current.CliWorkers);
+            SteamContentClient = new SteamContentClient(client, AppSettings.Current.CliWorkers);
             Parameters.Output += "\nConnected !";
             Logger.Log("SteamLogin: connected OK");
             IsLoggingIn = false;
-            return SteamClient.IsConnected;
+            return client.IsConnected;
         }
 
         internal bool SteamReset()
         {
             Parameters.Output += "\nDisconnecting...";
-            SteamClient.Shutdown();
-            SteamClient.Dispose();
+            SteamClient?.Shutdown();
+            SteamClient?.Dispose();
             SteamClient = null;
             Parameters.Output += "\nDisconnected.";
             return SteamClient == null;

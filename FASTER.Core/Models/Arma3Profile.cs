@@ -47,7 +47,7 @@ namespace FASTER.Models
         private double skillAi = 0.5;
         private double precisionAi = 0.5;
 
-        private string armaProfileContent;
+        private string armaProfileContent = string.Empty;
 
         public string ArmaProfileContent
         {
@@ -379,7 +379,7 @@ namespace FASTER.Models
         }
 
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         private void RaisePropertyChanged(string property)
         {

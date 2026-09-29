@@ -4,19 +4,22 @@
     <EnableWindowsTargeting>true</EnableWindowsTargeting>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <!-- NU1903 cannot be fixed by bumping: the vulnerable SQLitePCLRaw comes transitively from the retired AppCenter SDK, and the advisory lists no patched version. AppCenter uses it only for local telemetry buffering, so suppress. -->
+    <NoWarn>$(NoWarn);NU1903</NoWarn>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <LangVersion>14.0</LangVersion>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <NoWarn>1701;1702;NU1701;CS8002</NoWarn>
+    <NoWarn>1701;1702;NU1701;CS8002;NU1903</NoWarn>
     <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <NoWarn>1701;1702;NU1701;CS8002</NoWarn>
+    <NoWarn>1701;1702;NU1701;CS8002;NU1903</NoWarn>
     <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
-    <NoWarn>1701;1702;NU1701;CS8002</NoWarn>
+    <NoWarn>1701;1702;NU1701;CS8002;NU1903</NoWarn>
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
