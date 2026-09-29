@@ -662,6 +662,8 @@ namespace FASTER.ViewModel
 
         private async Task Download(IDownloadHandler downloadHandler, string targetDir)
         {
+            SteamDiagLogger.Attach(downloadHandler);
+
             ulong downloadedSize = 0;
             bool skipDownload = false;
             downloadHandler.FileVerified          += (_, args) => Parameters.Output += $"{(args.RequiresDownload ? $"\nFile verified : {args.ManifestFile.FileName} ({Functions.ParseFileSize(args.ManifestFile.TotalSize)})" : "")}";
@@ -751,6 +753,8 @@ namespace FASTER.ViewModel
 
         private async Task DownloadForMultiple(IDownloadHandler downloadHandler, string targetDir)
         {
+            SteamDiagLogger.Attach(downloadHandler);
+
             Logger.Log($"DownloadForMultiple: targetDir={targetDir}");
             if (targetDir == null)
             {
