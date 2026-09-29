@@ -47,19 +47,17 @@ namespace FASTER.Models
         }
 
 
+                private static readonly HttpClient client = new() { Timeout = TimeSpan.FromSeconds(5) };
+
         // Calls to Steam API Endpoint and returns the result as JSON Object
         private static JObject ApiCall(string uri)
         {
-            // Create a request for the URL. 
-            HttpClient client = new();
-            client.Timeout = TimeSpan.FromSeconds(5);
-
             // Get the response.
             HttpResponseMessage response = null;
 
             try
-            { response = client.GetAsync(uri).Result; }
-            catch (WebException e)
+            { response = client.GetAsync(uri).GetAwaiter().GetResult(); }
+            catch (Exception e) when (e is HttpRequestException or TaskCanceledException or SocketException)
             {
                 try
                 {
@@ -71,7 +69,7 @@ namespace FASTER.Models
                     // Create an EventLog instance and assign its source.
                     using EventLog eventLog = new EventLog("Application")
                     { Source = "FASTER" };
-                    eventLog.WriteEntry($"Could not reach Steam API : \n[WebException] {e.Message}\n\n{e.StackTrace}", EventLogEntryType.Error);
+                    eventLog.WriteEntry($"Could not reach Steam API : \n[{e.GetType().Name}] {e.Message}\n\n{e.StackTrace}", EventLogEntryType.Error);
                 }
                 catch (Exception) //In case it was called before Initialized in SteamMods_Initialized() and could not connect to SteamAPI
                 {
