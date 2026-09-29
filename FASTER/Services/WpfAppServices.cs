@@ -51,7 +51,8 @@ namespace FASTER.Services
             {
                 try
                 { Clipboard.SetDataObject(text); }
-                catch (System.Runtime.InteropServices.COMException) { }
+                catch (System.Runtime.InteropServices.COMException)
+                { /* Clipboard stayed locked, the user can copy again. */ }
             }
             return Task.CompletedTask;
         }

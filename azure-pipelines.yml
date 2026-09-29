@@ -26,7 +26,7 @@ steps:
     command: 'restore'
     feedsToUse: 'select'
 
-- task: SonarCloudPrepare@1
+- task: SonarCloudPrepare@4.2.6
   inputs:
     SonarCloud: 'SonarCloud'
     organization: 'foxlicorp'
@@ -38,7 +38,7 @@ steps:
 - script: dotnet build --configuration $(buildConfiguration)
   displayName: 'Dotnet Build $(buildConfiguration)'
 
-- task: SonarCloudAnalyze@1
+- task: SonarCloudAnalyze@4.2.6
 
 - task: DotNetCoreCLI@2
   displayName: 'Dotnet Publish $(buildConfiguration) x64'

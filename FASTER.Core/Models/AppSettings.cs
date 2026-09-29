@@ -178,7 +178,7 @@ public sealed class AppSettings
                     }
                 }
                 catch
-                { }
+                { /* Corrupt or unreadable file, fall through to defaults and the legacy import. */ }
 
                 var fresh = new AppSettings();
                 var imported = ImportLegacyUserConfig();
@@ -241,7 +241,7 @@ public sealed class AppSettings
                     }
                 }
                 catch
-                { }
+                { /* One bad value must not kill the whole import, skip it. */ }
             }
 
             return result;

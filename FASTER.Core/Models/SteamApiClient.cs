@@ -10,12 +10,14 @@ public static class SteamWebApi
 {
     private const string V2 = "&steamids=";
     private const string V3 = "&publishedfileids[0]=";
+    private const string FileDetailsEndpoint = "https://api.steampowered.com/IPublishedFileService/GetDetails/v1?key=";
+    private const string PlayerSummariesEndpoint = "https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v1?key=";
 
     public static JObject? GetSingleFileDetails(uint modId)
     {
         try
         {
-            var response = ApiCall("https://api.steampowered.com/IPublishedFileService/GetDetails/v1?key=" + GetApiKey() + V3 + modId);
+            var response = ApiCall(FileDetailsEndpoint + GetApiKey() + V3 + modId);
             return (JObject?)response?.SelectToken("response.publishedfiledetails[0]");
         }
         catch
@@ -26,7 +28,7 @@ public static class SteamWebApi
     {
         try
         {
-            var response = ApiCall("https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v1?key=" + GetApiKey() + V2 + playerId);
+            var response = ApiCall(PlayerSummariesEndpoint + GetApiKey() + V2 + playerId);
             return (JObject?)response?.SelectToken("response.players.player[0]");
         }
         catch

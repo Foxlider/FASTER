@@ -13,6 +13,8 @@ namespace FASTER.ViewModel
 {
     public class ModsViewModel
     {
+        private const string WorkshopFileDetailsUrl = "https://steamcommunity.com/workshop/filedetails/?id=";
+
         public ModsViewModel()
         {
             ModsCollection = AppSettings.Current.ArmaMods ?? new ArmaModCollection();
@@ -155,7 +157,7 @@ namespace FASTER.ViewModel
             if (mod == null)
                 return;
 
-            var url = "https://steamcommunity.com/workshop/filedetails/?id=" + mod.WorkshopId;
+            var url = WorkshopFileDetailsUrl + mod.WorkshopId;
 
             try
             { Process.Start(url); }

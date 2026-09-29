@@ -91,7 +91,7 @@ public partial class ServerStatusView : UserControl
             try
             { process.Kill(); }
             catch
-            { }
+            { /* Already exited or not killable from here, the rescan below sorts it out. */ }
         }
         await Task.Delay(1000);
         RefreshServers();
@@ -104,7 +104,7 @@ public partial class ServerStatusView : UserControl
             try
             { process.Kill(); }
             catch
-            { }
+            { /* Same story, already gone or not killable from here. */ }
             RefreshServers();
         }
     }
@@ -119,11 +119,11 @@ public partial class ServerStatusView : UserControl
                     try
                     { return p.ProcessName.Contains("arma3server"); }
                     catch
-                    { return false; }
+                    { /* Exited mid-scan or not inspectable, so not one of ours. */ return false; }
                 })
                 .ToList();
         }
         catch
-        { }
+        { /* Process listing failed, keep showing the old list. */ }
     }
 }

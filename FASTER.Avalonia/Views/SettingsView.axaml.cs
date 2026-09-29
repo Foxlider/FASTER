@@ -15,6 +15,8 @@ namespace FASTER.Avalonia.Views;
 
 public partial class SettingsView : UserControl
 {
+    private const string SteamApiKeyUrl = "https://steamcommunity.com/dev/apikey";
+    private const string UpdateFeedUrl = "https://github.com/milutinke/FASTER";
     public SettingsView()
     {
         InitializeComponent();
@@ -60,7 +62,7 @@ public partial class SettingsView : UserControl
     }
 
     private void ApiKeyButton_Click(object? sender, RoutedEventArgs e)
-        => Functions.OpenBrowser("https://steamcommunity.com/dev/apikey");
+        => Functions.OpenBrowser(SteamApiKeyUrl);
 
     private void Save_Click(object? sender, RoutedEventArgs e)
     {
@@ -77,7 +79,7 @@ public partial class SettingsView : UserControl
         UpdateMessage.Text = "Checking for updates...";
         try
         {
-            var source = new GithubSource("https://github.com/milutinke/FASTER", null, false);
+            var source = new GithubSource(UpdateFeedUrl, null, false);
             var manager = new UpdateManager(source);
             var update = await manager.CheckForUpdatesAsync();
             if (update == null)

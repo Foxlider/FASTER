@@ -9,6 +9,8 @@ namespace FASTER.ViewModel
 {
     public class DeploymentViewModel
     {
+        private const string WorkshopFileDetailsUrl = "https://steamcommunity.com/workshop/filedetails/?id=";
+
         public DeploymentViewModel()
         {
             if (AppSettings.Current.Deployments == null)
@@ -162,7 +164,7 @@ namespace FASTER.ViewModel
             if (mod == null)
                 return;
 
-            var url = "https://steamcommunity.com/workshop/filedetails/?id=" + mod.WorkshopId;
+            var url = WorkshopFileDetailsUrl + mod.WorkshopId;
 
             try
             { Process.Start(url); }
