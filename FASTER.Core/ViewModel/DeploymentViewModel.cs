@@ -10,8 +10,8 @@ namespace FASTER.ViewModel
     public class DeploymentViewModel
     {
         public DeploymentViewModel()
-        { 
-            if(AppSettings.Current.Deployments == null)
+        {
+            if (AppSettings.Current.Deployments == null)
             {
                 AppSettings.Current.Deployments = new ArmaDeployment();
                 AppSettings.Current.Save();
@@ -53,7 +53,7 @@ namespace FASTER.ViewModel
                     AppSettings.Current.Save();
                     continue;
                 }
-                mod.UpdateInfos(); 
+                mod.UpdateInfos();
             }
         }
 
@@ -64,7 +64,7 @@ namespace FASTER.ViewModel
         /// <param name="mod"></param>
         public void DeployMod(DeploymentMod mod)
         {
-            if(!Directory.Exists(Deployment.InstallPath))
+            if (!Directory.Exists(Deployment.InstallPath))
             {
                 DisplayMessage("Arma Install Path is empty.\nMake sure you have entered a valid path before deploying mods.");
                 return;
@@ -187,7 +187,7 @@ namespace FASTER.ViewModel
         {
             try
             {
-                if(Directory.Exists(linkPath))
+                if (Directory.Exists(linkPath))
                     Directory.Delete(linkPath, true);
 
                 Directory.CreateSymbolicLink(linkPath ?? throw new ArgumentNullException(nameof(linkPath)), mod.Path);

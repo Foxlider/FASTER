@@ -14,8 +14,8 @@ namespace FASTER.ViewModel
     public class ModsViewModel
     {
         public ModsViewModel()
-        { 
-            ModsCollection = AppSettings.Current.ArmaMods ?? new ArmaModCollection(); 
+        {
+            ModsCollection = AppSettings.Current.ArmaMods ?? new ArmaModCollection();
         }
 
         public ArmaModCollection ModsCollection { get; set; }
@@ -51,7 +51,7 @@ namespace FASTER.ViewModel
             var mod = new ArmaMod
             {
                 WorkshopId = modIDOut,
-                Path       = Path.Combine(AppSettings.Current.ModStagingDirectory, modID),
+                Path = Path.Combine(AppSettings.Current.ModStagingDirectory, modID),
                 IsLocal = false
             };
 
@@ -96,7 +96,8 @@ namespace FASTER.ViewModel
                     continue;
                 }
 
-                await Task.Factory.StartNew(() => {
+                await Task.Factory.StartNew(() =>
+                {
                     Directory.CreateSymbolicLink(newPath, oldPath);
                     var progressDone = oldPaths.IndexOf(oldPath);
                     progress.SetMessage($"Copying mod from {oldPath}\n{progressDone} / {progress.Maximum}");
@@ -163,7 +164,7 @@ namespace FASTER.ViewModel
                 try
                 {
                     url = url.Replace("&", "^&");
-                    Process.Start(new ProcessStartInfo("cmd", $"/c start {url}") {CreateNoWindow = true});
+                    Process.Start(new ProcessStartInfo("cmd", $"/c start {url}") { CreateNoWindow = true });
                 }
                 catch
                 { DisplayMessage($"Could not open \"{url}\""); }
@@ -190,7 +191,7 @@ namespace FASTER.ViewModel
                     continue;
                 }
 
-                if(!await Task.Run(() => extractedMod.IsOnWorkshop()))
+                if (!await Task.Run(() => extractedMod.IsOnWorkshop()))
                     continue;
 
                 ModsCollection.AddSteamMod(extractedMod);
@@ -225,7 +226,7 @@ namespace FASTER.ViewModel
         {
             Ui.Current.NavigateToConsole();
             var ans = await Ui.Current.RunModsUpdaterAsync(ModsCollection.ArmaMods);
-            if(ans == UpdateState.LoginFailed) 
+            if (ans == UpdateState.LoginFailed)
                 DisplayMessage("Steam Login Failed");
         }
     }

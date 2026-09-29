@@ -18,60 +18,60 @@ namespace FASTER.Models
     public class ServerCfg : INotifyPropertyChanged
     {
         //Server Options
-        private string       passwordAdmin;
-        private string       password;
-        private string       hostname;
-        private int          maxPlayers = 32;
-        private List<string> motd       = new();
-        private int          motdInterval;
-        private List<string> admins          = new();
+        private string passwordAdmin;
+        private string password;
+        private string hostname;
+        private int maxPlayers = 32;
+        private List<string> motd = new();
+        private int motdInterval;
+        private List<string> admins = new();
         private List<string> headlessClients = new();
-        private List<string> localClient     = new();
-        private bool         headlessClientEnabled;
-        private bool         votingEnabled;
-        private bool         netlogEnabled;
+        private List<string> localClient = new();
+        private bool headlessClientEnabled;
+        private bool votingEnabled;
+        private bool netlogEnabled;
 
         //Server Behavior
-        private double voteThreshold            = 0.33;
-        private int    voteMissionPlayers       = 3;
-        private short  kickduplicate            = 1;        // 1 = active ; 0=disabled
-        private bool   loopback;                            // Adding this option will force server into LAN mode
-        private bool   upnp                     = false;    // False by default due to 600s slow down if not set-up right. Thus in such case is recommended to disable it.
-        private short  allowedFilePatching;                 // 0 = no clients; 1= HC only; 2= All Clients
-        private int    disconnectTimeout        = 90;       // Server wait time before disconnecting client after loss of active traffic connection, range 5 to 90 seconds.
-        private int    maxdesync                = 150;      // Max desync value until server kick the user
-        private int    maxping                  = 200;      // Max ping value until server kick the user
-        private int    maxpacketloss            = 50;       // Max packetloss value until server kick the user
-        private bool   kickClientOnSlowNetwork;
-        private int    lobbyIdleTimeout         = 300;
-        private bool   autoSelectMission        = true;
-        private bool   randomMissionOrder       = true;
-        private int    briefingTimeOut          = 60; 	     // <-
-        private int    roleTimeOut              = 90; 	 	 // <- These are BI base figues
-        private int    votingTimeOut            = 60; 	 	 // <-
-        private int    debriefingTimeOut        = 45;        // <-
-        private bool   LogObjectNotFound        = true;      // logging enabled
-        private bool   SkipDescriptionParsing   = false;     // parse description.ext
-        private bool   ignoreMissionLoadErrors  = false;     // do not ingore errors
-        private int    armaUnitsTimeout         = 30; 	     // Defines how long the player will be stuck connecting and wait for armaUnits data. Player will be notified if timeout elapsed and no units data was received
-        private int    queueSizeLogG            = 1000000; 	 // if a specific players message queue is larger than 1MB and '#monitor' is running, dump his messages to a logfile for analysis
-        private string forcedDifficulty         = "Custom";  // By default forcedDifficulty is only applying Custom
+        private double voteThreshold = 0.33;
+        private int voteMissionPlayers = 3;
+        private short kickduplicate = 1;        // 1 = active ; 0=disabled
+        private bool loopback;                            // Adding this option will force server into LAN mode
+        private bool upnp = false;    // False by default due to 600s slow down if not set-up right. Thus in such case is recommended to disable it.
+        private short allowedFilePatching;                 // 0 = no clients; 1= HC only; 2= All Clients
+        private int disconnectTimeout = 90;       // Server wait time before disconnecting client after loss of active traffic connection, range 5 to 90 seconds.
+        private int maxdesync = 150;      // Max desync value until server kick the user
+        private int maxping = 200;      // Max ping value until server kick the user
+        private int maxpacketloss = 50;       // Max packetloss value until server kick the user
+        private bool kickClientOnSlowNetwork;
+        private int lobbyIdleTimeout = 300;
+        private bool autoSelectMission = true;
+        private bool randomMissionOrder = true;
+        private int briefingTimeOut = 60; 	     // <-
+        private int roleTimeOut = 90; 	 	 // <- These are BI base figues
+        private int votingTimeOut = 60; 	 	 // <-
+        private int debriefingTimeOut = 45;        // <-
+        private bool LogObjectNotFound = true;      // logging enabled
+        private bool SkipDescriptionParsing = false;     // parse description.ext
+        private bool ignoreMissionLoadErrors = false;     // do not ingore errors
+        private int armaUnitsTimeout = 30; 	     // Defines how long the player will be stuck connecting and wait for armaUnits data. Player will be notified if timeout elapsed and no units data was received
+        private int queueSizeLogG = 1000000; 	 // if a specific players message queue is larger than 1MB and '#monitor' is running, dump his messages to a logfile for analysis
+        private string forcedDifficulty = "Custom";  // By default forcedDifficulty is only applying Custom
 
 
         //Arma server only
-        private short  verifySignatures         = 0;         // 0 = Disabled (FASTER Default); 1 = Deprecated Activated ; 2 = Activated (Arma Default)
-        private bool   drawingInMap             = true;
-        private short  disableVoN;                           // 0 = VoN activated ; 1 = VoN Disabled
-        private int    vonCodecQuality          = 3;         // 8kHz is 0-10, 16kHz is 11-20, 32kHz is 21-30 (and 48kHz with OPUS enabled)
-        private short  vonCodec;                             // 0 = SPEEX ; 1 = OPUS
-        private bool   skipLobby;                            //Overritten by mission parameters
-        private string logFile                  = "server_console.log";
-        private short  battlEye                 = 1;         // 0 = Disabled ; 1 = Enabled
-        private string timeStampFormat          = "short";   // Possible values = "none", "short", "full"
-        private short  persistent;
-        private bool   requiredBuildChecked;
-        private int    requiredBuild            = 999999999; // Minimum required client version. Clients with version lower than requiredBuild will not be able to connect
-        private int    steamProtocolMaxDataSize = 10000;     // BI Default value is 1024. Increasing this value is dangerous for older routers as it will cause UDP packets to be fragmented. Though increasing this value can help with modulier length limit in a3 launcher.
+        private short verifySignatures = 0;         // 0 = Disabled (FASTER Default); 1 = Deprecated Activated ; 2 = Activated (Arma Default)
+        private bool drawingInMap = true;
+        private short disableVoN;                           // 0 = VoN activated ; 1 = VoN Disabled
+        private int vonCodecQuality = 3;         // 8kHz is 0-10, 16kHz is 11-20, 32kHz is 21-30 (and 48kHz with OPUS enabled)
+        private short vonCodec;                             // 0 = SPEEX ; 1 = OPUS
+        private bool skipLobby;                            //Overritten by mission parameters
+        private string logFile = "server_console.log";
+        private short battlEye = 1;         // 0 = Disabled ; 1 = Enabled
+        private string timeStampFormat = "short";   // Possible values = "none", "short", "full"
+        private short persistent;
+        private bool requiredBuildChecked;
+        private int requiredBuild = 999999999; // Minimum required client version. Clients with version lower than requiredBuild will not be able to connect
+        private int steamProtocolMaxDataSize = 10000;     // BI Default value is 1024. Increasing this value is dangerous for older routers as it will cause UDP packets to be fragmented. Though increasing this value can help with modulier length limit in a3 launcher.
 
         //Scripting
         private string serverCommandPassword;
@@ -83,15 +83,15 @@ namespace FASTER.Models
         private string onUnsignedData = "kick (_this select 0)";
         private string onUserKicked;
 
-        private bool                 missionSelectorChecked;
-        private string               missionContentOverride;
+        private bool missionSelectorChecked;
+        private string missionContentOverride;
         private List<ProfileMission> _missions = new();
-        private bool                 autoInit;
-        private string               difficulty = "Custom";
+        private bool autoInit;
+        private string difficulty = "Custom";
 
-        private bool   maxMemOverride;
-        private uint   maxMem = 1024;
-        private bool   cpuCountOverride;
+        private bool maxMemOverride;
+        private uint maxMem = 1024;
+        private bool cpuCountOverride;
         private ushort cpuCount;
         private string commandLineParams;
 
@@ -434,7 +434,7 @@ namespace FASTER.Models
             }
         }
 
-		 public int QueueSizeLogG
+        public int QueueSizeLogG
         {
             get => queueSizeLogG;
             set
@@ -444,7 +444,7 @@ namespace FASTER.Models
             }
         }
 
-		public string ForcedDifficulty
+        public string ForcedDifficulty
         {
             get => forcedDifficulty;
             set
@@ -732,10 +732,10 @@ namespace FASTER.Models
                 _missions.ForEach(m => m.PropertyChanged -= Item_PropertyChanged);
 
                 bool isEqual = _missions.Count == value.Count
-                            && !( from mission in value
-                                  let local = _missions.Find(m => m.Path == mission.Path)
-                                  where local == null || local.MissionChecked != mission.MissionChecked
-                                  select mission ).Any();
+                            && !(from mission in value
+                                 let local = _missions.Find(m => m.Path == mission.Path)
+                                 where local == null || local.MissionChecked != mission.MissionChecked
+                                 select mission).Any();
 
                 if (!isEqual)
                 {
@@ -814,7 +814,7 @@ namespace FASTER.Models
 
         public ServerCfg()
         {
-            if(string.IsNullOrWhiteSpace(serverCfgContent))
+            if (string.IsNullOrWhiteSpace(serverCfgContent))
             { ServerCfgContent = ProcessFile(); }
         }
 
@@ -842,7 +842,7 @@ namespace FASTER.Models
                 lines.Add("};");
 
                 var compiledMission = string.Join("\r\n", lines);
-                if(missionContentOverride?.Length != compiledMission.Length)
+                if (missionContentOverride?.Length != compiledMission.Length)
                 { MissionContentOverride = compiledMission; }
             }
 
@@ -858,11 +858,11 @@ namespace FASTER.Models
                           + $"passwordAdmin = \"{passwordAdmin}\";\t\t\t// Password to become server admin. When you're in Arma MP and connected to the server, type '#login xyz'\r\n"
                           + $"serverCommandPassword = \"{serverCommandPassword}\";\t\t// Password required by alternate syntax of [[serverCommand]] server-side scripting.\r\n"
                           + $"logFile = \"{logFile}\";\t\t// Tells Arma-server where the logfile should go and what it should be called\r\n"
-                          + $"admins[] =  { "{\n\t\"" + string.Join("\",\n\t\"", admins) + "\"\n}" };\r\n"
+                          + $"admins[] =  {"{\n\t\"" + string.Join("\",\n\t\"", admins) + "\"\n}"};\r\n"
                           + "\r\n"
                           + "\r\n"
                           + "// WELCOME MESSAGE\r\n"
-                          + $"motd[] = { "{\n\t\"" + string.Join("\",\n\t \"", motd) + "\"\n}" };\r\n"
+                          + $"motd[] = {"{\n\t\"" + string.Join("\",\n\t \"", motd) + "\"\n}"};\r\n"
                           + $"motdInterval = {motdInterval};\t\t\t\t// Time interval (in seconds) between each message\r\n"
                           + "\r\n"
                           + "\r\n"
@@ -903,7 +903,7 @@ namespace FASTER.Models
                           + $"maxDesync = {maxdesync};\t\t\t// Max desync value until server kick the user\r\n"
                           + $"maxPing= {maxping};\t\t\t\t// Max ping value until server kick the user\r\n"
                           + $"maxPacketLoss= {maxpacketloss};\t\t\t// Max packetloss value until server kick the user\r\n"
-                          + $"kickClientsOnSlowNetwork[] = {( kickClientOnSlowNetwork ? "{ 1, 1, 1, 1 }" : "{ 0, 0, 0, 0 }")};\t// Defines if {{<MaxPing>, <MaxPacketLoss>, <MaxDesync>, <DisconnectTimeout>}} will be logged (0) or kicked (1)\r\n"
+                          + $"kickClientsOnSlowNetwork[] = {(kickClientOnSlowNetwork ? "{ 1, 1, 1, 1 }" : "{ 0, 0, 0, 0 }")};\t// Defines if {{<MaxPing>, <MaxPacketLoss>, <MaxDesync>, <DisconnectTimeout>}} will be logged (0) or kicked (1)\r\n"
                           + $"lobbyIdleTimeout = {lobbyIdleTimeout};\t\t\t// The amount of time the server will wait before force-starting a mission without a logged-in Admin.\r\n"
                           + $"roleTimeOut = {roleTimeOut};\t\t\t\t// The amount of time a player can sit in role selection before being kicked.\r\n"
                           + $"debriefingTimeOut = {debriefingTimeOut};\t\t\t// The amount of time a player can sit in breifing mode before being kicked.\r\n"
@@ -932,8 +932,8 @@ namespace FASTER.Models
                           + "\r\n"
                           + "\r\n"
                           + "// HEADLESS CLIENT\r\n"
-                          + $"{(headlessClientEnabled && !headlessClients.Exists(string.IsNullOrWhiteSpace) ? $"headlessClients[] =  { "{\n\t\"" + string.Join("\",\n\t \"", headlessClients) + "\"\n}" };\r\n" : "")}"
-                          + $"{(headlessClientEnabled && !localClient.Exists(string.IsNullOrWhiteSpace)? $"localClient[] =  { "{\n\t\"" + string.Join("\",\n\t \"", localClient) + "\"\n}" };" : "")}";
+                          + $"{(headlessClientEnabled && !headlessClients.Exists(string.IsNullOrWhiteSpace) ? $"headlessClients[] =  {"{\n\t\"" + string.Join("\",\n\t \"", headlessClients) + "\"\n}"};\r\n" : "")}"
+                          + $"{(headlessClientEnabled && !localClient.Exists(string.IsNullOrWhiteSpace) ? $"localClient[] =  {"{\n\t\"" + string.Join("\",\n\t \"", localClient) + "\"\n}"};" : "")}";
             return output;
         }
 
@@ -943,7 +943,7 @@ namespace FASTER.Models
         {
             if (PropertyChanged == null) return;
             PropertyChanged(this, new PropertyChangedEventArgs(property));
-            if(property != "ServerCfgContent") ServerCfgContent = ProcessFile();
+            if (property != "ServerCfgContent") ServerCfgContent = ProcessFile();
         }
     }
 

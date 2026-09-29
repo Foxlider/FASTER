@@ -15,10 +15,10 @@ namespace FASTER.Models
 
         [XmlElement(Order = 1)]
         // ReSharper disable once UnusedAutoPropertyAccessor.Global
-        public string InstallPath 
-        { 
-            get => _name; 
-            set 
+        public string InstallPath
+        {
+            get => _name;
+            set
             {
                 _name = value;
                 RaisePropertyChanged(nameof(InstallPath));

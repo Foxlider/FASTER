@@ -81,7 +81,7 @@ namespace FASTER.Views
             IServerDirBox.Text = AppSettings.Current.ServerPath;
 
             //Do not skip to mainwindow if it was FirstRun
-            if (wasFirstRun ) return;
+            if (wasFirstRun) return;
 
             try
             {
@@ -134,7 +134,7 @@ namespace FASTER.Views
         {
             var encryption = Encryption.Instance;
 
-            if(string.IsNullOrEmpty(IModStaging.Text))
+            if (string.IsNullOrEmpty(IModStaging.Text))
             {
                 DisplaySetupMessage("Please enter a valid Mod Staging Directory");
                 return;

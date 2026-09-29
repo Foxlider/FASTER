@@ -41,7 +41,6 @@ public sealed class DefaultPlatformServices : IPlatformServices
         ArgumentException.ThrowIfNullOrWhiteSpace(path);
         if (s_isWindows)
         {
-            // Resolve explorer outside of PATH so a planted binary earlier on PATH cannot get picked up instead.
             string explorer = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), "explorer.exe");
             Process.Start(new ProcessStartInfo { FileName = explorer, Arguments = path });
             return;

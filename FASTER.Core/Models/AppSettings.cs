@@ -178,9 +178,7 @@ public sealed class AppSettings
                     }
                 }
                 catch
-                {
-                    // The settings file is corrupt or unreadable. Fall through to defaults plus the legacy import below.
-                }
+                { }
 
                 var fresh = new AppSettings();
                 var imported = ImportLegacyUserConfig();
@@ -243,9 +241,7 @@ public sealed class AppSettings
                     }
                 }
                 catch
-                {
-                    // One bad value in the old config must not kill the whole import, so skip it and keep going.
-                }
+                { }
             }
 
             return result;

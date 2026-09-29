@@ -15,7 +15,7 @@ namespace FASTER.Models
         {
             if (sender is TextBox tb)
             {
-                bool alwaysScrollToEnd = (e.NewValue != null) && (bool) e.NewValue;
+                bool alwaysScrollToEnd = (e.NewValue != null) && (bool)e.NewValue;
 
                 if (alwaysScrollToEnd)
                 {
@@ -36,7 +36,7 @@ namespace FASTER.Models
                 throw new ArgumentNullException(nameof(textBox));
             }
 
-            return (bool) textBox.GetValue(AlwaysScrollToEndProperty);
+            return (bool)textBox.GetValue(AlwaysScrollToEndProperty);
         }
 
         public static void SetAlwaysScrollToEnd(TextBox textBox, bool alwaysScrollToEnd)
@@ -51,7 +51,7 @@ namespace FASTER.Models
 
         private static void TextChanged(object sender, TextChangedEventArgs e)
         {
-            ((TextBox) sender).ScrollToEnd();
+            ((TextBox)sender).ScrollToEnd();
         }
     }
 }

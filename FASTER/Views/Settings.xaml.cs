@@ -54,7 +54,7 @@ namespace FASTER.Views
             }
             catch (Exception exception)
             {
-                IMessageText.Text     = exception.Message + " " + exception.GetType();
+                IMessageText.Text = exception.Message + " " + exception.GetType();
                 IMessageDialog.IsOpen = true;
             }
         }
@@ -92,7 +92,7 @@ namespace FASTER.Views
             }
             else
             {
-                IMessageText.Text     = "There is a problem reaching update server please check your internet connection and try again later.";
+                IMessageText.Text = "There is a problem reaching update server please check your internet connection and try again later.";
                 IMessageDialog.IsOpen = true;
             }
         }
@@ -124,7 +124,7 @@ namespace FASTER.Views
             AppSettings.Current.Save();
             Application.Current.Shutdown();
         }
-        
+
         private void Settings_Initialized(object sender, EventArgs e)
         {
             IModUpdatesOnLaunch.IsChecked = AppSettings.Current?.CheckForModUpdates;
@@ -154,7 +154,7 @@ namespace FASTER.Views
 
         private void ISaveSettings_Click(object sender, RoutedEventArgs e)
         {
-            if (!string.IsNullOrEmpty(IAPIKeyBox.Text)) 
+            if (!string.IsNullOrEmpty(IAPIKeyBox.Text))
                 AppSettings.Current.SteamAPIKey = IAPIKeyBox.Text;
             AppSettings.Current.CheckForAppUpdates = IAppUpdatesOnLaunch.IsChecked ?? true;
             AppSettings.Current.CheckForModUpdates = IModUpdatesOnLaunch.IsChecked ?? true;
@@ -179,7 +179,7 @@ namespace FASTER.Views
 
         private void Colors_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-            if(e.AddedItems[0] is not Theme theme)
+            if (e.AddedItems[0] is not Theme theme)
                 return;
             ThemeManager.Current.ThemeSyncMode = ThemeSyncMode.SyncAll;
             ThemeManager.Current.ChangeTheme(Application.Current, theme);

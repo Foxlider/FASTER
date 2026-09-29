@@ -20,7 +20,7 @@ namespace FASTER.Views
 
         private void DispatcherOnShutdownStarted(object sender, EventArgs e)
         {
-            ((ModsViewModel) DataContext)?.UnloadData();
+            ((ModsViewModel)DataContext)?.UnloadData();
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
@@ -30,39 +30,39 @@ namespace FASTER.Views
 
         private void UserControl_Unloaded(object sender, RoutedEventArgs e)
         {
-            ((ModsViewModel) DataContext)?.UnloadData();
+            ((ModsViewModel)DataContext)?.UnloadData();
         }
 
         private async void UpdateSelectedMods(object sender, RoutedEventArgs e)
         {
-            await ((ModsViewModel) DataContext)?.UpdateSelectedMods();
+            await ((ModsViewModel)DataContext)?.UpdateSelectedMods();
         }
 
         private void DeleteSelectedMods(object sender, RoutedEventArgs e)
         {
-            ((ModsViewModel) DataContext)?.DeleteSelectedMods();
+            ((ModsViewModel)DataContext)?.DeleteSelectedMods();
         }
 
         private void OpenModPage(object sender, RoutedEventArgs e)
         {
-            var mod = ((FrameworkElement) sender).DataContext as ArmaMod;
-            ((ModsViewModel) DataContext)?.OpenModPage(mod);
+            var mod = ((FrameworkElement)sender).DataContext as ArmaMod;
+            ((ModsViewModel)DataContext)?.OpenModPage(mod);
         }
 
         private void OpenModFolder(object sender, RoutedEventArgs e)
         {
-            var mod = ((FrameworkElement) sender).DataContext as ArmaMod;
-            ((ModsViewModel) DataContext)?.OpenModFolder(mod);
+            var mod = ((FrameworkElement)sender).DataContext as ArmaMod;
+            ((ModsViewModel)DataContext)?.OpenModFolder(mod);
         }
 
         private async void AddSteamMod_Click(object sender, RoutedEventArgs e)
         {
-            await ((ModsViewModel) DataContext)?.AddSteamMod();
+            await ((ModsViewModel)DataContext)?.AddSteamMod();
         }
 
         private void AddLocalMod_Click(object sender, RoutedEventArgs e)
         {
-            ((ModsViewModel) DataContext)?.AddLocalModAsync();
+            ((ModsViewModel)DataContext)?.AddLocalModAsync();
         }
 
         private async void ImportLauncherFile_Click(object sender, RoutedEventArgs e)
@@ -72,17 +72,17 @@ namespace FASTER.Views
 
         private void CheckForUpdates_Click(object sender, RoutedEventArgs e)
         {
-            ((ModsViewModel) DataContext)?.CheckForUpdates();
+            ((ModsViewModel)DataContext)?.CheckForUpdates();
         }
 
         private void UpdateAll_Click(object sender, RoutedEventArgs e)
         {
-            ((ModsViewModel) DataContext)?.UpdateAll();
+            ((ModsViewModel)DataContext)?.UpdateAll();
         }
-		
-		private async void DeleteAll_Click(object sender, RoutedEventArgs e)
+
+        private async void DeleteAll_Click(object sender, RoutedEventArgs e)
         {
-            await ((ModsViewModel) DataContext)?.DeleteAllMods();
+            await ((ModsViewModel)DataContext)?.DeleteAllMods();
         }
     }
 }

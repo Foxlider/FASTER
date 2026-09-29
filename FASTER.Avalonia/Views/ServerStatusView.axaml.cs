@@ -91,9 +91,7 @@ public partial class ServerStatusView : UserControl
             try
             { process.Kill(); }
             catch
-            {
-                // The process exited on its own or this user cannot kill it. The rescan below picks up whatever is left.
-            }
+            { }
         }
         await Task.Delay(1000);
         RefreshServers();
@@ -106,9 +104,7 @@ public partial class ServerStatusView : UserControl
             try
             { process.Kill(); }
             catch
-            {
-                // Same as above, the process is already gone or cannot be killed from here.
-            }
+            { }
             RefreshServers();
         }
     }
@@ -123,16 +119,11 @@ public partial class ServerStatusView : UserControl
                     try
                     { return p.ProcessName.Contains("arma3server"); }
                     catch
-                    {
-                        // Reading the name throws for processes that exited mid-scan or that this user cannot inspect. Those are not our servers anyway.
-                        return false;
-                    }
+                    { return false; }
                 })
                 .ToList();
         }
         catch
-        {
-            // Listing processes itself failed. Keep showing the old list instead of blanking the grid.
-        }
+        { }
     }
 }

@@ -43,7 +43,7 @@ namespace FASTER_Maintenance.Models._17Models
         [XmlElement(ElementName = "HeadlessChecked")]
         public string HeadlessChecked { get; set; }
 
-        [XmlElement(ElementName = "Id")]   public string Id   { get; set; }
+        [XmlElement(ElementName = "Id")] public string Id { get; set; }
         [XmlElement(ElementName = "Name")] public string Name { get; set; }
     }
 
@@ -115,7 +115,7 @@ namespace FASTER_Maintenance.Models._17Models
         public string KickDuplicates { get; set; }
 
         [XmlElement(ElementName = "Loopback")] public string Loopback { get; set; }
-        [XmlElement(ElementName = "Upnp")]     public string Upnp     { get; set; }
+        [XmlElement(ElementName = "Upnp")] public string Upnp { get; set; }
 
         [XmlElement(ElementName = "AllowedFilePatching")]
         public string AllowedFilePatching { get; set; }
@@ -164,10 +164,10 @@ namespace FASTER_Maintenance.Models._17Models
 
         [XmlElement(ElementName = "IgnoreMissionLoadErrors")]
         public string IgnoreMissionLoadErrors { get; set; }
-		
-		[XmlElement(ElementName = "ArmaUnitsTimeout")]
+
+        [XmlElement(ElementName = "ArmaUnitsTimeout")]
         public string ArmaUnitsTimeout { get; set; }
-		
+
         [XmlElement(ElementName = "QueueSizeLogG")]
         public string QueueSizeLogG { get; set; }
 
@@ -184,12 +184,12 @@ namespace FASTER_Maintenance.Models._17Models
         public string VonCodecQuality { get; set; }
 
         [XmlElement(ElementName = "VonCodec")]
-		public string VonCodec { get; set; }
+        public string VonCodec { get; set; }
 
         [XmlElement(ElementName = "SkipLobby")]
         public string SkipLobby { get; set; }
 
-        [XmlElement(ElementName = "LogFile")]  public string LogFile  { get; set; }
+        [XmlElement(ElementName = "LogFile")] public string LogFile { get; set; }
         [XmlElement(ElementName = "BattlEye")] public string BattlEye { get; set; }
 
         [XmlElement(ElementName = "TimeStampFormat")]
@@ -220,13 +220,13 @@ namespace FASTER_Maintenance.Models._17Models
         public string MissionContentOverride { get; set; }
 
         [XmlElement(ElementName = "AutoInit")]
-		public string AutoInit { get; set; }
+        public string AutoInit { get; set; }
 
         [XmlElement(ElementName = "Difficulty")]
         public string Difficulty { get; set; }
 
         [XmlElement(ElementName = "Missions")]
-		public Missions Missions { get; set; }
+        public Missions Missions { get; set; }
 
         [XmlElement(ElementName = "MaxMemOverride")]
         public string MaxMemOverride { get; set; }
@@ -234,7 +234,7 @@ namespace FASTER_Maintenance.Models._17Models
         [XmlElement(ElementName = "CpuCountOverride")]
         public string CpuCountOverride { get; set; }
 
-        [XmlElement(ElementName = "MaxMem")]   public string MaxMem   { get; set; }
+        [XmlElement(ElementName = "MaxMem")] public string MaxMem { get; set; }
         [XmlElement(ElementName = "CpuCount")] public string CpuCount { get; set; }
 
         [XmlElement(ElementName = "ServerCfgContent")]
@@ -263,7 +263,7 @@ namespace FASTER_Maintenance.Models._17Models
         public string DetectedMines { get; set; }
 
         [XmlElement(ElementName = "Commands")]
-		public string Commands { get; set; }
+        public string Commands { get; set; }
 
         [XmlElement(ElementName = "Waypoints")]
         public string Waypoints { get; set; }
@@ -296,7 +296,7 @@ namespace FASTER_Maintenance.Models._17Models
         public string DeathMessages { get; set; }
 
         [XmlElement(ElementName = "VonID")]
-		public string VonID { get; set; }
+        public string VonID { get; set; }
 
         [XmlElement(ElementName = "MapContentFriendly")]
         public string MapContentFriendly { get; set; }
@@ -320,7 +320,7 @@ namespace FASTER_Maintenance.Models._17Models
         public string AiLevelPreset { get; set; }
 
         [XmlElement(ElementName = "SkillAi")]
-		public string SkillAi { get; set; }
+        public string SkillAi { get; set; }
 
         [XmlElement(ElementName = "PrecisionAi")]
         public string PrecisionAi { get; set; }
@@ -377,7 +377,7 @@ namespace FASTER_Maintenance.Models._17Models
         [XmlElement(ElementName = "WorkshopId")]
         public string WorkshopId { get; set; }
 
-        [XmlElement(ElementName = "Name")]   public string Name   { get; set; }
+        [XmlElement(ElementName = "Name")] public string Name { get; set; }
         [XmlElement(ElementName = "Author")] public string Author { get; set; }
 
         [XmlElement(ElementName = "SteamLastUpdated")]
@@ -390,7 +390,7 @@ namespace FASTER_Maintenance.Models._17Models
         public string PrivateMod { get; set; }
 
         [XmlElement(ElementName = "Status")] public string Status { get; set; }
-        [XmlElement(ElementName = "Size")]   public string Size   { get; set; }
+        [XmlElement(ElementName = "Size")] public string Size { get; set; }
     }
 
     [XmlRoot(ElementName = "SteamModCollection")]

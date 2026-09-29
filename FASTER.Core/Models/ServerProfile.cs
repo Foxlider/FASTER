@@ -26,8 +26,8 @@ namespace FASTER.Models
         {
             var currentProfiles = AppSettings.Current.Profiles;
             var p = new ServerProfile(profileName);
-            p.ServerCfg.ServerCfgContent     = p.ServerCfg.ProcessFile();
-            p.BasicCfg.BasicContent          = p.BasicCfg.ProcessFile();
+            p.ServerCfg.ServerCfgContent = p.ServerCfg.ProcessFile();
+            p.BasicCfg.BasicContent = p.BasicCfg.ProcessFile();
             p.ArmaProfile.ArmaProfileContent = p.ArmaProfile.ProcessFile();
             currentProfiles.Add(p);
             AppSettings.Current.Profiles = currentProfiles;
@@ -113,14 +113,14 @@ namespace FASTER.Models
 
         public string ArmaPath => Path.GetDirectoryName(_executable) ?? string.Empty;
 
-        public int Port 
-        { 
-            get => _port; 
-            set 
-            { 
+        public int Port
+        {
+            get => _port;
+            set
+            {
                 _port = value;
                 RaisePropertyChanged("Port");
-            } 
+            }
         }
 
         public int HeadlessNumber
@@ -395,15 +395,15 @@ namespace FASTER.Models
             }
         }
 
-        public ServerCfg ServerCfg 
-        { 
+        public ServerCfg ServerCfg
+        {
             get => _serverCfg;
             set
             {
-                if(_serverCfg != null)
+                if (_serverCfg != null)
                     _serverCfg.PropertyChanged -= Class_PropertyChanged;
-                _serverCfg                  =  value;
-                _serverCfg.PropertyChanged  += Class_PropertyChanged;
+                _serverCfg = value;
+                _serverCfg.PropertyChanged += Class_PropertyChanged;
                 RaisePropertyChanged("ServerCfg");
             }
         }
@@ -415,7 +415,7 @@ namespace FASTER.Models
             {
                 if (_armaProfile != null)
                     _armaProfile.PropertyChanged -= Class_PropertyChanged;
-                _armaProfile               =  value;
+                _armaProfile = value;
                 _armaProfile.PropertyChanged += Class_PropertyChanged;
                 RaisePropertyChanged("ArmaProfile");
             }
@@ -428,7 +428,7 @@ namespace FASTER.Models
             {
                 if (_basicCfg != null)
                     _basicCfg.PropertyChanged -= Class_PropertyChanged;
-                _basicCfg                  =  value;
+                _basicCfg = value;
                 _basicCfg.PropertyChanged += Class_PropertyChanged;
                 RaisePropertyChanged("BasicCfg");
             }
@@ -440,7 +440,7 @@ namespace FASTER.Models
             _id = $"_{Guid.NewGuid():N}";
             Name = name;
             Executable = Path.Combine(AppSettings.Current.ServerPath, Platform.Current.ServerBinaryName);
-            ServerCfg = new ServerCfg(){ Hostname = name};
+            ServerCfg = new ServerCfg() { Hostname = name };
             ArmaProfile = new Arma3Profile();
             BasicCfg = new BasicCfg();
             ServerCfg.ServerCfgContent = ServerCfg.ProcessFile();
@@ -454,11 +454,11 @@ namespace FASTER.Models
         [JsonConstructor]
         public ServerProfile()
         {
-            _id  = $"_{Guid.NewGuid():N}";
+            _id = $"_{Guid.NewGuid():N}";
             Name = _id;
-            ServerCfg   = new ServerCfg(){ Hostname = Name};
+            ServerCfg = new ServerCfg() { Hostname = Name };
             ArmaProfile = new Arma3Profile();
-            BasicCfg    = new BasicCfg();
+            BasicCfg = new BasicCfg();
             ServerCfg.ServerCfgContent = ServerCfg.ProcessFile();
             ArmaProfile.ArmaProfileContent = ArmaProfile.ProcessFile();
             BasicCfg.BasicContent = BasicCfg.ProcessFile();
@@ -478,10 +478,10 @@ namespace FASTER.Models
 
                 if (p.Name.EndsWith(')') && p.Name.Contains('(') && int.TryParse(p.Name.Substring(p.Name.Length - 2, 1), out _))
                 {
-                    var i   = p.Name.IndexOf('(');
-                    var j   = p.Name.Length;
+                    var i = p.Name.IndexOf('(');
+                    var j = p.Name.Length;
                     var num = p.Name.Substring(i + 1, j - 1 - i - 1);
-                    p.Name = $"{p.Name.Substring(0,   p.Name.Length - i + 1)} ({int.Parse(num) + 1})";
+                    p.Name = $"{p.Name.Substring(0, p.Name.Length - i + 1)} ({int.Parse(num) + 1})";
                 }
                 else
                 {
@@ -494,7 +494,7 @@ namespace FASTER.Models
                 p.GenerateNewId();
                 p.Name = "New Profile";
             }
-            
+
             return p;
         }
 
@@ -545,7 +545,7 @@ namespace FASTER.Models
 
 
             string config = Path.Combine(ArmaPath, "Servers", Id, "server_config.cfg");
-            string basic  = Path.Combine(ArmaPath, "Servers", Id, "server_basic.cfg");
+            string basic = Path.Combine(ArmaPath, "Servers", Id, "server_basic.cfg");
 
             string playerMods = string.Join(";", ProfileMods.Where(m => m.ClientSideChecked).OrderBy(m => m.LoadPriority).Select(m => $"@{Functions.SafeName(m.Name)}"));
             string serverMods = string.Join(";", ProfileMods.Where(m => m.ServerSideChecked).OrderBy(m => m.LoadPriority).Select(m => $"@{Functions.SafeName(m.Name)}"));
@@ -590,7 +590,7 @@ namespace FASTER.Models
         public void RaisePropertyChanged(string property)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
-            if(property != "CommandLine")
+            if (property != "CommandLine")
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CommandLine)));
         }
     }
@@ -598,14 +598,14 @@ namespace FASTER.Models
     [Serializable]
     public class ProfileMod : INotifyPropertyChanged
     {
-        private bool    serverSideChecked;
-        private bool    clientSideChecked;
-        private bool    headlessChecked;
-        private bool 	optChecked;
+        private bool serverSideChecked;
+        private bool clientSideChecked;
+        private bool headlessChecked;
+        private bool optChecked;
         private ushort? loadPriority;
-        private bool    isLocal;
-        private uint    _id;
-        private string  name;
+        private bool isLocal;
+        private uint _id;
+        private string name;
 
         public bool ServerSideChecked
         {

@@ -20,9 +20,9 @@ namespace FASTER.Models
             Website = website;
         }
 
-        public string Name    { get; set; } = string.Empty;
-        public string Path    { get; set; } = string.Empty;
-        public string Author  { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public string Path { get; set; } = string.Empty;
+        public string Author { get; set; } = string.Empty;
         public string Website { get; set; } = string.Empty;
 
         public static List<LocalMod> GetLocalMods(bool serverPathOnly = false)
@@ -34,7 +34,7 @@ namespace FASTER.Models
             if (serverPathOnly && !string.IsNullOrEmpty(AppSettings.Current.ServerPath))
             { foldersToSearch.Add(AppSettings.Current.ServerPath); }
 
-            if (!serverPathOnly && AppSettings.Current.LocalModFolders != null) 
+            if (!serverPathOnly && AppSettings.Current.LocalModFolders != null)
             { foldersToSearch.AddRange(AppSettings.Current.LocalModFolders.Where(folder => folder != null && folder != AppSettings.Current.ServerPath)); }
 
             if (foldersToSearch.Count <= 0) return localMods;

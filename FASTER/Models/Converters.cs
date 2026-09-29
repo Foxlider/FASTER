@@ -16,9 +16,9 @@ namespace FASTER.Models
         {
             if (value is long size)
             {
-                double   fullSize = size;
-                string[] sizes    = {" B", "KB", "MB", "GB", "TB"};
-                var      order    = 0;
+                double fullSize = size;
+                string[] sizes = { " B", "KB", "MB", "GB", "TB" };
+                var order = 0;
                 while (fullSize >= 1024 && order < sizes.Length - 1)
                 {
                     order++;
@@ -40,7 +40,7 @@ namespace FASTER.Models
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         { return null; }
 
-    #endregion
+        #endregion
     }
 
     public class NotBooleanToVisibilityConverter : IValueConverter

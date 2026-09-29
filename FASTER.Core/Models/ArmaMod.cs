@@ -42,7 +42,7 @@ namespace FASTER.Models
 
         public void AddSteamMod(ArmaMod newMod)
         {
-            var duplicate   = false;
+            var duplicate = false;
             var currentMods = ReloadMods();
 
             if (currentMods.ArmaMods.Count > 0)
@@ -67,11 +67,11 @@ namespace FASTER.Models
             try
             {
                 var currentProfiles = ReloadMods();
-                var item            = currentProfiles.ArmaMods.FirstOrDefault(x => x.WorkshopId == workshopId);
+                var item = currentProfiles.ArmaMods.FirstOrDefault(x => x.WorkshopId == workshopId);
 
                 if (item != null)
                 {
-                    if(Directory.Exists(item.Path))
+                    if (Directory.Exists(item.Path))
                         Directory.Delete(item.Path, true);
                     currentProfiles.ArmaMods.Remove(item);
                 }
@@ -89,25 +89,25 @@ namespace FASTER.Models
     }
 
 
-    [Serializable] 
+    [Serializable]
     public class ArmaMod : INotifyPropertyChanged
     {
 
-        private uint   _workshopId;
-        private string _name   = string.Empty;
+        private uint _workshopId;
+        private string _name = string.Empty;
         private string _author = string.Empty;
         private string _path;
-        private ulong  _steamLastUpdated;
-        private ulong  _localLastUpdated;
-        private bool   _privateMod;
-        private bool   _isLocal;
+        private ulong _steamLastUpdated;
+        private ulong _localLastUpdated;
+        private bool _privateMod;
+        private bool _isLocal;
         private string _status = "Not Installed";
-        private long   _size;
-        private bool   _isLoading;
-        private bool   _isSelected;
+        private long _size;
+        private bool _isLoading;
+        private bool _isSelected;
 
 
-        public uint   WorkshopId
+        public uint WorkshopId
         {
             get => _workshopId;
             set
@@ -157,7 +157,7 @@ namespace FASTER.Models
             }
         }
 
-        public ulong  LocalLastUpdated
+        public ulong LocalLastUpdated
         {
             get => _localLastUpdated;
             set
@@ -167,7 +167,7 @@ namespace FASTER.Models
             }
         }
 
-        public bool   PrivateMod
+        public bool PrivateMod
         {
             get => _privateMod;
             set
@@ -177,7 +177,7 @@ namespace FASTER.Models
             }
         }
 
-        public bool   IsLocal
+        public bool IsLocal
         {
             get => _isLocal;
             set
@@ -197,7 +197,7 @@ namespace FASTER.Models
             }
         }
 
-        public long   Size
+        public long Size
         {
             get => _size;
             set
@@ -235,13 +235,13 @@ namespace FASTER.Models
 
             if (!Directory.Exists(Path))
             {
-                Size      = 0;
+                Size = 0;
                 IsLoading = false;
                 return;
             }
 
             var ChildProcess = Task.Factory.StartNew(() => GetDirectorySize(Path));
-            Size      = ChildProcess.Result;
+            Size = ChildProcess.Result;
             IsLoading = false;
         }
 
@@ -278,7 +278,7 @@ namespace FASTER.Models
                     var nx = DateTime.UnixEpoch;
                     var ts = DateTime.UtcNow - nx;
 
-                    LocalLastUpdated = (ulong) ts.TotalSeconds;
+                    LocalLastUpdated = (ulong)ts.TotalSeconds;
                     break;
             }
 
@@ -372,9 +372,9 @@ namespace FASTER.Models
 
     public static class ArmaModStatus
     {
-        public static string NotComplete    => "Download Not Complete";
-        public static string UpToDate       => "Up To Date";
+        public static string NotComplete => "Download Not Complete";
+        public static string UpToDate => "Up To Date";
         public static string UpdateRequired => "Update Required";
-        public static string Local          => "Local Mod";
+        public static string Local => "Local Mod";
     }
 }

@@ -19,41 +19,41 @@ namespace FASTER.Models
     [Serializable]
     public class Arma3Profile : INotifyPropertyChanged
     {
-        private ushort reducedDamage      = 0;
-        private ushort groupIndicators    = 2;
-        private ushort friendlyTags       = 1;
-        private ushort enemyTags          = 0;
-        private ushort detectedMines      = 1;
-        private ushort commands           = 1;
-        private ushort waypoints          = 1;
-        private ushort weaponInfo         = 2;
-        private ushort stanceIndicator    = 2;
-        private ushort staminaBar         = 1;
-        private ushort weaponCrosshair    = 1;
-        private ushort visionAid          = 0;
-        private ushort thirdPersonView    = 1;
-        private ushort cameraShake        = 1;
-        private ushort scoreTable         = 1;
-        private ushort deathMessages      = 1;
-        private ushort vonID              = 1;
+        private ushort reducedDamage = 0;
+        private ushort groupIndicators = 2;
+        private ushort friendlyTags = 1;
+        private ushort enemyTags = 0;
+        private ushort detectedMines = 1;
+        private ushort commands = 1;
+        private ushort waypoints = 1;
+        private ushort weaponInfo = 2;
+        private ushort stanceIndicator = 2;
+        private ushort staminaBar = 1;
+        private ushort weaponCrosshair = 1;
+        private ushort visionAid = 0;
+        private ushort thirdPersonView = 1;
+        private ushort cameraShake = 1;
+        private ushort scoreTable = 1;
+        private ushort deathMessages = 1;
+        private ushort vonID = 1;
         private ushort mapContentFriendly = 1;
-        private ushort mapContentEnemy    = 1;
-        private ushort mapContentMines    = 1;
-        private ushort autoReport         = 0;
-        private ushort multipleSaves      = 0;
-        private int tacticalPing          = 1;
+        private ushort mapContentEnemy = 1;
+        private ushort mapContentMines = 1;
+        private ushort autoReport = 0;
+        private ushort multipleSaves = 0;
+        private int tacticalPing = 1;
 
-        private ushort aiLevelPreset      = 3;
-        private double skillAi            = 0.5;
-        private double precisionAi        = 0.5;
+        private ushort aiLevelPreset = 3;
+        private double skillAi = 0.5;
+        private double precisionAi = 0.5;
 
         private string armaProfileContent;
 
         public string ArmaProfileContent
         {
             get => armaProfileContent;
-            set 
-            { 
+            set
+            {
                 armaProfileContent = value;
                 RaisePropertyChanged("ArmaProfileContent");
             }
@@ -324,7 +324,7 @@ namespace FASTER.Models
 
         public string ProcessFile()
         {
-            string output = 
+            string output =
                 "//\r\n" +
                 "// Arma3Profile\r\n" +
                 "//\r\n" +

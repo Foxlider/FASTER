@@ -51,10 +51,7 @@ namespace FASTER.Services
             {
                 try
                 { Clipboard.SetDataObject(text); }
-                catch (System.Runtime.InteropServices.COMException)
-                {
-                    // The clipboard is locked by another app and the fallback copy failed too. There is nothing sensible to do here, the user can copy again.
-                }
+                catch (System.Runtime.InteropServices.COMException) { }
             }
             return Task.CompletedTask;
         }

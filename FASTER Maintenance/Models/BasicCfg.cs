@@ -7,7 +7,7 @@ namespace FASTER.Models
 {
     static class BasicCfgArrays
     {
-        public static string[] PerfPresets { get; } = {"Custom", "Arma3 Defaults", "1Mb Preset", "250Mb Preset"};
+        public static string[] PerfPresets { get; } = { "Custom", "Arma3 Defaults", "1Mb Preset", "250Mb Preset" };
     }
 
     [Serializable]
@@ -155,15 +155,15 @@ namespace FASTER.Models
                         MaxCustomFileSize = 160;
                         break;
                     case 3:
-                        MaxMsgSend           = 256;
-                        MaxSizeGuaranteed    = 512;
+                        MaxMsgSend = 256;
+                        MaxSizeGuaranteed = 512;
                         MaxSizeNonGuaranteed = 256;
-                        MinBandwidth         = 2000000000;
-                        MaxBandwidth         = 10000000000;
-                        MinErrorToSend       = 0.001;
-                        MinErrorToSendNear   = 0.01;
-                        MaxPacketSize        = 1400;
-                        MaxCustomFileSize    = 160;
+                        MinBandwidth = 2000000000;
+                        MaxBandwidth = 10000000000;
+                        MinErrorToSend = 0.001;
+                        MinErrorToSendNear = 0.01;
+                        MaxPacketSize = 1400;
+                        MaxCustomFileSize = 160;
                         break;
                 }
                 RaisePropertyChanged("PerfPreset");
@@ -196,7 +196,7 @@ namespace FASTER.Models
                           + $"MinErrorToSend = {minErrorToSend.ToString(CultureInfo.InvariantCulture)};\t\t\t// Minimal error to send updates across network. Using a smaller value can make units observed by binoculars or sniper rifle to move smoother. Default: 0.001\r\n"
                           + $"MinErrorToSendNear = {minErrorToSendNear.ToString(CultureInfo.InvariantCulture)};\t\t// Minimal error to send updates across network for near units. Using larger value can reduce traffic sent for near units. Used to control client to server traffic as well. Default: 0.01\r\n"
                           + "\r\n"
-                          + $"MaxCustomFileSize = {maxCustomFileSize};\t\t\t// (bytes) Users with custom face or custom sound larger than this size are kicked when trying to connect.\r\n" 
+                          + $"MaxCustomFileSize = {maxCustomFileSize};\t\t\t// (bytes) Users with custom face or custom sound larger than this size are kicked when trying to connect.\r\n"
                           + $"class sockets{{ maxPacketSize = {maxPacketSize};}};";
             return output;
         }
