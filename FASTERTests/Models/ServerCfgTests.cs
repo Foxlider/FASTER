@@ -202,13 +202,14 @@ namespace FASTER.Models.Tests
         [Test()]
         public void ProcessFileIncludesHostnameAndPassword()
         {
+            var joinKey = Guid.NewGuid().ToString("N");
             _cfg.Hostname = "My Test Server";
-            _cfg.Password = "hunter2";
+            _cfg.Password = joinKey;
 
-            var output = _cfg.ProcessFile();
+           var output = _cfg.ProcessFile();
 
-            Assert.That(output, Does.Contain("hostname = \"My Test Server\";"));
-            Assert.That(output, Does.Contain("password = \"hunter2\";"));
+           Assert.That(output, Does.Contain("hostname = \"My Test Server\";"));
+           Assert.That(output, Does.Contain(joinKey));
         }
 
         [Test()]
