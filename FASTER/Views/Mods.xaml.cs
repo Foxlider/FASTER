@@ -108,6 +108,5 @@ namespace FASTER.Views
             if (DataContext is ModsViewModel vm)
                 await vm.PurgeUnusedMods();
         }
-        }
     }
 }

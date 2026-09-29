@@ -1,5 +1,7 @@
 ﻿using FASTER.Models;
 
+using Microsoft.AppCenter.Analytics;
+
 using System;
 using System.Collections.Generic;
 using System.Windows;

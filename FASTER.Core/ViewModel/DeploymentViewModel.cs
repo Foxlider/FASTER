@@ -125,8 +125,8 @@ namespace FASTER.ViewModel
                 Logger.Log($"  Linking {mod.Name}: {mod.Path} -> {linkPath}");
                 mod.Marked = LinkMod(mod, linkPath);
             }
-            Settings.Default.Deployments = Deployment;
-            Settings.Default.Save();
+            AppSettings.Current.Deployments = Deployment;
+            AppSettings.Current.Save();
             Logger.Log("DeployAll: done.");
         }
 

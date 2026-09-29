@@ -20,14 +20,20 @@ namespace FASTER.Models
 
     internal class FasterLoggerAdapter : ILogger
     {
-        public IDisposable BeginScope<TState>(TState state) => null;
+        public IDisposable BeginScope<TState>(TState state) where TState : notnull => NullScope.Instance;
 
         public bool IsEnabled(LogLevel logLevel) => logLevel >= LogLevel.Warning;
 
-        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
+        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
         {
             var message = formatter(state, exception);
             Logger.Log($"[{logLevel}] {message}{(exception != null ? $" | {exception}" : "")}");
+        }
+
+        private sealed class NullScope : IDisposable
+        {
+            public static readonly NullScope Instance = new();
+            public void Dispose() { }
         }
     }
 }
