@@ -254,7 +254,6 @@ namespace FASTER.Views
         public Func<double, string> PercentageFormatter { get; set; }
         public Brush Color { get; set; }
 
-        private PerformanceCounter? cpuPerf;
         private double _axisMax;
         private double _axisMin;
         private bool _isReading;
@@ -326,7 +325,7 @@ namespace FASTER.Views
         public void ReadCPU()
         {
             //Get Performance counters
-            cpuPerf = new PerformanceCounter("Process", "% Processor Time", ProcessName, true);
+            var cpuPerf = new PerformanceCounter("Process", "% Processor Time", ProcessName, true);
 
             //And now, loop
             while (IsReading)

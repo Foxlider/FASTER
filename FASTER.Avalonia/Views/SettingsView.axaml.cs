@@ -15,8 +15,8 @@ namespace FASTER.Avalonia.Views;
 
 public partial class SettingsView : UserControl
 {
-    private const string SteamApiKeyUrl = "https://steamcommunity.com/dev/apikey";
-    private const string UpdateFeedUrl = "https://github.com/milutinke/FASTER";
+    private const string SteamApiKeyUrl = "https://steamcommunity.com/dev/apikey"; // NOSONAR - stable public service endpoint, intentionally compiled in
+    private const string UpdateFeedUrl = "https://github.com/milutinke/FASTER"; // NOSONAR - stable public service endpoint, intentionally compiled in
     public SettingsView()
     {
         InitializeComponent();

@@ -11,7 +11,7 @@ public static class SteamWebApi
 {
     private const string V2 = "&steamids=";
     private const string V3 = "&publishedfileids[0]=";
-    private const string FileDetailsEndpoint = "https://api.steampowered.com/IPublishedFileService/GetDetails/v1?key=";
+    private const string FileDetailsEndpoint = "https://api.steampowered.com/IPublishedFileService/GetDetails/v1?key="; // NOSONAR - stable public service endpoint, intentionally compiled in
     private const string PlayerSummariesEndpoint = "https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v1?key=";
 
     public static JObject? GetSingleFileDetails(uint modId)

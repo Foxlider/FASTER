@@ -11,7 +11,7 @@ namespace FASTER.ViewModel
 {
     public class DeploymentViewModel
     {
-        private const string WorkshopFileDetailsUrl = "https://steamcommunity.com/workshop/filedetails/?id=";
+        private const string WorkshopFileDetailsUrl = "https://steamcommunity.com/workshop/filedetails/?id="; // NOSONAR - stable public service endpoint, intentionally compiled in
 
         public DeploymentViewModel()
         {

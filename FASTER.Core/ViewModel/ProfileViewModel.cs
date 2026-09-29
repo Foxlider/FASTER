@@ -262,8 +262,7 @@ namespace FASTER.ViewModel
                 {
                     mod.ClientSideChecked = true;
                     mod.LoadPriority = loadPriority;
-                    if (loadPriority != null)
-                        loadPriority++;
+                    loadPriority++;
                 }
                 else
                 {

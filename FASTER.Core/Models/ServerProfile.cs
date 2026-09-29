@@ -49,7 +49,7 @@ namespace FASTER.Models
     public class ServerProfile : INotifyPropertyChanged
     {
         //PRIVATE VARS DECLARATION
-        private string _id = string.Empty;
+        private string _id;
         private string _name = string.Empty;
         private string _executable = string.Empty;
         private int _port = 2302;

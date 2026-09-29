@@ -328,7 +328,7 @@ namespace FASTER.ViewModel
                     // The client declares branchPassword non-nullable but defaults it to null and null-checks it internally, so a null depot password is valid here.
                     manifestId = await contentClient.GetDepotManifestIdAsync(appId, depot.id, depot.branch, depot.pass!);
 
-                    Parameters.Output += $"\n\nFetching informations of app {appId}, depot {depot.id} from Steam ({depots.IndexOf(depot) + 1}/{depots.Count})... ";
+                    Parameters.Output += $"\n\nFetching informations of app {appId}, depot {depot.id} from Steam ({depots.IndexOf(depot) + 1}/{depots.Count})... "; // NOSONAR - live console feed, each append intentionally refreshes the bound UI
                     var downloadHandler = await contentClient.GetAppDataAsync(appId, depot.id, manifestId, tokenSource.Token);
 
                     await Download(downloadHandler, path);
@@ -336,7 +336,7 @@ namespace FASTER.ViewModel
                 catch (ArgumentException ex)
                 {
                     if (ex.Message.Contains("'tasks'"))
-                        Parameters.Output += "\nSkipped...";
+                        Parameters.Output += "\nSkipped..."; // NOSONAR - live console feed, each append intentionally refreshes the bound UI
                     else
                     {
                         throw;
@@ -344,7 +344,7 @@ namespace FASTER.ViewModel
                 }
                 catch (Exception ex)
                 {
-                    Parameters.Output += $"\nError: {ex.Message}{(ex.InnerException != null ? $" Inner Exception: {ex.InnerException.Message}" : "")}";
+                    Parameters.Output += $"\nError: {ex.Message}{(ex.InnerException != null ? $" Inner Exception: {ex.InnerException.Message}" : "")}"; // NOSONAR - live console feed, each append intentionally refreshes the bound UI
                     return UpdateState.Error;
                 }
             }
@@ -456,7 +456,7 @@ namespace FASTER.ViewModel
                         if (t.IsFaulted)
                             Logger.Log($"  ContinueWith: task for {mod.WorkshopId} faulted: {t.Exception}");
                         finished += 1;
-                        Parameters.Output += $"\n   Thread {mod.WorkshopId} complete  ({finished} / {ml.Count})";
+                        Parameters.Output += $"\n   Thread {mod.WorkshopId} complete  ({finished} / {ml.Count})"; // NOSONAR - live console feed, each append intentionally refreshes the bound UI
                         Parameters.Progress = finished * 100.0 / ml.Count;
                         Logger.Log($"  ContinueWith: mod {mod.WorkshopId} done ({finished}/{ml.Count}), releasing semaphore.");
                         maxThread.Release();
@@ -592,21 +592,16 @@ namespace FASTER.ViewModel
 
             SteamCredentials _steamCredentials = new(Parameters.Username, Encryption.Instance.DecryptData(Parameters.Password) ?? string.Empty);
 
-            if (SteamClient == null || SteamClient.Credentials.Username != _steamCredentials.Username || SteamClient.Credentials.Password != _steamCredentials.Password)
-            {
-                SteamClient = new SteamClient(_steamCredentials, new AuthCodeProvider(_steamCredentials.Username, path, this));
-                SteamClient.InternalClientAttemptingConnect += () => Parameters.Output += "\n\tClient : Attempting connect..";
-                SteamClient.InternalClientConnected += () => Parameters.Output += "\n\tClient : Connected";
-                SteamClient.InternalClientDisconnected += () => Parameters.Output += "\n\tClient : Disconnected";
-                SteamClient.InternalClientLoggedOn += () => Parameters.Output += "\n\tClient : Logged on";
-                SteamClient.InternalClientLoggedOff += () => Parameters.Output += "\n\tClient : Logged off";
-            }
-
             var client = SteamClient;
-            if (client == null)
+            if (client == null || client.Credentials.Username != _steamCredentials.Username || client.Credentials.Password != _steamCredentials.Password)
             {
-                IsLoggingIn = false;
-                return false;
+                client = new SteamClient(_steamCredentials, new AuthCodeProvider(_steamCredentials.Username, path, this));
+                client.InternalClientAttemptingConnect += () => Parameters.Output += "\n\tClient : Attempting connect..";
+                client.InternalClientConnected += () => Parameters.Output += "\n\tClient : Connected";
+                client.InternalClientDisconnected += () => Parameters.Output += "\n\tClient : Disconnected";
+                client.InternalClientLoggedOn += () => Parameters.Output += "\n\tClient : Logged on";
+                client.InternalClientLoggedOff += () => Parameters.Output += "\n\tClient : Logged off";
+                SteamClient = client;
             }
 
             if (!client.IsConnected || client.IsFaulted)
@@ -723,8 +718,8 @@ namespace FASTER.ViewModel
                 await Task.WhenAny(delayTask, downloadTask);
 
                 if (tokenSource.Token.IsCancellationRequested)
-                    Parameters.Output += "\nTask cancellation requested";
-                Parameters.Output += $"\nProgress {downloadHandler.TotalProgress * 100:00.00}%";
+                    Parameters.Output += "\nTask cancellation requested"; // NOSONAR - live console feed, each append intentionally refreshes the bound UI
+                Parameters.Output += $"\nProgress {downloadHandler.TotalProgress * 100:00.00}%"; // NOSONAR - live console feed, each append intentionally refreshes the bound UI
                 Parameters.Progress = downloadHandler.TotalProgress * 100;
             }
 
@@ -845,13 +840,13 @@ namespace FASTER.ViewModel
                 await Task.WhenAny(delayTask, downloadTask);
 
                 if (tokenSource.IsCancellationRequested)
-                    Parameters.Output += "\n    Task cancellation requested";
+                    Parameters.Output += "\n    Task cancellation requested"; // NOSONAR - live console feed, each append intentionally refreshes the bound UI
             }
 
             if (downloadTask.IsCanceled)
             {
                 Logger.Log("DownloadForMultiple: task was cancelled.");
-                Parameters.Output += "\n    Task Cancelled";
+                Parameters.Output += "\n    Task Cancelled"; // NOSONAR - live console feed, each append intentionally refreshes the bound UI
                 DownloadTasks.Remove(downloadTask);
                 await downloadHandler.DisposeAsync();
                 return;

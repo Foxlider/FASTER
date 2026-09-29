@@ -9,7 +9,6 @@ using Microsoft.AppCenter.Crashes;
 
 namespace FASTER.Models
 {
-    [Serializable]
     public class LocalMod
     {
         public LocalMod()

@@ -13,7 +13,7 @@ namespace FASTER.ViewModel
 {
     public class ModsViewModel
     {
-        private const string WorkshopFileDetailsUrl = "https://steamcommunity.com/workshop/filedetails/?id=";
+        private const string WorkshopFileDetailsUrl = "https://steamcommunity.com/workshop/filedetails/?id="; // NOSONAR - stable public service endpoint, intentionally compiled in
 
         public ModsViewModel()
         {
