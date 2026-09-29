@@ -93,19 +93,31 @@ namespace FASTER.Views
             ((ProfileViewModel)DataContext)?.LoadModsFromFile();
         }
 
-        private void CopyModKeys_Click(object sender, RoutedEventArgs e)
+        private async void CopyModKeys_Click(object sender, RoutedEventArgs e)
         {
-            ((ProfileViewModel)DataContext)?.CopyModKeys();
+            if (DataContext is ProfileViewModel vm)
+                await vm.CopyModKeys();
         }
 
-        private void ClearModKeys_Click(object sender, RoutedEventArgs e)
+        private async void ClearModKeys_Click(object sender, RoutedEventArgs e)
         {
-            ((ProfileViewModel)DataContext)?.ClearModKeys();
+            if (DataContext is ProfileViewModel vm)
+                await vm.ClearModKeys();
         }
 
         private void SelectServerFile(object sender, RoutedEventArgs e)
         {
             ((ProfileViewModel)DataContext)?.SelectServerFile();
+        }
+
+        private void SelectBePath(object sender, RoutedEventArgs e)
+        {
+            ((ProfileViewModel) DataContext)?.SelectBePath();
+        }
+
+        private void SelectKeysFolder(object sender, RoutedEventArgs e)
+        {
+            ((ProfileViewModel) DataContext)?.SelectKeysFolder();
         }
 
         private void OpenProfileLocation(object sender, RoutedEventArgs e)

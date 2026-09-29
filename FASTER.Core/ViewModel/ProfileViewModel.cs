@@ -1,6 +1,6 @@
 using FASTER.Models;
 using FASTER.Services;
-
+using Microsoft.AppCenter.Analytics;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -28,6 +28,7 @@ namespace FASTER.ViewModel
         public ObservableCollection<string> MissionDifficulties { get; } = new ObservableCollection<string> { "Recruit", "Regular", "Veteran", "Custom" };
         public ObservableCollection<string> PerfPresets { get; } = new ObservableCollection<string>(BasicCfgArrays.PerfPresets);
         public ObservableCollection<double> TerrainGrids { get; } = new ObservableCollection<double>(BasicCfgArrays.TerrainGrids);
+        public ObservableCollection<string> Languages { get; } = new ObservableCollection<string>(BasicCfgArrays.Languages);
 
         internal void DisplayMessage(string msg)
         {
@@ -36,6 +37,11 @@ namespace FASTER.ViewModel
 
         internal void OpenProfileLocation()
         {
+            Analytics.TrackEvent("Profile - Clicked OpenProfile", new Dictionary<string, string>
+            {
+                {"Name", AppSettings.Current.SteamUserName}
+            });
+
             string folderPath = Path.Combine(Profile.ArmaPath, "Servers", Profile.Id);
             if (Directory.Exists(folderPath))
             {
@@ -97,6 +103,11 @@ namespace FASTER.ViewModel
             //Launching... 
             DisplayMessage($"Launching Profile {Profile.Name}...");
 
+            Analytics.TrackEvent("Profile - Clicked LaunchServer", new Dictionary<string, string>
+            {
+                {"Name", AppSettings.Current.SteamUserName}
+            });
+
             Profile.RaisePropertyChanged("CommandLine");
             var commandLine = Profile.CommandLine;
             _ = AppServices.Clipboard.SetTextAsync(commandLine);
@@ -156,12 +167,21 @@ namespace FASTER.ViewModel
             Ui.Current.RemoveProfileUi(Profile.Id);
 
             Ui.Current.NavigateToConsole();
+            Ui.Current.ReloadServerProfiles();
         }
 
         internal void SaveProfile()
         {
-            string config = Path.Combine(Profile.ArmaPath, "Servers", Profile.Id, "server_config.cfg");
-            string basic = Path.Combine(Profile.ArmaPath, "Servers", Profile.Id, "server_basic.cfg");
+            var armaPath = Path.GetDirectoryName(Profile.Executable);
+
+            if(string.IsNullOrWhiteSpace(armaPath))
+            {
+                DisplayMessage("Arma executable is empty. Select the correct executable before saving your profile.");
+                return;
+            }
+
+            string config        = Path.Combine(Profile.ArmaPath, "Servers", Profile.Id, "server_config.cfg");
+            string basic         = Path.Combine(Profile.ArmaPath, "Servers", Profile.Id, "server_basic.cfg");
             string serverProfile = Path.Combine(Profile.ArmaPath, "Servers", Profile.Id, "users", Profile.Id, $"{Profile.Id}.Arma3Profile");
 
             //Creating profile directory
@@ -175,9 +195,9 @@ namespace FASTER.ViewModel
                 File.WriteAllLines(serverProfile, Profile.ArmaProfile.ArmaProfileContent.Replace("\r", "").Split('\n'));
             }
             catch
-            { DisplayMessage("Could not write the config files. Please ensure the server is not running and retry."); }
-
-            var armaPath = Path.GetDirectoryName(Profile.Executable);
+            { DisplayMessage("Could not write the config files. Please ensure the server is not running and retry."); 
+            return;
+            }
 
             if (string.IsNullOrWhiteSpace(armaPath))
             {
@@ -255,6 +275,24 @@ namespace FASTER.ViewModel
             {
                 DisplayMessage($"Some mods in the preset were not found: \n{string.Join("\n\t", notFound)}");
             }
+        }
+
+        internal async Task SelectBePath()
+        {
+            string? folder = await AppServices.Files.PickFolderAsync(Profile.BePath);
+            if (folder != null)
+            { Profile.BePath = folder; }
+            else
+            { await AppServices.Dialogs.ShowMessageAsync(this, "Invalid directory", "Please enter a valid BattlEye directory"); }
+        }
+
+        internal async Task SelectKeysFolder()
+        {
+            string? folder = await AppServices.Files.PickFolderAsync(Profile.KeysFolder);
+            if (folder != null)
+            { Profile.KeysFolder = folder; }
+            else
+            { await AppServices.Dialogs.ShowMessageAsync(this, "Invalid directory", "Please enter a valid keys directory"); }
         }
 
         internal async Task SelectServerFile()

@@ -1,4 +1,3 @@
-﻿
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -66,6 +65,13 @@ namespace FASTER.Models
         private bool _efDlcChecked;
         private bool _enableHT = true;
         private bool _enableRanking;
+        private bool _hugePages = false;
+        private string _bePath = "";
+        private string _keysFolder = "";
+        private int _exThreads = 0;
+        private bool _loadMissionToMemory = false;
+        private int _limitFPS = 0;
+        private bool _enableSteamLogs = false;
 
         private List<ProfileMod> _profileMods = new List<ProfileMod>();
         private string _profileModsFilter = "";
@@ -240,6 +246,76 @@ namespace FASTER.Models
             {
                 _enableRanking = value;
                 RaisePropertyChanged("RankingChecked");
+            }
+        }
+
+        public bool HugePages
+        {
+            get => _hugePages;
+            set
+            {
+                _hugePages = value;
+                RaisePropertyChanged(nameof(HugePages));
+            }
+        }
+
+        public string BePath
+        {
+            get => _bePath;
+            set
+            {
+                _bePath = value;
+                RaisePropertyChanged(nameof(BePath));
+            }
+        }
+
+        public string KeysFolder
+        {
+            get => _keysFolder;
+            set
+            {
+                _keysFolder = value;
+                RaisePropertyChanged(nameof(KeysFolder));
+            }
+        }
+
+        public int ExThreads
+        {
+            get => _exThreads;
+            set
+            {
+                _exThreads = value;
+                RaisePropertyChanged(nameof(ExThreads));
+            }
+        }
+
+        public bool LoadMissionToMemory
+        {
+            get => _loadMissionToMemory;
+            set
+            {
+                _loadMissionToMemory = value;
+                RaisePropertyChanged(nameof(LoadMissionToMemory));
+            }
+        }
+
+        public int LimitFPS
+        {
+            get => _limitFPS;
+            set
+            {
+                _limitFPS = value;
+                RaisePropertyChanged(nameof(LimitFPS));
+            }
+        }
+
+        public bool EnableSteamLogs
+        {
+            get => _enableSteamLogs;
+            set
+            {
+                _enableSteamLogs = value;
+                RaisePropertyChanged(nameof(EnableSteamLogs));
             }
         }
 
@@ -481,7 +557,7 @@ namespace FASTER.Models
                     var i = p.Name.IndexOf('(');
                     var j = p.Name.Length;
                     var num = p.Name.Substring(i + 1, j - 1 - i - 1);
-                    p.Name = $"{p.Name.Substring(0, p.Name.Length - i + 1)} ({int.Parse(num) + 1})";
+                    p.Name = $"{p.Name.Substring(0, i)}({int.Parse(num) + 1})";
                 }
                 else
                 {
@@ -565,6 +641,13 @@ namespace FASTER.Models
                 $"{(ServerCfg.AutoInit ? " -autoInit" : "")}",
                 $"{(ServerCfg.MaxMemOverride ? $" -maxMem={ServerCfg.MaxMem}" : "")}",
                 $"{(ServerCfg.CpuCountOverride ? $" -cpuCount={ServerCfg.CpuCount}" : "")}",
+                $"{(HugePages ? " -hugePages" : "")}",
+                $"{(!string.IsNullOrWhiteSpace(BePath) ? $" \"-bepath={BePath}\"" : "")}",
+                $"{(!string.IsNullOrWhiteSpace(KeysFolder) ? $" \"-keysFolder={KeysFolder}\"" : "")}",
+                $"{(ExThreads > 0 ? $" -exThreads={ExThreads}" : "")}",
+                $"{(LoadMissionToMemory ? " -loadMissionToMemory" : "")}",
+                $"{(LimitFPS > 0 ? $" -limitFPS={LimitFPS}" : "")}",
+                $"{(EnableSteamLogs ? " -enableSteamLogs" : "")}",
                 $"{(!string.IsNullOrWhiteSpace(ServerCfg.CommandLineParameters) ? $" {ServerCfg.CommandLineParameters}" : "")}"
             };
 

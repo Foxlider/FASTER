@@ -7,6 +7,8 @@ using ControlzEx.Theming;
 using FASTER.Models;
 
 using System;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -129,6 +131,7 @@ namespace FASTER.Views
         {
             IModUpdatesOnLaunch.IsChecked = AppSettings.Current?.CheckForModUpdates;
             IAppUpdatesOnLaunch.IsChecked = AppSettings.Current?.CheckForAppUpdates;
+            IEnableDebugLog.IsChecked = AppSettings.Current?.EnableDebugLog;
             IAPIKeyBox.Text = AppSettings.Current?.SteamAPIKey ?? string.Empty;
             Slider.Value = AppSettings.Current.CliWorkers;
             NumericUpDown.Value = Slider.Value;
@@ -146,6 +149,22 @@ namespace FASTER.Views
             AppSettings.Current.Save();
         }
 
+        private void IEnableDebugLog_Checked(object sender, RoutedEventArgs e)
+        {
+            AppSettings.Current.EnableDebugLog = IEnableDebugLog.IsChecked ?? false;
+            AppSettings.Current.Save();
+            Logger.Log("Debug logging enabled.");
+        }
+
+        private void IOpenLogFile_Click(object sender, RoutedEventArgs e)
+        {
+            var path = Logger.LogFilePath;
+            if (File.Exists(path))
+                Process.Start(new ProcessStartInfo(path) { UseShellExecute = true });
+            else
+                MainWindow.Instance.DisplayMessage($"No log file found at:\n{path}");
+        }
+
         private void IUpdateApp_OnClick(object sender, RoutedEventArgs e)
         { AutoUpdater.Start("https://raw.githubusercontent.com/Foxlider/FASTER/master/FASTER_Version.xml"); }
 
@@ -158,6 +177,7 @@ namespace FASTER.Views
                 AppSettings.Current.SteamAPIKey = IAPIKeyBox.Text;
             AppSettings.Current.CheckForAppUpdates = IAppUpdatesOnLaunch.IsChecked ?? true;
             AppSettings.Current.CheckForModUpdates = IModUpdatesOnLaunch.IsChecked ?? true;
+            AppSettings.Current.EnableDebugLog = IEnableDebugLog.IsChecked ?? false;
             AppSettings.Current.Save();
         }
 

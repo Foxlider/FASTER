@@ -17,11 +17,11 @@
 [![Sonar Violations (long format)](https://img.shields.io/sonar/violations/Foxlider_FASTER?format=long&label=Issues&logo=sonarcloud&logoColor=white&server=https%3A%2F%2Fsonarcloud.io&style=flat-square)](https://sonarcloud.io/project/issues?id=Foxlider_FASTER&resolved=false)
 
 
-[![Discord](https://img.shields.io/discord/366955806777671681?label=Discord&logo=discord&logoColor=white&style=for-the-badge)](https://discord.gg/2BUuZa3)
+[![Discord](https://img.shields.io/discord/366955806777671681?label=Discord&logo=discord&logoColor=white&style=for-the-badge)](https://discord.gg/SJxnTNuNJN)
 
 #### **INTRO**
 
-FASTER is an extensive rewrite of FAST2 and FAST. There was no update for a long time and it was written in VB. I translated the whole project to C# using .NET Core 3.0.  
+FASTER is an extensive rewrite of FAST2 and FAST. There was no update for a long time and it was written in VB. I translated the whole project to C# using .NET 8.0.  
 Thanks go out to all the guys who helped the developpment and those who will test it. Also, to BI for giving us an awesome game to play with and break.
 
 
@@ -39,7 +39,7 @@ Thanks go out to all the guys who helped the developpment and those who will tes
   - Automated Update process
 
 - SteamCMD Automation
-  - Install and update Arma 3 Server (Stable, Dev, DLCs)
+  - Install and update Arma 3 Server (Stable, Performance, DLCs)
   - Install, update and manage Arma 3 Workshop mods
   - Import installed Steam Mods
   - Supports Steam Guard and Mobile Auth

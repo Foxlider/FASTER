@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Text.Json;
 using System.Xml;
 using System.Xml.Serialization;
@@ -65,6 +66,7 @@ public sealed class AppSettings
     public bool UsingSPEDlc { get; set; } = false;
     public bool UsingRFDlc { get; set; } = false;
     public bool UsingEFDlc { get; set; } = false;
+    public bool EnableDebugLog { get; set; } = false;
 
     public void Save()
     {
@@ -112,6 +114,7 @@ public sealed class AppSettings
         UsingSPEDlc = fresh.UsingSPEDlc;
         UsingRFDlc = fresh.UsingRFDlc;
         UsingEFDlc = fresh.UsingEFDlc;
+        EnableDebugLog = fresh.EnableDebugLog;
     }
 
     public void Reset()
@@ -162,6 +165,7 @@ public sealed class AppSettings
         UsingSPEDlc = source.UsingSPEDlc;
         UsingRFDlc = source.UsingRFDlc;
         UsingEFDlc = source.UsingEFDlc;
+        EnableDebugLog = source.EnableDebugLog;
     }
 
     private static bool s_loading;
@@ -222,7 +226,8 @@ public sealed class AppSettings
                 {
                     var name = setting.Attributes?.GetNamedItem("name")?.Value;
                     if (string.IsNullOrEmpty(name)) continue;
-                    var property = type.GetProperty(name);
+                    // Legacy setting names are camelCase, ours are PascalCase, so match case-insensitively.
+                    var property = type.GetProperty(name, BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
                     if (property == null || !property.CanWrite) continue;
                     var valueNode = setting.SelectSingleNode("value");
                     if (valueNode == null) continue;

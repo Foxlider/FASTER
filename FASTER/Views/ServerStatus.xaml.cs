@@ -1,7 +1,12 @@
 using ControlzEx.Theming;
 
+using FASTER.Models;
+
 using LiveCharts;
 using LiveCharts.Configurations;
+
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 
 using System;
 using System.Collections.Generic;
@@ -180,6 +185,9 @@ namespace FASTER.Views
 
         private void IRescanAll_Click(object sender, RoutedEventArgs e)
         {
+            Analytics.TrackEvent("ServerStatus - Rescanning Servers", new Dictionary<string, string> {
+                { "Name", MetroWindow.SteamUpdaterViewModel.Parameters.Username}
+            });
             RefreshServers();
         }
         #endregion
@@ -194,9 +202,10 @@ namespace FASTER.Views
                     var p = new ProcessSpy(proc);
                     processes.Add(p);
                 }
-                catch (InvalidOperationException)
+                catch (InvalidOperationException e)
                 {
                     /*The process exited. Cannot add it back*/
+                    Crashes.TrackError(e, new Dictionary<string, string> { { "Name", AppSettings.Current.SteamUserName } });
                 }
             }
         }
@@ -524,7 +533,7 @@ namespace FASTER.Views
         }
 
         #region INotifyPropertyChanged implementation
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         protected virtual void OnPropertyChanged(string propertyName = null)
         { PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName)); }

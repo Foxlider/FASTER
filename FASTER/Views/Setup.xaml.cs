@@ -1,5 +1,8 @@
 ﻿using FASTER.Models;
 
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -92,10 +95,19 @@ namespace FASTER.Views
                 MainWindow.Instance.Version = $"{Assembly.GetExecutingAssembly().GetName().Version.Major}."
                                + $"{Assembly.GetExecutingAssembly().GetName().Version.Minor}"
                                + $"{rev}";
+                Analytics.TrackEvent("Setup - Launching", new Dictionary<string, string> {
+                    { "Name", AppSettings.Current.SteamUserName },
+                    { "Version", MainWindow.Instance.Version },
+                    { "Region", RegionInfo.CurrentRegion.TwoLetterISORegionName},
+                    { "CPU Architecture", Environment.Is64BitOperatingSystem ? "x64" : "x86" },
+                    { "OS Version", Environment.OSVersion.VersionString },
+                    { "Machine Name", Environment.MachineName }
+                });
                 MainWindow.Instance.Show();
             }
             catch (Exception e)
             {
+                Crashes.TrackError(e, new Dictionary<string, string> { {"Message", $"Could not start FASTER: \n[{ e.GetType()}] { e.Message}\n\n{ e.StackTrace}"}});
                 using EventLog eventLog = new EventLog("Application")
                 { Source = "FASTER" };
                 eventLog.WriteEntry($"Could not start FASTER : \n[{e.GetType()}] {e.Message}\n\n{e.StackTrace}", EventLogEntryType.Error);
@@ -167,8 +179,11 @@ namespace FASTER.Views
 
             try
             { MainWindow.Instance.Show(); }
-            catch
-            { DisplaySetupMessage("Could not start FASTER. Check the Windows Event Logs for details."); }
+            catch (Exception exception)
+            {
+                Crashes.TrackError(exception);
+                DisplaySetupMessage("Could not start FASTER. Check the Windows Event Logs for details.");
+            }
 
             Close();
         }

@@ -22,7 +22,8 @@ namespace FASTER.Views
         }
         private async void Update_Click(object sender, RoutedEventArgs e)
         {
-            await ((SteamUpdaterViewModel)DataContext)?.UpdateClick()!;
+            if (DataContext is SteamUpdaterViewModel vm)
+                await vm.UpdateClick();
         }
         private async void ServerDir_Click(object sender, RoutedEventArgs e)
         {

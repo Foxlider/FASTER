@@ -12,7 +12,7 @@
         <SignAssembly>True</SignAssembly>
         <AssemblyOriginatorKeyFile>FASTERKey.snk</AssemblyOriginatorKeyFile>
         <Authors>Keelah Fox, Jupster, Canno.n</Authors>
-        <Version>1.9.7.2</Version>
+        <Version>1.9.8.0</Version>
         <Company>FoxliCorp.</Company>
         <Description>Fox's Arma Server Tool Extended Rewrite</Description>
         <Copyright>Copyright © 2019</Copyright>
@@ -58,6 +58,8 @@
     <PackageReference Include="MahApps.Metro.IconPacks.Material" Version="5.0.0" />
     <PackageReference Include="MahApps.Metro.IconPacks.Modern" Version="5.0.0" />
     <PackageReference Include="MahApps.Metro.SimpleChildWindow" Version="2.2.1" />
+    <PackageReference Include="Microsoft.AppCenter.Analytics" Version="5.0.5" />
+    <PackageReference Include="Microsoft.AppCenter.Crashes" Version="5.0.5" />
     <PackageReference Include="System.Management" Version="10.0.0" />
     <PackageReference Include="System.Text.Json" Version="10.0.0" />
     <PackageReference Include="WindowsAPICodePack-Shell" Version="1.1.1" />

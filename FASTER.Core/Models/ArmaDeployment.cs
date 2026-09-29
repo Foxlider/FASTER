@@ -42,7 +42,7 @@ namespace FASTER.Models
             DeployMods = new ObservableCollection<DeploymentMod>();
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         private void RaisePropertyChanged(string property)
         {
@@ -107,7 +107,7 @@ namespace FASTER.Models
             set
             {
                 _workshopId = value;
-                RaisePropertyChanged("WorkshopID");
+                RaisePropertyChanged("WorkshopId");
             }
         }
 
@@ -182,7 +182,7 @@ namespace FASTER.Models
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         private void RaisePropertyChanged(string property)
         {

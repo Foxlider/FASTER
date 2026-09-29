@@ -11,7 +11,15 @@ namespace FASTER.Services
 {
     internal sealed class WpfUiBridge : IUiBridge
     {
-        public void DisplayMessage(string message) => MainWindow.Instance.DisplayMessage(message);
+        // Core models raise this from background threads (e.g. failed Steam API lookups), so marshal to the UI thread here instead of at every call site.
+        public void DisplayMessage(string message)
+        {
+            var window = MainWindow.Instance;
+            if (window.Dispatcher.CheckAccess())
+                window.DisplayMessage(message);
+            else
+                window.Dispatcher.Invoke(() => window.DisplayMessage(message));
+        }
 
         public void NavigateToConsole() => MainWindow.Instance.NavigateToConsole();
 
@@ -25,18 +33,31 @@ namespace FASTER.Services
 
         public void SyncProfileMenuName(string profileId, string name)
         {
-            var menuItem = MainWindow.Instance.IServerProfilesMenu.Items.Cast<ToggleButton>().FirstOrDefault(p => p.Name == profileId);
-            if (menuItem != null)
-                menuItem.Content = name;
+            var button = FindProfileMenuEntry(profileId).Button;
+            if (button != null)
+                button.Content = name;
         }
 
         public void RemoveProfileUi(string profileId)
         {
             var window = MainWindow.Instance;
             window.ContentProfileViews.Remove(window.ContentProfileViews.Find(p => p.Profile.Id == profileId));
-            var menuItem = window.IServerProfilesMenu.Items.Cast<ToggleButton>().FirstOrDefault(p => p.Name == profileId);
-            if (menuItem != null)
-                window.IServerProfilesMenu.Items.Remove(menuItem);
+            var outer = FindProfileMenuEntry(profileId).Outer;
+            if (outer != null)
+                window.IServerProfilesMenu.Items.Remove(outer);
+        }
+
+        // Profile menu rows are DockPanels wrapping the toggle button (with reorder buttons), or bare toggle buttons, so match the button but hand back the outer row for removal.
+        private static (object? Outer, ToggleButton? Button) FindProfileMenuEntry(string profileId)
+        {
+            foreach (var item in MainWindow.Instance.IServerProfilesMenu.Items)
+            {
+                var button = item is System.Windows.Controls.DockPanel dp
+                    ? dp.Children.OfType<ToggleButton>().FirstOrDefault()
+                    : item as ToggleButton;
+                if (button?.Name == profileId) return (item, button);
+            }
+            return (null, null);
         }
 
         public void AppendUpdaterOutput(string text)

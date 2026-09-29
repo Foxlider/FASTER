@@ -3,6 +3,7 @@ using FASTER.Services;
 using Newtonsoft.Json.Linq;
 
 using System.Net.Http;
+using System.Net.Sockets;
 
 namespace FASTER.Models;
 
@@ -35,24 +36,29 @@ public static class SteamWebApi
         { return null; }
     }
 
+    private static readonly HttpClient s_client = new() { Timeout = TimeSpan.FromSeconds(5) };
+
     private static JObject? ApiCall(string uri)
     {
-        using HttpClient client = new() { Timeout = TimeSpan.FromSeconds(5) };
         HttpResponseMessage? response = null;
 
         try
-        { response = client.GetAsync(uri).Result; }
-        catch (Exception e)
+        { response = s_client.GetAsync(uri).GetAwaiter().GetResult(); }
+        catch (Exception e) when (e is HttpRequestException or TaskCanceledException or SocketException)
         {
             Ui.Current.DisplayMessage("Cannot reach Steam API.\nCheck https://steamstat.us/ for status.");
-            Console.WriteLine($"Could not reach Steam API: {e.Message}");
+            Console.WriteLine($"Could not reach Steam API: [{e.GetType().Name}] {e.Message}");
         }
 
         Console.WriteLine(response?.StatusCode);
 
-        return response == null
-            ? null
-            : JObject.Parse(response.Content.ReadAsStringAsync().Result);
+        if (response == null)
+            return null;
+
+        if (!response.IsSuccessStatusCode)
+            throw new HttpRequestException($"Steam API returned HTTP {(int)response.StatusCode} {response.StatusCode}. Please check your Steam API Key in Settings.");
+
+        return JObject.Parse(response.Content.ReadAsStringAsync().Result);
     }
 
     private static string GetApiKey()

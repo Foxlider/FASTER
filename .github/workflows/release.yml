@@ -1,21 +1,23 @@
 name: "Release Generator"
 
-# after successful analysis on the main branch, a new pre-release is generated
 on:
-  #Makes a Nighly release on a new commit. 
+  #Makes a Nightly release after a successful build on master
   workflow_run:
-    workflows: [Code Analysis]
+    workflows: [Build]
     types: [completed]
     branches: [master]
-  
+
   #Makes a Release on tag
   push:
-    # Sequence of patterns matched against refs/tags
     tags:
       - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
   workflow_dispatch: # ReleaseGen can be triggered manually
 
+permissions:
+  contents: read
+
 env:
+  DOTNET_VERSION: '8.0.x'
   IS_RELEASE: ${{ github.ref_type == 'tag' }}
   ZIP_NAME: ${{ github.ref_type == 'tag' && 'Release_' || 'Release_Nightly_' }}
   ZIP_PATH: ${{ github.ref_type == 'tag' && 'FASTER_' || 'FASTER_Nightly_' }}
@@ -24,7 +26,7 @@ jobs:
 
   # BUILD APP
   build:
-    if: ( github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'master' ) || startsWith(github.ref, 'refs/tags/v')
+    if: ( github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' ) || startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
     strategy:
       matrix:
         # runtime: [x64, x86]
@@ -35,26 +37,27 @@ jobs:
 
     env:
       Configuration: Release
-      Solution_Name: FASTER                         # Replace with your solution name, i.e. MyWpfApp.sln.
+      Solution_Name: FASTER                                            # Replace with your solution name, i.e. MyWpfApp.sln.
       Test_Project_Path: FASTERTests\FASTERTests.csproj                # Replace with the path to your test project, i.e. MyWpfApp.Tests\MyWpfApp.Tests.csproj.
-      Wap_Project_Directory: FASTER    # Replace with the Wap project directory relative to the solution, i.e. MyWpfApp.Package.
-      Wap_Project_Path: FASTER.App.Package\FASTER.Package.wapproj                   # Replace with the path to your Wap project, i.e. MyWpf.App.Package\MyWpfApp.Package.wapproj.
+      Wap_Project_Directory: FASTER                                    # Replace with the Wap project directory relative to the solution, i.e. MyWpfApp.Package.
+      Wap_Project_Path: FASTER.App.Package\FASTER.Package.wapproj      # Replace with the path to your Wap project, i.e. MyWpf.App.Package\MyWpfApp.Package.wapproj.
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       with:
         submodules: true
+        ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
     # Install the .NET Core workload
     - name: Install .NET Core
-      uses: actions/setup-dotnet@v4
+      uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
       with:
         dotnet-version: ${{env.DOTNET_VERSION}}
     
     # Execute all unit tests in the solution
     - name: Execute unit tests
-      run: dotnet test
+      run: dotnet test --filter "TestCategory!=Network"
       
     # Restore the application to populate the obj folder with RuntimeIdentifiers
     - name: Restore the application
@@ -80,7 +83,7 @@ jobs:
         Runtime: ${{ matrix.runtime }}
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
       with:
         name: build-${{ matrix.runtime }}
         path: .\${{ env.ZIP_NAME}}${{ matrix.runtime }}.zip
@@ -88,23 +91,25 @@ jobs:
   release:
     needs: build
     runs-on: windows-latest
+    permissions:
+      contents: write
     steps:
 
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       with:
         submodules: true
         fetch-depth: 0 # required for tags history processing
+        ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
     - name: Download x64 artifact
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
       with:
         name: build-x64
         path: ./artifacts
     
-    # Get version number
     - name: get-net-sdk-project-versions-action
-      uses: kzrnm/get-net-sdk-project-versions-action@v2.0.0
+      uses: kzrnm/get-net-sdk-project-versions-action@7d62715f5720ec339d39ab4a43b365391ad96db9 # v3.1.0
       id: get-version
       with:
         proj-path: ./FASTER/FASTER.csproj
@@ -157,10 +162,17 @@ jobs:
           $changes = $changes -replace "^(.*)$", "$linePrefix`$1"
         }
 
+        # Truncate changelog to avoid exceeding env var limits (max ~32k)
+        $changesStr = $changes -join "`n"
+        if ($changesStr.Length -gt 20000) {
+          $truncationWarning = "`n⚠️ **Note:** Changelog truncated at 20,000 characters. See [full commit history](https://github.com/${{ github.repository }}/commits/${{ github.ref_name }})"
+          $changesStr = $changesStr.Substring(0, 20000) + "`n`n...(truncated)`n" + $truncationWarning
+        }
+
         # Set outputs
         $EOF = (New-Guid).Guid
         "changes<<$EOF" >> $env:GITHUB_OUTPUT
-        $changes >> $env:GITHUB_OUTPUT
+        $changesStr >> $env:GITHUB_OUTPUT
         "$EOF" >> $env:GITHUB_OUTPUT
         "tag=$latestTag" >> $env:GITHUB_OUTPUT
 
@@ -178,7 +190,7 @@ jobs:
       id: set_version
       run: |
         if ($env:IS_RELEASE -eq "true") {
-          echo "VERSION=$env:GITHUB_REF" >> $env:GITHUB_ENV
+          echo "VERSION=$env:GITHUB_REF_NAME" >> $env:GITHUB_ENV
         } else {
           echo "VERSION=${{ steps.get-version.outputs.version }}" >> $env:GITHUB_ENV
         }
@@ -187,47 +199,58 @@ jobs:
     #Create Release
     - name: Create Release
       if: env.IS_RELEASE == 'true'
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+      uses: softprops/action-gh-release@e598afbe1493e6b1bafb1f389cabb956eab91231 # v3.0.3
       with:
-        tag_name: '${{ env.VERSION }}'
-        release_name: 'Release ${{ env.VERSION }}'
-        body: | 
-          Changelog since release ${{ steps.get-changes.outputs.tag }} :  
-          ---  
+        tag_name: ${{ env.VERSION }}
+        name: 'Release ${{ env.VERSION }}'
+        body: |
+          Changelog since release ${{ steps.get-changes.outputs.tag }} :
+          ---
           ${{ steps.get-changes.outputs.changes }}
-          ---  
+          ---
         draft: false
-        prerelease: ${{ env.IS_RELEASE == 'false' }}
-
-    # Upload Artifacts
-    - name: Upload Release Asset
-      if: env.IS_RELEASE == 'true'
-      id: upload-release-asset 
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-        asset_path: ./artifacts/${{ env.ZIP_NAME}}x64.zip
-        asset_name: ${{ env.ZIP_NAME}}x64.zip
-        asset_content_type: application/zip
+        prerelease: false
+        files: ./artifacts/${{ env.ZIP_NAME}}x64.zip
     
+    # Delete existing nightly release and tag so it can be recreated cleanly
+    - name: Delete existing nightly release and tag
+      if: env.IS_RELEASE == 'false'
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        gh release delete nightly --yes --repo ${{ github.repository }} || true
+        git push origin :refs/tags/nightly || true
+      shell: bash
+
     # Create Nightly Release
     - name: Create Nightly Release
       if: env.IS_RELEASE == 'false'
-      uses: andelf/nightly-release@main
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: softprops/action-gh-release@e598afbe1493e6b1bafb1f389cabb956eab91231 # v3.0.3
       with:
         tag_name: nightly
         name: 'Nightly Release v${{ env.VERSION }}'
-        body: | 
-          Changelog since release ${{ steps.get-changes.outputs.tag }} :  
-          ---  
+        draft: false
+        body: |
+          Changelog since release ${{ steps.get-changes.outputs.tag }} :
+          ---
           ${{ steps.get-changes.outputs.changes }}
-          ---  
+          ---
         prerelease: true
         files: ./artifacts/${{ env.ZIP_NAME}}x64.zip
+
+  # PUBLISH TO WINGET (tagged releases only)
+  winget:
+    needs: release
+    if: github.ref_type == 'tag'
+    runs-on: windows-latest
+    steps:
+      # Requires forked winget-pkgs: https://github.com/microsoft/winget-pkgs to the same account as this project
+      - name: Submit to WinGet
+        uses: vedantmgoyal9/winget-releaser@4ffc7888bffd451b357355dc214d43bb9f23917e #v2
+        with:
+          identifier: Foxlider.FASTER
+          installers-regex: 'Release_x64.zip'
+          max-versions-to-keep: 5
+          release-tag: ${{ github.ref_name }}
+          # Classic Personal Access Token with [public_repo, workflow] scopes
+          token: ${{ secrets.WINGET_TOKEN }}

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
+using Microsoft.AppCenter.Crashes;
+
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
 namespace FASTER.Models
@@ -52,7 +54,10 @@ namespace FASTER.Models
                                        select new LocalMod(name, modFolder, author, website));
                 }
                 catch (Exception e)
-                { Console.WriteLine($"Could not list local mods in {localModFolder}: {e.Message}"); }
+                {
+                    Crashes.TrackError(e, new Dictionary<string, string> { { "Name", AppSettings.Current.SteamUserName } });
+                    Console.WriteLine($"Could not list local mods in {localModFolder}: {e.Message}");
+                }
             }
 
             return localMods;
