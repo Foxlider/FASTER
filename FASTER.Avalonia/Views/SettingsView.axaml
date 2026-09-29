@@ -22,10 +22,9 @@
         <Button Grid.Column="1" Content="Get key" Margin="8,0,0,0" Click="ApiKeyButton_Click" />
       </Grid>
       <TextBlock Text="Download workers" />
-      <Grid ColumnDefinitions="Auto,*,Auto">
-        <NumericUpDown Grid.Column="0" x:Name="WorkersCount" IsReadOnly="True" Minimum="1" Maximum="50" Width="90" Margin="0,0,8,0" Watermark="Workers" />
-        <Slider Grid.Column="1" x:Name="WorkersSlider" Minimum="1" Maximum="50" ValueChanged="WorkersSlider_Changed" VerticalAlignment="Center" />
-        <TextBlock Grid.Column="2" Text="{Binding #WorkersSlider.Value, StringFormat={}{0:0} / 50}" VerticalAlignment="Center" Margin="8,0,0,0" Opacity="0.75" FontSize="11" />
+      <Grid ColumnDefinitions="*,Auto">
+        <Slider Grid.Column="0" x:Name="WorkersSlider" Minimum="1" Maximum="50" ValueChanged="WorkersSlider_Changed" VerticalAlignment="Center" />
+        <TextBlock Grid.Column="1" Text="{Binding #WorkersSlider.Value, StringFormat={}{0:0} / 50}" VerticalAlignment="Center" Margin="8,0,0,0" Opacity="0.75" FontSize="11" />
       </Grid>
       <TextBlock x:Name="UpdateMessage" TextWrapping="Wrap" />
       <WrapPanel>

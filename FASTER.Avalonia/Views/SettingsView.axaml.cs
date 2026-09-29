@@ -32,7 +32,6 @@ public partial class SettingsView : UserControl
         AnalyticsBox.IsChecked = settings.EnableAnalytics;
         ApiKeyBox.Text = settings.SteamAPIKey;
         WorkersSlider.Value = settings.CliWorkers;
-        WorkersCount.Value = (decimal)settings.CliWorkers;
     }
 
     private void ThemeBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
@@ -66,7 +65,6 @@ public partial class SettingsView : UserControl
     private void WorkersSlider_Changed(object? sender, RangeBaseValueChangedEventArgs e)
     {
         AppSettings.Current.CliWorkers = Convert.ToUInt16(e.NewValue);
-        WorkersCount.Value = (decimal)e.NewValue;
         AppSettings.Current.Save();
     }
 
