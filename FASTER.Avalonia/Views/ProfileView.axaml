@@ -182,7 +182,7 @@
      <Border Grid.Row="0" Grid.Column="0" Margin="5,0,4,0" Classes="card">
         <Grid RowDefinitions="Auto,*">
           <TextBlock Text="MISSIONS" Classes="card-header" />
-          <Grid Grid.Row="1" Margin="8" RowDefinitions="Auto,*,Auto,Auto,Auto">
+          <Grid Grid.Row="1" Margin="8" RowDefinitions="Auto,*,Auto,Auto,Auto,Auto">
               <ToggleSwitch Content="Mission selector override" IsChecked="{Binding Profile.ServerCfg.MissionChecked}" Margin="5,0" />
               <TextBox Grid.Row="1" MinHeight="50" Margin="0,5" Text="{Binding Profile.ServerCfg.MissionContentOverride}"
                        Watermark="Mission Override" AcceptsReturn="True"
@@ -207,7 +207,7 @@
                   <dg:DataGridTextColumn Header="NAME" Binding="{Binding Name}" Width="*" IsReadOnly="True" />
                 </dg:DataGrid.Columns>
               </dg:DataGrid>
-              <Button Grid.Row="2" Classes="accent" Content="Refresh" Margin="0,5" MinHeight="34" Click="MissionRefresh" />
+              <Button Grid.Row="2" Classes="accent" Content="Refresh" Margin="0,5" MinHeight="34" HorizontalAlignment="Left" Click="MissionRefresh" />
               <StackPanel Grid.Row="2" Margin="5,0" HorizontalAlignment="Right" Spacing="2">
                   <TextBlock Classes="field-label" Text="Difficulty Preset" />
                   <ComboBox SelectedItem="{Binding Profile.ServerCfg.Difficulty}"
@@ -226,6 +226,7 @@
                 <CheckBox Content="Random Order" IsChecked="{Binding Profile.ServerCfg.RandomMissionOrder}"
                           Grid.Column="1" Margin="5" HorizontalAlignment="Right" />
               </Grid>
+              <TextBox Grid.Row="5" Watermark="Mission download URL" Text="{Binding Profile.ServerCfg.MissionHTTPDownloadBaseURL}" Margin="5,3" />
             </Grid>
           </Grid>
         </Border>
@@ -514,6 +515,20 @@
                     </StackPanel>
                   </StackPanel>
                 </Border>
+                <Border Classes="card" Margin="5">
+                  <StackPanel>
+                    <TextBlock Classes="card-header" Text="ANTI-FLOOD" />
+                    <StackPanel Margin="8" Spacing="5">
+                      <CheckBox Content="Enable anti-flood" IsChecked="{Binding Profile.ServerCfg.AntiFloodEnabled}" />
+                      <StackPanel IsEnabled="{Binding Profile.ServerCfg.AntiFloodEnabled}" Spacing="5">
+                        <NumericUpDown Watermark="Cycle time" Minimum="0" Value="{Binding Profile.ServerCfg.AntiFloodCycleTime}" />
+                        <NumericUpDown Watermark="Cycle limit" Minimum="0" Value="{Binding Profile.ServerCfg.AntiFloodCycleLimit}" />
+                        <NumericUpDown Watermark="Hard limit" Minimum="0" Value="{Binding Profile.ServerCfg.AntiFloodCycleHardLimit}" />
+                        <CheckBox Content="Kick flooding clients" IsChecked="{Binding Profile.ServerCfg.AntiFloodEnableKick}" />
+                      </StackPanel>
+                    </StackPanel>
+                  </StackPanel>
+                </Border>
                 <Expander Classes="bar" Margin="5" Header="SCRIPTING SETTINGS">
                   <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto,Auto">
                     <TextBox Text="{Binding Profile.ServerCfg.ServerCommandPassword}" Watermark="Server Command Password" Grid.ColumnSpan="2" Margin="5" />
@@ -552,7 +567,7 @@
             <StackPanel>
               <TextBlock Text="PERFORMANCE TWEAKS" Classes="card-header" />
               <StackPanel Margin="8">
-            <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto">
+            <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto">
               <NumericUpDown Value="{Binding Profile.BasicCfg.MinBandwidth}" Watermark="MinBandwidth" Minimum="0" Grid.Row="0" Grid.Column="0" Margin="3" />
               <NumericUpDown Value="{Binding Profile.BasicCfg.MaxPacketSize}" Watermark="MaxPacketSize" Minimum="0" Grid.Row="0" Grid.Column="1" Margin="3" />
               <NumericUpDown Value="{Binding Profile.BasicCfg.MaxBandwidth}" Watermark="MaxBandwidth" Minimum="0" Grid.Row="0" Grid.Column="2" Margin="3" />
@@ -577,6 +592,27 @@
               <NumericUpDown Value="{Binding Profile.ServerCfg.MaxMem}" Watermark="Maximum Memory (MB)" Minimum="1024" Grid.Row="5" Grid.Column="0" Margin="3" IsVisible="{Binding Profile.ServerCfg.MaxMemOverride}" />
               <NumericUpDown Value="{Binding Profile.ServerCfg.CpuCount}" Watermark="CPU Core Count" Minimum="1" Grid.Row="5" Grid.Column="2" Margin="3" IsVisible="{Binding Profile.ServerCfg.CpuCountOverride}" />
               <TextBox Text="{Binding Profile.ServerCfg.CommandLineParameters}" Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="3" Margin="3,5" Watermark="Command Line Arguments" />
+              <StackPanel Grid.Row="7" Grid.ColumnSpan="3" Spacing="6" Margin="3">
+                <TextBlock Text="Server language" Classes="field-label" />
+                <ComboBox ItemsSource="{Binding Languages}" SelectedItem="{Binding Profile.BasicCfg.Language}" HorizontalAlignment="Stretch" />
+                <WrapPanel>
+                  <CheckBox Content="Huge pages" IsChecked="{Binding Profile.HugePages}" Margin="0,0,12,0" />
+                  <CheckBox Content="Preload missions" IsChecked="{Binding Profile.LoadMissionToMemory}" Margin="0,0,12,0" />
+                  <CheckBox Content="Steam logging" IsChecked="{Binding Profile.EnableSteamLogs}" />
+                </WrapPanel>
+                <Grid ColumnDefinitions="*,*">
+                  <NumericUpDown Watermark="Extra threads (0 = default)" Minimum="0" Maximum="7" Value="{Binding Profile.ExThreads}" Margin="0,0,3,0" />
+                  <NumericUpDown Grid.Column="1" Watermark="FPS limit (0 = default)" Minimum="0" Value="{Binding Profile.LimitFPS}" Margin="3,0,0,0" />
+                </Grid>
+                <Grid ColumnDefinitions="*,Auto">
+                  <TextBox Watermark="BattlEye directory" Text="{Binding Profile.BePath}" />
+                  <Button Grid.Column="1" Content="Browse" Click="SelectBePath" Margin="6,0,0,0" />
+                </Grid>
+                <Grid ColumnDefinitions="*,Auto">
+                  <TextBox Watermark="Keys directory" Text="{Binding Profile.KeysFolder}" />
+                  <Button Grid.Column="1" Content="Browse" Click="SelectKeysFolder" Margin="6,0,0,0" />
+                </Grid>
+              </StackPanel>
             </Grid>
               </StackPanel>
             </StackPanel>

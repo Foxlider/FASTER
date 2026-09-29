@@ -59,6 +59,8 @@
             </ListBox.ItemTemplate>
             <ListBox.ContextMenu>
               <ContextMenu>
+                <MenuItem Header="Move up" Click="MoveProfileUp_Click" />
+                <MenuItem Header="Move down" Click="MoveProfileDown_Click" />
                 <MenuItem Header="Clone" Click="CloneProfile_Click" />
                 <MenuItem Header="Delete" Click="DeleteProfile_Click" />
               </ContextMenu>
@@ -67,6 +69,13 @@
         </Grid>
         <StackPanel Grid.Row="2" Margin="8" Spacing="2">
           <Separator />
+          <Menu Margin="0,2">
+            <MenuItem Header="Tools">
+              <MenuItem Header="Server directory" Click="OpenServer_Click" />
+              <MenuItem Header="Mod staging directory" Click="OpenStaging_Click" />
+              <MenuItem Header="Application data directory" Click="OpenData_Click" />
+            </MenuItem>
+          </Menu>
           <TextBlock Text="Other" FontWeight="Bold" FontSize="14" Margin="4,4,0,4" />
           <Button Name="NavSettings" Classes="nav" Click="NavSettings_Click">
             <StackPanel Orientation="Horizontal" Spacing="10">

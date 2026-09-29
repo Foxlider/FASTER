@@ -1,4 +1,4 @@
-﻿using AutoUpdaterDotNET;
+using AutoUpdaterDotNET;
 
 using BytexDigital.Steam.ContentDelivery;
 
@@ -6,8 +6,6 @@ using ControlzEx.Theming;
 
 using FASTER.Models;
 
-using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
 
 using System;
 using System.Diagnostics;
@@ -160,8 +158,7 @@ namespace FASTER.Views
         {
             AppSettings.Current.EnableAnalytics = IShareAnalytics.IsChecked ?? true;
             AppSettings.Current.Save();
-            _ = Analytics.SetEnabledAsync(AppSettings.Current.EnableAnalytics);
-            _ = Crashes.SetEnabledAsync(AppSettings.Current.EnableAnalytics);
+            _ = FASTER.Services.Telemetry.SetEnabledAsync(AppSettings.Current.EnableAnalytics);
         }
 
         private void IEnableDebugLog_Checked(object sender, RoutedEventArgs e)

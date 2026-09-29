@@ -1,8 +1,6 @@
-﻿using FASTER.Models;
+using FASTER.Models;
 using FASTER.Services;
 
-using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
 
 using System;
 using System.Collections.Generic;
@@ -36,16 +34,6 @@ namespace FASTER.Views
                 DisplaySetupMessage("Could not read your configuration file. Check file before continuing");
                 return;
             }
-
-            if (wasFirstRun)
-            {
-                AppSettings.Current.Upgrade();
-                AppSettings.Current.FirstRun = false;
-                AppSettings.Current.Save();
-            }
-
-            if (AppSettings.Current.ClearSettings)
-                AppSettings.Current.Reset();
 
             if (AppSettings.Current.SteamMods == null)
             {
@@ -98,12 +86,12 @@ namespace FASTER.Views
                                + $"{asmVersion.Minor}"
                                + $"{rev}";
                 if (AppSettings.Current.EnableAnalytics)
-                    Analytics.TrackEvent("Setup - Launching", GetLaunchProperties());
+                    FASTER.Services.Telemetry.TrackEvent("Setup - Launching", GetLaunchProperties());
                 MainWindow.Instance.Show();
             }
             catch (Exception e)
             {
-                Crashes.TrackError(e, new Dictionary<string, string> { {"Message", $"Could not start FASTER: \n[{ e.GetType()}] { e.Message}\n\n{ e.StackTrace}"}});
+                FASTER.Services.Telemetry.TrackError(e, new Dictionary<string, string> { {"Message", $"Could not start FASTER: \n[{ e.GetType()}] { e.Message}\n\n{ e.StackTrace}"}});
                 using EventLog eventLog = new EventLog("Application")
                 { Source = "FASTER" };
                 eventLog.WriteEntry($"Could not start FASTER : \n[{e.GetType()}] {e.Message}\n\n{e.StackTrace}", EventLogEntryType.Error);
@@ -177,6 +165,7 @@ namespace FASTER.Views
             if (!string.IsNullOrEmpty(IApiKeyBox.Text))
                 AppSettings.Current.SteamAPIKey = IApiKeyBox.Text;
             settings.FirstRun = false;
+            settings.SetupRun = false;
             settings.Save();
 
             MainWindow.Instance.SteamUpdaterViewModel.Parameters.ModStagingDirectory = settings.ModStagingDirectory;
@@ -192,7 +181,7 @@ namespace FASTER.Views
             { MainWindow.Instance.Show(); }
             catch (Exception exception)
             {
-                Crashes.TrackError(exception);
+                FASTER.Services.Telemetry.TrackError(exception);
                 DisplaySetupMessage("Could not start FASTER. Check the Windows Event Logs for details.");
             }
 

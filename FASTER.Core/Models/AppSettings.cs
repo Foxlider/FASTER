@@ -30,7 +30,7 @@ public sealed class AppSettings
     }
 
     public static string SettingsPath => PathOverrideForTests ?? Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData, Environment.SpecialFolderOption.DoNotVerify),
         "FoxliCorp", "FASTER", "faster.json");
 
     internal static string? PathOverrideForTests { get; set; }
@@ -68,6 +68,45 @@ public sealed class AppSettings
     public bool UsingEFDlc { get; set; } = false;
     public bool EnableDebugLog { get; set; } = false;
     public bool EnableAnalytics { get; set; } = true;
+
+    public void InitializeForStartup()
+    {
+        if (ClearSettings)
+            Reset();
+        if (!FirstRun)
+            SetupRun = false;
+        SteamMods ??= new SteamModCollection();
+        LocalMods ??= new List<LocalMod>();
+        LocalModFolders ??= new List<string>();
+        if (ArmaMods == null)
+        {
+            ArmaMods = new ArmaModCollection();
+            foreach (var mod in SteamMods.SteamMods)
+                ArmaMods.ArmaMods.Add(new ArmaMod {
+                    WorkshopId = mod.WorkshopId, Name = mod.Name, Author = mod.Author,
+                    Path = Path.Combine(SteamCMDPath, "steamapps", "workshop", "content", "107410", mod.WorkshopId.ToString()),
+                    SteamLastUpdated = (ulong)Math.Max(0, mod.SteamLastUpdated),
+                    LocalLastUpdated = (ulong)Math.Max(0, mod.LocalLastUpdated), PrivateMod = mod.PrivateMod, Status = mod.Status
+                });
+            uint localId = uint.MaxValue;
+            foreach (var mod in LocalMods)
+            {
+                while (ArmaMods.ArmaMods.Any(m => m.WorkshopId == localId)) localId--;
+                ArmaMods.ArmaMods.Add(new ArmaMod { WorkshopId = localId--, Name = mod.Name,
+                    Author = mod.Author, Path = mod.Path, IsLocal = true, Status = ArmaModStatus.Local });
+            }
+        }
+        Save();
+    }
+
+    public void CompleteSetup(string password, bool passwordChanged)
+    {
+        if (passwordChanged)
+            SteamPassword = Encryption.Instance.EncryptData(password) ?? string.Empty;
+        FirstRun = false;
+        SetupRun = false;
+        Save();
+    }
 
     public void Save()
     {

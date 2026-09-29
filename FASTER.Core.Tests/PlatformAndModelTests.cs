@@ -28,8 +28,8 @@ public class PlatformTests
     [Test]
     public void IsServerExecutableAcceptsKnownBinaries()
     {
-        Assert.That(Platform.Current.IsServerExecutable("/srv/arma3/arma3server"), Is.True);
-        Assert.That(Platform.Current.IsServerExecutable("/srv/arma3/arma3server_x64"), Is.True);
+        Assert.That(Platform.Current.IsServerExecutable("/srv/arma3/arma3server"), Is.EqualTo(!OperatingSystem.IsWindows()));
+        Assert.That(Platform.Current.IsServerExecutable("/srv/arma3/arma3server_x64"), Is.EqualTo(!OperatingSystem.IsWindows()));
         Assert.That(Platform.Current.IsServerExecutable(null), Is.False);
         Assert.That(Platform.Current.IsServerExecutable(string.Empty), Is.False);
         Assert.That(Platform.Current.IsServerExecutable("/usr/bin/notepad.exe"), Is.False);

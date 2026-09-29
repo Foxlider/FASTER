@@ -18,25 +18,33 @@
       <TextBlock Grid.Row="2" Grid.Column="1" x:Name="RamLabel" HorizontalAlignment="Center" Margin="0,4" Foreground="{DynamicResource FasterMutedText}" />
     </Grid>
     <Expander Grid.Row="1" Classes="bar" Header="Additional Gauges" HorizontalAlignment="Stretch" Margin="5">
-      <Grid RowDefinitions="*,Auto">
+      <Grid RowDefinitions="Auto,Auto,Auto">
         <lvc:CartesianChart Height="120" x:Name="CpuChart" TooltipPosition="Hidden" />
-        <TextBlock Grid.Row="1" Text="CPU usage history · CPU temperature unavailable" HorizontalAlignment="Center" Margin="5" />
+        <lvc:CartesianChart Grid.Row="2" Height="120" x:Name="ProcessChart" />
+        <TextBlock x:Name="TemperatureLabel" Grid.Row="1" Text="CPU temperature: Unavailable" HorizontalAlignment="Center" Margin="5" />
       </Grid>
     </Expander>
-    <dg:DataGrid Grid.Row="2" x:Name="ProcessGrid" AutoGenerateColumns="False" CanUserSortColumns="True" Margin="10,5">
+    <dg:DataGrid Grid.Row="2" x:Name="ProcessGrid" SelectionChanged="ProcessSelectionChanged" AutoGenerateColumns="False" CanUserSortColumns="True" Margin="10,5">
       <dg:DataGrid.Columns>
         <dg:DataGridTextColumn Header="Process ID" Binding="{Binding Id}" IsReadOnly="True" />
-        <dg:DataGridTextColumn Header="Name" Binding="{Binding ProcessName}" Width="*" IsReadOnly="True" />
-        <dg:DataGridTextColumn Header="Memory" Binding="{Binding WorkingSet64, Converter={StaticResource SizeConverter}}" IsReadOnly="True" />
+        <dg:DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*" IsReadOnly="True" />
+        <dg:DataGridTextColumn Header="State" Binding="{Binding State}" IsReadOnly="True" />
+        <dg:DataGridTextColumn Header="CPU %" Binding="{Binding CpuPercent, StringFormat={}{0:F1}}" IsReadOnly="True" />
+        <dg:DataGridTextColumn Header="Memory" Binding="{Binding MemoryBytes, Converter={StaticResource SizeConverter}}" IsReadOnly="True" />
         <dg:DataGridTemplateColumn Header="" CanUserSort="False" CanUserResize="False">
           <dg:DataGridTemplateColumn.CellTemplate>
-            <DataTemplate><Button Classes="accent" Content="Kill" Click="KillProcess_Click" /></DataTemplate>
+            <DataTemplate><StackPanel Orientation="Horizontal" Spacing="4">
+              <Button Content="Pause/resume" Click="PauseProcess_Click" />
+              <Button Content="Output" Click="Output_Click" />
+              <Button Classes="accent" Content="Kill" Click="KillProcess_Click" />
+            </StackPanel></DataTemplate>
           </dg:DataGridTemplateColumn.CellTemplate>
         </dg:DataGridTemplateColumn>
       </dg:DataGrid.Columns>
     </dg:DataGrid>
     <Grid Grid.Row="3" ColumnDefinitions="Auto,*,Auto" Margin="10,5">
       <StackPanel Orientation="Horizontal" Spacing="5">
+        <Button x:Name="PauseAllButton" Content="Pause monitoring" Click="PauseAll_Click" />
         <Button Classes="accent" Content="Rescan" Click="Rescan_Click" />
         <Button Classes="accent" Content="Kill all" Click="KillAll_Click" />
       </StackPanel>

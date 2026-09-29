@@ -1,0 +1,56 @@
+name: Package Avalonia
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            runtime: win-x64
+            executable: FASTER.Avalonia.exe
+          - os: ubuntu-22.04
+            runtime: linux-x64
+            executable: FASTER.Avalonia
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          submodules: recursive
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68
+        with:
+          dotnet-version: '10.0.x'
+      - name: Install matching Velopack tooling
+        run: dotnet tool install vpk --tool-path .tools --version 1.2.158
+      - name: Test Core
+        run: dotnet test FASTER.Core.Tests/FASTER.Core.Tests.csproj -c Release -warnaserror
+      - name: Publish
+        run: dotnet publish FASTER.Avalonia/FASTER.Avalonia.csproj -c Release -r ${{ matrix.runtime }} --self-contained true -o publish -warnaserror
+      - name: Package and generate update manifest
+        shell: pwsh
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+          REF_TYPE: ${{ github.ref_type }}
+        run: |
+          $version = (dotnet msbuild FASTER.Core/FASTER.Core.csproj -getProperty:Version).Trim()
+          $parts = $version.Split('.')
+          $version = ($parts[0..2] -join '.')
+          if ($env:REF_TYPE -eq 'tag' -and $env:RELEASE_TAG -match '^v?(\d+\.\d+\.\d+)$') {
+            $version = $Matches[1]
+          } elseif ($env:REF_TYPE -ne 'tag') {
+            $version += '-nightly.${{ github.run_number }}'
+          }
+          ./.tools/vpk pack --packId FASTER --packVersion $version --packDir publish --mainExe ${{ matrix.executable }} --runtime ${{ matrix.runtime }} --outputDir packages
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: avalonia-${{ matrix.runtime }}
+          path: packages/*
+          if-no-files-found: error

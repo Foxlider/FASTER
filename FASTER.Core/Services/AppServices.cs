@@ -30,6 +30,7 @@ public interface IFilePickerService
 
 public static class AppServices
 {
+    public static IProcessMonitor Processes { get; set; } = new ProcessMonitor();
     public static IDialogService Dialogs { get; set; } = new NullDialogService();
     public static IClipboardService Clipboard { get; set; } = new NullClipboardService();
     public static IFilePickerService Files { get; set; } = new NullFilePickerService();

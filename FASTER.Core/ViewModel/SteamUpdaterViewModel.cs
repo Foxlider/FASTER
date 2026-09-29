@@ -9,7 +9,6 @@ using BytexDigital.Steam.Core.Structs;
 using FASTER.Models;
 using FASTER.Services;
 
-using Microsoft.AppCenter.Analytics;
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -39,11 +38,18 @@ namespace FASTER.ViewModel
             _ = TickLoopAsync();
         }
 
+        private readonly CancellationTokenSource _lifetime = new();
+        private readonly SemaphoreSlim _operationGate = new(1, 1);
+        private bool _operationRunning;
+
         private async Task TickLoopAsync()
         {
             using PeriodicTimer timer = new(TimeSpan.FromSeconds(1));
-            while (await timer.WaitForNextTickAsync())
-                Timer_Tick();
+            try
+            {
+                while (await timer.WaitForNextTickAsync(_lifetime.Token)) Timer_Tick();
+            }
+            catch (OperationCanceledException) { }
         }
 
         private bool _isLoggingIn;
@@ -55,7 +61,14 @@ namespace FASTER.ViewModel
 
         private CancellationTokenSource tokenSource = new();
 
-        public bool IsDownloading => DownloadTasks.Count > 0 || IsLoggingIn || IsDlOverride;
+        private bool _isMaintaining;
+        public bool IsMaintaining
+        {
+            get => _isMaintaining;
+            set { _isMaintaining = value; RaisePropertyChanged(nameof(IsDownloading)); }
+        }
+
+        public bool IsDownloading => IsMaintaining || _operationRunning || DownloadTasks.Count > 0 || IsLoggingIn || IsDlOverride;
 
         private BindingList<Task> DownloadTasks { get; } = new BindingList<Task>();
 
@@ -128,7 +141,7 @@ namespace FASTER.ViewModel
 
         public async Task UpdateClick()
         {
-            Analytics.TrackEvent("Updater - Clicked Update", new Dictionary<string, string>
+            FASTER.Services.Telemetry.TrackEvent("Updater - Clicked Update", new Dictionary<string, string>
             {
                 {"Name", AppSettings.Current.SteamUserName},
                 {"DLCs", $"{(Parameters.UsingGMDlc ? "GM " : "")}{(Parameters.UsingCSLADlc? "CSLA " : "")}{(Parameters.UsingPFDlc ? "SOG " : "")}{(Parameters.UsingWSDlc ? "WS " : "")}{(Parameters.UsingSPEDlc ? "SPE " : "")}{(Parameters.UsingRFDlc ? "RF " : "")}{(Parameters.UsingEFDlc ? "EF " : "")}"},
@@ -188,7 +201,7 @@ namespace FASTER.ViewModel
 
             // Downloading depot 233782 fow Windows from branch public
             depotsDownload.Add((
-                depotsIDs.FirstOrDefault(d => d.Value == "Arma 3 Alpha Dedicated Server binary Windows (internal)").Key,
+                DefaultPlatformServices.ServerDepot(OperatingSystem.IsWindows(), false),
                 "public",
                 null));
 
@@ -196,7 +209,7 @@ namespace FASTER.ViewModel
             //Download depot 233784 for windows in branch profiling
             if (Parameters.UsingPerfBinaries)
                 depotsDownload.Add((
-                    depotsIDs.FirstOrDefault(d => d.Value == "Arma 3 Server Profiling - WINDOWS Depot").Key,
+                    DefaultPlatformServices.ServerDepot(OperatingSystem.IsWindows(), true),
                     "profiling",
                     "CautionSpecialProfilingAndTestingBranchArma3"));
 
@@ -267,6 +280,9 @@ namespace FASTER.ViewModel
 
             var result = await RunServerUpdater(Parameters.InstallDirectory, appId, depotsDownload);
 
+            if (result == UpdateState.Success)
+                Platform.Current.PrepareServerExecutables(Parameters.InstallDirectory);
+
             Parameters.Output += result switch
             {
                 UpdateState.Success     => "\n\nAll Done ! ",
@@ -302,7 +318,33 @@ namespace FASTER.ViewModel
             assign(path);
         }
 
-        internal async Task<int> RunServerUpdater(string path, uint appId, List<(uint id, string branch, string? pass)> depots)
+        internal Task<int> RunServerUpdater(string path, uint appId, List<(uint id, string branch, string? pass)> depots)
+            => RunExclusiveAsync(() => RunServerUpdaterCore(path, appId, depots));
+        public Task<int> RunModUpdater(ulong modId, string path)
+            => RunExclusiveAsync(() => RunModUpdaterCore(modId, path));
+        public Task<int> RunModsUpdater(ObservableCollection<ArmaMod> mods)
+            => RunExclusiveAsync(() => RunModsUpdaterCore(mods));
+
+        private async Task<int> RunExclusiveAsync(Func<Task<int>> operation)
+        {
+            if (!await _operationGate.WaitAsync(0)) return UpdateState.Error;
+            _operationRunning = true;
+            RaisePropertyChanged(nameof(IsDownloading));
+            try { return await operation(); }
+            catch (OperationCanceledException) { return UpdateState.Cancelled; }
+            catch (Exception ex)
+            { Logger.LogCritical(ex.ToString()); Parameters.Output += "\nUpdate failed: " + ex.Message; return UpdateState.Error; }
+            finally
+            {
+                _operationRunning = false;
+                IsDlOverride = false;
+                Parameters.IsUpdating = false;
+                RaisePropertyChanged(nameof(IsDownloading));
+                _operationGate.Release();
+            }
+        }
+
+        private async Task<int> RunServerUpdaterCore(string path, uint appId, List<(uint id, string branch, string? pass)> depots)
         {
             if (string.IsNullOrWhiteSpace(path))
                 return UpdateState.Cancelled;
@@ -322,6 +364,7 @@ namespace FASTER.ViewModel
 
             foreach (var depot in depots)
             {
+                tokenSource.Token.ThrowIfCancellationRequested();
                 try
                 {
                     ManifestId manifestId;
@@ -354,7 +397,7 @@ namespace FASTER.ViewModel
             return 0;
         }
 
-        public async Task<int> RunModUpdater(ulong modId, string path)
+        private async Task<int> RunModUpdaterCore(ulong modId, string path)
         {
             tokenSource = new CancellationTokenSource();
 
@@ -425,7 +468,7 @@ namespace FASTER.ViewModel
         }
 
 
-        public async Task<int> RunModsUpdater(ObservableCollection<ArmaMod> mods)
+        private async Task<int> RunModsUpdaterCore(ObservableCollection<ArmaMod> mods)
         {
             Logger.Log($"RunModsUpdater: starting, {mods.Count} mods total");
 
@@ -446,6 +489,7 @@ namespace FASTER.ViewModel
 
             foreach (ArmaMod mod in ml)
             {
+                if (tokenSource.IsCancellationRequested) break;
                 Logger.Log($"RunModsUpdater: waiting semaphore for mod {mod.WorkshopId} ({mod.Name})");
                 await maxThread.WaitAsync();
 
@@ -474,6 +518,7 @@ namespace FASTER.ViewModel
                IsDlOverride = false;
             }
 
+            if (tokenSource.IsCancellationRequested) return UpdateState.Cancelled;
             Logger.Log("RunModsUpdater: all done.");
             Parameters.Output += "\nMods updated !";
             return UpdateState.Success;
@@ -890,7 +935,9 @@ namespace FASTER.ViewModel
 
         public void Dispose()
         {
-            tokenSource.Dispose();
+            _lifetime.Cancel();
+            tokenSource.Cancel();
+            SteamClient?.Dispose();
         }
     }
 

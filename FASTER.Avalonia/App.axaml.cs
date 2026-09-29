@@ -11,23 +11,25 @@ namespace FASTER.Avalonia;
 
 public partial class App : Application
 {
-    public static MainViewModel Main { get; } = new MainViewModel();
+    public static MainViewModel Main { get; private set; } = null!;
 
     public override void Initialize()
     {
+        FASTER.Models.AppSettings.Current.InitializeForStartup();
         AvaloniaXamlLoader.Load(this);
-        RequestedThemeVariant = FASTER.Models.AppSettings.Current.Theme.StartsWith("Light", StringComparison.OrdinalIgnoreCase)
-            ? global::Avalonia.Styling.ThemeVariant.Light
-            : global::Avalonia.Styling.ThemeVariant.Dark;
+        Services.Appearance.Apply();
     }
 
     public override void OnFrameworkInitializationCompleted()
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
+            Main = new MainViewModel();
             var window = new MainWindow { DataContext = Main };
             Main.Attach(window);
+            window.Opened += async (_, _) => await Main.RunStartupChecksAsync();
             desktop.MainWindow = window;
+            desktop.Exit += (_, _) => { Main.ServerStatusView.Dispose(); Main.Updater.Dispose(); FASTER.Services.AppServices.Processes.Dispose(); };
 
             if (desktop.Args.Contains("--smoke", StringComparer.Ordinal))
             {

@@ -15,6 +15,17 @@ namespace FASTER.Models
     [Serializable]
     public class ServerProfileCollection : List<ServerProfile>
     {
+        public bool MoveProfile(string id, int offset)
+        {
+            int from = FindIndex(p => p.Id == id);
+            int to = from + offset;
+            if (from < 0 || to < 0 || to >= Count) return false;
+            var profile = this[from];
+            RemoveAt(from);
+            Insert(to, profile);
+            return true;
+        }
+
         [XmlElement(Order = 1)]
         public string CollectionName { get; set; }
 
@@ -48,6 +59,11 @@ namespace FASTER.Models
     [Serializable]
     public class ServerProfile : INotifyPropertyChanged
     {
+        [System.Text.Json.Serialization.JsonExtensionData]
+        [System.Xml.Serialization.XmlIgnore]
+        [Newtonsoft.Json.JsonIgnore]
+        public Dictionary<string, System.Text.Json.JsonElement>? AdditionalSettings { get; set; }
+
         //PRIVATE VARS DECLARATION
         private string _id;
         private string _name = string.Empty;
@@ -550,6 +566,9 @@ namespace FASTER.Models
 
             if (p != null)
             {
+                p.AdditionalSettings = AdditionalSettings == null ? null : new(AdditionalSettings);
+                p.ServerCfg.AdditionalSettings = ServerCfg.AdditionalSettings == null ? null : new(ServerCfg.AdditionalSettings);
+                p.BasicCfg.AdditionalSettings = BasicCfg.AdditionalSettings == null ? null : new(BasicCfg.AdditionalSettings);
                 p.GenerateNewId();
 
                 if (p.Name.EndsWith(')') && p.Name.Contains('(') && int.TryParse(p.Name.Substring(p.Name.Length - 2, 1), out _))

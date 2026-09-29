@@ -13,6 +13,8 @@ namespace FASTER.Avalonia.Views;
 
 public partial class SetupView : UserControl
 {
+    private string _loadedPassword = string.Empty;
+
     public SetupView()
     {
         InitializeComponent();
@@ -23,18 +25,6 @@ public partial class SetupView : UserControl
     {
         try
         {
-            if (AppSettings.Current.FirstRun)
-            {
-                AppSettings.Current.Upgrade();
-                AppSettings.Current.FirstRun = false;
-                AppSettings.Current.Save();
-            }
-
-            AppSettings.Current.SteamMods ??= new SteamModCollection();
-            AppSettings.Current.LocalMods ??= new List<LocalMod>();
-            AppSettings.Current.LocalModFolders ??= new List<string>();
-            AppSettings.Current.ArmaMods ??= new ArmaModCollection();
-
             if (string.IsNullOrEmpty(AppSettings.Current.ModStagingDirectory))
             {
                 AppSettings.Current.ModStagingDirectory = Path.Combine(
@@ -42,6 +32,9 @@ public partial class SetupView : UserControl
                 AppSettings.Current.Save();
             }
 
+            _loadedPassword = Encryption.Instance.DecryptData(AppSettings.Current.SteamPassword) ?? string.Empty;
+            SteamPassBox.Text = _loadedPassword;
+            ApiKeyBox.Text = AppSettings.Current.SteamAPIKey;
             SteamUserBox.Text = AppSettings.Current.SteamUserName;
             ModStagingBox.Text = AppSettings.Current.ModStagingDirectory;
             ServerDirBox.Text = AppSettings.Current.ServerPath;
@@ -66,7 +59,7 @@ public partial class SetupView : UserControl
             ModStagingBox.Text = path;
     }
 
-    private void Continue_Click(object? sender, RoutedEventArgs e)
+    private async void Continue_Click(object? sender, RoutedEventArgs e)
     {
         if (string.IsNullOrEmpty(ModStagingBox.Text))
         {
@@ -84,11 +77,9 @@ public partial class SetupView : UserControl
         settings.ServerPath = ServerDirBox.Text ?? string.Empty;
         settings.ModStagingDirectory = ModStagingBox.Text ?? string.Empty;
         settings.SteamUserName = SteamUserBox.Text ?? string.Empty;
-        settings.SteamPassword = Encryption.Instance.EncryptData(SteamPassBox.Text ?? string.Empty) ?? string.Empty;
-        if (!string.IsNullOrEmpty(ApiKeyBox.Text))
-            settings.SteamAPIKey = ApiKeyBox.Text;
-        settings.FirstRun = false;
-        settings.Save();
+        settings.SteamAPIKey = ApiKeyBox.Text ?? string.Empty;
+        settings.CompleteSetup(SteamPassBox.Text ?? string.Empty,
+            (SteamPassBox.Text ?? string.Empty) != _loadedPassword);
 
         if (DataContext is MainViewModel main)
         {
@@ -98,6 +89,7 @@ public partial class SetupView : UserControl
             main.Updater.Parameters.Username = settings.SteamUserName;
             main.Updater.Parameters.Password = settings.SteamPassword;
             main.ShowUpdater();
+            await main.RunStartupChecksAsync();
         }
     }
 }

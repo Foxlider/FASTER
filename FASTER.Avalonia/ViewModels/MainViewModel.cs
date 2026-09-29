@@ -21,6 +21,10 @@ public sealed class MainViewModel : INotifyPropertyChanged
     private string _statusMessage = string.Empty;
     private bool _isMessageExpanded;
 
+    private bool _startupChecksRan;
+    public IApplicationUpdates Updates { get; } = new ApplicationUpdates(new VelopackUpdates(),
+        () => SteamUpdaterViewModel.Instance.IsDownloading || App.Main.Mods.IsBusy);
+
     public ModsViewModel Mods { get; } = new();
     public DeploymentViewModel Deployment { get; } = new();
     public SteamUpdaterViewModel Updater => SteamUpdaterViewModel.Instance;
@@ -76,8 +80,39 @@ public sealed class MainViewModel : INotifyPropertyChanged
         LoadServerProfiles();
         bridge.MarkAttached();
 
-        if (!AppSettings.Current.SetupRun)
+        if (!AppSettings.Current.FirstRun)
             ShowUpdater();
+    }
+
+    public async System.Threading.Tasks.Task RunStartupChecksAsync()
+    {
+        if (_startupChecksRan || AppSettings.Current.FirstRun) return;
+        _startupChecksRan = true;
+        await Telemetry.SetEnabledAsync(AppSettings.Current.EnableAnalytics);
+        try
+        {
+            if (AppSettings.Current.CheckForModUpdates) await Mods.CheckForUpdates();
+        }
+        catch (Exception ex) { ShowStatus("Mod update check failed: " + ex.Message); }
+        if (AppSettings.Current.CheckForAppUpdates) await CheckApplicationUpdatesAsync();
+    }
+
+    public async System.Threading.Tasks.Task CheckApplicationUpdatesAsync()
+    {
+        var result = await Updates.CheckAsync();
+        ShowStatus(Updates.Status);
+        if (result == UpdateResult.Unpackaged && await AppServices.Dialogs.ShowConfirmationAsync(this,
+            "Application updates", "This is an unpackaged installation. Open the releases page?"))
+        {
+            try { Platform.Current.OpenUrl(VelopackUpdates.ReleasePage); }
+            catch (Exception ex) { ShowStatus("Could not open releases: " + ex.Message); }
+        }
+        if (result == UpdateResult.Ready && await AppServices.Dialogs.ShowConfirmationAsync(this,
+            "Update ready", "Restart FASTER to apply the downloaded update? Running servers will remain running."))
+        {
+            Updates.TryRestart();
+            ShowStatus(Updates.Status);
+        }
     }
 
     public void ShowUpdater() => CurrentView = UpdaterView;

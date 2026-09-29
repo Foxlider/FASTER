@@ -19,10 +19,15 @@ using SkiaSharp;
 
 namespace FASTER.Avalonia.Views;
 
-public partial class ServerStatusView : UserControl
+public partial class ServerStatusView : UserControl, IDisposable
 {
-    private readonly ISystemMetrics _metrics =
-        OperatingSystem.IsWindows() ? new WindowsSystemMetrics() : new LinuxSystemMetrics();
+    private readonly ISystemMetrics? _metrics = CreateMetrics();
+
+    private static ISystemMetrics? CreateMetrics()
+    {
+        try { return OperatingSystem.IsWindows() ? new WindowsSystemMetrics() : new LinuxSystemMetrics(); }
+        catch (Exception ex) { FASTER.Models.Logger.LogCritical("System metrics unavailable: " + ex.Message); return null; }
+    }
 
     private readonly ObservableValue _cpuValue = new(0);
     private readonly ObservableValue _ramValue = new(0);
@@ -50,8 +55,8 @@ public partial class ServerStatusView : UserControl
         CpuChart.XAxes = new[] { new Axis { IsVisible = false } };
         CpuChart.YAxes = new[] { new Axis { MinLimit = 0, MaxLimit = 100, LabelsPaint = new SolidColorPaint(SKColors.Gray) } };
         _timer.Tick += (_, _) => Refresh();
-        _timer.Start();
-        RefreshServers();
+        Loaded += (_, _) => { RefreshServers(); Refresh(); _timer.Start(); };
+        Unloaded += (_, _) => _timer.Stop();
     }
 
     private static ISeries[] CreateGauge(ObservableValue value) =>
@@ -75,11 +80,31 @@ public partial class ServerStatusView : UserControl
         }
     ];
 
+    private DateTime _nextTemperature;
+    private bool _temperaturePending;
+
+    private async void RefreshTemperature()
+    {
+        if (_temperaturePending || DateTime.UtcNow < _nextTemperature) return;
+        _temperaturePending = true;
+        try
+        {
+            var temperature = await Task.Run(CpuTemperature.Read);
+            TemperatureLabel.Text = temperature.HasValue ? $"CPU temperature: {temperature:F1} °C" : "CPU temperature: Unavailable";
+        }
+        finally { _nextTemperature = DateTime.UtcNow.AddSeconds(5); _temperaturePending = false; }
+    }
+
     private void Refresh()
     {
         try
         {
+            RefreshTemperature();
+            if (AppServices.Processes.IsPaused) return;
+            RefreshProcesses();
+            if (_metrics == null) return;
             float cpu = _metrics.GetTotalCpuUsage();
+            if (!float.IsFinite(cpu)) throw new InvalidOperationException("CPU reading unavailable");
             ulong total = _metrics.GetTotalMemoryBytes();
             ulong available = _metrics.GetAvailableMemoryBytes();
             ulong used = total > available ? total - available : 0;
@@ -116,51 +141,92 @@ public partial class ServerStatusView : UserControl
             return;
         _timer.Stop();
         _timer.Interval = TimeSpan.FromMilliseconds(s_intervalsMs[index]);
-        _timer.Start();
+        if (IsLoaded) _timer.Start();
     }
 
     private void Rescan_Click(object? sender, RoutedEventArgs e) => RefreshServers();
 
     private async void KillAll_Click(object? sender, RoutedEventArgs e)
     {
-        foreach (var process in Process.GetProcesses().Where(p => p.ProcessName.Contains("arma3server")))
-        {
-            try
-            { process.Kill(); }
-            catch
-            { /* Already exited or not killable from here, the rescan below sorts it out. */ }
-        }
-        await Task.Delay(1000);
+        if (!await AppServices.Dialogs.ShowConfirmationAsync(this, "Terminate servers", "Terminate all listed server processes?")) return;
+        foreach (var process in AppServices.Processes.Sample().Where(p => !p.Exited)) Terminate(process);
         RefreshServers();
     }
 
-    private void KillProcess_Click(object? sender, RoutedEventArgs e)
+    private async void KillProcess_Click(object? sender, RoutedEventArgs e)
     {
-        if ((sender as Control)?.DataContext is Process process)
-        {
-            try
-            { process.Kill(); }
-            catch
-            { /* Same story, already gone or not killable from here. */ }
-            RefreshServers();
-        }
+        if ((sender as Control)?.DataContext is MonitoredProcess process &&
+            await AppServices.Dialogs.ShowConfirmationAsync(this, "Terminate server", $"Terminate process {process.Id}?"))
+        { Terminate(process); RefreshProcesses(); }
+    }
+
+    private void Terminate(MonitoredProcess process)
+    {
+        try { AppServices.Processes.Terminate(process.Identity); }
+        catch (Exception ex) { App.Main.ShowStatus("Could not terminate process: " + ex.Message); }
+    }
+
+    private void PauseProcess_Click(object? sender, RoutedEventArgs e)
+    {
+        if ((sender as Control)?.DataContext is MonitoredProcess process)
+        { AppServices.Processes.Pause(process.Identity, !process.Paused); RefreshProcesses(); }
+    }
+
+    private void PauseAll_Click(object? sender, RoutedEventArgs e)
+    {
+        AppServices.Processes.IsPaused = !AppServices.Processes.IsPaused;
+        PauseAllButton.Content = AppServices.Processes.IsPaused ? "Resume monitoring" : "Pause monitoring";
+        RefreshProcesses();
+    }
+
+    private void Output_Click(object? sender, RoutedEventArgs e)
+    {
+        if ((sender as Control)?.DataContext is not MonitoredProcess process) return;
+        var text = new TextBox { IsReadOnly = true, AcceptsReturn = true,
+            FontFamily = new global::Avalonia.Media.FontFamily("monospace"), Text = AppServices.Processes.ReadOutput(process.Identity) };
+        var window = new Window { Title = $"Process {process.Id} output", Width = 800, Height = 450, Content = text };
+        var refresh = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
+        refresh.Tick += (_, _) => text.Text = AppServices.Processes.ReadOutput(process.Identity);
+        window.Closed += (_, _) => refresh.Stop();
+        window.Show((Window)TopLevel.GetTopLevel(this)!);
+        refresh.Start();
+    }
+
+    private void RefreshProcesses()
+    {
+        var selected = (ProcessGrid.SelectedItem as MonitoredProcess)?.Identity;
+        var processes = AppServices.Processes.Sample();
+        ProcessGrid.ItemsSource = processes;
+        ProcessGrid.SelectedItem = processes.FirstOrDefault(p => p.Identity == selected);
+        UpdateProcessChart();
+    }
+
+    private void ProcessSelectionChanged(object? sender, SelectionChangedEventArgs e) => UpdateProcessChart();
+    private void UpdateProcessChart()
+    {
+        if (ProcessChart == null) return;
+        var history = (ProcessGrid.SelectedItem as MonitoredProcess)?.History ?? Array.Empty<ProcessSample>();
+        ProcessChart.Series = new ISeries[] {
+            new LineSeries<double> { Name = "CPU %", Values = history.Select(p => p.CpuPercent).ToArray(), GeometrySize = 0, Fill = null },
+            new LineSeries<double> { Name = "Memory MB", Values = history.Select(p => p.MemoryBytes / 1048576d).ToArray(), GeometrySize = 0, Fill = null, ScalesYAt = 1 }
+        };
+        ProcessChart.XAxes = new[] { new Axis { IsVisible = false } };
+        ProcessChart.YAxes = new[] { new Axis { MinLimit = 0, MaxLimit = 100, Name = "CPU %" }, new Axis { MinLimit = 0, Name = "Memory MB", Position = LiveChartsCore.Measure.AxisPosition.End } };
     }
 
     private void RefreshServers()
     {
         try
         {
-            ProcessGrid.ItemsSource = Process.GetProcesses()
-                .Where(p =>
-                {
-                    try
-                    { return p.ProcessName.Contains("arma3server"); }
-                    catch
-                    { /* Exited mid-scan or not inspectable, so not one of ours. */ return false; }
-                })
-                .ToList();
+            AppServices.Processes.Rescan(); RefreshProcesses();
+            RefreshTemperature();
         }
-        catch
-        { /* Process listing failed, keep showing the old list. */ }
+        catch (Exception ex) { App.Main.ShowStatus("Could not scan processes: " + ex.Message); }
+    }
+
+    public void Dispose()
+    {
+        _timer.Stop();
+        if (_metrics is IDisposable disposable) disposable.Dispose();
     }
 }

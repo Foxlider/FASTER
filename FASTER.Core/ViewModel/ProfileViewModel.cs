@@ -1,6 +1,5 @@
 using FASTER.Models;
 using FASTER.Services;
-using Microsoft.AppCenter.Analytics;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -37,7 +36,7 @@ namespace FASTER.ViewModel
 
         internal void OpenProfileLocation()
         {
-            Analytics.TrackEvent("Profile - Clicked OpenProfile", new Dictionary<string, string>
+            FASTER.Services.Telemetry.TrackEvent("Profile - Clicked OpenProfile", new Dictionary<string, string>
             {
                 {"Name", AppSettings.Current.SteamUserName}
             });
@@ -66,8 +65,10 @@ namespace FASTER.ViewModel
                 DisplayMessage($"{Profile.HeadlessNumber} Headless Clients launched !\n{commandLine}");
 #else
                 ProcessStartInfo hcStartInfo = new ProcessStartInfo(Profile.Executable, commandLine);
-                Process          hcProcess   = new Process { StartInfo = hcStartInfo };
-                hcProcess.Start();
+                hcStartInfo.WorkingDirectory = Profile.ArmaPath;
+                try { AppServices.Processes.Launch(hcStartInfo); }
+                catch (Exception ex)
+                { Logger.LogCritical(ex.ToString()); DisplayMessage("Could not launch headless client: " + ex.Message); return; }
 #endif
             }
         }
@@ -103,7 +104,7 @@ namespace FASTER.ViewModel
             //Launching... 
             DisplayMessage($"Launching Profile {Profile.Name}...");
 
-            Analytics.TrackEvent("Profile - Clicked LaunchServer", new Dictionary<string, string>
+            FASTER.Services.Telemetry.TrackEvent("Profile - Clicked LaunchServer", new Dictionary<string, string>
             {
                 {"Name", AppSettings.Current.SteamUserName}
             });
@@ -116,8 +117,10 @@ namespace FASTER.ViewModel
 #else
             DisplayMessage($"Profile {Profile.Name}'s server launched !\nCommand line copied to clipboard.");
             ProcessStartInfo sStartInfo = new ProcessStartInfo(Profile.Executable, commandLine);
-            Process          sProcess   = new Process { StartInfo = sStartInfo };
-            sProcess.Start();
+            sStartInfo.WorkingDirectory = Profile.ArmaPath;
+            try { AppServices.Processes.Launch(sStartInfo); }
+            catch (Exception ex)
+            { Logger.LogCritical(ex.ToString()); DisplayMessage("Could not launch server: " + ex.Message); return; }
 
             LaunchHCs();
 #endif

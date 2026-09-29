@@ -16,6 +16,11 @@ namespace FASTER.Models
     [Serializable]
     public class BasicCfg : INotifyPropertyChanged
     {
+        [System.Text.Json.Serialization.JsonExtensionData]
+        [System.Xml.Serialization.XmlIgnore]
+        [Newtonsoft.Json.JsonIgnore]
+        public Dictionary<string, System.Text.Json.JsonElement>? AdditionalSettings { get; set; }
+
         private uint viewDistance = 2000;
         private double terrainGrid = 25;
 

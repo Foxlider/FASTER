@@ -8,7 +8,7 @@
     <converters:FolderSizeConverter x:Key="SizeConverter" />
     <converters:BoolNegationConverter x:Key="Not" />
   </UserControl.Resources>
-  <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,*">
+  <Grid IsEnabled="{Binding IsBusy, Converter={StaticResource Not}}" ColumnDefinitions="Auto,*" RowDefinitions="Auto,*">
     <StackPanel Orientation="Horizontal" Margin="10,10,5,5" Spacing="4">
       <Button Classes="accent" ToolTip.Tip="Add Steam Mod" Click="AddSteamMod_Click">
         <materialIcons:MaterialIcon Kind="Plus" Width="18" Height="18" />
@@ -28,6 +28,12 @@
       <Button Classes="accent" ToolTip.Tip="Delete All" Click="DeleteAll_Click">
         <materialIcons:MaterialIcon Kind="Delete" Width="18" Height="18" />
       </Button>
+      <Button Content="Maintenance">
+        <Button.Flyout><MenuFlyout>
+          <MenuItem Header="Purge &amp; Reinstall All" Click="PurgeAll_Click" />
+          <MenuItem Header="Purge Unused Mods" Click="PurgeUnused_Click" />
+        </MenuFlyout></Button.Flyout>
+      </Button>
     </StackPanel>
     <TextBlock Grid.Column="1" Text="{Binding ModsCollection.ArmaMods.Count, Mode=OneWay}"
              Padding="5" HorizontalAlignment="Stretch" VerticalAlignment="Center"
@@ -40,6 +46,7 @@
         <ContextMenu>
           <MenuItem Header="Update" Click="UpdateSelectedMods" />
           <MenuItem Header="Delete" Click="DeleteSelectedMods" />
+          <MenuItem Header="Purge &amp; Reinstall Selected" Click="PurgeSelected_Click" />
         </ContextMenu>
       </dg:DataGrid.ContextMenu>
       <dg:DataGrid.Columns>

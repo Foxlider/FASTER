@@ -87,7 +87,7 @@
             </ContextMenu>
           </Ellipse.ContextMenu>
         </Ellipse>
-        <TextBox Grid.Row="1" Grid.ColumnSpan="2" Classes="console" IsReadOnly="True"
+        <TextBox x:Name="ConsoleOutput" Grid.Row="1" Grid.ColumnSpan="2" Classes="console" IsReadOnly="True"
                  Text="{Binding Parameters.Output}" TextWrapping="Wrap" Margin="0,10,0,0"
                  AcceptsReturn="True" ScrollViewer.VerticalScrollBarVisibility="Visible" />
         <ProgressBar Grid.Row="2" Grid.Column="0" Value="{Binding Parameters.Progress}"

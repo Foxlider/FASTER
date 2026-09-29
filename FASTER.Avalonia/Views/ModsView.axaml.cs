@@ -51,11 +51,20 @@ public partial class ModsView : UserControl
     private async void ImportLauncherFile_Click(object? sender, RoutedEventArgs e)
         => await ViewModel.OpenLauncherFile();
 
-    private void CheckForUpdates_Click(object? sender, RoutedEventArgs e)
-        => ViewModel.CheckForUpdates();
+    private async void CheckForUpdates_Click(object? sender, RoutedEventArgs e)
+        => await ViewModel.CheckForUpdates();
 
     private void UpdateAll_Click(object? sender, RoutedEventArgs e)
         => _ = ViewModel.UpdateAll();
+
+    private async void PurgeAll_Click(object? sender, RoutedEventArgs e)
+        => await ViewModel.PurgeAndReinstallAll();
+
+    private async void PurgeUnused_Click(object? sender, RoutedEventArgs e)
+        => await ViewModel.PurgeUnusedMods();
+
+    private async void PurgeSelected_Click(object? sender, RoutedEventArgs e)
+        => await ViewModel.PurgeSelectedAsync();
 
     private async void DeleteAll_Click(object? sender, RoutedEventArgs e)
         => await ViewModel.DeleteAllMods();

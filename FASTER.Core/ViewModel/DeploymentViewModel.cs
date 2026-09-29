@@ -1,6 +1,5 @@
-﻿using FASTER.Models;
+using FASTER.Models;
 using FASTER.Services;
-using Microsoft.AppCenter.Analytics;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -71,7 +70,7 @@ namespace FASTER.ViewModel
         /// <param name="mod"></param>
         public void DeployMod(DeploymentMod mod)
         {
-            Analytics.TrackEvent("Deployment - Clicked DeployMod", new Dictionary<string, string>
+            FASTER.Services.Telemetry.TrackEvent("Deployment - Clicked DeployMod", new Dictionary<string, string>
             {
                 {"Name", AppSettings.Current.SteamUserName},
                 {"Mod", mod.Name}
@@ -108,7 +107,7 @@ namespace FASTER.ViewModel
         /// </summary>
         public void DeployAll()
         {
-            Analytics.TrackEvent("Deployment - Clicked DeployAll", new Dictionary<string, string>
+            FASTER.Services.Telemetry.TrackEvent("Deployment - Clicked DeployAll", new Dictionary<string, string>
             {
                 {"Name", AppSettings.Current.SteamUserName}
             });
@@ -203,17 +202,9 @@ namespace FASTER.ViewModel
             var url = WorkshopFileDetailsUrl + mod.WorkshopId;
 
             try
-            { Process.Start(url); }
+            { Platform.Current.OpenUrl(url); }
             catch
-            {
-                try
-                {
-                    url = url.Replace("&", "^&");
-                    Process.Start(new ProcessStartInfo("cmd", $"/c start {url}") { CreateNoWindow = true });
-                }
-                catch
-                { DisplayMessage($"Could not open \"{url}\""); }
-            }
+            { DisplayMessage($"Could not open \"{url}\""); }
         }
 
         /// <summary>

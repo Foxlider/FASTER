@@ -1,4 +1,7 @@
+using System.Linq;
 using Avalonia.Controls;
+using Avalonia.VisualTree;
+using Avalonia.Threading;
 using Avalonia.Interactivity;
 
 using FASTER.ViewModel;
@@ -9,10 +12,36 @@ public partial class UpdaterView : UserControl
 {
     private SteamUpdaterViewModel ViewModel => (SteamUpdaterViewModel)DataContext!;
 
+    private ScrollViewer? _consoleScroll;
+    private bool _follow = true;
+
     public UpdaterView()
     {
         InitializeComponent();
-        Loaded += (_, _) => PasswordBox.Text = ViewModel.GetPw() ?? string.Empty;
+        Loaded += (_, _) =>
+        {
+            PasswordBox.Text = ViewModel.GetPw() ?? string.Empty;
+            var scroll = ConsoleOutput.GetVisualDescendants().OfType<ScrollViewer>().FirstOrDefault();
+            if (scroll != null && scroll != _consoleScroll)
+            {
+                if (_consoleScroll != null) _consoleScroll.ScrollChanged -= ConsoleScrolled;
+                _consoleScroll = scroll;
+                scroll.ScrollChanged += ConsoleScrolled;
+            }
+        };
+        ConsoleOutput.TextChanged += (_, _) =>
+        {
+            if (_follow) Dispatcher.UIThread.Post(() =>
+            {
+                if (_follow) _consoleScroll?.ScrollToEnd();
+            }, DispatcherPriority.Background);
+        };
+    }
+
+    private void ConsoleScrolled(object? sender, ScrollChangedEventArgs e)
+    {
+        if (_consoleScroll == null || e.OffsetDelta.Y == 0) return;
+        _follow = _consoleScroll.Offset.Y >= _consoleScroll.Extent.Height - _consoleScroll.Viewport.Height - 2;
     }
 
     private void UpdateCancel_Click(object? sender, RoutedEventArgs e) => ViewModel.UpdateCancelClick();

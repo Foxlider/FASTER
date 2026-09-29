@@ -8,7 +8,7 @@ namespace FASTER.Models
         private const long MaxLogSizeBytes = 10 * 1024 * 1024; // 10 MB
 
         private static readonly string LogPath = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData, Environment.SpecialFolderOption.DoNotVerify),
             "FASTER", "faster.log");
 
         private static readonly string BackupLogPath = LogPath + ".old";

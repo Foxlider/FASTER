@@ -25,15 +25,15 @@
     <Setter Property="BorderBrush" Value="{DynamicResource FasterCardBorder}" />
   </Style>
   <Style Selector="Button.accent">
-    <Setter Property="Background" Value="#CC119EDA" />
+    <Setter Property="Background" Value="{DynamicResource FasterAccent}" />
     <Setter Property="Foreground" Value="White" />
     <Setter Property="BorderThickness" Value="0" />
   </Style>
   <Style Selector="Button.accent:pointerover">
-    <Setter Property="Background" Value="#E0119EDA" />
+    <Setter Property="Background" Value="{DynamicResource FasterAccentHover}" />
   </Style>
   <Style Selector="Button.accent:pressed">
-    <Setter Property="Background" Value="#99119EDA" />
+    <Setter Property="Background" Value="{DynamicResource FasterAccentPressed}" />
   </Style>
   <Style Selector="Button.accent:disabled">
     <Setter Property="Background" Value="{DynamicResource FasterCardBorder}" />
@@ -105,7 +105,7 @@
     <Setter Property="Padding" Value="0" />
   </Style>
   <Style Selector="TextBlock.card-header">
-    <Setter Property="Background" Value="#CC119EDA" />
+    <Setter Property="Background" Value="{DynamicResource FasterAccent}" />
     <Setter Property="Foreground" Value="White" />
     <Setter Property="FontWeight" Value="Bold" />
     <Setter Property="FontSize" Value="13" />
@@ -162,14 +162,14 @@
 
   <!-- Blue-bar expanders for config outputs and advanced sections -->
   <Style Selector="Expander.bar /template/ ToggleButton#ExpanderHeader">
-    <Setter Property="Background" Value="#CC119EDA" />
+    <Setter Property="Background" Value="{DynamicResource FasterAccent}" />
     <Setter Property="Foreground" Value="White" />
     <Setter Property="FontWeight" Value="Bold" />
     <Setter Property="MinHeight" Value="0" />
     <Setter Property="Padding" Value="8,5,8,2" />
   </Style>
   <Style Selector="Expander.bar /template/ ToggleButton#ExpanderHeader:pointerover">
-    <Setter Property="Background" Value="#E0119EDA" />
+    <Setter Property="Background" Value="{DynamicResource FasterAccentHover}" />
   </Style>
 
   <Style Selector="Separator">
@@ -185,7 +185,7 @@
   </Style>
   <!-- Set base typography once; controls inherit it on both platforms. -->
   <Style Selector="Window">
-    <Setter Property="FontFamily" Value="Segoe UI, Noto Sans, DejaVu Sans" />
+    <Setter Property="FontFamily" Value="{DynamicResource FasterFont}" />
     <Setter Property="FontSize" Value="12" />
     <Setter Property="Foreground" Value="{DynamicResource FasterText}" />
     <Setter Property="Background" Value="{DynamicResource FasterWindowBackground}" />

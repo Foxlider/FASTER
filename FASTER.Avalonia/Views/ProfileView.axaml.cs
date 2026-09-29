@@ -15,6 +15,9 @@ public partial class ProfileView : UserControl
         Unloaded += (_, _) => ViewModel.UnloadData();
     }
 
+    private async void SelectBePath(object? sender, RoutedEventArgs e) => await ViewModel.SelectBePath();
+    private async void SelectKeysFolder(object? sender, RoutedEventArgs e) => await ViewModel.SelectKeysFolder();
+
     private void ClearModOrder(object? sender, RoutedEventArgs e) => ViewModel.ClearModOrder();
 
     private void CopyFromClientServer(object? sender, RoutedEventArgs e) => ViewModel.ModsCopyFrom("Server Only", "Server + Client");

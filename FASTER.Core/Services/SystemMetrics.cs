@@ -12,7 +12,7 @@ public interface ISystemMetrics
 }
 
 [SupportedOSPlatform("windows")]
-public sealed class WindowsSystemMetrics : ISystemMetrics
+public sealed class WindowsSystemMetrics : ISystemMetrics, IDisposable
 {
     private readonly PerformanceCounter _cpuCounter = new("Processor", "% Processor Time", "_Total");
     private readonly PerformanceCounter _ramCounter = new("Memory", "Available Bytes");
@@ -22,6 +22,7 @@ public sealed class WindowsSystemMetrics : ISystemMetrics
     private static extern bool GetPhysicallyInstalledSystemMemory(out long totalMemoryInKilobytes);
 
     public float GetTotalCpuUsage() => _cpuCounter.NextValue();
+    public void Dispose() { _cpuCounter.Dispose(); _ramCounter.Dispose(); }
 
     public ulong GetTotalMemoryBytes()
     {

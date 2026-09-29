@@ -17,6 +17,11 @@ namespace FASTER.Models
     [Serializable]
     public class ServerCfg : INotifyPropertyChanged
     {
+        [System.Text.Json.Serialization.JsonExtensionData]
+        [System.Xml.Serialization.XmlIgnore]
+        [Newtonsoft.Json.JsonIgnore]
+        public Dictionary<string, System.Text.Json.JsonElement>? AdditionalSettings { get; set; }
+
         //Server Options
         private string passwordAdmin = string.Empty;
         private string password = string.Empty;

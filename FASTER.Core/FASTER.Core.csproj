@@ -19,6 +19,7 @@
     <PackageReference Include="Microsoft.AppCenter.Analytics" Version="5.0.5" />
     <PackageReference Include="Microsoft.AppCenter.Crashes" Version="5.0.5" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="System.Management" Version="10.0.0" />
     <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="10.0.0" />
   </ItemGroup>
 

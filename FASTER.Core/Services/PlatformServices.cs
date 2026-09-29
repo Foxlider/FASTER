@@ -9,6 +9,9 @@ public interface IPlatformServices
     string SteamCmdBinaryName { get; }
     bool IsServerExecutable(string? path);
     void OpenFolder(string path);
+    void OpenFile(string path);
+    void OpenUrl(string url);
+    void PrepareServerExecutables(string directory);
 }
 
 public static class Platform
@@ -36,21 +39,43 @@ public sealed class DefaultPlatformServices : IPlatformServices
         return !s_isWindows || name.EndsWith(".exe", StringComparison.OrdinalIgnoreCase);
     }
 
-    public void OpenFolder(string path)
+    public void OpenFolder(string path) => OpenFile(path);
+
+    public void OpenFile(string path)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(path);
-        if (s_isWindows)
+        Process.Start(CreateOpenStartInfo(path));
+    }
+
+    public void OpenUrl(string url)
+    {
+        if (!Uri.TryCreate(url, UriKind.Absolute, out var uri) ||
+            (uri.Scheme != "https" && uri.Scheme != "http"))
+            throw new ArgumentException("Only HTTP and HTTPS links are supported.", nameof(url));
+        OpenFile(url);
+    }
+
+    internal static ProcessStartInfo CreateOpenStartInfo(string target)
+    {
+        if (OperatingSystem.IsWindows())
+            return new ProcessStartInfo(target) { UseShellExecute = true };
+        var start = new ProcessStartInfo(OperatingSystem.IsMacOS() ? "/usr/bin/open" : "/usr/bin/xdg-open");
+        start.ArgumentList.Add(target);
+        return start;
+    }
+
+    public static uint ServerDepot(bool windows, bool profiling) =>
+        (windows, profiling) switch { (true, false) => 233782, (false, false) => 233783,
+            (true, true) => 233784, (false, true) => 233785 };
+
+    public void PrepareServerExecutables(string directory)
+    {
+        if (!OperatingSystem.IsLinux() || !Directory.Exists(directory)) return;
+        foreach (var path in Directory.EnumerateFiles(directory, "arma3server*"))
         {
-            string explorer = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), "explorer.exe");
-            Process.Start(new ProcessStartInfo { FileName = explorer, Arguments = path });
-            return;
+            if (Path.GetExtension(path).Length != 0) continue;
+            File.SetUnixFileMode(path, File.GetUnixFileMode(path) | UnixFileMode.UserExecute |
+                UnixFileMode.GroupExecute | UnixFileMode.OtherExecute);
         }
-        if (OperatingSystem.IsMacOS())
-        {
-            Process.Start("/usr/bin/open", path);
-            return;
-        }
-        // xdg-utils installs here on every mainstream desktop distro.
-        Process.Start("/usr/bin/xdg-open", path);
     }
 }

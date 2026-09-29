@@ -8,15 +8,13 @@ using Avalonia.Styling;
 
 using FASTER.Models;
 
-using Velopack;
-using Velopack.Sources;
 
 namespace FASTER.Avalonia.Views;
 
 public partial class SettingsView : UserControl
 {
+    private bool _loading = true;
     private const string SteamApiKeyUrl = "https://steamcommunity.com/dev/apikey"; // NOSONAR - stable public service endpoint, intentionally compiled in
-    private const string UpdateFeedUrl = "https://github.com/milutinke/FASTER"; // NOSONAR - stable public service endpoint, intentionally compiled in
     public SettingsView()
     {
         InitializeComponent();
@@ -25,45 +23,77 @@ public partial class SettingsView : UserControl
 
     private void LoadCurrent()
     {
+        _loading = true;
         var settings = AppSettings.Current;
+        AccentBox.ItemsSource = Services.Appearance.Accents.Keys;
+        FontBox.ItemsSource = Services.Appearance.Fonts;
+        FontBox.SelectedItem = Services.Appearance.AppliedFont;
+        AccentBox.SelectedItem = settings.Theme.Split('.').Length > 1 ? settings.Theme.Split('.')[1] : "Blue";
+        DebugBox.IsChecked = settings.EnableDebugLog;
+        TelemetryStatus.Text = FASTER.Services.Telemetry.Current.Status;
         ThemeBox.SelectedIndex = settings.Theme.StartsWith("Dark", StringComparison.OrdinalIgnoreCase) ? 0 : 1;
         ModUpdatesBox.IsChecked = settings.CheckForModUpdates;
         AppUpdatesBox.IsChecked = settings.CheckForAppUpdates;
         AnalyticsBox.IsChecked = settings.EnableAnalytics;
         ApiKeyBox.Text = settings.SteamAPIKey;
         WorkersSlider.Value = settings.CliWorkers;
+        _loading = false;
     }
 
     private void ThemeBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
-        if (Application.Current == null)
-            return;
-        bool dark = ThemeBox.SelectedIndex == 0;
-        Application.Current.RequestedThemeVariant = dark ? ThemeVariant.Dark : ThemeVariant.Light;
-        AppSettings.Current.Theme = dark ? "Dark.Blue" : "Light.Blue";
+        SaveAppearance();
+    }
+
+    private void Appearance_Changed(object? sender, SelectionChangedEventArgs e) => SaveAppearance();
+    private void SaveAppearance()
+    {
+        if (_loading) return;
+        AppSettings.Current.Theme = (ThemeBox.SelectedIndex == 0 ? "Dark." : "Light.") + (AccentBox.SelectedItem as string ?? "Blue");
+        if (FontBox.SelectedItem is string font) AppSettings.Current.Font = font;
         AppSettings.Current.Save();
+        Services.Appearance.Apply();
+    }
+    private void ResetAccent_Click(object? sender, RoutedEventArgs e) { ThemeBox.SelectedIndex = 0; AccentBox.SelectedItem = "Blue"; SaveAppearance(); }
+    private void ResetFont_Click(object? sender, RoutedEventArgs e) { AppSettings.Current.Font = "Segoe UI"; AppSettings.Current.Save(); Services.Appearance.Apply(); LoadCurrent(); }
+    private void DebugBox_Changed(object? sender, RoutedEventArgs e)
+    {
+        if (_loading) return;
+        AppSettings.Current.EnableDebugLog = DebugBox.IsChecked == true;
+        AppSettings.Current.Save();
+    }
+    private void OpenLog_Click(object? sender, RoutedEventArgs e)
+    {
+        try { Logger.LogCritical("Log opened from Settings."); FASTER.Services.Platform.Current.OpenFile(Logger.LogFilePath); }
+        catch (Exception ex) { UpdateMessage.Text = "Could not open log: " + ex.Message; }
     }
 
     private void ModUpdatesBox_Changed(object? sender, RoutedEventArgs e)
     {
+        if (_loading) return;
         AppSettings.Current.CheckForModUpdates = ModUpdatesBox.IsChecked ?? true;
         AppSettings.Current.Save();
     }
 
     private void AppUpdatesBox_Changed(object? sender, RoutedEventArgs e)
     {
+        if (_loading) return;
         AppSettings.Current.CheckForAppUpdates = AppUpdatesBox.IsChecked ?? true;
         AppSettings.Current.Save();
     }
 
-    private void AnalyticsBox_Changed(object? sender, RoutedEventArgs e)
+    private async void AnalyticsBox_Changed(object? sender, RoutedEventArgs e)
     {
+        if (_loading) return;
         AppSettings.Current.EnableAnalytics = AnalyticsBox.IsChecked ?? true;
         AppSettings.Current.Save();
+        await FASTER.Services.Telemetry.SetEnabledAsync(AppSettings.Current.EnableAnalytics);
+        TelemetryStatus.Text = FASTER.Services.Telemetry.Current.Status;
     }
 
     private void WorkersSlider_Changed(object? sender, RangeBaseValueChangedEventArgs e)
     {
+        if (_loading) return;
         AppSettings.Current.CliWorkers = Convert.ToUInt16(e.NewValue);
         AppSettings.Current.Save();
     }
@@ -73,8 +103,7 @@ public partial class SettingsView : UserControl
 
     private void Save_Click(object? sender, RoutedEventArgs e)
     {
-        if (!string.IsNullOrEmpty(ApiKeyBox.Text))
-            AppSettings.Current.SteamAPIKey = ApiKeyBox.Text;
+        AppSettings.Current.SteamAPIKey = ApiKeyBox.Text ?? string.Empty;
         AppSettings.Current.CheckForAppUpdates = AppUpdatesBox.IsChecked ?? true;
         AppSettings.Current.CheckForModUpdates = ModUpdatesBox.IsChecked ?? true;
         AppSettings.Current.Save();
@@ -83,30 +112,15 @@ public partial class SettingsView : UserControl
 
     private async void CheckUpdate_Click(object? sender, RoutedEventArgs e)
     {
-        UpdateMessage.Text = "Checking for updates...";
-        try
-        {
-            var source = new GithubSource(UpdateFeedUrl, null, false);
-            var manager = new UpdateManager(source);
-            var update = await manager.CheckForUpdatesAsync();
-            if (update == null)
-            {
-                UpdateMessage.Text = "No update available.";
-                return;
-            }
-            UpdateMessage.Text = $"Downloading {update.TargetFullRelease.Version}...";
-            await manager.DownloadUpdatesAsync(update);
-            UpdateMessage.Text = "Update downloaded, restarting...";
-            manager.ApplyUpdatesAndRestart(update);
-        }
-        catch (Exception ex)
-        {
-            UpdateMessage.Text = "Update check failed: " + ex.Message;
-        }
+        await App.Main.CheckApplicationUpdatesAsync();
+        UpdateMessage.Text = App.Main.Updates.Status;
     }
 
-    private void Reset_Click(object? sender, RoutedEventArgs e)
+    private async void Reset_Click(object? sender, RoutedEventArgs e)
     {
+        if (!await FASTER.Services.AppServices.Dialogs.ShowConfirmationAsync(this, "Reset settings",
+            "Reset configuration on the next launch? Downloaded mods, server installations and generated files will be kept."))
+            return;
         AppSettings.Current.ClearSettings = true;
         AppSettings.Current.Save();
         UpdateMessage.Text = "Settings will reset on next launch.";

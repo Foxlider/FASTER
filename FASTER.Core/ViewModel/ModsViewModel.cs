@@ -1,6 +1,5 @@
-﻿using FASTER.Models;
+using FASTER.Models;
 using FASTER.Services;
-using Microsoft.AppCenter.Analytics;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -11,14 +10,44 @@ using System.Threading.Tasks;
 
 namespace FASTER.ViewModel
 {
-    public class ModsViewModel
+    public class ModsViewModel : System.ComponentModel.INotifyPropertyChanged
     {
         private const string WorkshopFileDetailsUrl = "https://steamcommunity.com/workshop/filedetails/?id="; // NOSONAR - stable public service endpoint, intentionally compiled in
 
         public ModsViewModel()
         {
             ModsCollection = AppSettings.Current.ArmaMods ?? new ArmaModCollection();
+            SteamUpdaterViewModel.Instance.PropertyChanged += (_, args) =>
+            {
+                if (args.PropertyName == nameof(SteamUpdaterViewModel.IsDownloading))
+                    PropertyChanged?.Invoke(this, new(nameof(IsBusy)));
+            };
         }
+
+        private bool _maintaining;
+        public bool IsBusy => _maintaining || SteamUpdaterViewModel.Instance.IsDownloading;
+        public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
+
+        private async Task MaintainAsync(Func<Task> action)
+        {
+            if (IsBusy) return;
+            _maintaining = true;
+            SteamUpdaterViewModel.Instance.IsMaintaining = true;
+            PropertyChanged?.Invoke(this, new(nameof(IsBusy)));
+            try { await action(); }
+            finally { SteamUpdaterViewModel.Instance.IsMaintaining = false; _maintaining = false; PropertyChanged?.Invoke(this, new(nameof(IsBusy))); }
+        }
+
+        public Task PurgeAndReinstallAll(CancellationToken cancellationToken = default) => MaintainAsync(() => PurgeAllCore(cancellationToken));
+        public Task PurgeUnusedMods(CancellationToken cancellationToken = default) => MaintainAsync(() => PurgeUnusedCore(cancellationToken));
+        public Task PurgeSelectedAsync(CancellationToken cancellationToken = default) => MaintainAsync(async () =>
+        {
+            if (!await AppServices.Dialogs.ShowConfirmationAsync(this, "Purge selected mods",
+                "Delete and download the selected Workshop mods again? Local mods will be kept.")) return;
+            cancellationToken.ThrowIfCancellationRequested();
+            PurgeAndReinstallSelectedMods();
+            await UpdateSelectedMods();
+        });
 
         public ArmaModCollection ModsCollection { get; set; }
 
@@ -40,7 +69,7 @@ namespace FASTER.ViewModel
             if (string.IsNullOrEmpty(modID))
                 return;
 
-            Analytics.TrackEvent("Mods - Clicked AddSteamMod", new Dictionary<string, string>
+            FASTER.Services.Telemetry.TrackEvent("Mods - Clicked AddSteamMod", new Dictionary<string, string>
             {
                 {"Name", AppSettings.Current.SteamUserName},
                 {"Mod", modID}
@@ -66,7 +95,9 @@ namespace FASTER.ViewModel
             ModsCollection.AddSteamMod(mod);
         }
 
-        public async Task AddLocalModAsync()
+        public Task AddLocalModAsync() => MaintainAsync(AddLocalModCore);
+
+        private async Task AddLocalModCore()
         {
             var localPath = await AppServices.Files.PickFolderAsync(AppSettings.Current.ModStagingDirectory);
 
@@ -144,14 +175,16 @@ namespace FASTER.ViewModel
             }
         }
 
-        internal async Task DeleteAllMods()
+        internal Task DeleteAllMods() => MaintainAsync(DeleteAllModsCore);
+
+        private async Task DeleteAllModsCore()
         {
             var answer = await AppServices.Dialogs.ShowInputAsync(this, "Are you sure you want to delete all mods?", "Write \"yes\" and press OK if you wish to continue.");
 
             if (string.IsNullOrEmpty(answer) || !answer.Equals("yes"))
                 return;
 
-            Analytics.TrackEvent("Mods - Clicked DeleteAllMods", new Dictionary<string, string>
+            FASTER.Services.Telemetry.TrackEvent("Mods - Clicked DeleteAllMods", new Dictionary<string, string>
             {
                 {"Name", AppSettings.Current.SteamUserName}
             });
@@ -170,20 +203,14 @@ namespace FASTER.ViewModel
             var url = WorkshopFileDetailsUrl + mod.WorkshopId;
 
             try
-            { Process.Start(url); }
+            { Platform.Current.OpenUrl(url); }
             catch
-            {
-                try
-                {
-                    url = url.Replace("&", "^&");
-                    Process.Start(new ProcessStartInfo("cmd", $"/c start {url}") { CreateNoWindow = true });
-                }
-                catch
-                { DisplayMessage($"Could not open \"{url}\""); }
-            }
+            { DisplayMessage($"Could not open \"{url}\""); }
         }
 
-        internal async Task OpenLauncherFile()
+        internal Task OpenLauncherFile() => MaintainAsync(OpenLauncherFileCore);
+
+        private async Task OpenLauncherFileCore()
         {
             string? modsFile = await AppServices.Files.PickModPresetFileAsync();
 
@@ -242,7 +269,7 @@ namespace FASTER.ViewModel
 
         public async Task UpdateAll()
         {
-            Analytics.TrackEvent("Mods - Clicked UpdateAll", new Dictionary<string, string>
+            FASTER.Services.Telemetry.TrackEvent("Mods - Clicked UpdateAll", new Dictionary<string, string>
             {
                 {"Name", AppSettings.Current.SteamUserName}
             });
@@ -287,14 +314,14 @@ namespace FASTER.ViewModel
                 PurgeAndReinstallMod(mod);
         }
 
-        public async Task PurgeAndReinstallAll()
+        private async Task PurgeAllCore(CancellationToken cancellationToken)
         {
             var answer = await AppServices.Dialogs.ShowInputAsync(this, "Are you sure you want to purge all mods?", "Write \"yes\" and press OK to delete all folders in the Mod Staging Directory and re-download everything.");
 
             if (string.IsNullOrEmpty(answer?.Trim()) || !answer.Trim().Equals("yes", StringComparison.OrdinalIgnoreCase))
                 return;
 
-            Analytics.TrackEvent("Mods - Clicked PurgeAndReinstallAll", new Dictionary<string, string>
+            FASTER.Services.Telemetry.TrackEvent("Mods - Clicked PurgeAndReinstallAll", new Dictionary<string, string>
             {
                 {"Name", AppSettings.Current.SteamUserName}
             });
@@ -307,7 +334,8 @@ namespace FASTER.ViewModel
 
                 foreach (var dir in Directory.GetDirectories(stagingDir))
                 {
-                    if (localModFolderNames.Contains(Path.GetFileName(dir)))
+                    cancellationToken.ThrowIfCancellationRequested();
+                    if (localModFolderNames.Contains(Path.GetFileName(dir)) || ModsCollection.ArmaMods.Any(m => m.IsLocal && Path.GetFullPath(m.Path) == Path.GetFullPath(dir)))
                     {
                         Logger.Log($"  Skipped (local mod): {dir}");
                         continue;
@@ -344,7 +372,7 @@ namespace FASTER.ViewModel
                 DisplayMessage("Steam Login Failed");
         }
 
-        public async Task PurgeUnusedMods()
+        private async Task PurgeUnusedCore(CancellationToken cancellationToken)
         {
             // Without profiles there is no usage data, so bail out instead of treating every mod as unused.
             var profiles = AppSettings.Current.Profiles;
@@ -376,7 +404,7 @@ namespace FASTER.ViewModel
             if (result?.ToLower() != "yes") return;
 
             foreach (var mod in unusedMods)
-                DeleteMod(mod);
+            { cancellationToken.ThrowIfCancellationRequested(); DeleteMod(mod); }
         }
     }
 }

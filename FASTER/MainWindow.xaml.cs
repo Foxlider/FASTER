@@ -6,8 +6,6 @@ using MahApps.Metro.Controls.Dialogs;
 
 using MahApps.Metro.IconPacks;
 
-using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
 using Microsoft.WindowsAPICodePack.Dialogs;
 
 using System;
@@ -265,7 +263,7 @@ namespace FASTER
 
         private void ICreateProfileButton_Click(object sender, RoutedEventArgs e)
         {
-            Analytics.TrackEvent("Main - Creating new profile");
+            FASTER.Services.Telemetry.TrackEvent("Main - Creating new profile");
             INewProfileName.Text = INewProfileName.Text.Trim();
             if (string.IsNullOrEmpty(INewProfileName.Text))
             {
@@ -311,7 +309,7 @@ namespace FASTER
             catch (Exception err)
             {
                 DisplayMessage("An error occured while cloning your profile");
-                Crashes.TrackError(err, new Dictionary<string, string> { { "Name", AppSettings.Current.SteamUserName } });
+                FASTER.Services.Telemetry.TrackError(err, new Dictionary<string, string> { { "Name", AppSettings.Current.SteamUserName } });
             }
         }
 
@@ -337,7 +335,7 @@ namespace FASTER
             catch (Exception err)
             {
                 DisplayMessage("An error occured while deleting your profile");
-                Crashes.TrackError(err, new Dictionary<string, string> { { "Name", AppSettings.Current.SteamUserName } });
+                FASTER.Services.Telemetry.TrackError(err, new Dictionary<string, string> { { "Name", AppSettings.Current.SteamUserName } });
             }
         }
 
