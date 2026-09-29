@@ -255,11 +255,13 @@
                 <ComboBox SelectedItem="{Binding Profile.ServerCfg.ForcedDifficulty}" PlaceholderText="Forced Difficulty" Grid.Column="2" Grid.Row="7" ItemsSource="{Binding ForcedDifficultyString}" Margin="3" />
                 <StackPanel Grid.Column="0" Grid.Row="8" Margin="3,0">
                   <NumericUpDown Value="{Binding Profile.ArmaProfile.SkillAi}" Watermark="AI Skill" Minimum="0" Maximum="1" Increment="0.01" />
-                  <Slider Maximum="1" Value="{Binding Profile.ArmaProfile.SkillAi}" TickFrequency="0.01" ToolTip.Tip="AI Skill" Margin="0,5" />
+                  <Slider x:Name="SkillAiSlider" Maximum="1" Value="{Binding Profile.ArmaProfile.SkillAi}" TickFrequency="0.01" ToolTip.Tip="AI Skill" Margin="0,5" />
+                  <TextBlock Text="{Binding #SkillAiSlider.Value, StringFormat={}{0:0.##} / 1}" HorizontalAlignment="Right" Opacity="0.75" FontSize="11" />
                 </StackPanel>
                 <StackPanel Grid.Column="1" Grid.Row="8" Margin="3,0">
                   <NumericUpDown Value="{Binding Profile.ArmaProfile.PrecisionAi}" Watermark="AI Precision" Minimum="0" Maximum="1" Increment="0.01" />
-                  <Slider Maximum="1" Value="{Binding Profile.ArmaProfile.PrecisionAi}" TickFrequency="0.01" ToolTip.Tip="AI Precision" Margin="0,5" />
+                  <Slider x:Name="PrecisionAiSlider" Maximum="1" Value="{Binding Profile.ArmaProfile.PrecisionAi}" TickFrequency="0.01" ToolTip.Tip="AI Precision" Margin="0,5" />
+                  <TextBlock Text="{Binding #PrecisionAiSlider.Value, StringFormat={}{0:0.##} / 1}" HorizontalAlignment="Right" Opacity="0.75" FontSize="11" />
                 </StackPanel>
                 <ComboBox SelectedItem="{Binding Profile.ArmaProfile.AiLevelPreset}" PlaceholderText="AI Preset" Grid.Column="2" Grid.Row="8" ItemsSource="{Binding AiPresetStrings}" Margin="3" />
               </Grid>
@@ -340,7 +342,8 @@
                     <ToggleSwitch Content="VoN Activation" IsChecked="{Binding Profile.ServerCfg.VonActivated}" ToolTip.Tip="VoN Activation" Margin="10,2,0,2" />
                     <ComboBox HorizontalAlignment="Stretch" IsVisible="{Binding Profile.ServerCfg.VonActivated}"
                               ItemsSource="{Binding VonCodecs}" SelectedItem="{Binding Profile.ServerCfg.VonCodec}" PlaceholderText="VoN Codec" Margin="10,5" />
-                    <Slider Maximum="30" IsVisible="{Binding Profile.ServerCfg.VonActivated}" Value="{Binding Profile.ServerCfg.VonCodecQuality}" ToolTip.Tip="Codec Quality" Margin="20,3" />
+                    <Slider x:Name="VonCodecSlider" Maximum="30" IsVisible="{Binding Profile.ServerCfg.VonActivated}" Value="{Binding Profile.ServerCfg.VonCodecQuality}" ToolTip.Tip="Codec Quality" Margin="20,3" />
+                    <TextBlock Text="{Binding #VonCodecSlider.Value, StringFormat={}{0:0} / 30}" IsVisible="{Binding Profile.ServerCfg.VonActivated}" HorizontalAlignment="Right" Opacity="0.75" FontSize="11" Margin="0,0,20,0" />
                   </StackPanel>
                     </StackPanel>
                   </StackPanel>
@@ -353,7 +356,10 @@
                     <ToggleSwitch Content="Voting Settings" IsChecked="{Binding Profile.ServerCfg.VotingEnabled}" ToolTip.Tip="Voting Settings" Margin="10,2,0,2" />
                     <Grid ColumnDefinitions="*,*">
                       <NumericUpDown Value="{Binding Profile.ServerCfg.VoteMissionPlayers}" IsVisible="{Binding Profile.ServerCfg.VotingEnabled}" Grid.Column="0" Margin="5" Watermark="Min Players" />
-                      <Slider Value="{Binding Profile.ServerCfg.VoteThreshold}" IsVisible="{Binding Profile.ServerCfg.VotingEnabled}" Minimum="0" Maximum="1" Grid.Column="1" Margin="5" ToolTip.Tip="Voting threshold" />
+                      <StackPanel Grid.Column="1" Margin="5,5,5,0">
+                        <Slider x:Name="VoteThresholdSlider" Value="{Binding Profile.ServerCfg.VoteThreshold}" IsVisible="{Binding Profile.ServerCfg.VotingEnabled}" Minimum="0" Maximum="1" ToolTip.Tip="Voting threshold" />
+                        <TextBlock Text="{Binding #VoteThresholdSlider.Value, StringFormat={}{0:0.##} / 1}" IsVisible="{Binding Profile.ServerCfg.VotingEnabled}" HorizontalAlignment="Right" Opacity="0.75" FontSize="11" />
+                      </StackPanel>
                     </Grid>
                   </StackPanel>
                     </StackPanel>
@@ -374,8 +380,8 @@
                              IsVisible="{Binding Profile.ServerCfg.HeadlessClientEnabled}"
                              AcceptsReturn="True" TextWrapping="Wrap" Watermark="Local Clients (one per line)" />
                     <StackPanel IsVisible="{Binding Profile.ServerCfg.HeadlessClientEnabled}">
-                      <Slider Value="{Binding Profile.HeadlessNumber}" Minimum="0" Maximum="5" ToolTip.Tip="Number of Headless Clients" Margin="10,5" />
-                      <TextBlock Text="Number of HCs" ToolTip.Tip="Number of Headless Clients" HorizontalAlignment="Center" Margin="1" />
+                      <Slider x:Name="HeadlessSlider" Value="{Binding Profile.HeadlessNumber}" Minimum="0" Maximum="5" ToolTip.Tip="Number of Headless Clients" Margin="10,5" />
+                      <TextBlock Text="{Binding #HeadlessSlider.Value, StringFormat={}Number of HCs: {0:0} / 5}" ToolTip.Tip="Number of Headless Clients" HorizontalAlignment="Center" Margin="1" />
                     </StackPanel>
                   </StackPanel>
                     </StackPanel>
