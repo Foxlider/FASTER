@@ -40,6 +40,12 @@ namespace FASTER.ViewModel
             if (string.IsNullOrEmpty(modID))
                 return;
 
+            AppServices.Analytics.TrackEvent("Mods - Clicked AddSteamMod", new Dictionary<string, string>
+            {
+                {"Name", AppSettings.Current.SteamUserName},
+                {"Mod", modID}
+            });
+
             //Cast link to mod ID
             if (modID.Contains("steamcommunity.com") && modID.Contains("id="))
             {
@@ -145,6 +151,10 @@ namespace FASTER.ViewModel
             if (string.IsNullOrEmpty(answer) || !answer.Equals("yes"))
                 return;
 
+            AppServices.Analytics.TrackEvent("Mods - Clicked DeleteAllMods", new Dictionary<string, string>
+            {
+                {"Name", AppSettings.Current.SteamUserName}
+            });
             var copyArmaMods = new List<ArmaMod>(ModsCollection.ArmaMods);
             foreach (var mod in copyArmaMods)
             {
@@ -226,6 +236,11 @@ namespace FASTER.ViewModel
 
         public async Task UpdateAll()
         {
+            AppServices.Analytics.TrackEvent("Mods - Clicked UpdateAll", new Dictionary<string, string>
+            {
+                {"Name", AppSettings.Current.SteamUserName}
+            });
+
             Ui.Current.NavigateToConsole();
             var ans = await Ui.Current.RunModsUpdaterAsync(ModsCollection.ArmaMods);
             if (ans == UpdateState.LoginFailed)

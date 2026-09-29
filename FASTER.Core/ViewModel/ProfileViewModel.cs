@@ -36,6 +36,11 @@ namespace FASTER.ViewModel
 
         internal void OpenProfileLocation()
         {
+            AppServices.Analytics.TrackEvent("Profile - Clicked OpenProfile", new Dictionary<string, string>
+            {
+                {"Name", AppSettings.Current.SteamUserName}
+            });
+
             string folderPath = Path.Combine(Profile.ArmaPath, "Servers", Profile.Id);
             if (Directory.Exists(folderPath))
             {
@@ -96,6 +101,11 @@ namespace FASTER.ViewModel
 
             //Launching... 
             DisplayMessage($"Launching Profile {Profile.Name}...");
+
+            AppServices.Analytics.TrackEvent("Profile - Clicked LaunchServer", new Dictionary<string, string>
+            {
+                {"Name", AppSettings.Current.SteamUserName}
+            });
 
             Profile.RaisePropertyChanged("CommandLine");
             var commandLine = Profile.CommandLine;

@@ -52,7 +52,10 @@ namespace FASTER.Models
                                        select new LocalMod(name, modFolder, author, website));
                 }
                 catch (Exception e)
-                { Console.WriteLine($"Could not list local mods in {localModFolder}: {e.Message}"); }
+                {
+                    Console.WriteLine($"Could not list local mods in {localModFolder}: {e.Message}");
+                    FASTER.Services.AppServices.Analytics.TrackError(e, new Dictionary<string, string> { { "Name", AppSettings.Current.SteamUserName } });
+                }
             }
 
             return localMods;
