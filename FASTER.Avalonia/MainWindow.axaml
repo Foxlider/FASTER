@@ -1,0 +1,10 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="FASTER.Avalonia.MainWindow"
+        Title="FASTER on Avalonia"
+        Width="480" Height="240">
+  <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="8">
+    <TextBlock Text="FASTER on Avalonia (.NET 10)" FontSize="20" HorizontalAlignment="Center" />
+    <TextBlock Text="Spike: window renders, Fluent theme loads." HorizontalAlignment="Center" />
+  </StackPanel>
+</Window>
