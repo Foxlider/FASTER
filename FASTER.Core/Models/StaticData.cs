@@ -1,6 +1,6 @@
 ﻿namespace FASTER.Models
 {
-    internal static class StaticData
+    public static class StaticData
     {
         /// <summary>
         /// List of FASTER's supporters

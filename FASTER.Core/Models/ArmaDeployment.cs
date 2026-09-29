@@ -31,14 +31,14 @@ namespace FASTER.Models
             set
             {
                 _mods = value;
-                Properties.Settings.Default.Save();
+                AppSettings.Current.Save();
                 RaisePropertyChanged("DeployMods");
             }
         }
 
         public ArmaDeployment()
         {
-            InstallPath = Properties.Settings.Default.serverPath;
+            InstallPath = AppSettings.Current.ServerPath;
             DeployMods = new ObservableCollection<DeploymentMod>();
         }
 
@@ -89,7 +89,7 @@ namespace FASTER.Models
 
         public void UpdateInfos()
         {
-            var originalMod = Properties.Settings.Default.armaMods.ArmaMods.FirstOrDefault(m => m.WorkshopId == WorkshopId);
+            var originalMod = AppSettings.Current.ArmaMods.ArmaMods.FirstOrDefault(m => m.WorkshopId == WorkshopId);
             if (originalMod == null)
                 return;
 
@@ -176,7 +176,7 @@ namespace FASTER.Models
             set
             {
                 marked = value;
-                Properties.Settings.Default.Save();
+                AppSettings.Current.Save();
                 RaisePropertyChanged(nameof(Marked));
             }
         }

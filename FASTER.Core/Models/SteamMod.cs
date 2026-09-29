@@ -24,7 +24,7 @@ namespace FASTER.Models
     [Serializable]
     public class SteamMod
     {
-        private SteamMod()
+        public SteamMod()
         {}
 
         public SteamMod(uint workshopId, string name, string author, int steamLastUpdated, bool privateMod = false)
@@ -40,7 +40,7 @@ namespace FASTER.Models
 
         private static string GetModSize(uint workshopId)
         {
-            var modFolder = Path.Combine(Properties.Settings.Default.steamCMDPath, "steamapps", "workshop", "content", "107410", workshopId.ToString());
+            var modFolder = Path.Combine(AppSettings.Current.SteamCMDPath, "steamapps", "workshop", "content", "107410", workshopId.ToString());
             if (!Directory.Exists(modFolder)) return "Unknown";
 
             double fullSize = GetDirectorySize(modFolder);
@@ -80,10 +80,10 @@ namespace FASTER.Models
         {
             List<SteamMod> currentSteamMods = new();
 
-            if (Properties.Settings.Default.steamMods == null) return currentSteamMods;
+            if (AppSettings.Current.SteamMods == null) return currentSteamMods;
 
-            Properties.Settings.Default.Reload();
-            currentSteamMods = Properties.Settings.Default.steamMods?.SteamMods;
+            AppSettings.Current.Reload();
+            currentSteamMods = AppSettings.Current.SteamMods?.SteamMods;
 
             return currentSteamMods;
         }

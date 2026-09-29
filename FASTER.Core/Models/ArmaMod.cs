@@ -1,4 +1,4 @@
-﻿using FASTER.ViewModel;
+﻿using FASTER.Services;
 
 using System;
 using System.Collections.ObjectModel;
@@ -34,8 +34,8 @@ namespace FASTER.Models
         {
             ArmaModCollection currentMods = new();
 
-            if (Properties.Settings.Default.steamMods != null)
-                currentMods = Properties.Settings.Default.armaMods;
+            if (AppSettings.Current.SteamMods != null)
+                currentMods = AppSettings.Current.ArmaMods;
 
             return currentMods;
         }
@@ -51,13 +51,13 @@ namespace FASTER.Models
             if (!duplicate)
             {
                 currentMods.ArmaMods.Add(newMod);
-                Properties.Settings.Default.armaMods = currentMods;
+                AppSettings.Current.ArmaMods = currentMods;
                 _ = Task.Run(() => ArmaMods.FirstOrDefault(m => m.WorkshopId == newMod.WorkshopId)?.UpdateInfos());
             }
             else
-            { MainWindow.Instance.DisplayMessage("Mod Already Exists"); }
+            { Ui.Current.DisplayMessage("Mod Already Exists"); }
 
-            Properties.Settings.Default.Save();
+            AppSettings.Current.Save();
         }
 
         public void DeleteSteamMod(uint workshopId)
@@ -76,10 +76,10 @@ namespace FASTER.Models
                     currentProfiles.ArmaMods.Remove(item);
                 }
 
-                Properties.Settings.Default.Save();
+                AppSettings.Current.Save();
             }
             catch
-            { MainWindow.Instance.DisplayMessage($"Could not delete mod {workshopId}"); }
+            { Ui.Current.DisplayMessage($"Could not delete mod {workshopId}"); }
         }
 
 
@@ -229,7 +229,7 @@ namespace FASTER.Models
             }
         }
 
-        internal void CheckModSize()
+        public void CheckModSize()
         {
             IsLoading = true;
 
@@ -245,7 +245,7 @@ namespace FASTER.Models
             IsLoading = false;
         }
 
-        internal async Task UpdateModAsync()
+        public async Task UpdateModAsync()
         {
             if (IsLocal)
             {
@@ -258,11 +258,11 @@ namespace FASTER.Models
 
             UpdateInfos(false);
 
-            Path = System.IO.Path.Combine(Properties.Settings.Default.modStagingDirectory, WorkshopId.ToString());
+            Path = System.IO.Path.Combine(AppSettings.Current.ModStagingDirectory, WorkshopId.ToString());
             if (!Directory.Exists(Path))
                 Directory.CreateDirectory(Path);
-            MainWindow.Instance.NavigateToConsole();
-            var res = await MainWindow.Instance.SteamUpdaterViewModel.RunModUpdater(WorkshopId, Path);
+            Ui.Current.NavigateToConsole();
+            var res = await Ui.Current.RunModUpdaterAsync(WorkshopId, Path);
 
             CheckModSize();
 
@@ -285,7 +285,7 @@ namespace FASTER.Models
             IsLoading = false;
         }
 
-        internal void UpdateInfos(bool checkFileSize = true)
+        public void UpdateInfos(bool checkFileSize = true)
         {
             IsLoading = true;
 
@@ -343,7 +343,7 @@ namespace FASTER.Models
             IsLoading = false;
         }
 
-        internal bool IsOnWorkshop()
+        public bool IsOnWorkshop()
         {
             try
             {
@@ -364,7 +364,7 @@ namespace FASTER.Models
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        internal void RaisePropertyChanged(string property)
+        public void RaisePropertyChanged(string property)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
         }

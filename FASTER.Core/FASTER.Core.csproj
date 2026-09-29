@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>14.0</LangVersion>
+    <AssemblyName>FASTER.Core</AssemblyName>
+    <RootNamespace>FASTER</RootNamespace>
+    <Version>1.9.7.2</Version>
+    <Company>FoxliCorp.</Company>
+    <Description>Portable core for FASTER: server models, settings store and platform abstractions</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="10.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BytexDigital.Steam\BytexDigital.Steam\BytexDigital.Steam.csproj" />
+  </ItemGroup>
+
+</Project>

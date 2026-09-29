@@ -1,6 +1,4 @@
-﻿using Microsoft.AppCenter.Crashes;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -10,12 +8,11 @@ using System.Linq;
 namespace FASTER.Models
 {
     [Serializable]
-    internal class LocalMod
+    public class LocalMod
     {
-        private LocalMod()
-        {}
-
-        private LocalMod(string name, string path, string author = "Unknown", string website = null)
+        public LocalMod()
+        { }
+        private LocalMod(string name, string path, string author = "Unknown", string? website = null)
         {
             Name = name;
             Path = path;
@@ -34,11 +31,11 @@ namespace FASTER.Models
 
             List<string> foldersToSearch = new();
 
-            if (serverPathOnly && !string.IsNullOrEmpty(Properties.Settings.Default.serverPath))
-            { foldersToSearch.Add(Properties.Settings.Default.serverPath); }
+            if (serverPathOnly && !string.IsNullOrEmpty(AppSettings.Current.ServerPath))
+            { foldersToSearch.Add(AppSettings.Current.ServerPath); }
 
-            if (!serverPathOnly && Properties.Settings.Default.localModFolders != null) 
-            { foldersToSearch.AddRange(Properties.Settings.Default.localModFolders.Where(folder => folder != null && folder != Properties.Settings.Default.serverPath)); }
+            if (!serverPathOnly && AppSettings.Current.LocalModFolders != null) 
+            { foldersToSearch.AddRange(AppSettings.Current.LocalModFolders.Where(folder => folder != null && folder != AppSettings.Current.ServerPath)); }
 
             if (foldersToSearch.Count <= 0) return localMods;
 
@@ -54,8 +51,8 @@ namespace FASTER.Models
                                        let website = "Unknown"
                                        select new LocalMod(name, modFolder, author, website));
                 }
-                catch (Exception e) 
-                { Crashes.TrackError(e, new Dictionary<string, string> { { "Name", Properties.Settings.Default.steamUserName } }); }
+                catch (Exception e)
+                { Console.WriteLine($"Could not list local mods in {localModFolder}: {e.Message}"); }
             }
 
             return localMods;

@@ -25,7 +25,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FASTER Maintenance", "FASTE
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BytexDigital.Steam", "BytexDigital.Steam\BytexDigital.Steam\BytexDigital.Steam.csproj", "{22F5B346-B3B2-302D-9D68-35A2DFCE2081}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FASTER.Avalonia", "FASTER.Avalonia\FASTER.Avalonia.csproj", "{48E719BC-43AB-43F3-893C-1CAD7E37F6EC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FASTER.Avalonia", "FASTER.Avalonia\FASTER.Avalonia.csproj", "{48E719BC-43AB-43F3-893C-1CAD7E37F6EC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FASTER.Core", "FASTER.Core\FASTER.Core.csproj", "{F3880F1F-2E9A-44AD-A937-BE78A07295FA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -97,6 +99,18 @@ Global
 		{48E719BC-43AB-43F3-893C-1CAD7E37F6EC}.Release|x64.Build.0 = Release|Any CPU
 		{48E719BC-43AB-43F3-893C-1CAD7E37F6EC}.Release|x86.ActiveCfg = Release|Any CPU
 		{48E719BC-43AB-43F3-893C-1CAD7E37F6EC}.Release|x86.Build.0 = Release|Any CPU
+		{F3880F1F-2E9A-44AD-A937-BE78A07295FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3880F1F-2E9A-44AD-A937-BE78A07295FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F3880F1F-2E9A-44AD-A937-BE78A07295FA}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{F3880F1F-2E9A-44AD-A937-BE78A07295FA}.Debug|x64.Build.0 = Debug|Any CPU
+		{F3880F1F-2E9A-44AD-A937-BE78A07295FA}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F3880F1F-2E9A-44AD-A937-BE78A07295FA}.Debug|x86.Build.0 = Debug|Any CPU
+		{F3880F1F-2E9A-44AD-A937-BE78A07295FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F3880F1F-2E9A-44AD-A937-BE78A07295FA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F3880F1F-2E9A-44AD-A937-BE78A07295FA}.Release|x64.ActiveCfg = Release|Any CPU
+		{F3880F1F-2E9A-44AD-A937-BE78A07295FA}.Release|x64.Build.0 = Release|Any CPU
+		{F3880F1F-2E9A-44AD-A937-BE78A07295FA}.Release|x86.ActiveCfg = Release|Any CPU
+		{F3880F1F-2E9A-44AD-A937-BE78A07295FA}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

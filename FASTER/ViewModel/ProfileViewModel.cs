@@ -1,7 +1,5 @@
 using FASTER.Models;
 
-using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
 using Microsoft.WindowsAPICodePack.Dialogs;
 
 using System;
@@ -43,11 +41,6 @@ namespace FASTER.ViewModel
 
         internal void OpenProfileLocation()
         {
-            Analytics.TrackEvent("Profile - Clicked OpenProfile", new Dictionary<string, string>
-            {
-                {"Name", Properties.Settings.Default.steamUserName}
-            });
-
             string folderPath = Path.Combine(Profile.ArmaPath, "Servers", Profile.Id);
             if (Directory.Exists(folderPath))
             {
@@ -105,14 +98,13 @@ namespace FASTER.ViewModel
             string commandLine = string.Join("", arguments);
 
             try { Clipboard.SetText(commandLine); }
-            catch (COMException e)
+            catch (COMException)
             {
                 try
                 {
-                    Crashes.TrackError(e, new Dictionary<string, string> { { "Name", Properties.Settings.Default.steamUserName } });
                     Clipboard.SetDataObject(commandLine);
                 }
-                catch (COMException ex) { Crashes.TrackError(ex, new Dictionary<string, string> { { "Name", Properties.Settings.Default.steamUserName } }); }
+                catch (COMException) { }
             }
             return commandLine;
         }
@@ -124,27 +116,17 @@ namespace FASTER.ViewModel
             //Launching... 
             DisplayMessage($"Launching Profile {Profile.Name}...");
 
-            Analytics.TrackEvent("Profile - Clicked LaunchServer", new Dictionary<string, string>
-            {
-                {"Name", Properties.Settings.Default.steamUserName}
-            });
-
             Profile.RaisePropertyChanged("CommandLine");
             var commandLine = Profile.CommandLine;
             try { Clipboard.SetText(commandLine); }
-            catch (COMException e)
+            catch (COMException)
             {
                 try
                 {
-                    Crashes.TrackError(e, new Dictionary<string, string>
-                                           {{ "Name", Properties.Settings.Default.steamUserName }});
                     Clipboard.SetDataObject(commandLine);
                 }
-                catch (COMException ex)
-                {
-                    Crashes.TrackError(ex, new Dictionary<string, string>
-                                           {{ "Name", Properties.Settings.Default.steamUserName }});
-                }
+                catch (COMException)
+                { }
             }
             #if DEBUG
             DisplayMessage($"Launching Arma3Server with commandline : \n{commandLine}");
@@ -197,8 +179,8 @@ namespace FASTER.ViewModel
         {
             if (Directory.Exists(Path.Combine(Profile.ArmaPath, "Servers", Profile.Id)))
             { Directory.Delete(Path.Combine(Profile.ArmaPath, "Servers", Profile.Id), true); }
-            Properties.Settings.Default.Profiles.Remove(Profile);
-            Properties.Settings.Default.Save();
+            AppSettings.Current.Profiles.Remove(Profile);
+            AppSettings.Current.Save();
             MainWindow.Instance.ContentProfileViews.Remove(MainWindow.Instance.ContentProfileViews.Find(p => p.Profile.Id == Profile.Id));
             var menuItem = MainWindow.Instance.IServerProfilesMenu.Items.Cast<ToggleButton>().FirstOrDefault(p => p.Name == Profile.Id);
             if(menuItem != null)
@@ -243,11 +225,11 @@ namespace FASTER.ViewModel
             }
 
 
-            var index = Properties.Settings.Default.Profiles.FindIndex(p => p.Id == Profile.Id);  
+            var index = AppSettings.Current.Profiles.FindIndex(p => p.Id == Profile.Id);  
             if (index != -1)
-            { Properties.Settings.Default.Profiles[index] = Profile; }
+            { AppSettings.Current.Profiles[index] = Profile; }
 
-            Properties.Settings.Default.Save();
+            AppSettings.Current.Save();
             Profile.RaisePropertyChanged("CommandLine");
             DisplayMessage($"Saved Profile {Profile.Name}");
 
@@ -329,8 +311,8 @@ namespace FASTER.ViewModel
                 Title                     = "Select the arma server executable",
                 IsFolderPicker            = false,
                 AddToMostRecentlyUsedList = false,
-                InitialDirectory          = Properties.Settings.Default.serverPath,
-                DefaultDirectory          = Properties.Settings.Default.serverPath,
+                InitialDirectory          = AppSettings.Current.ServerPath,
+                DefaultDirectory          = AppSettings.Current.ServerPath,
                 AllowNonFileSystemItems   = false,
                 EnsureFileExists          = true,
                 EnsurePathExists          = true,
@@ -353,10 +335,10 @@ namespace FASTER.ViewModel
         {
             var mods = new List<string>();
 
-            if (!Directory.Exists(Properties.Settings.Default.modStagingDirectory))
+            if (!Directory.Exists(AppSettings.Current.ModStagingDirectory))
             {
                 MainWindow.Instance.IFlyout.IsOpen         = true;
-                MainWindow.Instance.IFlyoutMessage.Content = $"The SteamCMD path does not exist :\n{Properties.Settings.Default.modStagingDirectory}";
+                MainWindow.Instance.IFlyoutMessage.Content = $"The SteamCMD path does not exist :\n{AppSettings.Current.ModStagingDirectory}";
                 return;
             }
 
@@ -367,7 +349,7 @@ namespace FASTER.ViewModel
             foreach (var line in steamMods)
             {
                 try
-                { mods.AddRange(Directory.GetDirectories(Path.Combine(Properties.Settings.Default.modStagingDirectory, line.Id.ToString()))
+                { mods.AddRange(Directory.GetDirectories(Path.Combine(AppSettings.Current.ModStagingDirectory, line.Id.ToString()))
 				.SelectMany(subDir => Directory.GetFiles(subDir, "*.bikey", SearchOption.TopDirectoryOnly))); }
                 catch (DirectoryNotFoundException)
                 { /*there was no directory*/ }
@@ -421,7 +403,7 @@ namespace FASTER.ViewModel
         public void LoadData()
         {
             var modlist = new List<ProfileMod>();
-            foreach(var mod in Properties.Settings.Default.armaMods.ArmaMods)
+            foreach(var mod in AppSettings.Current.ArmaMods.ArmaMods)
             {
                 ProfileMod existingMod = Profile.ProfileMods.Find(m => m.Id == mod.WorkshopId);
                 if (existingMod == null)
@@ -442,9 +424,9 @@ namespace FASTER.ViewModel
 
         public void UnloadData()
         {
-            var index = Properties.Settings.Default.Profiles.FindIndex(p => p.Id == Profile.Id);  
+            var index = AppSettings.Current.Profiles.FindIndex(p => p.Id == Profile.Id);  
             if (index != -1)
-            { Properties.Settings.Default.Profiles[index] = Profile; }
+            { AppSettings.Current.Profiles[index] = Profile; }
         }
 
         internal void LoadMissions()

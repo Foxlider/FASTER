@@ -3,9 +3,6 @@ using ControlzEx.Theming;
 using LiveCharts;
 using LiveCharts.Configurations;
 
-using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
-
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -183,9 +180,6 @@ namespace FASTER.Views
 
         private void IRescanAll_Click(object sender, RoutedEventArgs e)
         {
-            Analytics.TrackEvent("ServerStatus - Rescanning Servers", new Dictionary<string, string> {
-                { "Name", MetroWindow.SteamUpdaterViewModel.Parameters.Username}
-            });
             RefreshServers();
         }
         #endregion
@@ -200,10 +194,9 @@ namespace FASTER.Views
                     var p = new ProcessSpy(proc);
                     processes.Add(p);
                 }
-                catch (InvalidOperationException e)
+                catch (InvalidOperationException)
                 {
                     /*The process exited. Cannot add it back*/
-                    Crashes.TrackError(e, new Dictionary<string, string> { { "Name", Properties.Settings.Default.steamUserName } });
                 }
             }
         }

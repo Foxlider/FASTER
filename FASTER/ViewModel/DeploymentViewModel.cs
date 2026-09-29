@@ -1,11 +1,8 @@
 ﻿using FASTER.Models;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using FASTER.Properties;
-using Microsoft.AppCenter.Analytics;
 
 namespace FASTER.ViewModel
 {
@@ -13,13 +10,13 @@ namespace FASTER.ViewModel
     {
         public DeploymentViewModel()
         { 
-            if(Settings.Default.Deployments == null)
+            if(AppSettings.Current.Deployments == null)
             {
-                Settings.Default.Deployments = new ArmaDeployment();
-                Settings.Default.Save();
+                AppSettings.Current.Deployments = new ArmaDeployment();
+                AppSettings.Current.Save();
             }
 
-            Deployment = Settings.Default.Deployments;
+            Deployment = AppSettings.Current.Deployments;
         }
 
         public ArmaDeployment Deployment { get; set; }
@@ -30,8 +27,8 @@ namespace FASTER.ViewModel
         /// </summary>
         public void UnloadData()
         {
-            Settings.Default.Deployments = Deployment;
-            Settings.Default.Save();
+            AppSettings.Current.Deployments = Deployment;
+            AppSettings.Current.Save();
         }
 
         /// <summary>
@@ -39,20 +36,20 @@ namespace FASTER.ViewModel
         /// </summary>
         public void LoadData()
         {
-            Deployment = Settings.Default.Deployments;
-            foreach (var mod in Settings.Default.armaMods.ArmaMods)
+            Deployment = AppSettings.Current.Deployments;
+            foreach (var mod in AppSettings.Current.ArmaMods.ArmaMods)
             {
                 if (Deployment.DeployMods.Any(m => m.WorkshopId == mod.WorkshopId))
                     continue;
                 Deployment.DeployMods.Add(new DeploymentMod(mod));
-                Settings.Default.Save();
+                AppSettings.Current.Save();
             }
             foreach (var mod in Deployment.DeployMods.ToArray())
             {
-                if (Settings.Default.armaMods.ArmaMods.All(m => m.WorkshopId != mod.WorkshopId))
+                if (AppSettings.Current.ArmaMods.ArmaMods.All(m => m.WorkshopId != mod.WorkshopId))
                 {
                     Deployment.DeployMods.Remove(mod);
-                    Settings.Default.Save();
+                    AppSettings.Current.Save();
                     continue;
                 }
                 mod.UpdateInfos(); 
@@ -66,12 +63,6 @@ namespace FASTER.ViewModel
         /// <param name="mod"></param>
         public void DeployMod(DeploymentMod mod)
         {
-            Analytics.TrackEvent("Deployment - Clicked DeployMod", new Dictionary<string, string>
-            {
-                {"Name", Settings.Default.steamUserName},
-                {"Mod", mod.Name}
-            });
-
             if(!Directory.Exists(Deployment.InstallPath))
             {
                 DisplayMessage("Arma Install Path is empty.\nMake sure you have entered a valid path before deploying mods.");
@@ -93,8 +84,8 @@ namespace FASTER.ViewModel
                     DeleteLink(linkPath);
             }
 
-            Settings.Default.Deployments = Deployment;
-            Settings.Default.Save();
+            AppSettings.Current.Deployments = Deployment;
+            AppSettings.Current.Save();
         }
 
 
@@ -103,11 +94,6 @@ namespace FASTER.ViewModel
         /// </summary>
         public void DeployAll()
         {
-            Analytics.TrackEvent("Deployment - Clicked DeployAll", new Dictionary<string, string>
-            {
-                {"Name", Settings.Default.steamUserName}
-            });
-
             foreach (var mod in Deployment.DeployMods)
             {
                 var linkPath = Path.Combine(Deployment.InstallPath, $"@{Functions.SafeName(mod.Name)}");
@@ -146,8 +132,8 @@ namespace FASTER.ViewModel
                 var links = Directory.EnumerateDirectories(Deployment.InstallPath).Select(d => new DirectoryInfo(d)).Where(d => d.Attributes.HasFlag(FileAttributes.ReparsePoint));
                 mod.Marked = links.Any(l => l.Name == $"@{Functions.SafeName(mod.Name)}");
             }
-            Settings.Default.Deployments = Deployment;
-            Settings.Default.Save();
+            AppSettings.Current.Deployments = Deployment;
+            AppSettings.Current.Save();
         }
 
         /// <summary>

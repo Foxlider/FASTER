@@ -1,6 +1,4 @@
-﻿using Microsoft.Win32;
-
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -8,15 +6,15 @@ using System.Text.RegularExpressions;
 
 namespace FASTER.Models
 {
-    internal static class Functions
+    public static class Functions
     {
         public static void CheckSettings()
         {
-            if (!Directory.Exists(Properties.Settings.Default.serverPath))
-                Properties.Settings.Default.serverPath = string.Empty;
+            if (!Directory.Exists(AppSettings.Current.ServerPath))
+                AppSettings.Current.ServerPath = string.Empty;
 
-            if (!Directory.Exists(Properties.Settings.Default.steamCMDPath))
-                Properties.Settings.Default.steamCMDPath = string.Empty;
+            if (!Directory.Exists(AppSettings.Current.SteamCMDPath))
+                AppSettings.Current.SteamCMDPath = string.Empty;
         }
 
         public static string ParseFileSize(long size)
@@ -47,11 +45,7 @@ namespace FASTER.Models
             return $"{fullSize,7:F} {sizes[order],-2}";
         }
 
-        public static string SelectFile(string filter)
-        {
-            OpenFileDialog openFileDialog = new() { Filter = filter };
-            return openFileDialog.ShowDialog() == true ? openFileDialog.FileName : null;
-        }
+        // File picking lives in FileDialogs on the UI side, this class stays portable.
 
         // Takes any string and removes illegal characters
         public static string SafeName(string input, bool ignoreWhiteSpace = false, string replacement = "_")
@@ -92,7 +86,7 @@ namespace FASTER.Models
             }
         }
 
-        internal static string GetVersion()
+        public static string GetVersion()
         {
             var assembly = Assembly.GetExecutingAssembly().GetName().Version;
             
@@ -124,7 +118,7 @@ namespace FASTER.Models
             return version;
         }
         
-        internal static string GetRawVersion()
+        public static string GetRawVersion()
         {
             var assembly = Assembly.GetExecutingAssembly().GetName().Version;
             return assembly.ToString();

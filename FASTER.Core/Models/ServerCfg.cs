@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace FASTER.Models
 {
-    static class ServerCfgArrays
+    public static class ServerCfgArrays
     {
         public static string[] AllowFilePatchingStrings { get; } = { "No Clients", "HC Only", "All Clients" };
         public static string[] VerifySignaturesStrings { get; } = { "Disabled", "Deprecated", "Activated" };

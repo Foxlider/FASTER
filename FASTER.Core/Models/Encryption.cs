@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using System.Security.Cryptography;
 
 namespace FASTER.Models
@@ -84,19 +85,28 @@ namespace FASTER.Models
         {
             try
             {
-                var powershell = Process.Start(new ProcessStartInfo
+                if (OperatingSystem.IsWindows())
                 {
-                    UseShellExecute = false,
-                    WindowStyle = ProcessWindowStyle.Hidden,
-                    CreateNoWindow = true,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    FileName = "powershell",
-                    Arguments = "Get-WmiObject Win32_BaseBoard | select SerialNumber"
-                });
-                powershell?.WaitForExit();
-                var output = powershell?.StandardOutput.ReadToEnd();
-                return output?.Replace("\r", "").Split('\n')[3];
+                    var powershell = Process.Start(new ProcessStartInfo
+                    {
+                        UseShellExecute = false,
+                        WindowStyle = ProcessWindowStyle.Hidden,
+                        CreateNoWindow = true,
+                        RedirectStandardOutput = true,
+                        RedirectStandardError = true,
+                        FileName = "powershell",
+                        Arguments = "Get-WmiObject Win32_BaseBoard | select SerialNumber"
+                    });
+                    powershell?.WaitForExit();
+                    var output = powershell?.StandardOutput.ReadToEnd();
+                    return output?.Replace("\r", "").Split('\n')[3];
+                }
+
+                // No WMI outside Windows, fall back to the OS machine id.
+                const string machineIdPath = "/etc/machine-id";
+                if (File.Exists(machineIdPath))
+                    return File.ReadAllText(machineIdPath).Trim();
+                return "UNKNOWN-DEVICE";
             }
             catch (Exception) { return "EXCEPTION_ON_QUERY"; }
         }

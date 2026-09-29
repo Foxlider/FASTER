@@ -10,8 +10,6 @@ using FASTER.Models;
 
 using MahApps.Metro.Controls.Dialogs;
 
-using Microsoft.AppCenter.Analytics;
-
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Configuration;
@@ -130,13 +128,6 @@ namespace FASTER.ViewModel
 
         public async Task UpdateClick()
         {
-            Analytics.TrackEvent("Updater - Clicked Update", new Dictionary<string, string>
-            {
-                {"Name", Properties.Settings.Default.steamUserName},
-                {"DLCs", $"{(Parameters.UsingGMDlc ? "GM " : "")}{(Parameters.UsingCSLADlc? "CSLA " : "")}{(Parameters.UsingPFDlc ? "SOG " : "")}{(Parameters.UsingWSDlc ? "WS " : "")}{(Parameters.UsingSPEDlc ? "SPE " : "")}{(Parameters.UsingRFDlc ? "RF " : "")}{(Parameters.UsingEFDlc ? "EF " : "")}"},
-                {"Branch", $"{(Parameters.UsingPerfBinaries? "Profiling" : "Public")}"}
-            });
-
             Parameters.IsUpdating = true;
             Parameters.Output     = "Starting Update...";
             Parameters.Output += "\nPlease don't quit this page or cancel the download\nThis might take a while...";
@@ -561,7 +552,7 @@ namespace FASTER.ViewModel
                 }
             }
 
-            SteamContentClient = new SteamContentClient(SteamClient, Properties.Settings.Default.CliWorkers);
+            SteamContentClient = new SteamContentClient(SteamClient, AppSettings.Current.CliWorkers);
             Parameters.Output += "\nConnected !";
             IsLoggingIn = false;
             return SteamClient.IsConnected;
@@ -768,11 +759,4 @@ namespace FASTER.ViewModel
         }
     }
 
-    public static class UpdateState
-    {
-        public const int Success     = 0;
-        public const int Error       = 1;
-        public const int LoginFailed = 2;
-        public const int Cancelled   = 3;
-    }
 }

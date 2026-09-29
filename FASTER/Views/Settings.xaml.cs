@@ -36,13 +36,13 @@ namespace FASTER.Views
 
             colorPicker.ItemsSource = ThemeManager.Current.Themes/*.Where(t => t.BaseColorScheme == "Dark")*/;
             colorPicker.DisplayMemberPath = "DisplayName";
-            colorPicker.SelectedItem = ThemeManager.Current.Themes.FirstOrDefault(t => t.Name == Properties.Settings.Default.theme);
+            colorPicker.SelectedItem = ThemeManager.Current.Themes.FirstOrDefault(t => t.Name == AppSettings.Current.Theme);
 
             fontPicker.ItemsSource = Fonts.SystemFontFamilies;
             fontPicker.DisplayMemberPath = "Source";
-            fontPicker.SelectedItem = Fonts.SystemFontFamilies.FirstOrDefault(t => t.Source == Properties.Settings.Default.font);
+            fontPicker.SelectedItem = Fonts.SystemFontFamilies.FirstOrDefault(t => t.Source == AppSettings.Current.Font);
 
-            Slider.Value = Properties.Settings.Default.CliWorkers;
+            Slider.Value = AppSettings.Current.CliWorkers;
         }
 
         private void IUpdateBtnOK_Click(object sender, RoutedEventArgs e)
@@ -120,30 +120,30 @@ namespace FASTER.Views
 
         private void IResetButton_Click(object sender, RoutedEventArgs e)
         {
-            Properties.Settings.Default.clearSettings = true;
-            Properties.Settings.Default.Save();
+            AppSettings.Current.ClearSettings = true;
+            AppSettings.Current.Save();
             Application.Current.Shutdown();
         }
         
         private void Settings_Initialized(object sender, EventArgs e)
         {
-            IModUpdatesOnLaunch.IsChecked = Properties.Settings.Default?.checkForModUpdates;
-            IAppUpdatesOnLaunch.IsChecked = Properties.Settings.Default?.checkForAppUpdates;
-            IAPIKeyBox.Text = Properties.Settings.Default?.SteamAPIKey ?? string.Empty;
-            Slider.Value = Properties.Settings.Default.CliWorkers;
+            IModUpdatesOnLaunch.IsChecked = AppSettings.Current?.CheckForModUpdates;
+            IAppUpdatesOnLaunch.IsChecked = AppSettings.Current?.CheckForAppUpdates;
+            IAPIKeyBox.Text = AppSettings.Current?.SteamAPIKey ?? string.Empty;
+            Slider.Value = AppSettings.Current.CliWorkers;
             NumericUpDown.Value = Slider.Value;
         }
 
         private void IModUpdatesOnLaunch_Checked(object sender, RoutedEventArgs e)
         {
-            Properties.Settings.Default.checkForModUpdates = IModUpdatesOnLaunch.IsChecked ?? true;
-            Properties.Settings.Default.Save();
+            AppSettings.Current.CheckForModUpdates = IModUpdatesOnLaunch.IsChecked ?? true;
+            AppSettings.Current.Save();
         }
 
         private void IAppUpdatesOnLaunch_Checked(object sender, RoutedEventArgs e)
         {
-            Properties.Settings.Default.checkForAppUpdates = IAppUpdatesOnLaunch.IsChecked ?? true;
-            Properties.Settings.Default.Save();
+            AppSettings.Current.CheckForAppUpdates = IAppUpdatesOnLaunch.IsChecked ?? true;
+            AppSettings.Current.Save();
         }
 
         private void IUpdateApp_OnClick(object sender, RoutedEventArgs e)
@@ -155,26 +155,26 @@ namespace FASTER.Views
         private void ISaveSettings_Click(object sender, RoutedEventArgs e)
         {
             if (!string.IsNullOrEmpty(IAPIKeyBox.Text)) 
-                Properties.Settings.Default.SteamAPIKey = IAPIKeyBox.Text;
-            Properties.Settings.Default.checkForAppUpdates = IAppUpdatesOnLaunch.IsChecked ?? true;
-            Properties.Settings.Default.checkForModUpdates = IModUpdatesOnLaunch.IsChecked ?? true;
-            Properties.Settings.Default.Save();
+                AppSettings.Current.SteamAPIKey = IAPIKeyBox.Text;
+            AppSettings.Current.CheckForAppUpdates = IAppUpdatesOnLaunch.IsChecked ?? true;
+            AppSettings.Current.CheckForModUpdates = IModUpdatesOnLaunch.IsChecked ?? true;
+            AppSettings.Current.Save();
         }
 
         private void ResetTheme_Click(object sender, RoutedEventArgs e)
         {
             colorPicker.SelectedItem = ThemeManager.Current.Themes.FirstOrDefault(t => t.Name == "Dark.Blue");
 
-            Properties.Settings.Default.theme = "Dark.Blue";
-            Properties.Settings.Default.Save();
+            AppSettings.Current.Theme = "Dark.Blue";
+            AppSettings.Current.Save();
         }
 
         private void ResetFont_Click(object sender, RoutedEventArgs e)
         {
             fontPicker.SelectedItem = Fonts.SystemFontFamilies.FirstOrDefault(f => f.Source == "Segoe UI");
 
-            Properties.Settings.Default.font = "Segoe UI";
-            Properties.Settings.Default.Save();
+            AppSettings.Current.Font = "Segoe UI";
+            AppSettings.Current.Save();
         }
 
         private void Colors_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
@@ -184,8 +184,8 @@ namespace FASTER.Views
             ThemeManager.Current.ThemeSyncMode = ThemeSyncMode.SyncAll;
             ThemeManager.Current.ChangeTheme(Application.Current, theme);
 
-            Properties.Settings.Default.theme = theme.Name;
-            Properties.Settings.Default.Save();
+            AppSettings.Current.Theme = theme.Name;
+            AppSettings.Current.Save();
         }
 
         private void Fonts_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
@@ -195,8 +195,8 @@ namespace FASTER.Views
 
             MetroWindow.FontFamily = font;
 
-            Properties.Settings.Default.font = font.Source;
-            Properties.Settings.Default.Save();
+            AppSettings.Current.Font = font.Source;
+            AppSettings.Current.Save();
         }
 
         private void RangeBase_OnValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -205,10 +205,10 @@ namespace FASTER.Views
             if ((sender is Slider slider) && !slider.IsLoaded)
                 return;
 
-            Properties.Settings.Default.CliWorkers = Convert.ToUInt16(e.NewValue);
+            AppSettings.Current.CliWorkers = Convert.ToUInt16(e.NewValue);
             NumericUpDown.Value = e.NewValue;
             if (MainWindow.Instance.SteamUpdaterViewModel.SteamContentClient != null)
-                MainWindow.Instance.SteamUpdaterViewModel.SteamContentClient = new SteamContentClient(MainWindow.Instance.SteamUpdaterViewModel.SteamClient, Properties.Settings.Default.CliWorkers);
+                MainWindow.Instance.SteamUpdaterViewModel.SteamContentClient = new SteamContentClient(MainWindow.Instance.SteamUpdaterViewModel.SteamClient, AppSettings.Current.CliWorkers);
         }
     }
 }

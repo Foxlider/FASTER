@@ -1,5 +1,4 @@
-﻿using FASTER.Properties;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 
 namespace FASTER.Models
 {
@@ -12,44 +11,44 @@ namespace FASTER.Models
 
         public string InstallDirectory
         {
-            get => Settings.Default.serverPath;
+            get => AppSettings.Current.ServerPath;
             set
             {
-                Settings.Default.serverPath = value;
-                Settings.Default.Save();
+                AppSettings.Current.ServerPath = value;
+                AppSettings.Current.Save();
                 RaisePropertyChanged(nameof(InstallDirectory));
             }
         }
 
         public string Username
         {
-            get => Settings.Default.steamUserName;
+            get => AppSettings.Current.SteamUserName;
             set
             {
-                Settings.Default.steamUserName = value;
-                Settings.Default.Save();
+                AppSettings.Current.SteamUserName = value;
+                AppSettings.Current.Save();
                 RaisePropertyChanged(nameof(Username));
             }
         }
 
         public string Password
         {
-            get => Settings.Default.steamPassword;
+            get => AppSettings.Current.SteamPassword;
             set
             {
-                Settings.Default.steamPassword = value;
-                Settings.Default.Save();
+                AppSettings.Current.SteamPassword = value;
+                AppSettings.Current.Save();
                 RaisePropertyChanged(nameof(Password));
             }
         }
 
         public string ModStagingDirectory
         {
-            get => Settings.Default.modStagingDirectory;
+            get => AppSettings.Current.ModStagingDirectory;
             set
             {
-                Settings.Default.modStagingDirectory = value;
-                Settings.Default.Save();
+                AppSettings.Current.ModStagingDirectory = value;
+                AppSettings.Current.Save();
                 RaisePropertyChanged(nameof(ModStagingDirectory));
             }
         }
@@ -86,112 +85,112 @@ namespace FASTER.Models
 
         public bool UsingPerfBinaries
         {
-            get => Settings.Default.usingPerfBinaries;
+            get => AppSettings.Current.UsingPerfBinaries;
             set
             {
-                Settings.Default.usingPerfBinaries = value;
-                Settings.Default.Save();
+                AppSettings.Current.UsingPerfBinaries = value;
+                AppSettings.Current.Save();
                 RaisePropertyChanged(nameof(UsingPerfBinaries));
             }
         }
 
         public bool UsingContactDlc
         {
-            get => Settings.Default.usingContactDlc;
+            get => AppSettings.Current.UsingContactDlc;
             set
             {
-                Settings.Default.usingContactDlc = value;
-                Settings.Default.Save();
+                AppSettings.Current.UsingContactDlc = value;
+                AppSettings.Current.Save();
                 RaisePropertyChanged(nameof(UsingContactDlc));
             }
         }
 
         public bool UsingGMDlc
         {
-            get => Settings.Default.usingGMDlc;
+            get => AppSettings.Current.UsingGMDlc;
             set
             {
-                Settings.Default.usingGMDlc = value;
-                Settings.Default.Save();
+                AppSettings.Current.UsingGMDlc = value;
+                AppSettings.Current.Save();
                 RaisePropertyChanged(nameof(UsingGMDlc));
             }
         }
 
         public bool UsingPFDlc
         {
-            get => Settings.Default.usingPFDlc;
+            get => AppSettings.Current.UsingPFDlc;
             set
             {
-                Settings.Default.usingPFDlc = value;
-                Settings.Default.Save();
+                AppSettings.Current.UsingPFDlc = value;
+                AppSettings.Current.Save();
                 RaisePropertyChanged(nameof(UsingPFDlc));
             }
         }
 
         public bool UsingCSLADlc
         {
-            get => Settings.Default.usingCSLADlc;
+            get => AppSettings.Current.UsingCSLADlc;
             set
             {
-                Settings.Default.usingCSLADlc = value;
-                Settings.Default.Save();
+                AppSettings.Current.UsingCSLADlc = value;
+                AppSettings.Current.Save();
                 RaisePropertyChanged(nameof(UsingCSLADlc));
             }
         }
 
         public bool UsingWSDlc
         {
-            get => Settings.Default.usingWSDlc;
+            get => AppSettings.Current.UsingWSDlc;
             set
             {
-                Settings.Default.usingWSDlc = value;
-                Settings.Default.Save();
+                AppSettings.Current.UsingWSDlc = value;
+                AppSettings.Current.Save();
                 RaisePropertyChanged(nameof(UsingWSDlc));
             }
         }
 
         public bool UsingSPEDlc
         {
-            get => Settings.Default.usingSPEDlc;
+            get => AppSettings.Current.UsingSPEDlc;
             set
             {
-                Settings.Default.usingSPEDlc = value;
-                Settings.Default.Save();
+                AppSettings.Current.UsingSPEDlc = value;
+                AppSettings.Current.Save();
                 RaisePropertyChanged(nameof(UsingSPEDlc));
             }
         }
 
         public bool UsingRFDlc
         {
-            get => Settings.Default.usingRFDlc;
+            get => AppSettings.Current.UsingRFDlc;
             set
             {
-                Settings.Default.usingRFDlc = value;
-                Settings.Default.Save();
+                AppSettings.Current.UsingRFDlc = value;
+                AppSettings.Current.Save();
                 RaisePropertyChanged(nameof(UsingRFDlc));
             }
         }
 
         public bool UsingEFDlc
         {
-            get => Settings.Default.usingEFDlc;
+            get => AppSettings.Current.UsingEFDlc;
             set
             {
-                Settings.Default.usingEFDlc = value;
-                Settings.Default.Save();
+                AppSettings.Current.UsingEFDlc = value;
+                AppSettings.Current.Save();
                 RaisePropertyChanged(nameof(UsingEFDlc));
             }
         }
 
         public string ApiKey
         {
-            get => !string.IsNullOrEmpty(Settings.Default.SteamAPIKey)
-                       ? Settings.Default.SteamAPIKey
+            get => !string.IsNullOrEmpty(AppSettings.Current.SteamAPIKey)
+                       ? AppSettings.Current.SteamAPIKey
                        : StaticData.SteamApiKey;
             set
             {
-                Settings.Default.SteamAPIKey = value;
-                Settings.Default.Save();
+                AppSettings.Current.SteamAPIKey = value;
+                AppSettings.Current.Save();
                 RaisePropertyChanged(nameof(ApiKey));
             }
         }

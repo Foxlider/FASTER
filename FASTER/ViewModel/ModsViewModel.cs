@@ -2,8 +2,6 @@
 
 using MahApps.Metro.Controls.Dialogs;
 
-using Microsoft.AppCenter.Analytics;
-
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -18,7 +16,7 @@ namespace FASTER.ViewModel
     {
         public ModsViewModel()
         { 
-            ModsCollection = Properties.Settings.Default.armaMods ?? new ArmaModCollection(); 
+            ModsCollection = AppSettings.Current.ArmaMods ?? new ArmaModCollection(); 
         }
 
         public ArmaModCollection ModsCollection { get; set; }
@@ -34,8 +32,8 @@ namespace FASTER.ViewModel
 
         public void UnloadData()
         {
-            Properties.Settings.Default.armaMods = ModsCollection;
-            Properties.Settings.Default.Save();
+            AppSettings.Current.ArmaMods = ModsCollection;
+            AppSettings.Current.Save();
         }
 
         public async Task AddSteamMod()
@@ -44,12 +42,6 @@ namespace FASTER.ViewModel
 
             if (string.IsNullOrEmpty(modID))
                 return;
-
-            Analytics.TrackEvent("Mods - Clicked AddSteamMod", new Dictionary<string, string>
-            {
-                {"Name", Properties.Settings.Default.steamUserName},
-                {"Mod", modID}
-            });
 
             //Cast link to mod ID
             if (modID.Contains("steamcommunity.com") && modID.Contains("id="))
@@ -64,7 +56,7 @@ namespace FASTER.ViewModel
             var mod = new ArmaMod
             {
                 WorkshopId = modIDOut,
-                Path       = Path.Combine(Properties.Settings.Default.modStagingDirectory, modID),
+                Path       = Path.Combine(AppSettings.Current.ModStagingDirectory, modID),
                 IsLocal = false
             };
 
@@ -73,7 +65,7 @@ namespace FASTER.ViewModel
 
         public async Task AddLocalModAsync()
         {
-            var localPath = MainWindow.Instance.SelectFolder(Properties.Settings.Default.modStagingDirectory);
+            var localPath = MainWindow.Instance.SelectFolder(AppSettings.Current.ModStagingDirectory);
 
             if (string.IsNullOrEmpty(localPath))
                 return;
@@ -102,7 +94,7 @@ namespace FASTER.ViewModel
                     Random r = new();
                     modID = (uint)(uint.MaxValue - r.Next(ushort.MaxValue / 2));
                 }
-                var newPath = Path.Combine(Properties.Settings.Default.modStagingDirectory, modID.ToString());
+                var newPath = Path.Combine(AppSettings.Current.ModStagingDirectory, modID.ToString());
                 if (Directory.Exists(newPath))
                 {
                     await DialogCoordinator.ShowMessageAsync(this, "Warning", $"Directory already exists for {oldPath[(oldPath.LastIndexOf("@", StringComparison.Ordinal) + 1)..]}.");
@@ -155,10 +147,6 @@ namespace FASTER.ViewModel
             if (string.IsNullOrEmpty(answer) || !answer.Equals("yes"))
                 return;
 
-            Analytics.TrackEvent("Mods - Clicked DeleteAllMods", new Dictionary<string, string>
-            {
-                {"Name", Properties.Settings.Default.steamUserName}
-            });
             var copyArmaMods = new List<ArmaMod>(ModsCollection.ArmaMods);
             foreach (var mod in copyArmaMods)
             {
@@ -189,7 +177,7 @@ namespace FASTER.ViewModel
 
         internal async Task OpenLauncherFile()
         {
-            string modsFile = Functions.SelectFile("Arma 3 Launcher File|*.html");
+            string? modsFile = FileDialogs.SelectFile("Arma 3 Launcher File|*.html");
 
             if (string.IsNullOrEmpty(modsFile)) return;
 
@@ -246,11 +234,6 @@ namespace FASTER.ViewModel
 
         public async Task UpdateAll()
         {
-            Analytics.TrackEvent("Mods - Clicked UpdateAll", new Dictionary<string, string>
-            {
-                {"Name", Properties.Settings.Default.steamUserName}
-            });
-
             MainWindow.Instance.NavigateToConsole();
             var ans = await MainWindow.Instance.SteamUpdaterViewModel.RunModsUpdater(ModsCollection.ArmaMods);
             if(ans == UpdateState.LoginFailed) 

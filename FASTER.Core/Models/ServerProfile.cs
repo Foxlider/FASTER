@@ -6,8 +6,9 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Windows.Controls.Primitives;
 using System.Xml.Serialization;
+
+using FASTER.Services;
 
 namespace FASTER.Models
 {
@@ -20,27 +21,27 @@ namespace FASTER.Models
         public ServerProfileCollection()
         { CollectionName = "Main"; }
 
-        internal static void AddServerProfile(string profileName)
+        public static void AddServerProfile(string profileName)
         {
-            var currentProfiles = Properties.Settings.Default.Profiles;
+            var currentProfiles = AppSettings.Current.Profiles;
             var p = new ServerProfile(profileName);
             p.ServerCfg.ServerCfgContent     = p.ServerCfg.ProcessFile();
             p.BasicCfg.BasicContent          = p.BasicCfg.ProcessFile();
             p.ArmaProfile.ArmaProfileContent = p.ArmaProfile.ProcessFile();
             currentProfiles.Add(p);
-            Properties.Settings.Default.Profiles = currentProfiles;
-            Properties.Settings.Default.Save();
-            MainWindow.Instance.LoadServerProfiles();
+            AppSettings.Current.Profiles = currentProfiles;
+            AppSettings.Current.Save();
+            Ui.Current.ReloadServerProfiles();
         }
 
-        internal static void AddServerProfile(ServerProfile profile)
+        public static void AddServerProfile(ServerProfile profile)
         {
-            var currentProfiles = Properties.Settings.Default.Profiles;
+            var currentProfiles = AppSettings.Current.Profiles;
             profile.GenerateNewId();
             currentProfiles.Add(profile);
-            Properties.Settings.Default.Profiles = currentProfiles;
-            Properties.Settings.Default.Save();
-            MainWindow.Instance.LoadServerProfiles();
+            AppSettings.Current.Profiles = currentProfiles;
+            AppSettings.Current.Save();
+            Ui.Current.ReloadServerProfiles();
         }
     }
 
@@ -92,12 +93,8 @@ namespace FASTER.Models
             set
             {
                 _name = value;
-                if (MainWindow.HasLoaded())
-                {
-                    var menuItem = MainWindow.Instance.IServerProfilesMenu.Items.Cast<ToggleButton>().FirstOrDefault(p => p.Name == _id);
-                    if (menuItem != null)
-                    { menuItem.Content = _name; }
-                }
+                if (Ui.Current.IsUiLoaded())
+                    Ui.Current.SyncProfileMenuName(_id, _name);
                 RaisePropertyChanged("Name");
             }
         }
@@ -422,7 +419,7 @@ namespace FASTER.Models
         {
             _id = $"_{Guid.NewGuid():N}";
             Name = name;
-            Executable = Path.Combine(Properties.Settings.Default.serverPath, "arma3server_x64.exe");
+            Executable = Path.Combine(AppSettings.Current.ServerPath, "arma3server_x64.exe");
             ServerCfg = new ServerCfg(){ Hostname = name};
             ArmaProfile = new Arma3Profile();
             BasicCfg = new BasicCfg();
@@ -431,7 +428,7 @@ namespace FASTER.Models
             BasicCfg.BasicContent = BasicCfg.ProcessFile();
 
             if (createFolder)
-            { Directory.CreateDirectory(Path.Combine(Properties.Settings.Default.serverPath, "Servers", Id)); }
+            { Directory.CreateDirectory(Path.Combine(AppSettings.Current.ServerPath, "Servers", Id)); }
         }
 
         public ServerProfile()
@@ -569,7 +566,7 @@ namespace FASTER.Models
 
         //INOTIFYPROPERTYCHANGED
         public event PropertyChangedEventHandler PropertyChanged;
-        internal void RaisePropertyChanged(string property)
+        public void RaisePropertyChanged(string property)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
             if(property != "CommandLine")

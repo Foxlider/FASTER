@@ -4,8 +4,6 @@ using FASTER.Views;
 
 using MahApps.Metro.Controls.Dialogs;
 
-using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
 using Microsoft.WindowsAPICodePack.Dialogs;
 
 using System;
@@ -123,9 +121,10 @@ namespace FASTER
             InitializeComponent();
 
             //Set font preferences
-            FontFamily = Fonts.SystemFontFamilies.FirstOrDefault(f => f.Source == Properties.Settings.Default.font);
+            FontFamily = Fonts.SystemFontFamilies.FirstOrDefault(f => f.Source == AppSettings.Current.Font);
 
             _instance = this;
+            Services.Ui.Current = new Services.WpfUiBridge();
             Version = GetVersion();
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
             NavigateToConsole();
@@ -148,10 +147,10 @@ namespace FASTER
 
         private async void MetroWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            var settings = Properties.Settings.Default;
+            var settings = AppSettings.Current;
 
-            if (!Directory.Exists(settings.modStagingDirectory))
-                Directory.CreateDirectory(settings.modStagingDirectory);
+            if (!Directory.Exists(settings.ModStagingDirectory))
+                Directory.CreateDirectory(settings.ModStagingDirectory);
             
             if (ConvertMods)
                 await ModConversion();
@@ -159,7 +158,7 @@ namespace FASTER
 
         private void MetroWindow_Closing(object sender, CancelEventArgs e)
         {
-            Properties.Settings.Default.Save();
+            AppSettings.Current.Save();
             SteamUpdaterViewModel.Instance.SteamClient?.Shutdown();
             SteamUpdaterViewModel.Instance.SteamClient?.Dispose();
             Application.Current.Shutdown();
@@ -188,7 +187,7 @@ namespace FASTER
             lastNavButton = nav;
 
             //Saving just in case
-            Properties.Settings.Default.Save();
+            AppSettings.Current.Save();
 
             //Get loading screen
             switch (nav.Name)
@@ -243,7 +242,6 @@ namespace FASTER
 
         private void ICreateProfileButton_Click(object sender, RoutedEventArgs e)
         {
-            Analytics.TrackEvent("Main - Creating new profile");
             INewProfileName.Text = INewProfileName.Text.Trim();
             if (string.IsNullOrEmpty(INewProfileName.Text))
             {
@@ -266,7 +264,7 @@ namespace FASTER
 
             try
             {
-                var temp = Properties.Settings.Default.Profiles.FirstOrDefault(s =>
+                var temp = AppSettings.Current.Profiles.FirstOrDefault(s =>
                     s.Id == ((ToggleButton) IServerProfilesMenu.SelectedItem).Name);
                 if (temp == null)
                 {
@@ -277,10 +275,9 @@ namespace FASTER
                 ServerProfile serverProfile = temp.Clone(); 
                 ServerProfileCollection.AddServerProfile(serverProfile);
             }
-            catch (Exception err)
+            catch (Exception)
             {
                 DisplayMessage("An error occured while cloning your profile");
-                Crashes.TrackError(err, new Dictionary<string, string> { { "Name", Properties.Settings.Default.steamUserName } });
             }
         }
 
@@ -291,7 +288,7 @@ namespace FASTER
 
             try
             {
-                var temp = Properties.Settings.Default.Profiles.FirstOrDefault(s =>
+                var temp = AppSettings.Current.Profiles.FirstOrDefault(s =>
                     s.Id == ((ToggleButton)IServerProfilesMenu.SelectedItem).Name);
                 if (temp == null)
                 {
@@ -301,10 +298,9 @@ namespace FASTER
 
                 ContentProfileViews.FirstOrDefault(p => p.Profile.Id == temp.Id)?.DeleteProfile();
             }
-            catch (Exception err)
+            catch (Exception)
             {
                 DisplayMessage("An error occured while cloning your profile");
-                Crashes.TrackError(err, new Dictionary<string, string> { { "Name", Properties.Settings.Default.steamUserName } });
             }
 
         }
@@ -411,12 +407,12 @@ namespace FASTER
 
         public void LoadServerProfiles()
         {
-            if (Properties.Settings.Default.Profiles == null)
+            if (AppSettings.Current.Profiles == null)
             {
-                Properties.Settings.Default.Profiles = new ServerProfileCollection();
-                Properties.Settings.Default.Save();
+                AppSettings.Current.Profiles = new ServerProfileCollection();
+                AppSettings.Current.Save();
             }
-            var currentProfilesNew = Properties.Settings.Default.Profiles;
+            var currentProfilesNew = AppSettings.Current.Profiles;
 
             Dispatcher?.Invoke(() => { IServerProfilesMenu.Items.Clear(); });
 
@@ -449,15 +445,15 @@ namespace FASTER
 
         private async Task ModConversion()
         {
-            var properties    = Properties.Settings.Default;
-            var modStagingDir = properties.modStagingDirectory;
+            var properties    = AppSettings.Current;
+            var modStagingDir = properties.ModStagingDirectory;
 
             var controller = await this.ShowProgressAsync("Please wait...", "Checking Drive Space...");
-            controller.Maximum = properties.steamMods.SteamMods.Count;
+            controller.Maximum = properties.SteamMods.SteamMods.Count;
             var progress = 0;
 
             long fullzize = 0;
-            foreach (var mod in properties.steamMods.SteamMods.Select(m => Path.Combine(Properties.Settings.Default.steamCMDPath, "steamapps", "workshop", "content", "107410", m.WorkshopId.ToString())).Concat(properties.localMods.Select(m => m.Path)))
+            foreach (var mod in properties.SteamMods.SteamMods.Select(m => Path.Combine(AppSettings.Current.SteamCMDPath, "steamapps", "workshop", "content", "107410", m.WorkshopId.ToString())).Concat(properties.LocalMods.Select(m => m.Path)))
             {
                 if(!Directory.Exists(mod))
                     continue;
@@ -472,8 +468,8 @@ namespace FASTER
 
             if (drive.AvailableFreeSpace < fullzize)
             {
-                properties.armaMods = null;
-                properties.firstRun = true;
+                properties.ArmaMods = null;
+                properties.FirstRun = true;
                 properties.Save();
 
                 var closing = 10000;
@@ -491,10 +487,10 @@ namespace FASTER
             }
                 
 
-            foreach (var steamMod in properties.steamMods.SteamMods)
+            foreach (var steamMod in properties.SteamMods.SteamMods)
             {
                 var newPath = Path.Combine(modStagingDir,                            steamMod.WorkshopId.ToString());
-                var oldPath = Path.Combine(Properties.Settings.Default.steamCMDPath, "steamapps", "workshop", "content", "107410", steamMod.WorkshopId.ToString());
+                var oldPath = Path.Combine(AppSettings.Current.SteamCMDPath, "steamapps", "workshop", "content", "107410", steamMod.WorkshopId.ToString());
                 if (!Directory.Exists(newPath))
                     Directory.CreateDirectory(newPath);
 
@@ -511,15 +507,15 @@ namespace FASTER
                     SteamLastUpdated = Convert.ToUInt64(steamMod.SteamLastUpdated),
                     Status           = ArmaModStatus.UpdateRequired
                 };
-                await Task.Run(() => properties.armaMods.AddSteamMod(newMod));
+                await Task.Run(() => properties.ArmaMods.AddSteamMod(newMod));
                 progress += 1;
                 controller.SetMessage($"Converting Steam Mods... {progress} / {controller.Maximum}");
                 controller.SetProgress(progress);
             }
 
-            properties.steamMods = new SteamModCollection();
+            properties.SteamMods = new SteamModCollection();
 
-            if (properties.localMods == null || properties.localMods.Count == 0)
+            if (properties.LocalMods == null || properties.LocalMods.Count == 0)
             {
                 await controller.CloseAsync();
                 properties.Save();
@@ -528,10 +524,10 @@ namespace FASTER
 
             var r = new Random();
             progress = 0;
-            controller.Maximum = properties.localMods.Count;
+            controller.Maximum = properties.LocalMods.Count;
             controller.SetMessage($"Converting Local Mods... {progress} / {controller.Maximum}");
             controller.SetProgress(progress);
-            foreach (var localMod in properties.localMods)
+            foreach (var localMod in properties.LocalMods)
             {
                 var modID   = (uint) (uint.MaxValue - r.Next(ushort.MaxValue/2));
                 var newPath = Path.Combine(modStagingDir, modID.ToString());
@@ -550,7 +546,7 @@ namespace FASTER
                     IsLocal          = true,
                     Status           = ArmaModStatus.Local
                 };
-                await Task.Run(() => properties.armaMods.AddSteamMod(newMod));
+                await Task.Run(() => properties.ArmaMods.AddSteamMod(newMod));
                 progress += 1;
                 controller.SetMessage($"Converting Local Mods... {progress} / {controller.Maximum}");
                 controller.SetProgress(progress * 100.0 / controller.Maximum );
