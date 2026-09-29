@@ -208,6 +208,14 @@ namespace FASTER.ViewModel
 
         internal void SaveProfile()
         {
+            var armaPath = Path.GetDirectoryName(Profile.Executable);
+
+            if(string.IsNullOrWhiteSpace(armaPath))
+            {
+                DisplayMessage("Arma executable is empty. Select the correct executable before saving your profile.");
+                return;
+            }
+
             string config        = Path.Combine(Profile.ArmaPath, "Servers", Profile.Id, "server_config.cfg");
             string basic         = Path.Combine(Profile.ArmaPath, "Servers", Profile.Id, "server_basic.cfg");
             string serverProfile = Path.Combine(Profile.ArmaPath, "Servers", Profile.Id, "users", Profile.Id, $"{Profile.Id}.Arma3Profile");
