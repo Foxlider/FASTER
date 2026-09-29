@@ -268,17 +268,17 @@ namespace FASTER.ViewModel
             tokenSource.Cancel();
         }
 
-        public void ModStagingDirClick()
+        public Task ModStagingDirClick()
         {
-            PickFolderInto(v => Parameters.ModStagingDirectory = v, Parameters.ModStagingDirectory);
+            return PickFolderInto(v => Parameters.ModStagingDirectory = v, Parameters.ModStagingDirectory);
         }
 
-        public void ServerDirClick()
+        public Task ServerDirClick()
         {
-            PickFolderInto(v => Parameters.InstallDirectory = v, Parameters.InstallDirectory);
+            return PickFolderInto(v => Parameters.InstallDirectory = v, Parameters.InstallDirectory);
         }
 
-        private static async void PickFolderInto(Action<string> assign, string current)
+        private static async Task PickFolderInto(Action<string> assign, string current)
         {
             string? path = await AppServices.Files.PickFolderAsync(current);
             if (path == null)

@@ -28,7 +28,7 @@ public sealed class AppSettings
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
         "FoxliCorp", "FASTER", "faster.json");
 
-    internal static string? PathOverrideForTests;
+    internal static string? PathOverrideForTests { get; set; }
 
     public string ServerPath { get; set; } = string.Empty;
     public string SteamCMDPath { get; set; } = string.Empty;
@@ -164,8 +164,7 @@ public sealed class AppSettings
     {
         lock (s_lock)
         {
-            // Model constructors must never trigger a nested load while
-            // deserializing; bail out with defaults instead of recursing.
+            // Model constructors must never trigger a nested load while deserializing, so bail out with defaults instead of recursing.
             if (s_loading) return new AppSettings();
             s_loading = true;
             try
@@ -179,7 +178,9 @@ public sealed class AppSettings
                     }
                 }
                 catch
-                { }
+                {
+                    // The settings file is corrupt or unreadable. Fall through to defaults plus the legacy import below.
+                }
 
                 var fresh = new AppSettings();
                 var imported = ImportLegacyUserConfig();
@@ -242,7 +243,9 @@ public sealed class AppSettings
                     }
                 }
                 catch
-                { }
+                {
+                    // One bad value in the old config must not kill the whole import, so skip it and keep going.
+                }
             }
 
             return result;

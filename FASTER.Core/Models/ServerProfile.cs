@@ -266,59 +266,74 @@ namespace FASTER.Models
 
                 RaisePropertyChanged("ProfileMods");
                 RaisePropertyChanged("FilteredProfileMods");
+                _filteredProfileModsStale = true;
             }
         }
+
+        private List<ProfileMod> _filteredProfileMods = new();
+        private bool _filteredProfileModsStale = true;
 
         public List<ProfileMod> FilteredProfileMods
         {
             get
             {
-                if (string.IsNullOrEmpty(ProfileModsFilter))
+                // The filtered view is cached and only recomputed when the mod list or one of the filter settings changes. Rebuilding the regex match on every binding read was wasteful and properties should not hand out a fresh copy on each access.
+                if (_filteredProfileModsStale)
                 {
-                    if (ProfileModsFilterIsInvalid)
-                    {
-                        ProfileModsFilterIsInvalid = false;
-                    }
-                    return new List<ProfileMod>(_profileMods);
+                    _filteredProfileMods = ComputeFilteredProfileMods();
+                    _filteredProfileModsStale = false;
                 }
+                return _filteredProfileMods;
+            }
+        }
 
-                var pattern = ProfileModsFilter;
-                if (!ProfileModsFilterIsRegex)
+        private List<ProfileMod> ComputeFilteredProfileMods()
+        {
+            if (string.IsNullOrEmpty(ProfileModsFilter))
+            {
+                if (ProfileModsFilterIsInvalid)
                 {
-                    pattern = Regex.Replace(pattern, @"[\\\{\}\*\+\?\|\^\$\.\[\]\(\)]", "\\$&");
+                    ProfileModsFilterIsInvalid = false;
                 }
+                return new List<ProfileMod>(_profileMods);
+            }
 
-                if (ProfileModsFilterIsWholeWord)
-                {
-                    if (!Regex.IsMatch(pattern[0].ToString(), @"\B"))
-                    {
-                        pattern = $"\\b{pattern}";
-                    }
-                    if (!Regex.IsMatch(pattern[pattern.Length - 1].ToString(), @"\B"))
-                    {
-                        pattern = $"{pattern}\\b";
-                    }
-                }
+            var pattern = ProfileModsFilter;
+            if (!ProfileModsFilterIsRegex)
+            {
+                pattern = Regex.Replace(pattern, @"[\\\{\}\*\+\?\|\^\$\.\[\]\(\)]", "\\$&");
+            }
 
-                var options = ProfileModsFilterIsCaseSensitive ? RegexOptions.None : RegexOptions.IgnoreCase;
+            if (ProfileModsFilterIsWholeWord)
+            {
+                if (!Regex.IsMatch(pattern[0].ToString(), @"\B"))
+                {
+                    pattern = $"\\b{pattern}";
+                }
+                if (!Regex.IsMatch(pattern[pattern.Length - 1].ToString(), @"\B"))
+                {
+                    pattern = $"{pattern}\\b";
+                }
+            }
 
-                try
+            var options = ProfileModsFilterIsCaseSensitive ? RegexOptions.None : RegexOptions.IgnoreCase;
+
+            try
+            {
+                var filteredProfileMods = _profileMods.Where(m => Regex.IsMatch(m.Name, pattern, options)).ToList();
+                if (ProfileModsFilterIsInvalid)
                 {
-                    var filteredProfileMods = _profileMods.Where(m => Regex.IsMatch(m.Name, pattern, options)).ToList();
-                    if (ProfileModsFilterIsInvalid)
-                    {
-                        ProfileModsFilterIsInvalid = false;
-                    }
-                    return filteredProfileMods;
+                    ProfileModsFilterIsInvalid = false;
                 }
-                catch (ArgumentException)
+                return filteredProfileMods;
+            }
+            catch (ArgumentException)
+            {
+                if (!ProfileModsFilterIsInvalid)
                 {
-                    if (!ProfileModsFilterIsInvalid)
-                    {
-                        ProfileModsFilterIsInvalid = true;
-                    }
-                    return new List<ProfileMod>();
+                    ProfileModsFilterIsInvalid = true;
                 }
+                return new List<ProfileMod>();
             }
         }
 
@@ -330,6 +345,7 @@ namespace FASTER.Models
                 _profileModsFilter = value;
                 RaisePropertyChanged("ProfileModsFilter");
                 RaisePropertyChanged("FilteredProfileMods");
+                _filteredProfileModsStale = true;
             }
         }
 
@@ -341,6 +357,7 @@ namespace FASTER.Models
                 _profileModsFilterIsCaseSensitive = value;
                 RaisePropertyChanged("ProfileModsFilterIsCaseSensitive");
                 RaisePropertyChanged("FilteredProfileMods");
+                _filteredProfileModsStale = true;
             }
         }
 
@@ -352,6 +369,7 @@ namespace FASTER.Models
                 _profileModsFilterIsWholeWord = value;
                 RaisePropertyChanged("ProfileModsFilterIsWholeWord");
                 RaisePropertyChanged("FilteredProfileMods");
+                _filteredProfileModsStale = true;
             }
         }
 
@@ -363,6 +381,7 @@ namespace FASTER.Models
                 _profileModsFilterIsRegex = value;
                 RaisePropertyChanged("ProfileModsFilterIsRegex");
                 RaisePropertyChanged("FilteredProfileMods");
+                _filteredProfileModsStale = true;
             }
         }
 

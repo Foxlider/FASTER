@@ -149,3 +149,53 @@ public class ModelTests
         }
     }
 }
+
+[TestFixture]
+public class ProfileFilterTests
+{
+    private static ServerProfile ProfileWithMods()
+    {
+        var profile = new ServerProfile("filter-test", createFolder: false);
+        profile.ProfileMods = new List<ProfileMod>
+        {
+            new() { Id = 1, Name = "CBA_A3" },
+            new() { Id = 2, Name = "ACE3" },
+            new() { Id = 3, Name = "CBA_A3_Optional" }
+        };
+        return profile;
+    }
+
+    [Test]
+    public void EmptyFilterReturnsEveryMod()
+    {
+        var profile = ProfileWithMods();
+        Assert.That(profile.FilteredProfileMods.Count, Is.EqualTo(3));
+    }
+
+    [Test]
+    public void TextFilterNarrowsTheList()
+    {
+        var profile = ProfileWithMods();
+        profile.ProfileModsFilter = "ACE";
+        Assert.That(profile.FilteredProfileMods.Select(m => m.Name), Is.EqualTo(new[] { "ACE3" }));
+    }
+
+    [Test]
+    public void BadRegexEmptiesTheListAndRaisesTheFlag()
+    {
+        var profile = ProfileWithMods();
+        profile.ProfileModsFilterIsRegex = true;
+        profile.ProfileModsFilter = "([";
+        Assert.That(profile.FilteredProfileMods, Is.Empty);
+        Assert.That(profile.ProfileModsFilterIsInvalid, Is.True);
+    }
+
+    [Test]
+    public void RepeatedReadsReturnTheSameListUntilSomethingChanges()
+    {
+        var profile = ProfileWithMods();
+        Assert.That(ReferenceEquals(profile.FilteredProfileMods, profile.FilteredProfileMods), Is.True);
+        profile.ProfileModsFilter = "CBA";
+        Assert.That(profile.FilteredProfileMods.Count, Is.EqualTo(2));
+    }
+}

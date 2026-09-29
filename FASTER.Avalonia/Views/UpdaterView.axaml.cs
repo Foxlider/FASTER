@@ -19,9 +19,9 @@ public partial class UpdaterView : UserControl
 
     private async void Update_Click(object? sender, RoutedEventArgs e) => await ViewModel.UpdateClick();
 
-    private void ServerDir_Click(object? sender, RoutedEventArgs e) => ViewModel.ServerDirClick();
+    private async void ServerDir_Click(object? sender, RoutedEventArgs e) => await ViewModel.ServerDirClick();
 
-    private void ModStagingDir_Click(object? sender, RoutedEventArgs e) => ViewModel.ModStagingDirClick();
+    private async void ModStagingDir_Click(object? sender, RoutedEventArgs e) => await ViewModel.ModStagingDirClick();
 
     private void PasswordBox_TextChanged(object? sender, TextChangedEventArgs e)
     {

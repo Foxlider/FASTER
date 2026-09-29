@@ -17,7 +17,6 @@ namespace FASTER.Avalonia.ViewModels;
 
 public sealed class MainViewModel : INotifyPropertyChanged
 {
-    private Window? _window;
     private object? _currentView;
     private string _statusMessage = string.Empty;
 
@@ -60,7 +59,6 @@ public sealed class MainViewModel : INotifyPropertyChanged
 
     public void Attach(Window window)
     {
-        _window = window;
         var bridge = new AvaUiBridge(this);
         Ui.Current = bridge;
         AppServices.Dialogs = new AvaDialogService(window);

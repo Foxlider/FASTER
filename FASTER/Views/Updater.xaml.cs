@@ -24,14 +24,16 @@ namespace FASTER.Views
         {
             await ((SteamUpdaterViewModel)DataContext)?.UpdateClick()!;
         }
-        private void ServerDir_Click(object sender, RoutedEventArgs e)
+        private async void ServerDir_Click(object sender, RoutedEventArgs e)
         {
-            ((SteamUpdaterViewModel) DataContext)?.ServerDirClick();
+            if (DataContext is SteamUpdaterViewModel vm)
+                await vm.ServerDirClick();
         }
 
-        private void ModStagingDir_Click(object sender, RoutedEventArgs e)
+        private async void ModStagingDir_Click(object sender, RoutedEventArgs e)
         {
-            ((SteamUpdaterViewModel) DataContext)?.ModStagingDirClick();
+            if (DataContext is SteamUpdaterViewModel vm)
+                await vm.ModStagingDirClick();
         }
 
         private void PasswordBox_OnPasswordChanged(object sender, RoutedEventArgs e)

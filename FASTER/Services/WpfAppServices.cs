@@ -51,7 +51,10 @@ namespace FASTER.Services
             {
                 try
                 { Clipboard.SetDataObject(text); }
-                catch (System.Runtime.InteropServices.COMException) { }
+                catch (System.Runtime.InteropServices.COMException)
+                {
+                    // The clipboard is locked by another app and the fallback copy failed too. There is nothing sensible to do here, the user can copy again.
+                }
             }
             return Task.CompletedTask;
         }
@@ -85,7 +88,8 @@ namespace FASTER.Services
         public Task<string?> PickModPresetFileAsync()
         {
             OpenFileDialog dialog = new() { Filter = "Arma 3 Mod Preset|*.html" };
-            return Task.FromResult(dialog.ShowDialog() == true ? dialog.FileName : null);
+            bool picked = dialog.ShowDialog().GetValueOrDefault();
+            return Task.FromResult(picked ? dialog.FileName : null);
         }
 
         public Task<string?> PickFolderAsync(string current)

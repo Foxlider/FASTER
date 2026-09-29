@@ -33,9 +33,7 @@ public sealed class DefaultPlatformServices : IPlatformServices
         var name = Path.GetFileName(path);
         if (string.IsNullOrEmpty(name) || !name.Contains("arma3server", StringComparison.OrdinalIgnoreCase))
             return false;
-        return s_isWindows
-            ? name.EndsWith(".exe", StringComparison.OrdinalIgnoreCase)
-            : true;
+        return !s_isWindows || name.EndsWith(".exe", StringComparison.OrdinalIgnoreCase);
     }
 
     public void OpenFolder(string path)
@@ -43,14 +41,17 @@ public sealed class DefaultPlatformServices : IPlatformServices
         ArgumentException.ThrowIfNullOrWhiteSpace(path);
         if (s_isWindows)
         {
-            Process.Start(new ProcessStartInfo { FileName = "explorer.exe", Arguments = path });
+            // Resolve explorer outside of PATH so a planted binary earlier on PATH cannot get picked up instead.
+            string explorer = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), "explorer.exe");
+            Process.Start(new ProcessStartInfo { FileName = explorer, Arguments = path });
             return;
         }
         if (OperatingSystem.IsMacOS())
         {
-            Process.Start("open", path);
+            Process.Start("/usr/bin/open", path);
             return;
         }
-        Process.Start("xdg-open", path);
+        // xdg-utils installs here on every mainstream desktop distro.
+        Process.Start("/usr/bin/xdg-open", path);
     }
 }

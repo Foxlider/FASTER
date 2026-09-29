@@ -50,10 +50,8 @@ internal sealed class AvaDialogService : IDialogService
             return dialog;
         });
 
-    // SteamKit invokes auth callbacks on its own network thread, and Avalonia
-    // windows must be created and shown on the UI thread. Calling ShowDialog
-    // from a background thread never shows the popup, which left users staring
-    // at the prompt text in the read-only console box with no way to answer.
+    // SteamKit fires auth callbacks on its own network thread, but Avalonia windows have to open on the UI thread.
+    // Calling ShowDialog from a background thread silently shows nothing, so users were stuck staring at the prompt in the read-only console box with no way to answer.
     private static Task<T> OnUiAsync<T>(Func<Task<T>> fn)
     {
         if (Dispatcher.UIThread.CheckAccess())
