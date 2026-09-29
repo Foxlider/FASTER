@@ -146,10 +146,10 @@
 
   <!-- Blue-bar expanders for config outputs and advanced sections -->
   <Style Selector="Expander.bar /template/ ToggleButton#ExpanderHeader">
-    <Setter Property="Background" Value="Red" />
+    <Setter Property="Background" Value="#CC119EDA" />
     <Setter Property="Foreground" Value="White" />
     <Setter Property="FontWeight" Value="Bold" />
-    <Setter Property="Padding" Value="8,5" />
+    <Setter Property="Padding" Value="8,5,8,2" />
   </Style>
   <Style Selector="Expander.bar /template/ ToggleButton#ExpanderHeader:pointerover">
     <Setter Property="Background" Value="#E0119EDA" />

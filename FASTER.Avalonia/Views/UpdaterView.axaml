@@ -15,6 +15,7 @@
             <TextBox Grid.Row="1" Grid.Column="0" Text="{Binding Parameters.ModStagingDirectory}"
                      Watermark="Mod Staging Directory" Margin="0,5,5,5" />
             <Button Grid.Row="1" Grid.Column="1" Classes="accent" Margin="0,5,0,5" Padding="10,2"
+                     VerticalAlignment="Stretch" VerticalContentAlignment="Center"
                     Click="ModStagingDir_Click" ToolTip.Tip="Browse">
               <materialIcons:MaterialIcon Kind="Folder" Width="18" Height="18" />
             </Button>
@@ -24,7 +25,8 @@
               <TextBox Grid.Column="0" Watermark="Password" PasswordChar="*"
                        TextChanged="PasswordBox_TextChanged" Margin="0,0,5,0"
                        x:Name="PasswordBox" />
-              <Button Grid.Column="1" Click="PasswordReveal_Click" ToolTip.Tip="Show password">
+              <Button Grid.Column="1" Click="PasswordReveal_Click" ToolTip.Tip="Show password"
+                VerticalAlignment="Stretch" VerticalContentAlignment="Center">
                 <materialIcons:MaterialIcon x:Name="PasswordEye" Kind="Eye" Width="18" Height="18" />
               </Button>
             </Grid>
@@ -36,7 +38,8 @@
             <Grid Grid.Row="1" ColumnDefinitions="*,Auto" Margin="0,5">
               <TextBox Grid.Column="0" Text="{Binding Parameters.InstallDirectory}"
                        Watermark="Install Directory" Margin="0,0,5,0" />
-              <Button Grid.Column="1" Classes="accent" Padding="10,2" Click="ServerDir_Click" ToolTip.Tip="Browse">
+              <Button Grid.Column="1" Classes="accent" Padding="10,2" VerticalAlignment="Stretch"
+                VerticalContentAlignment="Center" Click="ServerDir_Click" ToolTip.Tip="Browse">
                 <materialIcons:MaterialIcon Kind="Folder" Width="18" Height="18" />
               </Button>
             </Grid>

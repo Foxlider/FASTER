@@ -38,8 +38,9 @@
           <DockPanel Grid.Row="0" Margin="8,4">
             <TextBlock Text="Server Profiles" FontWeight="Bold" FontSize="14" VerticalAlignment="Center" />
             <Button Name="AddProfileButton" Classes="accent" Content="+" FontWeight="Bold"
-                    Width="28" Height="28" Padding="0" HorizontalAlignment="Right"
-                    Click="AddProfileButton_Click" />
+                    FontSize="20" Width="28" Height="28" Padding="0,3,0,0"
+                    HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                    HorizontalAlignment="Right" Click="AddProfileButton_Click" />
           </DockPanel>
           <ListBox Grid.Row="1" Name="ProfilesList" Classes="side" ItemsSource="{Binding Profiles}"
                    Margin="8,0,8,4" SelectionChanged="ProfilesList_SelectionChanged">

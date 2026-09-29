@@ -70,6 +70,8 @@ public sealed class AppSettings
     {
         lock (s_lock)
         {
+            // Saving while the file is still being loaded would persist half-loaded defaults over good data, so ignore it.
+            if (s_loading) return;
             var path = SettingsPath;
             Directory.CreateDirectory(Path.GetDirectoryName(path) ?? ".");
             File.WriteAllText(path, JsonSerializer.Serialize(this, s_json));
