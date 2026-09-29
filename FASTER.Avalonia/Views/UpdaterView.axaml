@@ -15,9 +15,9 @@
                  Watermark="Mod Staging Directory" Margin="5" />
         <Button Grid.Row="2" Grid.Column="1" Content="..." Margin="5" Click="ModStagingDir_Click" />
         <TextBox Grid.Row="3" Grid.ColumnSpan="2" Text="{Binding Parameters.Username}"
-                 Watermark="User Name" Margin="10,30,10,10" />
+                 Watermark="User Name" Margin="10" />
         <TextBox Grid.Row="4" Grid.ColumnSpan="2" Watermark="Password" PasswordChar="*"
-                 Margin="10,10,10,30" TextChanged="PasswordBox_TextChanged"
+                 Margin="10" TextChanged="PasswordBox_TextChanged"
                  x:Name="PasswordBox" />
       </Grid>
     </Border>
