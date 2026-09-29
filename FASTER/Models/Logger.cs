@@ -20,6 +20,16 @@ namespace FASTER.Models
         public static void Log(string message)
         {
             if (!IsEnabled) return;
+            WriteLine(message);
+        }
+
+        // Always writes, regardless of the debug-logging setting. Reserved for
+        // fatal/unhandled-exception logging so crashes are never silently lost.
+        public static void LogCritical(string message)
+        { WriteLine(message); }
+
+        private static void WriteLine(string message)
+        {
             try
             {
                 Directory.CreateDirectory(Path.GetDirectoryName(LogPath)!);
