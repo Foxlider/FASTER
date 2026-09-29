@@ -42,7 +42,7 @@ namespace FASTER.Views
             Analytics.TrackEvent("About - Clicked Discord", new Dictionary<string, string> {
                 { "Name", Properties.Settings.Default.steamUserName }
             });
-            Functions.OpenBrowser("https://discord.gg/2BUuZa3");
+            Functions.OpenBrowser("https://discord.gg/SJxnTNuNJN");
         }
 
         private void IGitHubButton_Click(object sender, RoutedEventArgs e)

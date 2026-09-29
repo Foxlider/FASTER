@@ -28,7 +28,7 @@ If applicable, add screenshots to help explain your problem.
 
 **OS Version (required):**  
  - OS: [e.g. Windows 10 1903]
- - FASTER Version [e.g. 1.8b]
+ - FASTER Version [e.g. 1.9g]
 
 **Additional context**  
 Add any other context about the problem here.

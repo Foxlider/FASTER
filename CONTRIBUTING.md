@@ -14,7 +14,7 @@ Reading and following these guidelines will help us make the contribution proces
 
 ## Code of Conduct
 
-We take our open source community seriously and hold ourselves and other contributors to high standards of communication. By participating and contributing to this project, you agree to uphold our [Code of Conduct](https://github.com/Foxlider/FASTER/blob/master/CODE-OF-CONDUCT.md).
+We take our open source community seriously and hold ourselves and other contributors to high standards of communication. By participating and contributing to this project, you agree to uphold our [Code of Conduct](https://github.com/Foxlider/FASTER/blob/master/CODE_OF_CONDUCT.md).
 
 ## Getting Started
 
@@ -55,4 +55,4 @@ The changes will be added to the version when the current update is merged back 
 
 ## Getting Help
 
-Join us in the [FASTER Community](https://discord.gg/2BUuZa3) and post your question there in the correct category with a descriptive tag.
+Join us in the [FASTER Community](https://discord.gg/SJxnTNuNJN) and post your question there in the correct category with a descriptive tag.

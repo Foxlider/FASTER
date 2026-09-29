@@ -29,7 +29,7 @@
                 </Grid.RowDefinitions>
                 <TextBlock Grid.Row="0"  Name="IVersionLabel" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="16">Version:</TextBlock>
                 <TextBlock Grid.Row="1" Style="{DynamicResource MahApps.Styles.TextBlock.Watermark}" Margin="16,0" TextWrapping="Wrap" FontSize="13" TextAlignment="Justify">
-                    FASTER is an extended rewrite of FAST2, which is itself a rewrite of FAST ; server tool made by Flax to manage Arma 3 servers. This version uses the latest .NET Core 3.0 in C# which is far more stable and maintainable than the VisualBasic version used by Flax.
+                    FASTER is an extended rewrite of FAST2, which is itself a rewrite of FAST ; server tool made by Flax to manage Arma 3 servers. This version uses the latest .NET 8.0 in C# which is far more stable and maintainable than the VisualBasic version used by Flax.
                 </TextBlock>
                 <TextBlock Grid.Row="2" Style="{DynamicResource MahApps.Styles.TextBlock.Watermark}" Margin="16,12,16,0" TextWrapping="Wrap" FontSize="13" TextAlignment="Justify">
                     Thanks go out to Flax (big thumbs up !) for his amazing server tool and programming. Also to BI for giving us an awesome game to play with and break.

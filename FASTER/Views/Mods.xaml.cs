@@ -37,7 +37,8 @@ namespace FASTER.Views
 
         private async void UpdateSelectedMods(object sender, RoutedEventArgs e)
         {
-            await ((ModsViewModel) DataContext)?.UpdateSelectedMods();
+            if (DataContext is ModsViewModel vm)
+                await vm.UpdateSelectedMods();
         }
 
         private void DeleteSelectedMods(object sender, RoutedEventArgs e)
@@ -59,32 +60,55 @@ namespace FASTER.Views
 
         private async void AddSteamMod_Click(object sender, RoutedEventArgs e)
         {
-            await ((ModsViewModel) DataContext)?.AddSteamMod();
+            if (DataContext is ModsViewModel vm)
+                await vm.AddSteamMod();
         }
 
-        private void AddLocalMod_Click(object sender, RoutedEventArgs e)
+        private async void AddLocalMod_Click(object sender, RoutedEventArgs e)
         {
-            ((ModsViewModel) DataContext)?.AddLocalModAsync();
+            if (DataContext is ModsViewModel vm)
+                await vm.AddLocalModAsync();
         }
 
         private async void ImportLauncherFile_Click(object sender, RoutedEventArgs e)
         {
-            await ((ModsViewModel)DataContext)?.OpenLauncherFile();
+            if (DataContext is ModsViewModel vm)
+                await vm.OpenLauncherFile();
         }
 
-        private void CheckForUpdates_Click(object sender, RoutedEventArgs e)
+        private async void CheckForUpdates_Click(object sender, RoutedEventArgs e)
         {
-            ((ModsViewModel) DataContext)?.CheckForUpdates();
+            if (DataContext is ModsViewModel vm)
+                await vm.CheckForUpdates();
         }
 
-        private void UpdateAll_Click(object sender, RoutedEventArgs e)
+        private async void UpdateAll_Click(object sender, RoutedEventArgs e)
         {
-            ((ModsViewModel) DataContext)?.UpdateAll();
+            if (DataContext is ModsViewModel vm)
+                await vm.UpdateAll();
         }
 		
 		private async void DeleteAll_Click(object sender, RoutedEventArgs e)
         {
-            await ((ModsViewModel) DataContext)?.DeleteAllMods();
+            if (DataContext is ModsViewModel vm)
+                await vm.DeleteAllMods();
+        }
+
+        private async void PurgeAndReinstallAll_Click(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is ModsViewModel vm)
+                await vm.PurgeAndReinstallAll();
+        }
+
+        private void PurgeAndReinstallSelected_Click(object sender, RoutedEventArgs e)
+        {
+            ((ModsViewModel) DataContext)?.PurgeAndReinstallSelectedMods();
+        }
+
+        private async void PurgeUnusedMods_Click(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is ModsViewModel vm)
+                await vm.PurgeUnusedMods();
         }
     }
 }

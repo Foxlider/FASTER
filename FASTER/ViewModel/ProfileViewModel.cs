@@ -34,6 +34,7 @@ namespace FASTER.ViewModel
         public ObservableCollection<string> MissionDifficulties { get; } = new ObservableCollection<string> { "Recruit", "Regular", "Veteran", "Custom" };
         public ObservableCollection<string> PerfPresets         { get; } = new ObservableCollection<string>(BasicCfgArrays.PerfPresets);
         public ObservableCollection<double> TerrainGrids        { get; } = new ObservableCollection<double>(BasicCfgArrays.TerrainGrids);
+        public ObservableCollection<string> Languages           { get; } = new ObservableCollection<string>(BasicCfgArrays.Languages);
 
         internal void DisplayMessage(string msg)
         {
@@ -200,15 +201,21 @@ namespace FASTER.ViewModel
             Properties.Settings.Default.Profiles.Remove(Profile);
             Properties.Settings.Default.Save();
             MainWindow.Instance.ContentProfileViews.Remove(MainWindow.Instance.ContentProfileViews.Find(p => p.Profile.Id == Profile.Id));
-            var menuItem = MainWindow.Instance.IServerProfilesMenu.Items.Cast<ToggleButton>().FirstOrDefault(p => p.Name == Profile.Id);
-            if(menuItem != null)
-                MainWindow.Instance.IServerProfilesMenu.Items.Remove(menuItem);
 
             MainWindow.Instance.NavigateToConsole();
+            MainWindow.Instance.LoadServerProfiles();
         }
 
         internal void SaveProfile()
         {
+            var armaPath = Path.GetDirectoryName(Profile.Executable);
+
+            if(string.IsNullOrWhiteSpace(armaPath))
+            {
+                DisplayMessage("Arma executable is empty. Select the correct executable before saving your profile.");
+                return;
+            }
+
             string config        = Path.Combine(Profile.ArmaPath, "Servers", Profile.Id, "server_config.cfg");
             string basic         = Path.Combine(Profile.ArmaPath, "Servers", Profile.Id, "server_basic.cfg");
             string serverProfile = Path.Combine(Profile.ArmaPath, "Servers", Profile.Id, "users", Profile.Id, $"{Profile.Id}.Arma3Profile");
@@ -224,9 +231,9 @@ namespace FASTER.ViewModel
                 File.WriteAllLines(serverProfile, Profile.ArmaProfile.ArmaProfileContent.Replace("\r", "").Split('\n'));
             }
             catch
-            { DisplayMessage("Could not write the config files. Please ensure the server is not running and retry."); }
-
-            var armaPath = Path.GetDirectoryName(Profile.Executable);
+            { DisplayMessage("Could not write the config files. Please ensure the server is not running and retry."); 
+            return;
+            }
 
             if(string.IsNullOrWhiteSpace(armaPath))
             {
@@ -320,6 +327,54 @@ namespace FASTER.ViewModel
             {
                 DisplayMessage($"Some mods in the preset were not found: \n{string.Join("\n\t", notFound)}");
             }
+        }
+
+        internal void SelectBePath()
+        {
+            var dialog = new CommonOpenFileDialog
+            {
+                Title                     = "Select the BattlEye directory",
+                IsFolderPicker            = true,
+                AddToMostRecentlyUsedList = false,
+                AllowNonFileSystemItems   = false,
+                EnsureFileExists          = false,
+                EnsurePathExists          = true,
+                EnsureReadOnly            = false,
+                EnsureValidNames          = true,
+                Multiselect               = false,
+                ShowPlacesList            = true
+            };
+
+            if (dialog.ShowDialog() != CommonFileDialogResult.Ok) return;
+
+            if (dialog.FileName != null)
+            { Profile.BePath = dialog.FileName; }
+            else
+            { MessageBox.Show("Please enter a valid BattlEye directory"); }
+        }
+
+        internal void SelectKeysFolder()
+        {
+            var dialog = new CommonOpenFileDialog
+            {
+                Title                     = "Select the keys directory",
+                IsFolderPicker            = true,
+                AddToMostRecentlyUsedList = false,
+                AllowNonFileSystemItems   = false,
+                EnsureFileExists          = false,
+                EnsurePathExists          = true,
+                EnsureReadOnly            = false,
+                EnsureValidNames          = true,
+                Multiselect               = false,
+                ShowPlacesList            = true
+            };
+
+            if (dialog.ShowDialog() != CommonFileDialogResult.Ok) return;
+
+            if (dialog.FileName != null)
+            { Profile.KeysFolder = dialog.FileName; }
+            else
+            { MessageBox.Show("Please enter a valid keys directory"); }
         }
 
         internal void SelectServerFile()

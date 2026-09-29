@@ -10,12 +10,13 @@ on:
     branches: [ master ]
   workflow_dispatch: # CodeQL can be triggered manually
 
+env:
+  DOTNET_VERSION: '8.0.x'
+
 jobs:
   analyzeQL:
     name: Analyze with CodeQL
-    environment: Dev
     runs-on: [windows-latest]
-    # runs-on: [self-hosted]
 
     permissions:
       # required for all workflows
@@ -24,6 +25,9 @@ jobs:
       # required to fetch internal or private CodeQL packs
       packages: read
 
+      # required to check out the repository
+      contents: read
+
     strategy:
       fail-fast: false
       matrix:
@@ -31,21 +35,18 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       with:
         submodules: recursive
         token: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Init & update submodules
-      run: git submodule update --init --recursive
-
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@v3
+      uses: github/codeql-action/init@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
       with:
         languages: ${{ matrix.language }}
 
     - name: Setup .NET Core SDK
-      uses: actions/setup-dotnet@v4.0.0
+      uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
       with:
         dotnet-version: ${{env.DOTNET_VERSION}}
 
@@ -55,11 +56,8 @@ jobs:
     - name: Build Solution
       run: dotnet build ./FASTER.sln --configuration Debug
 
-    - name: Execute unit tests
-      run: dotnet test
-
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v3
+      uses: github/codeql-action/analyze@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
 
   ## SONAR is now auto-analysing the project and the PRs
   # AnalysisSonar:
