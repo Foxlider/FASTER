@@ -7,8 +7,20 @@
   <UserControl.Resources>
     <converters:FolderSizeConverter x:Key="SizeConverter" />
   </UserControl.Resources>
-  <Grid RowDefinitions="Auto,Auto,*" Margin="8">
-    <Grid Grid.Row="0" ColumnDefinitions="*,*" Margin="0,0,0,8">
+  <Grid RowDefinitions="Auto,Auto,Auto,*" Margin="8">
+    <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="8" Margin="0,0,0,8"
+                HorizontalAlignment="Right" VerticalAlignment="Center">
+      <TextBlock Text="Refresh interval" VerticalAlignment="Center" />
+      <ComboBox x:Name="IntervalBox" SelectedIndex="1" SelectionChanged="IntervalBox_SelectionChanged"
+                MinWidth="110">
+        <ComboBoxItem Content="250 ms" />
+        <ComboBoxItem Content="500 ms" />
+        <ComboBoxItem Content="1 s" />
+        <ComboBoxItem Content="2 s" />
+        <ComboBoxItem Content="5 s" />
+      </ComboBox>
+    </StackPanel>
+    <Grid Grid.Row="1" ColumnDefinitions="*,*" Margin="0,0,0,8">
       <StackPanel Grid.Column="0" Margin="0,0,8,0" Spacing="4">
         <TextBlock Text="CPU" FontWeight="Bold" />
         <ProgressBar x:Name="CpuBar" Minimum="0" Maximum="100" Height="20" />
@@ -20,9 +32,9 @@
         <TextBlock x:Name="RamLabel" Text="0 B" />
       </StackPanel>
     </Grid>
-    <lvc:CartesianChart Grid.Row="1" Height="160" x:Name="CpuChart"
+    <lvc:CartesianChart Grid.Row="2" Height="160" x:Name="CpuChart"
                         TooltipPosition="Hidden" />
-    <Grid Grid.Row="2" RowDefinitions="Auto,*">
+    <Grid Grid.Row="3" RowDefinitions="Auto,*">
       <WrapPanel Margin="0,8">
         <Button Content="Rescan" Margin="0,0,8,0" Click="Rescan_Click" />
         <Button Content="Kill all" Click="KillAll_Click" />

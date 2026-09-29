@@ -21,7 +21,8 @@ public partial class ServerStatusView : UserControl
         OperatingSystem.IsWindows() ? new WindowsSystemMetrics() : new LinuxSystemMetrics();
 
     private readonly ObservableCollection<double> _cpuHistory = new();
-    private readonly DispatcherTimer _timer = new() { Interval = TimeSpan.FromSeconds(1) };
+    private readonly DispatcherTimer _timer = new() { Interval = TimeSpan.FromMilliseconds(500) };
+    private static readonly int[] s_intervalsMs = [250, 500, 1000, 2000, 5000];
 
     public ServerStatusView()
     {
@@ -65,6 +66,20 @@ public partial class ServerStatusView : UserControl
         {
             // Counters can fail on some machines; the view simply keeps old values.
         }
+    }
+
+    private void IntervalBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
+    {
+        // Sender is used instead of the named control: this also fires while
+        // the view is still loading and the generated field is not set yet.
+        if (sender is not ComboBox box)
+            return;
+        int index = box.SelectedIndex;
+        if (index < 0 || index >= s_intervalsMs.Length)
+            return;
+        _timer.Stop();
+        _timer.Interval = TimeSpan.FromMilliseconds(s_intervalsMs[index]);
+        _timer.Start();
     }
 
     private void Rescan_Click(object? sender, RoutedEventArgs e) => RefreshServers();

@@ -5,47 +5,50 @@
   <UserControl.Resources>
     <converters:BoolNegationConverter x:Key="Not" />
   </UserControl.Resources>
-  <Grid ColumnDefinitions="*,2*" RowDefinitions="*,Auto" Margin="5">
-    <Border Grid.Column="0" Grid.Row="0" Margin="5" Padding="10" BorderThickness="1"
-            BorderBrush="{DynamicResource SystemControlForegroundBaseMediumLowBrush}">
-      <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto">
-        <TextBlock Grid.ColumnSpan="2" Text="Mod Installer Settings" FontWeight="Bold" Margin="2" />
-        <Separator Grid.ColumnSpan="2" Grid.Row="0" VerticalAlignment="Bottom" />
-        <TextBox Grid.Row="2" Grid.Column="0" Text="{Binding Parameters.ModStagingDirectory}"
-                 Watermark="Mod Staging Directory" Margin="5" />
-        <Button Grid.Row="2" Grid.Column="1" Content="..." Margin="5" Click="ModStagingDir_Click" />
-        <TextBox Grid.Row="3" Grid.ColumnSpan="2" Text="{Binding Parameters.Username}"
-                 Watermark="User Name" Margin="10" />
-        <TextBox Grid.Row="4" Grid.ColumnSpan="2" Watermark="Password" PasswordChar="*"
-                 Margin="10" TextChanged="PasswordBox_TextChanged"
-                 x:Name="PasswordBox" />
-      </Grid>
-    </Border>
-    <Border Grid.Column="0" Grid.Row="1" Margin="5" Padding="10" BorderThickness="1"
-            BorderBrush="{DynamicResource SystemControlForegroundBaseMediumLowBrush}">
-      <Grid RowDefinitions="Auto,Auto,Auto,Auto,*">
-        <TextBlock Text="Arma 3 Settings" FontWeight="Bold" Margin="2" />
-        <Grid Grid.Row="1" ColumnDefinitions="*,Auto" Margin="5">
-          <TextBox Grid.Column="0" Text="{Binding Parameters.InstallDirectory}"
-                   Watermark="Install Directory" Margin="5" />
-          <Button Grid.Column="1" Content="..." Margin="5" Click="ServerDir_Click" />
-        </Grid>
-        <ToggleSwitch Grid.Row="2" Content="Profiling" IsChecked="{Binding Parameters.UsingPerfBinaries}" Margin="10,5" />
-        <StackPanel Grid.Row="3" Margin="10" Spacing="4">
-          <CheckBox IsChecked="{Binding Parameters.UsingContactDlc}" Content="Contact DLC" />
-          <CheckBox IsChecked="{Binding Parameters.UsingGMDlc}" Content="GM DLC" />
-          <CheckBox IsChecked="{Binding Parameters.UsingPFDlc}" Content="Prairie Fire DLC" />
-          <CheckBox IsChecked="{Binding Parameters.UsingCSLADlc}" Content="CSLA DLC" />
-          <CheckBox IsChecked="{Binding Parameters.UsingWSDlc}" Content="Western Sahara DLC" />
-          <CheckBox IsChecked="{Binding Parameters.UsingSPEDlc}" Content="Spearhead 1944 DLC" />
-          <CheckBox IsChecked="{Binding Parameters.UsingRFDlc}" Content="Reaction Forces DLC" />
-          <CheckBox IsChecked="{Binding Parameters.UsingEFDlc}" Content="Expeditionary Forces DLC" />
-        </StackPanel>
-        <Button Grid.Row="4" Content="Update" Margin="10" HorizontalAlignment="Stretch"
-                VerticalAlignment="Bottom" Click="Update_Click" />
-      </Grid>
-    </Border>
-    <Border Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" Margin="5" Padding="10" BorderThickness="1"
+  <Grid ColumnDefinitions="*,2*" RowDefinitions="*">
+    <ScrollViewer Grid.Column="0" Grid.Row="0" Margin="5">
+      <StackPanel Spacing="10">
+        <Border Padding="10" BorderThickness="1"
+                BorderBrush="{DynamicResource SystemControlForegroundBaseMediumLowBrush}">
+          <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto,Auto">
+            <TextBlock Grid.ColumnSpan="2" Text="Mod Installer Settings" FontWeight="Bold" Margin="2" />
+            <TextBox Grid.Row="1" Grid.Column="0" Text="{Binding Parameters.ModStagingDirectory}"
+                     Watermark="Mod Staging Directory" Margin="5" />
+            <Button Grid.Row="1" Grid.Column="1" Content="..." Margin="5" Click="ModStagingDir_Click" />
+            <TextBox Grid.Row="2" Grid.ColumnSpan="2" Text="{Binding Parameters.Username}"
+                     Watermark="User Name" Margin="5,10,5,10" />
+            <TextBox Grid.Row="3" Grid.ColumnSpan="2" Watermark="Password" PasswordChar="*"
+                     Margin="5,10,5,10" TextChanged="PasswordBox_TextChanged"
+                     x:Name="PasswordBox" />
+          </Grid>
+        </Border>
+        <Border Padding="10" BorderThickness="1"
+                BorderBrush="{DynamicResource SystemControlForegroundBaseMediumLowBrush}">
+          <Grid RowDefinitions="Auto,Auto,Auto,Auto,*">
+            <TextBlock Text="Arma 3 Settings" FontWeight="Bold" Margin="2" />
+            <Grid Grid.Row="1" ColumnDefinitions="*,Auto" Margin="5">
+              <TextBox Grid.Column="0" Text="{Binding Parameters.InstallDirectory}"
+                       Watermark="Install Directory" Margin="5" />
+              <Button Grid.Column="1" Content="..." Margin="5" Click="ServerDir_Click" />
+            </Grid>
+            <ToggleSwitch Grid.Row="2" Content="Profiling" IsChecked="{Binding Parameters.UsingPerfBinaries}" Margin="10,5" />
+            <StackPanel Grid.Row="3" Margin="10" Spacing="4">
+              <CheckBox IsChecked="{Binding Parameters.UsingContactDlc}" Content="Contact DLC" />
+              <CheckBox IsChecked="{Binding Parameters.UsingGMDlc}" Content="GM DLC" />
+              <CheckBox IsChecked="{Binding Parameters.UsingPFDlc}" Content="Prairie Fire DLC" />
+              <CheckBox IsChecked="{Binding Parameters.UsingCSLADlc}" Content="CSLA DLC" />
+              <CheckBox IsChecked="{Binding Parameters.UsingWSDlc}" Content="Western Sahara DLC" />
+              <CheckBox IsChecked="{Binding Parameters.UsingSPEDlc}" Content="Spearhead 1944 DLC" />
+              <CheckBox IsChecked="{Binding Parameters.UsingRFDlc}" Content="Reaction Forces DLC" />
+              <CheckBox IsChecked="{Binding Parameters.UsingEFDlc}" Content="Expeditionary Forces DLC" />
+            </StackPanel>
+            <Button Grid.Row="4" Content="Update" Margin="10" HorizontalAlignment="Stretch"
+                    VerticalAlignment="Bottom" Click="Update_Click" />
+          </Grid>
+        </Border>
+      </StackPanel>
+    </ScrollViewer>
+    <Border Grid.Column="1" Grid.Row="0" Margin="5" Padding="10" BorderThickness="1"
             BorderBrush="{DynamicResource SystemControlForegroundBaseMediumLowBrush}">
       <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,*,Auto">
         <TextBlock Text="Console Output" FontWeight="Bold" Margin="2" />
