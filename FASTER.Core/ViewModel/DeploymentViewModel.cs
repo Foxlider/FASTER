@@ -119,9 +119,9 @@ namespace FASTER.ViewModel
         /// <summary>
         /// Set the current steam deployment location
         /// </summary>
-        public void InstallFolderClick()
+        public async Task InstallFolderClick()
         {
-            string path = MainWindow.Instance.SelectFolder(Deployment.InstallPath);
+            string? path = await AppServices.Files.PickFolderAsync(Deployment.InstallPath);
 
             if (path == null)
                 return;
@@ -217,8 +217,7 @@ namespace FASTER.ViewModel
         /// <param name="msg"></param>
         internal void DisplayMessage(string msg)
         {
-            MainWindow.Instance.IFlyout.IsOpen = true;
-            MainWindow.Instance.IFlyoutMessage.Content = msg;
+            Ui.Current.DisplayMessage(msg);
         }
 
     }

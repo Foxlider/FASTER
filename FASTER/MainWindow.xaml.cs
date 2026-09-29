@@ -125,6 +125,9 @@ namespace FASTER
 
             _instance = this;
             Services.Ui.Current = new Services.WpfUiBridge();
+            Services.AppServices.Dialogs = new Services.WpfDialogService();
+            Services.AppServices.Clipboard = new Services.WpfClipboardService();
+            Services.AppServices.Files = new Services.WpfFilePickerService();
             Version = GetVersion();
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
             NavigateToConsole();

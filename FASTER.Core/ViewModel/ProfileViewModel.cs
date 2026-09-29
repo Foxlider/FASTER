@@ -1,22 +1,17 @@
 using FASTER.Models;
 using FASTER.Services;
 
-using Microsoft.WindowsAPICodePack.Dialogs;
-
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls.Primitives;
 
 namespace FASTER.ViewModel
 {
-    internal class ProfileViewModel
+    public class ProfileViewModel
     {
         public ProfileViewModel()
         { Profile = new ServerProfile("Server", false); }
@@ -36,8 +31,7 @@ namespace FASTER.ViewModel
 
         internal void DisplayMessage(string msg)
         {
-            MainWindow.Instance.IFlyout.IsOpen         = true;
-            MainWindow.Instance.IFlyoutMessage.Content = msg;
+            Ui.Current.DisplayMessage(msg);
         }
 
         internal void OpenProfileLocation()
@@ -92,15 +86,7 @@ namespace FASTER.ViewModel
 
             string commandLine = string.Join("", arguments);
 
-            try { Clipboard.SetText(commandLine); }
-            catch (COMException)
-            {
-                try
-                {
-                    Clipboard.SetDataObject(commandLine);
-                }
-                catch (COMException) { }
-            }
+            _ = AppServices.Clipboard.SetTextAsync(commandLine);
             return commandLine;
         }
 
@@ -113,16 +99,7 @@ namespace FASTER.ViewModel
 
             Profile.RaisePropertyChanged("CommandLine");
             var commandLine = Profile.CommandLine;
-            try { Clipboard.SetText(commandLine); }
-            catch (COMException)
-            {
-                try
-                {
-                    Clipboard.SetDataObject(commandLine);
-                }
-                catch (COMException)
-                { }
-            }
+            _ = AppServices.Clipboard.SetTextAsync(commandLine);
             #if DEBUG
             DisplayMessage($"Launching Arma3Server with commandline : \n{commandLine}");
             #else
@@ -176,12 +153,9 @@ namespace FASTER.ViewModel
             { Directory.Delete(Path.Combine(Profile.ArmaPath, "Servers", Profile.Id), true); }
             AppSettings.Current.Profiles.Remove(Profile);
             AppSettings.Current.Save();
-            MainWindow.Instance.ContentProfileViews.Remove(MainWindow.Instance.ContentProfileViews.Find(p => p.Profile.Id == Profile.Id));
-            var menuItem = MainWindow.Instance.IServerProfilesMenu.Items.Cast<ToggleButton>().FirstOrDefault(p => p.Name == Profile.Id);
-            if(menuItem != null)
-                MainWindow.Instance.IServerProfilesMenu.Items.Remove(menuItem);
+            Ui.Current.RemoveProfileUi(Profile.Id);
 
-            MainWindow.Instance.NavigateToConsole();
+            Ui.Current.NavigateToConsole();
         }
 
         internal void SaveProfile()
@@ -235,28 +209,12 @@ namespace FASTER.ViewModel
 
         public ObservableCollection<string> FadeOutStrings         { get; } = new ObservableCollection<string>(ProfileCfgArrays.FadeOutStrings);
 
-        internal void LoadModsFromFile()
+        internal async Task LoadModsFromFile()
         {
-            var dialog = new CommonOpenFileDialog
+            string? presetFile = await AppServices.Files.PickModPresetFileAsync();
+            if (presetFile == null)
             {
-                Title                     = "Select the Arma3 mod preset",
-                IsFolderPicker            = false,
-                AddToMostRecentlyUsedList = false,
-                AllowNonFileSystemItems   = false,
-                EnsureFileExists          = true,
-                EnsurePathExists          = true,
-                EnsureReadOnly            = false,
-                EnsureValidNames          = true,
-                Multiselect               = false,
-                ShowPlacesList            = true
-            };
-            dialog.Filters.Add(new CommonFileDialogFilter("Arma 3 Mod Preset", ".html"));
-
-            if (dialog.ShowDialog() != CommonFileDialogResult.Ok) return;
-
-            if (dialog.FileName == null)
-            {
-                MessageBox.Show("Please enter a valid arma3server executable location");
+                await AppServices.Dialogs.ShowMessageAsync(this, "Invalid preset", "Please enter a valid arma3server executable location");
                 return;
             }
 
@@ -265,7 +223,7 @@ namespace FASTER.ViewModel
             { mod.ClientSideChecked = false; }
 
             ushort? loadPriority = 1;
-            List<ProfileMod> extractedModList = ModUtilities.ParseModsFromArmaProfileFile(dialog.FileName).Select(armaMod =>
+            List<ProfileMod> extractedModList = ModUtilities.ParseModsFromArmaProfileFile(presetFile).Select(armaMod =>
             {
                 return new ProfileMod
                 {
@@ -299,33 +257,13 @@ namespace FASTER.ViewModel
             }
         }
 
-        internal void SelectServerFile()
+        internal async Task SelectServerFile()
         {
-            var dialog = new CommonOpenFileDialog
-            {
-                Title                     = "Select the arma server executable",
-                IsFolderPicker            = false,
-                AddToMostRecentlyUsedList = false,
-                InitialDirectory          = AppSettings.Current.ServerPath,
-                DefaultDirectory          = AppSettings.Current.ServerPath,
-                AllowNonFileSystemItems   = false,
-                EnsureFileExists          = true,
-                EnsurePathExists          = true,
-                EnsureReadOnly            = false,
-                EnsureValidNames          = true,
-                Multiselect               = false,
-                ShowPlacesList            = true
-            };
-            var filter = Platform.Current.ServerExecutableExtensionFilter;
-            if (!string.IsNullOrEmpty(filter))
-                dialog.Filters.Add(new CommonFileDialogFilter("Arma 3 Server Executable", filter));
-
-            if (dialog.ShowDialog() != CommonFileDialogResult.Ok) return;
-
-            if (dialog.FileName != null)
-            { Profile.Executable = dialog.FileName; }
+            string? executable = await AppServices.Files.PickServerExecutableAsync();
+            if (executable != null)
+            { Profile.Executable = executable; }
             else
-            { MessageBox.Show("Please enter a valid arma3server executable location"); }
+            { await AppServices.Dialogs.ShowMessageAsync(this, "Invalid executable", "Please enter a valid arma3server executable location"); }
         }
 
         internal async Task CopyModKeys()
@@ -334,8 +272,7 @@ namespace FASTER.ViewModel
 
             if (!Directory.Exists(AppSettings.Current.ModStagingDirectory))
             {
-                MainWindow.Instance.IFlyout.IsOpen         = true;
-                MainWindow.Instance.IFlyoutMessage.Content = $"The SteamCMD path does not exist :\n{AppSettings.Current.ModStagingDirectory}";
+                DisplayMessage($"The SteamCMD path does not exist :\n{AppSettings.Current.ModStagingDirectory}");
                 return;
             }
 
@@ -361,8 +298,7 @@ namespace FASTER.ViewModel
                 try { File.Copy(link, Path.Combine(Profile.ArmaPath, "keys", Path.GetFileName(link)), true); }
                 catch (IOException)
                 {
-                    MainWindow.Instance.IFlyout.IsOpen         = true;
-                    MainWindow.Instance.IFlyoutMessage.Content = $"Some keys could not be copied : {Path.GetFileName(link)}";
+                    DisplayMessage($"Some keys could not be copied : {Path.GetFileName(link)}");
                 }
             }
             await Task.Delay(1000);
@@ -383,8 +319,7 @@ namespace FASTER.ViewModel
                     }
                     catch (Exception)
                     {
-                        MainWindow.Instance.IFlyout.IsOpen         = true;
-                        MainWindow.Instance.IFlyoutMessage.Content = $"Some keys could not be cleared : {Path.GetFileName(keyFile)}";
+                        DisplayMessage($"Some keys could not be cleared : {Path.GetFileName(keyFile)}");
                     }
                 }
             }

@@ -1,7 +1,5 @@
 ﻿using FASTER.ViewModel;
 
-using MahApps.Metro.Controls.Dialogs;
-
 using System.Windows;
 using System.Windows.Controls;
 
@@ -15,7 +13,6 @@ namespace FASTER.Views
         public Updater()
         {
             InitializeComponent();
-            MainWindow.Instance.SteamUpdaterViewModel.DialogCoordinator = DialogCoordinator.Instance;
             DataContext = MainWindow.Instance.SteamUpdaterViewModel;
         }
 

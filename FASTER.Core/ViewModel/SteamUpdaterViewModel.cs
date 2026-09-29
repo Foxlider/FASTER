@@ -7,15 +7,12 @@ using BytexDigital.Steam.Core.Exceptions;
 using BytexDigital.Steam.Core.Structs;
 
 using FASTER.Models;
-
-using MahApps.Metro.Controls.Dialogs;
+using FASTER.Services;
 
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Configuration;
 using System.Diagnostics;
 using System.IO;
-using System.Windows.Threading;
 
 namespace FASTER.ViewModel
 {
@@ -36,12 +33,14 @@ namespace FASTER.ViewModel
         {
             Parameters                =  model;
             DownloadTasks.ListChanged += (_, _) => RaisePropertyChanged(nameof(IsDownloading));
-            var timer = new DispatcherTimer
-            {
-                Interval = TimeSpan.FromSeconds(1)
-            };
-            timer.Tick += Timer_Tick;
-            timer.IsEnabled = true;
+            _ = TickLoopAsync();
+        }
+
+        private async Task TickLoopAsync()
+        {
+            using PeriodicTimer timer = new(TimeSpan.FromSeconds(1));
+            while (await timer.WaitForNextTickAsync())
+                Timer_Tick();
         }
 
         private bool _isLoggingIn;
@@ -51,8 +50,6 @@ namespace FASTER.ViewModel
 
         public SteamUpdaterModel Parameters { get; set; }
 
-
-        public IDialogCoordinator DialogCoordinator { get; set; }
         private CancellationTokenSource tokenSource = new();
 
         public bool IsDownloading => DownloadTasks.Count > 0 || IsLoggingIn || IsDlOverride;
@@ -110,7 +107,7 @@ namespace FASTER.ViewModel
             Parameters.Password = Encryption.Instance.EncryptData(password);
         }
 
-        private void Timer_Tick(object sender, EventArgs e)
+        private void Timer_Tick()
         {
             if (SteamClient == null)
             {
@@ -273,22 +270,20 @@ namespace FASTER.ViewModel
 
         public void ModStagingDirClick()
         {
-            string path = MainWindow.Instance.SelectFolder(Parameters.ModStagingDirectory);
-
-            if (path == null) 
-                return;
-
-            Parameters.ModStagingDirectory = path;
+            PickFolderInto(v => Parameters.ModStagingDirectory = v, Parameters.ModStagingDirectory);
         }
 
         public void ServerDirClick()
         {
-            string path = MainWindow.Instance.SelectFolder(Parameters.InstallDirectory);
+            PickFolderInto(v => Parameters.InstallDirectory = v, Parameters.InstallDirectory);
+        }
 
+        private static async void PickFolderInto(Action<string> assign, string current)
+        {
+            string? path = await AppServices.Files.PickFolderAsync(current);
             if (path == null)
                 return;
-
-            Parameters.InstallDirectory = path;
+            assign(path);
         }
 
         internal async Task<int> RunServerUpdater(string path, uint appId, List<(uint id, string branch, string pass)> depots)
@@ -508,13 +503,13 @@ namespace FASTER.ViewModel
             if (tokenSource.IsCancellationRequested)
                 tokenSource = new CancellationTokenSource();
             IsLoggingIn = true;
-            var path = Path.Combine(Path.GetDirectoryName(ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal).FilePath) ?? string.Empty, "sentries");
+            var path = Path.Combine(Path.GetDirectoryName(AppSettings.SettingsPath) ?? string.Empty, "sentries");
 
             SteamCredentials _steamCredentials = new(Parameters.Username, Encryption.Instance.DecryptData(Parameters.Password));
 
             if (SteamClient == null || SteamClient.Credentials.Username != _steamCredentials.Username || SteamClient.Credentials.Password != _steamCredentials.Password)
             { 
-                SteamClient = new SteamClient(_steamCredentials, new AuthCodeProvider(_steamCredentials.Username, path));
+                SteamClient = new SteamClient(_steamCredentials, new AuthCodeProvider(_steamCredentials.Username, path, this));
                 SteamClient.InternalClientAttemptingConnect += () => Parameters.Output += "\n\tClient : Attempting connect..";
                 SteamClient.InternalClientConnected         += () => Parameters.Output += "\n\tClient : Connected";
                 SteamClient.InternalClientDisconnected      += () => Parameters.Output += "\n\tClient : Disconnected";
@@ -740,10 +735,10 @@ namespace FASTER.ViewModel
         }
 
         public async Task<string> SteamGuardInput()
-        { return await DialogCoordinator.ShowInputAsync(this, "Steam Guard", "Please enter your 2FA code"); }
+        { return await AppServices.Dialogs.ShowInputAsync(this, "Steam Guard", "Please enter your 2FA code") ?? string.Empty; }
 
-        public async Task<MessageDialogResult> SteamGuardInputPhone()
-        { return await DialogCoordinator.ShowMessageAsync(this, "Steam Guard", "Press OK after accepting authentification on mobile\nOr press Cancel to enter a 2FA Code", MessageDialogStyle.AffirmativeAndNegative); }
+        public async Task<bool> SteamGuardInputPhone()
+        { return await AppServices.Dialogs.ShowConfirmationAsync(this, "Steam Guard", "Press OK after accepting authentification on mobile\nOr press Cancel to enter a 2FA Code"); }
 
         public event PropertyChangedEventHandler PropertyChanged;
 

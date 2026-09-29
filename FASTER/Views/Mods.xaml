@@ -4,8 +4,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
-             xmlns:viewModel="clr-namespace:FASTER.ViewModel"
-             xmlns:models="clr-namespace:FASTER.Models"
+             xmlns:viewModel="clr-namespace:FASTER.ViewModel;assembly=FASTER.Core"
+             xmlns:models="clr-namespace:FASTER.Models;assembly=FASTER.Core"
+             xmlns:ui="clr-namespace:FASTER.Models"
              xmlns:fa="http://schemas.fontawesome.io/icons/"
              xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
              mah:DialogParticipation.Register="{Binding}"
@@ -16,8 +17,8 @@
     </UserControl.DataContext>
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
-        <models:FolderSizeConverter x:Key="SizeConverter" />
-        <models:NotBooleanToVisibilityConverter x:Key="BoolToHide" />
+        <ui:FolderSizeConverter x:Key="SizeConverter" />
+        <ui:NotBooleanToVisibilityConverter x:Key="BoolToHide" />
     </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>

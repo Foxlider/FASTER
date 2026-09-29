@@ -18,6 +18,9 @@ namespace FASTER.Services
         public Task<int> RunModUpdaterAsync(ulong workshopId, string path)
             => MainWindow.Instance.SteamUpdaterViewModel.RunModUpdater(workshopId, path);
 
+        public Task<int> RunModsUpdaterAsync(IEnumerable<ArmaMod> mods)
+            => MainWindow.Instance.SteamUpdaterViewModel.RunModsUpdater(new System.Collections.ObjectModel.ObservableCollection<ArmaMod>(mods));
+
         public bool IsUiLoaded() => MainWindow.HasLoaded();
 
         public void SyncProfileMenuName(string profileId, string name)
@@ -25,6 +28,15 @@ namespace FASTER.Services
             var menuItem = MainWindow.Instance.IServerProfilesMenu.Items.Cast<ToggleButton>().FirstOrDefault(p => p.Name == profileId);
             if (menuItem != null)
                 menuItem.Content = name;
+        }
+
+        public void RemoveProfileUi(string profileId)
+        {
+            var window = MainWindow.Instance;
+            window.ContentProfileViews.Remove(window.ContentProfileViews.Find(p => p.Profile.Id == profileId));
+            var menuItem = window.IServerProfilesMenu.Items.Cast<ToggleButton>().FirstOrDefault(p => p.Name == profileId);
+            if (menuItem != null)
+                window.IServerProfilesMenu.Items.Remove(menuItem);
         }
 
         public void AppendUpdaterOutput(string text)
@@ -38,11 +50,8 @@ namespace FASTER.Services
             return input;
         }
 
-        public async Task<bool> ConfirmPhoneAuthAsync()
-        {
-            var response = await MainWindow.Instance.SteamUpdaterViewModel.SteamGuardInputPhone();
-            return response == MessageDialogResult.Affirmative;
-        }
+        public Task<bool> ConfirmPhoneAuthAsync()
+            => MainWindow.Instance.SteamUpdaterViewModel.SteamGuardInputPhone();
 
         public void ReloadServerProfiles() => MainWindow.Instance.LoadServerProfiles();
     }

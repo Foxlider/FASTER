@@ -1,8 +1,6 @@
 ﻿using FASTER.Models;
 using FASTER.Services;
 
-using MahApps.Metro.Controls.Dialogs;
-
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -22,13 +20,9 @@ namespace FASTER.ViewModel
 
         public ArmaModCollection ModsCollection { get; set; }
 
-        public IDialogCoordinator DialogCoordinator { get; set; }
-
-
         internal void DisplayMessage(string msg)
         {
-            MainWindow.Instance.IFlyout.IsOpen         = true;
-            MainWindow.Instance.IFlyoutMessage.Content = msg;
+            Ui.Current.DisplayMessage(msg);
         }
 
         public void UnloadData()
@@ -39,7 +33,7 @@ namespace FASTER.ViewModel
 
         public async Task AddSteamMod()
         {
-            var modID = await DialogCoordinator.ShowInputAsync(this, "Add Steam Mod", "Please enter the mod ID or mod URL");
+            var modID = await AppServices.Dialogs.ShowInputAsync(this, "Add Steam Mod", "Please enter the mod ID or mod URL");
 
             if (string.IsNullOrEmpty(modID))
                 return;
@@ -66,7 +60,7 @@ namespace FASTER.ViewModel
 
         public async Task AddLocalModAsync()
         {
-            var localPath = MainWindow.Instance.SelectFolder(AppSettings.Current.ModStagingDirectory);
+            var localPath = await AppServices.Files.PickFolderAsync(AppSettings.Current.ModStagingDirectory);
 
             if (string.IsNullOrEmpty(localPath))
                 return;
@@ -84,7 +78,7 @@ namespace FASTER.ViewModel
                 oldPaths.Add(localPath);
             }
 
-            var progress = await DialogCoordinator.ShowProgressAsync(this, "Local Mod", "Copying mod(s)...");
+            var progress = await AppServices.Dialogs.ShowProgressAsync(this, "Local Mod", "Copying mod(s)...");
             progress.Maximum = oldPaths.Count;
             foreach (var oldPath in oldPaths.Where((path) => Directory.Exists(path)))
             {
@@ -98,7 +92,7 @@ namespace FASTER.ViewModel
                 var newPath = Path.Combine(AppSettings.Current.ModStagingDirectory, modID.ToString());
                 if (Directory.Exists(newPath))
                 {
-                    await DialogCoordinator.ShowMessageAsync(this, "Warning", $"Directory already exists for {oldPath[(oldPath.LastIndexOf("@", StringComparison.Ordinal) + 1)..]}.");
+                    await AppServices.Dialogs.ShowMessageAsync(this, "Warning", $"Directory already exists for {oldPath[(oldPath.LastIndexOf("@", StringComparison.Ordinal) + 1)..]}.");
                     continue;
                 }
 
@@ -143,7 +137,7 @@ namespace FASTER.ViewModel
 
         internal async Task DeleteAllMods()
         {
-            var answer = await DialogCoordinator.ShowInputAsync(this, "Are you sure you want to delete all mods?", "Write \"yes\" and press OK if you wish to continue.");
+            var answer = await AppServices.Dialogs.ShowInputAsync(this, "Are you sure you want to delete all mods?", "Write \"yes\" and press OK if you wish to continue.");
 
             if (string.IsNullOrEmpty(answer) || !answer.Equals("yes"))
                 return;
@@ -178,7 +172,7 @@ namespace FASTER.ViewModel
 
         internal async Task OpenLauncherFile()
         {
-            string? modsFile = FileDialogs.SelectFile("Arma 3 Launcher File|*.html");
+            string? modsFile = await AppServices.Files.PickModPresetFileAsync();
 
             if (string.IsNullOrEmpty(modsFile)) return;
 
@@ -221,16 +215,16 @@ namespace FASTER.ViewModel
 
         public async Task UpdateSelectedMods()
         {
-            MainWindow.Instance.NavigateToConsole();
-            var ans = await MainWindow.Instance.SteamUpdaterViewModel.RunModsUpdater(new ObservableCollection<ArmaMod>(ModsCollection.ArmaMods.Where(m => m.IsSelected)));
+            Ui.Current.NavigateToConsole();
+            var ans = await Ui.Current.RunModsUpdaterAsync(new ObservableCollection<ArmaMod>(ModsCollection.ArmaMods.Where(m => m.IsSelected)));
             if (ans == UpdateState.LoginFailed)
                 DisplayMessage("Steam Login Failed");
         }
 
         public async Task UpdateAll()
         {
-            MainWindow.Instance.NavigateToConsole();
-            var ans = await MainWindow.Instance.SteamUpdaterViewModel.RunModsUpdater(ModsCollection.ArmaMods);
+            Ui.Current.NavigateToConsole();
+            var ans = await Ui.Current.RunModsUpdaterAsync(ModsCollection.ArmaMods);
             if(ans == UpdateState.LoginFailed) 
                 DisplayMessage("Steam Login Failed");
         }

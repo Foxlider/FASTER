@@ -5,7 +5,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
-             xmlns:models="clr-namespace:FASTER.Models"
+             xmlns:models="clr-namespace:FASTER.Models;assembly=FASTER.Core"
+             xmlns:ui="clr-namespace:FASTER.Models"
              mc:Ignorable="d" 
              Loaded="UserControl_Loaded"
              Unloaded="UserControl_Unloaded"
@@ -15,8 +16,8 @@
     </UserControl.DataContext>-->
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
-        <models:FolderSizeConverter x:Key="SizeConverter" />
-        <models:NotBooleanToVisibilityConverter x:Key="BoolToHide" />
+        <ui:FolderSizeConverter x:Key="SizeConverter" />
+        <ui:NotBooleanToVisibilityConverter x:Key="BoolToHide" />
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
