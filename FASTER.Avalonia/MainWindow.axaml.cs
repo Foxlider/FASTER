@@ -14,7 +14,9 @@ public partial class MainWindow : Window
     public MainWindow() => InitializeComponent();
 
     private void NavUpdater_Click(object? sender, RoutedEventArgs e) => Navigate(NavUpdater, Main.ShowUpdater);
-    private void NavMods_Click(object? sender, RoutedEventArgs e) => Navigate(NavMods, Main.ShowMods);
+
+    private void MessageCollapse_Click(object? sender, RoutedEventArgs e)
+        => Main.ToggleMessageExpanded();    private void NavMods_Click(object? sender, RoutedEventArgs e) => Navigate(NavMods, Main.ShowMods);
     private void NavDeployment_Click(object? sender, RoutedEventArgs e) => Navigate(NavDeployment, Main.ShowDeployment);
     private void NavServerStatus_Click(object? sender, RoutedEventArgs e) => Navigate(NavServerStatus, Main.ShowServerStatus);
     private void NavSettings_Click(object? sender, RoutedEventArgs e) => Navigate(NavSettings, Main.ShowSettings);

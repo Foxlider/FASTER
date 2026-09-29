@@ -4,6 +4,8 @@ using FASTER.Views;
 
 using MahApps.Metro.Controls.Dialogs;
 
+using MahApps.Metro.IconPacks;
+
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using Microsoft.WindowsAPICodePack.Dialogs;
@@ -691,7 +693,16 @@ namespace FASTER
         public void DisplayMessage(string message)
         {
             IFlyoutMessage.Content = message;
+            IFlyoutScroller.Visibility = Visibility.Visible;
+            IFlyoutCollapseIcon.Kind = PackIconModernKind.ChevronDown;
             IFlyout.IsOpen = true;
+        }
+
+        private void IFlyoutCollapse_Click(object sender, RoutedEventArgs e)
+        {
+            var collapsed = IFlyoutScroller.Visibility == Visibility.Visible;
+            IFlyoutScroller.Visibility = collapsed ? Visibility.Collapsed : Visibility.Visible;
+            IFlyoutCollapseIcon.Kind = collapsed ? PackIconModernKind.ChevronUp : PackIconModernKind.ChevronDown;
         }
 
         // Opens Folder select dialog and returns selected path

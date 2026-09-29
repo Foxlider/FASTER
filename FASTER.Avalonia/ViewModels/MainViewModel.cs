@@ -19,6 +19,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
 {
     private object? _currentView;
     private string _statusMessage = string.Empty;
+    private bool _isMessageExpanded;
 
     public ModsViewModel Mods { get; } = new();
     public DeploymentViewModel Deployment { get; } = new();
@@ -44,6 +45,14 @@ public sealed class MainViewModel : INotifyPropertyChanged
         get => _statusMessage;
         set { _statusMessage = value; OnPropertyChanged(); }
     }
+
+    public bool IsMessageExpanded
+    {
+        get => _isMessageExpanded;
+        set { _isMessageExpanded = value; OnPropertyChanged(); }
+    }
+
+    public void ToggleMessageExpanded() => IsMessageExpanded = !IsMessageExpanded;
 
     public MainViewModel()
     {
@@ -79,7 +88,12 @@ public sealed class MainViewModel : INotifyPropertyChanged
     public void ShowAbout() => CurrentView = AboutView;
 
     public void ShowStatus(string message)
-        => Dispatcher.UIThread.Post(() => StatusMessage = message);
+        => Dispatcher.UIThread.Post(() =>
+        {
+            StatusMessage = message;
+            if (message.Contains('\n'))
+                IsMessageExpanded = true;
+        });
 
     public void AppendUpdaterOutput(string text)
         => Dispatcher.UIThread.Post(() => Updater.Parameters.Output += text);

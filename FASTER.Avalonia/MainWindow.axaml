@@ -1,9 +1,13 @@
 <Window x:CompileBindings="False" xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+        xmlns:converters="clr-namespace:FASTER.Avalonia.Converters;assembly=FASTER.Avalonia"
         x:Class="FASTER.Avalonia.MainWindow"
         Title="FASTER" Width="1100" Height="700" MinWidth="900" MinHeight="600"
         Background="{StaticResource FasterWindowBackground}">
+  <Window.Resources>
+    <converters:BoolNegationConverter x:Key="Not" />
+  </Window.Resources>
   <Grid ColumnDefinitions="230,*">
     <Border Grid.Column="0" BorderBrush="{StaticResource FasterCardBorder}" BorderThickness="0,0,1,0">
       <Grid RowDefinitions="Auto,*,Auto">
@@ -79,9 +83,28 @@
     </Border>
     <Grid Grid.Column="1" RowDefinitions="*,Auto" Background="{StaticResource FasterWindowBackground}">
       <ContentControl Grid.Row="0" Content="{Binding CurrentView}" Margin="8" />
-      <Border Grid.Row="1" BorderBrush="{StaticResource FasterCardBorder}" BorderThickness="0,1,0,0" Padding="8,4">
-        <TextBlock Text="{Binding StatusMessage}" Foreground="{StaticResource FasterMutedText}" />
-      </Border>
+      <Grid Grid.Row="1" RowDefinitions="Auto,Auto">
+        <Border Grid.Row="0" BorderBrush="{StaticResource FasterCardBorder}" BorderThickness="0,1,0,0"
+                MaxHeight="200" Padding="8,4" IsVisible="{Binding IsMessageExpanded}">
+          <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <TextBlock Text="{Binding StatusMessage}" TextWrapping="Wrap" />
+          </ScrollViewer>
+        </Border>
+        <Border Grid.Row="1" BorderBrush="{StaticResource FasterCardBorder}" BorderThickness="0,1,0,0" Padding="8,4">
+          <Grid ColumnDefinitions="*,Auto">
+            <TextBlock Grid.Column="0" Text="{Binding StatusMessage}" Foreground="{StaticResource FasterMutedText}"
+                       VerticalAlignment="Center" MaxLines="1" />
+            <Button Grid.Column="1" Padding="6,0" ToolTip.Tip="Collapse / expand message" Click="MessageCollapse_Click">
+              <Panel>
+                <materialIcons:MaterialIcon Kind="ChevronUp" Width="14" Height="14"
+                                            IsVisible="{Binding IsMessageExpanded}" />
+                <materialIcons:MaterialIcon Kind="ChevronDown" Width="14" Height="14"
+                                            IsVisible="{Binding IsMessageExpanded, Converter={StaticResource Not}}" />
+              </Panel>
+            </Button>
+          </Grid>
+        </Border>
+      </Grid>
     </Grid>
   </Grid>
 </Window>
