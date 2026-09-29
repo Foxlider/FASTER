@@ -1,11 +1,5 @@
 ﻿using FASTER.Models;
 
-using Microsoft.AppCenter;
-using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
-
-using System;
-using System.Globalization;
 using System.Windows;
 using ControlzEx.Theming;
 
@@ -20,16 +14,8 @@ namespace FASTER
         {
             base.OnStartup(e);
 
-            var countryCode = RegionInfo.CurrentRegion.TwoLetterISORegionName;
-            var userID = AppCenter.GetInstallIdAsync();
-
             ThemeManager.Current.ThemeSyncMode = ThemeSyncMode.SyncAll;
             ThemeManager.Current.ChangeTheme(Current, AppSettings.Current.Theme);
-
-            AppCenter.SetCountryCode(countryCode);
-            AppCenter.SetUserId($"{Environment.UserName}_{Environment.MachineName}_{Environment.UserDomainName}_{userID}");
-            Analytics.SetEnabledAsync(true);
-            AppCenter.Start("257a7dac-e53c-4bec-b672-b6b939ed5d1e", typeof(Analytics), typeof(Crashes));
         }
     }
 }

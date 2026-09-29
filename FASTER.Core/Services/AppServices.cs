@@ -33,7 +33,6 @@ public static class AppServices
     public static IDialogService Dialogs { get; set; } = new NullDialogService();
     public static IClipboardService Clipboard { get; set; } = new NullClipboardService();
     public static IFilePickerService Files { get; set; } = new NullFilePickerService();
-    public static IAnalyticsService Analytics { get; set; } = new NullAnalyticsService();
 
     private sealed class NullDialogService : IDialogService
     {
@@ -62,11 +61,5 @@ public static class AppServices
         public Task<string?> PickServerExecutableAsync() => Task.FromResult<string?>(null);
         public Task<string?> PickModPresetFileAsync() => Task.FromResult<string?>(null);
         public Task<string?> PickFolderAsync(string current) => Task.FromResult<string?>(null);
-    }
-
-    private sealed class NullAnalyticsService : IAnalyticsService
-    {
-        public void TrackEvent(string name, IDictionary<string, string>? properties = null) { }
-        public void TrackError(Exception exception, IDictionary<string, string>? properties = null) { }
     }
 }

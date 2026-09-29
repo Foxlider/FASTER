@@ -125,13 +125,6 @@ namespace FASTER.ViewModel
 
         public async Task UpdateClick()
         {
-            AppServices.Analytics.TrackEvent("Updater - Clicked Update", new Dictionary<string, string>
-            {
-                {"Name", AppSettings.Current.SteamUserName},
-                {"DLCs", $"{(Parameters.UsingGMDlc ? "GM " : "")}{(Parameters.UsingCSLADlc ? "CSLA " : "")}{(Parameters.UsingPFDlc ? "SOG " : "")}{(Parameters.UsingWSDlc ? "WS " : "")}{(Parameters.UsingSPEDlc ? "SPE " : "")}{(Parameters.UsingRFDlc ? "RF " : "")}{(Parameters.UsingEFDlc ? "EF " : "")}"},
-                {"Branch", $"{(Parameters.UsingPerfBinaries ? "Profiling" : "Public")}"}
-            });
-
             Parameters.IsUpdating = true;
             Parameters.Output = "Starting Update...";
             Parameters.Output += "\nPlease don't quit this page or cancel the download\nThis might take a while...";

@@ -47,15 +47,12 @@ namespace FASTER.Services
         {
             try
             { Clipboard.SetText(text); }
-            catch (System.Runtime.InteropServices.COMException e)
+            catch (System.Runtime.InteropServices.COMException)
             {
                 try
-                {
-                    AppServices.Analytics.TrackError(e, new Dictionary<string, string> { { "Name", Models.AppSettings.Current.SteamUserName } });
-                    Clipboard.SetDataObject(text);
-                }
-                catch (System.Runtime.InteropServices.COMException ex)
-                { AppServices.Analytics.TrackError(ex, new Dictionary<string, string> { { "Name", Models.AppSettings.Current.SteamUserName } }); }
+                { Clipboard.SetDataObject(text); }
+                catch (System.Runtime.InteropServices.COMException)
+                { /* Clipboard stayed locked, the user can copy again. */ }
             }
             return Task.CompletedTask;
         }

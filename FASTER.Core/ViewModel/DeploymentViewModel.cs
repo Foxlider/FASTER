@@ -66,12 +66,6 @@ namespace FASTER.ViewModel
         /// <param name="mod"></param>
         public void DeployMod(DeploymentMod mod)
         {
-            AppServices.Analytics.TrackEvent("Deployment - Clicked DeployMod", new Dictionary<string, string>
-            {
-                {"Name", AppSettings.Current.SteamUserName},
-                {"Mod", mod.Name}
-            });
-
             if (!Directory.Exists(Deployment.InstallPath))
             {
                 DisplayMessage("Arma Install Path is empty.\nMake sure you have entered a valid path before deploying mods.");
@@ -103,11 +97,6 @@ namespace FASTER.ViewModel
         /// </summary>
         public void DeployAll()
         {
-            AppServices.Analytics.TrackEvent("Deployment - Clicked DeployAll", new Dictionary<string, string>
-            {
-                {"Name", AppSettings.Current.SteamUserName}
-            });
-
             foreach (var mod in Deployment.DeployMods)
             {
                 var linkPath = Path.Combine(Deployment.InstallPath, $"@{Functions.SafeName(mod.Name)}");

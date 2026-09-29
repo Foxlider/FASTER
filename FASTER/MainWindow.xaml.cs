@@ -4,8 +4,6 @@ using FASTER.Views;
 
 using MahApps.Metro.Controls.Dialogs;
 
-using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
 using Microsoft.WindowsAPICodePack.Dialogs;
 
 using System;
@@ -130,7 +128,6 @@ namespace FASTER
             Services.AppServices.Dialogs = new Services.WpfDialogService();
             Services.AppServices.Clipboard = new Services.WpfClipboardService();
             Services.AppServices.Files = new Services.WpfFilePickerService();
-            Services.AppServices.Analytics = new Services.WpfAnalyticsService();
             Version = GetVersion();
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
             NavigateToConsole();
@@ -248,7 +245,6 @@ namespace FASTER
 
         private void ICreateProfileButton_Click(object sender, RoutedEventArgs e)
         {
-            Analytics.TrackEvent("Main - Creating new profile");
             INewProfileName.Text = INewProfileName.Text.Trim();
             if (string.IsNullOrEmpty(INewProfileName.Text))
             {
@@ -282,10 +278,9 @@ namespace FASTER
                 ServerProfile serverProfile = temp.Clone();
                 ServerProfileCollection.AddServerProfile(serverProfile);
             }
-            catch (Exception err)
+            catch (Exception)
             {
                 DisplayMessage("An error occured while cloning your profile");
-                Crashes.TrackError(err, new Dictionary<string, string> { { "Name", AppSettings.Current.SteamUserName } });
             }
         }
 
@@ -306,10 +301,9 @@ namespace FASTER
 
                 ContentProfileViews.FirstOrDefault(p => p.Profile.Id == temp.Id)?.DeleteProfile();
             }
-            catch (Exception err)
+            catch (Exception)
             {
                 DisplayMessage("An error occured while cloning your profile");
-                Crashes.TrackError(err, new Dictionary<string, string> { { "Name", AppSettings.Current.SteamUserName } });
             }
 
         }
