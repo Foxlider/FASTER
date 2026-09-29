@@ -6,8 +6,8 @@
     <TextBlock x:Name="MessageText" TextWrapping="Wrap" />
     <TextBox x:Name="InputBox" />
     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
-      <Button Content="OK" Click="Ok_Click" />
-      <Button Content="Cancel" Click="Cancel_Click" />
+      <Button Content="OK" Click="Ok_Click" IsDefault="True" />
+      <Button Content="Cancel" Click="Cancel_Click" IsCancel="True" />
     </StackPanel>
   </StackPanel>
 </Window>

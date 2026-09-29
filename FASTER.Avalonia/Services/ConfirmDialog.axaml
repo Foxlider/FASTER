@@ -5,8 +5,8 @@
   <StackPanel Margin="16" Spacing="10">
     <TextBlock x:Name="MessageText" TextWrapping="Wrap" />
     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
-      <Button Content="OK" Click="Ok_Click" />
-      <Button Content="Cancel" Click="Cancel_Click" />
+      <Button x:Name="OkButton" Content="OK" Click="Ok_Click" IsDefault="True" />
+      <Button Content="Cancel" Click="Cancel_Click" IsCancel="True" />
     </StackPanel>
   </StackPanel>
 </Window>

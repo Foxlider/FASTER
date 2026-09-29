@@ -4,6 +4,6 @@
         Width="420" SizeToContent="Height" WindowStartupLocation="CenterOwner">
   <StackPanel Margin="16" Spacing="10">
     <TextBlock x:Name="MessageText" TextWrapping="Wrap" />
-    <Button Content="OK" HorizontalAlignment="Right" Click="Ok_Click" />
+    <Button Content="OK" HorizontalAlignment="Right" Click="Ok_Click" IsDefault="True" />
   </StackPanel>
 </Window>
