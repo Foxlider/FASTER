@@ -51,8 +51,8 @@ namespace FASTER.Models
         private int    roleTimeOut = 90; 	 	// These are BI base figues
         private int    votingTimeOut = 60; 	 	//
         private int    debriefingTimeOut = 45; //
-        private bool   LogObjectNotFound = false;			// logging disabled
-	    private bool   SkipDescriptionParsing = false;		// parse description.ext
+        private bool   _logObjectNotFound = false;			// logging disabled
+	    private bool   _skipDescriptionParsing = false;		// parse description.ext
 	    private bool   ignoreMissionLoadErrors = false;	// do not ingore errors
 		private int    armaUnitsTimeout = 30; 				// Defines how long the player will be stuck connecting and wait for armaUnits data. Player will be notified if timeout elapsed and no units data was received
 		private int	   queueSizeLogG = 1000000; 			// if a specific players message queueis larger than 1MB and '#monitor' is running, dump his messages to a logfile for analysis
@@ -395,20 +395,20 @@ namespace FASTER.Models
 
         public bool LogObjectNotFound
         {
-            get => LogObjectNotFound;
+            get => _logObjectNotFound;
             set
             {
-                LogObjectNotFound = value;
+                _logObjectNotFound = value;
                 RaisePropertyChanged("LogObjectNotFound");
             }
         }
 
         public bool SkipDescriptionParsing
         {
-            get => SkipDescriptionParsing;
+            get => _skipDescriptionParsing;
             set
             {
-                SkipDescriptionParsing = value;
+                _skipDescriptionParsing = value;
                 RaisePropertyChanged("SkipDescriptionParsing");
             }
         }
@@ -870,8 +870,8 @@ namespace FASTER.Models
                           + $"timeStampFormat = \"{timeStampFormat}\";\t\t\t// Set the timestamp format used on each report line in server-side RPT file. Possible values are \"none\" (default),\"short\",\"full\".\r\n"
                           + $"BattlEye = {battlEye};\t\t\t\t\t// Server to use BattlEye system.\r\n"
 						  + $"queueSizeLogG = {queueSizeLogG}; \t\t\t\t\t// If a specific players message queue is larger than 1MB and #monitor is running, dump his messages to a logfile for analysis \r\n"
-                          + $"LogObjectNotFound = {LogObjectNotFound};\t\t\t\t\t // When false to skip logging 'Server: Object not found messages'.\r\n"
-                          + $"SkipDescriptionParsing = {SkipDescriptionParsing};\t\t\t\t\t // When true to skip parsing of description.ext/mission.sqm. Will show pbo filename instead of configured missionName. OverviewText and such won't work, but loading the mission list is a lot faster when there are many missions \r\n"
+                          + $"LogObjectNotFound = {_logObjectNotFound};\t\t\t\t\t // When false to skip logging 'Server: Object not found messages'.\r\n"
+                          + $"SkipDescriptionParsing = {_skipDescriptionParsing};\t\t\t\t\t // When true to skip parsing of description.ext/mission.sqm. Will show pbo filename instead of configured missionName. OverviewText and such won't work, but loading the mission list is a lot faster when there are many missions \r\n"
                           + $"ignoreMissionLoadErrors = {ignoreMissionLoadErrors};\t\t\t\t\t // When set to true, the mission will load no matter the amount of loading errors. If set to false, the server will abort mission's loading and return to mission selection.\r\n"
                           + "\r\n"
                           + "\r\n"
