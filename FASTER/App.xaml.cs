@@ -17,7 +17,7 @@ namespace FASTER
     /// </summary>
     public partial class App
     {
-        protected override void OnStartup(StartupEventArgs e)
+        protected override async void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
 
@@ -37,7 +37,7 @@ namespace FASTER
             };
 
             var countryCode = RegionInfo.CurrentRegion.TwoLetterISORegionName;
-            var userID = AppCenter.GetInstallIdAsync();
+            var userID = await AppCenter.GetInstallIdAsync();
 
             ThemeManager.Current.ThemeSyncMode = ThemeSyncMode.SyncAll;
             ThemeManager.Current.ChangeTheme(Current, FASTER.Properties.Settings.Default.theme);
