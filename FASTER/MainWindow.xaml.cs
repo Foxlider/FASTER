@@ -315,8 +315,7 @@ namespace FASTER
             {
                 try
                 {
-                    ProcessStartInfo startInfo = new ProcessStartInfo { Arguments = serverDirBox, FileName = "explorer.exe" };
-                    Process.Start(startInfo);
+                    Services.Platform.Current.OpenFolder(serverDirBox);
                 }
                 catch
                 { MessageBox.Show($" Could not open {serverDirBox}"); }
@@ -334,8 +333,7 @@ namespace FASTER
             {
                 try
                 {
-                    ProcessStartInfo startInfo = new ProcessStartInfo { Arguments = serverDirBox, FileName = "explorer.exe" };
-                    Process.Start(startInfo);
+                    Services.Platform.Current.OpenFolder(serverDirBox);
                 }
                 catch
                 { MessageBox.Show($" Could not open {serverDirBox}"); }
@@ -347,14 +345,13 @@ namespace FASTER
         private void OpenAppDataLocation_Click(object sender, RoutedEventArgs e)
         {
             IToolsDialog.IsOpen = false;
-            var appdataDirectory= Path.GetDirectoryName(ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal).FilePath);
+            var appdataDirectory = Path.GetDirectoryName(FASTER.Models.AppSettings.SettingsPath);
 
             if (!string.IsNullOrEmpty(appdataDirectory) && Directory.Exists(appdataDirectory))
             {
                 try
                 {
-                    ProcessStartInfo startInfo = new ProcessStartInfo { Arguments = appdataDirectory, FileName = "explorer.exe" };
-                    Process.Start(startInfo);
+                    Services.Platform.Current.OpenFolder(appdataDirectory);
                 }
                 catch
                 { MessageBox.Show($" Could not open {appdataDirectory}"); }

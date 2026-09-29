@@ -419,7 +419,7 @@ namespace FASTER.Models
         {
             _id = $"_{Guid.NewGuid():N}";
             Name = name;
-            Executable = Path.Combine(AppSettings.Current.ServerPath, "arma3server_x64.exe");
+            Executable = Path.Combine(AppSettings.Current.ServerPath, Platform.Current.ServerBinaryName);
             ServerCfg = new ServerCfg(){ Hostname = name};
             ArmaProfile = new Arma3Profile();
             BasicCfg = new BasicCfg();

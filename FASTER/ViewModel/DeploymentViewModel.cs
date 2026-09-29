@@ -1,4 +1,5 @@
 ﻿using FASTER.Models;
+using FASTER.Services;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -148,13 +149,7 @@ namespace FASTER.ViewModel
                 return;
             }
 
-            ProcessStartInfo startInfo = new()
-            {
-                Arguments = mod.Path,
-                FileName = "explorer.exe"
-            };
-
-            Process.Start(startInfo);
+            Platform.Current.OpenFolder(mod.Path);
         }
 
 

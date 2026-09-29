@@ -1,4 +1,5 @@
 ﻿using FASTER.Models;
+using FASTER.Services;
 
 using MahApps.Metro.Controls.Dialogs;
 
@@ -210,13 +211,7 @@ namespace FASTER.ViewModel
                 return;
             }
 
-            ProcessStartInfo startInfo = new()
-            {
-                Arguments = mod.Path,
-                FileName  = "explorer.exe"
-            };
-
-            Process.Start(startInfo);
+            Platform.Current.OpenFolder(mod.Path);
         }
         public void CheckForUpdates()
         {

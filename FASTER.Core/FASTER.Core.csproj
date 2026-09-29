@@ -21,4 +21,10 @@
     <ProjectReference Include="..\BytexDigital.Steam\BytexDigital.Steam\BytexDigital.Steam.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>FASTER.Core.Tests</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
+
 </Project>

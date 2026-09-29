@@ -24,9 +24,11 @@ public sealed class AppSettings
         }
     }
 
-    public static string SettingsPath => Path.Combine(
+    public static string SettingsPath => PathOverrideForTests ?? Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
         "FoxliCorp", "FASTER", "faster.json");
+
+    internal static string? PathOverrideForTests;
 
     public string ServerPath { get; set; } = string.Empty;
     public string SteamCMDPath { get; set; } = string.Empty;

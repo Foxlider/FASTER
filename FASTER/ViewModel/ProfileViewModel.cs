@@ -1,4 +1,5 @@
 using FASTER.Models;
+using FASTER.Services;
 
 using Microsoft.WindowsAPICodePack.Dialogs;
 
@@ -44,13 +45,7 @@ namespace FASTER.ViewModel
             string folderPath = Path.Combine(Profile.ArmaPath, "Servers", Profile.Id);
             if (Directory.Exists(folderPath))
             {
-                ProcessStartInfo startInfo = new()
-                {
-                    Arguments = folderPath,
-                    FileName  = "explorer.exe"
-                };
-
-                Process.Start(startInfo);
+                Platform.Current.OpenFolder(folderPath);
             }
             else
             { DisplayMessage("Could not open profile location..."); }
@@ -153,7 +148,7 @@ namespace FASTER.ViewModel
                 return false;
             }
 
-            if (!(Profile.Executable != null && Profile.Executable.Contains("arma3server") && Profile.Executable.EndsWith(".exe")))
+            if (!Platform.Current.IsServerExecutable(Profile.Executable))
             {
                 DisplayMessage("Please select a valid Arma 3 Sever Executable.");
                 return false;
@@ -321,7 +316,9 @@ namespace FASTER.ViewModel
                 Multiselect               = false,
                 ShowPlacesList            = true
             };
-            dialog.Filters.Add(new CommonFileDialogFilter("Arma 3 Server Executable", ".exe"));
+            var filter = Platform.Current.ServerExecutableExtensionFilter;
+            if (!string.IsNullOrEmpty(filter))
+                dialog.Filters.Add(new CommonFileDialogFilter("Arma 3 Server Executable", filter));
 
             if (dialog.ShowDialog() != CommonFileDialogResult.Ok) return;
 
