@@ -20,6 +20,6 @@
     <TextBox x:Name="SteamPassBox" PasswordChar="*" />
     <TextBlock Text="Steam API key (optional)" />
     <TextBox x:Name="ApiKeyBox" />
-    <Button Content="Continue" HorizontalAlignment="Left" Click="Continue_Click" />
+    <Button Classes="accent" Content="Continue" HorizontalAlignment="Left" Click="Continue_Click" />
   </StackPanel>
 </UserControl>

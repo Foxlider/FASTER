@@ -447,7 +447,7 @@ namespace FASTER.Models
             ArmaProfile.ArmaProfileContent = ArmaProfile.ProcessFile();
             BasicCfg.BasicContent = BasicCfg.ProcessFile();
 
-            if (createFolder)
+            if (createFolder && !string.IsNullOrEmpty(AppSettings.Current.ServerPath))
             { Directory.CreateDirectory(Path.Combine(AppSettings.Current.ServerPath, "Servers", Id)); }
         }
 

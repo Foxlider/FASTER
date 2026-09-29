@@ -32,7 +32,6 @@ namespace FASTER.Models
             set
             {
                 _mods = value;
-                AppSettings.Current.Save();
                 RaisePropertyChanged("DeployMods");
             }
         }

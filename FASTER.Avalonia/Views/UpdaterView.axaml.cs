@@ -29,6 +29,15 @@ public partial class UpdaterView : UserControl
             ViewModel.PasswordChanged(box.Text ?? string.Empty);
     }
 
+    private void PasswordReveal_Click(object? sender, RoutedEventArgs e)
+    {
+        bool revealed = PasswordBox.PasswordChar == '\0';
+        PasswordBox.PasswordChar = revealed ? '*' : '\0';
+        PasswordEye.Kind = revealed
+            ? Material.Icons.MaterialIconKind.Eye
+            : Material.Icons.MaterialIconKind.EyeOff;
+    }
+
     private void ClientReset_OnClick(object? sender, RoutedEventArgs e) => ViewModel.SteamReset();
 
     private void ClientConnect_OnClick(object? sender, RoutedEventArgs e) => _ = ViewModel.SteamLogin();

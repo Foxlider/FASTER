@@ -13,12 +13,20 @@ public partial class MainWindow : Window
 
     public MainWindow() => InitializeComponent();
 
-    private void NavUpdater_Click(object? sender, RoutedEventArgs e) => Main.ShowUpdater();
-    private void NavMods_Click(object? sender, RoutedEventArgs e) => Main.ShowMods();
-    private void NavDeployment_Click(object? sender, RoutedEventArgs e) => Main.ShowDeployment();
-    private void NavServerStatus_Click(object? sender, RoutedEventArgs e) => Main.ShowServerStatus();
-    private void NavSettings_Click(object? sender, RoutedEventArgs e) => Main.ShowSettings();
-    private void NavAbout_Click(object? sender, RoutedEventArgs e) => Main.ShowAbout();
+    private void NavUpdater_Click(object? sender, RoutedEventArgs e) => Navigate(NavUpdater, Main.ShowUpdater);
+    private void NavMods_Click(object? sender, RoutedEventArgs e) => Navigate(NavMods, Main.ShowMods);
+    private void NavDeployment_Click(object? sender, RoutedEventArgs e) => Navigate(NavDeployment, Main.ShowDeployment);
+    private void NavServerStatus_Click(object? sender, RoutedEventArgs e) => Navigate(NavServerStatus, Main.ShowServerStatus);
+    private void NavSettings_Click(object? sender, RoutedEventArgs e) => Navigate(NavSettings, Main.ShowSettings);
+    private void NavAbout_Click(object? sender, RoutedEventArgs e) => Navigate(NavAbout, Main.ShowAbout);
+
+    private void Navigate(Button active, Action show)
+    {
+        foreach (var button in new[] { NavUpdater, NavMods, NavDeployment, NavServerStatus, NavSettings, NavAbout })
+            button.Classes.Set("selected", button == active);
+        ProfilesList.SelectedItem = null;
+        show();
+    }
 
     private void ProfilesList_SelectionChanged(object? sender, SelectionChangedEventArgs e)
     {

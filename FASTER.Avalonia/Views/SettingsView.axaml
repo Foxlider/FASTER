@@ -22,8 +22,8 @@
       <Slider x:Name="WorkersSlider" Minimum="1" Maximum="32" ValueChanged="WorkersSlider_Changed" />
       <TextBlock x:Name="UpdateMessage" TextWrapping="Wrap" />
       <WrapPanel>
-        <Button Content="Save" Margin="0,0,8,0" Click="Save_Click" />
-        <Button Content="Check for app update" Margin="0,0,8,0" Click="CheckUpdate_Click" />
+        <Button Classes="accent" Content="Save" Margin="0,0,8,0" Click="Save_Click" />
+        <Button Classes="accent" Content="Check for app update" Margin="0,0,8,0" Click="CheckUpdate_Click" />
         <Button Content="Reset FASTER" Click="Reset_Click" />
       </WrapPanel>
     </StackPanel>

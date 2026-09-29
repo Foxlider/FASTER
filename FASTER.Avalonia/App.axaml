@@ -1,9 +1,38 @@
-<Application xmlns="https://github.com/avaloniaui"
+<Application x:CompileBindings="False" xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-             x:Class="FASTER.Avalonia.App">
+             x:Class="FASTER.Avalonia.App"
+             RequestedThemeVariant="Dark">
+  <Application.Resources>
+    <Color x:Key="SystemAccentColor">#119EDA</Color>
+    <Color x:Key="SystemAccentColorLight1">#2AA9E2</Color>
+    <Color x:Key="SystemAccentColorDark1">#086F9E</Color>
+    <SolidColorBrush x:Key="FasterAccent">#119EDA</SolidColorBrush>
+    <SolidColorBrush x:Key="FasterAccentHover">#1FA7E3</SolidColorBrush>
+    <SolidColorBrush x:Key="FasterAccentPressed">#086F9E</SolidColorBrush>
+    <SolidColorBrush x:Key="FasterSelectedRow">#196E92</SolidColorBrush>
+    <SolidColorBrush x:Key="FasterWindowBackground">#252525</SolidColorBrush>
+    <SolidColorBrush x:Key="FasterCardBorder">#454545</SolidColorBrush>
+    <SolidColorBrush x:Key="FasterTextBoxBackground">#333333</SolidColorBrush>
+    <SolidColorBrush x:Key="FasterTextBoxBorder">#767676</SolidColorBrush>
+    <SolidColorBrush x:Key="FasterButtonBackground">#333333</SolidColorBrush>
+    <SolidColorBrush x:Key="FasterButtonBorder">#555555</SolidColorBrush>
+    <SolidColorBrush x:Key="FasterButtonHover">#3E3E3E</SolidColorBrush>
+    <SolidColorBrush x:Key="FasterText">White</SolidColorBrush>
+    <SolidColorBrush x:Key="FasterMutedText">#B9B9B9</SolidColorBrush>
+    <SolidColorBrush x:Key="FasterWatermark">#9D9D9D</SolidColorBrush>
+    <SolidColorBrush x:Key="FasterDisabledText">#7F7F7F</SolidColorBrush>
+    <SolidColorBrush x:Key="FasterConsoleBackground">Black</SolidColorBrush>
+    <SolidColorBrush x:Key="FasterGridHeaderBackground">#1E1E1E</SolidColorBrush>
+    <SolidColorBrush x:Key="FasterGridLines">#333333</SolidColorBrush>
+    <!-- MahApps keeps list selection dark gray, so mute the Fluent accent selection. -->
+    <SolidColorBrush x:Key="SystemControlHighlightListAccentLowBrush">#454545</SolidColorBrush>
+    <SolidColorBrush x:Key="SystemControlHighlightListAccentMediumBrush">#555555</SolidColorBrush>
+    <SolidColorBrush x:Key="SystemControlHighlightListAccentHighBrush">#333333</SolidColorBrush>
+  </Application.Resources>
   <Application.Styles>
     <FluentTheme />
     <materialIcons:MaterialIconStyles />
+    <StyleInclude Source="/Styles/FASTERTheme.axaml" />
   </Application.Styles>
 </Application>

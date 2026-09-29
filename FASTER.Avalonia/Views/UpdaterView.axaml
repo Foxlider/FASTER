@@ -1,6 +1,7 @@
 <UserControl x:CompileBindings="False" xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:converters="clr-namespace:FASTER.Avalonia.Converters;assembly=FASTER.Avalonia"
+             xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              x:Class="FASTER.Avalonia.Views.UpdaterView">
   <UserControl.Resources>
     <converters:BoolNegationConverter x:Key="Not" />
@@ -8,31 +9,39 @@
   <Grid ColumnDefinitions="*,2*" RowDefinitions="*">
     <ScrollViewer Grid.Column="0" Grid.Row="0" Margin="5">
       <StackPanel Spacing="10">
-        <Border Padding="10" BorderThickness="1"
-                BorderBrush="{DynamicResource SystemControlForegroundBaseMediumLowBrush}">
+        <Border Classes="card" Padding="10">
           <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto,Auto">
-            <TextBlock Grid.ColumnSpan="2" Text="Mod Installer Settings" FontWeight="Bold" Margin="2" />
+            <TextBlock Grid.ColumnSpan="2" Classes="card-title" Text="Mod Installer Settings" />
             <TextBox Grid.Row="1" Grid.Column="0" Text="{Binding Parameters.ModStagingDirectory}"
-                     Watermark="Mod Staging Directory" Margin="5" />
-            <Button Grid.Row="1" Grid.Column="1" Content="..." Margin="5" Click="ModStagingDir_Click" />
+                     Watermark="Mod Staging Directory" Margin="0,5,5,5" />
+            <Button Grid.Row="1" Grid.Column="1" Classes="accent" Margin="0,5,0,5" Padding="10,2"
+                    Click="ModStagingDir_Click" ToolTip.Tip="Browse">
+              <materialIcons:MaterialIcon Kind="Folder" Width="18" Height="18" />
+            </Button>
             <TextBox Grid.Row="2" Grid.ColumnSpan="2" Text="{Binding Parameters.Username}"
-                     Watermark="User Name" Margin="5,10,5,10" />
-            <TextBox Grid.Row="3" Grid.ColumnSpan="2" Watermark="Password" PasswordChar="*"
-                     Margin="5,10,5,10" TextChanged="PasswordBox_TextChanged"
-                     x:Name="PasswordBox" />
+                     Watermark="User Name" Margin="0,5" />
+            <Grid Grid.Row="3" Grid.ColumnSpan="2" ColumnDefinitions="*,Auto" Margin="0,5,0,0">
+              <TextBox Grid.Column="0" Watermark="Password" PasswordChar="*"
+                       TextChanged="PasswordBox_TextChanged" Margin="0,0,5,0"
+                       x:Name="PasswordBox" />
+              <Button Grid.Column="1" Click="PasswordReveal_Click" ToolTip.Tip="Show password">
+                <materialIcons:MaterialIcon x:Name="PasswordEye" Kind="Eye" Width="18" Height="18" />
+              </Button>
+            </Grid>
           </Grid>
         </Border>
-        <Border Padding="10" BorderThickness="1"
-                BorderBrush="{DynamicResource SystemControlForegroundBaseMediumLowBrush}">
+        <Border Classes="card" Padding="10">
           <Grid RowDefinitions="Auto,Auto,Auto,Auto,*">
-            <TextBlock Text="Arma 3 Settings" FontWeight="Bold" Margin="2" />
-            <Grid Grid.Row="1" ColumnDefinitions="*,Auto" Margin="5">
+            <TextBlock Classes="card-title" Text="Arma 3 Settings" />
+            <Grid Grid.Row="1" ColumnDefinitions="*,Auto" Margin="0,5">
               <TextBox Grid.Column="0" Text="{Binding Parameters.InstallDirectory}"
-                       Watermark="Install Directory" Margin="5" />
-              <Button Grid.Column="1" Content="..." Margin="5" Click="ServerDir_Click" />
+                       Watermark="Install Directory" Margin="0,0,5,0" />
+              <Button Grid.Column="1" Classes="accent" Padding="10,2" Click="ServerDir_Click" ToolTip.Tip="Browse">
+                <materialIcons:MaterialIcon Kind="Folder" Width="18" Height="18" />
+              </Button>
             </Grid>
-            <ToggleSwitch Grid.Row="2" Content="Profiling" IsChecked="{Binding Parameters.UsingPerfBinaries}" Margin="10,5" />
-            <StackPanel Grid.Row="3" Margin="10" Spacing="4">
+            <ToggleSwitch Grid.Row="2" Content="Profiling" IsChecked="{Binding Parameters.UsingPerfBinaries}" Margin="0,5" />
+            <StackPanel Grid.Row="3" Margin="0,5" Spacing="4">
               <CheckBox IsChecked="{Binding Parameters.UsingContactDlc}" Content="Contact DLC" />
               <CheckBox IsChecked="{Binding Parameters.UsingGMDlc}" Content="GM DLC" />
               <CheckBox IsChecked="{Binding Parameters.UsingPFDlc}" Content="Prairie Fire DLC" />
@@ -42,32 +51,46 @@
               <CheckBox IsChecked="{Binding Parameters.UsingRFDlc}" Content="Reaction Forces DLC" />
               <CheckBox IsChecked="{Binding Parameters.UsingEFDlc}" Content="Expeditionary Forces DLC" />
             </StackPanel>
-            <Button Grid.Row="4" Content="Update" Margin="10" HorizontalAlignment="Stretch"
-                    VerticalAlignment="Bottom" Click="Update_Click" />
+            <Button Grid.Row="4" Classes="accent" Content="Update" HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Center" Margin="0,5,0,0" Click="Update_Click" />
           </Grid>
         </Border>
       </StackPanel>
     </ScrollViewer>
-    <Border Grid.Column="1" Grid.Row="0" Margin="5" Padding="10" BorderThickness="1"
-            BorderBrush="{DynamicResource SystemControlForegroundBaseMediumLowBrush}">
+    <Border Grid.Column="1" Grid.Row="0" Classes="card" Margin="5" Padding="10">
       <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,*,Auto">
-        <TextBlock Text="Console Output" FontWeight="Bold" Margin="2" />
-        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" Margin="10,5">
-          <Button Content="Connect" Click="ClientConnect_OnClick" IsVisible="{Binding UpdaterOnline, Converter={StaticResource Not}}" />
-          <Button Content="Disconnect" Click="ClientReset_OnClick" IsVisible="{Binding UpdaterOnline}" />
-          <Button Content="Reset" Click="ClientReset_OnClick" IsVisible="{Binding UpdaterFaulted}" />
-          <Ellipse Width="16" Height="16" ToolTip.Tip="Offline" Fill="Gray"
-                   IsVisible="{Binding UpdaterOnline, Converter={StaticResource Not}}" />
-          <Ellipse Width="16" Height="16" ToolTip.Tip="Online" Fill="Green" IsVisible="{Binding UpdaterOnline}" />
-          <Ellipse Width="16" Height="16" ToolTip.Tip="Faulted" Fill="Red" IsVisible="{Binding UpdaterFaulted}" />
-        </StackPanel>
-        <TextBox Grid.Row="1" Grid.ColumnSpan="2" IsReadOnly="True" Text="{Binding Parameters.Output}"
-                 TextWrapping="Wrap" Margin="10,10,10,0" AcceptsReturn="True"
-                 ScrollViewer.VerticalScrollBarVisibility="Visible" />
+        <TextBlock Classes="card-title" Text="Console Output" />
+        <Ellipse Grid.Column="1" Width="18" Height="18" Margin="10,5" ToolTip.Tip="Updater Offline"
+                 Fill="Gray" IsVisible="{Binding UpdaterOnline, Converter={StaticResource Not}}">
+          <Ellipse.ContextMenu>
+            <ContextMenu>
+              <MenuItem Header="Connect Client" Click="ClientConnect_OnClick" />
+            </ContextMenu>
+          </Ellipse.ContextMenu>
+        </Ellipse>
+        <Ellipse Grid.Column="1" Width="18" Height="18" Margin="10,5" ToolTip.Tip="Updater Online"
+                 Fill="#FF00CC6A" IsVisible="{Binding UpdaterOnline}">
+          <Ellipse.ContextMenu>
+            <ContextMenu>
+              <MenuItem Header="Disconnect Client" Click="ClientReset_OnClick" />
+            </ContextMenu>
+          </Ellipse.ContextMenu>
+        </Ellipse>
+        <Ellipse Grid.Column="1" Width="18" Height="18" Margin="10,5" ToolTip.Tip="Updater Faulted"
+                 Fill="#E81123" IsVisible="{Binding UpdaterFaulted}">
+          <Ellipse.ContextMenu>
+            <ContextMenu>
+              <MenuItem Header="Reset Client" Click="ClientReset_OnClick" />
+            </ContextMenu>
+          </Ellipse.ContextMenu>
+        </Ellipse>
+        <TextBox Grid.Row="1" Grid.ColumnSpan="2" Classes="console" IsReadOnly="True"
+                 Text="{Binding Parameters.Output}" TextWrapping="Wrap" Margin="0,10,0,0"
+                 AcceptsReturn="True" ScrollViewer.VerticalScrollBarVisibility="Visible" />
         <ProgressBar Grid.Row="2" Grid.Column="0" Value="{Binding Parameters.Progress}"
-                     Margin="10" Height="24" Minimum="0" Maximum="100" />
-        <Button Grid.Row="2" Grid.Column="1" Content="Cancel" Margin="10" Click="UpdateCancel_Click"
-                IsEnabled="{Binding IsDownloading}" />
+                     Margin="0,10,0,0" Height="28" Minimum="0" Maximum="100" />
+        <Button Grid.Row="2" Grid.Column="1" Classes="accent" Content="Cancel" Margin="10,10,0,0"
+                Click="UpdateCancel_Click" IsEnabled="{Binding IsDownloading}" />
       </Grid>
     </Border>
   </Grid>

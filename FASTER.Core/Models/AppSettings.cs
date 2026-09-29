@@ -20,7 +20,11 @@ public sealed class AppSettings
         get
         {
             lock (s_lock)
+            {
+                // Model constructors run while the file is being deserialized and read settings through here. Those nested reads get a throwaway so they can never poison the real instance or trigger a save of half-loaded data.
+                if (s_loading) return new AppSettings();
                 return s_current ??= Load();
+            }
         }
     }
 

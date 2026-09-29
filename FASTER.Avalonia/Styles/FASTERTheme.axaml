@@ -1,0 +1,169 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <!-- MahApps Dark.Blue look: accent #119EDA on #252525, square corners everywhere. -->
+
+  <!-- Buttons -->
+  <Style Selector="Button">
+    <Setter Property="Background" Value="{StaticResource FasterButtonBackground}" />
+    <Setter Property="Foreground" Value="{StaticResource FasterText}" />
+    <Setter Property="BorderBrush" Value="{StaticResource FasterButtonBorder}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="0" />
+    <Setter Property="Padding" Value="10,6" />
+  </Style>
+  <Style Selector="Button:pointerover">
+    <Setter Property="Background" Value="{StaticResource FasterButtonHover}" />
+    <Setter Property="BorderBrush" Value="{StaticResource FasterTextBoxBorder}" />
+  </Style>
+  <Style Selector="Button:pressed">
+    <Setter Property="Background" Value="{StaticResource FasterCardBorder}" />
+    <Setter Property="BorderBrush" Value="{StaticResource FasterAccent}" />
+  </Style>
+  <Style Selector="Button:disabled">
+    <Setter Property="Background" Value="{StaticResource FasterCardBorder}" />
+    <Setter Property="Foreground" Value="{StaticResource FasterDisabledText}" />
+    <Setter Property="BorderBrush" Value="{StaticResource FasterCardBorder}" />
+  </Style>
+  <Style Selector="Button.accent">
+    <Setter Property="Background" Value="#CC119EDA" />
+    <Setter Property="Foreground" Value="White" />
+    <Setter Property="BorderThickness" Value="0" />
+  </Style>
+  <Style Selector="Button.accent:pointerover">
+    <Setter Property="Background" Value="#E0119EDA" />
+  </Style>
+  <Style Selector="Button.accent:pressed">
+    <Setter Property="Background" Value="#99119EDA" />
+  </Style>
+  <Style Selector="Button.accent:disabled">
+    <Setter Property="Background" Value="{StaticResource FasterCardBorder}" />
+    <Setter Property="Foreground" Value="{StaticResource FasterDisabledText}" />
+  </Style>
+  <Style Selector="Button.nav">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="CornerRadius" Value="0" />
+    <Setter Property="Padding" Value="10,8" />
+    <Setter Property="HorizontalAlignment" Value="Stretch" />
+    <Setter Property="HorizontalContentAlignment" Value="Left" />
+  </Style>
+  <Style Selector="Button.nav:pointerover">
+    <Setter Property="Background" Value="{StaticResource FasterButtonHover}" />
+  </Style>
+  <Style Selector="Button.nav.selected">
+    <Setter Property="Background" Value="{StaticResource FasterCardBorder}" />
+  </Style>
+
+  <!-- Text input -->
+  <Style Selector="TextBox">
+    <Setter Property="Background" Value="{StaticResource FasterTextBoxBackground}" />
+    <Setter Property="Foreground" Value="{StaticResource FasterText}" />
+    <Setter Property="BorderBrush" Value="{StaticResource FasterTextBoxBorder}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="0" />
+    <Setter Property="Padding" Value="6,5" />
+  </Style>
+  <Style Selector="TextBox.console">
+    <Setter Property="Background" Value="{StaticResource FasterConsoleBackground}" />
+    <Setter Property="FontFamily" Value="Consolas, Menlo, monospace" />
+  </Style>
+  <Style Selector="ComboBox">
+    <Setter Property="Background" Value="{StaticResource FasterTextBoxBackground}" />
+    <Setter Property="Foreground" Value="{StaticResource FasterText}" />
+    <Setter Property="BorderBrush" Value="{StaticResource FasterTextBoxBorder}" />
+    <Setter Property="CornerRadius" Value="0" />
+    <Setter Property="Padding" Value="6,5" />
+  </Style>
+  <Style Selector="NumericUpDown">
+    <Setter Property="Background" Value="{StaticResource FasterTextBoxBackground}" />
+    <Setter Property="Foreground" Value="{StaticResource FasterText}" />
+    <Setter Property="BorderBrush" Value="{StaticResource FasterTextBoxBorder}" />
+    <Setter Property="CornerRadius" Value="0" />
+  </Style>
+
+  <!-- Cards with blue header bars, like the MahApps GroupBox look -->
+  <Style Selector="Border.card">
+    <Setter Property="Background" Value="{StaticResource FasterWindowBackground}" />
+    <Setter Property="BorderBrush" Value="{StaticResource FasterCardBorder}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="0" />
+    <Setter Property="Padding" Value="0" />
+  </Style>
+  <Style Selector="TextBlock.card-header">
+    <Setter Property="Background" Value="#CC119EDA" />
+    <Setter Property="Foreground" Value="White" />
+    <Setter Property="FontWeight" Value="Bold" />
+    <Setter Property="FontSize" Value="13" />
+    <Setter Property="Padding" Value="8,5" />
+  </Style>
+  <Style Selector="TextBlock.card-title">
+    <Setter Property="FontWeight" Value="Bold" />
+    <Setter Property="FontSize" Value="13" />
+    <Setter Property="Margin" Value="2" />
+  </Style>
+
+  <!-- Tab headers: big gray text, blue when active -->
+  <Style Selector="TabItem">
+    <Setter Property="FontSize" Value="22" />
+    <Setter Property="Foreground" Value="{StaticResource FasterMutedText}" />
+    <Setter Property="Padding" Value="8,4" />
+  </Style>
+  <Style Selector="TabItem:selected">
+    <Setter Property="Foreground" Value="{StaticResource FasterAccent}" />
+  </Style>
+
+  <!-- Data grids: near-black headers, dark rows, blue selection -->
+  <Style Selector="DataGridColumnHeader">
+    <Setter Property="Background" Value="{StaticResource FasterGridHeaderBackground}" />
+    <Setter Property="Foreground" Value="{StaticResource FasterText}" />
+    <Setter Property="FontWeight" Value="Bold" />
+    <Setter Property="FontSize" Value="12" />
+    <Setter Property="Padding" Value="8,6" />
+    <Setter Property="BorderThickness" Value="0,0,1,1" />
+    <Setter Property="BorderBrush" Value="{StaticResource FasterGridLines}" />
+  </Style>
+  <Style Selector="DataGridRow:selected">
+    <Setter Property="Background" Value="{StaticResource FasterSelectedRow}" />
+  </Style>
+  <Style Selector="DataGrid">
+    <Setter Property="Background" Value="{StaticResource FasterWindowBackground}" />
+    <Setter Property="Foreground" Value="{StaticResource FasterText}" />
+    <Setter Property="GridLinesVisibility" Value="Vertical" />
+  </Style>
+
+  <!-- Sidebar profile list -->
+  <Style Selector="ListBox.side">
+    <Setter Property="Background" Value="Transparent" />
+  </Style>
+  <Style Selector="ListBoxItem">
+    <Setter Property="Foreground" Value="{StaticResource FasterMutedText}" />
+    <Setter Property="Padding" Value="8,6" />
+  </Style>
+  <Style Selector="ListBoxItem:selected">
+    <Setter Property="Background" Value="{StaticResource FasterCardBorder}" />
+    <Setter Property="Foreground" Value="{StaticResource FasterText}" />
+  </Style>
+
+  <!-- Blue-bar expanders for config outputs and advanced sections -->
+  <Style Selector="Expander.bar /template/ ToggleButton#ExpanderHeader">
+    <Setter Property="Background" Value="Red" />
+    <Setter Property="Foreground" Value="White" />
+    <Setter Property="FontWeight" Value="Bold" />
+    <Setter Property="Padding" Value="8,5" />
+  </Style>
+  <Style Selector="Expander.bar /template/ ToggleButton#ExpanderHeader:pointerover">
+    <Setter Property="Background" Value="#E0119EDA" />
+  </Style>
+
+  <Style Selector="Separator">
+    <Setter Property="Background" Value="{StaticResource FasterCardBorder}" />
+  </Style>
+  <Style Selector="ProgressBar">
+    <Setter Property="Background" Value="{StaticResource FasterCardBorder}" />
+    <Setter Property="Foreground" Value="{StaticResource FasterAccent}" />
+    <Setter Property="CornerRadius" Value="0" />
+  </Style>
+  <Style Selector="Slider">
+    <Setter Property="Foreground" Value="{StaticResource FasterAccent}" />
+  </Style>
+</Styles>

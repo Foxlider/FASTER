@@ -2,44 +2,47 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
         x:Class="FASTER.Avalonia.MainWindow"
-        Title="FASTER" Width="1100" Height="700" MinWidth="900" MinHeight="600">
+        Title="FASTER" Width="1100" Height="700" MinWidth="900" MinHeight="600"
+        Background="{StaticResource FasterWindowBackground}">
   <Grid ColumnDefinitions="230,*">
-    <Border Grid.Column="0" BorderBrush="{DynamicResource SystemControlForegroundBaseMediumLowBrush}" BorderThickness="0,0,1,0">
+    <Border Grid.Column="0" BorderBrush="{StaticResource FasterCardBorder}" BorderThickness="0,0,1,0">
       <Grid RowDefinitions="Auto,*,Auto">
         <StackPanel Grid.Row="0" Margin="8" Spacing="2">
-          <TextBlock Text="Main" FontWeight="Bold" Margin="4,4,0,4" />
-          <Button Name="NavUpdater" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Click="NavUpdater_Click">
+          <TextBlock Text="Main" FontWeight="Bold" FontSize="14" Margin="4,4,0,4" />
+          <Button Name="NavUpdater" Classes="nav selected" Click="NavUpdater_Click">
             <StackPanel Orientation="Horizontal" Spacing="10">
               <materialIcons:MaterialIcon Kind="Console" Width="18" Height="18" />
-              <TextBlock Text="Updater" VerticalAlignment="Center" />
+              <TextBlock Text="Updater" FontSize="13" FontWeight="DemiBold" VerticalAlignment="Center" />
             </StackPanel>
           </Button>
-          <Button Name="NavMods" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Click="NavMods_Click">
+          <Button Name="NavMods" Classes="nav" Click="NavMods_Click">
             <StackPanel Orientation="Horizontal" Spacing="10">
               <materialIcons:MaterialIcon Kind="Steam" Width="18" Height="18" />
-              <TextBlock Text="Mods" VerticalAlignment="Center" />
+              <TextBlock Text="Mods" FontSize="13" FontWeight="DemiBold" VerticalAlignment="Center" />
             </StackPanel>
           </Button>
-          <Button Name="NavDeployment" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Click="NavDeployment_Click">
+          <Button Name="NavDeployment" Classes="nav" Click="NavDeployment_Click">
             <StackPanel Orientation="Horizontal" Spacing="10">
               <materialIcons:MaterialIcon Kind="Folder" Width="18" Height="18" />
-              <TextBlock Text="Deployment" VerticalAlignment="Center" />
+              <TextBlock Text="Deployment" FontSize="13" FontWeight="DemiBold" VerticalAlignment="Center" />
             </StackPanel>
           </Button>
-          <Button Name="NavServerStatus" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Click="NavServerStatus_Click">
+          <Button Name="NavServerStatus" Classes="nav" Click="NavServerStatus_Click">
             <StackPanel Orientation="Horizontal" Spacing="10">
               <materialIcons:MaterialIcon Kind="Gauge" Width="18" Height="18" />
-              <TextBlock Text="Server Status" VerticalAlignment="Center" />
+              <TextBlock Text="Server Status" FontSize="13" FontWeight="DemiBold" VerticalAlignment="Center" />
             </StackPanel>
           </Button>
         </StackPanel>
         <Grid Grid.Row="1" RowDefinitions="Auto,*">
           <DockPanel Grid.Row="0" Margin="8,4">
-            <TextBlock Text="Server Profiles" FontWeight="Bold" VerticalAlignment="Center" />
-            <Button Name="AddProfileButton" Content="+" Width="28" HorizontalAlignment="Right" Click="AddProfileButton_Click" />
+            <TextBlock Text="Server Profiles" FontWeight="Bold" FontSize="14" VerticalAlignment="Center" />
+            <Button Name="AddProfileButton" Classes="accent" Content="+" FontWeight="Bold"
+                    Width="28" Height="28" Padding="0" HorizontalAlignment="Right"
+                    Click="AddProfileButton_Click" />
           </DockPanel>
-          <ListBox Grid.Row="1" Name="ProfilesList" ItemsSource="{Binding Profiles}" Margin="8,0,8,4"
-                   SelectionChanged="ProfilesList_SelectionChanged">
+          <ListBox Grid.Row="1" Name="ProfilesList" Classes="side" ItemsSource="{Binding Profiles}"
+                   Margin="8,0,8,4" SelectionChanged="ProfilesList_SelectionChanged">
             <ListBox.ItemTemplate>
               <DataTemplate>
                 <TextBlock Text="{Binding Profile.Name}" />
@@ -54,25 +57,26 @@
           </ListBox>
         </Grid>
         <StackPanel Grid.Row="2" Margin="8" Spacing="2">
-          <Button Name="NavSettings" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Click="NavSettings_Click">
+          <TextBlock Text="Other" FontWeight="Bold" FontSize="14" Margin="4,4,0,4" />
+          <Button Name="NavSettings" Classes="nav" Click="NavSettings_Click">
             <StackPanel Orientation="Horizontal" Spacing="10">
               <materialIcons:MaterialIcon Kind="Cog" Width="18" Height="18" />
-              <TextBlock Text="Settings" VerticalAlignment="Center" />
+              <TextBlock Text="Settings" FontSize="13" FontWeight="DemiBold" VerticalAlignment="Center" />
             </StackPanel>
           </Button>
-          <Button Name="NavAbout" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Click="NavAbout_Click">
+          <Button Name="NavAbout" Classes="nav" Click="NavAbout_Click">
             <StackPanel Orientation="Horizontal" Spacing="10">
               <materialIcons:MaterialIcon Kind="Information" Width="18" Height="18" />
-              <TextBlock Text="About" VerticalAlignment="Center" />
+              <TextBlock Text="About" FontSize="13" FontWeight="DemiBold" VerticalAlignment="Center" />
             </StackPanel>
           </Button>
         </StackPanel>
       </Grid>
     </Border>
-    <Grid Grid.Column="1" RowDefinitions="*,Auto">
+    <Grid Grid.Column="1" RowDefinitions="*,Auto" Background="{StaticResource FasterWindowBackground}">
       <ContentControl Grid.Row="0" Content="{Binding CurrentView}" Margin="8" />
-      <Border Grid.Row="1" BorderBrush="{DynamicResource SystemControlForegroundBaseMediumLowBrush}" BorderThickness="0,1,0,0" Padding="8,4">
-        <TextBlock Text="{Binding StatusMessage}" />
+      <Border Grid.Row="1" BorderBrush="{StaticResource FasterCardBorder}" BorderThickness="0,1,0,0" Padding="8,4">
+        <TextBlock Text="{Binding StatusMessage}" Foreground="{StaticResource FasterMutedText}" />
       </Border>
     </Grid>
   </Grid>

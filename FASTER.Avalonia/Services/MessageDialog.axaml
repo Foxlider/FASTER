@@ -1,9 +1,10 @@
 <Window x:CompileBindings="False" xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         x:Class="FASTER.Avalonia.Services.MessageDialog"
-        Width="420" SizeToContent="Height" WindowStartupLocation="CenterOwner">
+        Width="420" SizeToContent="Height" WindowStartupLocation="CenterOwner"
+        Background="{StaticResource FasterWindowBackground}">
   <StackPanel Margin="16" Spacing="10">
     <TextBlock x:Name="MessageText" TextWrapping="Wrap" />
-    <Button Content="OK" HorizontalAlignment="Right" Click="Ok_Click" IsDefault="True" />
+    <Button Classes="accent" Content="OK" HorizontalAlignment="Right" Click="Ok_Click" IsDefault="True" />
   </StackPanel>
 </Window>

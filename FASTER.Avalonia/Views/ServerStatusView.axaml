@@ -37,19 +37,19 @@
                         TooltipPosition="Hidden" />
     <Grid Grid.Row="3" RowDefinitions="Auto,*">
       <WrapPanel Margin="0,8">
-        <Button Content="Rescan" Margin="0,0,8,0" Click="Rescan_Click" />
-        <Button Content="Kill all" Click="KillAll_Click" />
+        <Button Classes="accent" Content="Rescan" Margin="0,0,8,0" Click="Rescan_Click" />
+        <Button Classes="accent" Content="Kill all" Click="KillAll_Click" />
       </WrapPanel>
       <dg:DataGrid Grid.Row="1" x:Name="ProcessGrid" AutoGenerateColumns="False"
                    CanUserSortColumns="True" Margin="0,8,0,0">
         <dg:DataGrid.Columns>
           <dg:DataGridTextColumn Header="PID" Binding="{Binding Id}" IsReadOnly="True" />
-          <dg:DataGridTextColumn Header="Name" Binding="{Binding ProcessName}" Width="*" IsReadOnly="True" />
-          <dg:DataGridTextColumn Header="Memory" Binding="{Binding WorkingSet64, Converter={StaticResource SizeConverter}}" IsReadOnly="True" />
+          <dg:DataGridTextColumn Header="NAME" Binding="{Binding ProcessName}" Width="*" IsReadOnly="True" />
+          <dg:DataGridTextColumn Header="MEMORY" Binding="{Binding WorkingSet64, Converter={StaticResource SizeConverter}}" IsReadOnly="True" />
           <dg:DataGridTemplateColumn Header="" CanUserSort="False" CanUserResize="False">
             <dg:DataGridTemplateColumn.CellTemplate>
               <DataTemplate>
-                <Button Content="Kill" Click="KillProcess_Click" />
+                <Button Classes="accent" Content="Kill" Click="KillProcess_Click" />
               </DataTemplate>
             </dg:DataGridTemplateColumn.CellTemplate>
           </dg:DataGridTemplateColumn>
