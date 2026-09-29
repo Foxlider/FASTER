@@ -158,24 +158,38 @@ public sealed class AppSettings
         UsingEFDlc = source.UsingEFDlc;
     }
 
+    private static bool s_loading;
+
     private static AppSettings Load()
     {
-        try
+        lock (s_lock)
         {
-            if (File.Exists(SettingsPath))
+            // Model constructors must never trigger a nested load while
+            // deserializing; bail out with defaults instead of recursing.
+            if (s_loading) return new AppSettings();
+            s_loading = true;
+            try
             {
-                var parsed = JsonSerializer.Deserialize<AppSettings>(File.ReadAllText(SettingsPath), s_json);
-                if (parsed != null) return parsed;
-            }
-        }
-        catch
-        { }
+                try
+                {
+                    if (File.Exists(SettingsPath))
+                    {
+                        var parsed = JsonSerializer.Deserialize<AppSettings>(File.ReadAllText(SettingsPath), s_json);
+                        if (parsed != null) return parsed;
+                    }
+                }
+                catch
+                { }
 
-        var fresh = new AppSettings();
-        var imported = ImportLegacyUserConfig();
-        if (imported != null)
-            fresh.ReloadFrom(imported);
-        return fresh;
+                var fresh = new AppSettings();
+                var imported = ImportLegacyUserConfig();
+                if (imported != null)
+                    fresh.ReloadFrom(imported);
+                return fresh;
+            }
+            finally
+            { s_loading = false; }
+        }
     }
 
     private static AppSettings? ImportLegacyUserConfig()

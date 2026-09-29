@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using System.Xml.Serialization;
 
@@ -431,6 +432,7 @@ namespace FASTER.Models
             { Directory.CreateDirectory(Path.Combine(AppSettings.Current.ServerPath, "Servers", Id)); }
         }
 
+        [JsonConstructor]
         public ServerProfile()
         {
             _id  = $"_{Guid.NewGuid():N}";

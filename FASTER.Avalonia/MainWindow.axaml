@@ -1,10 +1,79 @@
-<Window xmlns="https://github.com/avaloniaui"
+<Window x:CompileBindings="False" xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
         x:Class="FASTER.Avalonia.MainWindow"
-        Title="FASTER on Avalonia"
-        Width="480" Height="240">
-  <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="8">
-    <TextBlock Text="FASTER on Avalonia (.NET 10)" FontSize="20" HorizontalAlignment="Center" />
-    <TextBlock Text="Spike: window renders, Fluent theme loads." HorizontalAlignment="Center" />
-  </StackPanel>
+        Title="FASTER" Width="1100" Height="700" MinWidth="900" MinHeight="600">
+  <Grid ColumnDefinitions="230,*">
+    <Border Grid.Column="0" BorderBrush="{DynamicResource SystemControlForegroundBaseMediumLowBrush}" BorderThickness="0,0,1,0">
+      <Grid RowDefinitions="Auto,*,Auto">
+        <StackPanel Grid.Row="0" Margin="8" Spacing="2">
+          <TextBlock Text="Main" FontWeight="Bold" Margin="4,4,0,4" />
+          <Button Name="NavUpdater" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Click="NavUpdater_Click">
+            <StackPanel Orientation="Horizontal" Spacing="10">
+              <materialIcons:MaterialIcon Kind="Console" Width="18" Height="18" />
+              <TextBlock Text="Updater" VerticalAlignment="Center" />
+            </StackPanel>
+          </Button>
+          <Button Name="NavMods" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Click="NavMods_Click">
+            <StackPanel Orientation="Horizontal" Spacing="10">
+              <materialIcons:MaterialIcon Kind="Steam" Width="18" Height="18" />
+              <TextBlock Text="Mods" VerticalAlignment="Center" />
+            </StackPanel>
+          </Button>
+          <Button Name="NavDeployment" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Click="NavDeployment_Click">
+            <StackPanel Orientation="Horizontal" Spacing="10">
+              <materialIcons:MaterialIcon Kind="Folder" Width="18" Height="18" />
+              <TextBlock Text="Deployment" VerticalAlignment="Center" />
+            </StackPanel>
+          </Button>
+          <Button Name="NavServerStatus" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Click="NavServerStatus_Click">
+            <StackPanel Orientation="Horizontal" Spacing="10">
+              <materialIcons:MaterialIcon Kind="Gauge" Width="18" Height="18" />
+              <TextBlock Text="Server Status" VerticalAlignment="Center" />
+            </StackPanel>
+          </Button>
+        </StackPanel>
+        <Grid Grid.Row="1" RowDefinitions="Auto,*">
+          <DockPanel Grid.Row="0" Margin="8,4">
+            <TextBlock Text="Server Profiles" FontWeight="Bold" VerticalAlignment="Center" />
+            <Button Name="AddProfileButton" Content="+" Width="28" HorizontalAlignment="Right" Click="AddProfileButton_Click" />
+          </DockPanel>
+          <ListBox Grid.Row="1" Name="ProfilesList" ItemsSource="{Binding Profiles}" Margin="8,0,8,4"
+                   SelectionChanged="ProfilesList_SelectionChanged">
+            <ListBox.ItemTemplate>
+              <DataTemplate>
+                <TextBlock Text="{Binding Profile.Name}" />
+              </DataTemplate>
+            </ListBox.ItemTemplate>
+            <ListBox.ContextMenu>
+              <ContextMenu>
+                <MenuItem Header="Clone" Click="CloneProfile_Click" />
+                <MenuItem Header="Delete" Click="DeleteProfile_Click" />
+              </ContextMenu>
+            </ListBox.ContextMenu>
+          </ListBox>
+        </Grid>
+        <StackPanel Grid.Row="2" Margin="8" Spacing="2">
+          <Button Name="NavSettings" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Click="NavSettings_Click">
+            <StackPanel Orientation="Horizontal" Spacing="10">
+              <materialIcons:MaterialIcon Kind="Cog" Width="18" Height="18" />
+              <TextBlock Text="Settings" VerticalAlignment="Center" />
+            </StackPanel>
+          </Button>
+          <Button Name="NavAbout" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Click="NavAbout_Click">
+            <StackPanel Orientation="Horizontal" Spacing="10">
+              <materialIcons:MaterialIcon Kind="Information" Width="18" Height="18" />
+              <TextBlock Text="About" VerticalAlignment="Center" />
+            </StackPanel>
+          </Button>
+        </StackPanel>
+      </Grid>
+    </Border>
+    <Grid Grid.Column="1" RowDefinitions="*,Auto">
+      <ContentControl Grid.Row="0" Content="{Binding CurrentView}" Margin="8" />
+      <Border Grid.Row="1" BorderBrush="{DynamicResource SystemControlForegroundBaseMediumLowBrush}" BorderThickness="0,1,0,0" Padding="8,4">
+        <TextBlock Text="{Binding StatusMessage}" />
+      </Border>
+    </Grid>
+  </Grid>
 </Window>

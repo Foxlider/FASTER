@@ -1,0 +1,15 @@
+<UserControl x:CompileBindings="False" xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="FASTER.Avalonia.Views.AboutView">
+  <StackPanel Margin="16" Spacing="10" MaxWidth="600">
+    <TextBlock Text="FASTER" FontSize="24" FontWeight="Bold" />
+    <TextBlock x:Name="VersionLabel" />
+    <TextBlock Text="Fox's Arma Server Tool Extended Rewrite: manage Arma 3 dedicated servers, SteamCMD updates and Workshop mods." TextWrapping="Wrap" />
+    <WrapPanel>
+      <Button Content="Discord" Margin="0,0,8,0" Click="Discord_Click" />
+      <Button Content="GitHub" Margin="0,0,8,0" Click="GitHub_Click" />
+      <Button Content="Wiki" Margin="0,0,8,0" Click="Wiki_Click" />
+      <Button Content="Donate" Click="Donate_Click" />
+    </WrapPanel>
+  </StackPanel>
+</UserControl>

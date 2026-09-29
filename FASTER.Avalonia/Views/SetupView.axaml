@@ -1,0 +1,25 @@
+<UserControl x:CompileBindings="False" xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="FASTER.Avalonia.Views.SetupView">
+  <StackPanel Margin="16" Spacing="10" MaxWidth="600">
+    <TextBlock Text="First time setup" FontSize="24" FontWeight="Bold" />
+    <TextBlock x:Name="MessageText" Foreground="OrangeRed" />
+    <TextBlock Text="Arma server directory" />
+    <Grid ColumnDefinitions="*,Auto">
+      <TextBox Grid.Column="0" x:Name="ServerDirBox" />
+      <Button Grid.Column="1" Content="Browse" Margin="8,0,0,0" Click="ServerDirButton_Click" />
+    </Grid>
+    <TextBlock Text="Mod staging directory" />
+    <Grid ColumnDefinitions="*,Auto">
+      <TextBox Grid.Column="0" x:Name="ModStagingBox" />
+      <Button Grid.Column="1" Content="Browse" Margin="8,0,0,0" Click="ModStagingButton_Click" />
+    </Grid>
+    <TextBlock Text="Steam username" />
+    <TextBox x:Name="SteamUserBox" />
+    <TextBlock Text="Steam password (stored encrypted)" />
+    <TextBox x:Name="SteamPassBox" PasswordChar="*" />
+    <TextBlock Text="Steam API key (optional)" />
+    <TextBox x:Name="ApiKeyBox" />
+    <Button Content="Continue" HorizontalAlignment="Left" Click="Continue_Click" />
+  </StackPanel>
+</UserControl>

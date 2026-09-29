@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Xml.Serialization;
 
 namespace FASTER.Models
@@ -63,6 +64,7 @@ namespace FASTER.Models
         private bool _isLocal;
 
 
+        [JsonConstructor]
         public DeploymentMod()
         {
             Marked = false;

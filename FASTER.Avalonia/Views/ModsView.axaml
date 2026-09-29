@@ -1,0 +1,83 @@
+<UserControl x:CompileBindings="False" xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:dg="using:Avalonia.Controls"
+             xmlns:converters="clr-namespace:FASTER.Avalonia.Converters;assembly=FASTER.Avalonia"
+             xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             x:Class="FASTER.Avalonia.Views.ModsView">
+  <UserControl.Resources>
+    <converters:FolderSizeConverter x:Key="SizeConverter" />
+    <converters:BoolNegationConverter x:Key="Not" />
+  </UserControl.Resources>
+  <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,*">
+    <StackPanel Orientation="Horizontal" Margin="10,10,5,5" Spacing="4">
+      <Button ToolTip.Tip="Add Steam Mod" Click="AddSteamMod_Click">
+        <materialIcons:MaterialIcon Kind="Plus" Width="18" Height="18" />
+      </Button>
+      <Button ToolTip.Tip="Add Local Mod" Click="AddLocalMod_Click">
+        <materialIcons:MaterialIcon Kind="FolderPlusOutline" Width="18" Height="18" />
+      </Button>
+      <Button ToolTip.Tip="Import from Arma 3 Launcher File" Click="ImportLauncherFile_Click">
+        <materialIcons:MaterialIcon Kind="FileDocumentOutline" Width="18" Height="18" />
+      </Button>
+      <Button ToolTip.Tip="Check For Updates" Click="CheckForUpdates_Click">
+        <materialIcons:MaterialIcon Kind="ClockCheckOutline" Width="18" Height="18" />
+      </Button>
+      <Button ToolTip.Tip="Update All" Click="UpdateAll_Click">
+        <materialIcons:MaterialIcon Kind="Update" Width="18" Height="18" />
+      </Button>
+      <Button ToolTip.Tip="Delete All" Click="DeleteAll_Click">
+        <materialIcons:MaterialIcon Kind="Delete" Width="18" Height="18" />
+      </Button>
+    </StackPanel>
+    <TextBlock Grid.Column="1" Text="{Binding ModsCollection.ArmaMods.Count}"
+               HorizontalAlignment="Center" VerticalAlignment="Center" />
+    <dg:DataGrid Grid.Row="1" Grid.ColumnSpan="2" Margin="10,5,10,10" x:Name="ModsGrid"
+                 ItemsSource="{Binding ModsCollection.ArmaMods}"
+                 CanUserReorderColumns="False" CanUserSortColumns="True" AutoGenerateColumns="False"
+                 SelectionMode="Extended" SelectionChanged="ModsGrid_SelectionChanged">
+      <dg:DataGrid.ContextMenu>
+        <ContextMenu>
+          <MenuItem Header="Update" Click="UpdateSelectedMods" />
+          <MenuItem Header="Delete" Click="DeleteSelectedMods" />
+        </ContextMenu>
+      </dg:DataGrid.ContextMenu>
+      <dg:DataGrid.Columns>
+        <dg:DataGridTemplateColumn CanUserResize="False" CanUserSort="True" SortMemberPath="IsLocal">
+          <dg:DataGridTemplateColumn.CellTemplate>
+            <DataTemplate>
+              <Panel Margin="3">
+                <materialIcons:MaterialIcon Kind="Folder" Width="16" Height="16" IsVisible="{Binding IsLocal}" />
+                <materialIcons:MaterialIcon Kind="Steam" Width="16" Height="16" IsVisible="{Binding IsLocal, Converter={StaticResource Not}}" />
+              </Panel>
+            </DataTemplate>
+          </dg:DataGridTemplateColumn.CellTemplate>
+        </dg:DataGridTemplateColumn>
+        <dg:DataGridTextColumn Header="ID" Binding="{Binding WorkshopId}" IsReadOnly="True" />
+        <dg:DataGridTextColumn Header="Status" Binding="{Binding Status}" IsReadOnly="True" />
+        <dg:DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*" IsReadOnly="True" />
+        <dg:DataGridTextColumn Header="Author" Binding="{Binding Author}" IsReadOnly="True" />
+        <dg:DataGridTextColumn Header="Size" Binding="{Binding Size, Converter={StaticResource SizeConverter}}" IsReadOnly="True" />
+        <dg:DataGridTemplateColumn Header="Info" CanUserSort="False" CanUserResize="False">
+          <dg:DataGridTemplateColumn.CellTemplate>
+            <DataTemplate>
+              <StackPanel Orientation="Horizontal">
+                <Button Height="25" Width="25" Margin="1" Padding="0" Click="OpenModPage"
+                        IsVisible="{Binding IsLocal, Converter={StaticResource Not}}">
+                  <materialIcons:MaterialIcon Kind="Web" Width="16" Height="16" />
+                </Button>
+                <Button Height="25" Width="25" Margin="1" Padding="0" Click="OpenModFolder"
+                        IsVisible="{Binding IsLocal, Converter={StaticResource Not}}">
+                  <materialIcons:MaterialIcon Kind="FolderOpen" Width="16" Height="16" />
+                </Button>
+                <Button Height="25" Width="52" Margin="1" Padding="0" Click="OpenModFolder"
+                        IsVisible="{Binding IsLocal}">
+                  <materialIcons:MaterialIcon Kind="FolderOpen" Width="16" Height="16" />
+                </Button>
+              </StackPanel>
+            </DataTemplate>
+          </dg:DataGridTemplateColumn.CellTemplate>
+        </dg:DataGridTemplateColumn>
+      </dg:DataGrid.Columns>
+    </dg:DataGrid>
+  </Grid>
+</UserControl>

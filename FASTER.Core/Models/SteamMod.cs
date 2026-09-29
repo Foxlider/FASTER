@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
@@ -24,6 +25,7 @@ namespace FASTER.Models
     [Serializable]
     public class SteamMod
     {
+        [JsonConstructor]
         public SteamMod()
         {}
 
