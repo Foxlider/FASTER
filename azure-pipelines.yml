@@ -21,10 +21,10 @@ steps:
   displayName: 'Checkout (with submodules)'
 
 - task: UseDotNet@2
-  displayName: 'Use DotNet 8.0'
+  displayName: 'Use DotNet 10.0'
   inputs:
     packageType: 'sdk'
-    version: '8.0.x'
+    version: '10.0.x'
     includePreviewVersions: false
 
 - task: DotNetCoreCLI@2
