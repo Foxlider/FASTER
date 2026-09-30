@@ -20,6 +20,10 @@
         <models:ProfileModsFilterIsInvalidBorderColorConverter x:Key="ProfileModsFilterIsInvalidBorderColorConverter"/>
         <models:ProfileModsFilterIsInvalidBackgroundColorConverter x:Key="ProfileModsFilterIsInvalidBackgroundColorConverter"/>
         <models:ProfileModsFilterIsInvalidTextConverter x:Key="ProfileModsFilterIsInvalidTextConverter"/>
+        <Style x:Key="CompactColumnHeader" TargetType="DataGridColumnHeader" BasedOn="{StaticResource MahApps.Styles.DataGridColumnHeader}">
+            <Setter Property="Padding" Value="4,2"/>
+            <Setter Property="mah:ControlsHelper.ContentCharacterCasing" Value="Normal"/>
+        </Style>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -797,6 +801,41 @@
                                             <Label Grid.Column="1" Content="Arma Required Build" Margin="-10,0" Visibility="{Binding Path=Profile.ServerCfg.RequiredBuildChecked, Converter={StaticResource BoolToHide}}"/>
                                             <mah:NumericUpDown Grid.Column="1" Value="{Binding Path=Profile.ServerCfg.RequiredBuild}" IsEnabled="{Binding Path=Profile.ServerCfg.RequiredBuildChecked}" Visibility="{Binding Path=Profile.ServerCfg.RequiredBuildChecked, Converter={StaticResource BoolToVis}}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Required Build" Margin="5,2"/>
                                         </Grid>
+                                        <Expander Header="Disable Channels" Margin="5,3">
+                                            <DataGrid ItemsSource="{Binding Path=Profile.ServerCfg.DisableChannels}" ColumnHeaderStyle="{StaticResource CompactColumnHeader}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False" CanUserSortColumns="False" HeadersVisibility="Column" IsReadOnly="True">
+                                                <DataGrid.Columns>
+                                                    <DataGridTextColumn Header="Channel" Binding="{Binding Name}" Width="*" MinWidth="60"/>
+                                                    <DataGridTemplateColumn Header="Text" Width="42">
+                                                        <DataGridTemplateColumn.CellTemplate>
+                                                            <DataTemplate DataType="models:ChannelRestriction">
+                                                                <CheckBox IsChecked="{Binding Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center"/>
+                                                            </DataTemplate>
+                                                        </DataGridTemplateColumn.CellTemplate>
+                                                    </DataGridTemplateColumn>
+                                                    <DataGridTemplateColumn Header="Voice" Width="42">
+                                                        <DataGridTemplateColumn.CellTemplate>
+                                                            <DataTemplate DataType="models:ChannelRestriction">
+                                                                <CheckBox IsChecked="{Binding Voice, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center"/>
+                                                            </DataTemplate>
+                                                        </DataGridTemplateColumn.CellTemplate>
+                                                    </DataGridTemplateColumn>
+                                                    <DataGridTemplateColumn Header="Marks" Width="42">
+                                                        <DataGridTemplateColumn.CellTemplate>
+                                                            <DataTemplate DataType="models:ChannelRestriction">
+                                                                <CheckBox IsChecked="{Binding MapMarkers, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center"/>
+                                                            </DataTemplate>
+                                                        </DataGridTemplateColumn.CellTemplate>
+                                                    </DataGridTemplateColumn>
+                                                    <DataGridTemplateColumn Header="Draw" Width="42">
+                                                        <DataGridTemplateColumn.CellTemplate>
+                                                            <DataTemplate DataType="models:ChannelRestriction">
+                                                                <CheckBox IsChecked="{Binding DrawOnMap, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center"/>
+                                                            </DataTemplate>
+                                                        </DataGridTemplateColumn.CellTemplate>
+                                                    </DataGridTemplateColumn>
+                                                </DataGrid.Columns>
+                                            </DataGrid>
+                                        </Expander>
                                     </StackPanel>
                                 </GroupBox>
 

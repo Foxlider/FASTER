@@ -63,6 +63,7 @@ namespace FASTER.Models
         private int    kickTimeoutBattlEye      = 60;        // <- These are BI base figures
         private int    kickTimeoutHarmless      = 60;        // <-
         private int    idleFPSLimit             = 30;        // FPS limit of a server without players, range 5-60
+        private ChannelRestriction[] disableChannels = ChannelRestriction.CreateDefaults();
 
 
         //Arma server only
@@ -656,6 +657,31 @@ namespace FASTER.Models
             }
         }
 
+        public ChannelRestriction[] DisableChannels
+        {
+            get => disableChannels;
+            set
+            {
+                foreach (var c in disableChannels) c.PropertyChanged -= Channel_PropertyChanged;
+                disableChannels = value ?? ChannelRestriction.CreateDefaults();
+                foreach (var c in disableChannels) c.PropertyChanged += Channel_PropertyChanged;
+                RaisePropertyChanged(nameof(DisableChannels));
+            }
+        }
+
+        private void Channel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            RaisePropertyChanged(nameof(DisableChannels));
+        }
+
+        private string FormatDisableChannels()
+        {
+            var channels = disableChannels.Where(c => !c.IsDefault).Select(c => c.ToCfg()).ToList();
+            if (channels.Count == 0)
+            { return ""; }
+            return $"disableChannels[] = {{ {string.Join(", ", channels)} }};\t// {{ channelID, text, voice, mapMarkers, drawOnMap }} - true disables it. Overridden by the mission's description.ext\r\n";
+        }
+
         #region Arma Server Only
         public string VerifySignatures
         {
@@ -1083,6 +1109,8 @@ namespace FASTER.Models
 
         public ServerCfg()
         {
+            foreach (var c in disableChannels) c.PropertyChanged += Channel_PropertyChanged;
+
             if(string.IsNullOrWhiteSpace(serverCfgContent))
             { ServerCfgContent = ProcessFile(); }
         }
@@ -1162,6 +1190,7 @@ namespace FASTER.Models
                           + "\r\n"
                           + "// INGAME SETTINGS\r\n"
                           + $"disableVoN = {disableVoN};\t\t\t\t// If set to 1, Voice over Net will not be available\r\n"
+                          + FormatDisableChannels()
                           + $"vonCodec = {vonCodec};\t\t\t\t// If set to 1 then it uses IETF standard OPUS codec, if to 0 then it uses SPEEX codec (since Arma 3 update 1.58+)  \r\n"
                           + $"skipLobby = {(skipLobby ? "1" : "0")};\t\t\t\t// Overridden by mission parameters\r\n"
                           + $"vonCodecQuality = {vonCodecQuality};\t\t\t// since 1.62.95417 supports range 1-20 //since 1.63.x will supports range 1-30 //8kHz is 0-10, 16kHz is 11-20, 32kHz(48kHz) is 21-30 \r\n"
