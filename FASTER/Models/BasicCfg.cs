@@ -211,7 +211,7 @@ namespace FASTER.Models
                           + "Resolution_W=800;\r\n"
                           + "Resolution_H=600;\r\n"
                           + "Resolution_Bpp=32;\r\n"
-                          + $"terrainGrid={terrainGrid:0.###};\r\n"
+                          + $"terrainGrid={terrainGrid.ToString("0.###", CultureInfo.InvariantCulture)};\r\n"
                           + $"viewDistance = {viewDistance};\r\n"
                           + "\r\n"
                           + "\r\n"
