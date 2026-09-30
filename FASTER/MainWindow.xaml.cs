@@ -563,9 +563,12 @@ namespace FASTER
                 controller.SetMessage($"Checking Drive Space... {Functions.ParseFileSize(fullzize)}");
             }
 
-            var drive = DriveInfo.GetDrives().FirstOrDefault(d => d.Name == Path.GetPathRoot(modStagingDir));
+            var drive = DriveInfo.GetDrives().FirstOrDefault(d => string.Equals(d.Name, Path.GetPathRoot(modStagingDir), StringComparison.OrdinalIgnoreCase));
 
-            if (drive.AvailableFreeSpace < fullzize)
+            if (drive == null)
+               Logger.Log($"ModConversion: no drive found for {modStagingDir}, skipping free space check.");
+
+            if (drive != null && drive.AvailableFreeSpace < fullzize)
             {
                 properties.armaMods = null;
                 properties.firstRun = true;
