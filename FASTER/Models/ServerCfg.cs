@@ -56,6 +56,13 @@ namespace FASTER.Models
         private int    armaUnitsTimeout         = 30; 	     // Defines how long the player will be stuck connecting and wait for armaUnits data. Player will be notified if timeout elapsed and no units data was received
         private int    queueSizeLogG            = 1000000; 	 // if a specific players message queue is larger than 1MB and '#monitor' is running, dump his messages to a logfile for analysis
         private string forcedDifficulty         = "Custom";  // By default forcedDifficulty is only applying Custom
+        private short  missionsEndAction;                    // 0 = nothing ; 1 = missionsToServerRestart ; 2 = missionsToShutdown (both can't be combined)
+        private int    missionsEndCount         = 8;
+        private int    kickTimeoutManual        = 60;        // <- kickTimeout[] in seconds, -1 = until mission end, -2 = until server restart
+        private int    kickTimeoutConnectivity  = 60;        // <-
+        private int    kickTimeoutBattlEye      = 60;        // <- These are BI base figures
+        private int    kickTimeoutHarmless      = 60;        // <-
+        private int    idleFPSLimit             = 30;        // FPS limit of a server without players, range 5-60
 
 
         //Arma server only
@@ -90,6 +97,8 @@ namespace FASTER.Models
         private string onDifferentData;
         private string onUnsignedData = "kick (_this select 0)";
         private string onUserKicked;
+        private int    callExtReportLimit = 1000;
+        private bool   enablePlayerDiag;
 
         private bool                 missionSelectorChecked;
         private string               missionContentOverride;
@@ -551,6 +560,102 @@ namespace FASTER.Models
         }
         #endregion
 
+        public bool RestartAfterMissions
+        {
+            get => missionsEndAction == 1;
+            set
+            {
+                if (value)
+                { missionsEndAction = 1; }
+                else if (missionsEndAction == 1)
+                { missionsEndAction = 0; }
+                RaiseMissionsEndActionChanged();
+            }
+        }
+
+        public bool ShutdownAfterMissions
+        {
+            get => missionsEndAction == 2;
+            set
+            {
+                if (value)
+                { missionsEndAction = 2; }
+                else if (missionsEndAction == 2)
+                { missionsEndAction = 0; }
+                RaiseMissionsEndActionChanged();
+            }
+        }
+
+        public bool MissionsEndActionEnabled => missionsEndAction != 0;
+
+        private void RaiseMissionsEndActionChanged()
+        {
+            RaisePropertyChanged(nameof(RestartAfterMissions));
+            RaisePropertyChanged(nameof(ShutdownAfterMissions));
+            RaisePropertyChanged(nameof(MissionsEndActionEnabled));
+        }
+
+        public int MissionsEndCount
+        {
+            get => missionsEndCount;
+            set
+            {
+                missionsEndCount = value;
+                RaisePropertyChanged(nameof(MissionsEndCount));
+            }
+        }
+
+
+        public int KickTimeoutManual
+        {
+            get => kickTimeoutManual;
+            set
+            {
+                kickTimeoutManual = value;
+                RaisePropertyChanged(nameof(KickTimeoutManual));
+            }
+        }
+
+        public int KickTimeoutConnectivity
+        {
+            get => kickTimeoutConnectivity;
+            set
+            {
+                kickTimeoutConnectivity = value;
+                RaisePropertyChanged(nameof(KickTimeoutConnectivity));
+            }
+        }
+
+        public int KickTimeoutBattlEye
+        {
+            get => kickTimeoutBattlEye;
+            set
+            {
+                kickTimeoutBattlEye = value;
+                RaisePropertyChanged(nameof(KickTimeoutBattlEye));
+            }
+        }
+
+        public int KickTimeoutHarmless
+        {
+            get => kickTimeoutHarmless;
+            set
+            {
+                kickTimeoutHarmless = value;
+                RaisePropertyChanged(nameof(KickTimeoutHarmless));
+            }
+        }
+
+        public int IdleFPSLimit
+        {
+            get => idleFPSLimit;
+            set
+            {
+                idleFPSLimit = value;
+                RaisePropertyChanged(nameof(IdleFPSLimit));
+            }
+        }
+
         #region Arma Server Only
         public string VerifySignatures
         {
@@ -824,6 +929,26 @@ namespace FASTER.Models
                 RaisePropertyChanged(nameof(OnUserKicked));
             }
         }
+
+        public int CallExtReportLimit
+        {
+            get => callExtReportLimit;
+            set
+            {
+                callExtReportLimit = value;
+                RaisePropertyChanged(nameof(CallExtReportLimit));
+            }
+        }
+
+        public bool EnablePlayerDiag
+        {
+            get => enablePlayerDiag;
+            set
+            {
+                enablePlayerDiag = value;
+                RaisePropertyChanged(nameof(EnablePlayerDiag));
+            }
+        }
         #endregion
 
         #region Mission
@@ -1043,6 +1168,8 @@ namespace FASTER.Models
                           + $"persistent = {persistent};\t\t\t\t// If 1, missions still run on even after the last player disconnected.\r\n"
                           + $"timeStampFormat = \"{timeStampFormat}\";\t\t// Set the timestamp format used on each report line in server-side RPT file. Possible values are \"none\" (default),\"short\",\"full\".\r\n"
                           + $"BattlEye = {battlEye};\t\t\t\t// Server to use BattlEye system\r\n"
+                          + $"idleFPSLimit = {idleFPSLimit};\t\t\t\t// Servers with no players will limit their FPS to this value (5-60)\r\n"
+                          + $"enablePlayerDiag = {(enablePlayerDiag ? "1" : "0")};\t\t\t// Logs players' bandwidth and desync info every 60 seconds\r\n"
                           + $"drawingInMap = {(drawingInMap ? "1" : "0")};\t\t\t\t// Enables or disables the ability to place markers and draw lines in map.\r\n"
                           + "class AdvancedOptions\r\n{\r\n"
                           + $"\tLogObjectNotFound = {(logObjectNotFound ? "1" : "0")};\t\t// When false to skip logging 'Server: Object not found messages'.\r\n"
@@ -1058,6 +1185,7 @@ namespace FASTER.Models
                           + $"maxPing= {maxping};\t\t\t\t// Max ping value until server kick the user\r\n"
                           + $"maxPacketLoss= {maxpacketloss};\t\t\t// Max packetloss value until server kick the user\r\n"
                           + $"kickClientsOnSlowNetwork[] = {( kickClientOnSlowNetwork ? "{ 1, 1, 1, 1 }" : "{ 0, 0, 0, 0 }")};\t// Defines if {{<MaxPing>, <MaxPacketLoss>, <MaxDesync>, <DisconnectTimeout>}} will be logged (0) or kicked (1)\r\n"
+                          + $"kickTimeout[] = {{ {{ 0, {kickTimeoutManual} }}, {{ 1, {kickTimeoutConnectivity} }}, {{ 2, {kickTimeoutBattlEye} }}, {{ 3, {kickTimeoutHarmless} }} }};\t// {{ kickID, timeout }} for manual, connectivity, BattlEye and harmless kicks. Seconds, -1 = until mission end, -2 = until server restart\r\n"
                           + $"lobbyIdleTimeout = {lobbyIdleTimeout};\t\t\t// The amount of time the server will wait before force-starting a mission without a logged-in Admin.\r\n"
                           + $"roleTimeOut = {roleTimeOut};\t\t\t\t// The amount of time a player can sit in role selection before being kicked.\r\n"
                           + $"debriefingTimeOut = {debriefingTimeOut};\t\t\t// The amount of time a player can sit in breifing mode before being kicked.\r\n"
@@ -1070,6 +1198,7 @@ namespace FASTER.Models
                           + $"onUserDisconnected = \"{onUserDisconnected}\";\t\t\t//\r\n"
                           + $"doubleIdDetected = \"{doubleIdDetected}\";\t\t\t//\r\n"
 						  + $"onUserKicked = \"{onUserKicked}\";\t\t\t\t//\r\n"
+                          + $"callExtReportLimit = {callExtReportLimit};\t\t// Log a warning if a server callExtension takes longer than this (ms)\r\n"
                           + "\r\n"
                           + "// SIGNATURE VERIFICATION\r\n"
                           + $"onUnsignedData = \"{onUnsignedData}\";\t// unsigned data detected\r\n"
@@ -1080,6 +1209,8 @@ namespace FASTER.Models
                           + "// MISSIONS CYCLE (see below)\r\n"
                           + $"randomMissionOrder = {(randomMissionOrder ? "1" : "0")};\t\t// Randomly iterate through Missions list\r\n"
                           + $"autoSelectMission = {(autoSelectMission ? "1" : "0")};\t\t\t// Server auto selects next mission in cycle\r\n"
+                          + (missionsEndAction == 1 ? $"missionsToServerRestart = {missionsEndCount};\t\t// Restart the server after this many missions ended\r\n" : "")
+                          + (missionsEndAction == 2 ? $"missionsToShutdown = {missionsEndCount};\t\t\t// Shut down the server after this many missions ended\r\n" : "")
                           + (!string.IsNullOrWhiteSpace(MissionHTTPDownloadBaseURL) ? $"missionHTTPDownloadBaseURL = \"{MissionHTTPDownloadBaseURL}\";\r\n" : "")
                           + "\r\n"
                           + $"{MissionContentOverride}\t\t\t\t\t// An empty Missions class means there will be no mission rotation\r\n"
