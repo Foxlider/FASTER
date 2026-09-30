@@ -46,7 +46,10 @@ namespace FASTER.Models
         private int    maxdesync                = 150;      // Max desync value until server kick the user
         private int    maxping                  = 200;      // Max ping value until server kick the user
         private int    maxpacketloss            = 50;       // Max packetloss value until server kick the user
-        private bool   kickClientOnSlowNetwork;
+        private bool   kickOnPing;                           // <- kickClientsOnSlowNetwork[] = { MaxPing, MaxPacketLoss, MaxDesync, DisconnectTimeout }
+        private bool   kickOnPacketLoss;                     // <- false = only logged, true = kicked
+        private bool   kickOnDesync;                         // <-
+        private bool   kickOnTimeout;                        // <-
         private int    lobbyIdleTimeout         = 300;
         private bool   autoSelectMission        = true;
         private bool   randomMissionOrder       = true;
@@ -375,11 +378,51 @@ namespace FASTER.Models
 
         public bool KickClientOnSlowNetwork
         {
-            get => kickClientOnSlowNetwork;
+            get => kickOnPing && kickOnPacketLoss && kickOnDesync && kickOnTimeout;
             set
             {
-                kickClientOnSlowNetwork = value;
+                KickOnPing = KickOnPacketLoss = KickOnDesync = KickOnTimeout = value;
                 RaisePropertyChanged(nameof(KickClientOnSlowNetwork));
+            }
+        }
+
+        public bool KickOnPing
+        {
+            get => kickOnPing;
+            set
+            {
+                kickOnPing = value;
+                RaisePropertyChanged(nameof(KickOnPing));
+            }
+        }
+
+        public bool KickOnPacketLoss
+        {
+            get => kickOnPacketLoss;
+            set
+            {
+                kickOnPacketLoss = value;
+                RaisePropertyChanged(nameof(KickOnPacketLoss));
+            }
+        }
+
+        public bool KickOnDesync
+        {
+            get => kickOnDesync;
+            set
+            {
+                kickOnDesync = value;
+                RaisePropertyChanged(nameof(KickOnDesync));
+            }
+        }
+
+        public bool KickOnTimeout
+        {
+            get => kickOnTimeout;
+            set
+            {
+                kickOnTimeout = value;
+                RaisePropertyChanged(nameof(KickOnTimeout));
             }
         }
 
@@ -1339,7 +1382,7 @@ namespace FASTER.Models
                           + $"maxDesync = {maxdesync};\t\t\t// Max desync value until server kick the user\r\n"
                           + $"maxPing= {maxping};\t\t\t\t// Max ping value until server kick the user\r\n"
                           + $"maxPacketLoss= {maxpacketloss};\t\t\t// Max packetloss value until server kick the user\r\n"
-                          + $"kickClientsOnSlowNetwork[] = {( kickClientOnSlowNetwork ? "{ 1, 1, 1, 1 }" : "{ 0, 0, 0, 0 }")};\t// Defines if {{<MaxPing>, <MaxPacketLoss>, <MaxDesync>, <DisconnectTimeout>}} will be logged (0) or kicked (1)\r\n"
+                          + $"kickClientsOnSlowNetwork[] = {{ {(kickOnPing ? 1 : 0)}, {(kickOnPacketLoss ? 1 : 0)}, {(kickOnDesync ? 1 : 0)}, {(kickOnTimeout ? 1 : 0)} }};\t// Defines if {{<MaxPing>, <MaxPacketLoss>, <MaxDesync>, <DisconnectTimeout>}} will be logged (0) or kicked (1)\r\n"
                           + $"kickTimeout[] = {{ {{ 0, {kickTimeoutManual} }}, {{ 1, {kickTimeoutConnectivity} }}, {{ 2, {kickTimeoutBattlEye} }}, {{ 3, {kickTimeoutHarmless} }} }};\t// {{ kickID, timeout }} for manual, connectivity, BattlEye and harmless kicks. Seconds, -1 = until mission end, -2 = until server restart\r\n"
                           + $"lobbyIdleTimeout = {lobbyIdleTimeout};\t\t\t// The amount of time the server will wait before force-starting a mission without a logged-in Admin.\r\n"
                           + $"roleTimeOut = {roleTimeOut};\t\t\t\t// The amount of time a player can sit in role selection before being kicked.\r\n"

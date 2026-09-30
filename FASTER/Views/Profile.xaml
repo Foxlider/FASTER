@@ -648,6 +648,7 @@
                                             <RowDefinition/>
                                             <RowDefinition/>
                                             <RowDefinition/>
+                                            <RowDefinition/>
                                         </Grid.RowDefinitions>
                                         <CheckBox Content="Loopback" IsChecked="{Binding Path=Profile.ServerCfg.Loopback}" Margin="5,2" Grid.Column="0" Grid.Row="0"/>
                                         <CheckBox Content="UPNP" IsChecked="{Binding Path=Profile.ServerCfg.Upnp}" Margin="5,2" Grid.Column="1" Grid.Row="0"/>
@@ -655,6 +656,13 @@
                                         <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.MaxDesync}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Max Desync" Grid.Row="1" Grid.Column="1" Margin="5,2"/>
                                         <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.MaxPing}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Max Ping" Grid.Row="2" Grid.Column="0" Margin="5,2"/>
                                         <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.MaxPacketLoss}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Max Packet Loss" Grid.Row="2" Grid.Column="1" Margin="5,2"/>
+                                        <WrapPanel Grid.Row="3" Grid.ColumnSpan="2">
+                                            <Label Content="Kick on:" Margin="0,2"/>
+                                            <CheckBox Content="Ping" IsChecked="{Binding Path=Profile.ServerCfg.KickOnPing}" Margin="5,2"/>
+                                            <CheckBox Content="Packet Loss" IsChecked="{Binding Path=Profile.ServerCfg.KickOnPacketLoss}" Margin="5,2"/>
+                                            <CheckBox Content="Desync" IsChecked="{Binding Path=Profile.ServerCfg.KickOnDesync}" Margin="5,2"/>
+                                            <CheckBox Content="Timeout" IsChecked="{Binding Path=Profile.ServerCfg.KickOnTimeout}" Margin="5,2"/>
+                                        </WrapPanel>
                                     </Grid>
                                 </GroupBox>
 
@@ -670,7 +678,6 @@
                                         <ComboBox SelectedItem="{Binding Path=Profile.ServerCfg.AllowedFilePatching}" ItemsSource="{Binding Path=FilePatching}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Allow File Patching" Margin="5"/>
                                         <ComboBox SelectedItem="{Binding Path=Profile.ServerCfg.VerifySignatures}" ItemsSource="{Binding Path=VerifySignatures}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Verify Signatures" Margin="5"/>
                                         <CheckBox IsChecked="{Binding Path=Profile.ServerCfg.KickDuplicates}" Content="Kick Duplicates" Margin="5,2"/>
-                                        <CheckBox IsChecked="{Binding Path=Profile.ServerCfg.KickClientOnSlowNetwork}" Content="Kick on Slow Network" Margin="5,2"/>
                                         <Grid>
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition/>
