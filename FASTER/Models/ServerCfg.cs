@@ -73,6 +73,14 @@ namespace FASTER.Models
         private int    requiredBuild            = 999999999; // Minimum required client version. Clients with version lower than requiredBuild will not be able to connect
         private int    steamProtocolMaxDataSize = 10000;     // BI Default value is 1024. Increasing this value is dangerous for older routers as it will cause UDP packets to be fragmented. Though increasing this value can help with modulier length limit in a3 launcher.
 
+        //Security
+        private static readonly string[] RecommendedLoadExtensions = { "hpp", "sqs", "sqf", "fsm", "cpp", "paa", "txt", "xml", "inc", "ext", "sqm", "ods", "fxy", "lip", "csv", "kb", "bik", "bikb", "html", "htm", "biedi" };
+        private List<string> allowedLoadFileExtensions       = RecommendedLoadExtensions.ToList();
+        private List<string> allowedPreprocessFileExtensions = RecommendedLoadExtensions.ToList();
+        private List<string> allowedHTMLLoadExtensions       = new() { "htm", "html", "xml", "txt" };
+        private List<string> allowedHTMLLoadURIs             = new();
+        private List<string> filePatchingExceptions          = new();
+
         //Scripting
         private string serverCommandPassword;
         private string doubleIdDetected;
@@ -677,6 +685,74 @@ namespace FASTER.Models
         }
         #endregion
 
+        #region Security
+        public string AllowedLoadFileExtensions
+        {
+            get => string.Join(", ", allowedLoadFileExtensions);
+            set
+            {
+                allowedLoadFileExtensions = ParseExtensions(value);
+                RaisePropertyChanged(nameof(AllowedLoadFileExtensions));
+            }
+        }
+
+        public string AllowedPreprocessFileExtensions
+        {
+            get => string.Join(", ", allowedPreprocessFileExtensions);
+            set
+            {
+                allowedPreprocessFileExtensions = ParseExtensions(value);
+                RaisePropertyChanged(nameof(AllowedPreprocessFileExtensions));
+            }
+        }
+
+        public string AllowedHTMLLoadExtensions
+        {
+            get => string.Join(", ", allowedHTMLLoadExtensions);
+            set
+            {
+                allowedHTMLLoadExtensions = ParseExtensions(value);
+                RaisePropertyChanged(nameof(AllowedHTMLLoadExtensions));
+            }
+        }
+
+        public string AllowedHTMLLoadURIs
+        {
+            get => string.Join("\n", allowedHTMLLoadURIs);
+            set
+            {
+                allowedHTMLLoadURIs = value.Replace("\r", "").Split('\n').ToList();
+                RaisePropertyChanged(nameof(AllowedHTMLLoadURIs));
+            }
+        }
+
+        public string FilePatchingExceptions
+        {
+            get => string.Join("\n", filePatchingExceptions);
+            set
+            {
+                filePatchingExceptions = value.Replace("\r", "").Split('\n').ToList();
+                RaisePropertyChanged(nameof(FilePatchingExceptions));
+            }
+        }
+
+        private static List<string> ParseExtensions(string value)
+        {
+            return (value ?? "").Split(new[] { ',', ';', ' ', '\t', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)
+                                .Select(e => e.Trim('"', '\'').TrimStart('.'))
+                                .Where(e => e.Length > 0)
+                                .ToList();
+        }
+
+        private static string FormatArray(string name, IEnumerable<string> values, string comment)
+        {
+            var items = values.Select(v => v.Trim()).Where(v => v.Length > 0).ToList();
+            if (items.Count == 0)
+            { return ""; }
+            return $"{name}[] = {{ \"{string.Join("\", \"", items)}\" }};\t// {comment}\r\n";
+        }
+        #endregion
+
         #region Scripting
 
         public string DoubleIdDetected
@@ -943,6 +1019,13 @@ namespace FASTER.Models
                           + $"steamProtocolMaxDataSize = {steamProtocolMaxDataSize};\t\t// Increasing this value will fix the modlist length limit in Arma 3 Launcher but mignt not be supported by some routers.\r\n"
                           + $"loopback = {(loopback ? "1" : "0")};\t\t\t\t// Enforces LAN only mode.\r\n"
                           + $"upnp = {(upnp ? "1" : "0")};\t\t\t\t// This setting might slow up server start-up by 600s if blocked by firewall or router.\r\n"
+                          + "\r\n"
+                          + "// SECURITY\r\n"
+                          + FormatArray("allowedLoadFileExtensions", allowedLoadFileExtensions, "Only allow files with these extensions to be loaded via loadFile")
+                          + FormatArray("allowedPreprocessFileExtensions", allowedPreprocessFileExtensions, "Only allow files with these extensions to be loaded via preprocessFile / preprocessFileLineNumbers")
+                          + FormatArray("allowedHTMLLoadExtensions", allowedHTMLLoadExtensions, "Only allow files and URLs with these extensions to be loaded via htmlLoad")
+                          + FormatArray("allowedHTMLLoadURIs", allowedHTMLLoadURIs, "Only allow files from these URIs to be loaded via htmlLoad")
+                          + FormatArray("filePatchingExceptions", filePatchingExceptions, "Steam IDs allowed to join ignoring allowedFilePatching and verifySignatures (since Arma 3 2.10)")
                           + "\r\n"
                           + "// VOTING\r\n"
                           + $"{(votingEnabled ? $"voteMissionPlayers = {voteMissionPlayers};" : "voteMissionPlayers = 1;")}\t\t\t// Tells the server how many people must connect so that it displays the mission selection screen.\r\n"

@@ -671,6 +671,23 @@
 
                                     </StackPanel>
                                 </Expander>
+
+                                <!-- SECURITY -->
+                                <Expander Header="Security Settings">
+                                    <Expander.Style>
+                                        <Style TargetType="Expander" BasedOn="{StaticResource MahApps.Styles.Expander}">
+                                            <Setter Property="Margin" Value="5"/>
+                                            <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Window.Background}"></Setter>
+                                        </Style>
+                                    </Expander.Style>
+                                    <StackPanel>
+                                        <TextBox MinHeight="50" Margin="5" Text="{Binding Path=Profile.ServerCfg.AllowedLoadFileExtensions}" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Allowed loadFile Extensions (comma separated)"/>
+                                        <TextBox MinHeight="50" Margin="5" Text="{Binding Path=Profile.ServerCfg.AllowedPreprocessFileExtensions}" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Allowed preprocessFile Extensions (comma separated)"/>
+                                        <TextBox Margin="5" Text="{Binding Path=Profile.ServerCfg.AllowedHTMLLoadExtensions}" TextWrapping="Wrap" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Allowed htmlLoad Extensions (comma separated)"/>
+                                        <TextBox MinHeight="50" Margin="5" Text="{Binding Path=Profile.ServerCfg.AllowedHTMLLoadURIs}" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Allowed htmlLoad URIs (one per line)"/>
+                                        <TextBox MinHeight="50" Margin="5" Text="{Binding Path=Profile.ServerCfg.FilePatchingExceptions}" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="File Patching Exceptions - Steam IDs (one per line)"/>
+                                    </StackPanel>
+                                </Expander>
                             </StackPanel>
 
                             <!-- COLUMN 2 -->
