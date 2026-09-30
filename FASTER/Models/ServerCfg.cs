@@ -11,7 +11,7 @@ namespace FASTER.Models
         public static string[] AllowFilePatchingStrings { get; } = { "No Clients", "HC Only", "All Clients" };
         public static string[] VerifySignaturesStrings { get; } = { "Disabled", "Deprecated", "Activated" };
         public static string[] VonCodecStrings { get; } = { "SPEEX", "OPUS" };
-        public static string[] TimeStampStrings { get; } = { "none", "short", "long" };
+        public static string[] TimeStampStrings { get; } = { "none", "short", "full" };
     }
 
     [Serializable]
