@@ -30,6 +30,9 @@ namespace FASTER.ViewModel
         public ObservableCollection<string> FilePatching        { get; } = new ObservableCollection<string>(ServerCfgArrays.AllowFilePatchingStrings);
         public ObservableCollection<string> VerifySignatures    { get; } = new ObservableCollection<string>(ServerCfgArrays.VerifySignaturesStrings);
         public ObservableCollection<string> TimestampFormats    { get; } = new ObservableCollection<string>(ServerCfgArrays.TimeStampStrings);
+        public ObservableCollection<string> ZeusScriptLevels    { get; } = new ObservableCollection<string>(ServerCfgArrays.ZeusScriptLevelStrings);
+        public ObservableCollection<string> RotorLibModes       { get; } = new ObservableCollection<string>(ServerCfgArrays.RotorLibStrings);
+        public ObservableCollection<string> HazeQualities       { get; } = new ObservableCollection<string>(ServerCfgArrays.HazeQualityStrings);
         public ObservableCollection<string> EnabledStrings      { get; } = new ObservableCollection<string>(ProfileCfgArrays.EnabledStrings);
         public ObservableCollection<string> MissionDifficulties { get; } = new ObservableCollection<string> { "Recruit", "Regular", "Veteran", "Custom" };
         public ObservableCollection<string> PerfPresets         { get; } = new ObservableCollection<string>(BasicCfgArrays.PerfPresets);

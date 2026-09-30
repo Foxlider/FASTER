@@ -534,6 +534,7 @@
                                         <RowDefinition Height="auto"/>
                                         <RowDefinition Height="10"/>
                                         <RowDefinition Height="auto"/>
+                                        <RowDefinition Height="auto"/>
                                     </Grid.RowDefinitions>
                                     <ComboBox SelectedItem="{Binding Path=Profile.ArmaProfile.ReducedDamage, UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="Reduced Damage" Grid.Column="0" Grid.Row="0" ItemsSource="{Binding Path=EnabledStrings}" mah:TextBoxHelper.UseFloatingWatermark="True" Margin="3"/>
                                     <ComboBox SelectedItem="{Binding Path=Profile.ArmaProfile.StaminaBar, UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="Stamina Bar" Grid.Column="1" Grid.Row="0" ItemsSource="{Binding Path=EnabledStrings}" mah:TextBoxHelper.UseFloatingWatermark="True" Margin="3"/>
@@ -569,6 +570,8 @@
                                         <Slider Maximum="1" Style="{StaticResource MahApps.Styles.Slider.Flat}" AutoToolTipPlacement="TopLeft" Value="{Binding Profile.ArmaProfile.PrecisionAi, UpdateSourceTrigger=PropertyChanged}" TickPlacement="BottomRight" IsSnapToTickEnabled="True" TickFrequency=".01" ToolTip="AI Skill" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="AI Precision" Margin="0,5" SmallChange=".01" LargeChange="0.1" AutoToolTipPrecision="2" />
                                     </StackPanel>
                                     <ComboBox SelectedItem="{Binding Profile.ArmaProfile.AiLevelPreset, UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="AI Preset" Grid.Column="2" Grid.Row="10" ItemsSource="{Binding Path=AiPresetStrings}" mah:TextBoxHelper.UseFloatingWatermark="True" Margin="3,0,3,15"/>
+                                    <ComboBox SelectedItem="{Binding Path=Profile.ServerCfg.ForceRotorLibSimulation, UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="Helicopter Flight Model" Grid.Column="0" Grid.Row="11" ItemsSource="{Binding Path=RotorLibModes}" mah:TextBoxHelper.UseFloatingWatermark="True" Margin="3"/>
+                                    <ComboBox SelectedItem="{Binding Path=Profile.ServerCfg.OverrideHazeQuality, UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="Haze Quality" Grid.Column="1" Grid.Row="11" ItemsSource="{Binding Path=HazeQualities}" mah:TextBoxHelper.UseFloatingWatermark="True" Margin="3"/>
                                 </Grid>
                             </ScrollViewer>
 
@@ -621,7 +624,10 @@
                                             <CheckBox IsChecked="{Binding Path=Profile.ServerCfg.BattlEye}" Content="BattlEye" Margin="5" HorizontalAlignment="Left"/>
                                             <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.MaxPlayers}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Max Players" ToolTip="Maximum number of players" HorizontalAlignment="Right" Margin="5,3" />
                                         </Grid>
-                                        <CheckBox IsChecked="{Binding Path=Profile.RankingChecked}" Content="Server Ranking" Margin="5" />
+                                        <Grid>
+                                            <CheckBox IsChecked="{Binding Path=Profile.RankingChecked}" Content="Server Ranking" Margin="5" HorizontalAlignment="Left"/>
+                                            <CheckBox IsChecked="{Binding Path=Profile.ServerCfg.StatisticsEnabled}" Content="BI Statistics" Margin="5" HorizontalAlignment="Right"/>
+                                        </Grid>
                                     </StackPanel>
                                 </GroupBox>
 
@@ -841,6 +847,8 @@
                                     <StackPanel>
                                         <CheckBox IsChecked="{Binding Path=Profile.ServerCfg.DrawingInMap}" Content="Enable drawing in Map" Margin="5,3"/>
                                         <CheckBox IsChecked="{Binding Path=Profile.ServerCfg.SkipLobby}" Content="Skip lobby" Margin="5,2"/>
+                                        <CheckBox IsChecked="{Binding Path=Profile.ServerCfg.AllowProfileGlasses}" Content="Allow profile glasses" Margin="5,2"/>
+                                        <ComboBox SelectedItem="{Binding Path=Profile.ServerCfg.ZeusCompositionScriptLevel}" ItemsSource="{Binding Path=ZeusScriptLevels}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Zeus Composition Scripts" Margin="5,2"/>
                                         <Grid>
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="auto"/>
@@ -899,8 +907,15 @@
                                     <StackPanel>
                                         <mah:ToggleSwitch IsOn="{Binding Path=Profile.ServerCfg.NetLogEnabled}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="NetLog Activation" ToolTip="NetLog Activation" Margin="10,2,0,2" HorizontalAlignment="Left"/>
                                         <CheckBox IsChecked="{Binding Path=Profile.ServerCfg.EnablePlayerDiag}" Content="Player Diagnostics" Margin="5,2"/>
-                                        <TextBox Text="{Binding Path=Profile.ServerCfg.LogFile}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Logfile Name" Margin="5,3" Visibility="{Binding Path=Profile.ServerCfg.NetLogEnabled, Converter={StaticResource BoolToVis}}"/>
-                                        <ComboBox ItemsSource="{Binding Path=TimestampFormats}" SelectedItem="{Binding Path=Profile.ServerCfg.TimeStampFormat}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Timestamp Format" Margin="5,2" Visibility="{Binding Path=Profile.ServerCfg.NetLogEnabled, Converter={StaticResource BoolToVis}}"/>
+                                        <TextBox Text="{Binding Path=Profile.ServerCfg.LogFile}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Logfile Name" Margin="5,3"/>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition/>
+                                                <ColumnDefinition/>
+                                            </Grid.ColumnDefinitions>
+                                            <ComboBox Grid.Column="0" ItemsSource="{Binding Path=TimestampFormats}" SelectedItem="{Binding Path=Profile.ServerCfg.TimeStampFormat}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Timestamp Format (RPT)" Margin="5,2"/>
+                                            <ComboBox Grid.Column="1" ItemsSource="{Binding Path=TimestampFormats}" SelectedItem="{Binding Path=Profile.ServerCfg.TimeStampFormatConsole}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Timestamp Format (Console)" Margin="5,2"/>
+                                        </Grid>
                                     </StackPanel>
                                 </GroupBox>
 
@@ -932,6 +947,7 @@
                                         <TextBox Text="{Binding Path=Profile.ServerCfg.OnUnsignedData}" Grid.Row="3" Grid.Column="0" mah:TextBoxHelper.Watermark="onUnsignedData" mah:TextBoxHelper.UseFloatingWatermark="True"  Margin="5,2"/>
                                         <TextBox Text="{Binding Path=Profile.ServerCfg.OnUserKicked}" Grid.Row="3" Grid.Column="1" mah:TextBoxHelper.Watermark="onUserKicked" mah:TextBoxHelper.UseFloatingWatermark="True"  Margin="5,2"/>
                                         <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.CallExtReportLimit}" Grid.Row="4" Grid.Column="0" Minimum="0" mah:TextBoxHelper.Watermark="callExtReportLimit (ms)" mah:TextBoxHelper.UseFloatingWatermark="True" Margin="5,2"/>
+                                        <TextBox Text="{Binding Path=Profile.ServerCfg.RegularCheck}" Grid.Row="4" Grid.Column="1" mah:TextBoxHelper.Watermark="regularCheck" mah:TextBoxHelper.UseFloatingWatermark="True" Margin="5,2"/>
 
                                     </Grid>
                                 </Expander>

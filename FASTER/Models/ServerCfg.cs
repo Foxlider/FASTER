@@ -12,6 +12,10 @@ namespace FASTER.Models
         public static string[] VerifySignaturesStrings { get; } = { "Disabled", "Deprecated", "Activated" };
         public static string[] VonCodecStrings { get; } = { "SPEEX", "OPUS" };
         public static string[] TimeStampStrings { get; } = { "none", "short", "full" };
+        public static string[] ZeusScriptLevelStrings { get; } = { "No scripts", "Attributes only", "All scripts" };
+        public static string[] RotorLibStrings { get; } = { "Player choice", "Force AFM", "Force SFM" };
+        public static string[] HazeQualityStrings { get; } = { "Don't force", "Very Low", "Low", "Standard" };
+        public static short[] HazeQualityValues { get; } = { -1, 0, 1, 2 };
     }
 
     [Serializable]
@@ -78,6 +82,12 @@ namespace FASTER.Models
         private string logFile                  = "server_console.log";
         private short  battlEye                 = 1;         // 0 = Disabled ; 1 = Enabled
         private string timeStampFormat          = "short";   // Possible values = "none", "short", "full"
+        private string timeStampFormatConsole   = "short";   // Same values, for the server console (Arma 3 2.22+)
+        private bool   statisticsEnabled        = true;      // BI analytics, false to opt out
+        private bool   allowProfileGlasses      = true;      // Only used if the mission doesn't define it
+        private short  zeusCompositionScriptLevel = 1;       // 0 = no scripts ; 1 = attributes only ; 2 = all scripts. Only used if the mission doesn't define it
+        private short  forceRotorLibSimulation;              // 0 = player choice ; 1 = forced AFM ; 2 = forced SFM
+        private short  overrideHazeQuality      = -1;        // -1 = don't force ; 0 = very low ; 1 = low ; 2 = standard
         private short  persistent;
         private bool   requiredBuildChecked;
         private int    requiredBuild            = 999999999; // Minimum required client version. Clients with version lower than requiredBuild will not be able to connect
@@ -100,6 +110,7 @@ namespace FASTER.Models
         private string onDifferentData;
         private string onUnsignedData = "kick (_this select 0)";
         private string onUserKicked;
+        private string regularCheck;
         private int    callExtReportLimit = 1000;
         private bool   enablePlayerDiag;
 
@@ -811,6 +822,66 @@ namespace FASTER.Models
             }
         }
 
+        public string TimeStampFormatConsole
+        {
+            get => timeStampFormatConsole;
+            set
+            {
+                timeStampFormatConsole = value;
+                RaisePropertyChanged(nameof(TimeStampFormatConsole));
+            }
+        }
+
+        public bool StatisticsEnabled
+        {
+            get => statisticsEnabled;
+            set
+            {
+                statisticsEnabled = value;
+                RaisePropertyChanged(nameof(StatisticsEnabled));
+            }
+        }
+
+        public bool AllowProfileGlasses
+        {
+            get => allowProfileGlasses;
+            set
+            {
+                allowProfileGlasses = value;
+                RaisePropertyChanged(nameof(AllowProfileGlasses));
+            }
+        }
+
+        public string ZeusCompositionScriptLevel
+        {
+            get => ServerCfgArrays.ZeusScriptLevelStrings[zeusCompositionScriptLevel];
+            set
+            {
+                zeusCompositionScriptLevel = (short)Array.IndexOf(ServerCfgArrays.ZeusScriptLevelStrings, value);
+                RaisePropertyChanged(nameof(ZeusCompositionScriptLevel));
+            }
+        }
+
+        public string ForceRotorLibSimulation
+        {
+            get => ServerCfgArrays.RotorLibStrings[forceRotorLibSimulation];
+            set
+            {
+                forceRotorLibSimulation = (short)Array.IndexOf(ServerCfgArrays.RotorLibStrings, value);
+                RaisePropertyChanged(nameof(ForceRotorLibSimulation));
+            }
+        }
+
+        public string OverrideHazeQuality
+        {
+            get => ServerCfgArrays.HazeQualityStrings[Array.IndexOf(ServerCfgArrays.HazeQualityValues, overrideHazeQuality)];
+            set
+            {
+                overrideHazeQuality = ServerCfgArrays.HazeQualityValues[Array.IndexOf(ServerCfgArrays.HazeQualityStrings, value)];
+                RaisePropertyChanged(nameof(OverrideHazeQuality));
+            }
+        }
+
         public bool Persistent
         {
             get => persistent == 1;
@@ -991,6 +1062,16 @@ namespace FASTER.Models
             {
                 onUserKicked = value;
                 RaisePropertyChanged(nameof(OnUserKicked));
+            }
+        }
+
+        public string RegularCheck
+        {
+            get => regularCheck;
+            set
+            {
+                regularCheck = value;
+                RaisePropertyChanged(nameof(RegularCheck));
             }
         }
 
@@ -1232,9 +1313,15 @@ namespace FASTER.Models
                           + FormatDisableChannels()
                           + $"vonCodec = {vonCodec};\t\t\t\t// If set to 1 then it uses IETF standard OPUS codec, if to 0 then it uses SPEEX codec (since Arma 3 update 1.58+)  \r\n"
                           + $"skipLobby = {(skipLobby ? "1" : "0")};\t\t\t\t// Overridden by mission parameters\r\n"
+                          + $"allowProfileGlasses = {(allowProfileGlasses ? "1" : "0")};\t\t\t// If 0, glasses set in player profiles are ignored. Overridden by mission parameters\r\n"
+                          + $"zeusCompositionScriptLevel = {zeusCompositionScriptLevel};\t\t// 0 = no scripts, 1 = only attributes, 2 = all scripts in Zeus compositions. Overridden by mission parameters\r\n"
+                          + $"forceRotorLibSimulation = {forceRotorLibSimulation};\t\t// 0 = up to the player, 1 = forced Advanced Flight Model, 2 = forced Standard Flight Model\r\n"
+                          + (overrideHazeQuality >= 0 ? $"overrideHazeQuality = {overrideHazeQuality};\t\t\t// Forces haze quality on all clients: 0 = very low, 1 = low, 2 = standard\r\n" : "")
+                          + $"statisticsEnabled = {(statisticsEnabled ? "1" : "0")};\t\t\t// 0 to opt out of Arma 3 analytics\r\n"
                           + $"vonCodecQuality = {vonCodecQuality};\t\t\t// since 1.62.95417 supports range 1-20 //since 1.63.x will supports range 1-30 //8kHz is 0-10, 16kHz is 11-20, 32kHz(48kHz) is 21-30 \r\n"
                           + $"persistent = {persistent};\t\t\t\t// If 1, missions still run on even after the last player disconnected.\r\n"
                           + $"timeStampFormat = \"{timeStampFormat}\";\t\t// Set the timestamp format used on each report line in server-side RPT file. Possible values are \"none\" (default),\"short\",\"full\".\r\n"
+                          + $"timeStampFormatConsole = \"{timeStampFormatConsole}\";\t// Timestamp format used on each line of the server console. Possible values are \"none\", \"short\", \"full\".\r\n"
                           + $"BattlEye = {battlEye};\t\t\t\t// Server to use BattlEye system\r\n"
                           + $"idleFPSLimit = {idleFPSLimit};\t\t\t\t// Servers with no players will limit their FPS to this value (5-60)\r\n"
                           + $"enablePlayerDiag = {(enablePlayerDiag ? "1" : "0")};\t\t\t// Logs players' bandwidth and desync info every 60 seconds\r\n"
@@ -1266,6 +1353,7 @@ namespace FASTER.Models
                           + $"onUserDisconnected = \"{onUserDisconnected}\";\t\t\t//\r\n"
                           + $"doubleIdDetected = \"{doubleIdDetected}\";\t\t\t//\r\n"
 						  + $"onUserKicked = \"{onUserKicked}\";\t\t\t\t//\r\n"
+                          + $"regularCheck = \"{regularCheck}\";\t\t\t\t//\r\n"
                           + $"callExtReportLimit = {callExtReportLimit};\t\t// Log a warning if a server callExtension takes longer than this (ms)\r\n"
                           + "\r\n"
                           + "// SIGNATURE VERIFICATION\r\n"
