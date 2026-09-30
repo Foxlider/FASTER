@@ -550,6 +550,7 @@ namespace FASTER.Models
                 {
                     baseName = match.Groups[1].Value;
                     number   = parsed;
+                    p.Name = $"{baseName}({number + 1})";
                 }
 
                 do

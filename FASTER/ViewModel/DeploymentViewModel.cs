@@ -83,7 +83,7 @@ namespace FASTER.ViewModel
             if (mod.Marked)
             {
                 //LINK MOD
-                LinkMod(mod, linkPath);
+                mod.Marked = LinkMod(mod, linkPath);
             }
             else
             {
@@ -120,9 +120,8 @@ namespace FASTER.ViewModel
             foreach (var mod in Deployment.DeployMods)
             {
                 var linkPath = Path.Combine(Deployment.InstallPath, $"@{Functions.SafeName(mod.Name)}");
-                mod.Marked = true;
                 Logger.Log($"  Linking {mod.Name}: {mod.Path} -> {linkPath}");
-                LinkMod(mod, linkPath);
+                mod.Marked = LinkMod(mod, linkPath);
             }
             Settings.Default.Deployments = Deployment;
             Settings.Default.Save();
@@ -134,12 +133,20 @@ namespace FASTER.ViewModel
         /// </summary>
         public void ClearAll()
         {
-            foreach (var mod in Deployment.DeployMods)
-            { mod.Marked = false; }
+            if (!Directory.Exists(Deployment.InstallPath))
+            {
+                DisplayMessage("Arma Install Path is empty.\nMake sure you have entered a valid path before deploying mods.");
+                return;
+            }
 
-            var links = Directory.EnumerateDirectories(Deployment.InstallPath).Select(d => new DirectoryInfo(d)).Where(d => d.Attributes.HasFlag(FileAttributes.ReparsePoint));
-            foreach (var link in links)
-            { DeleteLink(link.FullName); }
+            foreach (var mod in Deployment.DeployMods)
+            {
+                var linkPath = Path.Combine(Deployment.InstallPath, $"@{Functions.SafeName(mod.Name)}");
+                if (Directory.Exists(linkPath) && new DirectoryInfo(linkPath).Attributes.HasFlag(FileAttributes.ReparsePoint))
+                { DeleteLink(linkPath); }
+
+                mod.Marked = false;
+            }
         }
 
         /// <summary>
@@ -215,7 +222,7 @@ namespace FASTER.ViewModel
         /// </summary>
         /// <param name="mod"></param>
         /// <param name="linkPath"></param>
-        private void LinkMod(DeploymentMod mod, string linkPath)
+        private bool LinkMod(DeploymentMod mod, string linkPath)
         {
             Logger.Log($"LinkMod: {mod.Name} ({mod.WorkshopId}) -> {linkPath}");
             try
@@ -229,23 +236,27 @@ namespace FASTER.ViewModel
                     }
                     else
                     {
-                        Logger.Log($"  Removing existing real dir: {linkPath}");
-                        Directory.Delete(linkPath, true);
+                        Logger.Log($"  Skipped: a real folder already exists at {linkPath}. Not deleting it.");
+                        DisplayMessage($"Skipped \"{mod.Name}\": a real folder already exists at\n{linkPath}\n\nRename or remove it yourself, then deploy again.");
+                        return false;
                     }
                 }
 
                 Directory.CreateSymbolicLink(linkPath ?? throw new ArgumentNullException(nameof(linkPath)), mod.Path);
                 Logger.Log($"  Symlink created OK.");
+                return true;
             }
             catch (UnauthorizedAccessException)
             {
                 Logger.Log($"  ERROR: UnauthorizedAccessException creating symlink.");
                 DisplayMessage("Could not create symlink: Access denied.\n\nTo deploy mods, enable Windows Developer Mode in Settings → Update & Security → For Developers, or run FASTER as Administrator.");
+                return false;
             }
             catch (Exception ex)
             {
                 Logger.Log($"  ERROR: {ex.Message}");
                 DisplayMessage("An exception occurred: \n\n" + ex.Message);
+                return false;
             }
         }
 

@@ -313,8 +313,16 @@ namespace FASTER.ViewModel
             Logger.Log($"PurgeAndReinstallAll: staging dir={stagingDir}");
             if (Directory.Exists(stagingDir))
             {
+                var localModFolderNames = ModsCollection.ArmaMods.Where(m => m.IsLocal).Select(m => m.WorkshopId.ToString()).ToHashSet();
+
                 foreach (var dir in Directory.GetDirectories(stagingDir))
                 {
+                    if (localModFolderNames.Contains(Path.GetFileName(dir)))
+                    {
+                        Logger.Log($"  Skipped (local mod): {dir}");
+                        continue;
+                    }
+
                     try
                     {
                         Directory.Delete(dir, true);
@@ -350,6 +358,7 @@ namespace FASTER.ViewModel
         {
             var usedIds = Properties.Settings.Default.Profiles
                 .SelectMany(p => p.ProfileMods ?? Enumerable.Empty<ProfileMod>())
+                .Where(m => m.ServerSideChecked || m.ClientSideChecked || m.HeadlessChecked || m.OptChecked)
                 .Select(m => m.Id)
                 .ToHashSet();
 

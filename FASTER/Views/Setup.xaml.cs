@@ -40,8 +40,6 @@ namespace FASTER.Views
             if (wasFirstRun)
             {
                 Properties.Settings.Default.Upgrade();
-                Properties.Settings.Default.firstRun = false;
-                Properties.Settings.Default.Save();
             }
 
             if (Properties.Settings.Default.clearSettings)

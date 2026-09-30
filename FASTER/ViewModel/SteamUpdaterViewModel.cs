@@ -267,9 +267,15 @@ namespace FASTER.ViewModel
                     null));
             }
 
-            await RunServerUpdater(Parameters.InstallDirectory, appId, depotsDownload);
+            var result = await RunServerUpdater(Parameters.InstallDirectory, appId, depotsDownload);
 
-            Parameters.Output += "\n\nAll Done ! ";
+            Parameters.Output += result switch
+            {
+                UpdateState.Success     => "\n\nAll Done ! ",
+                UpdateState.LoginFailed => "\n\nSteam login failed. Nothing was updated.",
+                UpdateState.Cancelled   => "\n\nUpdate was cancelled.",
+                _                       => "\n\nUpdate did not complete. Check the output above for errors."
+            };
         }
 
         public void UpdateCancelClick()
@@ -446,7 +452,7 @@ namespace FASTER.ViewModel
                             Logger.Log($"  ContinueWith: task for {mod.WorkshopId} faulted: {t.Exception}");
                         finished += 1;
                         Parameters.Output += $"\n   Thread {mod.WorkshopId} complete  ({finished} / {ml.Count})";
-                        Parameters.Progress = finished * ml.Count / 100.00;
+                        Parameters.Progress = finished * 100.0 / ml.Count;
                         Logger.Log($"  ContinueWith: mod {mod.WorkshopId} done ({finished}/{ml.Count}), releasing semaphore.");
                         maxThread.Release();
                     });
@@ -656,6 +662,8 @@ namespace FASTER.ViewModel
 
         private async Task Download(IDownloadHandler downloadHandler, string targetDir)
         {
+            SteamDiagLogger.Attach(downloadHandler);
+
             ulong downloadedSize = 0;
             bool skipDownload = false;
             downloadHandler.FileVerified          += (_, args) => Parameters.Output += $"{(args.RequiresDownload ? $"\nFile verified : {args.ManifestFile.FileName} ({Functions.ParseFileSize(args.ManifestFile.TotalSize)})" : "")}";
@@ -745,6 +753,8 @@ namespace FASTER.ViewModel
 
         private async Task DownloadForMultiple(IDownloadHandler downloadHandler, string targetDir)
         {
+            SteamDiagLogger.Attach(downloadHandler);
+
             Logger.Log($"DownloadForMultiple: targetDir={targetDir}");
             if (targetDir == null)
             {
