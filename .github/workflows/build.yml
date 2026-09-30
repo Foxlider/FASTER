@@ -13,9 +13,13 @@ permissions:
 jobs:
   build:
     runs-on: windows-latest
+    defaults:
+      run:
+        shell: bash
 
     steps:
       - name: Checkout
+        if: ${{ !env.ACT }}
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           submodules: recursive
@@ -28,8 +32,9 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore FASTER.sln
 
+      # FASTER projects enforce TreatWarningsAsErrors; the external Steam submodule does not.
       - name: Build
-        run: dotnet build FASTER.sln --configuration Release --no-restore -warnaserror
+        run: dotnet build FASTER.sln --configuration Release --no-restore
 
   avalonia-packages:
     uses: ./.github/workflows/package-avalonia.yml

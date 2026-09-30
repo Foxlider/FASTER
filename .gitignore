@@ -336,3 +336,8 @@ ASALocalRun/
 
 # Local agent plans and reports
 .agent-state/
+
+# Local packaging outputs
+.tools/
+*.AppImage
+*.pkg.tar.*
