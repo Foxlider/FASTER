@@ -63,6 +63,8 @@ namespace FASTER.Models
         private int    kickTimeoutBattlEye      = 60;        // <- These are BI base figures
         private int    kickTimeoutHarmless      = 60;        // <-
         private int    idleFPSLimit             = 30;        // FPS limit of a server without players, range 5-60
+        private VoteCommand[] voteCommands       = VoteCommand.CreateDefaults(VoteCommand.VoteCommandNames);
+        private VoteCommand[] votedAdminCommands = VoteCommand.CreateDefaults(VoteCommand.VotedAdminCommandNames);
         private ChannelRestriction[] disableChannels = ChannelRestriction.CreateDefaults();
 
 
@@ -657,6 +659,35 @@ namespace FASTER.Models
             }
         }
 
+        public VoteCommand[] VoteCommands
+        {
+            get => voteCommands;
+            set
+            {
+                foreach (var c in voteCommands) c.PropertyChanged -= Vote_PropertyChanged;
+                voteCommands = value ?? VoteCommand.CreateDefaults(VoteCommand.VoteCommandNames);
+                foreach (var c in voteCommands) c.PropertyChanged += Vote_PropertyChanged;
+                RaisePropertyChanged(nameof(VoteCommands));
+            }
+        }
+
+        public VoteCommand[] VotedAdminCommands
+        {
+            get => votedAdminCommands;
+            set
+            {
+                foreach (var c in votedAdminCommands) c.PropertyChanged -= Vote_PropertyChanged;
+                votedAdminCommands = value ?? VoteCommand.CreateDefaults(VoteCommand.VotedAdminCommandNames);
+                foreach (var c in votedAdminCommands) c.PropertyChanged += Vote_PropertyChanged;
+                RaisePropertyChanged(nameof(VotedAdminCommands));
+            }
+        }
+
+        private void Vote_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            RaisePropertyChanged(nameof(VoteCommands));
+        }
+
         public ChannelRestriction[] DisableChannels
         {
             get => disableChannels;
@@ -672,6 +703,13 @@ namespace FASTER.Models
         private void Channel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             RaisePropertyChanged(nameof(DisableChannels));
+        }
+
+        private static string FormatVoteCmds(string name, VoteCommand[] commands)
+        {
+            if (commands.All(c => c.IsDefault))
+            { return ""; }
+            return $"{name}[] = {{ {string.Join(", ", commands.Select(c => c.ToCfg()))} }};\r\n";
         }
 
         private string FormatDisableChannels()
@@ -1110,6 +1148,7 @@ namespace FASTER.Models
         public ServerCfg()
         {
             foreach (var c in disableChannels) c.PropertyChanged += Channel_PropertyChanged;
+            foreach (var c in voteCommands.Concat(votedAdminCommands)) c.PropertyChanged += Vote_PropertyChanged;
 
             if(string.IsNullOrWhiteSpace(serverCfgContent))
             { ServerCfgContent = ProcessFile(); }
@@ -1183,8 +1222,8 @@ namespace FASTER.Models
                           + "// VOTING\r\n"
                           + $"{(votingEnabled ? $"voteMissionPlayers = {voteMissionPlayers};" : "voteMissionPlayers = 1;")}\t\t\t// Tells the server how many people must connect so that it displays the mission selection screen.\r\n"
                           + $"{(votingEnabled ? $"voteThreshold = {voteThreshold.ToString(CultureInfo.InvariantCulture)};" : "voteThreshold = 0;")}\t\t\t// 33% or more players need to vote for something, for example an admin or a new map, to become effective\r\n"
-                          + $"{(votingEnabled ? "" : "allowedVoteCmds[] = {};")}\t\t\t//\r\n"
-                          + $"{(votingEnabled ? "" : "allowedVotedAdminCmds[] = {};")}\t\t//\r\n"
+                          + (votingEnabled ? FormatVoteCmds("allowedVoteCmds", voteCommands) : "allowedVoteCmds[] = {};\t\t\t// Voting disabled\r\n")
+                          + (votingEnabled ? FormatVoteCmds("allowedVotedAdminCmds", votedAdminCommands) : "allowedVotedAdminCmds[] = {};\t\t// Voting disabled\r\n")
                           + $"votingTimeOut = {votingTimeOut};\t\t\t// The amount of time a vote will last before ending.\r\n"
                           + "\r\n"
                           + "\r\n"

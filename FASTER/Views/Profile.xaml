@@ -755,6 +755,55 @@
                                             <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.VoteMissionPlayers}" Visibility="{Binding Path=Profile.ServerCfg.VotingEnabled, Converter={StaticResource BoolToVis}}" Grid.Column="0" Margin="5"  mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Min Players"/>
                                             <Slider Value="{Binding Path=Profile.ServerCfg.VoteThreshold}" Style="{StaticResource MahApps.Styles.Slider.Flat}" AutoToolTipPlacement="TopLeft" AutoToolTipPrecision="2" IsSnapToTickEnabled="True" Visibility="{Binding Path=Profile.ServerCfg.VotingEnabled, Converter={StaticResource BoolToVis}}" Minimum="0" Maximum="1"  Grid.Column="1" Margin="5" TickFrequency="0.01" TickPlacement="BottomRight" ToolTip="Voting threshold" SmallChange="0.01"/>
                                         </Grid>
+                                        <Expander Header="Vote Commands" Margin="5,3" Visibility="{Binding Path=Profile.ServerCfg.VotingEnabled, Converter={StaticResource BoolToVis}}">
+                                            <DataGrid ItemsSource="{Binding Path=Profile.ServerCfg.VoteCommands}" ColumnHeaderStyle="{StaticResource CompactColumnHeader}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False" CanUserSortColumns="False" HeadersVisibility="Column" IsReadOnly="True">
+                                                <DataGrid.Columns>
+                                                    <DataGridTextColumn Header="Command" Binding="{Binding Name}" Width="*" MinWidth="60"/>
+                                                    <DataGridTemplateColumn Header="Before" Width="46">
+                                                        <DataGridTemplateColumn.CellTemplate>
+                                                            <DataTemplate DataType="models:VoteCommand">
+                                                                <CheckBox IsChecked="{Binding PreMissionStart, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center"/>
+                                                            </DataTemplate>
+                                                        </DataGridTemplateColumn.CellTemplate>
+                                                    </DataGridTemplateColumn>
+                                                    <DataGridTemplateColumn Header="After" Width="46">
+                                                        <DataGridTemplateColumn.CellTemplate>
+                                                            <DataTemplate DataType="models:VoteCommand">
+                                                                <CheckBox IsChecked="{Binding PostMissionStart, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center"/>
+                                                            </DataTemplate>
+                                                        </DataGridTemplateColumn.CellTemplate>
+                                                    </DataGridTemplateColumn>
+                                                    <DataGridTemplateColumn Header="Threshold" Width="64">
+                                                        <DataGridTemplateColumn.CellTemplate>
+                                                            <DataTemplate DataType="models:VoteCommand">
+                                                                <mah:NumericUpDown Value="{Binding Threshold, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Minimum="0" Maximum="1" Interval="0.01" StringFormat="0.00" mah:TextBoxHelper.Watermark="global" HideUpDownButtons="True" MinWidth="0"/>
+                                                            </DataTemplate>
+                                                        </DataGridTemplateColumn.CellTemplate>
+                                                    </DataGridTemplateColumn>
+                                                </DataGrid.Columns>
+                                            </DataGrid>
+                                        </Expander>
+                                        <Expander Header="Voted Admin Commands" Margin="5,3" Visibility="{Binding Path=Profile.ServerCfg.VotingEnabled, Converter={StaticResource BoolToVis}}">
+                                            <DataGrid ItemsSource="{Binding Path=Profile.ServerCfg.VotedAdminCommands}" ColumnHeaderStyle="{StaticResource CompactColumnHeader}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False" CanUserSortColumns="False" HeadersVisibility="Column" IsReadOnly="True">
+                                                <DataGrid.Columns>
+                                                    <DataGridTextColumn Header="Command" Binding="{Binding Name}" Width="*" MinWidth="60"/>
+                                                    <DataGridTemplateColumn Header="Before" Width="46">
+                                                        <DataGridTemplateColumn.CellTemplate>
+                                                            <DataTemplate DataType="models:VoteCommand">
+                                                                <CheckBox IsChecked="{Binding PreMissionStart, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center"/>
+                                                            </DataTemplate>
+                                                        </DataGridTemplateColumn.CellTemplate>
+                                                    </DataGridTemplateColumn>
+                                                    <DataGridTemplateColumn Header="After" Width="46">
+                                                        <DataGridTemplateColumn.CellTemplate>
+                                                            <DataTemplate DataType="models:VoteCommand">
+                                                                <CheckBox IsChecked="{Binding PostMissionStart, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center"/>
+                                                            </DataTemplate>
+                                                        </DataGridTemplateColumn.CellTemplate>
+                                                    </DataGridTemplateColumn>
+                                                </DataGrid.Columns>
+                                            </DataGrid>
+                                        </Expander>
                                     </StackPanel>
                                 </GroupBox>
 
