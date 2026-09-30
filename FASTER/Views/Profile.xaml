@@ -747,6 +747,7 @@
                                             <ComboBox HorizontalAlignment="Right" Visibility="{Binding Path=Profile.ServerCfg.VonActivated, Converter={StaticResource BoolToVis}}" ItemsSource="{Binding Path=VonCodecs}" SelectedItem="{Binding Profile.ServerCfg.VonCodec}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="VoN Codec" Margin="10,5"/>
                                         </Grid>
                                         <Slider Maximum="30" Style="{StaticResource MahApps.Styles.Slider.Flat}" Visibility="{Binding Path=Profile.ServerCfg.VonActivated, Converter={StaticResource BoolToVis}}" AutoToolTipPlacement="TopLeft" Value="{Binding Path=Profile.ServerCfg.VonCodecQuality}" TickPlacement="BottomRight" IsSnapToTickEnabled="True" ToolTip="Codec Quality" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Codec Quality" Margin="20,3" SmallChange="1" />
+                                        <TextBlock Text="{Binding Path=Profile.ServerCfg.VonCodecQuality, StringFormat='Codec Quality: {0}'}" Visibility="{Binding Path=Profile.ServerCfg.VonActivated, Converter={StaticResource BoolToVis}}" HorizontalAlignment="Center" Margin="5,0,5,5"/>
                                     </StackPanel>
                                 </GroupBox>
 
@@ -766,7 +767,10 @@
                                                 <ColumnDefinition/>
                                             </Grid.ColumnDefinitions>
                                             <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.VoteMissionPlayers}" Visibility="{Binding Path=Profile.ServerCfg.VotingEnabled, Converter={StaticResource BoolToVis}}" Grid.Column="0" Margin="5"  mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Min Players"/>
-                                            <Slider Value="{Binding Path=Profile.ServerCfg.VoteThreshold}" Style="{StaticResource MahApps.Styles.Slider.Flat}" AutoToolTipPlacement="TopLeft" AutoToolTipPrecision="2" IsSnapToTickEnabled="True" Visibility="{Binding Path=Profile.ServerCfg.VotingEnabled, Converter={StaticResource BoolToVis}}" Minimum="0" Maximum="1"  Grid.Column="1" Margin="5" TickFrequency="0.01" TickPlacement="BottomRight" ToolTip="Voting threshold" SmallChange="0.01"/>
+                                            <StackPanel Grid.Column="1" Visibility="{Binding Path=Profile.ServerCfg.VotingEnabled, Converter={StaticResource BoolToVis}}">
+                                                <Slider Value="{Binding Path=Profile.ServerCfg.VoteThreshold}" Style="{StaticResource MahApps.Styles.Slider.Flat}" AutoToolTipPlacement="TopLeft" AutoToolTipPrecision="2" IsSnapToTickEnabled="True" Minimum="0" Maximum="1" Margin="5,5,5,0" TickFrequency="0.01" TickPlacement="BottomRight" ToolTip="Voting threshold" SmallChange="0.01"/>
+                                                <TextBlock Text="{Binding Path=Profile.ServerCfg.VoteThreshold, StringFormat='Vote Threshold: {0:P0}'}" HorizontalAlignment="Center" Margin="5,0,5,5"/>
+                                            </StackPanel>
                                         </Grid>
                                         <Expander Header="Vote Commands" Margin="5,3" Visibility="{Binding Path=Profile.ServerCfg.VotingEnabled, Converter={StaticResource BoolToVis}}">
                                             <DataGrid ItemsSource="{Binding Path=Profile.ServerCfg.VoteCommands}" ColumnHeaderStyle="{StaticResource CompactColumnHeader}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False" CanUserSortColumns="False" HeadersVisibility="Column" IsReadOnly="True">
