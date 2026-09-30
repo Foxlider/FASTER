@@ -83,7 +83,10 @@ public sealed class ProcessMonitor : IProcessMonitor
                 Directory.CreateDirectory(directory);
                 outputFile = Path.Combine(directory, Guid.NewGuid().ToString("N") + ".log");
                 using (new FileStream(outputFile, new FileStreamOptions { Mode = FileMode.CreateNew, Access = FileAccess.Write,
-                    UnixCreateMode = UnixFileMode.UserRead | UnixFileMode.UserWrite })) { }
+                    UnixCreateMode = UnixFileMode.UserRead | UnixFileMode.UserWrite }))
+                {
+                    // Create the owner-only file before the shell opens it for output.
+                }
                 var shell = new ProcessStartInfo("/bin/sh") { WorkingDirectory = start.WorkingDirectory, UseShellExecute = false };
                 foreach (var pair in start.Environment) shell.Environment[pair.Key] = pair.Value;
                 shell.Environment["FASTER_CAPTURE_OUTPUT"] = outputFile;
@@ -175,7 +178,10 @@ public sealed class ProcessMonitor : IProcessMonitor
                 }
             } while (await timer.WaitForNextTickAsync(token));
         }
-        catch (OperationCanceledException) { }
+        catch (OperationCanceledException) when (token.IsCancellationRequested)
+        {
+            // Disposing the monitor stops capture but leaves the server running.
+        }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         { AppendOutput(entry, "Output capture unavailable: " + ex.GetType().Name); }
     }
@@ -213,7 +219,10 @@ public sealed class ProcessMonitor : IProcessMonitor
                     _entries.Add(identity, new Entry(process, false));
                     retained = true;
                 }
-                catch (Exception ex) when (ex is InvalidOperationException or System.ComponentModel.Win32Exception or NotSupportedException) { }
+                catch (Exception ex) when (ex is InvalidOperationException or System.ComponentModel.Win32Exception or NotSupportedException)
+                {
+                    // Skip processes that exit during the scan or cannot be inspected.
+                }
                 finally { if (!retained) process.Dispose(); }
             }
             // Keep a bounded set of exited entries so their last output remains accessible.
@@ -289,6 +298,7 @@ public sealed class ProcessMonitor : IProcessMonitor
             if (_disposed) return;
             _disposed = true;
             _lifetime.Cancel();
+            _lifetime.Dispose();
             foreach (var entry in _entries.Values) entry.Process.Dispose();
             _entries.Clear();
         }

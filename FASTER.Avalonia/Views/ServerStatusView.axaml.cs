@@ -19,7 +19,7 @@ using SkiaSharp;
 
 namespace FASTER.Avalonia.Views;
 
-public partial class ServerStatusView : UserControl, IDisposable
+public sealed partial class ServerStatusView : UserControl, IDisposable
 {
     private readonly ISystemMetrics? _metrics = CreateMetrics();
 
@@ -83,7 +83,7 @@ public partial class ServerStatusView : UserControl, IDisposable
     private DateTime _nextTemperature;
     private bool _temperaturePending;
 
-    private async void RefreshTemperature()
+    private async Task RefreshTemperatureAsync()
     {
         if (_temperaturePending || DateTime.UtcNow < _nextTemperature) return;
         _temperaturePending = true;
@@ -92,6 +92,11 @@ public partial class ServerStatusView : UserControl, IDisposable
             var temperature = await Task.Run(CpuTemperature.Read);
             TemperatureLabel.Text = temperature.HasValue ? $"CPU temperature: {temperature:F1} °C" : "CPU temperature: Unavailable";
         }
+        catch (Exception ex)
+        {
+            TemperatureLabel.Text = "CPU temperature: Unavailable";
+            FASTER.Models.Logger.LogCritical("Temperature reading failed: " + ex.Message);
+        }
         finally { _nextTemperature = DateTime.UtcNow.AddSeconds(5); _temperaturePending = false; }
     }
 
@@ -99,7 +104,7 @@ public partial class ServerStatusView : UserControl, IDisposable
     {
         try
         {
-            RefreshTemperature();
+            _ = RefreshTemperatureAsync();
             if (AppServices.Processes.IsPaused) return;
             RefreshProcesses();
             if (_metrics == null) return;
@@ -219,7 +224,7 @@ public partial class ServerStatusView : UserControl, IDisposable
         try
         {
             AppServices.Processes.Rescan(); RefreshProcesses();
-            RefreshTemperature();
+            _ = RefreshTemperatureAsync();
         }
         catch (Exception ex) { App.Main.ShowStatus("Could not scan processes: " + ex.Message); }
     }

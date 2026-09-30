@@ -60,6 +60,8 @@ public class ProcessMonitoringTests
         try
         {
             monitor.Dispose();
+            Assert.DoesNotThrow(monitor.Dispose);
+            Assert.Throws<ObjectDisposedException>(() => monitor.Sample());
             await Task.Delay(200);
             Assert.That(process.HasExited, Is.False);
         }

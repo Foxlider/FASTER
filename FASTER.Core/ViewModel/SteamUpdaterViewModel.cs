@@ -23,6 +23,7 @@ namespace FASTER.ViewModel
         public SteamUpdaterViewModel()
         {
             Parameters = new SteamUpdaterModel();
+            _operationToken = tokenSource.Token;
         }
 
         private static readonly Lazy<SteamUpdaterViewModel>
@@ -34,6 +35,7 @@ namespace FASTER.ViewModel
         private SteamUpdaterViewModel(SteamUpdaterModel model)
         {
             Parameters = model;
+            _operationToken = tokenSource.Token;
             DownloadTasks.ListChanged += (_, _) => RaisePropertyChanged(nameof(IsDownloading));
             _ = TickLoopAsync();
         }
@@ -41,15 +43,21 @@ namespace FASTER.ViewModel
         private readonly CancellationTokenSource _lifetime = new();
         private readonly SemaphoreSlim _operationGate = new(1, 1);
         private bool _operationRunning;
+        private bool _disposed;
+        private CancellationToken _operationToken;
 
         private async Task TickLoopAsync()
         {
+            var cancellationToken = _lifetime.Token;
             using PeriodicTimer timer = new(TimeSpan.FromSeconds(1));
             try
             {
-                while (await timer.WaitForNextTickAsync(_lifetime.Token)) Timer_Tick();
+                while (await timer.WaitForNextTickAsync(cancellationToken)) Timer_Tick();
             }
-            catch (OperationCanceledException) { }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                // The application is closing; no further timer updates are needed.
+            }
         }
 
         private bool _isLoggingIn;
@@ -60,6 +68,14 @@ namespace FASTER.ViewModel
         public SteamUpdaterModel Parameters { get; set; }
 
         private CancellationTokenSource tokenSource = new();
+
+        private void ResetCancellation()
+        {
+            ObjectDisposedException.ThrowIf(_disposed, this);
+            tokenSource.Dispose();
+            tokenSource = new CancellationTokenSource();
+            _operationToken = tokenSource.Token;
+        }
 
         private bool _isMaintaining;
         public bool IsMaintaining
@@ -294,6 +310,7 @@ namespace FASTER.ViewModel
 
         public void UpdateCancelClick()
         {
+            if (_disposed) return;
             Parameters.Output += "\nUpdate Cancelled.";
             Parameters.IsUpdating = false;
 
@@ -327,6 +344,7 @@ namespace FASTER.ViewModel
 
         private async Task<int> RunExclusiveAsync(Func<Task<int>> operation)
         {
+            ObjectDisposedException.ThrowIf(_disposed, this);
             if (!await _operationGate.WaitAsync(0)) return UpdateState.Error;
             _operationRunning = true;
             RaisePropertyChanged(nameof(IsDownloading));
@@ -351,7 +369,7 @@ namespace FASTER.ViewModel
 
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
-            tokenSource = new CancellationTokenSource();
+            ResetCancellation();
 
             if (!await SteamLogin())
                 return UpdateState.LoginFailed;
@@ -364,7 +382,7 @@ namespace FASTER.ViewModel
 
             foreach (var depot in depots)
             {
-                tokenSource.Token.ThrowIfCancellationRequested();
+                _operationToken.ThrowIfCancellationRequested();
                 try
                 {
                     ManifestId manifestId;
@@ -372,7 +390,7 @@ namespace FASTER.ViewModel
                     manifestId = await contentClient.GetDepotManifestIdAsync(appId, depot.id, depot.branch, depot.pass!);
 
                     Parameters.Output += $"\n\nFetching informations of app {appId}, depot {depot.id} from Steam ({depots.IndexOf(depot) + 1}/{depots.Count})... "; // NOSONAR - live console feed, each append intentionally refreshes the bound UI
-                    var downloadHandler = await contentClient.GetAppDataAsync(appId, depot.id, manifestId, tokenSource.Token);
+                    var downloadHandler = await contentClient.GetAppDataAsync(appId, depot.id, manifestId, _operationToken);
 
                     await Download(downloadHandler, path);
                 }
@@ -399,7 +417,7 @@ namespace FASTER.ViewModel
 
         private async Task<int> RunModUpdaterCore(ulong modId, string path)
         {
-            tokenSource = new CancellationTokenSource();
+            ResetCancellation();
 
             try
             {
@@ -440,7 +458,7 @@ namespace FASTER.ViewModel
 
                 Parameters.Output += $"\nAttempting to start download of item {modId}... ";
 
-                var downloadHandler = await contentClient.GetPublishedFileDataAsync(modId, manifestId, tokenSource.Token);
+                var downloadHandler = await contentClient.GetPublishedFileDataAsync(modId, manifestId, _operationToken);
 
                 await Download(downloadHandler, path);
             }
@@ -472,7 +490,7 @@ namespace FASTER.ViewModel
         {
             Logger.Log($"RunModsUpdater: starting, {mods.Count} mods total");
 
-            tokenSource = new CancellationTokenSource();
+            ResetCancellation();
             if (!await TryLoginAsync())
             {
                 IsLoggingIn = false;
@@ -489,7 +507,7 @@ namespace FASTER.ViewModel
 
             foreach (ArmaMod mod in ml)
             {
-                if (tokenSource.IsCancellationRequested) break;
+                if (_operationToken.IsCancellationRequested) break;
                 Logger.Log($"RunModsUpdater: waiting semaphore for mod {mod.WorkshopId} ({mod.Name})");
                 await maxThread.WaitAsync();
 
@@ -518,7 +536,7 @@ namespace FASTER.ViewModel
                IsDlOverride = false;
             }
 
-            if (tokenSource.IsCancellationRequested) return UpdateState.Cancelled;
+            if (_operationToken.IsCancellationRequested) return UpdateState.Cancelled;
             Logger.Log("RunModsUpdater: all done.");
             Parameters.Output += "\nMods updated !";
             return UpdateState.Success;
@@ -549,7 +567,7 @@ namespace FASTER.ViewModel
                     Directory.CreateDirectory(mod.Path);
                 }
 
-                if (tokenSource.Token.IsCancellationRequested)
+                if (_operationToken.IsCancellationRequested)
                 {
                     Logger.Log($"  Cancellation requested before {mod.WorkshopId}, skipping.");
                     return;
@@ -616,7 +634,7 @@ namespace FASTER.ViewModel
            Logger.Log($"  Requesting download handler for {mod.WorkshopId}");
            Parameters.Output += $"\n    Attempting to start download of item {mod.WorkshopId}... ";
 
-           var downloadHandler = await contentClient.GetPublishedFileDataAsync(mod.WorkshopId, manifestId, tokenSource.Token);
+           var downloadHandler = await contentClient.GetPublishedFileDataAsync(mod.WorkshopId, manifestId, _operationToken);
            Logger.Log($"  Download handler obtained for {mod.WorkshopId}, starting download...");
            await DownloadForMultiple(downloadHandler, mod.Path);
            Logger.Log($"  Download complete for {mod.WorkshopId}");
@@ -629,9 +647,10 @@ namespace FASTER.ViewModel
 
         internal async Task<bool> SteamLogin()
         {
+            ObjectDisposedException.ThrowIf(_disposed, this);
             Logger.Log("SteamLogin: start");
-            if (tokenSource.IsCancellationRequested)
-                tokenSource = new CancellationTokenSource();
+            if (_operationToken.IsCancellationRequested)
+                ResetCancellation();
             IsLoggingIn = true;
             var path = Path.Combine(Path.GetDirectoryName(AppSettings.SettingsPath) ?? string.Empty, "sentries");
 
@@ -654,7 +673,7 @@ namespace FASTER.ViewModel
                 Parameters.Output += $"\nConnecting to Steam as {(_steamCredentials.IsAnonymous ? "anonymous" : _steamCredentials.Username)}";
                 client.MaximumLogonAttempts = 5;
                 try
-                { await client.ConnectAsync(tokenSource.Token); }
+                { await client.ConnectAsync(_operationToken); }
                 catch (SteamClientAlreadyRunningException)
                 {
                     Logger.Log("SteamLogin: SteamClientAlreadyRunningException - client already running");
@@ -738,14 +757,14 @@ namespace FASTER.ViewModel
                                                      };
             downloadHandler.DownloadComplete += (_, _) => Parameters.Output += "\nDownload completed";
 
-            if (tokenSource.IsCancellationRequested)
-                tokenSource = new CancellationTokenSource();
+            if (_operationToken.IsCancellationRequested)
+                ResetCancellation();
 
             Task downloadTask = Task.Run(async () =>
             {
-                await downloadHandler.SetupAsync(targetDir, file => true, tokenSource.Token);
-                await downloadHandler.VerifyAsync(tokenSource.Token);
-                await downloadHandler.DownloadAsync(tokenSource.Token);
+                await downloadHandler.SetupAsync(targetDir, file => true, _operationToken);
+                await downloadHandler.VerifyAsync(_operationToken);
+                await downloadHandler.DownloadAsync(_operationToken);
             });
 
             Parameters.Output += "\nOK.";
@@ -756,13 +775,13 @@ namespace FASTER.ViewModel
             Parameters.Output += $"\nDownloading {downloadHandler.TotalFileCount} files with total size of {Functions.ParseFileSize(downloadHandler.TotalFileSize)}...";
             Parameters.Output += $"\nVerifying Install...";
 
-            while (!downloadTask.IsCompleted && !downloadTask.IsCanceled && !tokenSource.Token.IsCancellationRequested && !skipDownload)
+            while (!downloadTask.IsCompleted && !downloadTask.IsCanceled && !_operationToken.IsCancellationRequested && !skipDownload)
             {
 
-                var delayTask = Task.Delay(500, tokenSource.Token);
+                var delayTask = Task.Delay(500, _operationToken);
                 await Task.WhenAny(delayTask, downloadTask);
 
-                if (tokenSource.Token.IsCancellationRequested)
+                if (_operationToken.IsCancellationRequested)
                     Parameters.Output += "\nTask cancellation requested"; // NOSONAR - live console feed, each append intentionally refreshes the bound UI
                 Parameters.Output += $"\nProgress {downloadHandler.TotalProgress * 100:00.00}%"; // NOSONAR - live console feed, each append intentionally refreshes the bound UI
                 Parameters.Progress = downloadHandler.TotalProgress * 100;
@@ -826,7 +845,7 @@ namespace FASTER.ViewModel
                 Directory.CreateDirectory(targetDir);
             }
 
-            tokenSource.Token.ThrowIfCancellationRequested();
+            _operationToken.ThrowIfCancellationRequested();
             ulong downloadedSize = 0;
             downloadHandler.FileVerified          += (_, args) =>
             {
@@ -859,11 +878,11 @@ namespace FASTER.ViewModel
                 try
                 {
                     Logger.Log("  SetupAsync starting...");
-                    await downloadHandler.SetupAsync(targetDir, file => true, tokenSource.Token);
+                    await downloadHandler.SetupAsync(targetDir, file => true, _operationToken);
                     Logger.Log("  SetupAsync done. VerifyAsync starting...");
-                    await downloadHandler.VerifyAsync(tokenSource.Token);
+                    await downloadHandler.VerifyAsync(_operationToken);
                     Logger.Log("  VerifyAsync done. DownloadAsync starting...");
-                    await downloadHandler.DownloadAsync(tokenSource.Token);
+                    await downloadHandler.DownloadAsync(_operationToken);
                     Logger.Log("  DownloadAsync done.");
                 }
                 catch (Exception ex)
@@ -879,12 +898,12 @@ namespace FASTER.ViewModel
 
             Parameters.Output += $"\n    Downloading {downloadHandler.TotalFileCount} files with total size of {Functions.ParseFileSize(downloadHandler.TotalFileSize)}...";
             Parameters.Progress = 0;
-            while (!downloadTask.IsCompleted && !downloadTask.IsCanceled && !tokenSource.IsCancellationRequested)
+            while (!downloadTask.IsCompleted && !downloadTask.IsCanceled && !_operationToken.IsCancellationRequested)
             {
-                var delayTask = Task.Delay(500, tokenSource.Token);
+                var delayTask = Task.Delay(500, _operationToken);
                 await Task.WhenAny(delayTask, downloadTask);
 
-                if (tokenSource.IsCancellationRequested)
+                if (_operationToken.IsCancellationRequested)
                     Parameters.Output += "\n    Task cancellation requested"; // NOSONAR - live console feed, each append intentionally refreshes the bound UI
             }
 
@@ -935,8 +954,12 @@ namespace FASTER.ViewModel
 
         public void Dispose()
         {
+            if (_disposed) return;
+            _disposed = true;
             _lifetime.Cancel();
+            _lifetime.Dispose();
             tokenSource.Cancel();
+            tokenSource.Dispose();
             SteamClient?.Dispose();
         }
     }

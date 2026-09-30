@@ -13,7 +13,10 @@ public static class CpuTemperature
             if (OperatingSystem.IsWindows()) return ReadWindows();
             if (OperatingSystem.IsLinux()) return ReadLinux("/sys/class/hwmon", "/sys/class/thermal");
         }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ManagementException or System.Runtime.InteropServices.COMException) { }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ManagementException or System.Runtime.InteropServices.COMException)
+        {
+            return null;
+        }
         return null;
     }
 
@@ -27,20 +30,29 @@ public static class CpuTemperature
             {
                 try
                 {
-                    var namePath = Path.Combine(directory, root == hwmon ? "name" : "type");
-                    if (!File.Exists(namePath)) continue;
-                    var name = File.ReadAllText(namePath).Trim();
-                    if (!new[] { "coretemp", "k10temp", "zenpower", "cpu_thermal", "x86_pkg_temp", "cpu-thermal" }.Contains(name)) continue;
-                    foreach (var file in Directory.EnumerateFiles(directory, root == hwmon ? "temp*_input" : "temp"))
-                    {
-                        if (double.TryParse(File.ReadAllText(file).Trim(), NumberStyles.Float, CultureInfo.InvariantCulture, out double value) && Valid(value / 1000))
-                            readings.Add(value / 1000);
-                    }
+                    readings.AddRange(ReadSensor(directory, root == hwmon));
                 }
-                catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { }
+                catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+                {
+                    // Sensors may disappear or deny access while the others remain readable.
+                    continue;
+                }
             }
         }
         return readings.Count > 0 ? readings.Max() : null;
+    }
+
+    private static IEnumerable<double> ReadSensor(string directory, bool hwmon)
+    {
+        var namePath = Path.Combine(directory, hwmon ? "name" : "type");
+        if (!File.Exists(namePath)) yield break;
+        var name = File.ReadAllText(namePath).Trim();
+        if (!new[] { "coretemp", "k10temp", "zenpower", "cpu_thermal", "x86_pkg_temp", "cpu-thermal" }.Contains(name)) yield break;
+        foreach (var file in Directory.EnumerateFiles(directory, hwmon ? "temp*_input" : "temp"))
+        {
+            if (double.TryParse(File.ReadAllText(file).Trim(), NumberStyles.Float, CultureInfo.InvariantCulture, out double value) && Valid(value / 1000))
+                yield return value / 1000;
+        }
     }
 
     private static bool Valid(double value) => double.IsFinite(value) && value > 0 && value < 150;
@@ -50,7 +62,7 @@ public static class CpuTemperature
     {
         using var searcher = new ManagementObjectSearcher("root\\WMI", "SELECT CurrentTemperature FROM MSAcpi_ThermalZoneTemperature");
         using var results = searcher.Get();
-        foreach (ManagementObject result in results)
+        foreach (ManagementBaseObject result in results)
         {
             using (result)
             {

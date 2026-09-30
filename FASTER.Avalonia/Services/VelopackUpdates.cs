@@ -8,10 +8,11 @@ namespace FASTER.Avalonia.Services;
 
 internal sealed class VelopackUpdates : IApplicationUpdateBackend
 {
-    public const string ReleasePage = "https://github.com/milutinke/FASTER/releases";
+    private const string ReleaseRepository = "https://github.com/milutinke/FASTER";
+    public const string ReleasePage = ReleaseRepository + "/releases";
     private UpdateManager? _manager;
     private UpdateInfo? _update;
-    private UpdateManager Manager => _manager ??= new UpdateManager(new GithubSource("https://github.com/milutinke/FASTER", null, false));
+    private UpdateManager Manager => _manager ??= new UpdateManager(new GithubSource(ReleaseRepository, null, false));
     public bool IsInstalled => Manager.IsInstalled;
     public async Task<bool> CheckAsync(CancellationToken cancellationToken)
     {

@@ -26,7 +26,7 @@ public partial class SettingsView : UserControl
         _loading = true;
         var settings = AppSettings.Current;
         AccentBox.ItemsSource = Services.Appearance.Accents.Keys;
-        FontBox.ItemsSource = Services.Appearance.Fonts;
+        FontBox.ItemsSource = Services.Appearance.GetFonts();
         FontBox.SelectedItem = Services.Appearance.AppliedFont;
         AccentBox.SelectedItem = settings.Theme.Split('.').Length > 1 ? settings.Theme.Split('.')[1] : "Blue";
         DebugBox.IsChecked = settings.EnableDebugLog;
@@ -59,7 +59,7 @@ public partial class SettingsView : UserControl
     private void DebugBox_Changed(object? sender, RoutedEventArgs e)
     {
         if (_loading) return;
-        AppSettings.Current.EnableDebugLog = DebugBox.IsChecked == true;
+        AppSettings.Current.EnableDebugLog = DebugBox.IsChecked.GetValueOrDefault();
         AppSettings.Current.Save();
     }
     private void OpenLog_Click(object? sender, RoutedEventArgs e)
