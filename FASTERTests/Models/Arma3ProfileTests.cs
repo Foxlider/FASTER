@@ -7,7 +7,7 @@ namespace FASTER.Models.Tests
     public class Arma3ProfileTests
     {
         Arma3Profile _p;
-        [OneTimeSetUp]
+        [SetUp]
         public void Arma3ProfileSetUp()
         { Assert.DoesNotThrow(() => _p = new Arma3Profile()); }
 
@@ -39,8 +39,8 @@ namespace FASTER.Models.Tests
             Assert.That(ProfileCfgArrays.EnabledStrings.Contains(_p.MultipleSaves));
             Assert.That(ProfileCfgArrays.TacticalPingStrings.Contains(_p.TacticalPing));
             Assert.That(!string.IsNullOrWhiteSpace(_p.ArmaProfileContent));
-            Assert.That(_p.PrecisionAi, Is.Not.Null);
-            Assert.That(_p.SkillAi, Is.Not.Null);
+            Assert.That(_p.PrecisionAi, Is.EqualTo(0.5));
+            Assert.That(_p.SkillAi, Is.EqualTo(0.5));
         }
 
         [Test()]
@@ -72,6 +72,29 @@ namespace FASTER.Models.Tests
             Assert.DoesNotThrow(() => _p.TacticalPing = ProfileCfgArrays.TacticalPingStrings[0]);
             Assert.DoesNotThrow(() => _p.SkillAi = 0.5);
             Assert.DoesNotThrow(() => _p.PrecisionAi = 0.5);
+        }
+		[Test()]
+        public void Arma3ProfileDefaults()
+        {
+            Assert.That(_p.ReducedDamage, Is.EqualTo("Disabled"));
+            Assert.That(_p.StaminaBar, Is.EqualTo("Enabled"));
+            Assert.That(_p.AiLevelPreset, Is.EqualTo("Custom"));
+            Assert.That(_p.TacticalPing, Is.EqualTo("3D only"));
+        }
+
+        [Test()]
+        public void UnknownValueKeepsCurrentSetting()
+        {
+            _p.ReducedDamage = "Enabled";
+            _p.ReducedDamage = "not a real option";
+            Assert.That(_p.ReducedDamage, Is.EqualTo("Enabled"));
+
+            _p.ReducedDamage = null;
+            Assert.That(_p.ReducedDamage, Is.EqualTo("Enabled"));
+
+            _p.TacticalPing = "Both";
+            _p.TacticalPing = "nonsense";
+            Assert.That(_p.TacticalPing, Is.EqualTo("Both"));
         }
     }
 }
