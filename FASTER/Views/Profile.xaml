@@ -833,7 +833,7 @@
                                     </Expander.Style>
                                     <StackPanel>
                                         <CheckBox IsChecked="{Binding Path=Profile.ServerCfg.AntiFloodEnabled}" Content="Enable AntiFlood" Margin="5,3"/>
-                                        <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.AntiFloodCycleTime}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Cycle Time" Minimum="1" Margin="5"/>
+                                        <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.AntiFloodCycleTime}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Cycle Time (s)" Minimum="0.1" Interval="0.1" StringFormat="0.0#" Margin="5"/>
                                         <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.AntiFloodCycleLimit}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Cycle Limit" Minimum="1" Margin="5"/>
                                         <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.AntiFloodCycleHardLimit}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Cycle Hard Limit" Minimum="1" Margin="5"/>
                                         <CheckBox IsChecked="{Binding Path=Profile.ServerCfg.AntiFloodEnableKick}" Content="Enable Kick" Margin="5,3"/>

@@ -92,9 +92,9 @@ namespace FASTER.Models
 
         // AntiFlood (Arma 2.18+)
         private bool _antiFloodEnabled        = false;
-        private int  _antiFloodCycleTime      = 5;
-        private int  _antiFloodCycleLimit     = 5;
-        private int  _antiFloodCycleHardLimit = 10;
+        private double _antiFloodCycleTime    = 0.5;
+        private int  _antiFloodCycleLimit     = 400;
+        private int  _antiFloodCycleHardLimit = 4000;
         private int  _antiFloodEnableKick     = 0;  // 0 = disabled, 1 = enabled
 
         private bool   maxMemOverride;
@@ -502,7 +502,7 @@ namespace FASTER.Models
             }
         }
 
-        public int AntiFloodCycleTime
+        public double AntiFloodCycleTime
         {
             get => _antiFloodCycleTime;
             set
@@ -1007,7 +1007,7 @@ namespace FASTER.Models
                           + "// HEADLESS CLIENT\r\n"
                           + $"{(headlessClientEnabled && !headlessClients.Exists(string.IsNullOrWhiteSpace) ? $"headlessClients[] =  { "{\n\t\"" + string.Join("\",\n\t \"", headlessClients) + "\"\n}" };\r\n" : "")}"
                           + $"{(headlessClientEnabled && !localClient.Exists(string.IsNullOrWhiteSpace)? $"localClient[] =  { "{\n\t\"" + string.Join("\",\n\t \"", localClient) + "\"\n}" };" : "")}"
-                          + (AntiFloodEnabled ? $"class AntiFlood\r\n{{\r\n\tcycleTime = {AntiFloodCycleTime};\r\n\tcycleLimit = {AntiFloodCycleLimit};\r\n\tcycleHardLimit = {AntiFloodCycleHardLimit};\r\n\tenableKick = {_antiFloodEnableKick};\r\n}};\r\n" : "");
+                          + (AntiFloodEnabled ? $"class AntiFlood\r\n{{\r\n\tcycleTime = {AntiFloodCycleTime.ToString(CultureInfo.InvariantCulture)};\r\n\tcycleLimit = {AntiFloodCycleLimit};\r\n\tcycleHardLimit = {AntiFloodCycleHardLimit};\r\n\tenableKick = {_antiFloodEnableKick};\r\n}};\r\n" : "");
             return output;
         }
 
