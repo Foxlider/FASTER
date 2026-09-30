@@ -196,8 +196,24 @@ namespace FASTER.ViewModel
 
         internal void DeleteProfile()
         {
-            if (Directory.Exists(Path.Combine(Profile.ArmaPath, "Servers", Profile.Id)))
-            { Directory.Delete(Path.Combine(Profile.ArmaPath, "Servers", Profile.Id), true); }
+            var result = MessageBox.Show(
+                $"Delete profile \"{Profile.Name}\"?\n\nIts config files in the Servers folder will be deleted too.",
+                "Delete profile", MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No);
+            if (result != MessageBoxResult.Yes) return;
+
+            var profileFolder = Path.Combine(Profile.ArmaPath, "Servers", Profile.Id);
+            try
+            {
+                if (!string.IsNullOrEmpty(Profile.ArmaPath) && Directory.Exists(profileFolder))
+                    Directory.Delete(profileFolder, true);
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+            {
+                Logger.Log($"DeleteProfile: could not delete {profileFolder}: {ex.Message}");
+                DisplayMessage("Could not delete the profile files. Make sure its server is stopped and try again.");
+                return;
+            }
+
             Properties.Settings.Default.Profiles.Remove(Profile);
             Properties.Settings.Default.Save();
             MainWindow.Instance.ContentProfileViews.Remove(MainWindow.Instance.ContentProfileViews.Find(p => p.Profile.Id == Profile.Id));
