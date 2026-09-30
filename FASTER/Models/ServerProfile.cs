@@ -546,7 +546,7 @@ namespace FASTER.Models
                     var i   = p.Name.IndexOf('(');
                     var j   = p.Name.Length;
                     var num = p.Name.Substring(i + 1, j - 1 - i - 1);
-                    p.Name = $"{p.Name.Substring(0,   p.Name.Length - i + 1)} ({int.Parse(num) + 1})";
+                    p.Name = $"{p.Name.Substring(0, i)}({int.Parse(num) + 1})";
                 }
                 else
                 {

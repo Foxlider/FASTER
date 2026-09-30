@@ -17,27 +17,27 @@ namespace FASTER
     /// </summary>
     public partial class App
     {
-        protected override void OnStartup(StartupEventArgs e)
+        protected override async void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
 
             AppDomain.CurrentDomain.UnhandledException += (_, args) =>
-                Logger.Log($"[FATAL] Unhandled exception (CLR): {args.ExceptionObject}");
+                Logger.LogCritical($"[FATAL] Unhandled exception (CLR): {args.ExceptionObject}");
 
             DispatcherUnhandledException += (_, args) =>
             {
-                Logger.Log($"[FATAL] Unhandled dispatcher exception: {args.Exception}");
+                Logger.LogCritical($"[FATAL] Unhandled dispatcher exception: {args.Exception}");
                 args.Handled = true;
             };
 
             TaskScheduler.UnobservedTaskException += (_, args) =>
             {
-                Logger.Log($"[FATAL] Unobserved task exception: {args.Exception}");
+                Logger.LogCritical($"[FATAL] Unobserved task exception: {args.Exception}");
                 args.SetObserved();
             };
 
             var countryCode = RegionInfo.CurrentRegion.TwoLetterISORegionName;
-            var userID = AppCenter.GetInstallIdAsync();
+            var userID = await AppCenter.GetInstallIdAsync();
 
             ThemeManager.Current.ThemeSyncMode = ThemeSyncMode.SyncAll;
             ThemeManager.Current.ChangeTheme(Current, FASTER.Properties.Settings.Default.theme);

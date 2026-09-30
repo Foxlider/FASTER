@@ -106,7 +106,7 @@ namespace FASTER.Models
             set
             {
                 _workshopId = value;
-                RaisePropertyChanged("WorkshopID");
+                RaisePropertyChanged("WorkshopId");
             }
         }
 

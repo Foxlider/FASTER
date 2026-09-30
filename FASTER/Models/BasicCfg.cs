@@ -169,6 +169,10 @@ namespace FASTER.Models
             get => "Custom";
             set
             {
+                var index = (short)Array.IndexOf(BasicCfgArrays.PerfPresets, value);
+
+                if (index <= 0) return; // "Custom" (0) or not found (-1): leave existing values alone
+
                 MaxMsgSend           = 256;
                 MaxSizeGuaranteed    = 512;
                 MaxSizeNonGuaranteed = 256;
@@ -177,8 +181,7 @@ namespace FASTER.Models
                 MaxPacketSize      = 1400;
                 MaxCustomFileSize  = 160;
 
-
-                switch ((short)Array.IndexOf(BasicCfgArrays.PerfPresets, value))
+                switch (index)
                 {
                     case 1:
                         MaxMsgSend   = 128;

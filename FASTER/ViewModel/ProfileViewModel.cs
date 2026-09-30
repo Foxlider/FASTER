@@ -208,6 +208,14 @@ namespace FASTER.ViewModel
 
         internal void SaveProfile()
         {
+            var armaPath = Path.GetDirectoryName(Profile.Executable);
+
+            if(string.IsNullOrWhiteSpace(armaPath))
+            {
+                DisplayMessage("Arma executable is empty. Select the correct executable before saving your profile.");
+                return;
+            }
+
             string config        = Path.Combine(Profile.ArmaPath, "Servers", Profile.Id, "server_config.cfg");
             string basic         = Path.Combine(Profile.ArmaPath, "Servers", Profile.Id, "server_basic.cfg");
             string serverProfile = Path.Combine(Profile.ArmaPath, "Servers", Profile.Id, "users", Profile.Id, $"{Profile.Id}.Arma3Profile");
@@ -223,9 +231,9 @@ namespace FASTER.ViewModel
                 File.WriteAllLines(serverProfile, Profile.ArmaProfile.ArmaProfileContent.Replace("\r", "").Split('\n'));
             }
             catch
-            { DisplayMessage("Could not write the config files. Please ensure the server is not running and retry."); }
-
-            var armaPath = Path.GetDirectoryName(Profile.Executable);
+            { DisplayMessage("Could not write the config files. Please ensure the server is not running and retry."); 
+            return;
+            }
 
             if(string.IsNullOrWhiteSpace(armaPath))
             {
