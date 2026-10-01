@@ -11,7 +11,11 @@ namespace FASTER.Models
         public static string[] AllowFilePatchingStrings { get; } = { "No Clients", "HC Only", "All Clients" };
         public static string[] VerifySignaturesStrings { get; } = { "Disabled", "Deprecated", "Activated" };
         public static string[] VonCodecStrings { get; } = { "SPEEX", "OPUS" };
-        public static string[] TimeStampStrings { get; } = { "none", "short", "long" };
+        public static string[] TimeStampStrings { get; } = { "none", "short", "full" };
+        public static string[] ZeusScriptLevelStrings { get; } = { "No scripts", "Attributes only", "All scripts" };
+        public static string[] RotorLibStrings { get; } = { "Player choice", "Force AFM", "Force SFM" };
+        public static string[] HazeQualityStrings { get; } = { "Don't force", "Very Low", "Low", "Standard" };
+        public static short[] HazeQualityValues { get; } = { -1, 0, 1, 2 };
     }
 
     [Serializable]
@@ -42,7 +46,10 @@ namespace FASTER.Models
         private int    maxdesync                = 150;      // Max desync value until server kick the user
         private int    maxping                  = 200;      // Max ping value until server kick the user
         private int    maxpacketloss            = 50;       // Max packetloss value until server kick the user
-        private bool   kickClientOnSlowNetwork;
+        private bool   kickOnPing;                           // <- kickClientsOnSlowNetwork[] = { MaxPing, MaxPacketLoss, MaxDesync, DisconnectTimeout }
+        private bool   kickOnPacketLoss;                     // <- false = only logged, true = kicked
+        private bool   kickOnDesync;                         // <-
+        private bool   kickOnTimeout;                        // <-
         private int    lobbyIdleTimeout         = 300;
         private bool   autoSelectMission        = true;
         private bool   randomMissionOrder       = true;
@@ -56,6 +63,16 @@ namespace FASTER.Models
         private int    armaUnitsTimeout         = 30; 	     // Defines how long the player will be stuck connecting and wait for armaUnits data. Player will be notified if timeout elapsed and no units data was received
         private int    queueSizeLogG            = 1000000; 	 // if a specific players message queue is larger than 1MB and '#monitor' is running, dump his messages to a logfile for analysis
         private string forcedDifficulty         = "Custom";  // By default forcedDifficulty is only applying Custom
+        private short  missionsEndAction;                    // 0 = nothing ; 1 = missionsToServerRestart ; 2 = missionsToShutdown (both can't be combined)
+        private int    missionsEndCount         = 8;
+        private int    kickTimeoutManual        = 60;        // <- kickTimeout[] in seconds, -1 = until mission end, -2 = until server restart
+        private int    kickTimeoutConnectivity  = 60;        // <-
+        private int    kickTimeoutBattlEye      = 60;        // <- These are BI base figures
+        private int    kickTimeoutHarmless      = 60;        // <-
+        private int    idleFPSLimit             = 30;        // FPS limit of a server without players, range 5-60
+        private VoteCommand[] voteCommands       = VoteCommand.CreateDefaults(VoteCommand.VoteCommandNames);
+        private VoteCommand[] votedAdminCommands = VoteCommand.CreateDefaults(VoteCommand.VotedAdminCommandNames);
+        private ChannelRestriction[] disableChannels = ChannelRestriction.CreateDefaults();
 
 
         //Arma server only
@@ -68,10 +85,24 @@ namespace FASTER.Models
         private string logFile                  = "server_console.log";
         private short  battlEye                 = 1;         // 0 = Disabled ; 1 = Enabled
         private string timeStampFormat          = "short";   // Possible values = "none", "short", "full"
+        private string timeStampFormatConsole   = "short";   // Same values, for the server console (Arma 3 2.22+)
+        private bool   statisticsEnabled        = true;      // BI analytics, false to opt out
+        private bool   allowProfileGlasses      = true;      // Only used if the mission doesn't define it
+        private short  zeusCompositionScriptLevel = 1;       // 0 = no scripts ; 1 = attributes only ; 2 = all scripts. Only used if the mission doesn't define it
+        private short  forceRotorLibSimulation;              // 0 = player choice ; 1 = forced AFM ; 2 = forced SFM
+        private short  overrideHazeQuality      = -1;        // -1 = don't force ; 0 = very low ; 1 = low ; 2 = standard
         private short  persistent;
         private bool   requiredBuildChecked;
         private int    requiredBuild            = 999999999; // Minimum required client version. Clients with version lower than requiredBuild will not be able to connect
         private int    steamProtocolMaxDataSize = 10000;     // BI Default value is 1024. Increasing this value is dangerous for older routers as it will cause UDP packets to be fragmented. Though increasing this value can help with modulier length limit in a3 launcher.
+
+        //Security
+        private static readonly string[] RecommendedLoadExtensions = { "hpp", "sqs", "sqf", "fsm", "cpp", "paa", "txt", "xml", "inc", "ext", "sqm", "ods", "fxy", "lip", "csv", "kb", "bik", "bikb", "html", "htm", "biedi" };
+        private List<string> allowedLoadFileExtensions       = RecommendedLoadExtensions.ToList();
+        private List<string> allowedPreprocessFileExtensions = RecommendedLoadExtensions.ToList();
+        private List<string> allowedHTMLLoadExtensions       = new() { "htm", "html", "xml", "txt" };
+        private List<string> allowedHTMLLoadURIs             = new();
+        private List<string> filePatchingExceptions          = new();
 
         //Scripting
         private string serverCommandPassword;
@@ -82,6 +113,9 @@ namespace FASTER.Models
         private string onDifferentData;
         private string onUnsignedData = "kick (_this select 0)";
         private string onUserKicked;
+        private string regularCheck;
+        private int    callExtReportLimit = 1000;
+        private bool   enablePlayerDiag;
 
         private bool                 missionSelectorChecked;
         private string               missionContentOverride;
@@ -92,9 +126,9 @@ namespace FASTER.Models
 
         // AntiFlood (Arma 2.18+)
         private bool _antiFloodEnabled        = false;
-        private int  _antiFloodCycleTime      = 5;
-        private int  _antiFloodCycleLimit     = 5;
-        private int  _antiFloodCycleHardLimit = 10;
+        private double _antiFloodCycleTime    = 0.5;
+        private int  _antiFloodCycleLimit     = 400;
+        private int  _antiFloodCycleHardLimit = 4000;
         private int  _antiFloodEnableKick     = 0;  // 0 = disabled, 1 = enabled
 
         private bool   maxMemOverride;
@@ -344,11 +378,51 @@ namespace FASTER.Models
 
         public bool KickClientOnSlowNetwork
         {
-            get => kickClientOnSlowNetwork;
+            get => kickOnPing && kickOnPacketLoss && kickOnDesync && kickOnTimeout;
             set
             {
-                kickClientOnSlowNetwork = value;
+                KickOnPing = KickOnPacketLoss = KickOnDesync = KickOnTimeout = value;
                 RaisePropertyChanged(nameof(KickClientOnSlowNetwork));
+            }
+        }
+
+        public bool KickOnPing
+        {
+            get => kickOnPing;
+            set
+            {
+                kickOnPing = value;
+                RaisePropertyChanged(nameof(KickOnPing));
+            }
+        }
+
+        public bool KickOnPacketLoss
+        {
+            get => kickOnPacketLoss;
+            set
+            {
+                kickOnPacketLoss = value;
+                RaisePropertyChanged(nameof(KickOnPacketLoss));
+            }
+        }
+
+        public bool KickOnDesync
+        {
+            get => kickOnDesync;
+            set
+            {
+                kickOnDesync = value;
+                RaisePropertyChanged(nameof(KickOnDesync));
+            }
+        }
+
+        public bool KickOnTimeout
+        {
+            get => kickOnTimeout;
+            set
+            {
+                kickOnTimeout = value;
+                RaisePropertyChanged(nameof(KickOnTimeout));
             }
         }
 
@@ -502,7 +576,7 @@ namespace FASTER.Models
             }
         }
 
-        public int AntiFloodCycleTime
+        public double AntiFloodCycleTime
         {
             get => _antiFloodCycleTime;
             set
@@ -542,6 +616,163 @@ namespace FASTER.Models
             }
         }
         #endregion
+
+        public bool RestartAfterMissions
+        {
+            get => missionsEndAction == 1;
+            set
+            {
+                if (value)
+                { missionsEndAction = 1; }
+                else if (missionsEndAction == 1)
+                { missionsEndAction = 0; }
+                RaiseMissionsEndActionChanged();
+            }
+        }
+
+        public bool ShutdownAfterMissions
+        {
+            get => missionsEndAction == 2;
+            set
+            {
+                if (value)
+                { missionsEndAction = 2; }
+                else if (missionsEndAction == 2)
+                { missionsEndAction = 0; }
+                RaiseMissionsEndActionChanged();
+            }
+        }
+
+        public bool MissionsEndActionEnabled => missionsEndAction != 0;
+
+        private void RaiseMissionsEndActionChanged()
+        {
+            RaisePropertyChanged(nameof(RestartAfterMissions));
+            RaisePropertyChanged(nameof(ShutdownAfterMissions));
+            RaisePropertyChanged(nameof(MissionsEndActionEnabled));
+        }
+
+        public int MissionsEndCount
+        {
+            get => missionsEndCount;
+            set
+            {
+                missionsEndCount = value;
+                RaisePropertyChanged(nameof(MissionsEndCount));
+            }
+        }
+
+
+        public int KickTimeoutManual
+        {
+            get => kickTimeoutManual;
+            set
+            {
+                kickTimeoutManual = value;
+                RaisePropertyChanged(nameof(KickTimeoutManual));
+            }
+        }
+
+        public int KickTimeoutConnectivity
+        {
+            get => kickTimeoutConnectivity;
+            set
+            {
+                kickTimeoutConnectivity = value;
+                RaisePropertyChanged(nameof(KickTimeoutConnectivity));
+            }
+        }
+
+        public int KickTimeoutBattlEye
+        {
+            get => kickTimeoutBattlEye;
+            set
+            {
+                kickTimeoutBattlEye = value;
+                RaisePropertyChanged(nameof(KickTimeoutBattlEye));
+            }
+        }
+
+        public int KickTimeoutHarmless
+        {
+            get => kickTimeoutHarmless;
+            set
+            {
+                kickTimeoutHarmless = value;
+                RaisePropertyChanged(nameof(KickTimeoutHarmless));
+            }
+        }
+
+        public int IdleFPSLimit
+        {
+            get => idleFPSLimit;
+            set
+            {
+                idleFPSLimit = value;
+                RaisePropertyChanged(nameof(IdleFPSLimit));
+            }
+        }
+
+        public VoteCommand[] VoteCommands
+        {
+            get => voteCommands;
+            set
+            {
+                foreach (var c in voteCommands) c.PropertyChanged -= Vote_PropertyChanged;
+                voteCommands = value ?? VoteCommand.CreateDefaults(VoteCommand.VoteCommandNames);
+                foreach (var c in voteCommands) c.PropertyChanged += Vote_PropertyChanged;
+                RaisePropertyChanged(nameof(VoteCommands));
+            }
+        }
+
+        public VoteCommand[] VotedAdminCommands
+        {
+            get => votedAdminCommands;
+            set
+            {
+                foreach (var c in votedAdminCommands) c.PropertyChanged -= Vote_PropertyChanged;
+                votedAdminCommands = value ?? VoteCommand.CreateDefaults(VoteCommand.VotedAdminCommandNames);
+                foreach (var c in votedAdminCommands) c.PropertyChanged += Vote_PropertyChanged;
+                RaisePropertyChanged(nameof(VotedAdminCommands));
+            }
+        }
+
+        private void Vote_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            RaisePropertyChanged(nameof(VoteCommands));
+        }
+
+        public ChannelRestriction[] DisableChannels
+        {
+            get => disableChannels;
+            set
+            {
+                foreach (var c in disableChannels) c.PropertyChanged -= Channel_PropertyChanged;
+                disableChannels = value ?? ChannelRestriction.CreateDefaults();
+                foreach (var c in disableChannels) c.PropertyChanged += Channel_PropertyChanged;
+                RaisePropertyChanged(nameof(DisableChannels));
+            }
+        }
+
+        private void Channel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            RaisePropertyChanged(nameof(DisableChannels));
+        }
+
+        private static string FormatVoteCmds(string name, VoteCommand[] commands)
+        {
+            if (commands.All(c => c.IsDefault))
+            { return ""; }
+            return $"{name}[] = {{ {string.Join(", ", commands.Select(c => c.ToCfg()))} }};\r\n";
+        }
+
+        private string FormatDisableChannels()
+        {
+            var channels = disableChannels.Where(c => !c.IsDefault).Select(c => c.ToCfg()).ToList();
+            if (channels.Count == 0)
+            { return ""; }
+            return $"disableChannels[] = {{ {string.Join(", ", channels)} }};\t// {{ channelID, text, voice, mapMarkers, drawOnMap }} - true disables it. Overridden by the mission's description.ext\r\n";
+        }
 
         #region Arma Server Only
         public string VerifySignatures
@@ -634,6 +865,66 @@ namespace FASTER.Models
             }
         }
 
+        public string TimeStampFormatConsole
+        {
+            get => timeStampFormatConsole;
+            set
+            {
+                timeStampFormatConsole = value;
+                RaisePropertyChanged(nameof(TimeStampFormatConsole));
+            }
+        }
+
+        public bool StatisticsEnabled
+        {
+            get => statisticsEnabled;
+            set
+            {
+                statisticsEnabled = value;
+                RaisePropertyChanged(nameof(StatisticsEnabled));
+            }
+        }
+
+        public bool AllowProfileGlasses
+        {
+            get => allowProfileGlasses;
+            set
+            {
+                allowProfileGlasses = value;
+                RaisePropertyChanged(nameof(AllowProfileGlasses));
+            }
+        }
+
+        public string ZeusCompositionScriptLevel
+        {
+            get => ServerCfgArrays.ZeusScriptLevelStrings[zeusCompositionScriptLevel];
+            set
+            {
+                zeusCompositionScriptLevel = (short)Array.IndexOf(ServerCfgArrays.ZeusScriptLevelStrings, value);
+                RaisePropertyChanged(nameof(ZeusCompositionScriptLevel));
+            }
+        }
+
+        public string ForceRotorLibSimulation
+        {
+            get => ServerCfgArrays.RotorLibStrings[forceRotorLibSimulation];
+            set
+            {
+                forceRotorLibSimulation = (short)Array.IndexOf(ServerCfgArrays.RotorLibStrings, value);
+                RaisePropertyChanged(nameof(ForceRotorLibSimulation));
+            }
+        }
+
+        public string OverrideHazeQuality
+        {
+            get => ServerCfgArrays.HazeQualityStrings[Array.IndexOf(ServerCfgArrays.HazeQualityValues, overrideHazeQuality)];
+            set
+            {
+                overrideHazeQuality = ServerCfgArrays.HazeQualityValues[Array.IndexOf(ServerCfgArrays.HazeQualityStrings, value)];
+                RaisePropertyChanged(nameof(OverrideHazeQuality));
+            }
+        }
+
         public bool Persistent
         {
             get => persistent == 1;
@@ -674,6 +965,74 @@ namespace FASTER.Models
                 steamProtocolMaxDataSize = value;
                 RaisePropertyChanged(nameof(SteamProtocolMaxDataSize));
             }
+        }
+        #endregion
+
+        #region Security
+        public string AllowedLoadFileExtensions
+        {
+            get => string.Join(", ", allowedLoadFileExtensions);
+            set
+            {
+                allowedLoadFileExtensions = ParseExtensions(value);
+                RaisePropertyChanged(nameof(AllowedLoadFileExtensions));
+            }
+        }
+
+        public string AllowedPreprocessFileExtensions
+        {
+            get => string.Join(", ", allowedPreprocessFileExtensions);
+            set
+            {
+                allowedPreprocessFileExtensions = ParseExtensions(value);
+                RaisePropertyChanged(nameof(AllowedPreprocessFileExtensions));
+            }
+        }
+
+        public string AllowedHTMLLoadExtensions
+        {
+            get => string.Join(", ", allowedHTMLLoadExtensions);
+            set
+            {
+                allowedHTMLLoadExtensions = ParseExtensions(value);
+                RaisePropertyChanged(nameof(AllowedHTMLLoadExtensions));
+            }
+        }
+
+        public string AllowedHTMLLoadURIs
+        {
+            get => string.Join("\n", allowedHTMLLoadURIs);
+            set
+            {
+                allowedHTMLLoadURIs = value.Replace("\r", "").Split('\n').ToList();
+                RaisePropertyChanged(nameof(AllowedHTMLLoadURIs));
+            }
+        }
+
+        public string FilePatchingExceptions
+        {
+            get => string.Join("\n", filePatchingExceptions);
+            set
+            {
+                filePatchingExceptions = value.Replace("\r", "").Split('\n').ToList();
+                RaisePropertyChanged(nameof(FilePatchingExceptions));
+            }
+        }
+
+        private static List<string> ParseExtensions(string value)
+        {
+            return (value ?? "").Split(new[] { ',', ';', ' ', '\t', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)
+                                .Select(e => e.Trim('"', '\'').TrimStart('.'))
+                                .Where(e => e.Length > 0)
+                                .ToList();
+        }
+
+        private static string FormatArray(string name, IEnumerable<string> values, string comment)
+        {
+            var items = values.Select(v => v.Trim()).Where(v => v.Length > 0).ToList();
+            if (items.Count == 0)
+            { return ""; }
+            return $"{name}[] = {{ \"{string.Join("\", \"", items)}\" }};\t// {comment}\r\n";
         }
         #endregion
 
@@ -746,6 +1105,36 @@ namespace FASTER.Models
             {
                 onUserKicked = value;
                 RaisePropertyChanged(nameof(OnUserKicked));
+            }
+        }
+
+        public string RegularCheck
+        {
+            get => regularCheck;
+            set
+            {
+                regularCheck = value;
+                RaisePropertyChanged(nameof(RegularCheck));
+            }
+        }
+
+        public int CallExtReportLimit
+        {
+            get => callExtReportLimit;
+            set
+            {
+                callExtReportLimit = value;
+                RaisePropertyChanged(nameof(CallExtReportLimit));
+            }
+        }
+
+        public bool EnablePlayerDiag
+        {
+            get => enablePlayerDiag;
+            set
+            {
+                enablePlayerDiag = value;
+                RaisePropertyChanged(nameof(EnablePlayerDiag));
             }
         }
         #endregion
@@ -882,6 +1271,9 @@ namespace FASTER.Models
 
         public ServerCfg()
         {
+            foreach (var c in disableChannels) c.PropertyChanged += Channel_PropertyChanged;
+            foreach (var c in voteCommands.Concat(votedAdminCommands)) c.PropertyChanged += Vote_PropertyChanged;
+
             if(string.IsNullOrWhiteSpace(serverCfgContent))
             { ServerCfgContent = ProcessFile(); }
         }
@@ -952,25 +1344,45 @@ namespace FASTER.Models
                           + $"loopback = {(loopback ? "1" : "0")};\t\t\t\t// Enforces LAN only mode.\r\n"
                           + $"upnp = {(upnp ? "1" : "0")};\t\t\t\t// This setting might slow up server start-up by 600s if blocked by firewall or router.\r\n"
                           + "\r\n"
+                          + "// SECURITY\r\n"
+                          + FormatArray("allowedLoadFileExtensions", allowedLoadFileExtensions, "Only allow files with these extensions to be loaded via loadFile")
+                          + FormatArray("allowedPreprocessFileExtensions", allowedPreprocessFileExtensions, "Only allow files with these extensions to be loaded via preprocessFile / preprocessFileLineNumbers")
+                          + FormatArray("allowedHTMLLoadExtensions", allowedHTMLLoadExtensions, "Only allow files and URLs with these extensions to be loaded via htmlLoad")
+                          + FormatArray("allowedHTMLLoadURIs", allowedHTMLLoadURIs, "Only allow files from these URIs to be loaded via htmlLoad")
+                          + FormatArray("filePatchingExceptions", filePatchingExceptions, "Steam IDs allowed to join ignoring allowedFilePatching and verifySignatures (since Arma 3 2.10)")
+                          + "\r\n"
                           + "// VOTING\r\n"
                           + $"{(votingEnabled ? $"voteMissionPlayers = {voteMissionPlayers};" : "voteMissionPlayers = 1;")}\t\t\t// Tells the server how many people must connect so that it displays the mission selection screen.\r\n"
                           + $"{(votingEnabled ? $"voteThreshold = {voteThreshold.ToString(CultureInfo.InvariantCulture)};" : "voteThreshold = 0;")}\t\t\t// 33% or more players need to vote for something, for example an admin or a new map, to become effective\r\n"
-                          + $"{(votingEnabled ? "" : "allowedVoteCmds[] = {};")}\t\t\t//\r\n"
-                          + $"{(votingEnabled ? "" : "allowedVotedAdminCmds[] = {};")}\t\t//\r\n"
+                          + (votingEnabled ? FormatVoteCmds("allowedVoteCmds", voteCommands) : "allowedVoteCmds[] = {};\t\t\t// Voting disabled\r\n")
+                          + (votingEnabled ? FormatVoteCmds("allowedVotedAdminCmds", votedAdminCommands) : "allowedVotedAdminCmds[] = {};\t\t// Voting disabled\r\n")
                           + $"votingTimeOut = {votingTimeOut};\t\t\t// The amount of time a vote will last before ending.\r\n"
                           + "\r\n"
                           + "\r\n"
                           + "// INGAME SETTINGS\r\n"
                           + $"disableVoN = {disableVoN};\t\t\t\t// If set to 1, Voice over Net will not be available\r\n"
+                          + FormatDisableChannels()
                           + $"vonCodec = {vonCodec};\t\t\t\t// If set to 1 then it uses IETF standard OPUS codec, if to 0 then it uses SPEEX codec (since Arma 3 update 1.58+)  \r\n"
                           + $"skipLobby = {(skipLobby ? "1" : "0")};\t\t\t\t// Overridden by mission parameters\r\n"
+                          + $"allowProfileGlasses = {(allowProfileGlasses ? "1" : "0")};\t\t\t// If 0, glasses set in player profiles are ignored. Overridden by mission parameters\r\n"
+                          + $"zeusCompositionScriptLevel = {zeusCompositionScriptLevel};\t\t// 0 = no scripts, 1 = only attributes, 2 = all scripts in Zeus compositions. Overridden by mission parameters\r\n"
+                          + $"forceRotorLibSimulation = {forceRotorLibSimulation};\t\t// 0 = up to the player, 1 = forced Advanced Flight Model, 2 = forced Standard Flight Model\r\n"
+                          + (overrideHazeQuality >= 0 ? $"overrideHazeQuality = {overrideHazeQuality};\t\t\t// Forces haze quality on all clients: 0 = very low, 1 = low, 2 = standard\r\n" : "")
+                          + $"statisticsEnabled = {(statisticsEnabled ? "1" : "0")};\t\t\t// 0 to opt out of Arma 3 analytics\r\n"
                           + $"vonCodecQuality = {vonCodecQuality};\t\t\t// since 1.62.95417 supports range 1-20 //since 1.63.x will supports range 1-30 //8kHz is 0-10, 16kHz is 11-20, 32kHz(48kHz) is 21-30 \r\n"
                           + $"persistent = {persistent};\t\t\t\t// If 1, missions still run on even after the last player disconnected.\r\n"
                           + $"timeStampFormat = \"{timeStampFormat}\";\t\t// Set the timestamp format used on each report line in server-side RPT file. Possible values are \"none\" (default),\"short\",\"full\".\r\n"
+                          + $"timeStampFormatConsole = \"{timeStampFormatConsole}\";\t// Timestamp format used on each line of the server console. Possible values are \"none\", \"short\", \"full\".\r\n"
                           + $"BattlEye = {battlEye};\t\t\t\t// Server to use BattlEye system\r\n"
-                          + $"queueSizeLogG = {queueSizeLogG};\t\t\t// If a specific players message queue is larger than 1MB and #monitor is running, dump his messages to a logfile for analysis \r\n"
-                          + $"class AdvancedOptions\r\n{{\r\n\tLogObjectNotFound = {logObjectNotFound};\t\t// When false to skip logging 'Server: Object not found messages'.\r\n\tSkipDescriptionParsing = {skipDescriptionParsing};\t\t// When true to skip parsing of description.ext/mission.sqm. Will show pbo filename instead of configured missionName. OverviewText and such won't work, but loading the mission list is a lot faster when there are many missions.\r\n}};\r\n"
-                          + $"ignoreMissionLoadErrors = {ignoreMissionLoadErrors};\t\t// When set to true, the mission will load no matter the amount of loading errors. If set to false, the server will abort mission's loading and return to mission selection.\r\n"
+                          + $"idleFPSLimit = {idleFPSLimit};\t\t\t\t// Servers with no players will limit their FPS to this value (5-60)\r\n"
+                          + $"enablePlayerDiag = {(enablePlayerDiag ? "1" : "0")};\t\t\t// Logs players' bandwidth and desync info every 60 seconds\r\n"
+                          + $"drawingInMap = {(drawingInMap ? "1" : "0")};\t\t\t\t// Enables or disables the ability to place markers and draw lines in map.\r\n"
+                          + "class AdvancedOptions\r\n{\r\n"
+                          + $"\tLogObjectNotFound = {(logObjectNotFound ? "1" : "0")};\t\t// When false to skip logging 'Server: Object not found messages'.\r\n"
+                          + $"\tSkipDescriptionParsing = {(skipDescriptionParsing ? "1" : "0")};\t\t// When true to skip parsing of description.ext/mission.sqm. Will show pbo filename instead of configured missionName. OverviewText and such won't work, but loading the mission list is a lot faster when there are many missions.\r\n"
+                          + $"\tignoreMissionLoadErrors = {(ignoreMissionLoadErrors ? "1" : "0")};\t\t// When set to true, the mission will load no matter the amount of loading errors. If set to false, the server will abort mission's loading and return to mission selection.\r\n"
+                          + $"\tqueueSizeLogG = {queueSizeLogG};\t\t\t// If a specific players message queue is larger than 1MB and #monitor is running, dump his messages to a logfile for analysis \r\n"
+                          + "};\r\n"
                           + $"forcedDifficulty = \"{forcedDifficulty}\";\t\t\t// Forced difficulty (Recruit, Regular, Veteran, Custom)\r\n"
                           + "\r\n"
                           + "// TIMEOUTS\r\n"
@@ -978,7 +1390,8 @@ namespace FASTER.Models
                           + $"maxDesync = {maxdesync};\t\t\t// Max desync value until server kick the user\r\n"
                           + $"maxPing= {maxping};\t\t\t\t// Max ping value until server kick the user\r\n"
                           + $"maxPacketLoss= {maxpacketloss};\t\t\t// Max packetloss value until server kick the user\r\n"
-                          + $"kickClientsOnSlowNetwork[] = {( kickClientOnSlowNetwork ? "{ 1, 1, 1, 1 }" : "{ 0, 0, 0, 0 }")};\t// Defines if {{<MaxPing>, <MaxPacketLoss>, <MaxDesync>, <DisconnectTimeout>}} will be logged (0) or kicked (1)\r\n"
+                          + $"kickClientsOnSlowNetwork[] = {{ {(kickOnPing ? 1 : 0)}, {(kickOnPacketLoss ? 1 : 0)}, {(kickOnDesync ? 1 : 0)}, {(kickOnTimeout ? 1 : 0)} }};\t// Defines if {{<MaxPing>, <MaxPacketLoss>, <MaxDesync>, <DisconnectTimeout>}} will be logged (0) or kicked (1)\r\n"
+                          + $"kickTimeout[] = {{ {{ 0, {kickTimeoutManual} }}, {{ 1, {kickTimeoutConnectivity} }}, {{ 2, {kickTimeoutBattlEye} }}, {{ 3, {kickTimeoutHarmless} }} }};\t// {{ kickID, timeout }} for manual, connectivity, BattlEye and harmless kicks. Seconds, -1 = until mission end, -2 = until server restart\r\n"
                           + $"lobbyIdleTimeout = {lobbyIdleTimeout};\t\t\t// The amount of time the server will wait before force-starting a mission without a logged-in Admin.\r\n"
                           + $"roleTimeOut = {roleTimeOut};\t\t\t\t// The amount of time a player can sit in role selection before being kicked.\r\n"
                           + $"debriefingTimeOut = {debriefingTimeOut};\t\t\t// The amount of time a player can sit in breifing mode before being kicked.\r\n"
@@ -991,6 +1404,8 @@ namespace FASTER.Models
                           + $"onUserDisconnected = \"{onUserDisconnected}\";\t\t\t//\r\n"
                           + $"doubleIdDetected = \"{doubleIdDetected}\";\t\t\t//\r\n"
 						  + $"onUserKicked = \"{onUserKicked}\";\t\t\t\t//\r\n"
+                          + $"regularCheck = \"{regularCheck}\";\t\t\t\t//\r\n"
+                          + $"callExtReportLimit = {callExtReportLimit};\t\t// Log a warning if a server callExtension takes longer than this (ms)\r\n"
                           + "\r\n"
                           + "// SIGNATURE VERIFICATION\r\n"
                           + $"onUnsignedData = \"{onUnsignedData}\";\t// unsigned data detected\r\n"
@@ -999,8 +1414,10 @@ namespace FASTER.Models
                           + "\r\n"
                           + "\r\n"
                           + "// MISSIONS CYCLE (see below)\r\n"
-                          + $"randomMissionOrder = {randomMissionOrder};\t\t// Randomly iterate through Missions list\r\n"
-                          + $"autoSelectMission = {autoSelectMission};\t\t\t// Server auto selects next mission in cycle\r\n"
+                          + $"randomMissionOrder = {(randomMissionOrder ? "1" : "0")};\t\t// Randomly iterate through Missions list\r\n"
+                          + $"autoSelectMission = {(autoSelectMission ? "1" : "0")};\t\t\t// Server auto selects next mission in cycle\r\n"
+                          + (missionsEndAction == 1 ? $"missionsToServerRestart = {missionsEndCount};\t\t// Restart the server after this many missions ended\r\n" : "")
+                          + (missionsEndAction == 2 ? $"missionsToShutdown = {missionsEndCount};\t\t\t// Shut down the server after this many missions ended\r\n" : "")
                           + (!string.IsNullOrWhiteSpace(MissionHTTPDownloadBaseURL) ? $"missionHTTPDownloadBaseURL = \"{MissionHTTPDownloadBaseURL}\";\r\n" : "")
                           + "\r\n"
                           + $"{MissionContentOverride}\t\t\t\t\t// An empty Missions class means there will be no mission rotation\r\n"
@@ -1009,9 +1426,9 @@ namespace FASTER.Models
                           + "\r\n"
                           + "\r\n"
                           + "// HEADLESS CLIENT\r\n"
-                          + $"{(headlessClientEnabled && !headlessClients.Exists(string.IsNullOrWhiteSpace) ? $"headlessClients[] =  { "{\n\t\"" + string.Join("\",\n\t \"", headlessClients) + "\"\n}" };\r\n" : "")}"
-                          + $"{(headlessClientEnabled && !localClient.Exists(string.IsNullOrWhiteSpace)? $"localClient[] =  { "{\n\t\"" + string.Join("\",\n\t \"", localClient) + "\"\n}" };" : "")}"
-                          + (AntiFloodEnabled ? $"class AntiFlood\r\n{{\r\n\tcycleTime = {AntiFloodCycleTime};\r\n\tcycleLimit = {AntiFloodCycleLimit};\r\n\tcycleHardLimit = {AntiFloodCycleHardLimit};\r\n\tenableKick = {_antiFloodEnableKick};\r\n}};\r\n" : "");
+                          + $"{(headlessClientEnabled && headlessClients.Count > 0 && !headlessClients.Exists(string.IsNullOrWhiteSpace) ? $"headlessClients[] =  { "{\n\t\"" + string.Join("\",\n\t \"", headlessClients) + "\"\n}" };\r\n" : "")}"
+                          + $"{(headlessClientEnabled && localClient.Count > 0 && !localClient.Exists(string.IsNullOrWhiteSpace)? $"localClient[] =  { "{\n\t\"" + string.Join("\",\n\t \"", localClient) + "\"\n}" };\r\n" : "")}"
+                          + (AntiFloodEnabled ? $"class AntiFlood\r\n{{\r\n\tcycleTime = {AntiFloodCycleTime.ToString(CultureInfo.InvariantCulture)};\r\n\tcycleLimit = {AntiFloodCycleLimit};\r\n\tcycleHardLimit = {AntiFloodCycleHardLimit};\r\n\tenableKick = {_antiFloodEnableKick};\r\n}};\r\n" : "");
             return output;
         }
 

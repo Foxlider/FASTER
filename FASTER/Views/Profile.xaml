@@ -20,6 +20,10 @@
         <models:ProfileModsFilterIsInvalidBorderColorConverter x:Key="ProfileModsFilterIsInvalidBorderColorConverter"/>
         <models:ProfileModsFilterIsInvalidBackgroundColorConverter x:Key="ProfileModsFilterIsInvalidBackgroundColorConverter"/>
         <models:ProfileModsFilterIsInvalidTextConverter x:Key="ProfileModsFilterIsInvalidTextConverter"/>
+        <Style x:Key="CompactColumnHeader" TargetType="DataGridColumnHeader" BasedOn="{StaticResource MahApps.Styles.DataGridColumnHeader}">
+            <Setter Property="Padding" Value="4,2"/>
+            <Setter Property="mah:ControlsHelper.ContentCharacterCasing" Value="Normal"/>
+        </Style>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -445,6 +449,7 @@
                                 <RowDefinition Height="auto"/>
                                 <RowDefinition Height="auto"/>
                                 <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
                             </Grid.RowDefinitions>
 
                             <mah:ToggleSwitch Content="Mission selector override" IsOn="{Binding Path=Profile.ServerCfg.MissionChecked}" Margin="5,0"/>
@@ -493,6 +498,15 @@
                                 <CheckBox Content="Random Order" IsChecked="{Binding Path=Profile.ServerCfg.RandomMissionOrder}" Margin="5" HorizontalAlignment="Right"/>
                             </Grid>
                             <TextBox Grid.Row="5" Text="{Binding Path=Profile.ServerCfg.MissionHTTPDownloadBaseURL, UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="missionHTTPDownloadBaseURL" Margin="5,3"/>
+                            <Grid Grid.Row="6">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <CheckBox Grid.Row="0" Content="Restart server after missions" IsChecked="{Binding Path=Profile.ServerCfg.RestartAfterMissions}" Margin="5" HorizontalAlignment="Left"/>
+                                <CheckBox Grid.Row="1" Content="Shutdown server after missions" IsChecked="{Binding Path=Profile.ServerCfg.ShutdownAfterMissions}" Margin="5" HorizontalAlignment="Left"/>
+                                <mah:NumericUpDown Grid.Row="0" Grid.RowSpan="2" Value="{Binding Path=Profile.ServerCfg.MissionsEndCount}" IsEnabled="{Binding Path=Profile.ServerCfg.MissionsEndActionEnabled, Mode=OneWay}" Minimum="1" Margin="5,2" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                            </Grid>
                         </Grid>
                     </GroupBox>
                     <GroupBox Grid.Column="1" Grid.Row="0" Header="Difficulty Settings" Margin="4, 0, 5, 0">
@@ -519,6 +533,7 @@
                                         <RowDefinition Height="auto"/>
                                         <RowDefinition Height="auto"/>
                                         <RowDefinition Height="10"/>
+                                        <RowDefinition Height="auto"/>
                                         <RowDefinition Height="auto"/>
                                     </Grid.RowDefinitions>
                                     <ComboBox SelectedItem="{Binding Path=Profile.ArmaProfile.ReducedDamage, UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="Reduced Damage" Grid.Column="0" Grid.Row="0" ItemsSource="{Binding Path=EnabledStrings}" mah:TextBoxHelper.UseFloatingWatermark="True" Margin="3"/>
@@ -555,6 +570,8 @@
                                         <Slider Maximum="1" Style="{StaticResource MahApps.Styles.Slider.Flat}" AutoToolTipPlacement="TopLeft" Value="{Binding Profile.ArmaProfile.PrecisionAi, UpdateSourceTrigger=PropertyChanged}" TickPlacement="BottomRight" IsSnapToTickEnabled="True" TickFrequency=".01" ToolTip="AI Skill" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="AI Precision" Margin="0,5" SmallChange=".01" LargeChange="0.1" AutoToolTipPrecision="2" />
                                     </StackPanel>
                                     <ComboBox SelectedItem="{Binding Profile.ArmaProfile.AiLevelPreset, UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="AI Preset" Grid.Column="2" Grid.Row="10" ItemsSource="{Binding Path=AiPresetStrings}" mah:TextBoxHelper.UseFloatingWatermark="True" Margin="3,0,3,15"/>
+                                    <ComboBox SelectedItem="{Binding Path=Profile.ServerCfg.ForceRotorLibSimulation, UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="Helicopter Flight Model" Grid.Column="0" Grid.Row="11" ItemsSource="{Binding Path=RotorLibModes}" mah:TextBoxHelper.UseFloatingWatermark="True" Margin="3"/>
+                                    <ComboBox SelectedItem="{Binding Path=Profile.ServerCfg.OverrideHazeQuality, UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="Haze Quality" Grid.Column="1" Grid.Row="11" ItemsSource="{Binding Path=HazeQualities}" mah:TextBoxHelper.UseFloatingWatermark="True" Margin="3"/>
                                 </Grid>
                             </ScrollViewer>
 
@@ -607,7 +624,10 @@
                                             <CheckBox IsChecked="{Binding Path=Profile.ServerCfg.BattlEye}" Content="BattlEye" Margin="5" HorizontalAlignment="Left"/>
                                             <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.MaxPlayers}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Max Players" ToolTip="Maximum number of players" HorizontalAlignment="Right" Margin="5,3" />
                                         </Grid>
-                                        <CheckBox IsChecked="{Binding Path=Profile.RankingChecked}" Content="Server Ranking" Margin="5" />
+                                        <Grid>
+                                            <CheckBox IsChecked="{Binding Path=Profile.RankingChecked}" Content="Server Ranking" Margin="5" HorizontalAlignment="Left"/>
+                                            <CheckBox IsChecked="{Binding Path=Profile.ServerCfg.StatisticsEnabled}" Content="BI Statistics" Margin="5" HorizontalAlignment="Right"/>
+                                        </Grid>
                                     </StackPanel>
                                 </GroupBox>
 
@@ -628,6 +648,7 @@
                                             <RowDefinition/>
                                             <RowDefinition/>
                                             <RowDefinition/>
+                                            <RowDefinition/>
                                         </Grid.RowDefinitions>
                                         <CheckBox Content="Loopback" IsChecked="{Binding Path=Profile.ServerCfg.Loopback}" Margin="5,2" Grid.Column="0" Grid.Row="0"/>
                                         <CheckBox Content="UPNP" IsChecked="{Binding Path=Profile.ServerCfg.Upnp}" Margin="5,2" Grid.Column="1" Grid.Row="0"/>
@@ -635,6 +656,13 @@
                                         <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.MaxDesync}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Max Desync" Grid.Row="1" Grid.Column="1" Margin="5,2"/>
                                         <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.MaxPing}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Max Ping" Grid.Row="2" Grid.Column="0" Margin="5,2"/>
                                         <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.MaxPacketLoss}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Max Packet Loss" Grid.Row="2" Grid.Column="1" Margin="5,2"/>
+                                        <WrapPanel Grid.Row="3" Grid.ColumnSpan="2">
+                                            <Label Content="Kick on:" Margin="0,2"/>
+                                            <CheckBox Content="Ping" IsChecked="{Binding Path=Profile.ServerCfg.KickOnPing}" Margin="5,2"/>
+                                            <CheckBox Content="Packet Loss" IsChecked="{Binding Path=Profile.ServerCfg.KickOnPacketLoss}" Margin="5,2"/>
+                                            <CheckBox Content="Desync" IsChecked="{Binding Path=Profile.ServerCfg.KickOnDesync}" Margin="5,2"/>
+                                            <CheckBox Content="Timeout" IsChecked="{Binding Path=Profile.ServerCfg.KickOnTimeout}" Margin="5,2"/>
+                                        </WrapPanel>
                                     </Grid>
                                 </GroupBox>
 
@@ -650,7 +678,20 @@
                                         <ComboBox SelectedItem="{Binding Path=Profile.ServerCfg.AllowedFilePatching}" ItemsSource="{Binding Path=FilePatching}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Allow File Patching" Margin="5"/>
                                         <ComboBox SelectedItem="{Binding Path=Profile.ServerCfg.VerifySignatures}" ItemsSource="{Binding Path=VerifySignatures}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Verify Signatures" Margin="5"/>
                                         <CheckBox IsChecked="{Binding Path=Profile.ServerCfg.KickDuplicates}" Content="Kick Duplicates" Margin="5,2"/>
-                                        <CheckBox IsChecked="{Binding Path=Profile.ServerCfg.KickClientOnSlowNetwork}" Content="Kick on Slow Network" Margin="5,2"/>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition/>
+                                                <ColumnDefinition/>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition/>
+                                                <RowDefinition/>
+                                            </Grid.RowDefinitions>
+                                            <mah:NumericUpDown Grid.Row="0" Grid.Column="0" Value="{Binding Path=Profile.ServerCfg.KickTimeoutManual}" Minimum="-2" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Kick Timeout: Manual / Vote" Margin="5,2"/>
+                                            <mah:NumericUpDown Grid.Row="0" Grid.Column="1" Value="{Binding Path=Profile.ServerCfg.KickTimeoutConnectivity}" Minimum="-2" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Kick Timeout: Connectivity" Margin="5,2"/>
+                                            <mah:NumericUpDown Grid.Row="1" Grid.Column="0" Value="{Binding Path=Profile.ServerCfg.KickTimeoutBattlEye}" Minimum="-2" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Kick Timeout: BattlEye" Margin="5,2"/>
+                                            <mah:NumericUpDown Grid.Row="1" Grid.Column="1" Value="{Binding Path=Profile.ServerCfg.KickTimeoutHarmless}" Minimum="-2" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Kick Timeout: Harmless" Margin="5,2"/>
+                                        </Grid>
                                         <CheckBox IsChecked="{Binding Path=Profile.ServerCfg.logObjectNotFound}" Content="Log Object Not Found" Margin="5,2"/>
                                         <CheckBox IsChecked="{Binding Path=Profile.ServerCfg.skipDescriptionParsing}" Content="Skip Description Parsing" Margin="5,2"/>
                                         <CheckBox IsChecked="{Binding Path=Profile.ServerCfg.IgnoreMissionLoadErrors}" Content="Ignore Mission Load Errors" Margin="5,2"/>
@@ -671,6 +712,23 @@
 
                                     </StackPanel>
                                 </Expander>
+
+                                <!-- SECURITY -->
+                                <Expander Header="Security Settings">
+                                    <Expander.Style>
+                                        <Style TargetType="Expander" BasedOn="{StaticResource MahApps.Styles.Expander}">
+                                            <Setter Property="Margin" Value="5"/>
+                                            <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Window.Background}"></Setter>
+                                        </Style>
+                                    </Expander.Style>
+                                    <StackPanel>
+                                        <TextBox MinHeight="50" Margin="5" Text="{Binding Path=Profile.ServerCfg.AllowedLoadFileExtensions}" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Allowed loadFile Extensions (comma separated)"/>
+                                        <TextBox MinHeight="50" Margin="5" Text="{Binding Path=Profile.ServerCfg.AllowedPreprocessFileExtensions}" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Allowed preprocessFile Extensions (comma separated)"/>
+                                        <TextBox Margin="5" Text="{Binding Path=Profile.ServerCfg.AllowedHTMLLoadExtensions}" TextWrapping="Wrap" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Allowed htmlLoad Extensions (comma separated)"/>
+                                        <TextBox MinHeight="50" Margin="5" Text="{Binding Path=Profile.ServerCfg.AllowedHTMLLoadURIs}" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Allowed htmlLoad URIs (one per line)"/>
+                                        <TextBox MinHeight="50" Margin="5" Text="{Binding Path=Profile.ServerCfg.FilePatchingExceptions}" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="File Patching Exceptions - Steam IDs (one per line)"/>
+                                    </StackPanel>
+                                </Expander>
                             </StackPanel>
 
                             <!-- COLUMN 2 -->
@@ -689,6 +747,7 @@
                                             <ComboBox HorizontalAlignment="Right" Visibility="{Binding Path=Profile.ServerCfg.VonActivated, Converter={StaticResource BoolToVis}}" ItemsSource="{Binding Path=VonCodecs}" SelectedItem="{Binding Profile.ServerCfg.VonCodec}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="VoN Codec" Margin="10,5"/>
                                         </Grid>
                                         <Slider Maximum="30" Style="{StaticResource MahApps.Styles.Slider.Flat}" Visibility="{Binding Path=Profile.ServerCfg.VonActivated, Converter={StaticResource BoolToVis}}" AutoToolTipPlacement="TopLeft" Value="{Binding Path=Profile.ServerCfg.VonCodecQuality}" TickPlacement="BottomRight" IsSnapToTickEnabled="True" ToolTip="Codec Quality" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Codec Quality" Margin="20,3" SmallChange="1" />
+                                        <TextBlock Text="{Binding Path=Profile.ServerCfg.VonCodecQuality, StringFormat='Codec Quality: {0}'}" Visibility="{Binding Path=Profile.ServerCfg.VonActivated, Converter={StaticResource BoolToVis}}" HorizontalAlignment="Center" Margin="5,0,5,5"/>
                                     </StackPanel>
                                 </GroupBox>
 
@@ -708,8 +767,60 @@
                                                 <ColumnDefinition/>
                                             </Grid.ColumnDefinitions>
                                             <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.VoteMissionPlayers}" Visibility="{Binding Path=Profile.ServerCfg.VotingEnabled, Converter={StaticResource BoolToVis}}" Grid.Column="0" Margin="5"  mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Min Players"/>
-                                            <Slider Value="{Binding Path=Profile.ServerCfg.VoteThreshold}" Style="{StaticResource MahApps.Styles.Slider.Flat}" AutoToolTipPlacement="TopLeft" AutoToolTipPrecision="2" IsSnapToTickEnabled="True" Visibility="{Binding Path=Profile.ServerCfg.VotingEnabled, Converter={StaticResource BoolToVis}}" Minimum="0" Maximum="1"  Grid.Column="1" Margin="5" TickFrequency="0.01" TickPlacement="BottomRight" ToolTip="Voting threshold" SmallChange="0.01"/>
+                                            <StackPanel Grid.Column="1" Visibility="{Binding Path=Profile.ServerCfg.VotingEnabled, Converter={StaticResource BoolToVis}}">
+                                                <Slider Value="{Binding Path=Profile.ServerCfg.VoteThreshold}" Style="{StaticResource MahApps.Styles.Slider.Flat}" AutoToolTipPlacement="TopLeft" AutoToolTipPrecision="2" IsSnapToTickEnabled="True" Minimum="0" Maximum="1" Margin="5,5,5,0" TickFrequency="0.01" TickPlacement="BottomRight" ToolTip="Voting threshold" SmallChange="0.01"/>
+                                                <TextBlock Text="{Binding Path=Profile.ServerCfg.VoteThreshold, StringFormat='Vote Threshold: {0:P0}'}" HorizontalAlignment="Center" Margin="5,0,5,5"/>
+                                            </StackPanel>
                                         </Grid>
+                                        <Expander Header="Vote Commands" Margin="5,3" Visibility="{Binding Path=Profile.ServerCfg.VotingEnabled, Converter={StaticResource BoolToVis}}">
+                                            <DataGrid ItemsSource="{Binding Path=Profile.ServerCfg.VoteCommands}" ColumnHeaderStyle="{StaticResource CompactColumnHeader}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False" CanUserSortColumns="False" HeadersVisibility="Column" IsReadOnly="True">
+                                                <DataGrid.Columns>
+                                                    <DataGridTextColumn Header="Command" Binding="{Binding Name}" Width="*" MinWidth="60"/>
+                                                    <DataGridTemplateColumn Header="Before" Width="46">
+                                                        <DataGridTemplateColumn.CellTemplate>
+                                                            <DataTemplate DataType="models:VoteCommand">
+                                                                <CheckBox IsChecked="{Binding PreMissionStart, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center"/>
+                                                            </DataTemplate>
+                                                        </DataGridTemplateColumn.CellTemplate>
+                                                    </DataGridTemplateColumn>
+                                                    <DataGridTemplateColumn Header="After" Width="46">
+                                                        <DataGridTemplateColumn.CellTemplate>
+                                                            <DataTemplate DataType="models:VoteCommand">
+                                                                <CheckBox IsChecked="{Binding PostMissionStart, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center"/>
+                                                            </DataTemplate>
+                                                        </DataGridTemplateColumn.CellTemplate>
+                                                    </DataGridTemplateColumn>
+                                                    <DataGridTemplateColumn Header="Threshold" Width="64">
+                                                        <DataGridTemplateColumn.CellTemplate>
+                                                            <DataTemplate DataType="models:VoteCommand">
+                                                                <mah:NumericUpDown Value="{Binding Threshold, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Minimum="0" Maximum="1" Interval="0.01" StringFormat="0.00" mah:TextBoxHelper.Watermark="global" HideUpDownButtons="True" MinWidth="0"/>
+                                                            </DataTemplate>
+                                                        </DataGridTemplateColumn.CellTemplate>
+                                                    </DataGridTemplateColumn>
+                                                </DataGrid.Columns>
+                                            </DataGrid>
+                                        </Expander>
+                                        <Expander Header="Voted Admin Commands" Margin="5,3" Visibility="{Binding Path=Profile.ServerCfg.VotingEnabled, Converter={StaticResource BoolToVis}}">
+                                            <DataGrid ItemsSource="{Binding Path=Profile.ServerCfg.VotedAdminCommands}" ColumnHeaderStyle="{StaticResource CompactColumnHeader}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False" CanUserSortColumns="False" HeadersVisibility="Column" IsReadOnly="True">
+                                                <DataGrid.Columns>
+                                                    <DataGridTextColumn Header="Command" Binding="{Binding Name}" Width="*" MinWidth="60"/>
+                                                    <DataGridTemplateColumn Header="Before" Width="46">
+                                                        <DataGridTemplateColumn.CellTemplate>
+                                                            <DataTemplate DataType="models:VoteCommand">
+                                                                <CheckBox IsChecked="{Binding PreMissionStart, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center"/>
+                                                            </DataTemplate>
+                                                        </DataGridTemplateColumn.CellTemplate>
+                                                    </DataGridTemplateColumn>
+                                                    <DataGridTemplateColumn Header="After" Width="46">
+                                                        <DataGridTemplateColumn.CellTemplate>
+                                                            <DataTemplate DataType="models:VoteCommand">
+                                                                <CheckBox IsChecked="{Binding PostMissionStart, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center"/>
+                                                            </DataTemplate>
+                                                        </DataGridTemplateColumn.CellTemplate>
+                                                    </DataGridTemplateColumn>
+                                                </DataGrid.Columns>
+                                            </DataGrid>
+                                        </Expander>
                                     </StackPanel>
                                 </GroupBox>
 
@@ -747,6 +858,8 @@
                                     <StackPanel>
                                         <CheckBox IsChecked="{Binding Path=Profile.ServerCfg.DrawingInMap}" Content="Enable drawing in Map" Margin="5,3"/>
                                         <CheckBox IsChecked="{Binding Path=Profile.ServerCfg.SkipLobby}" Content="Skip lobby" Margin="5,2"/>
+                                        <CheckBox IsChecked="{Binding Path=Profile.ServerCfg.AllowProfileGlasses}" Content="Allow profile glasses" Margin="5,2"/>
+                                        <ComboBox SelectedItem="{Binding Path=Profile.ServerCfg.ZeusCompositionScriptLevel}" ItemsSource="{Binding Path=ZeusScriptLevels}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Zeus Composition Scripts" Margin="5,2"/>
                                         <Grid>
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="auto"/>
@@ -756,6 +869,41 @@
                                             <Label Grid.Column="1" Content="Arma Required Build" Margin="-10,0" Visibility="{Binding Path=Profile.ServerCfg.RequiredBuildChecked, Converter={StaticResource BoolToHide}}"/>
                                             <mah:NumericUpDown Grid.Column="1" Value="{Binding Path=Profile.ServerCfg.RequiredBuild}" IsEnabled="{Binding Path=Profile.ServerCfg.RequiredBuildChecked}" Visibility="{Binding Path=Profile.ServerCfg.RequiredBuildChecked, Converter={StaticResource BoolToVis}}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Required Build" Margin="5,2"/>
                                         </Grid>
+                                        <Expander Header="Disable Channels" Margin="5,3">
+                                            <DataGrid ItemsSource="{Binding Path=Profile.ServerCfg.DisableChannels}" ColumnHeaderStyle="{StaticResource CompactColumnHeader}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False" CanUserSortColumns="False" HeadersVisibility="Column" IsReadOnly="True">
+                                                <DataGrid.Columns>
+                                                    <DataGridTextColumn Header="Channel" Binding="{Binding Name}" Width="*" MinWidth="60"/>
+                                                    <DataGridTemplateColumn Header="Text" Width="42">
+                                                        <DataGridTemplateColumn.CellTemplate>
+                                                            <DataTemplate DataType="models:ChannelRestriction">
+                                                                <CheckBox IsChecked="{Binding Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center"/>
+                                                            </DataTemplate>
+                                                        </DataGridTemplateColumn.CellTemplate>
+                                                    </DataGridTemplateColumn>
+                                                    <DataGridTemplateColumn Header="Voice" Width="42">
+                                                        <DataGridTemplateColumn.CellTemplate>
+                                                            <DataTemplate DataType="models:ChannelRestriction">
+                                                                <CheckBox IsChecked="{Binding Voice, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center"/>
+                                                            </DataTemplate>
+                                                        </DataGridTemplateColumn.CellTemplate>
+                                                    </DataGridTemplateColumn>
+                                                    <DataGridTemplateColumn Header="Marks" Width="42">
+                                                        <DataGridTemplateColumn.CellTemplate>
+                                                            <DataTemplate DataType="models:ChannelRestriction">
+                                                                <CheckBox IsChecked="{Binding MapMarkers, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center"/>
+                                                            </DataTemplate>
+                                                        </DataGridTemplateColumn.CellTemplate>
+                                                    </DataGridTemplateColumn>
+                                                    <DataGridTemplateColumn Header="Draw" Width="42">
+                                                        <DataGridTemplateColumn.CellTemplate>
+                                                            <DataTemplate DataType="models:ChannelRestriction">
+                                                                <CheckBox IsChecked="{Binding DrawOnMap, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center"/>
+                                                            </DataTemplate>
+                                                        </DataGridTemplateColumn.CellTemplate>
+                                                    </DataGridTemplateColumn>
+                                                </DataGrid.Columns>
+                                            </DataGrid>
+                                        </Expander>
                                     </StackPanel>
                                 </GroupBox>
 
@@ -769,8 +917,16 @@
                                     </GroupBox.Style>
                                     <StackPanel>
                                         <mah:ToggleSwitch IsOn="{Binding Path=Profile.ServerCfg.NetLogEnabled}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="NetLog Activation" ToolTip="NetLog Activation" Margin="10,2,0,2" HorizontalAlignment="Left"/>
-                                        <TextBox Text="{Binding Path=Profile.ServerCfg.LogFile}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Logfile Name" Margin="5,3" Visibility="{Binding Path=Profile.ServerCfg.NetLogEnabled, Converter={StaticResource BoolToVis}}"/>
-                                        <ComboBox ItemsSource="{Binding Path=TimestampFormats}" SelectedItem="{Binding Path=Profile.ServerCfg.TimeStampFormat}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Timestamp Format" Margin="5,2" Visibility="{Binding Path=Profile.ServerCfg.NetLogEnabled, Converter={StaticResource BoolToVis}}"/>
+                                        <CheckBox IsChecked="{Binding Path=Profile.ServerCfg.EnablePlayerDiag}" Content="Player Diagnostics" Margin="5,2"/>
+                                        <TextBox Text="{Binding Path=Profile.ServerCfg.LogFile}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Logfile Name" Margin="5,3"/>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition/>
+                                                <ColumnDefinition/>
+                                            </Grid.ColumnDefinitions>
+                                            <ComboBox Grid.Column="0" ItemsSource="{Binding Path=TimestampFormats}" SelectedItem="{Binding Path=Profile.ServerCfg.TimeStampFormat}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Timestamp Format (RPT)" Margin="5,2"/>
+                                            <ComboBox Grid.Column="1" ItemsSource="{Binding Path=TimestampFormats}" SelectedItem="{Binding Path=Profile.ServerCfg.TimeStampFormatConsole}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Timestamp Format (Console)" Margin="5,2"/>
+                                        </Grid>
                                     </StackPanel>
                                 </GroupBox>
 
@@ -792,6 +948,7 @@
                                             <RowDefinition/>
                                             <RowDefinition/>
                                             <RowDefinition/>
+                                            <RowDefinition/>
                                         </Grid.RowDefinitions>
                                         <TextBox Text="{Binding Path=Profile.ServerCfg.ServerCommandPassword}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Server Command Password" Grid.ColumnSpan="2" Margin="5"/>
                                         <TextBox Text="{Binding Path=Profile.ServerCfg.OnUserConnected}" Grid.Row="1" Grid.Column="0" mah:TextBoxHelper.Watermark="onUserConnected" mah:TextBoxHelper.UseFloatingWatermark="True"  Margin="5,2"/>
@@ -800,6 +957,8 @@
                                         <TextBox Text="{Binding Path=Profile.ServerCfg.OnDifferentData}" Grid.Row="2" Grid.Column="1" mah:TextBoxHelper.Watermark="onDifferentData" mah:TextBoxHelper.UseFloatingWatermark="True"  Margin="5,2"/>
                                         <TextBox Text="{Binding Path=Profile.ServerCfg.OnUnsignedData}" Grid.Row="3" Grid.Column="0" mah:TextBoxHelper.Watermark="onUnsignedData" mah:TextBoxHelper.UseFloatingWatermark="True"  Margin="5,2"/>
                                         <TextBox Text="{Binding Path=Profile.ServerCfg.OnUserKicked}" Grid.Row="3" Grid.Column="1" mah:TextBoxHelper.Watermark="onUserKicked" mah:TextBoxHelper.UseFloatingWatermark="True"  Margin="5,2"/>
+                                        <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.CallExtReportLimit}" Grid.Row="4" Grid.Column="0" Minimum="0" mah:TextBoxHelper.Watermark="callExtReportLimit (ms)" mah:TextBoxHelper.UseFloatingWatermark="True" Margin="5,2"/>
+                                        <TextBox Text="{Binding Path=Profile.ServerCfg.RegularCheck}" Grid.Row="4" Grid.Column="1" mah:TextBoxHelper.Watermark="regularCheck" mah:TextBoxHelper.UseFloatingWatermark="True" Margin="5,2"/>
 
                                     </Grid>
                                 </Expander>
@@ -833,7 +992,7 @@
                                     </Expander.Style>
                                     <StackPanel>
                                         <CheckBox IsChecked="{Binding Path=Profile.ServerCfg.AntiFloodEnabled}" Content="Enable AntiFlood" Margin="5,3"/>
-                                        <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.AntiFloodCycleTime}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Cycle Time" Minimum="1" Margin="5"/>
+                                        <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.AntiFloodCycleTime}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Cycle Time (s)" Minimum="0.1" Interval="0.1" StringFormat="0.0#" Margin="5"/>
                                         <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.AntiFloodCycleLimit}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Cycle Limit" Minimum="1" Margin="5"/>
                                         <mah:NumericUpDown Value="{Binding Path=Profile.ServerCfg.AntiFloodCycleHardLimit}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Cycle Hard Limit" Minimum="1" Margin="5"/>
                                         <CheckBox IsChecked="{Binding Path=Profile.ServerCfg.AntiFloodEnableKick}" Content="Enable Kick" Margin="5,3"/>
@@ -906,7 +1065,7 @@
 
                                             <mah:NumericUpDown Grid.Row="4" Grid.Column="0" Value="{Binding Profile.BasicCfg.MinErrorToSend, UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="MinErrorToSend" mah:TextBoxHelper.UseFloatingWatermark="True" Minimum="0" Maximum="1" Margin="3" Interval="0.001"/>
                                             <mah:NumericUpDown Grid.Row="4" Grid.Column="1" Value="{Binding Profile.BasicCfg.MinErrorToSendNear, UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="MinErrorToSendNear" mah:TextBoxHelper.UseFloatingWatermark="True" Minimum="0" Maximum="1" Margin="3" Interval="0.001"/>
-                                            <mah:NumericUpDown Grid.Row="4" Grid.Column="2" Value="{Binding Profile.BasicCfg.MaxCustomFileSize, UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="MaxCustomFileSize" mah:TextBoxHelper.UseFloatingWatermark="True" Minimum="0" Maximum="65535" Interval="1" Margin="3"/>
+                                            <mah:NumericUpDown Grid.Row="4" Grid.Column="2" Value="{Binding Profile.BasicCfg.MaxCustomFileSize, UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="MaxCustomFileSize (KB)" mah:TextBoxHelper.UseFloatingWatermark="True" Minimum="0" Maximum="65535" Interval="1" Margin="3"/>
 
                                             <ComboBox Grid.Row="6" Grid.Column="0" SelectedItem="{Binding Path=Profile.BasicCfg.PerfPreset, UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="Load performance Preset" mah:TextBoxHelper.UseFloatingWatermark="True" ItemsSource="{Binding PerfPresets}" Margin="3"/>
                                             <ComboBox Grid.Row="6" Grid.Column="1" SelectedItem="{Binding Path=Profile.BasicCfg.TerrainGrid, UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="Terrain Grid" mah:TextBoxHelper.UseFloatingWatermark="True" ItemsSource="{Binding TerrainGrids}" Margin="3"/>
@@ -940,6 +1099,7 @@
                                                 <Button Grid.Column="1" Content="{iconPacks:Material Kind=FolderOpen}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" Height="auto" Margin="5,3,3,3" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Padding="3" Click="SelectKeysFolder"/>
                                             </Grid>
                                         <mah:NumericUpDown Grid.Row="19" Grid.Column="0" Value="{Binding Profile.LimitFPS, UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="-limitFPS (50=Default, max 999)" mah:TextBoxHelper.UseFloatingWatermark="True" Minimum="50" Maximum="999" Interval="1" Margin="3"/>
+                                        <mah:NumericUpDown Grid.Row="19" Grid.Column="1" Value="{Binding Profile.ServerCfg.IdleFPSLimit, UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="idleFPSLimit (empty server, 5-60)" mah:TextBoxHelper.UseFloatingWatermark="True" Minimum="5" Maximum="60" Interval="1" Margin="3"/>
                                     <TextBox Text="{Binding Profile.ServerCfg.CommandLineParameters, UpdateSourceTrigger=PropertyChanged}" Grid.Row="21" Grid.Column="0" Grid.ColumnSpan="3" Margin="3,5" mah:TextBoxHelper.Watermark="Command Line Arguments" mah:TextBoxHelper.UseFloatingWatermark="True"/>
                                 </Grid>
                             </ScrollViewer>
