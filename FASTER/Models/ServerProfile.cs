@@ -532,7 +532,7 @@ namespace FASTER.Models
         public void GenerateNewId()
         { _id = $"_{Guid.NewGuid():N}"; }
 
-        public ServerProfile Clone()
+        public ServerProfile Clone(IEnumerable<string>? existingNames = null)
         {
             string serialized = Newtonsoft.Json.JsonConvert.SerializeObject(this);
             ServerProfile p = Newtonsoft.Json.JsonConvert.DeserializeObject<ServerProfile>(serialized);
@@ -541,17 +541,23 @@ namespace FASTER.Models
             {
                 p.GenerateNewId();
 
-                if (p.Name.EndsWith(')') && p.Name.Contains('(') && int.TryParse(p.Name.Substring(p.Name.Length - 2, 1), out _))
+                var taken    = new HashSet<string>(existingNames ?? Enumerable.Empty<string>(), StringComparer.OrdinalIgnoreCase);
+                var baseName = p.Name;
+                var number   = 1;
+
+                var match = Regex.Match(p.Name, @"^(.*) \((\d+)\)$");
+                if (match.Success && int.TryParse(match.Groups[2].Value, out var parsed))
                 {
-                    var i   = p.Name.IndexOf('(');
-                    var j   = p.Name.Length;
-                    var num = p.Name.Substring(i + 1, j - 1 - i - 1);
-                    p.Name = $"{p.Name.Substring(0, i)}({int.Parse(num) + 1})";
+                    baseName = match.Groups[1].Value;
+                    number   = parsed;
+                    p.Name = $"{baseName}({number + 1})";
                 }
-                else
+
+                do
                 {
-                    p.Name = $"{p.Name} (2)";
-                }
+                    number++;
+                    p.Name = $"{baseName} ({number})";
+                } while (taken.Contains(p.Name));
             }
             else
             {

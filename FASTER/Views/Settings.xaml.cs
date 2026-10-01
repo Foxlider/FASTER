@@ -199,7 +199,7 @@ namespace FASTER.Views
 
         private void Colors_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-            if(e.AddedItems[0] is not Theme theme)
+            if (e.AddedItems.Count == 0 || e.AddedItems[0] is not Theme theme)
                 return;
             ThemeManager.Current.ThemeSyncMode = ThemeSyncMode.SyncAll;
             ThemeManager.Current.ChangeTheme(Application.Current, theme);
@@ -210,7 +210,7 @@ namespace FASTER.Views
 
         private void Fonts_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-            if (e.AddedItems[0] is not FontFamily font)
+            if (e.AddedItems.Count == 0 || e.AddedItems[0] is not FontFamily font)
                 return;
 
             MetroWindow.FontFamily = font;

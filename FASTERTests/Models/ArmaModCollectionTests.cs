@@ -8,7 +8,7 @@ namespace FASTER.Models.Tests
         ArmaModCollection _amc;
         ArmaMod _mod;
 
-        [OneTimeSetUp]
+        [SetUp]
         public void SetUp()
         {
             _amc = new ArmaModCollection();
@@ -23,6 +23,7 @@ namespace FASTER.Models.Tests
         }
 
         [Test()]
+        [Category("Network")] // AddSteamMod starts a background Steam API lookup
         public void AddSteamModTest()
         {
             Assert.DoesNotThrow(() => _amc.AddSteamMod(_mod));
@@ -33,33 +34,46 @@ namespace FASTER.Models.Tests
         [Test]
         public void TestSteamModGet()
         {
-            Assert.That(!string.IsNullOrEmpty(_mod.Author));
-            Assert.That(!string.IsNullOrEmpty(_mod.Name));
-            Assert.That(!string.IsNullOrEmpty(_mod.Path));
-            Assert.That(!string.IsNullOrEmpty(_mod.Status));
-            Assert.That(_mod.Size, Is.Not.Null);
-            Assert.That(_mod.LocalLastUpdated, Is.Not.Null);
-            Assert.That(_mod.WorkshopId, Is.Not.Null);
-            Assert.That(_mod.SteamLastUpdated, Is.Not.Null);
-            Assert.That(_mod.PrivateMod, Is.Not.Null);
-            Assert.That(_mod.IsLocal, Is.Not.Null);
-            Assert.That(_mod.IsLoading, Is.Not.Null);
+            Assert.That(_mod.Author, Is.EqualTo("Test"));
+            Assert.That(_mod.Name, Is.EqualTo("Test"));
+            Assert.That(_mod.Path, Is.EqualTo("Test"));
+            Assert.That(_mod.Status, Is.EqualTo("Not Installed"));
+            Assert.That(_mod.Size, Is.EqualTo(0));
+            Assert.That(_mod.LocalLastUpdated, Is.EqualTo(0));
+            Assert.That(_mod.WorkshopId, Is.EqualTo(1));
+            Assert.That(_mod.SteamLastUpdated, Is.EqualTo(0));
+            Assert.That(_mod.PrivateMod, Is.False);
+            Assert.That(_mod.IsLocal, Is.False);
+            Assert.That(_mod.IsLoading, Is.False);
         }
 
         [Test]
         public void TestSteamModSet()
         {
-            Assert.DoesNotThrow(() => _mod.Author = "Test2");
-            Assert.DoesNotThrow(() => _mod.Name = "Test2");
-            Assert.DoesNotThrow(() => _mod.Path = "Test2");
-            Assert.DoesNotThrow(() => _mod.Status = ArmaModStatus.UpToDate);
-            Assert.DoesNotThrow(() => _mod.Size = 5);
-            Assert.DoesNotThrow(() => _mod.LocalLastUpdated = 0);
-            Assert.DoesNotThrow(() => _mod.WorkshopId = 2);
-            Assert.DoesNotThrow(() => _mod.SteamLastUpdated = 1);
-            Assert.DoesNotThrow(() => _mod.PrivateMod = false);
-            Assert.DoesNotThrow(() => _mod.IsLocal = false);
-            Assert.DoesNotThrow(() => _mod.IsLoading = false);
+            _mod.Author = "Test2";
+            _mod.Name = "Test2";
+            _mod.Path = "Test2";
+            _mod.Status = ArmaModStatus.UpToDate;
+            _mod.Size = 5;
+            _mod.LocalLastUpdated = 7;
+            _mod.WorkshopId = 2;
+            _mod.SteamLastUpdated = 1;
+            _mod.PrivateMod = true;
+            _mod.IsLocal = true;
+            _mod.IsLoading = true;
+
+
+            Assert.That(_mod.Author, Is.EqualTo("Test2"));
+            Assert.That(_mod.Name, Is.EqualTo("Test2"));
+            Assert.That(_mod.Path, Is.EqualTo("Test2"));
+            Assert.That(_mod.Status, Is.EqualTo(ArmaModStatus.UpToDate));
+            Assert.That(_mod.Size, Is.EqualTo(5));
+            Assert.That(_mod.LocalLastUpdated, Is.EqualTo(7));
+            Assert.That(_mod.WorkshopId, Is.EqualTo(2));
+            Assert.That(_mod.SteamLastUpdated, Is.EqualTo(1));
+            Assert.That(_mod.PrivateMod, Is.True);
+            Assert.That(_mod.IsLocal, Is.True);
+            Assert.That(_mod.IsLoading, Is.True);
         }
     }
 }

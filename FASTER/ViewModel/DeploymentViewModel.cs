@@ -268,13 +268,17 @@ namespace FASTER.ViewModel
         {
             try
             {
-                if (Directory.Exists(linkPath))
+                if (!Directory.Exists(linkPath))
+                    return;
+
+                if (!new DirectoryInfo(linkPath).Attributes.HasFlag(FileAttributes.ReparsePoint))
                 {
-                    if (new DirectoryInfo(linkPath).Attributes.HasFlag(FileAttributes.ReparsePoint))
-                        Directory.Delete(linkPath);
-                    else
-                        Directory.Delete(linkPath, true);
+                    Logger.Log($"DeleteLink: refusing to delete real folder {linkPath}");
+                    DisplayMessage($"Not removed: \"{linkPath}\" is a real folder, not a link.");
+                    return;
                 }
+
+                Directory.Delete(linkPath);
             }
             catch (Exception ex)
             { DisplayMessage("An exception occurred: \n\n" + ex.Message); }

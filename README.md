@@ -21,7 +21,7 @@
 
 #### **INTRO**
 
-FASTER is an extensive rewrite of FAST2 and FAST. There was no update for a long time and it was written in VB. I translated the whole project to C# using .NET 8.0.  
+FASTER is an extensive rewrite of FAST2 and FAST. There was no update for a long time and it was written in VB. I translated the whole project to C# using .NET 10.0.  
 Thanks go out to all the guys who helped the developpment and those who will test it. Also, to BI for giving us an awesome game to play with and break.
 
 

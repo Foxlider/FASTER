@@ -72,7 +72,10 @@ namespace FASTER.Models
                 if (item != null)
                 {
                     if(Directory.Exists(item.Path))
-                        Directory.Delete(item.Path, true);
+					{
+                        var isLink = new DirectoryInfo(item.Path).Attributes.HasFlag(FileAttributes.ReparsePoint);						
+                        Directory.Delete(item.Path, recursive: !isLink);
+                    }
                     currentProfiles.ArmaMods.Remove(item);
                 }
 

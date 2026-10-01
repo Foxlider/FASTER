@@ -64,7 +64,7 @@ namespace FASTER.Models
             get => ProfileCfgArrays.EnabledStrings[reducedDamage];
             set
             {
-                reducedDamage = (ushort)Array.IndexOf(ProfileCfgArrays.EnabledStrings, value);
+                reducedDamage = (ushort)IndexOrKeep(ProfileCfgArrays.EnabledStrings, value, reducedDamage);
                 RaisePropertyChanged("ReducedDamage");
             }
         }
@@ -74,7 +74,7 @@ namespace FASTER.Models
             get => ProfileCfgArrays.LimitedDistanceStrings[groupIndicators];
             set
             {
-                groupIndicators = (ushort)Array.IndexOf(ProfileCfgArrays.LimitedDistanceStrings, value);
+                groupIndicators = (ushort)IndexOrKeep(ProfileCfgArrays.LimitedDistanceStrings, value, groupIndicators);
                 RaisePropertyChanged("GroupIndicators");
             }
         }
@@ -84,7 +84,7 @@ namespace FASTER.Models
             get => ProfileCfgArrays.LimitedDistanceStrings[friendlyTags];
             set
             {
-                friendlyTags = (ushort)Array.IndexOf(ProfileCfgArrays.LimitedDistanceStrings, value);
+                friendlyTags = (ushort)IndexOrKeep(ProfileCfgArrays.LimitedDistanceStrings, value, friendlyTags);
                 RaisePropertyChanged("FriendlyTags");
             }
         }
@@ -94,7 +94,7 @@ namespace FASTER.Models
             get => ProfileCfgArrays.LimitedDistanceStrings[enemyTags];
             set
             {
-                enemyTags = (ushort)Array.IndexOf(ProfileCfgArrays.LimitedDistanceStrings, value);
+                enemyTags = (ushort)IndexOrKeep(ProfileCfgArrays.LimitedDistanceStrings, value, enemyTags);
                 RaisePropertyChanged("EnemyTags");
             }
         }
@@ -104,7 +104,7 @@ namespace FASTER.Models
             get => ProfileCfgArrays.LimitedDistanceStrings[detectedMines];
             set
             {
-                detectedMines = (ushort)Array.IndexOf(ProfileCfgArrays.LimitedDistanceStrings, value);
+                detectedMines = (ushort)IndexOrKeep(ProfileCfgArrays.LimitedDistanceStrings, value, detectedMines);
                 RaisePropertyChanged("DetectedMines");
             }
         }
@@ -114,7 +114,7 @@ namespace FASTER.Models
             get => ProfileCfgArrays.FadeOutStrings[commands];
             set
             {
-                commands = (ushort)Array.IndexOf(ProfileCfgArrays.FadeOutStrings, value);
+                commands = (ushort)IndexOrKeep(ProfileCfgArrays.FadeOutStrings, value, commands);
                 RaisePropertyChanged("Commands");
             }
         }
@@ -124,7 +124,7 @@ namespace FASTER.Models
             get => ProfileCfgArrays.FadeOutStrings[waypoints];
             set
             {
-                waypoints = (ushort)Array.IndexOf(ProfileCfgArrays.FadeOutStrings, value);
+                waypoints = (ushort)IndexOrKeep(ProfileCfgArrays.FadeOutStrings, value, waypoints);
                 RaisePropertyChanged("Waypoints");
             }
         }
@@ -134,7 +134,7 @@ namespace FASTER.Models
             get => ProfileCfgArrays.FadeOutStrings[weaponInfo];
             set
             {
-                weaponInfo = (ushort)Array.IndexOf(ProfileCfgArrays.FadeOutStrings, value);
+                weaponInfo = (ushort)IndexOrKeep(ProfileCfgArrays.FadeOutStrings, value, weaponInfo);
                 RaisePropertyChanged("WeaponInfo");
             }
         }
@@ -144,7 +144,7 @@ namespace FASTER.Models
             get => ProfileCfgArrays.FadeOutStrings[stanceIndicator];
             set
             {
-                stanceIndicator = (ushort)Array.IndexOf(ProfileCfgArrays.FadeOutStrings, value);
+                stanceIndicator = (ushort)IndexOrKeep(ProfileCfgArrays.FadeOutStrings, value, stanceIndicator);
                 RaisePropertyChanged("StanceIndicator");
             }
         }
@@ -154,7 +154,7 @@ namespace FASTER.Models
             get => ProfileCfgArrays.EnabledStrings[staminaBar];
             set
             {
-                staminaBar = (ushort)Array.IndexOf(ProfileCfgArrays.EnabledStrings, value);
+                staminaBar = (ushort)IndexOrKeep(ProfileCfgArrays.EnabledStrings, value, staminaBar);
                 RaisePropertyChanged("StaminaBar");
             }
         }
@@ -164,7 +164,7 @@ namespace FASTER.Models
             get => ProfileCfgArrays.EnabledStrings[weaponCrosshair];
             set
             {
-                weaponCrosshair = (ushort)Array.IndexOf(ProfileCfgArrays.EnabledStrings, value);
+                weaponCrosshair = (ushort)IndexOrKeep(ProfileCfgArrays.EnabledStrings, value, weaponCrosshair);
                 RaisePropertyChanged("WeaponCrosshair");
             }
         }
@@ -174,7 +174,7 @@ namespace FASTER.Models
             get => ProfileCfgArrays.EnabledStrings[visionAid];
             set
             {
-                visionAid = (ushort)Array.IndexOf(ProfileCfgArrays.EnabledStrings, value);
+                visionAid = (ushort)IndexOrKeep(ProfileCfgArrays.EnabledStrings, value, visionAid);
                 RaisePropertyChanged("VisionAid");
             }
         }
@@ -184,7 +184,7 @@ namespace FASTER.Models
             get => ProfileCfgArrays.ThirdPersonStrings[thirdPersonView];
             set
             {
-                thirdPersonView = (ushort)Array.IndexOf(ProfileCfgArrays.ThirdPersonStrings, value);
+                thirdPersonView = (ushort)IndexOrKeep(ProfileCfgArrays.ThirdPersonStrings, value, thirdPersonView);
                 RaisePropertyChanged("ThirdPersonView");
             }
         }
@@ -194,7 +194,7 @@ namespace FASTER.Models
             get => ProfileCfgArrays.EnabledStrings[cameraShake];
             set
             {
-                cameraShake = (ushort)Array.IndexOf(ProfileCfgArrays.EnabledStrings, value);
+                cameraShake = (ushort)IndexOrKeep(ProfileCfgArrays.EnabledStrings, value, cameraShake);
                 RaisePropertyChanged("CameraShake");
             }
         }
@@ -204,7 +204,7 @@ namespace FASTER.Models
             get => ProfileCfgArrays.EnabledStrings[scoreTable];
             set
             {
-                scoreTable = (ushort)Array.IndexOf(ProfileCfgArrays.EnabledStrings, value);
+                scoreTable = (ushort)IndexOrKeep(ProfileCfgArrays.EnabledStrings, value, scoreTable);
                 RaisePropertyChanged("ScoreTable");
             }
         }
@@ -214,7 +214,7 @@ namespace FASTER.Models
             get => ProfileCfgArrays.EnabledStrings[deathMessages];
             set
             {
-                deathMessages = (ushort)Array.IndexOf(ProfileCfgArrays.EnabledStrings, value);
+                deathMessages = (ushort)IndexOrKeep(ProfileCfgArrays.EnabledStrings, value, deathMessages);
                 RaisePropertyChanged("DeathMessages");
             }
         }
@@ -224,7 +224,7 @@ namespace FASTER.Models
             get => ProfileCfgArrays.EnabledStrings[vonID];
             set
             {
-                vonID = (ushort)Array.IndexOf(ProfileCfgArrays.EnabledStrings, value);
+                vonID = (ushort)IndexOrKeep(ProfileCfgArrays.EnabledStrings, value, vonID);
                 RaisePropertyChanged("VonID");
             }
         }
@@ -234,7 +234,7 @@ namespace FASTER.Models
             get => ProfileCfgArrays.EnabledStrings[mapContentFriendly];
             set
             {
-                mapContentFriendly = (ushort)Array.IndexOf(ProfileCfgArrays.EnabledStrings, value);
+                mapContentFriendly = (ushort)IndexOrKeep(ProfileCfgArrays.EnabledStrings, value, mapContentFriendly);
                 RaisePropertyChanged("MapContentFriendly");
             }
         }
@@ -244,7 +244,7 @@ namespace FASTER.Models
             get => ProfileCfgArrays.EnabledStrings[mapContentEnemy];
             set
             {
-                mapContentEnemy = (ushort)Array.IndexOf(ProfileCfgArrays.EnabledStrings, value);
+                mapContentEnemy = (ushort)IndexOrKeep(ProfileCfgArrays.EnabledStrings, value, mapContentEnemy);
                 RaisePropertyChanged("MapContentEnemy");
             }
         }
@@ -254,7 +254,7 @@ namespace FASTER.Models
             get => ProfileCfgArrays.EnabledStrings[mapContentMines];
             set
             {
-                mapContentMines = (ushort)Array.IndexOf(ProfileCfgArrays.EnabledStrings, value);
+                mapContentMines = (ushort)IndexOrKeep(ProfileCfgArrays.EnabledStrings, value, mapContentMines);
                 RaisePropertyChanged("MapContentMines");
             }
         }
@@ -264,7 +264,7 @@ namespace FASTER.Models
             get => ProfileCfgArrays.EnabledStrings[autoReport];
             set
             {
-                autoReport = (ushort)Array.IndexOf(ProfileCfgArrays.EnabledStrings, value);
+                autoReport = (ushort)IndexOrKeep(ProfileCfgArrays.EnabledStrings, value, autoReport);
                 RaisePropertyChanged("AutoReport");
             }
         }
@@ -274,7 +274,7 @@ namespace FASTER.Models
             get => ProfileCfgArrays.EnabledStrings[multipleSaves];
             set
             {
-                multipleSaves = (ushort)Array.IndexOf(ProfileCfgArrays.EnabledStrings, value);
+                multipleSaves = (ushort)IndexOrKeep(ProfileCfgArrays.EnabledStrings, value, multipleSaves);
                 RaisePropertyChanged("MultipleSaves");
             }
         }
@@ -284,7 +284,7 @@ namespace FASTER.Models
             get => ProfileCfgArrays.TacticalPingStrings[tacticalPing];
             set
             {
-                tacticalPing = Array.IndexOf(ProfileCfgArrays.TacticalPingStrings, value);
+                tacticalPing = IndexOrKeep(ProfileCfgArrays.TacticalPingStrings, value, tacticalPing);
                 RaisePropertyChanged("TacticalPing");
             }
         }
@@ -294,7 +294,7 @@ namespace FASTER.Models
             get => ProfileCfgArrays.AiPresetStrings[aiLevelPreset];
             set
             {
-                aiLevelPreset = (ushort)Array.IndexOf(ProfileCfgArrays.AiPresetStrings, value);
+                aiLevelPreset = (ushort)IndexOrKeep(ProfileCfgArrays.AiPresetStrings, value, aiLevelPreset);
                 RaisePropertyChanged("AiLevelPreset");
             }
         }
@@ -317,6 +317,12 @@ namespace FASTER.Models
                 precisionAi = Math.Round(value, 2);
                 RaisePropertyChanged("PrecisionAi");
             }
+        }
+
+        private static int IndexOrKeep(string[] options, string? value, int current)
+        {
+            var index = Array.IndexOf(options, value);
+            return index < 0 ? current : index;
         }
 
         public Arma3Profile()

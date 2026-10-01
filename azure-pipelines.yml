@@ -21,10 +21,10 @@ steps:
   displayName: 'Checkout (with submodules)'
 
 - task: UseDotNet@2
-  displayName: 'Use DotNet 8.0'
+  displayName: 'Use DotNet 10.0'
   inputs:
     packageType: 'sdk'
-    version: '8.0.x'
+    version: '10.0.x'
     includePreviewVersions: false
 
 - task: DotNetCoreCLI@2
@@ -51,7 +51,7 @@ steps:
 - script: dotnet tool update --global dotnet-coverage
   displayName: 'Install dotnet-coverage'
 
-- script: dotnet-coverage collect "dotnet test FASTERTests/FASTERTests.csproj --configuration $(buildConfiguration) --no-restore --no-build" -f xml -o "$(Agent.TempDirectory)\coverage.xml"
+- script: dotnet-coverage collect "dotnet test FASTERTests/FASTERTests.csproj --configuration $(buildConfiguration) --no-restore --no-build --filter \"TestCategory!=Network\"" -f xml -o "$(Agent.TempDirectory)\coverage.xml"
   displayName: 'Dotnet Test (with coverage)'
 
 - task: SonarCloudAnalyze@4.2.6
