@@ -79,7 +79,7 @@ namespace FASTER.ViewModel
             }
 
             mod.Marked = !mod.Marked;
-            var linkPath = Path.Combine(Deployment.InstallPath, $"@{Functions.SafeName(mod.Name)}");
+            var linkPath = Path.Combine(Deployment.InstallPath, $"@{Functions.ModFolderName(mod.Name, mod.WorkshopId)}");
             if (mod.Marked)
             {
                 //LINK MOD
@@ -89,7 +89,7 @@ namespace FASTER.ViewModel
             {
                 //UNLINK MOD
                 var links = Directory.EnumerateDirectories(Deployment.InstallPath).Select(d => new DirectoryInfo(d)).Where(d => d.Attributes.HasFlag(FileAttributes.ReparsePoint));
-                if (links.Any(l => l.Name == $"@{Functions.SafeName(mod.Name)}"))
+                if (links.Any(l => l.Name == $"@{Functions.ModFolderName(mod.Name, mod.WorkshopId)}"))
                     DeleteLink(linkPath);
             }
 
@@ -119,7 +119,7 @@ namespace FASTER.ViewModel
 
             foreach (var mod in Deployment.DeployMods)
             {
-                var linkPath = Path.Combine(Deployment.InstallPath, $"@{Functions.SafeName(mod.Name)}");
+                if (links.Any(l => l.Name == $"@{Functions.ModFolderName(mod.Name, mod.WorkshopId)}"))
                 Logger.Log($"  Linking {mod.Name}: {mod.Path} -> {linkPath}");
                 mod.Marked = LinkMod(mod, linkPath);
             }
@@ -141,7 +141,7 @@ namespace FASTER.ViewModel
 
             foreach (var mod in Deployment.DeployMods)
             {
-                var linkPath = Path.Combine(Deployment.InstallPath, $"@{Functions.SafeName(mod.Name)}");
+                var linkPath = Path.Combine(Deployment.InstallPath, $"@{Functions.ModFolderName(mod.Name, mod.WorkshopId)}");
                 if (Directory.Exists(linkPath) && new DirectoryInfo(linkPath).Attributes.HasFlag(FileAttributes.ReparsePoint))
                 { DeleteLink(linkPath); }
 
@@ -164,7 +164,7 @@ namespace FASTER.ViewModel
             foreach (var mod in Deployment.DeployMods)
             {
                 var links = Directory.EnumerateDirectories(Deployment.InstallPath).Select(d => new DirectoryInfo(d)).Where(d => d.Attributes.HasFlag(FileAttributes.ReparsePoint));
-                mod.Marked = links.Any(l => l.Name == $"@{Functions.SafeName(mod.Name)}");
+                mod.Marked = links.Any(l => l.Name == $"@{Functions.ModFolderName(mod.Name, mod.WorkshopId)}");
             }
             Settings.Default.Deployments = Deployment;
             Settings.Default.Save();

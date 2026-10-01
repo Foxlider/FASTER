@@ -618,8 +618,8 @@ namespace FASTER.Models
             string config = Path.Combine(ArmaPath, "Servers", Id, "server_config.cfg");
             string basic  = Path.Combine(ArmaPath, "Servers", Id, "server_basic.cfg");
 
-            string playerMods = string.Join(";", ProfileMods.Where(m => m.ClientSideChecked).OrderBy(m => m.LoadPriority).Select(m => $"@{Functions.SafeName(m.Name)}"));
-            string serverMods = string.Join(";", ProfileMods.Where(m => m.ServerSideChecked).OrderBy(m => m.LoadPriority).Select(m => $"@{Functions.SafeName(m.Name)}"));
+            string playerMods = string.Join(";", ProfileMods.Where(m => m.ClientSideChecked).OrderBy(m => m.LoadPriority).Select(m => $"@{Functions.ModFolderName(m.Name, m.Id)}"));
+            string serverMods = string.Join(";", ProfileMods.Where(m => m.ServerSideChecked).OrderBy(m => m.LoadPriority).Select(m => $"@{Functions.ModFolderName(m.Name, m.Id)}"));
             List<string> arguments = new List<string>
             {
                 $"-port={Port}",

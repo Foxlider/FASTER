@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 
 namespace FASTER.Models
 {
-    internal static class Functions
+    public static class Functions
     {
         public static void CheckSettings()
         {
@@ -64,10 +64,24 @@ namespace FASTER.Models
                 input = input.Replace(replacement + replacement, replacement);
                 return input;
             }
-            // input = Regex.Replace(input, "[^a-zA-Z0-9\-_]", replacement) >> "-" is allowed
             input = Regex.Replace(input, "[^a-zA-Z0-9_]", replacement);
             input = input.Replace(replacement + replacement, replacement);
             return input;
+        }
+
+        // Folder/symlink name for a mod (without the leading "@").
+        // Names with only ASCII letters/digits behave exactly like SafeName, so existing links keep working.
+        // Names containing non-ASCII letters/digits would collapse into underscores and collide with
+        // other mods, so the Workshop ID is added to keep them unique.
+        public static string ModFolderName(string name, uint workshopId)
+        {
+            var safe = SafeName(name);
+
+            if (!name.Any(c => c > 127 && char.IsLetterOrDigit(c)))
+                return safe;
+
+            safe = safe.Trim('_');
+            return $"{(safe.Length == 0 ? "mod" : safe)}_{workshopId}";
         }
 
         //Opens a browser url
