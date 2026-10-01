@@ -1,7 +1,5 @@
 ﻿using FASTER.ViewModel;
 
-using MahApps.Metro.Controls.Dialogs;
-
 using System.Windows;
 using System.Windows.Controls;
 
@@ -15,38 +13,39 @@ namespace FASTER.Views
         public Updater()
         {
             InitializeComponent();
-            MainWindow.Instance.SteamUpdaterViewModel.DialogCoordinator = DialogCoordinator.Instance;
             DataContext = MainWindow.Instance.SteamUpdaterViewModel;
         }
 
         private void UpdateCancel_Click(object sender, RoutedEventArgs e)
         {
-            ((SteamUpdaterViewModel) DataContext)?.UpdateCancelClick();
+            ((SteamUpdaterViewModel)DataContext)?.UpdateCancelClick();
         }
         private async void Update_Click(object sender, RoutedEventArgs e)
         {
             if (DataContext is SteamUpdaterViewModel vm)
                 await vm.UpdateClick();
         }
-        private void ServerDir_Click(object sender, RoutedEventArgs e)
+        private async void ServerDir_Click(object sender, RoutedEventArgs e)
         {
-            ((SteamUpdaterViewModel) DataContext)?.ServerDirClick();
+            if (DataContext is SteamUpdaterViewModel vm)
+                await vm.ServerDirClick();
         }
 
-        private void ModStagingDir_Click(object sender, RoutedEventArgs e)
+        private async void ModStagingDir_Click(object sender, RoutedEventArgs e)
         {
-            ((SteamUpdaterViewModel) DataContext)?.ModStagingDirClick();
+            if (DataContext is SteamUpdaterViewModel vm)
+                await vm.ModStagingDirClick();
         }
 
         private void PasswordBox_OnPasswordChanged(object sender, RoutedEventArgs e)
         {
-            if(sender is PasswordBox {IsFocused: true} box)
-                ((SteamUpdaterViewModel) DataContext)?.PasswordChanged(box.Password);
+            if (sender is PasswordBox { IsFocused: true } box)
+                ((SteamUpdaterViewModel)DataContext)?.PasswordChanged(box.Password);
         }
 
         private void Updater_OnLoaded(object sender, RoutedEventArgs e)
         {
-            PasswordBox.Password = ((SteamUpdaterViewModel) DataContext)?.GetPw() ?? string.Empty;
+            PasswordBox.Password = ((SteamUpdaterViewModel)DataContext)?.GetPw() ?? string.Empty;
         }
 
         private void ClientReset_OnClick(object sender, RoutedEventArgs e)

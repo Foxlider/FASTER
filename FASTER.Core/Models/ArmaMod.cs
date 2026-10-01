@@ -1,0 +1,391 @@
+﻿using FASTER.Services;
+
+using System;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Xml.Serialization;
+
+namespace FASTER.Models
+{
+    [Serializable]
+    public class ArmaModCollection : INotifyPropertyChanged
+    {
+        [XmlElement(Order = 1)]
+        // ReSharper disable once UnusedAutoPropertyAccessor.Global
+        public string CollectionName { get; set; } = "Main";
+
+        private ObservableCollection<ArmaMod> _mods = new();
+
+        [XmlElement(Order = 2, ElementName = "ArmaMod")]
+        public ObservableCollection<ArmaMod> ArmaMods
+        {
+            get => _mods;
+            set
+            {
+                _mods = value;
+                RaisePropertyChanged("ArmaMods");
+            }
+        }
+
+        private static ArmaModCollection ReloadMods()
+        {
+            ArmaModCollection currentMods = new();
+
+            if (AppSettings.Current.SteamMods != null && AppSettings.Current.ArmaMods != null)
+                currentMods = AppSettings.Current.ArmaMods;
+
+            return currentMods;
+        }
+
+        public void AddSteamMod(ArmaMod newMod)
+        {
+            var duplicate = false;
+            var currentMods = ReloadMods();
+
+            if (currentMods.ArmaMods.Count > 0)
+            { duplicate = currentMods.ArmaMods.FirstOrDefault(mod => mod.WorkshopId == newMod.WorkshopId) != null; }
+
+            if (!duplicate)
+            {
+                currentMods.ArmaMods.Add(newMod);
+                AppSettings.Current.ArmaMods = currentMods;
+                _ = Task.Run(() => ArmaMods.FirstOrDefault(m => m.WorkshopId == newMod.WorkshopId)?.UpdateInfos());
+            }
+            else
+            { Ui.Current.DisplayMessage("Mod Already Exists"); }
+
+            AppSettings.Current.Save();
+        }
+
+        public void DeleteSteamMod(uint workshopId)
+        {
+
+
+            try
+            {
+                var currentProfiles = ReloadMods();
+                var item = currentProfiles.ArmaMods.FirstOrDefault(x => x.WorkshopId == workshopId);
+
+                if (item != null)
+                {
+                    if (Directory.Exists(item.Path))
+                        Directory.Delete(item.Path, true);
+                    currentProfiles.ArmaMods.Remove(item);
+                }
+
+                AppSettings.Current.Save();
+            }
+            catch
+            { Ui.Current.DisplayMessage($"Could not delete mod {workshopId}"); }
+        }
+
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+        private void RaisePropertyChanged(string property)
+        { PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property)); }
+    }
+
+
+    [Serializable]
+    public class ArmaMod : INotifyPropertyChanged
+    {
+
+        private uint _workshopId;
+        private string _name = string.Empty;
+        private string _author = string.Empty;
+        private string _path = string.Empty;
+        private ulong _steamLastUpdated;
+        private ulong _localLastUpdated;
+        private bool _privateMod;
+        private bool _isLocal;
+        private string _status = "Not Installed";
+        private long _size;
+        private bool _isLoading;
+        private bool _isSelected;
+        private static bool _apiKeyWarningShown = false;
+
+        private static bool TryShowApiKeyWarning()
+        {
+            if (_apiKeyWarningShown) return false;
+            _apiKeyWarningShown = true;
+            return true;
+        }
+
+
+        public uint WorkshopId
+        {
+            get => _workshopId;
+            set
+            {
+                _workshopId = value;
+                RaisePropertyChanged("WorkshopId");
+            }
+        }
+
+        public string Name
+        {
+            get => _name;
+            set
+            {
+                _name = value;
+                RaisePropertyChanged("Name");
+            }
+        }
+
+        public string Author
+        {
+            get => _author;
+            set
+            {
+                _author = value;
+                RaisePropertyChanged("Author");
+            }
+        }
+
+        public string Path
+        {
+            get => _path;
+            set
+            {
+                _path = value;
+                RaisePropertyChanged("Path");
+            }
+        }
+
+        public ulong SteamLastUpdated
+        {
+            get => _steamLastUpdated;
+            set
+            {
+                _steamLastUpdated = value;
+                RaisePropertyChanged("SteamLastUpdated");
+            }
+        }
+
+        public ulong LocalLastUpdated
+        {
+            get => _localLastUpdated;
+            set
+            {
+                _localLastUpdated = value;
+                RaisePropertyChanged("LocalLastUpdated");
+            }
+        }
+
+        public bool PrivateMod
+        {
+            get => _privateMod;
+            set
+            {
+                _privateMod = value;
+                RaisePropertyChanged("PrivateMod");
+            }
+        }
+
+        public bool IsLocal
+        {
+            get => _isLocal;
+            set
+            {
+                _isLocal = value;
+                RaisePropertyChanged("IsLocal");
+            }
+        }
+
+        public string Status
+        {
+            get => _status;
+            set
+            {
+                _status = value;
+                RaisePropertyChanged("Status");
+            }
+        }
+
+        public long Size
+        {
+            get => _size;
+            set
+            {
+                _size = value;
+                RaisePropertyChanged("Size");
+            }
+        }
+
+        [XmlIgnore]
+        public bool IsLoading
+        {
+            get => _isLoading;
+            set
+            {
+                _isLoading = value;
+                RaisePropertyChanged("IsLoading");
+            }
+        }
+
+        [XmlIgnore]
+        public bool IsSelected
+        {
+            get => _isSelected;
+            set
+            {
+                _isSelected = value;
+                RaisePropertyChanged("IsSelected");
+            }
+        }
+
+        public void CheckModSize()
+        {
+            IsLoading = true;
+
+            if (!Directory.Exists(Path))
+            {
+                Size = 0;
+                IsLoading = false;
+                return;
+            }
+
+            var ChildProcess = Task.Factory.StartNew(() => GetDirectorySize(Path));
+            Size = ChildProcess.Result;
+            IsLoading = false;
+        }
+
+        public async Task UpdateModAsync()
+        {
+            if (IsLocal)
+            {
+                Status = ArmaModStatus.Local;
+                CheckModSize();
+                IsLoading = false;
+                return;
+            }
+            IsLoading = true;
+
+            UpdateInfos(false);
+
+            Path = System.IO.Path.Combine(AppSettings.Current.ModStagingDirectory, WorkshopId.ToString());
+            if (!Directory.Exists(Path))
+                Directory.CreateDirectory(Path);
+            Ui.Current.NavigateToConsole();
+            var res = await Ui.Current.RunModUpdaterAsync(WorkshopId, Path);
+
+            CheckModSize();
+
+            switch (res)
+            {
+                case UpdateState.Error:
+                case UpdateState.Cancelled:
+                case UpdateState.LoginFailed:
+                    Status = ArmaModStatus.NotComplete;
+                    break;
+                case UpdateState.Success:
+                    Status = ArmaModStatus.UpToDate;
+                    var nx = DateTime.UnixEpoch;
+                    var ts = DateTime.UtcNow - nx;
+
+                    LocalLastUpdated = (ulong)ts.TotalSeconds;
+                    break;
+            }
+
+            IsLoading = false;
+        }
+
+        public void UpdateInfos(bool checkFileSize = true)
+        {
+            IsLoading = true;
+
+            if (IsLocal)
+            {
+                Status = ArmaModStatus.Local;
+                if (checkFileSize)
+                    CheckModSize();
+                IsLoading = false;
+                return;
+            }
+
+
+            int failNum = 0;
+            bool success = false;
+            do
+            {
+                var modInfo = SteamWebApi.GetSingleFileDetails(WorkshopId);
+
+                if (modInfo == null)
+                {
+                    failNum++;
+                    continue;
+                }
+
+                var modDetails = modInfo.ToObject<SteamApiFileDetails>();
+
+                if (modDetails == null || modDetails.result != 1)
+                {
+                    failNum++;
+                    continue;
+                }
+
+                try
+                {
+                    var creatorDetails = SteamWebApi.GetPlayerSummaries(modDetails.creator.ToString())?.ToObject<SteamApiPlayerInfo>();
+                    Author = creatorDetails?.personaname ?? "Unknown";
+                }
+                catch
+                { Author = "Unknown"; }
+
+                SteamLastUpdated = modDetails.time_updated;
+                Name = modDetails.title ?? string.Empty;
+
+                if (SteamLastUpdated > LocalLastUpdated && Status != ArmaModStatus.NotComplete)
+                    Status = ArmaModStatus.UpdateRequired;
+                else if (Status != ArmaModStatus.NotComplete)
+                    Status = ArmaModStatus.UpToDate;
+                success = true;
+            } while (failNum < 3 && !success);
+
+            if (!success && TryShowApiKeyWarning())
+                Ui.Current.DisplayMessage("Could not fetch mod info. Please check your Steam API Key in Settings.");
+
+            if (checkFileSize)
+                CheckModSize();
+
+            IsLoading = false;
+        }
+
+        public bool IsOnWorkshop()
+        {
+            try
+            {
+                var infos = SteamWebApi.GetSingleFileDetails(WorkshopId)?.ToObject<SteamApiFileDetails>();
+                return infos?.result == 1;
+            }
+            catch
+            { return false; }
+        }
+
+
+        private static long GetDirectorySize(string p)
+        {
+            var d = Directory.ResolveLinkTarget(p, true);
+            string[] a = Directory.GetFiles(d != null ? d.FullName : p, "*.*", SearchOption.AllDirectories);
+            return a.Select(name => new FileInfo(name)).Select(info => info.Length).Sum();
+        }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        public void RaisePropertyChanged(string property)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
+        }
+    }
+
+    public static class ArmaModStatus
+    {
+        public static string NotComplete => "Download Not Complete";
+        public static string UpToDate => "Up To Date";
+        public static string UpdateRequired => "Update Required";
+        public static string Local => "Local Mod";
+    }
+}

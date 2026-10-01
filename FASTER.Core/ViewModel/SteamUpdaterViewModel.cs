@@ -1,0 +1,967 @@
+using BytexDigital.Steam.ContentDelivery;
+using BytexDigital.Steam.ContentDelivery.Exceptions;
+using BytexDigital.Steam.ContentDelivery.Models;
+using BytexDigital.Steam.ContentDelivery.Models.Downloading;
+using BytexDigital.Steam.Core;
+using BytexDigital.Steam.Core.Exceptions;
+using BytexDigital.Steam.Core.Structs;
+
+using FASTER.Models;
+using FASTER.Services;
+
+
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
+
+namespace FASTER.ViewModel
+{
+    public sealed class SteamUpdaterViewModel : INotifyPropertyChanged, IDisposable
+    {
+        public SteamUpdaterViewModel()
+        {
+            Parameters = new SteamUpdaterModel();
+            _operationToken = tokenSource.Token;
+        }
+
+        private static readonly Lazy<SteamUpdaterViewModel>
+            lazy =
+                new(() => new SteamUpdaterViewModel(new SteamUpdaterModel()));
+
+        public static SteamUpdaterViewModel Instance => lazy.Value;
+
+        private SteamUpdaterViewModel(SteamUpdaterModel model)
+        {
+            Parameters = model;
+            _operationToken = tokenSource.Token;
+            DownloadTasks.ListChanged += (_, _) => RaisePropertyChanged(nameof(IsDownloading));
+            _ = TickLoopAsync();
+        }
+
+        private readonly CancellationTokenSource _lifetime = new();
+        private readonly SemaphoreSlim _operationGate = new(1, 1);
+        private bool _operationRunning;
+        private bool _disposed;
+        private CancellationToken _operationToken;
+
+        private async Task TickLoopAsync()
+        {
+            var cancellationToken = _lifetime.Token;
+            using PeriodicTimer timer = new(TimeSpan.FromSeconds(1));
+            try
+            {
+                while (await timer.WaitForNextTickAsync(cancellationToken)) Timer_Tick();
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                // The application is closing; no further timer updates are needed.
+            }
+        }
+
+        private bool _isLoggingIn;
+        private bool _isDlOverride;
+        private bool _updaterOnline;
+        private bool _updaterFaulted;
+
+        public SteamUpdaterModel Parameters { get; set; }
+
+        private CancellationTokenSource tokenSource = new();
+
+        private void ResetCancellation()
+        {
+            ObjectDisposedException.ThrowIf(_disposed, this);
+            tokenSource.Dispose();
+            tokenSource = new CancellationTokenSource();
+            _operationToken = tokenSource.Token;
+        }
+
+        private bool _isMaintaining;
+        public bool IsMaintaining
+        {
+            get => _isMaintaining;
+            set { _isMaintaining = value; RaisePropertyChanged(nameof(IsDownloading)); }
+        }
+
+        public bool IsDownloading => IsMaintaining || _operationRunning || DownloadTasks.Count > 0 || IsLoggingIn || IsDlOverride;
+
+        private BindingList<Task> DownloadTasks { get; } = new BindingList<Task>();
+
+
+        public bool UpdaterOnline
+        {
+            get => _updaterOnline;
+            set
+            {
+                _updaterOnline = value;
+                RaisePropertyChanged(nameof(UpdaterOnline));
+            }
+        }
+
+        public bool UpdaterFaulted
+        {
+            get => _updaterFaulted;
+            set
+            {
+                _updaterFaulted = value;
+                RaisePropertyChanged(nameof(UpdaterFaulted));
+            }
+        }
+
+        public bool IsLoggingIn
+        {
+            get => _isLoggingIn;
+            set
+            {
+                _isLoggingIn = value;
+                RaisePropertyChanged(nameof(IsLoggingIn));
+                RaisePropertyChanged(nameof(IsDownloading));
+            }
+        }
+
+        public bool IsDlOverride
+        {
+            get => _isDlOverride;
+            set
+            {
+                _isDlOverride = value;
+                RaisePropertyChanged(nameof(IsDlOverride));
+                RaisePropertyChanged(nameof(IsDownloading));
+            }
+        }
+
+        internal SteamClient? SteamClient;
+        internal SteamContentClient? SteamContentClient;
+
+        public void PasswordChanged(string password)
+        {
+            Parameters.Password = Encryption.Instance.EncryptData(password) ?? string.Empty;
+        }
+
+        private void Timer_Tick()
+        {
+            if (SteamClient == null)
+            {
+                UpdaterFaulted = false;
+                UpdaterOnline = false;
+                return;
+            }
+
+            UpdaterFaulted = SteamClient.IsFaulted;
+            UpdaterOnline = SteamClient.IsConnected;
+        }
+
+        internal string? GetPw()
+        { return Encryption.Instance.DecryptData(Parameters.Password); }
+
+        public async Task UpdateClick()
+        {
+            FASTER.Services.Telemetry.TrackEvent("Updater - Clicked Update", new Dictionary<string, string>
+            {
+                {"Name", AppSettings.Current.SteamUserName},
+                {"DLCs", $"{(Parameters.UsingGMDlc ? "GM " : "")}{(Parameters.UsingCSLADlc? "CSLA " : "")}{(Parameters.UsingPFDlc ? "SOG " : "")}{(Parameters.UsingWSDlc ? "WS " : "")}{(Parameters.UsingSPEDlc ? "SPE " : "")}{(Parameters.UsingRFDlc ? "RF " : "")}{(Parameters.UsingEFDlc ? "EF " : "")}"},
+                {"Branch", $"{(Parameters.UsingPerfBinaries? "Profiling" : "Public")}"}
+            });
+
+            Parameters.IsUpdating = true;
+            Parameters.Output = "Starting Update...";
+            Parameters.Output += "\nPlease don't quit this page or cancel the download\nThis might take a while...";
+
+            uint appId = 233780;
+            Dictionary<uint, string> depotsIDs = new()
+            //Find a way to update automatically with depot changes
+            {
+                {233781, "Arma 3 Alpha Dedicated Server Content (internal)"},
+                {233782, "Arma 3 Alpha Dedicated Server binary Windows (internal)"},
+                {233783, "Arma 3 Alpha Dedicated Server binary Linux (internal)"},
+                {233784, "Arma 3 Server Profiling - WINDOWS Depot"},
+                {233785, "Arma 3 Server - Profiler - LINUX Depot"},
+                {233792, "Arma 3 Server Creator DLC - GM"},
+                {233788, "Arma 3 Server Creator DLC - SPE"},
+                {233793, "Arma 3 Server Creator DLC - CSLA"},
+                {233794, "Arma 3 Server Creator DLC - SOGPF"},
+                {233795, "Arma 3 Server Creator DLC - WS"},
+                {233799, "Arma 3 Server Creator DLC - RF"},
+                {233798, "Arma 3 Server Creator DLC - EF"},
+            };
+
+            //IReadOnlyList<Depot> depotsList;
+
+            //try
+            //{ depotsList = await GetAppDepots(appId); }
+            //catch
+            //{
+            //    Parameters.Output += "\n\n /!\\ Something went wrong while getting the depots list. Check login/password and your internet connexion.\nAlternatively, clear the sentry folder and try again.";
+            //    return;
+            //}
+
+
+            //if(depotsList == null || depotsList.Count == 0)
+            //{
+            //    Parameters.Output += "\n\n /!\\ Could not retrieve depots list. PLease retry later or check your internet connection\nAlternatively, clear the sentry folder and try again.";
+            //    return;
+            //}
+
+            List<(uint id, string branch, string? pass)> depotsDownload = new();
+
+            Parameters.Output += "\nChecking Shared Content...";
+            //Downloading Depot 233781 from either branch contact or public
+            depotsDownload.Add((
+                depotsIDs.FirstOrDefault(d => d.Value == "Arma 3 Alpha Dedicated Server Content (internal)").Key,
+                Parameters.UsingContactDlc ? "contact" : "public",
+                null));
+
+            Parameters.Output += "\nChecking Executables...";
+
+
+            // Downloading depot 233782 fow Windows from branch public
+            depotsDownload.Add((
+                DefaultPlatformServices.ServerDepot(OperatingSystem.IsWindows(), false),
+                "public",
+                null));
+
+
+            //Download depot 233784 for windows in branch profiling
+            if (Parameters.UsingPerfBinaries)
+                depotsDownload.Add((
+                    DefaultPlatformServices.ServerDepot(OperatingSystem.IsWindows(), true),
+                    "profiling",
+                    "CautionSpecialProfilingAndTestingBranchArma3"));
+
+
+            //Downloading mods
+            if (Parameters.UsingGMDlc)
+            {
+                Parameters.Output += "\nChecking Arma 3 Server Creator DLC - GM...";
+                depotsDownload.Add((
+                    depotsIDs.FirstOrDefault(d => d.Value == "Arma 3 Server Creator DLC - GM").Key,
+                    "creatordlc",
+                    null));
+            }
+
+            if (Parameters.UsingCSLADlc)
+            {
+                Parameters.Output += "\nChecking Arma 3 Server Creator DLC - CSLA...";
+                depotsDownload.Add((
+                    depotsIDs.FirstOrDefault(d => d.Value == "Arma 3 Server Creator DLC - CSLA").Key,
+                    "creatordlc",
+                    null));
+            }
+
+            if (Parameters.UsingPFDlc)
+            {
+                Parameters.Output += "\nChecking Arma 3 Server Creator DLC - SOGPF...";
+                depotsDownload.Add((
+                    depotsIDs.FirstOrDefault(d => d.Value == "Arma 3 Server Creator DLC - SOGPF").Key,
+                    "creatordlc",
+                    null));
+            }
+
+            if (Parameters.UsingWSDlc)
+            {
+                Parameters.Output += "\nChecking Arma 3 Server Creator DLC - Western Sahara...";
+                depotsDownload.Add((
+                    depotsIDs.FirstOrDefault(d => d.Value == "Arma 3 Server Creator DLC - WS").Key,
+                    "creatordlc",
+                    null));
+            }
+
+            if (Parameters.UsingSPEDlc)
+            {
+                Parameters.Output += "\nChecking Arma 3 Server Creator DLC - SPE...";
+                depotsDownload.Add((
+                    depotsIDs.FirstOrDefault(d => d.Value == "Arma 3 Server Creator DLC - SPE").Key,
+                    "creatordlc",
+                    null));
+            }
+
+            if (Parameters.UsingRFDlc)
+            {
+                Parameters.Output += "\nChecking Arma 3 Server Creator DLC - RF...";
+                depotsDownload.Add((
+                    depotsIDs.FirstOrDefault(d => d.Value == "Arma 3 Server Creator DLC - RF").Key,
+                    "creatordlc",
+                    null));
+            }
+
+            if (Parameters.UsingEFDlc)
+            {
+                Parameters.Output += "\nChecking Arma 3 Server Creator DLC - EF...";
+                depotsDownload.Add((
+                    depotsIDs.FirstOrDefault(d => d.Value == "Arma 3 Server Creator DLC - EF").Key,
+                    "creatordlc",
+                    null));
+            }
+
+            var result = await RunServerUpdater(Parameters.InstallDirectory, appId, depotsDownload);
+
+            if (result == UpdateState.Success)
+                Platform.Current.PrepareServerExecutables(Parameters.InstallDirectory);
+
+            Parameters.Output += result switch
+            {
+                UpdateState.Success     => "\n\nAll Done ! ",
+                UpdateState.LoginFailed => "\n\nSteam login failed. Nothing was updated.",
+                UpdateState.Cancelled   => "\n\nUpdate was cancelled.",
+                _                       => "\n\nUpdate did not complete. Check the output above for errors."
+            };
+        }
+
+        public void UpdateCancelClick()
+        {
+            if (_disposed) return;
+            Parameters.Output += "\nUpdate Cancelled.";
+            Parameters.IsUpdating = false;
+
+            tokenSource.Cancel();
+        }
+
+        public Task ModStagingDirClick()
+        {
+            return PickFolderInto(v => Parameters.ModStagingDirectory = v, Parameters.ModStagingDirectory);
+        }
+
+        public Task ServerDirClick()
+        {
+            return PickFolderInto(v => Parameters.InstallDirectory = v, Parameters.InstallDirectory);
+        }
+
+        private static async Task PickFolderInto(Action<string> assign, string current)
+        {
+            string? path = await AppServices.Files.PickFolderAsync(current);
+            if (path == null)
+                return;
+            assign(path);
+        }
+
+        internal Task<int> RunServerUpdater(string path, uint appId, List<(uint id, string branch, string? pass)> depots)
+            => RunExclusiveAsync(() => RunServerUpdaterCore(path, appId, depots));
+        public Task<int> RunModUpdater(ulong modId, string path)
+            => RunExclusiveAsync(() => RunModUpdaterCore(modId, path));
+        public Task<int> RunModsUpdater(ObservableCollection<ArmaMod> mods)
+            => RunExclusiveAsync(() => RunModsUpdaterCore(mods));
+
+        private async Task<int> RunExclusiveAsync(Func<Task<int>> operation)
+        {
+            ObjectDisposedException.ThrowIf(_disposed, this);
+            if (!await _operationGate.WaitAsync(0)) return UpdateState.Error;
+            _operationRunning = true;
+            RaisePropertyChanged(nameof(IsDownloading));
+            try { return await operation(); }
+            catch (OperationCanceledException) { return UpdateState.Cancelled; }
+            catch (Exception ex)
+            { Logger.LogCritical(ex.ToString()); Parameters.Output += "\nUpdate failed: " + ex.Message; return UpdateState.Error; }
+            finally
+            {
+                _operationRunning = false;
+                IsDlOverride = false;
+                Parameters.IsUpdating = false;
+                RaisePropertyChanged(nameof(IsDownloading));
+                _operationGate.Release();
+            }
+        }
+
+        private async Task<int> RunServerUpdaterCore(string path, uint appId, List<(uint id, string branch, string? pass)> depots)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+                return UpdateState.Cancelled;
+
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
+            ResetCancellation();
+
+            if (!await SteamLogin())
+                return UpdateState.LoginFailed;
+
+            var contentClient = SteamContentClient;
+            if (contentClient == null)
+                return UpdateState.Error;
+
+            Stopwatch sw = Stopwatch.StartNew();
+
+            foreach (var depot in depots)
+            {
+                _operationToken.ThrowIfCancellationRequested();
+                try
+                {
+                    ManifestId manifestId;
+                    // The client declares branchPassword non-nullable but defaults it to null and null-checks it internally, so a null depot password is valid here.
+                    manifestId = await contentClient.GetDepotManifestIdAsync(appId, depot.id, depot.branch, depot.pass!);
+
+                    Parameters.Output += $"\n\nFetching informations of app {appId}, depot {depot.id} from Steam ({depots.IndexOf(depot) + 1}/{depots.Count})... "; // NOSONAR - live console feed, each append intentionally refreshes the bound UI
+                    var downloadHandler = await contentClient.GetAppDataAsync(appId, depot.id, manifestId, _operationToken);
+
+                    await Download(downloadHandler, path);
+                }
+                catch (ArgumentException ex)
+                {
+                    if (ex.Message.Contains("'tasks'"))
+                        Parameters.Output += "\nSkipped..."; // NOSONAR - live console feed, each append intentionally refreshes the bound UI
+                    else
+                    {
+                        throw;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Parameters.Output += $"\nError: {ex.Message}{(ex.InnerException != null ? $" Inner Exception: {ex.InnerException.Message}" : "")}"; // NOSONAR - live console feed, each append intentionally refreshes the bound UI
+                    return UpdateState.Error;
+                }
+            }
+            sw.Stop();
+            Parameters.Output += $"\nDone in {sw.Elapsed.Hours}h {sw.Elapsed.Minutes}m {sw.Elapsed.Seconds}s {sw.Elapsed.Milliseconds}ms";
+
+            return 0;
+        }
+
+        private async Task<int> RunModUpdaterCore(ulong modId, string path)
+        {
+            ResetCancellation();
+
+            try
+            {
+                //if(SteamClient is {IsConnected: true})
+                //{
+                //    SteamClient?.Shutdown();
+                //    SteamClient?.Dispose();
+                //    SteamClient = null;
+                //}
+                if (!await SteamLogin())
+                    return UpdateState.LoginFailed;
+            }
+            catch (Exception)
+            {
+                return UpdateState.LoginFailed;
+            }
+
+            Stopwatch sw = Stopwatch.StartNew();
+
+            try
+            {
+                ManifestId manifestId = default;
+
+                Parameters.Output += $"\nFetching mod {modId} infos... ";
+
+                var client = SteamClient;
+                var contentClient = SteamContentClient;
+                if (client == null || contentClient == null)
+                    return UpdateState.LoginFailed;
+
+                if (!client.Credentials.IsAnonymous) //IS SYNC ENABLED
+                {
+                    manifestId = (await contentClient.GetPublishedFileDetailsAsync(modId)).hcontent_file;
+                    Manifest manifest = await contentClient.GetManifestAsync(107410, 107410, manifestId);
+
+                    SyncDeleteRemovedFiles(path, manifest);
+                }
+
+                Parameters.Output += $"\nAttempting to start download of item {modId}... ";
+
+                var downloadHandler = await contentClient.GetPublishedFileDataAsync(modId, manifestId, _operationToken);
+
+                await Download(downloadHandler, path);
+            }
+            catch (TaskCanceledException)
+            {
+                sw.Stop();
+                SteamClient?.Shutdown();
+                SteamClient?.Dispose();
+                SteamClient = null;
+                return UpdateState.Cancelled;
+            }
+            catch (Exception ex)
+            {
+                sw.Stop();
+                Parameters.Output += $"\nError: {ex.Message}{(ex.InnerException != null ? $" Inner Exception: {ex.InnerException.Message}" : "")}";
+                SteamClient?.Shutdown();
+                SteamClient?.Dispose();
+                SteamClient = null;
+                return UpdateState.Error;
+            }
+
+            sw.Stop();
+            Parameters.Output += $"\nDownload completed, it took {sw.Elapsed.Minutes + sw.Elapsed.Hours * 60}m {sw.Elapsed.Seconds}s {sw.Elapsed.Milliseconds}ms";
+            return UpdateState.Success;
+        }
+
+
+        private async Task<int> RunModsUpdaterCore(ObservableCollection<ArmaMod> mods)
+        {
+            Logger.Log($"RunModsUpdater: starting, {mods.Count} mods total");
+
+            ResetCancellation();
+            if (!await TryLoginAsync())
+            {
+                IsLoggingIn = false;
+                return UpdateState.LoginFailed;
+            }
+
+            Parameters.Output += "\nAdding mods to download list...";
+
+            SemaphoreSlim maxThread = new(1);
+            var ml = mods.Where(m => !m.IsLocal).ToList();
+            uint finished = 0;
+            IsDlOverride = true;
+            Logger.Log($"RunModsUpdater: {ml.Count} non-local mods to update");
+
+            foreach (ArmaMod mod in ml)
+            {
+                if (_operationToken.IsCancellationRequested) break;
+                Logger.Log($"RunModsUpdater: waiting semaphore for mod {mod.WorkshopId} ({mod.Name})");
+                await maxThread.WaitAsync();
+
+                _ = Task.Factory.StartNew(() => DownloadModAsync(mod), TaskCreationOptions.LongRunning)
+                    .Unwrap()
+                    .ContinueWith((t) =>
+                    {
+                        if (t.IsFaulted)
+                            Logger.Log($"  ContinueWith: task for {mod.WorkshopId} faulted: {t.Exception}");
+                        finished += 1;
+                        Parameters.Output += $"\n   Thread {mod.WorkshopId} complete  ({finished} / {ml.Count})"; // NOSONAR - live console feed, each append intentionally refreshes the bound UI
+                        Parameters.Progress = finished * 100.0 / ml.Count;
+                        Logger.Log($"  ContinueWith: mod {mod.WorkshopId} done ({finished}/{ml.Count}), releasing semaphore.");
+                        maxThread.Release();
+                    });
+            }
+
+            Logger.Log("RunModsUpdater: all tasks queued, waiting for last semaphore...");
+            Parameters.Output += "\nAlmost there...";
+            try
+            {
+               await maxThread.WaitAsync();
+            }
+            finally
+            {
+               IsDlOverride = false;
+            }
+
+            if (_operationToken.IsCancellationRequested) return UpdateState.Cancelled;
+            Logger.Log("RunModsUpdater: all done.");
+            Parameters.Output += "\nMods updated !";
+            return UpdateState.Success;
+        }
+
+        private async Task<bool> TryLoginAsync()
+        {
+            Logger.Log("RunModsUpdater: calling SteamLogin...");
+            bool loginOk = false;
+            try { loginOk = await SteamLogin(); }
+            catch (Exception ex) { Logger.Log($"RunModsUpdater: SteamLogin threw exception: {ex}"); }
+
+            Logger.Log(loginOk
+                ? "RunModsUpdater: SteamLogin OK"
+                : "RunModsUpdater: SteamLogin failed, aborting.");
+
+            return loginOk;
+        }
+
+        private async Task DownloadModAsync(ArmaMod mod)
+        {
+            Logger.Log($"  Task started: {mod.WorkshopId} ({mod.Name}), path={mod.Path}");
+            try
+            {
+                if (!Directory.Exists(mod.Path))
+                {
+                    Logger.Log($"  Creating dir: {mod.Path}");
+                    Directory.CreateDirectory(mod.Path);
+                }
+
+                if (_operationToken.IsCancellationRequested)
+                {
+                    Logger.Log($"  Cancellation requested before {mod.WorkshopId}, skipping.");
+                    return;
+                }
+                Parameters.Output += $"\n   Starting {mod.WorkshopId}";
+
+                Stopwatch sw = Stopwatch.StartNew();
+                try
+                {
+                    await DownloadModContentAsync(mod);
+                }
+                catch (TaskCanceledException)
+                {
+                   Logger.Log($"  {mod.WorkshopId} task cancelled.");
+                   sw.Stop();
+                   mod.Status = ArmaModStatus.NotComplete;
+                }
+                catch (Exception ex)
+                {
+                    Logger.Log($"  ERROR downloading {mod.WorkshopId}: {ex.GetType().Name}: {ex.Message}{(ex.InnerException != null ? $" | Inner: {ex.InnerException.Message}" : "")}\n  StackTrace: {ex.StackTrace}");
+                    sw.Stop();
+                    mod.Status = ArmaModStatus.NotComplete;
+                    Parameters.Output += $"\nError: {ex.Message}{(ex.InnerException != null ? $" Inner Exception: {ex.InnerException.Message}" : "")}";
+                }
+                sw.Stop();
+
+                mod.CheckModSize();
+                Parameters.Output += $"\n    Download {mod.WorkshopId} completed, it took {sw.Elapsed.Minutes + sw.Elapsed.Hours*60}m {sw.Elapsed.Seconds}s {sw.Elapsed.Milliseconds}ms";
+            }
+            catch (Exception ex)
+            {
+                Logger.Log($"  UNHANDLED ERROR in task for {mod.WorkshopId}: {ex.GetType().Name}: {ex.Message}\n  StackTrace: {ex.StackTrace}");
+            }
+        }
+
+        private async Task DownloadModContentAsync(ArmaMod mod)
+        {
+            ManifestId manifestId = default;
+
+            if (mod.LocalLastUpdated > mod.SteamLastUpdated && mod.Size > 0)
+            {
+                mod.Status = ArmaModStatus.UpToDate;
+                Parameters.Output += $"\n   Mod{mod.WorkshopId} already up to date. Ignoring...";
+                Logger.Log($"  {mod.WorkshopId} already up to date, skipping.");
+                return;
+            }
+
+            var client = SteamClient;
+            var contentClient = SteamContentClient;
+            if (client == null || contentClient == null)
+                return;
+
+            if (!client.Credentials.IsAnonymous)
+            {
+                Logger.Log($"  Getting manifest for {mod.WorkshopId}");
+                Parameters.Output += $"\n   Getting manifest for {mod.WorkshopId}";
+                manifestId = (await contentClient.GetPublishedFileDetailsAsync(mod.WorkshopId)).hcontent_file;
+                Manifest manifest = await contentClient.GetManifestAsync(107410, 107410, manifestId);
+                Parameters.Output += $"\n   Manifest retrieved {mod.WorkshopId}";
+                Logger.Log($"  Manifest retrieved for {mod.WorkshopId}, syncing deleted files...");
+                SyncDeleteRemovedFiles(mod.Path, manifest);
+            }
+
+           Logger.Log($"  Requesting download handler for {mod.WorkshopId}");
+           Parameters.Output += $"\n    Attempting to start download of item {mod.WorkshopId}... ";
+
+           var downloadHandler = await contentClient.GetPublishedFileDataAsync(mod.WorkshopId, manifestId, _operationToken);
+           Logger.Log($"  Download handler obtained for {mod.WorkshopId}, starting download...");
+           await DownloadForMultiple(downloadHandler, mod.Path);
+           Logger.Log($"  Download complete for {mod.WorkshopId}");
+
+           mod.Status = ArmaModStatus.UpToDate;
+           var nx = DateTime.UnixEpoch;
+           var ts = DateTime.UtcNow - nx;
+           mod.LocalLastUpdated = (ulong)ts.TotalSeconds;
+        }
+
+        internal async Task<bool> SteamLogin()
+        {
+            ObjectDisposedException.ThrowIf(_disposed, this);
+            Logger.Log("SteamLogin: start");
+            if (_operationToken.IsCancellationRequested)
+                ResetCancellation();
+            IsLoggingIn = true;
+            var path = Path.Combine(Path.GetDirectoryName(AppSettings.SettingsPath) ?? string.Empty, "sentries");
+
+            SteamCredentials _steamCredentials = new(Parameters.Username, Encryption.Instance.DecryptData(Parameters.Password) ?? string.Empty);
+
+            var client = SteamClient;
+            if (client == null || client.Credentials.Username != _steamCredentials.Username || client.Credentials.Password != _steamCredentials.Password)
+            {
+                client = new SteamClient(_steamCredentials, new AuthCodeProvider(_steamCredentials.Username, path, this));
+                client.InternalClientAttemptingConnect += () => Parameters.Output += "\n\tClient : Attempting connect..";
+                client.InternalClientConnected += () => Parameters.Output += "\n\tClient : Connected";
+                client.InternalClientDisconnected += () => Parameters.Output += "\n\tClient : Disconnected";
+                client.InternalClientLoggedOn += () => Parameters.Output += "\n\tClient : Logged on";
+                client.InternalClientLoggedOff += () => Parameters.Output += "\n\tClient : Logged off";
+                SteamClient = client;
+            }
+
+            if (!client.IsConnected || client.IsFaulted)
+            {
+                Parameters.Output += $"\nConnecting to Steam as {(_steamCredentials.IsAnonymous ? "anonymous" : _steamCredentials.Username)}";
+                client.MaximumLogonAttempts = 5;
+                try
+                { await client.ConnectAsync(_operationToken); }
+                catch (SteamClientAlreadyRunningException)
+                {
+                    Logger.Log("SteamLogin: SteamClientAlreadyRunningException - client already running");
+                    Parameters.Output += $"\nClient already logged in.";
+                    IsLoggingIn = false;
+                    return false;
+                }
+                catch (Exception ex)
+                {
+                    Logger.Log($"SteamLogin: ConnectAsync failed: {ex.GetType().Name}: {ex.Message}\nStackTrace: {ex.StackTrace}");
+                    Parameters.Output += $"\nFailed! Error: {ex.Message}";
+                    var savedUsername = client.Credentials.Username;
+                    client.Shutdown();
+                    client.Dispose();
+                    SteamClient = null;
+
+                    if (ex.GetBaseException() is SteamAuthenticationException)
+                    {
+                        Parameters.Output += "\nWarning: The logon may have failed due to expired sentry-data."
+                                             + $"\nIf you are sure that the provided username and password are correct, consider deleting the token file for the user \"{savedUsername}\" in the sentries directory."
+                                             + $"{path}";
+                    }
+                    IsLoggingIn = false;
+                    return false;
+                }
+            }
+
+            Logger.Log($"SteamLogin: creating SteamContentClient with {AppSettings.Current.CliWorkers} workers");
+            SteamContentClient = new SteamContentClient(client, AppSettings.Current.CliWorkers);
+            Parameters.Output += "\nConnected !";
+            Logger.Log("SteamLogin: connected OK");
+            IsLoggingIn = false;
+            return client.IsConnected;
+        }
+
+        internal bool SteamReset()
+        {
+            Parameters.Output += "\nDisconnecting...";
+            SteamClient?.Shutdown();
+            SteamClient?.Dispose();
+            SteamClient = null;
+            Parameters.Output += "\nDisconnected.";
+            return SteamClient == null;
+        }
+
+        private void SyncDeleteRemovedFiles(string targetDir, Manifest manifest)
+        {
+            Console.WriteLine("Checking for unnecessary files in target directory...");
+
+            foreach (var localFilePath in Directory.GetFiles(targetDir, "*", SearchOption.AllDirectories))
+            {
+                var relativeLocalPath = Path.GetRelativePath(targetDir, localFilePath);
+
+                if (manifest.Files.Any(x => string.Equals(x.FileName, relativeLocalPath, StringComparison.InvariantCultureIgnoreCase)))
+                    continue;
+
+                Console.WriteLine($"Deleting local file {relativeLocalPath}");
+                File.Delete(localFilePath);
+            }
+        }
+
+
+        private async Task Download(IDownloadHandler downloadHandler, string targetDir)
+        {
+            SteamDiagLogger.Attach(downloadHandler);
+
+            ulong downloadedSize = 0;
+            bool skipDownload = false;
+            downloadHandler.FileVerified += (_, args) => Parameters.Output += $"{(args.RequiresDownload ? $"\nFile verified : {args.ManifestFile.FileName} ({Functions.ParseFileSize(args.ManifestFile.TotalSize)})" : "")}";
+            downloadHandler.VerificationCompleted += (_, args) =>
+            {
+                Parameters.Output += $"\nVerification completed, {args.QueuedFiles.Count} files queued for download. ({args.QueuedFiles.Sum(f => (double)f.TotalSize)} bytes)";
+                if (args.QueuedFiles.Count == 0)
+                { skipDownload = true; }
+            };
+            downloadHandler.FileDownloaded += (_, args) =>
+                                                     {
+                                                         downloadedSize += args.TotalSize;
+                                                         Parameters.Output += $"\nProgress {downloadHandler.TotalProgress * 100:00.00}% ({Functions.ParseFileSize(downloadedSize)} / {Functions.ParseFileSize(downloadHandler.TotalFileSize)})";
+                                                         Parameters.Progress = downloadHandler.TotalProgress * 100;
+                                                     };
+            downloadHandler.DownloadComplete += (_, _) => Parameters.Output += "\nDownload completed";
+
+            if (_operationToken.IsCancellationRequested)
+                ResetCancellation();
+
+            Task downloadTask = Task.Run(async () =>
+            {
+                await downloadHandler.SetupAsync(targetDir, file => true, _operationToken);
+                await downloadHandler.VerifyAsync(_operationToken);
+                await downloadHandler.DownloadAsync(_operationToken);
+            });
+
+            Parameters.Output += "\nOK.";
+
+            DownloadTasks.Add(downloadTask);
+
+            Parameters.Progress = 0;
+            Parameters.Output += $"\nDownloading {downloadHandler.TotalFileCount} files with total size of {Functions.ParseFileSize(downloadHandler.TotalFileSize)}...";
+            Parameters.Output += $"\nVerifying Install...";
+
+            while (!downloadTask.IsCompleted && !downloadTask.IsCanceled && !_operationToken.IsCancellationRequested && !skipDownload)
+            {
+
+                var delayTask = Task.Delay(500, _operationToken);
+                await Task.WhenAny(delayTask, downloadTask);
+
+                if (_operationToken.IsCancellationRequested)
+                    Parameters.Output += "\nTask cancellation requested"; // NOSONAR - live console feed, each append intentionally refreshes the bound UI
+                Parameters.Output += $"\nProgress {downloadHandler.TotalProgress * 100:00.00}%"; // NOSONAR - live console feed, each append intentionally refreshes the bound UI
+                Parameters.Progress = downloadHandler.TotalProgress * 100;
+            }
+
+            if (skipDownload)
+            {
+                Parameters.Output += "\nSkipping Download...";
+                Parameters.Progress = 0;
+                await downloadHandler.DisposeAsync();
+                DownloadTasks.Remove(downloadTask);
+                return;
+            }
+
+
+            if (downloadTask.IsCanceled)
+            {
+
+                Parameters.Output += "\nTask Cancelled";
+                Parameters.Progress = 0;
+                await downloadHandler.DisposeAsync();
+                DownloadTasks.Remove(downloadTask);
+                return;
+            }
+
+            try
+            { await downloadTask; }
+            catch (TaskCanceledException)
+            {
+                Parameters.Output += "\nTask Cancelled";
+                Parameters.Progress = 0;
+                throw;
+            }
+            catch (ArgumentException)
+            {
+                Parameters.Output += $"\nSkipping download : No tasks ";
+                Parameters.Progress = 0;
+            }
+            finally
+            {
+                DownloadTasks.Remove(downloadTask);
+                await downloadHandler.DisposeAsync();
+                downloadTask.Dispose();
+            }
+        }
+
+        private async Task DownloadForMultiple(IDownloadHandler downloadHandler, string targetDir)
+        {
+            SteamDiagLogger.Attach(downloadHandler);
+
+            Logger.Log($"DownloadForMultiple: targetDir={targetDir}");
+            if (targetDir == null)
+            {
+                Logger.Log("DownloadForMultiple: targetDir is null, aborting.");
+                return;
+            }
+
+            if (!Directory.Exists(targetDir))
+            {
+                Logger.Log($"DownloadForMultiple: creating dir {targetDir}");
+                Directory.CreateDirectory(targetDir);
+            }
+
+            _operationToken.ThrowIfCancellationRequested();
+            ulong downloadedSize = 0;
+            downloadHandler.FileVerified          += (_, args) =>
+            {
+                if (args.RequiresDownload)
+                {
+                    Logger.Log($"  File verified (needs download): {args.ManifestFile.FileName} ({Functions.ParseFileSize(args.ManifestFile.TotalSize)})");
+                    Parameters.Output += $"\n    File verified : {args.ManifestFile.FileName} ({Functions.ParseFileSize(args.ManifestFile.TotalSize)})";
+                }
+            };
+            downloadHandler.VerificationCompleted += (_, args) =>
+            {
+                Logger.Log($"  Verification completed: {args.QueuedFiles.Count} files queued ({args.QueuedFiles.Sum(f => (double)f.TotalSize)} bytes)");
+                Parameters.Output += $"\n    Verification completed, {args.QueuedFiles.Count} files queued for download. ({args.QueuedFiles.Sum(f => (double)f.TotalSize)} bytes)";
+            };
+            downloadHandler.FileDownloaded        += (_, args) =>
+            {
+                downloadedSize    += args.TotalSize;
+                Logger.Log($"  File downloaded: progress {downloadHandler.TotalProgress * 100:00.00}% ({Functions.ParseFileSize(downloadedSize)}/{Functions.ParseFileSize(downloadHandler.TotalFileSize)})");
+                Parameters.Output += $"\n    Progress {downloadHandler.TotalProgress * 100:00.00}% ({Functions.ParseFileSize(downloadedSize)} / {Functions.ParseFileSize(downloadHandler.TotalFileSize)})";
+            };
+            downloadHandler.DownloadComplete      += (_, _) =>
+            {
+                Logger.Log("  DownloadComplete event fired.");
+                Parameters.Output += "\n    Download completed";
+            };
+
+            Logger.Log($"DownloadForMultiple: starting Task.Run (Setup/Verify/Download), totalFiles={downloadHandler.TotalFileCount}, totalSize={Functions.ParseFileSize(downloadHandler.TotalFileSize)}");
+            Task downloadTask = Task.Run(async () =>
+            {
+                try
+                {
+                    Logger.Log("  SetupAsync starting...");
+                    await downloadHandler.SetupAsync(targetDir, file => true, _operationToken);
+                    Logger.Log("  SetupAsync done. VerifyAsync starting...");
+                    await downloadHandler.VerifyAsync(_operationToken);
+                    Logger.Log("  VerifyAsync done. DownloadAsync starting...");
+                    await downloadHandler.DownloadAsync(_operationToken);
+                    Logger.Log("  DownloadAsync done.");
+                }
+                catch (Exception ex)
+                {
+                    Logger.Log($"  ERROR inside download Task.Run: {ex.GetType().Name}: {ex.Message}\n  StackTrace: {ex.StackTrace}");
+                    throw;
+                }
+            });
+
+            Parameters.Output += "\n    OK.";
+
+            DownloadTasks.Add(downloadTask);
+
+            Parameters.Output += $"\n    Downloading {downloadHandler.TotalFileCount} files with total size of {Functions.ParseFileSize(downloadHandler.TotalFileSize)}...";
+            Parameters.Progress = 0;
+            while (!downloadTask.IsCompleted && !downloadTask.IsCanceled && !_operationToken.IsCancellationRequested)
+            {
+                var delayTask = Task.Delay(500, _operationToken);
+                await Task.WhenAny(delayTask, downloadTask);
+
+                if (_operationToken.IsCancellationRequested)
+                    Parameters.Output += "\n    Task cancellation requested"; // NOSONAR - live console feed, each append intentionally refreshes the bound UI
+            }
+
+            if (downloadTask.IsCanceled)
+            {
+                Logger.Log("DownloadForMultiple: task was cancelled.");
+                Parameters.Output += "\n    Task Cancelled"; // NOSONAR - live console feed, each append intentionally refreshes the bound UI
+                DownloadTasks.Remove(downloadTask);
+                await downloadHandler.DisposeAsync();
+                return;
+            }
+
+            try
+            { await downloadTask; }
+            catch (TaskCanceledException)
+            {
+                Logger.Log("DownloadForMultiple: TaskCanceledException caught on await.");
+                Parameters.Output += "\n    Task Cancelled";
+                throw;
+            }
+            catch (Exception ex)
+            {
+                Logger.Log($"DownloadForMultiple: exception on await downloadTask: {ex.GetType().Name}: {ex.Message}\n  StackTrace: {ex.StackTrace}");
+                throw;
+            }
+            finally
+            {
+                Logger.Log("DownloadForMultiple: finalizing, disposing handler.");
+                DownloadTasks.Remove(downloadTask);
+                await downloadHandler.DisposeAsync();
+                downloadTask.Dispose();
+            }
+        }
+
+        public async Task<string> SteamGuardInput()
+        { return await AppServices.Dialogs.ShowInputAsync(this, "Steam Guard", "Please enter your 2FA code") ?? string.Empty; }
+
+        public async Task<bool> SteamGuardInputPhone()
+        { return await AppServices.Dialogs.ShowConfirmationAsync(this, "Steam Guard", "Press OK after accepting authentification on mobile\nOr press Cancel to enter a 2FA Code"); }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        private void RaisePropertyChanged(string property)
+        {
+            if (PropertyChanged == null) return;
+            PropertyChanged(this, new PropertyChangedEventArgs(property));
+        }
+
+        public void Dispose()
+        {
+            if (_disposed) return;
+            _disposed = true;
+            _lifetime.Cancel();
+            _lifetime.Dispose();
+            tokenSource.Cancel();
+            tokenSource.Dispose();
+            SteamClient?.Dispose();
+        }
+    }
+
+}

@@ -21,10 +21,10 @@ steps:
   displayName: 'Checkout (with submodules)'
 
 - task: UseDotNet@2
-  displayName: 'Use DotNet 8.0'
+  displayName: 'Use DotNet 10.0'
   inputs:
     packageType: 'sdk'
-    version: '8.0.x'
+    version: '10.0.x'
     includePreviewVersions: false
 
 - task: DotNetCoreCLI@2
@@ -48,18 +48,18 @@ steps:
 - script: dotnet build --configuration $(buildConfiguration) --no-restore
   displayName: 'Dotnet Build $(buildConfiguration)'
 
-- script: dotnet tool update --global dotnet-coverage
-  displayName: 'Install dotnet-coverage'
+  - script: dotnet tool update --global dotnet-coverage
+    displayName: 'Install dotnet-coverage'
 
-- script: dotnet-coverage collect "dotnet test FASTERTests/FASTERTests.csproj --configuration $(buildConfiguration) --no-restore --no-build" -f xml -o "$(Agent.TempDirectory)\coverage.xml"
-  displayName: 'Dotnet Test (with coverage)'
+  - script: dotnet-coverage collect "dotnet test FASTERTests/FASTERTests.csproj --configuration $(buildConfiguration) --no-restore --no-build" -f xml -o "$(Agent.TempDirectory)\coverage.xml"
+    displayName: 'Dotnet Test (with coverage)'
 
-- task: SonarCloudAnalyze@4.2.6
+  - task: SonarCloudAnalyze@4.2.6
 
-- task: SonarCloudPublish@4.2.6
-  displayName: 'Publish SonarCloud Quality Gate result'
-  inputs:
-    pollingTimeoutSec: '300'
+  - task: SonarCloudPublish@4.2.6
+    displayName: 'Publish SonarCloud Quality Gate result'
+    inputs:
+      pollingTimeoutSec: '300'
 
 - task: DotNetCoreCLI@2
   displayName: 'Dotnet Publish $(buildConfiguration) x64'

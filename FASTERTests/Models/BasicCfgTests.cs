@@ -5,7 +5,7 @@ namespace FASTER.Models.Tests
     [TestFixture()]
     public class BasicCfgTests
     {
-        BasicCfg _cfg;
+        BasicCfg _cfg = null!;
 
         [OneTimeSetUp]
         public void BasicCfgSetUp()

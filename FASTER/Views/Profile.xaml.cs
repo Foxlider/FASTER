@@ -16,9 +16,9 @@ namespace FASTER.Views
             this.Dispatcher.ShutdownStarted += DispatcherOnShutdownStarted;
         }
 
-        private void DispatcherOnShutdownStarted(object sender, EventArgs e)
+        private void DispatcherOnShutdownStarted(object? sender, EventArgs e)
         {
-            ((ProfileViewModel) DataContext)?.UnloadData();
+            ((ProfileViewModel)DataContext)?.UnloadData();
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
@@ -35,62 +35,62 @@ namespace FASTER.Views
 
         internal void Refresh()
         {
-            ((ProfileViewModel) DataContext)?.LoadData();
+            ((ProfileViewModel)DataContext)?.LoadData();
         }
 
         private void ClearModOrder(object sender, RoutedEventArgs e)
         {
-            ( (ProfileViewModel) DataContext )?.ClearModOrder();
+            ((ProfileViewModel)DataContext)?.ClearModOrder();
         }
 
         private void CopyFromClient(object sender, RoutedEventArgs e)
         {
-            ((ProfileViewModel) DataContext)?.ModsCopyFrom(((MenuItem)sender).Tag, "Server + Client");
+            ((ProfileViewModel)DataContext)?.ModsCopyFrom(((MenuItem)sender).Tag, "Server + Client");
         }
 
         private void CopyFromServer(object sender, RoutedEventArgs e)
         {
-            ((ProfileViewModel) DataContext)?.ModsCopyFrom(((MenuItem)sender).Tag, "Server Only");
+            ((ProfileViewModel)DataContext)?.ModsCopyFrom(((MenuItem)sender).Tag, "Server Only");
         }
 
         private void CopyFromHeadless(object sender, RoutedEventArgs e)
         {
-            ((ProfileViewModel) DataContext)?.ModsCopyFrom(((MenuItem)sender).Tag, "HC");
+            ((ProfileViewModel)DataContext)?.ModsCopyFrom(((MenuItem)sender).Tag, "HC");
         }
-		
+
         private void CopyFromOpt(object sender, RoutedEventArgs e)
         {
-            ((ProfileViewModel) DataContext)?.ModsCopyFrom(((MenuItem)sender).Tag, "Opt");
+            ((ProfileViewModel)DataContext)?.ModsCopyFrom(((MenuItem)sender).Tag, "Opt");
         }
 
         private void ModsSelectAll(object sender, RoutedEventArgs e)
         {
-            ((ProfileViewModel) DataContext)?.ModsSelectAll(((MenuItem)sender).Tag, true);
+            ((ProfileViewModel)DataContext)?.ModsSelectAll(((MenuItem)sender).Tag, true);
         }
 
         private void ModsSelectNone(object sender, RoutedEventArgs e)
         {
-            ((ProfileViewModel) DataContext)?.ModsSelectAll(((MenuItem)sender).Tag, false);
+            ((ProfileViewModel)DataContext)?.ModsSelectAll(((MenuItem)sender).Tag, false);
         }
 
         private void MissionSelectAll(object sender, RoutedEventArgs e)
         {
-            ((ProfileViewModel) DataContext)?.MissionSelectAll(true);
+            ((ProfileViewModel)DataContext)?.MissionSelectAll(true);
         }
 
         private void MissionSelectNone(object sender, RoutedEventArgs e)
         {
-            ((ProfileViewModel) DataContext)?.MissionSelectAll(false);
+            ((ProfileViewModel)DataContext)?.MissionSelectAll(false);
         }
 
         private void MissionRefresh(object sender, RoutedEventArgs e)
         {
-            ((ProfileViewModel) DataContext)?.LoadMissions();
+            ((ProfileViewModel)DataContext)?.LoadMissions();
         }
 
         private void LoadFromFile_Click(object sender, RoutedEventArgs e)
         {
-            ((ProfileViewModel) DataContext)?.LoadModsFromFile();
+            ((ProfileViewModel)DataContext)?.LoadModsFromFile();
         }
 
         private async void CopyModKeys_Click(object sender, RoutedEventArgs e)
@@ -107,7 +107,7 @@ namespace FASTER.Views
 
         private void SelectServerFile(object sender, RoutedEventArgs e)
         {
-            ((ProfileViewModel) DataContext)?.SelectServerFile();
+            ((ProfileViewModel)DataContext)?.SelectServerFile();
         }
 
         private void SelectBePath(object sender, RoutedEventArgs e)
@@ -122,27 +122,27 @@ namespace FASTER.Views
 
         private void OpenProfileLocation(object sender, RoutedEventArgs e)
         {
-            ((ProfileViewModel) DataContext)?.OpenProfileLocation();
+            ((ProfileViewModel)DataContext)?.OpenProfileLocation();
         }
 
         private void SaveProfile(object sender, RoutedEventArgs e)
         {
-            ((ProfileViewModel) DataContext)?.SaveProfile();
+            ((ProfileViewModel)DataContext)?.SaveProfile();
         }
 
         private void DeleteProfile(object sender, RoutedEventArgs e)
         {
-            ((ProfileViewModel) DataContext)?.DeleteProfile();
+            ((ProfileViewModel)DataContext)?.DeleteProfile();
         }
 
         private void LaunchServer(object sender, RoutedEventArgs e)
         {
-            ((ProfileViewModel) DataContext)?.LaunchServer();
+            ((ProfileViewModel)DataContext)?.LaunchServer();
         }
 
         private void LaunchHCs(object sender, RoutedEventArgs e)
         {
-            ((ProfileViewModel) DataContext)?.LaunchHCs();
+            ((ProfileViewModel)DataContext)?.LaunchHCs();
         }
     }
 }

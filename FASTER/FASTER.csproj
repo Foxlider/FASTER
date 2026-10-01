@@ -1,10 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
-        <TargetFramework>net8.0-windows</TargetFramework>
+        <TargetFramework>net10.0-windows</TargetFramework>
         <EnableWindowsTargeting>true</EnableWindowsTargeting>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+    <!-- NU1903 cannot be fixed by bumping: the vulnerable SQLitePCLRaw comes transitively from the retired AppCenter SDK, and the advisory lists no patched version. AppCenter uses it only for local telemetry buffering, so suppress. -->
+    <NoWarn>$(NoWarn);NU1903</NoWarn>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <LangVersion>14.0</LangVersion>
         <UseWPF>true</UseWPF>
         <ApplicationIcon>Resources\FASTER.ico</ApplicationIcon>
         <ApplicationManifest>Properties\FASTER.manifest</ApplicationManifest>
@@ -29,12 +33,12 @@
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
         <DebugType>portable</DebugType>
-        <NoWarn>1701;1702;NU1701;CS8002;CS8618;CS8622</NoWarn>
+        <NoWarn>1701;1702;NU1701;CS8002;NU1903</NoWarn>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
         <DebugType>none</DebugType>
-        <NoWarn>1701;1702;NU1701;CS8002;CS8618;CS8622</NoWarn>
+        <NoWarn>1701;1702;NU1701;CS8002;NU1903</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>
@@ -44,19 +48,6 @@
     </ItemGroup>
     <ItemGroup>
         <SplashScreen Include="Resources\FasterSplash.png" />
-    </ItemGroup>
-    <ItemGroup>
-        <Compile Update="Properties\Settings.Designer.cs">
-            <DesignTimeSharedInput>True</DesignTimeSharedInput>
-            <AutoGen>True</AutoGen>
-            <DependentUpon>Settings.settings</DependentUpon>
-        </Compile>
-    </ItemGroup>
-    <ItemGroup>
-        <None Update="Properties\Settings.settings">
-            <Generator>SettingsSingleFileGenerator</Generator>
-            <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-        </None>
     </ItemGroup>
     <ItemGroup>
     <None Remove="Resources\FASTER.ico" />
@@ -72,10 +63,11 @@
     <PackageReference Include="MahApps.Metro.SimpleChildWindow" Version="2.2.1" />
     <PackageReference Include="Microsoft.AppCenter.Analytics" Version="5.0.5" />
     <PackageReference Include="Microsoft.AppCenter.Crashes" Version="5.0.5" />
-    <PackageReference Include="System.Text.Json" Version="8.0.5" />
+    <PackageReference Include="System.Management" Version="10.0.0" />
     <PackageReference Include="WindowsAPICodePack-Shell" Version="1.1.1" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\FASTER.Core\FASTER.Core.csproj" />
     <ProjectReference Include="..\BytexDigital.Steam\BytexDigital.Steam\BytexDigital.Steam.csproj" />
   </ItemGroup>
 </Project>

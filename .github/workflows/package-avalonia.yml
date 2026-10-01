@@ -1,0 +1,87 @@
+name: Package Avalonia
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            runtime: win-x64
+            executable: FASTER.Avalonia.exe
+          - os: ubuntu-22.04
+            runtime: linux-x64
+            executable: faster-arma
+    runs-on: ${{ matrix.os }}
+    steps:
+      - if: ${{ !env.ACT }}
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          submodules: recursive
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68
+        with:
+          dotnet-version: '10.0.x'
+      - name: Install Linux packaging and smoke-test dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libx11-6 libice6 libsm6 libfontconfig1 libfreetype6 libicu70 libssl3 libxrandr2 libxi6 libxcursor1 libxext6 libxrender1 libgl1 libegl1 xvfb xauth fonts-dejavu-core squashfs-tools
+      - name: Install matching Velopack tooling
+        run: dotnet tool install vpk --tool-path .tools --version 1.2.158
+      - name: Test Core
+        run: dotnet test FASTER.Core.Tests/FASTER.Core.Tests.csproj -c Release
+      - name: Prepare package output
+        shell: bash
+        run: rm -rf -- publish packages
+      - name: Publish
+        run: dotnet publish FASTER.Avalonia/FASTER.Avalonia.csproj -c Release -r ${{ matrix.runtime }} --self-contained true -o publish
+      - name: Bundle Linux desktop libraries
+        if: runner.os == 'Linux'
+        run: bash packaging/linux/bundle-dependencies.sh publish
+      - name: Package and generate update manifest
+        shell: bash
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+          REF_TYPE: ${{ github.ref_type }}
+          RUN_NUMBER: ${{ github.run_number }}
+          PACKAGE_RUNTIME: ${{ matrix.runtime }}
+          PACKAGE_EXECUTABLE: ${{ matrix.executable }}
+        run: |
+          set -euo pipefail
+          version=$(dotnet msbuild FASTER.Core/FASTER.Core.csproj -getProperty:Version | tr -d '\r')
+          version=$(cut -d. -f1-3 <<< "$version")
+          if [[ "$REF_TYPE" == tag && "$RELEASE_TAG" =~ ^v?([0-9]+\.[0-9]+\.[0-9]+)$ ]]; then
+            version="${BASH_REMATCH[1]}"
+          elif [[ "$REF_TYPE" != tag ]]; then
+            version+="-nightly.$RUN_NUMBER"
+          fi
+          extra=()
+          vpk=./.tools/vpk
+          if [[ "$RUNNER_OS" == Linux ]]; then
+            extra=(--icon packaging/linux/faster-arma.png --categories 'Game;Utility')
+          else
+            vpk+=.exe
+          fi
+          "$vpk" pack --packId FASTER --packVersion "$version" --packDir publish --mainExe "$PACKAGE_EXECUTABLE" --runtime "$PACKAGE_RUNTIME" --outputDir packages "${extra[@]}"
+      - name: Smoke-test AppImage without a system .NET installation
+        if: runner.os == 'Linux'
+        run: bash packaging/linux/smoke-appimage.sh packages/FASTER.AppImage
+      - name: Record Linux package checksum
+        if: runner.os == 'Linux'
+        working-directory: packages
+        run: sha256sum FASTER.AppImage > FASTER.AppImage.sha256
+      # Act does not implement the artifact v7 API; bind-mounted packages remain available locally.
+      - if: ${{ !env.ACT }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: avalonia-${{ matrix.runtime }}
+          path: packages/*
+          if-no-files-found: error

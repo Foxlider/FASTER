@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <!-- NU1903 cannot be fixed by bumping: the vulnerable SQLitePCLRaw comes transitively from the retired AppCenter SDK, and the advisory lists no patched version. AppCenter uses it only for local telemetry buffering, so suppress. -->
+    <NoWarn>$(NoWarn);NU1903</NoWarn>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <LangVersion>14.0</LangVersion>
+    <AssemblyName>FASTER.Avalonia</AssemblyName>
+    <RootNamespace>FASTER.Avalonia</RootNamespace>
+    <Version>1.9.7.2</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Pinned to Avalonia 11: the chart and icon packages target the 11 line,
+         their Avalonia 12 builds are still prerelease. The app itself is net10.0. -->
+    <PackageReference Include="Avalonia" Version="11.3.22" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.3.22" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.22" />
+    <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.3.13" />
+    <PackageReference Include="LiveChartsCore.SkiaSharpView.Avalonia" Version="2.0.5" />
+    <PackageReference Include="Material.Icons.Avalonia" Version="2.2.0" />
+    <PackageReference Include="Velopack" Version="1.2.158" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AvaloniaResource Include="../FASTER/Resources/FASTER.ico" Link="Assets/FASTER.ico" />
+    <ProjectReference Include="..\FASTER.Core\FASTER.Core.csproj" />
+  </ItemGroup>
+
+</Project>
