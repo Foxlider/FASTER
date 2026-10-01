@@ -297,7 +297,7 @@ namespace FASTER.Models
             get => ServerCfgArrays.AllowFilePatchingStrings[allowedFilePatching];
             set
             {
-                allowedFilePatching = (short)Array.IndexOf(ServerCfgArrays.AllowFilePatchingStrings, value);
+                allowedFilePatching = (short)IndexOrKeep(ServerCfgArrays.AllowFilePatchingStrings, value, allowedFilePatching);
                 RaisePropertyChanged(nameof(AllowedFilePatching));
             }
         }
@@ -549,7 +549,7 @@ namespace FASTER.Models
             get => ServerCfgArrays.VerifySignaturesStrings[verifySignatures];
             set
             {
-                verifySignatures = (short)Array.IndexOf(ServerCfgArrays.VerifySignaturesStrings, value);
+                verifySignatures = (short)IndexOrKeep(ServerCfgArrays.VerifySignaturesStrings, value, verifySignatures);
                 RaisePropertyChanged(nameof(VerifySignatures));
             }
         }
@@ -589,7 +589,7 @@ namespace FASTER.Models
             get => ServerCfgArrays.VonCodecStrings[vonCodec];
             set
             {
-                vonCodec = (short)Array.IndexOf(ServerCfgArrays.VonCodecStrings, value);
+                vonCodec = (short)IndexOrKeep(ServerCfgArrays.VonCodecStrings, value, vonCodec);
                 RaisePropertyChanged(nameof(VonCodec));
             }
         }
@@ -892,6 +892,14 @@ namespace FASTER.Models
             RaisePropertyChanged(nameof(MissionContentOverride));
         }
 
+        private static int IndexOrKeep(string[] options, string? value, int current)
+        {
+            var index = Array.IndexOf(options, value);
+            return index < 0 ? current : index;
+        }
+
+        private static string Esc(string? value) => (value ?? string.Empty).Replace("\"", "\"\"");
+
         public string ProcessFile()
         {
             if (!missionSelectorChecked)
@@ -902,7 +910,7 @@ namespace FASTER.Models
                     lines.AddRange(new List<string>
                     {
                         $"\tclass Mission_{Functions.SafeName(mission)} {{",
-                        $"\t\ttemplate = \"{mission}\";",
+                        $"\t\ttemplate = \"{Esc(mission)}\";",
                         $"\t\tdifficulty = \"{Difficulty}\";",
                         "\t};"
                     });
@@ -921,16 +929,16 @@ namespace FASTER.Models
                           + "\r\n"
                           + "\r\n"
                           + "// GLOBAL SETTINGS\r\n"
-                          + $"hostname = \"{hostname}\";\t\t\t// The name of the server that shall be displayed in the public server list\r\n"
-                          + $"password = \"{password}\";\t\t\t\t// Password for joining, eg connecting to the server\r\n"
-                          + $"passwordAdmin = \"{passwordAdmin}\";\t\t\t// Password to become server admin. When you're in Arma MP and connected to the server, type '#login xyz'\r\n"
-                          + $"serverCommandPassword = \"{serverCommandPassword}\";\t\t// Password required by alternate syntax of [[serverCommand]] server-side scripting.\r\n"
-                          + $"logFile = \"{logFile}\";\t\t// Tells Arma-server where the logfile should go and what it should be called\r\n"
-                          + $"admins[] =  { "{\n\t\"" + string.Join("\",\n\t\"", admins) + "\"\n}" };\r\n"
+                          + $"hostname = \"{Esc(hostname)}\";\t\t\t// The name of the server that shall be displayed in the public server list\r\n"
+                          + $"password = \"{Esc(password)}\";\t\t\t\t// Password for joining, eg connecting to the server\r\n"
+                          + $"passwordAdmin = \"{Esc(passwordAdmin)}\";\t\t\t// Password to become server admin. When you're in Arma MP and connected to the server, type '#login xyz'\r\n"
+                          + $"serverCommandPassword = \"{Esc(serverCommandPassword)}\";\t\t// Password required by alternate syntax of [[serverCommand]] server-side scripting.\r\n"
+                          + $"logFile = \"{Esc(logFile)}\";\t\t// Tells Arma-server where the logfile should go and what it should be called\r\n"
+                          + $"admins[] =  { "{\n\t\"" + string.Join("\",\n\t\"", admins.Select(Esc)) + "\"\n}" };\r\n"
                           + "\r\n"
                           + "\r\n"
                           + "// WELCOME MESSAGE\r\n"
-                          + $"motd[] = { "{\n\t\"" + string.Join("\",\n\t \"", motd) + "\"\n}" };\r\n"
+                          + $"motd[] = { "{\n\t\"" + string.Join("\",\n\t \"", motd.Select(Esc)) + "\"\n}" };\r\n"
                           + $"motdInterval = {motdInterval};\t\t\t\t// Time interval (in seconds) between each message\r\n"
                           + "\r\n"
                           + "\r\n"
