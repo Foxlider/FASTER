@@ -29,7 +29,7 @@ pkgbase = faster-arma-git
 	options = !strip
 	options = !debug
 	source = FASTER::git+https://github.com/milutinke/FASTER.git#branch=feat/avalonia-spike
-	source = BytexDigital.Steam::git+https://github.com/milutinke/BytexDigital.Steam.git
+	source = BytexDigital.Steam::git+https://github.com/liamcannon/BytexDigital.Steam.git
 	source = faster-arma.desktop
 	source = faster-arma.png
 	sha256sums = SKIP

@@ -14,7 +14,7 @@ conflicts=('faster-arma' 'faster-arma-bin')
 options=('!strip' '!debug')
 # Use the PR branch until the Avalonia frontend reaches upstream master.
 source=('FASTER::git+https://github.com/milutinke/FASTER.git#branch=feat/avalonia-spike'
-        'BytexDigital.Steam::git+https://github.com/milutinke/BytexDigital.Steam.git'
+        'BytexDigital.Steam::git+https://github.com/liamcannon/BytexDigital.Steam.git'
         'faster-arma.desktop' 'faster-arma.png')
 sha256sums=('SKIP' 'SKIP' 'e7daddb150c22da0e0321e81af1f9062e76d62f0a40eadfb7b6726989886fc30' '6b15841b7eaaeec9c4af96545fc2e045ad7a058ed612df13ee2e70d08c0a53a2')
 
