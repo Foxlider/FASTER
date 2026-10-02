@@ -1,57 +1,36 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Security.Cryptography;
+using System.Text;
 
 namespace FASTER.Models
 {
     public class Encryption
     {
-        private static readonly Aes Crypt = Aes.Create();
+        private const string CurrentPrefix = "dpapi:";
+        private static readonly byte[] Entropy = Encoding.UTF8.GetBytes("FASTER.SteamCredentials.v2");
+
         private static Encryption _instance;
-        
+        private Aes _legacyCrypt;
+
         public static Encryption Instance => _instance ??= new Encryption();
 
-        private static byte[] TruncateHash(string key, int length)
-        {
-            SHA1 sha1 = SHA1.Create();
-
-            // Hash the key.
-            byte[] keyBytes = System.Text.Encoding.Unicode.GetBytes(key);
-            byte[] hash = sha1.ComputeHash(keyBytes);
-            var oldHash = hash;
-            hash = new byte[length - 1 + 1];
-
-            // Truncate or pad the hash.
-            Array.Copy(oldHash, hash, Math.Min(length - 1 + 1, oldHash.Length));
-            return hash;
-        }
-
         private Encryption()
-        {
-            // Initialize the crypto provider.
-            string key = Environment.UserName + SystemSerialNumber();
-            Crypt.Key = TruncateHash(key, Crypt.KeySize / 8);
-            Crypt.IV = TruncateHash("", Crypt.BlockSize / 8);
-        }
+        { }
+
+        /// <summary>True if the stored value was written by the current (DPAPI) format.</summary>
+        public bool IsCurrentFormat(string stored)
+        { return !string.IsNullOrEmpty(stored) && stored.StartsWith(CurrentPrefix, StringComparison.Ordinal); }
 
         public string EncryptData(string plaintext)
         {
+            if (string.IsNullOrEmpty(plaintext))
+                return string.Empty;
+
             try
             {
-                // Convert the plaintext string to a byte array.
-                byte[] plaintextBytes = System.Text.Encoding.Unicode.GetBytes(plaintext);
-
-                // Create the stream.
-                System.IO.MemoryStream ms = new();
-                // Create the encoder to write to the stream.
-                CryptoStream encStream = new(ms, Crypt.CreateEncryptor(), CryptoStreamMode.Write);
-
-                // Use the crypto stream to write the byte array to the stream.
-                encStream.Write(plaintextBytes, 0, plaintextBytes.Length);
-                encStream.FlushFinalBlock();
-
-                // Convert the encrypted stream to a printable string.
-                return Convert.ToBase64String(ms.ToArray());
+                var bytes = ProtectedData.Protect(Encoding.UTF8.GetBytes(plaintext), Entropy, DataProtectionScope.CurrentUser);
+                return CurrentPrefix + Convert.ToBase64String(bytes);
             }
             catch
             { return null; }
@@ -59,22 +38,71 @@ namespace FASTER.Models
 
         public string DecryptData(string encryptedtext)
         {
+            if (string.IsNullOrEmpty(encryptedtext))
+                return null;
+
+            // Old values (pre-DPAPI) have no prefix. Still readable so they can be migrated.
+            if (!IsCurrentFormat(encryptedtext))
+                return DecryptLegacy(encryptedtext);
+
             try
             {
-                // Convert the encrypted text string to a byte array.
+                var bytes = ProtectedData.Unprotect(Convert.FromBase64String(encryptedtext[CurrentPrefix.Length..]), Entropy, DataProtectionScope.CurrentUser);
+                return Encoding.UTF8.GetString(bytes);
+            }
+            catch
+            { return null; }
+        }
+
+        /// <summary>
+        /// Converts an old-format value to the DPAPI format.
+        /// Returns the input unchanged if it is already current, empty, or unreadable.
+        /// </summary>
+        public string Migrate(string stored)
+        {
+            if (string.IsNullOrEmpty(stored) || IsCurrentFormat(stored))
+                return stored;
+
+            var plain = DecryptLegacy(stored);
+            return plain == null ? stored : EncryptData(plain) ?? stored;
+        }
+
+        #region Legacy (read-only, for migration)
+
+        private static byte[] TruncateHash(string key, int length)
+        {
+            byte[] hash   = SHA1.HashData(Encoding.Unicode.GetBytes(key));
+            byte[] result = new byte[length];
+            Array.Copy(hash, result, Math.Min(length, hash.Length));
+            return result;
+        }
+
+        // Built lazily so the PowerShell serial lookup only happens when an old value needs reading.
+        private Aes LegacyCrypt()
+        {
+            if (_legacyCrypt != null)
+                return _legacyCrypt;
+
+            var aes = Aes.Create();
+            string key = Environment.UserName + SystemSerialNumber();
+            aes.Key = TruncateHash(key, aes.KeySize / 8);
+            aes.IV  = TruncateHash("", aes.BlockSize / 8);
+            return _legacyCrypt = aes;
+        }
+
+        private string DecryptLegacy(string encryptedtext)
+        {
+            try
+            {
                 byte[] encryptedBytes = Convert.FromBase64String(encryptedtext);
 
-                // Create the stream.
-                System.IO.MemoryStream ms = new();
-                // Create the decoder to write to the stream.
-                CryptoStream decStream = new(ms, Crypt.CreateDecryptor(), CryptoStreamMode.Write);
-
-                // Use the crypto stream to write the byte array to the stream.
-                decStream.Write(encryptedBytes, 0, encryptedBytes.Length);
-                decStream.FlushFinalBlock();
-
-                // Convert the plaintext stream to a string.
-                return System.Text.Encoding.Unicode.GetString(ms.ToArray());
+                using var ms = new System.IO.MemoryStream();
+                using (var decStream = new CryptoStream(ms, LegacyCrypt().CreateDecryptor(), CryptoStreamMode.Write))
+                {
+                    decStream.Write(encryptedBytes, 0, encryptedBytes.Length);
+                    decStream.FlushFinalBlock();
+                }
+                return Encoding.Unicode.GetString(ms.ToArray());
             }
             catch
             { return null; }
@@ -100,5 +128,7 @@ namespace FASTER.Models
             }
             catch (Exception) { return "EXCEPTION_ON_QUERY"; }
         }
+
+        #endregion
     }
 }

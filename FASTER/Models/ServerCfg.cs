@@ -900,6 +900,17 @@ namespace FASTER.Models
 
         private static string Esc(string? value) => (value ?? string.Empty).Replace("\"", "\"\"");
 
+        private static bool HasEntries(List<string> items) => items.Exists(s => !string.IsNullOrWhiteSpace(s));
+
+        // Builds an Arma config array body, skipping blank lines: { "a", "b" }
+        private static string ArrayBody(IEnumerable<string> items)
+        {
+            var cleaned = items.Where(s => !string.IsNullOrWhiteSpace(s)).Select(s => Esc(s.Trim())).ToList();
+            return cleaned.Count == 0
+                ? "{}"
+                : "{\n\t\"" + string.Join("\",\n\t\"", cleaned) + "\"\n}";
+        }
+
         public string ProcessFile()
         {
             if (!missionSelectorChecked)
@@ -918,7 +929,7 @@ namespace FASTER.Models
                 lines.Add("};");
 
                 var compiledMission = string.Join("\r\n", lines);
-                if(missionContentOverride?.Length != compiledMission.Length)
+                if (missionContentOverride != compiledMission)
                 { MissionContentOverride = compiledMission; }
             }
 
@@ -934,7 +945,7 @@ namespace FASTER.Models
                           + $"passwordAdmin = \"{Esc(passwordAdmin)}\";\t\t\t// Password to become server admin. When you're in Arma MP and connected to the server, type '#login xyz'\r\n"
                           + $"serverCommandPassword = \"{Esc(serverCommandPassword)}\";\t\t// Password required by alternate syntax of [[serverCommand]] server-side scripting.\r\n"
                           + $"logFile = \"{Esc(logFile)}\";\t\t// Tells Arma-server where the logfile should go and what it should be called\r\n"
-                          + $"admins[] =  { "{\n\t\"" + string.Join("\",\n\t\"", admins.Select(Esc)) + "\"\n}" };\r\n"
+                          + $"admins[] = {ArrayBody(admins)};\r\n"
                           + "\r\n"
                           + "\r\n"
                           + "// WELCOME MESSAGE\r\n"
@@ -987,21 +998,21 @@ namespace FASTER.Models
                           + "\r\n"
                           + "\r\n"
                           + "// SCRIPTING ISSUES\r\n"
-                          + $"onUserConnected = \"{onUserConnected}\";\t\t\t//\r\n"
-                          + $"onUserDisconnected = \"{onUserDisconnected}\";\t\t\t//\r\n"
-                          + $"doubleIdDetected = \"{doubleIdDetected}\";\t\t\t//\r\n"
-						  + $"onUserKicked = \"{onUserKicked}\";\t\t\t\t//\r\n"
+                          + $"onUserConnected = \"{Esc(onUserConnected)}\";\t\t\t//\r\n"
+                          + $"onUserDisconnected = \"{Esc(onUserDisconnected)}\";\t\t\t//\r\n"
+                          + $"doubleIdDetected = \"{Esc(doubleIdDetected)}\";\t\t\t//\r\n"
+                          + $"onUserKicked = \"{Esc(onUserKicked)}\";\t\t\t\t//\r\n"
                           + "\r\n"
                           + "// SIGNATURE VERIFICATION\r\n"
-                          + $"onUnsignedData = \"{onUnsignedData}\";\t// unsigned data detected\r\n"
-                          + $"onHackedData = \"{onHackedData}\";\t// tampering of the signature detected\r\n"
-                          + $"onDifferentData = \"{onDifferentData}\";\t\t\t// data with a valid signature, but different version than the one present on server detected\r\n"
+                          + $"onUnsignedData = \"{Esc(onUnsignedData)}\";\t// unsigned data detected\r\n"
+                          + $"onHackedData = \"{Esc(onHackedData)}\";\t// tampering of the signature detected\r\n"
+                          + $"onDifferentData = \"{Esc(onDifferentData)}\";\t\t\t// data with a valid signature, but different version than the one present on server detected\r\n"
                           + "\r\n"
                           + "\r\n"
                           + "// MISSIONS CYCLE (see below)\r\n"
                           + $"randomMissionOrder = {randomMissionOrder};\t\t// Randomly iterate through Missions list\r\n"
                           + $"autoSelectMission = {autoSelectMission};\t\t\t// Server auto selects next mission in cycle\r\n"
-                          + (!string.IsNullOrWhiteSpace(MissionHTTPDownloadBaseURL) ? $"missionHTTPDownloadBaseURL = \"{MissionHTTPDownloadBaseURL}\";\r\n" : "")
+                          + (!string.IsNullOrWhiteSpace(MissionHTTPDownloadBaseURL) ? $"missionHTTPDownloadBaseURL = \"{Esc(MissionHTTPDownloadBaseURL)}\";\r\n" : "")
                           + "\r\n"
                           + $"{MissionContentOverride}\t\t\t\t\t// An empty Missions class means there will be no mission rotation\r\n"
                           + "\r\n"
@@ -1009,8 +1020,8 @@ namespace FASTER.Models
                           + "\r\n"
                           + "\r\n"
                           + "// HEADLESS CLIENT\r\n"
-                          + $"{(headlessClientEnabled && !headlessClients.Exists(string.IsNullOrWhiteSpace) ? $"headlessClients[] =  { "{\n\t\"" + string.Join("\",\n\t \"", headlessClients) + "\"\n}" };\r\n" : "")}"
-                          + $"{(headlessClientEnabled && !localClient.Exists(string.IsNullOrWhiteSpace)? $"localClient[] =  { "{\n\t\"" + string.Join("\",\n\t \"", localClient) + "\"\n}" };" : "")}"
+                          + (headlessClientEnabled && HasEntries(headlessClients) ? $"headlessClients[] = {ArrayBody(headlessClients)};\r\n" : "")
+                          + (headlessClientEnabled && HasEntries(localClient) ? $"localClient[] = {ArrayBody(localClient)};\r\n" : "")
                           + (AntiFloodEnabled ? $"class AntiFlood\r\n{{\r\n\tcycleTime = {AntiFloodCycleTime};\r\n\tcycleLimit = {AntiFloodCycleLimit};\r\n\tcycleHardLimit = {AntiFloodCycleHardLimit};\r\n\tenableKick = {_antiFloodEnableKick};\r\n}};\r\n" : "");
             return output;
         }

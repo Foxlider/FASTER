@@ -83,5 +83,125 @@ namespace FASTER.Models.Tests
             Assert.That(output, Does.Contain("template = \"Alpha\""));
             Assert.That(output, Does.Not.Contain("template = \"Bravo\""));
         }
+
+        [Test()]
+        public void ChangingDifficultyUpdatesMissionBlock()
+        {
+            var cfg = new ServerCfg
+            {
+                Missions = new List<ProfileMission>
+                {
+                    new ProfileMission { Name = "Alpha", Path = "Alpha.pbo", MissionChecked = true }
+                }
+            };
+
+            cfg.Difficulty = "Recruit";
+            Assert.That(cfg.ProcessFile(), Does.Contain("difficulty = \"Recruit\""));
+
+            // Recruit and Veteran are both 7 characters long
+            cfg.Difficulty = "Veteran";
+            var output = cfg.ProcessFile();
+            Assert.That(output, Does.Contain("difficulty = \"Veteran\""));
+            Assert.That(output, Does.Not.Contain("difficulty = \"Recruit\""));
+        }
+
+        [Test()]
+        public void SwappingMissionsOfSameNameLengthUpdatesMissionBlock()
+        {
+            var alpha = new ProfileMission { Name = "Alpha", Path = "Alpha.pbo", MissionChecked = true };
+            var bravo = new ProfileMission { Name = "Bravo", Path = "Bravo.pbo", MissionChecked = false };
+            var cfg = new ServerCfg { Missions = new List<ProfileMission> { alpha, bravo } };
+
+            Assert.That(cfg.ProcessFile(), Does.Contain("template = \"Alpha\""));
+
+            alpha.MissionChecked = false;
+            bravo.MissionChecked = true;
+
+            var output = cfg.ProcessFile();
+            Assert.That(output, Does.Contain("template = \"Bravo\""));
+            Assert.That(output, Does.Not.Contain("template = \"Alpha\""));
+        }
+
+        [Test()]
+        public void HeadlessClientsSurviveATrailingNewline()
+        {
+            var cfg = new ServerCfg { HeadlessClientEnabled = true, HeadlessClients = "10.0.0.5\n" };
+            var output = cfg.ProcessFile();
+
+            Assert.That(output, Does.Contain("headlessClients[]"));
+            Assert.That(output, Does.Contain("\"10.0.0.5\""));
+        }
+
+        [Test()]
+        public void LocalClientsSurviveATrailingNewline()
+        {
+            var cfg = new ServerCfg { HeadlessClientEnabled = true, LocalClient = "10.0.0.6\n" };
+            var output = cfg.ProcessFile();
+
+            Assert.That(output, Does.Contain("localClient[]"));
+            Assert.That(output, Does.Contain("\"10.0.0.6\""));
+        }
+
+        [Test()]
+        public void HeadlessLinesAreOmittedWhenDisabled()
+        {
+            var output = new ServerCfg().ProcessFile();
+
+            Assert.That(output, Does.Not.Contain("headlessClients[]"));
+            Assert.That(output, Does.Not.Contain("localClient[]"));
+        }
+
+        [Test()]
+        public void BlankAdminLinesAreIgnored()
+        {
+            var cfg = new ServerCfg { Admins = "111\n\n222\n" };
+            Assert.That(cfg.ProcessFile(), Does.Contain("\"111\",\n\t\"222\""));
+        }
+
+        [Test()]
+        public void NoAdminsWritesAnEmptyArray()
+        {
+            Assert.That(new ServerCfg().ProcessFile(), Does.Contain("admins[] = {};"));
+        }
+
+		[Test()]
+        public void ScriptingFieldsAreEscaped()
+        {
+            var cfg = new ServerCfg
+            {
+                OnUserConnected    = "diag_log \"joined\"",
+                OnUserDisconnected = "diag_log \"left\"",
+                DoubleIdDetected   = "diag_log \"dupe\"",
+                OnUserKicked       = "diag_log \"kicked\"",
+                OnUnsignedData     = "diag_log \"unsigned\"",
+                OnHackedData       = "diag_log \"hacked\"",
+                OnDifferentData    = "diag_log \"different\""
+            };
+            var output = cfg.ProcessFile();
+
+            Assert.That(output, Does.Contain("onUserConnected = \"diag_log \"\"joined\"\"\";"));
+            Assert.That(output, Does.Contain("onUserDisconnected = \"diag_log \"\"left\"\"\";"));
+            Assert.That(output, Does.Contain("doubleIdDetected = \"diag_log \"\"dupe\"\"\";"));
+            Assert.That(output, Does.Contain("onUserKicked = \"diag_log \"\"kicked\"\"\";"));
+            Assert.That(output, Does.Contain("onUnsignedData = \"diag_log \"\"unsigned\"\"\";"));
+            Assert.That(output, Does.Contain("onHackedData = \"diag_log \"\"hacked\"\"\";"));
+            Assert.That(output, Does.Contain("onDifferentData = \"diag_log \"\"different\"\"\";"));
+        }
+
+        [Test()]
+        public void MissionDownloadUrlIsEscaped()
+        {
+            var cfg = new ServerCfg { MissionHTTPDownloadBaseURL = "http://example.com/\"missions\"" };
+            Assert.That(cfg.ProcessFile(), Does.Contain("missionHTTPDownloadBaseURL = \"http://example.com/\"\"missions\"\"\";"));
+        }
+
+        [Test()]
+        public void DefaultScriptLinesAreUnchanged()
+        {
+            var output = new ServerCfg().ProcessFile();
+
+            Assert.That(output, Does.Contain("onHackedData = \"kick (_this select 0)\";"));
+            Assert.That(output, Does.Contain("onUnsignedData = \"kick (_this select 0)\";"));
+        }
     }
 }

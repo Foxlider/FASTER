@@ -163,6 +163,14 @@ namespace FASTER.Models
             return response == MessageDialogResult.Affirmative;
         }
 
+        // Reads a token file. New files are DPAPI-protected; old plain-text files are still accepted
+        // and get rewritten in the new format the next time Steam persists them.
+        private static string ReadProtected(string path)
+        {
+            var raw = File.ReadAllText(path);
+            return Encryption.Instance.IsCurrentFormat(raw) ? Encryption.Instance.DecryptData(raw) : raw;
+        }
+
         public override Task PersistAccessTokenAsync(string token, CancellationToken cancellationToken = default)
         {
             AccessToken = token;
@@ -170,7 +178,7 @@ namespace FASTER.Models
             if (string.IsNullOrEmpty(_persistenceDirectory)) return Task.CompletedTask;
 
             Directory.CreateDirectory(_persistenceDirectory);
-            File.WriteAllText(Path.Combine(_persistenceDirectory, $"{_uniqueStorageName}_accesstoken"), AccessToken);
+            File.WriteAllText(Path.Combine(_persistenceDirectory, $"{_uniqueStorageName}_accesstoken"), Encryption.Instance.EncryptData(AccessToken) ?? AccessToken);
 
             return Task.CompletedTask;
         }
@@ -185,7 +193,7 @@ namespace FASTER.Models
 
             var path = Path.Combine(_persistenceDirectory, $"{_uniqueStorageName}_accesstoken");
 
-            return Task.FromResult(File.Exists(path) ? File.ReadAllText(path) : AccessToken);
+            return Task.FromResult(File.Exists(path) ? ReadProtected(path) : AccessToken);
         }
 
         public override Task PersistGuardDataAsync(string data, CancellationToken cancellationToken = default)
@@ -195,7 +203,7 @@ namespace FASTER.Models
             if (string.IsNullOrEmpty(_persistenceDirectory)) return Task.CompletedTask;
 
             Directory.CreateDirectory(_persistenceDirectory);
-            File.WriteAllText(Path.Combine(_persistenceDirectory, $"{_uniqueStorageName}_guarddata"), GuardData);
+            File.WriteAllText(Path.Combine(_persistenceDirectory, $"{_uniqueStorageName}_guarddata"), Encryption.Instance.EncryptData(GuardData) ?? GuardData);
 
             return Task.CompletedTask;
         }
@@ -209,7 +217,7 @@ namespace FASTER.Models
 
             var path = Path.Combine(_persistenceDirectory, $"{_uniqueStorageName}_guarddata");
 
-            return Task.FromResult(File.Exists(path) ? File.ReadAllText(path) : GuardData);
+            return Task.FromResult(File.Exists(path) ? ReadProtected(path) : GuardData);
         }
     }
 

@@ -80,6 +80,13 @@ namespace FASTER.Views
             ISteamUserBox.Text = Properties.Settings.Default.steamUserName;
             var installId = AppCenter.GetInstallIdAsync().Result;
             AppCenter.SetUserId($"{installId}_{Properties.Settings.Default.steamUserName}");
+            var storedPassword   = Properties.Settings.Default.steamPassword;
+            var upgradedPassword = Encryption.Instance.Migrate(storedPassword);
+            if (upgradedPassword != storedPassword)
+            {
+                Properties.Settings.Default.steamPassword = upgradedPassword;
+                Properties.Settings.Default.Save();
+            }
             ISteamPassBox.Password = Encryption.Instance.DecryptData(Properties.Settings.Default.steamPassword);
             IModStaging.Text = Properties.Settings.Default.modStagingDirectory;
             IServerDirBox.Text = Properties.Settings.Default.serverPath;
