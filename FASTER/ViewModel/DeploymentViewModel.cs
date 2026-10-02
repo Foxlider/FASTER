@@ -119,7 +119,7 @@ namespace FASTER.ViewModel
 
             foreach (var mod in Deployment.DeployMods)
             {
-                if (links.Any(l => l.Name == $"@{Functions.ModFolderName(mod.Name, mod.WorkshopId)}"))
+                var linkPath = Path.Combine(Deployment.InstallPath, $"@{Functions.ModFolderName(mod.Name, mod.WorkshopId)}");
                 Logger.Log($"  Linking {mod.Name}: {mod.Path} -> {linkPath}");
                 mod.Marked = LinkMod(mod, linkPath);
             }
