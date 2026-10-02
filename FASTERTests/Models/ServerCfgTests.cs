@@ -163,5 +163,45 @@ namespace FASTER.Models.Tests
         {
             Assert.That(new ServerCfg().ProcessFile(), Does.Contain("admins[] = {};"));
         }
+
+		[Test()]
+        public void ScriptingFieldsAreEscaped()
+        {
+            var cfg = new ServerCfg
+            {
+                OnUserConnected    = "diag_log \"joined\"",
+                OnUserDisconnected = "diag_log \"left\"",
+                DoubleIdDetected   = "diag_log \"dupe\"",
+                OnUserKicked       = "diag_log \"kicked\"",
+                OnUnsignedData     = "diag_log \"unsigned\"",
+                OnHackedData       = "diag_log \"hacked\"",
+                OnDifferentData    = "diag_log \"different\""
+            };
+            var output = cfg.ProcessFile();
+
+            Assert.That(output, Does.Contain("onUserConnected = \"diag_log \"\"joined\"\"\";"));
+            Assert.That(output, Does.Contain("onUserDisconnected = \"diag_log \"\"left\"\"\";"));
+            Assert.That(output, Does.Contain("doubleIdDetected = \"diag_log \"\"dupe\"\"\";"));
+            Assert.That(output, Does.Contain("onUserKicked = \"diag_log \"\"kicked\"\"\";"));
+            Assert.That(output, Does.Contain("onUnsignedData = \"diag_log \"\"unsigned\"\"\";"));
+            Assert.That(output, Does.Contain("onHackedData = \"diag_log \"\"hacked\"\"\";"));
+            Assert.That(output, Does.Contain("onDifferentData = \"diag_log \"\"different\"\"\";"));
+        }
+
+        [Test()]
+        public void MissionDownloadUrlIsEscaped()
+        {
+            var cfg = new ServerCfg { MissionHTTPDownloadBaseURL = "http://example.com/\"missions\"" };
+            Assert.That(cfg.ProcessFile(), Does.Contain("missionHTTPDownloadBaseURL = \"http://example.com/\"\"missions\"\"\";"));
+        }
+
+        [Test()]
+        public void DefaultScriptLinesAreUnchanged()
+        {
+            var output = new ServerCfg().ProcessFile();
+
+            Assert.That(output, Does.Contain("onHackedData = \"kick (_this select 0)\";"));
+            Assert.That(output, Does.Contain("onUnsignedData = \"kick (_this select 0)\";"));
+        }
     }
 }
