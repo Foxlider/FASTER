@@ -150,7 +150,7 @@ namespace FASTER.ViewModel
 
         internal async Task DeleteAllMods()
         {
-            var answer = await DialogCoordinator.ShowInputAsync(this, "Are you sure you want to delete all mods?", "Write \"yes\" and press OK if you wish to continue.");
+            var answer = await DialogCoordinator.ShowInputAsync(this, "Are you sure you want to delete all mods?", "Write \"yes\" and press OK to delete every Steam mod folder in the Mod Staging Directory and re-download everything. Local mods and any other folders are not touched.");
 
             if (string.IsNullOrEmpty(answer) || !answer.Equals("yes"))
                 return;
@@ -311,32 +311,38 @@ namespace FASTER.ViewModel
 
             var stagingDir = Properties.Settings.Default.modStagingDirectory;
             Logger.Log($"PurgeAndReinstallAll: staging dir={stagingDir}");
-            if (Directory.Exists(stagingDir))
-            {
-                var localModFolderNames = ModsCollection.ArmaMods.Where(m => m.IsLocal).Select(m => m.WorkshopId.ToString()).ToHashSet();
 
-                foreach (var dir in Directory.GetDirectories(stagingDir))
+            if (string.IsNullOrWhiteSpace(stagingDir) || !Directory.Exists(stagingDir))
+                Logger.Log("  Staging dir does not exist, nothing deleted.");
+            else
+            {
+                var stagingFull = Path.TrimEndingDirectorySeparator(Path.GetFullPath(stagingDir));
+
+                foreach (var mod in ModsCollection.ArmaMods.Where(m => !m.IsLocal).ToList())
                 {
-                    if (localModFolderNames.Contains(Path.GetFileName(dir)))
+                    if (string.IsNullOrWhiteSpace(mod.Path) || !Directory.Exists(mod.Path))
+                        continue;
+
+                    // Safety: only delete a folder that sits directly inside the staging directory
+                    var modFull = Path.TrimEndingDirectorySeparator(Path.GetFullPath(mod.Path));
+                    if (!string.Equals(Path.GetDirectoryName(modFull), stagingFull, StringComparison.OrdinalIgnoreCase))
                     {
-                        Logger.Log($"  Skipped (local mod): {dir}");
+                        Logger.Log($"  Skipped (outside staging dir): {mod.Path}");
                         continue;
                     }
 
                     try
                     {
-                        Directory.Delete(dir, true);
-                        Logger.Log($"  Deleted: {dir}");
+                        Directory.Delete(mod.Path, true);
+                        Logger.Log($"  Deleted: {mod.Path}");
                     }
                     catch (Exception ex)
                     {
-                        Logger.Log($"  ERROR deleting {dir}: {ex.Message}");
-                        DisplayMessage($"Could not delete folder: {dir}");
+                        Logger.Log($"  ERROR deleting {mod.Path}: {ex.Message}");
+                        DisplayMessage($"Could not delete folder: {mod.Path}");
                     }
                 }
             }
-            else
-                Logger.Log("  Staging dir does not exist, nothing deleted.");
 
             foreach (var mod in ModsCollection.ArmaMods.Where(m => !m.IsLocal).ToList())
             {
