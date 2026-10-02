@@ -83,5 +83,43 @@ namespace FASTER.Models.Tests
             Assert.That(output, Does.Contain("template = \"Alpha\""));
             Assert.That(output, Does.Not.Contain("template = \"Bravo\""));
         }
+
+        [Test()]
+        public void ChangingDifficultyUpdatesMissionBlock()
+        {
+            var cfg = new ServerCfg
+            {
+                Missions = new List<ProfileMission>
+                {
+                    new ProfileMission { Name = "Alpha", Path = "Alpha.pbo", MissionChecked = true }
+                }
+            };
+
+            cfg.Difficulty = "Recruit";
+            Assert.That(cfg.ProcessFile(), Does.Contain("difficulty = \"Recruit\""));
+
+            // Recruit and Veteran are both 7 characters long
+            cfg.Difficulty = "Veteran";
+            var output = cfg.ProcessFile();
+            Assert.That(output, Does.Contain("difficulty = \"Veteran\""));
+            Assert.That(output, Does.Not.Contain("difficulty = \"Recruit\""));
+        }
+
+        [Test()]
+        public void SwappingMissionsOfSameNameLengthUpdatesMissionBlock()
+        {
+            var alpha = new ProfileMission { Name = "Alpha", Path = "Alpha.pbo", MissionChecked = true };
+            var bravo = new ProfileMission { Name = "Bravo", Path = "Bravo.pbo", MissionChecked = false };
+            var cfg = new ServerCfg { Missions = new List<ProfileMission> { alpha, bravo } };
+
+            Assert.That(cfg.ProcessFile(), Does.Contain("template = \"Alpha\""));
+
+            alpha.MissionChecked = false;
+            bravo.MissionChecked = true;
+
+            var output = cfg.ProcessFile();
+            Assert.That(output, Does.Contain("template = \"Bravo\""));
+            Assert.That(output, Does.Not.Contain("template = \"Alpha\""));
+        }
     }
 }

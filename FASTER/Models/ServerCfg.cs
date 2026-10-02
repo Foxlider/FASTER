@@ -918,7 +918,7 @@ namespace FASTER.Models
                 lines.Add("};");
 
                 var compiledMission = string.Join("\r\n", lines);
-                if(missionContentOverride?.Length != compiledMission.Length)
+                if (missionContentOverride != compiledMission)
                 { MissionContentOverride = compiledMission; }
             }
 
