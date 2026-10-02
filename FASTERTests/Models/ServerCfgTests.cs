@@ -121,5 +121,47 @@ namespace FASTER.Models.Tests
             Assert.That(output, Does.Contain("template = \"Bravo\""));
             Assert.That(output, Does.Not.Contain("template = \"Alpha\""));
         }
+
+        [Test()]
+        public void HeadlessClientsSurviveATrailingNewline()
+        {
+            var cfg = new ServerCfg { HeadlessClientEnabled = true, HeadlessClients = "10.0.0.5\n" };
+            var output = cfg.ProcessFile();
+
+            Assert.That(output, Does.Contain("headlessClients[]"));
+            Assert.That(output, Does.Contain("\"10.0.0.5\""));
+        }
+
+        [Test()]
+        public void LocalClientsSurviveATrailingNewline()
+        {
+            var cfg = new ServerCfg { HeadlessClientEnabled = true, LocalClient = "10.0.0.6\n" };
+            var output = cfg.ProcessFile();
+
+            Assert.That(output, Does.Contain("localClient[]"));
+            Assert.That(output, Does.Contain("\"10.0.0.6\""));
+        }
+
+        [Test()]
+        public void HeadlessLinesAreOmittedWhenDisabled()
+        {
+            var output = new ServerCfg().ProcessFile();
+
+            Assert.That(output, Does.Not.Contain("headlessClients[]"));
+            Assert.That(output, Does.Not.Contain("localClient[]"));
+        }
+
+        [Test()]
+        public void BlankAdminLinesAreIgnored()
+        {
+            var cfg = new ServerCfg { Admins = "111\n\n222\n" };
+            Assert.That(cfg.ProcessFile(), Does.Contain("\"111\",\n\t\"222\""));
+        }
+
+        [Test()]
+        public void NoAdminsWritesAnEmptyArray()
+        {
+            Assert.That(new ServerCfg().ProcessFile(), Does.Contain("admins[] = {};"));
+        }
     }
 }

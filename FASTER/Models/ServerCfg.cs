@@ -900,6 +900,17 @@ namespace FASTER.Models
 
         private static string Esc(string? value) => (value ?? string.Empty).Replace("\"", "\"\"");
 
+        private static bool HasEntries(List<string> items) => items.Exists(s => !string.IsNullOrWhiteSpace(s));
+
+        // Builds an Arma config array body, skipping blank lines: { "a", "b" }
+        private static string ArrayBody(IEnumerable<string> items)
+        {
+            var cleaned = items.Where(s => !string.IsNullOrWhiteSpace(s)).Select(s => Esc(s.Trim())).ToList();
+            return cleaned.Count == 0
+                ? "{}"
+                : "{\n\t\"" + string.Join("\",\n\t\"", cleaned) + "\"\n}";
+        }
+
         public string ProcessFile()
         {
             if (!missionSelectorChecked)
@@ -934,7 +945,7 @@ namespace FASTER.Models
                           + $"passwordAdmin = \"{Esc(passwordAdmin)}\";\t\t\t// Password to become server admin. When you're in Arma MP and connected to the server, type '#login xyz'\r\n"
                           + $"serverCommandPassword = \"{Esc(serverCommandPassword)}\";\t\t// Password required by alternate syntax of [[serverCommand]] server-side scripting.\r\n"
                           + $"logFile = \"{Esc(logFile)}\";\t\t// Tells Arma-server where the logfile should go and what it should be called\r\n"
-                          + $"admins[] =  { "{\n\t\"" + string.Join("\",\n\t\"", admins.Select(Esc)) + "\"\n}" };\r\n"
+                          + $"admins[] = {ArrayBody(admins)};\r\n"
                           + "\r\n"
                           + "\r\n"
                           + "// WELCOME MESSAGE\r\n"
@@ -1009,8 +1020,8 @@ namespace FASTER.Models
                           + "\r\n"
                           + "\r\n"
                           + "// HEADLESS CLIENT\r\n"
-                          + $"{(headlessClientEnabled && !headlessClients.Exists(string.IsNullOrWhiteSpace) ? $"headlessClients[] =  { "{\n\t\"" + string.Join("\",\n\t \"", headlessClients) + "\"\n}" };\r\n" : "")}"
-                          + $"{(headlessClientEnabled && !localClient.Exists(string.IsNullOrWhiteSpace)? $"localClient[] =  { "{\n\t\"" + string.Join("\",\n\t \"", localClient) + "\"\n}" };" : "")}"
+                          + (headlessClientEnabled && HasEntries(headlessClients) ? $"headlessClients[] = {ArrayBody(headlessClients)};\r\n" : "")
+                          + (headlessClientEnabled && HasEntries(localClient) ? $"localClient[] = {ArrayBody(localClient)};\r\n" : "")
                           + (AntiFloodEnabled ? $"class AntiFlood\r\n{{\r\n\tcycleTime = {AntiFloodCycleTime};\r\n\tcycleLimit = {AntiFloodCycleLimit};\r\n\tcycleHardLimit = {AntiFloodCycleHardLimit};\r\n\tenableKick = {_antiFloodEnableKick};\r\n}};\r\n" : "");
             return output;
         }
