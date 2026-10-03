@@ -20,3 +20,5 @@ FASTER Supported Versions.
 
 1.7 and previous versions have a vulnerability with Steam Passwords being encrypted with a weaker Cypher than the one used in 1.8. 
 It is not critical but updating to a more recent version is recommended.
+Versions before the DPAPI change stored the Steam password with an AES key derived from the Windows user name and motherboard serial number. 
+Current versions use Windows DPAPI (current user) and migrate old values on first launch. Updating is recommended.
