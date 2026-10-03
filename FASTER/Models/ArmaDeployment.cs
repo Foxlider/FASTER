@@ -176,7 +176,6 @@ namespace FASTER.Models
             set
             {
                 marked = value;
-                Properties.Settings.Default.Save();
                 RaisePropertyChanged(nameof(Marked));
             }
         }

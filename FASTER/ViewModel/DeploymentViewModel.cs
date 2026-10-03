@@ -147,6 +147,9 @@ namespace FASTER.ViewModel
 
                 mod.Marked = false;
             }
+
+            Settings.Default.Deployments = Deployment;
+            Settings.Default.Save();
         }
 
         /// <summary>
