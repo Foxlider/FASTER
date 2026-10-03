@@ -290,11 +290,14 @@ namespace FASTER.ViewModel
             Properties.Settings.Default.Save();
         }
 
-        public void PurgeAndReinstallSelectedMods()
+        public async Task PurgeAndReinstallSelectedMods()
         {
             var selectedMods = new List<ArmaMod>(ModsCollection.ArmaMods.Where(m => m.IsSelected && !m.IsLocal));
             foreach (var mod in selectedMods)
                 PurgeAndReinstallMod(mod);
+
+            if (selectedMods.Count > 0)
+                await UpdateSelectedMods();
         }
 
         public async Task PurgeAndReinstallAll()
