@@ -150,7 +150,7 @@ namespace FASTER.ViewModel
 
         internal async Task DeleteAllMods()
         {
-            var answer = await DialogCoordinator.ShowInputAsync(this, "Are you sure you want to delete all mods?", "Write \"yes\" and press OK to delete every Steam mod folder in the Mod Staging Directory and re-download everything. Local mods and any other folders are not touched.");
+            var answer = await DialogCoordinator.ShowInputAsync(this, "Write \"yes\" and press OK to remove every mod from this list and delete its folder in the Mod Staging Directory. For local mods only the link is removed; your original folders are not touched.");
 
             if (string.IsNullOrEmpty(answer) || !answer.Equals("yes"))
                 return;
