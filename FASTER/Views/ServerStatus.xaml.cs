@@ -156,8 +156,11 @@ namespace FASTER.Views
         {
             foreach (ProcessSpy element in dgProcess.Items)
             {
-                if (!element.IsReading)
-                { element.StartStop(); }
+                element.IsReading = false;
+                try
+                { element.proc.Kill(); }
+                catch (Exception ex) when (ex is InvalidOperationException or Win32Exception)
+                { /* already exited */ }
             }
         }
 
