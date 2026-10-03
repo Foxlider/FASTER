@@ -30,3 +30,6 @@ jobs:
 
       - name: Build
         run: dotnet build FASTER.sln --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test FASTER.sln --configuration Release --no-build --filter "TestCategory!=Network"
