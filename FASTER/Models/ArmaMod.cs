@@ -251,9 +251,16 @@ namespace FASTER.Models
                 return;
             }
 
-            var ChildProcess = Task.Factory.StartNew(() => GetDirectorySize(Path));
-            Size      = ChildProcess.Result;
-            IsLoading = false;
+            try
+            { Size = GetDirectorySize(Path); }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+            {
+                // Broken link, moved folder or locked file: show 0 instead of aborting the whole check
+                Logger.Log($"CheckModSize: could not read {Path}: {ex.Message}");
+                Size = 0;
+            }
+            finally
+            { IsLoading = false; }
         }
 
         internal async Task UpdateModAsync()
