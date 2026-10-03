@@ -130,6 +130,12 @@ namespace FASTER.ViewModel
 
         public async Task UpdateClick()
         {
+            if (IsDownloading)
+            {
+                Parameters.Output += "\nAn update is already running.";
+                return;
+            }
+
             Analytics.TrackEvent("Updater - Clicked Update", new Dictionary<string, string>
             {
                 {"Name", Properties.Settings.Default.steamUserName},
