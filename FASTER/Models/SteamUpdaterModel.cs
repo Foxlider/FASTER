@@ -54,12 +54,15 @@ namespace FASTER.Models
             }
         }
 
+        private const int MaxOutputLength = 200_000;
+
         public string Output
         {
             get => _output;
             set
             {
-                _output = value;
+                // Keep only the newest text so the console stays responsive
+                _output = value is { Length: > MaxOutputLength } ? value[^MaxOutputLength..] : value;
                 RaisePropertyChanged(nameof(Output));
             }
         }
