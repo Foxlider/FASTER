@@ -1,3 +1,4 @@
+using System;
 using NUnit.Framework;
 
 using System.Collections.Generic;
@@ -202,6 +203,18 @@ namespace FASTER.Models.Tests
 
             Assert.That(output, Does.Contain("onHackedData = \"kick (_this select 0)\";"));
             Assert.That(output, Does.Contain("onUnsignedData = \"kick (_this select 0)\";"));
+        }
+        [Test()]
+        public void IgnoreMissionLoadErrorsIsInsideAdvancedOptions()
+        {
+            var output = new ServerCfg { IgnoreMissionLoadErrors = true }.ProcessFile();
+
+            var classStart = output.IndexOf("class AdvancedOptions", StringComparison.Ordinal);
+            var classEnd   = output.IndexOf("};", classStart, StringComparison.Ordinal);
+            var setting    = output.IndexOf("ignoreMissionLoadErrors = True;", StringComparison.Ordinal);
+
+            Assert.That(classStart, Is.GreaterThanOrEqualTo(0));
+            Assert.That(setting, Is.GreaterThan(classStart).And.LessThan(classEnd));
         }
     }
 }
