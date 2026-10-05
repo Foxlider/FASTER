@@ -300,12 +300,19 @@ namespace FASTER.ViewModel
                 return;
             }
 
+            var parsedMods = ModUtilities.ParseModsFromArmaProfileFile(dialog.FileName);
+            if (parsedMods.Count == 0)
+            {
+                DisplayMessage("No mods could be read from that file.");
+                return;
+            }
+
             //Clear mods
             foreach (var mod in Profile.ProfileMods)
             { mod.ClientSideChecked = false; }
 
             ushort? loadPriority = 1;
-            List<ProfileMod> extractedModList = ModUtilities.ParseModsFromArmaProfileFile(dialog.FileName).Select(armaMod =>
+            List<ProfileMod> extractedModList = parsedMods.Select(armaMod =>
             {
                 return new ProfileMod
                 {

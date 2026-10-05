@@ -195,6 +195,12 @@ namespace FASTER.ViewModel
 
             var extractedModList = ModUtilities.ParseModsFromArmaProfileFile(modsFile);
 
+            if (extractedModList.Count == 0)
+            {
+                DisplayMessage("No mods could be read from that file.");
+                return;
+            }
+
             foreach (var extractedMod in extractedModList)
             {
                 var mod = ModsCollection.ArmaMods.FirstOrDefault(m => m.WorkshopId == extractedMod.WorkshopId || ModUtilities.GetCompareString(extractedMod.Name) == ModUtilities.GetCompareString(m.Name));
