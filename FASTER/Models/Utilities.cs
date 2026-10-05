@@ -26,12 +26,23 @@ namespace FASTER.Models
 
             List<ArmaMod> extractedModlist = new();
             XmlDocument doc = new();
-            doc.LoadXml(lines);
+            try
+            { doc.LoadXml(lines); }
+            catch (XmlException e)
+            {
+                Logger.Log($"ParseModsFromArmaProfileFile: could not parse {filePath}: {e.Message}");
+                return extractedModlist;
+            }
             var modNodes = doc.SelectNodes("//tr[@data-type=\"ModContainer\"]");
+            if (modNodes == null)
+                return extractedModlist;
+
             for (int i = 0; i < modNodes.Count; i++)
             {
                 var modNode = modNodes.Item(i);
-                var modName = modNode.SelectSingleNode("td[@data-type='DisplayName']").InnerText;
+                var modName = modNode?.SelectSingleNode("td[@data-type='DisplayName']")?.InnerText;
+                if (modNode == null || modName == null)
+                    continue;
                 var modIdNode = modNode.SelectSingleNode("td/a[@data-type='Link']");
                 Random r = new();
                 var modId = (uint)(uint.MaxValue - r.Next(ushort.MaxValue / 2));
