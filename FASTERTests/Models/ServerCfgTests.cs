@@ -204,6 +204,41 @@ namespace FASTER.Models.Tests
             Assert.That(output, Does.Contain("onHackedData = \"kick (_this select 0)\";"));
             Assert.That(output, Does.Contain("onUnsignedData = \"kick (_this select 0)\";"));
         }
+
+        [Test()]
+        public void DefaultScriptLinesAreUnchanged()
+        {
+            var output = new ServerCfg().ProcessFile();
+
+            Assert.That(output, Does.Contain("onHackedData = \"kick (_this select 0)\";"));
+            Assert.That(output, Does.Contain("onUnsignedData = \"kick (_this select 0)\";"));
+        }
+
+        [Test()]
+        public void LegacyLayoutIsRegenerated()
+        {
+            var cfg = new ServerCfg { IgnoreMissionLoadErrors = true };
+            cfg.ServerCfgContent = "class AdvancedOptions\r\n{\r\n\tLogObjectNotFound = True;\r\n};\r\nignoreMissionLoadErrors = True;\r\n";
+
+            Assert.That(cfg.MigrateLegacyLayout(), Is.True);
+
+            var output     = cfg.ServerCfgContent;
+            var classStart = output.IndexOf("class AdvancedOptions", StringComparison.Ordinal);
+            var classEnd   = output.IndexOf("};", classStart, StringComparison.Ordinal);
+            var setting    = output.IndexOf("ignoreMissionLoadErrors = True;", StringComparison.Ordinal);
+            Assert.That(setting, Is.GreaterThan(classStart).And.LessThan(classEnd));
+        }
+
+        [Test()]
+        public void CurrentLayoutIsLeftAlone()
+        {
+            var cfg = new ServerCfg();
+            cfg.ServerCfgContent = cfg.ProcessFile() + "// hand edit";
+
+            Assert.That(cfg.MigrateLegacyLayout(), Is.False);
+            Assert.That(cfg.ServerCfgContent, Does.EndWith("// hand edit"));
+        }
+
         [Test()]
         public void IgnoreMissionLoadErrorsIsInsideAdvancedOptions()
         {
