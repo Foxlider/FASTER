@@ -32,6 +32,8 @@ namespace FASTER.Views
         private void DeployMod(object sender, RoutedEventArgs e)
         {
             var mod = ((FrameworkElement)sender).DataContext as DeploymentMod;
+            if (mod == null)
+                return;
             ((DeploymentViewModel)DataContext)?.DeployMod(mod);
         }
 

@@ -115,9 +115,9 @@ namespace FASTER.Models
             catch 
             { steamUpdateTime = 0; }
 
-            var modName = modInfo?.SelectToken("title").ToString();
+            var modName = modInfo?.SelectToken("title")?.ToString();
             
-            return modInfo?.SelectToken("creator_appid").ToString() == "107410" ? new Tuple<string, string, int>(modName, author, steamUpdateTime) : null;
+            return modInfo?.SelectToken("creator_appid")?.ToString() == "107410" ? new Tuple<string, string, int>(modName, author, steamUpdateTime) : null;
         }
     }
 }
