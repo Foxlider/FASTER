@@ -7,15 +7,28 @@ namespace FASTER.Models
     {
         private const long MaxLogSizeBytes = 10 * 1024 * 1024; // 10 MB
 
-        private static readonly string LogPath = Path.Combine(
+        private static readonly string DefaultLogPath = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
             "FASTER", "faster.log");
 
-        private static readonly string BackupLogPath = LogPath + ".old";
+        private static string _logPath = DefaultLogPath;
+        private static bool? _enabledOverride;
 
-        public static bool IsEnabled => Properties.Settings.Default.enableDebugLog;
+        private static string BackupLogPath => _logPath + ".old";
 
-        public static string LogFilePath => LogPath;
+        public static bool IsEnabled => _enabledOverride ?? Properties.Settings.Default.enableDebugLog;
+
+        public static string LogFilePath => _logPath;
+
+        /// <summary>
+        /// Test hook: write to another file and ignore the user's debug-log setting.
+        /// Call with no arguments to go back to the real log file and setting.
+        /// </summary>
+        public static void ConfigureForTesting(string? logPath = null, bool? enabled = null)
+        {
+            _logPath         = logPath ?? DefaultLogPath;
+            _enabledOverride = enabled;
+        }
 
         public static void Log(string message)
         {
@@ -28,13 +41,18 @@ namespace FASTER.Models
         public static void LogCritical(string message)
         { WriteLine(message); }
 
+       private static readonly object Gate = new();
+
         private static void WriteLine(string message)
         {
             try
             {
-                Directory.CreateDirectory(Path.GetDirectoryName(LogPath)!);
-                RotateIfNeeded();
-                File.AppendAllText(LogPath, $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {message}{Environment.NewLine}");
+                lock (Gate)
+                {
+                    Directory.CreateDirectory(Path.GetDirectoryName(_logPath)!);
+                    RotateIfNeeded();
+                    File.AppendAllText(_logPath, $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {message}{Environment.NewLine}");
+                }
             }
             catch
             {
@@ -49,13 +67,13 @@ namespace FASTER.Models
         /// </summary>
         private static void RotateIfNeeded()
         {
-            var fileInfo = new FileInfo(LogPath);
+            var fileInfo = new FileInfo(_logPath);
             if (!fileInfo.Exists || fileInfo.Length < MaxLogSizeBytes) return;
 
             if (File.Exists(BackupLogPath))
                 File.Delete(BackupLogPath);
 
-            File.Move(LogPath, BackupLogPath);
+            File.Move(_logPath, BackupLogPath);
         }
     }
 }

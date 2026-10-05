@@ -130,6 +130,12 @@ namespace FASTER.ViewModel
 
         public async Task UpdateClick()
         {
+            if (IsDownloading)
+            {
+                Parameters.Output += "\nAn update is already running.";
+                return;
+            }
+
             Analytics.TrackEvent("Updater - Clicked Update", new Dictionary<string, string>
             {
                 {"Name", Properties.Settings.Default.steamUserName},
@@ -158,23 +164,6 @@ namespace FASTER.ViewModel
                 {233799, "Arma 3 Server Creator DLC - RF"},
                 {233798, "Arma 3 Server Creator DLC - EF"},
             };
-
-            //IReadOnlyList<Depot> depotsList;
-                
-            //try
-            //{ depotsList = await GetAppDepots(appId); }
-            //catch
-            //{
-            //    Parameters.Output += "\n\n /!\\ Something went wrong while getting the depots list. Check login/password and your internet connexion.\nAlternatively, clear the sentry folder and try again.";
-            //    return;
-            //}
-                
-            
-            //if(depotsList == null || depotsList.Count == 0)
-            //{
-            //    Parameters.Output += "\n\n /!\\ Could not retrieve depots list. PLease retry later or check your internet connection\nAlternatively, clear the sentry folder and try again.";
-            //    return;
-            //}
 
             List<(uint id, string branch, string pass)> depotsDownload = new();
 

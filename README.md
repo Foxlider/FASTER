@@ -16,19 +16,30 @@
 [![Sonar Quality Gate](https://img.shields.io/sonar/quality_gate/Foxlider_FASTER?label=Code%20quality&logo=sonarcloud&logoColor=white&server=https%3A%2F%2Fsonarcloud.io&style=flat-square)](https://sonarcloud.io/dashboard?id=Foxlider_FASTER)
 [![Sonar Violations (long format)](https://img.shields.io/sonar/violations/Foxlider_FASTER?format=long&label=Issues&logo=sonarcloud&logoColor=white&server=https%3A%2F%2Fsonarcloud.io&style=flat-square)](https://sonarcloud.io/project/issues?id=Foxlider_FASTER&resolved=false)
 
+***Build***  
+[![Build](https://github.com/Foxlider/FASTER/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/Foxlider/FASTER/actions/workflows/build.yml)
+[![CodeQL](https://github.com/Foxlider/FASTER/actions/workflows/codeql-analysis.yml/badge.svg?branch=master)](https://github.com/Foxlider/FASTER/actions/workflows/codeql-analysis.yml)
+[![Azure Build Status](https://dev.azure.com/keelah/FASTER/_apis/build/status/Faster%20Release%20Builder?branchName=master)](https://dev.azure.com/keelah/FASTER/_build/latest?definitionId=8&branchName=master)
+
 
 [![Discord](https://img.shields.io/discord/366955806777671681?label=Discord&logo=discord&logoColor=white&style=for-the-badge)](https://discord.gg/SJxnTNuNJN)
 
 #### **INTRO**
 
+FASTER is a Windows tool for installing, updating and running Arma 3 dedicated servers. It manages the server files, Workshop mods, multiple server profiles and their config files from one place.
+
 FASTER is an extensive rewrite of FAST2 and FAST. There was no update for a long time and it was written in VB. I translated the whole project to C# using .NET 10.0.  
-Thanks go out to all the guys who helped the developpment and those who will test it. Also, to BI for giving us an awesome game to play with and break.
+Thanks go out to all the guys who helped the development and those who will test it. Also, to BI for giving us an awesome game to play with and break.
+
+*This tool is in no way affiliated with Bohemia Interactive or its developers.*
 
 
 ##### **PREREQUISITES**
 
-- Steam account with valid copy of Arma 3.
+- Windows 10 or later or Windows Server 2016 or later, 64-bit. FASTER must be run as administrator.
+- Steam account with valid copy of Arma 3. A separate account just for your server is a good idea: FASTER stores the password (encrypted with Windows DPAPI for your Windows user) and you may be asked for a Steam Guard code on first login.
 - Basic understanding of Arma 3 dedicated servers.
+- No separate .NET install is needed. The release is self-contained.
 
 
 ##### **_FEATURES_**
@@ -36,20 +47,26 @@ Thanks go out to all the guys who helped the developpment and those who will tes
 - General Features
   - Theming System and Metro UI
   - Easy to read and share config files
-  - Automated Update process
+  - Built-in self-updater (Settings > Update FASTER)
+  - Optional debug log with automatic rotation
 
-- SteamCMD Automation
-  - Install and update Arma 3 Server (Stable, Performance, DLCs)
-  - Install, update and manage Arma 3 Workshop mods
-  - Import installed Steam Mods
-  - Supports Steam Guard and Mobile Auth
+- Steam Automation
+  - Install and update Arma 3 Server (Stable, Profiling, DLCs)
+  - Supported server DLCs: Contact, GM, S.O.G. Prairie Fire, CSLA, Western Sahara, Spearhead 1944, Reaction Forces, Expeditionary Forces
+  - Add and update Arma 3 Workshop mods by ID or URL
   - Import mod presets from Arma 3 Launcher
-  - Check for mod updates on app launch
+  - Check for Steam mod updates
+  - Supports Steam Guard and Mobile Auth
+
+- Mod Management
+  - All mods are kept in one Mod Staging Directory
+  - Deploy mods to your Arma 3 server folder as links, without copying files
+  - Add local mods from any folder (linked, not copied)
+  - Purge and reinstall mods, or remove mods that no server profile uses
 
 - Multiple Server Profiles
   - Save and load multiple server presets
-  - Supports all server config options
-  - Supports all server command line options
+  - Supports most server config options, plus a free-text field for any extra command line arguments
   - Custom mission params
   - Custom difficulty
   - Headless Client support and auto launch
@@ -57,14 +74,13 @@ Thanks go out to all the guys who helped the developpment and those who will tes
   - Load Steam Mod Presets (html presets) to your profiles
   - Manually editable config files
 
-- Local Mod Support
-  - Reads local mods from server folder
-  - Include additional folders to search
-
+- Server Status
+  - Live CPU and memory gauges
+  - Per-server CPU and memory graphs for running arma3server processes
 
 ##### **_ISSUES and FEEDBACK_**
 
-As always, best place to report issues is on the [GitHub Repo](https://github.com/Foxlider/FASTER/issues). As for general discussion I'll keep an eye on the BI forum thread but I'll be more active on [Discord](https://discord.gg/2BUuZa3).
+As always, best place to report issues is on the [GitHub Repo](https://github.com/Foxlider/FASTER/issues). As for general discussion I'll keep an eye on the BI forum thread but I'll be more active on [Discord](https://discord.gg/SJxnTNuNJN).
 
 
 ##### **_DOCUMENTATION_**
@@ -91,8 +107,8 @@ A complete Documentation is available on the [GitHub Wiki](https://github.com/Fo
 </details>
 
 ##### **_SOCIAL_**  
-Twitter :
-[@FoxliderAtom](https://twitter.com/FoxliderAtom)  
+X (Twitter) :
+[@FoxliderAtom](https://x.com/FoxliderAtom)
 [![Twitter Follow](https://img.shields.io/twitter/follow/FoxliderAtom.svg?label=Follow&logo=twitter&style=for-the-badge)](https://twitter.com/FoxliderAtom)
 
 Bohemia Interactive Forums :  

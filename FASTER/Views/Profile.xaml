@@ -486,7 +486,7 @@
                             <ComboBox Grid.Row="2" SelectedItem="{Binding Path=Profile.ServerCfg.Difficulty}" ItemsSource="{Binding Path=MissionDifficulties}"  mah:TextBoxHelper.UseFloatingWatermark="True"  mah:TextBoxHelper.Watermark="Difficulty Preset" IsEditable="False" Margin="5,0" HorizontalAlignment="Right"/>
                             <Grid Grid.Row="3">
                                 <CheckBox Content="AutoInit" IsChecked="{Binding Path=Profile.ServerCfg.AutoInit}" Margin="5" HorizontalAlignment="Left" IsEnabled="{Binding Path=Profile.ServerCfg.Persistent}"/>
-                                <CheckBox Content="Persistant Battlefield" IsChecked="{Binding Path=Profile.ServerCfg.Persistent}" Margin="5" HorizontalAlignment="Right"/>
+                                <CheckBox Content="Persistent Battlefield" IsChecked="{Binding Path=Profile.ServerCfg.Persistent}" Margin="5" HorizontalAlignment="Right"/>
                             </Grid>
                             <Grid Grid.Row="4">
                                 <CheckBox Content="AutoSelect Mission" IsChecked="{Binding Path=Profile.ServerCfg.AutoSelectMission}" Margin="5" HorizontalAlignment="Left"/>

@@ -31,7 +31,7 @@ namespace FASTER.Views
         public bool Updating
         { get; set; }
 
-        internal object             locked = new object();
+        private readonly Lock locked = new();
         private  PerformanceCounter _cpuCounter;
         private  PerformanceCounter _ramCounter;
 
@@ -156,8 +156,11 @@ namespace FASTER.Views
         {
             foreach (ProcessSpy element in dgProcess.Items)
             {
-                if (!element.IsReading)
-                { element.StartStop(); }
+                element.IsReading = false;
+                try
+                { element.proc.Kill(); }
+                catch (Exception ex) when (ex is InvalidOperationException or Win32Exception)
+                { /* already exited */ }
             }
         }
 

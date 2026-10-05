@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
@@ -911,6 +912,20 @@ namespace FASTER.Models
                 : "{\n\t\"" + string.Join("\",\n\t\"", cleaned) + "\"\n}";
         }
 
+        // Profiles saved before the AdvancedOptions fix store server.cfg text with
+        // ignoreMissionLoadErrors after the class's closing "};". Regenerate only those.
+        private static readonly Regex LegacyIgnoreMissionLoadErrors =
+            new(@"\}\s*;\s*ignoreMissionLoadErrors", RegexOptions.Compiled);
+
+        public bool MigrateLegacyLayout()
+        {
+            if (string.IsNullOrEmpty(serverCfgContent) || !LegacyIgnoreMissionLoadErrors.IsMatch(serverCfgContent))
+                return false;
+
+            ServerCfgContent = ProcessFile();
+            return true;
+        }
+
         public string ProcessFile()
         {
             if (!missionSelectorChecked)
@@ -980,8 +995,11 @@ namespace FASTER.Models
                           + $"timeStampFormat = \"{timeStampFormat}\";\t\t// Set the timestamp format used on each report line in server-side RPT file. Possible values are \"none\" (default),\"short\",\"full\".\r\n"
                           + $"BattlEye = {battlEye};\t\t\t\t// Server to use BattlEye system\r\n"
                           + $"queueSizeLogG = {queueSizeLogG};\t\t\t// If a specific players message queue is larger than 1MB and #monitor is running, dump his messages to a logfile for analysis \r\n"
-                          + $"class AdvancedOptions\r\n{{\r\n\tLogObjectNotFound = {logObjectNotFound};\t\t// When false to skip logging 'Server: Object not found messages'.\r\n\tSkipDescriptionParsing = {skipDescriptionParsing};\t\t// When true to skip parsing of description.ext/mission.sqm. Will show pbo filename instead of configured missionName. OverviewText and such won't work, but loading the mission list is a lot faster when there are many missions.\r\n}};\r\n"
-                          + $"ignoreMissionLoadErrors = {ignoreMissionLoadErrors};\t\t// When set to true, the mission will load no matter the amount of loading errors. If set to false, the server will abort mission's loading and return to mission selection.\r\n"
+                          + $"class AdvancedOptions\r\n{{\r\n"
+                          + $"\tLogObjectNotFound = {logObjectNotFound};\t\t// When false to skip logging 'Server: Object not found messages'.\r\n"
+                          + $"\tSkipDescriptionParsing = {skipDescriptionParsing};\t\t// When true to skip parsing of description.ext/mission.sqm. Will show pbo filename instead of configured missionName. OverviewText and such won't work, but loading the mission list is a lot faster when there are many missions.\r\n"
+                          + $"\tignoreMissionLoadErrors = {ignoreMissionLoadErrors};\t\t// When set to true, the mission will load no matter the amount of loading errors. If set to false, the server will abort mission's loading and return to mission selection.\r\n"
+                          + "};\r\n"
                           + $"forcedDifficulty = \"{forcedDifficulty}\";\t\t\t// Forced difficulty (Recruit, Regular, Veteran, Custom)\r\n"
                           + "\r\n"
                           + "// TIMEOUTS\r\n"

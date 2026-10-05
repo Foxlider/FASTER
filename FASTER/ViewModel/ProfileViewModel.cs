@@ -251,12 +251,6 @@ namespace FASTER.ViewModel
             return;
             }
 
-            if(string.IsNullOrWhiteSpace(armaPath))
-            {
-                DisplayMessage("Arma executable is empty. Select the correct executable before saving your profile.");
-                return;
-            }
-
             var links = Directory.EnumerateDirectories(armaPath).Select(d => new DirectoryInfo(d)).Where(d => d.Attributes.HasFlag(FileAttributes.ReparsePoint));
             uint MissingMods = 0;
             foreach (ProfileMod profileMod in Profile.ProfileMods.Where(m => m.ServerSideChecked || m.ClientSideChecked || m.HeadlessChecked || m.OptChecked))
@@ -306,12 +300,19 @@ namespace FASTER.ViewModel
                 return;
             }
 
+            var parsedMods = ModUtilities.ParseModsFromArmaProfileFile(dialog.FileName);
+            if (parsedMods.Count == 0)
+            {
+                DisplayMessage("No mods could be read from that file.");
+                return;
+            }
+
             //Clear mods
             foreach (var mod in Profile.ProfileMods)
             { mod.ClientSideChecked = false; }
 
             ushort? loadPriority = 1;
-            List<ProfileMod> extractedModList = ModUtilities.ParseModsFromArmaProfileFile(dialog.FileName).Select(armaMod =>
+            List<ProfileMod> extractedModList = parsedMods.Select(armaMod =>
             {
                 return new ProfileMod
                 {
@@ -427,7 +428,7 @@ namespace FASTER.ViewModel
             if (!Directory.Exists(Properties.Settings.Default.modStagingDirectory))
             {
                 MainWindow.Instance.IFlyout.IsOpen         = true;
-                MainWindow.Instance.IFlyoutMessage.Content = $"The SteamCMD path does not exist :\n{Properties.Settings.Default.modStagingDirectory}";
+                MainWindow.Instance.IFlyoutMessage.Content = $"The Mod Staging Directory does not exist :\n{Properties.Settings.Default.modStagingDirectory}";
                 return;
             }
 
@@ -491,6 +492,8 @@ namespace FASTER.ViewModel
 
         public void LoadData()
         {
+			Profile.ServerCfg.MigrateLegacyLayout();
+
             var modlist = new List<ProfileMod>();
             foreach(var mod in Properties.Settings.Default.armaMods.ArmaMods)
             {

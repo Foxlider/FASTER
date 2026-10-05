@@ -150,7 +150,7 @@ namespace FASTER.ViewModel
 
         internal async Task DeleteAllMods()
         {
-            var answer = await DialogCoordinator.ShowInputAsync(this, "Are you sure you want to delete all mods?", "Write \"yes\" and press OK to delete every Steam mod folder in the Mod Staging Directory and re-download everything. Local mods and any other folders are not touched.");
+            var answer = await DialogCoordinator.ShowInputAsync(this, "Are you sure you want to delete all mods?", "Write \"yes\" and press OK to remove every mod from this list and delete its folder in the Mod Staging Directory. For local mods only the link is removed. Your original folders are not touched.");
 
             if (string.IsNullOrEmpty(answer) || !answer.Equals("yes"))
                 return;
@@ -159,7 +159,7 @@ namespace FASTER.ViewModel
             {
                 {"Name", Properties.Settings.Default.steamUserName}
             });
-            var copyArmaMods = new List<ArmaMod>(ModsCollection.ArmaMods);
+            var copyArmaMods = new List<ArmaMod>(ModsCollection.ArmaMods.Where(m => !m.IsLocal));
             foreach (var mod in copyArmaMods)
             {
                 DeleteMod(mod);
@@ -171,20 +171,12 @@ namespace FASTER.ViewModel
             if (mod == null)
                 return;
 
-            var url = "https://steamcommunity.com/workshop/filedetails/?id=" + mod.WorkshopId;
+            var url = $"https://steamcommunity.com/workshop/filedetails/?id={mod.WorkshopId}";
 
             try
-            { Process.Start(url); }
+            { Functions.OpenBrowser(url); }
             catch
-            {
-                try
-                {
-                    url = url.Replace("&", "^&");
-                    Process.Start(new ProcessStartInfo("cmd", $"/c start {url}") {CreateNoWindow = true});
-                }
-                catch
-                { DisplayMessage($"Could not open \"{url}\""); }
-            }
+            { DisplayMessage($"Could not open \"{url}\""); }
         }
 
         internal async Task OpenLauncherFile()
@@ -194,6 +186,12 @@ namespace FASTER.ViewModel
             if (string.IsNullOrEmpty(modsFile)) return;
 
             var extractedModList = ModUtilities.ParseModsFromArmaProfileFile(modsFile);
+
+            if (extractedModList.Count == 0)
+            {
+                DisplayMessage("No mods could be read from that file.");
+                return;
+            }
 
             foreach (var extractedMod in extractedModList)
             {
@@ -290,11 +288,14 @@ namespace FASTER.ViewModel
             Properties.Settings.Default.Save();
         }
 
-        public void PurgeAndReinstallSelectedMods()
+        public async Task PurgeAndReinstallSelectedMods()
         {
             var selectedMods = new List<ArmaMod>(ModsCollection.ArmaMods.Where(m => m.IsSelected && !m.IsLocal));
             foreach (var mod in selectedMods)
                 PurgeAndReinstallMod(mod);
+
+            if (selectedMods.Count > 0)
+                await UpdateSelectedMods();
         }
 
         public async Task PurgeAndReinstallAll()

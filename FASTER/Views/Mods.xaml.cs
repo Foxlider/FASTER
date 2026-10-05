@@ -100,9 +100,10 @@ namespace FASTER.Views
                 await vm.PurgeAndReinstallAll();
         }
 
-        private void PurgeAndReinstallSelected_Click(object sender, RoutedEventArgs e)
+        private async void PurgeAndReinstallSelected_Click(object sender, RoutedEventArgs e)
         {
-            ((ModsViewModel) DataContext)?.PurgeAndReinstallSelectedMods();
+            if (DataContext is ModsViewModel vm)
+                await vm.PurgeAndReinstallSelectedMods();
         }
 
         private async void PurgeUnusedMods_Click(object sender, RoutedEventArgs e)
