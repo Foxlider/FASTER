@@ -35,15 +35,22 @@ namespace FASTER.Views
             ((ModsViewModel) DataContext)?.UnloadData();
         }
 
-        private async void UpdateSelectedMods(object sender, RoutedEventArgs e)
+        public async Task UpdateSelectedMods()
+        {
+            var selected = ModsCollection.ArmaMods.Where(m => m.IsSelected && !m.IsLocal).ToList();
+            if (selected.Count == 0)
+            {
+                DisplayMessage("No Steam mods selected.");
+                return;
+            }
+
+            MainWindow.Instance.NavigateToConsole();
+            var ans = await MainWindow.Instance.SteamUpdaterViewModel.RunModsUpdater(new ObservableCollection<ArmaMod>(selected));
+
+        private async void DeleteSelectedMods(object sender, RoutedEventArgs e)
         {
             if (DataContext is ModsViewModel vm)
-                await vm.UpdateSelectedMods();
-        }
-
-        private void DeleteSelectedMods(object sender, RoutedEventArgs e)
-        {
-            ((ModsViewModel) DataContext)?.DeleteSelectedMods();
+                await vm.DeleteSelectedMods();
         }
 
         private void OpenModPage(object sender, RoutedEventArgs e)
