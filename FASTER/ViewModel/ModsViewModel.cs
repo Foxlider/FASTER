@@ -213,7 +213,7 @@ namespace FASTER.ViewModel
 
             foreach (var extractedMod in extractedModList)
             {
-                var mod = ModsCollection.ArmaMods.FirstOrDefault(m => m.WorkshopId == extractedMod.WorkshopId || ModUtilities.GetCompareString(extractedMod.Name) == ModUtilities.GetCompareString(m.Name));
+                var mod = ModsCollection.ArmaMods.FirstOrDefault(m => m.WorkshopId == extractedMod.WorkshopId || ModUtilities.NamesMatch(extractedMod.Name, m.Name));
                 if (mod != null)
                     continue;
 

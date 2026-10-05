@@ -35,8 +35,16 @@ namespace FASTER.Models
         public static string GetCompareString(string input)
         {
             input = input.Replace("@", "");
-            input = Regex.Replace(input, "[^a-zA-Z0-9]", string.Empty);
+            input = Regex.Replace(input, @"[^\p{L}\p{Nd}]", string.Empty);
             return input;
+        }
+
+        // True when two mod names are the same once punctuation is ignored.
+        // A name that strips down to nothing never matches by name.
+        public static bool NamesMatch(string a, string b)
+        {
+            var compareA = GetCompareString(a ?? string.Empty);
+            return compareA.Length > 0 && compareA == GetCompareString(b ?? string.Empty);
         }
 
         // We're parsing to ArmaMod instead of ProfileMod because there's more info on the ArmaMod object and we can thus re-use this function

@@ -931,11 +931,13 @@ namespace FASTER.Models
             if (!missionSelectorChecked)
             {
                 List<string> lines = new() { "class Missions {" };
+                var missionNumber = 0;
                 foreach (var mission in Missions.Where(m => m.MissionChecked).Select(m => m.Name))
                 {
+                    missionNumber++;
                     lines.AddRange(new List<string>
                     {
-                        $"\tclass Mission_{Functions.SafeName(mission)} {{",
+                        $"\tclass Mission_{missionNumber}_{Functions.SafeName(mission)} {{",
                         $"\t\ttemplate = \"{Esc(mission)}\";",
                         $"\t\tdifficulty = \"{Difficulty}\";",
                         "\t};"

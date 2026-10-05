@@ -74,7 +74,11 @@ namespace FASTER.Models
         // other mods, so the Workshop ID is added to keep them unique.
         public static string ModFolderName(string name, uint workshopId)
         {
-            var safe = SafeName(name);
+            var safe = SafeName(name ?? string.Empty);
+
+            // No usable name (Steam lookup failed, or the name was only "@"): use the Workshop ID
+            if (safe.Length == 0)
+                return $"mod_{workshopId}";
 
             if (!name.Any(c => c > 127 && char.IsLetterOrDigit(c)))
                 return safe;

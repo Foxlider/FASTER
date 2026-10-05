@@ -326,7 +326,7 @@ namespace FASTER.ViewModel
             List<string> notFound = new();
             foreach (var extractedMod in extractedModList)
             {
-                var mod = Profile.ProfileMods.Find(m => m.Id == extractedMod.Id || ModUtilities.GetCompareString(extractedMod.Name) == ModUtilities.GetCompareString(m.Name));
+                var mod = Profile.ProfileMods.Find(m => m.Id == extractedMod.Id || ModUtilities.NamesMatch(extractedMod.Name, m.Name));
                 if (mod != null)
                 {
                     mod.ClientSideChecked = true;
