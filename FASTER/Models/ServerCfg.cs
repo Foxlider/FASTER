@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
@@ -909,6 +910,20 @@ namespace FASTER.Models
             return cleaned.Count == 0
                 ? "{}"
                 : "{\n\t\"" + string.Join("\",\n\t\"", cleaned) + "\"\n}";
+        }
+
+        // Profiles saved before the AdvancedOptions fix store server.cfg text with
+        // ignoreMissionLoadErrors after the class's closing "};". Regenerate only those.
+        private static readonly Regex LegacyIgnoreMissionLoadErrors =
+            new(@"\}\s*;\s*ignoreMissionLoadErrors", RegexOptions.Compiled);
+
+        public bool MigrateLegacyLayout()
+        {
+            if (string.IsNullOrEmpty(serverCfgContent) || !LegacyIgnoreMissionLoadErrors.IsMatch(serverCfgContent))
+                return false;
+
+            ServerCfgContent = ProcessFile();
+            return true;
         }
 
         public string ProcessFile()

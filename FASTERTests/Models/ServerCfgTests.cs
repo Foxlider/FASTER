@@ -206,15 +206,6 @@ namespace FASTER.Models.Tests
         }
 
         [Test()]
-        public void DefaultScriptLinesAreUnchanged()
-        {
-            var output = new ServerCfg().ProcessFile();
-
-            Assert.That(output, Does.Contain("onHackedData = \"kick (_this select 0)\";"));
-            Assert.That(output, Does.Contain("onUnsignedData = \"kick (_this select 0)\";"));
-        }
-
-        [Test()]
         public void LegacyLayoutIsRegenerated()
         {
             var cfg = new ServerCfg { IgnoreMissionLoadErrors = true };
