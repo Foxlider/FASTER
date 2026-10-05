@@ -204,20 +204,12 @@ namespace FASTER.ViewModel
             if (mod == null)
                 return;
 
-            var url = "https://steamcommunity.com/workshop/filedetails/?id=" + mod.WorkshopId;
+            var url = $"https://steamcommunity.com/workshop/filedetails/?id={mod.WorkshopId}";
 
             try
-            { Process.Start(url); }
+            { Functions.OpenBrowser(url); }
             catch
-            {
-                try
-                {
-                    url = url.Replace("&", "^&");
-                    Process.Start(new ProcessStartInfo("cmd", $"/c start {url}") { CreateNoWindow = true });
-                }
-                catch
-                { DisplayMessage($"Could not open \"{url}\""); }
-            }
+            { DisplayMessage($"Could not open \"{url}\""); }
         }
 
         /// <summary>
