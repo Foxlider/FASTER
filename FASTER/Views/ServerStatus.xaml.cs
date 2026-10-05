@@ -82,8 +82,12 @@ namespace FASTER.Views
             }
             catch
             {
-                IFlyoutMessage.Content = "Could not start the performance counters.";
-                IFlyout.IsOpen = true;
+                Dispatcher.Invoke(() =>
+                {
+                    IFlyoutMessage.Content = "Could not start the performance counters.";
+                    IFlyout.IsOpen = true;
+                });
+                return;
             }
             Task.Factory.StartNew(Updater, TaskCreationOptions.LongRunning);
         }
@@ -119,12 +123,6 @@ namespace FASTER.Views
         #endregion
 
         #region Process Buttons
-        private void PlayPause_Click(object sender, RoutedEventArgs e)
-        {
-            if (!(((FrameworkElement) e.Source).DataContext is ProcessSpy view)) return;
-            view.StartStop();
-        }
-
         private void KillProcess_Click(object sender, RoutedEventArgs e)
         {
             if (!(((FrameworkElement) e.Source).DataContext is ProcessSpy view)) return;
@@ -256,11 +254,10 @@ namespace FASTER.Views
         public Func<double, string>      PercentageFormatter { get; set; }
         public Brush                     Color               { get; set; }
 
-        private PerformanceCounter         cpuPerf;
         private          double            _axisMax;
         private          double            _axisMin;
-        private          bool              _isReading;
-        private readonly CancellationToken token;
+        private volatile bool              _isReading;
+        private volatile int               _generation;
 
         private string Output;
 
@@ -274,7 +271,6 @@ namespace FASTER.Views
             proc.EnableRaisingEvents = true;
             proc.OutputDataReceived += DataToString;
 
-            token = new CancellationToken();
             var r = new Random();
             var color = ThemeManager.Current.Themes[r.Next(0, ThemeManager.Current.Themes.Count)].PrimaryAccentColor;
             Color = new SolidColorBrush(color);
@@ -325,53 +321,64 @@ namespace FASTER.Views
             }
         }
 
-        public void ReadCPU()
+        public void ReadCPU(int generation)
         {
-            //Get Performance counters
-            cpuPerf = new PerformanceCounter("Process", "% Processor Time", ProcessName, true);
+            var cores     = Environment.ProcessorCount;
+            var lastCpu   = TimeSpan.Zero;
+            var lastStamp = DateTime.UtcNow;
 
-            //And now, loop
-            while (IsReading)
+            try
             {
-                var now = DateTime.Now;
+                proc.Refresh();
+                lastCpu = proc.TotalProcessorTime;
+            }
+            catch (Exception ex) when (ex is InvalidOperationException or Win32Exception)
+            {
+                IsReading = false;
+                return;
+            }
 
-                //Get current CPU usage
-                try
-                { 
-                    CPUChartValues.Add(new MeasureModel
-                    {
-                        DateTime = now,
-                        Value    = cpuPerf.NextValue()
-                    });
-                }
-                catch
-                { 
-                    //If the performance counter fails somehow, fill data with 0
-                    CPUChartValues.Add(new MeasureModel
-                    {
-                        DateTime = now,
-                        Value    = 0
-                    });
-                }
-
-                //Get current Memory usage
-                MemChartValues.Add(new MeasureModel
-                {
-                    DateTime = now,
-                    Value    = proc.WorkingSet64/(1024.0*1024.0)
-                });
-
-                //recalculate axes
-                SetAxisLimits(now);
- 
-                //lets only use the last 20 values
-                if (MemChartValues.Count > 20) 
-                    MemChartValues.RemoveAt(0);
-                if (CPUChartValues.Count > 20) 
-                    CPUChartValues.RemoveAt(0);
-
-                //Wait 1sec before next measurement
+            while (IsReading && generation == _generation)
+            {
                 Thread.Sleep(1000);
+                if (!IsReading || generation != _generation) break;
+
+                try
+                {
+                    proc.Refresh();
+                    if (proc.HasExited)
+                    {
+                        IsReading = false;
+                        break;
+                    }
+
+                    var now     = DateTime.Now;
+                    var utcNow  = DateTime.UtcNow;
+                    var cpu     = proc.TotalProcessorTime;
+                    var elapsed = (utcNow - lastStamp).TotalMilliseconds;
+                    var percent = elapsed > 0
+                        ? (cpu - lastCpu).TotalMilliseconds / (elapsed * cores) * 100
+                        : 0;
+                    lastCpu   = cpu;
+                    lastStamp = utcNow;
+
+                    CPUChartValues.Add(new MeasureModel { DateTime = now, Value = Math.Clamp(percent, 0, 100) });
+                    MemChartValues.Add(new MeasureModel { DateTime = now, Value = proc.WorkingSet64 / (1024.0 * 1024.0) });
+
+                    SetAxisLimits(now);
+
+                    //lets only use the last 20 values
+                    if (MemChartValues.Count > 20)
+                        MemChartValues.RemoveAt(0);
+                    if (CPUChartValues.Count > 20)
+                        CPUChartValues.RemoveAt(0);
+                }
+                catch (Exception ex) when (ex is InvalidOperationException or Win32Exception)
+                {
+                    // process exited or access was lost
+                    IsReading = false;
+                    break;
+                }
             }
         }
 
@@ -385,11 +392,7 @@ namespace FASTER.Views
         }
 
         public void StartStop()
-        {
-            IsReading = !IsReading;
-            if (IsReading) 
-                Task.Factory.StartNew(ReadCPU, token);
-        }
+        { IsReading = !IsReading; }
 
         #region INotifyPropertyChanged implementation
 
@@ -413,8 +416,15 @@ namespace FASTER.Views
             get => _isReading;
             set
             {
+                if (_isReading == value) return;
                 _isReading = value;
                 OnPropertyChanged(nameof(IsReading));
+
+                if (value)
+                {
+                    var generation = ++_generation;
+                    Task.Factory.StartNew(() => ReadCPU(generation), TaskCreationOptions.LongRunning);
+                }
             }
         }
 
