@@ -129,7 +129,10 @@ namespace FASTER.Views
         {
             if (!(((FrameworkElement) e.Source).DataContext is ProcessSpy view)) return;
             view.IsReading = false;
-            view.proc.Kill();
+            try
+            { view.proc.Kill(); }
+            catch (Exception ex) when (ex is InvalidOperationException or Win32Exception)
+            { /* already exited */ }
             RefreshServers();
         }
         #endregion
@@ -156,11 +159,8 @@ namespace FASTER.Views
         {
             foreach (ProcessSpy element in dgProcess.Items)
             {
-                element.IsReading = false;
-                try
-                { element.proc.Kill(); }
-                catch (Exception ex) when (ex is InvalidOperationException or Win32Exception)
-                { /* already exited */ }
+                if (!element.IsReading)
+                { element.StartStop(); }
             }
         }
 
@@ -173,12 +173,13 @@ namespace FASTER.Views
             }
         }
 
-        private async void IKillAll_Click(object sender, RoutedEventArgs e)
-        {
-            foreach (ProcessSpy element in dgProcess.Items)
+        foreach (ProcessSpy element in dgProcess.Items)
             {
                 element.IsReading = false;
-                element.proc.Kill();
+                try
+                { element.proc.Kill(); }
+                catch (Exception ex) when (ex is InvalidOperationException or Win32Exception)
+                { /* already exited */ }
             }
             await Task.Delay(1000);
             RefreshServers();
