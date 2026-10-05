@@ -29,10 +29,6 @@ namespace FASTER.Models
                 // show a single decimal place, and no space.
                 return $"{fullSize,7:F} {sizes[order],-2}";
             }
-            else
-            {
-                Console.WriteLine("WAT");
-            }
 
             return "0 B";
         }

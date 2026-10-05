@@ -159,7 +159,7 @@ namespace FASTER.ViewModel
             {
                 {"Name", Properties.Settings.Default.steamUserName}
             });
-            var copyArmaMods = new List<ArmaMod>(ModsCollection.ArmaMods);
+            var copyArmaMods = new List<ArmaMod>(ModsCollection.ArmaMods.Where(m => !m.IsLocal));
             foreach (var mod in copyArmaMods)
             {
                 DeleteMod(mod);
