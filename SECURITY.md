@@ -2,23 +2,33 @@
 
 ## Supported Versions
 
-FASTER Supported Versions.
+Security updates are provided for the following FASTER versions:
 
-| Version | Supported          |
+| Version | Supported Status   |
 | ------- | ------------------ |
 | < 1.6x  | :x:                |
 | 1.7x    | :x:                |
 | 1.8x    | :warning:          |
 | 1.9x    | :heavy_check_mark: |
 
-> :x:  : Not supported  
-> :heavy_check_mark: : Supported  
-> :warning:  : Only Critical Updates   
+:x: : Not supported
+:warning: : Critical security updates only
+:heavy_check_mark: : Fully supported 
 
 
 ## Reporting a Vulnerability
 
-1.7 and previous versions have a vulnerability with Steam Passwords being encrypted with a weaker Cypher than the one used in 1.8. 
-It is not critical but updating to a more recent version is recommended.
-Versions before the DPAPI change stored the Steam password with an AES key derived from the Windows user name and motherboard serial number. 
-Current versions use Windows DPAPI (current user) and migrate old values on first launch. Updating is recommended.
+Please do not report security vulnerabilities through public GitHub issues.
+
+Use GitHub's **Report a vulnerability** feature on the FASTER repository to submit security issues privately.
+
+Please provide enough information for the maintainers to reproduce and assess the issue, including the affected version, vulnerability details, reproduction steps, proof of concept, and potential impact.
+
+
+## Steam Password Storage
+
+Versions prior to 1.7 used a weaker cipher than the one introduced in 1.8, which uses AES-based encryption.
+
+FASTER 1.9.9.0 introduced Windows DPAPI for Steam password storage.
+
+Users running earlier versions should update to a supported release.

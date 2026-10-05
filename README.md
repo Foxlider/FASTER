@@ -3,7 +3,7 @@
 #### Badges 
 ***GitHub***  
 [![GitHub issues](https://img.shields.io/github/issues/Foxlider/FASTER.svg?logo=github&style=flat-square)](https://github.com/Foxlider/FASTER/issues)
-![GitHub](https://img.shields.io/github/license/Foxlider/FASTER.svg?style=flat-square)
+[![GitHub](https://img.shields.io/github/license/Foxlider/FASTER.svg?style=flat-square)](https://github.com/Foxlider/FASTER/blob/master/LICENSE)
 [![GitHub release](https://img.shields.io/github/release/Foxlider/FASTER.svg?logo=github&style=flat-square)](https://GitHub.com/Foxlider/FASTER/releases/)  
 [![Github total downloads](https://img.shields.io/github/downloads/Foxlider/FASTER/total.svg?logo=github&style=flat-square)](https://GitHub.com/Foxlider/FASTER/releases/)
 [![Github latest downloads](https://img.shields.io/github/downloads/Foxlider/FASTER/latest/total.svg?logo=github&style=flat-square)](https://GitHub.com/Foxlider/FASTER/releases/)
@@ -19,8 +19,6 @@
 ***Build***  
 [![Build](https://github.com/Foxlider/FASTER/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/Foxlider/FASTER/actions/workflows/build.yml)
 [![CodeQL](https://github.com/Foxlider/FASTER/actions/workflows/codeql-analysis.yml/badge.svg?branch=master)](https://github.com/Foxlider/FASTER/actions/workflows/codeql-analysis.yml)
-[![Azure Build Status](https://dev.azure.com/keelah/FASTER/_apis/build/status/Faster%20Release%20Builder?branchName=master)](https://dev.azure.com/keelah/FASTER/_build/latest?definitionId=8&branchName=master)
-
 
 [![Discord](https://img.shields.io/discord/366955806777671681?label=Discord&logo=discord&logoColor=white&style=for-the-badge)](https://discord.gg/SJxnTNuNJN)
 
@@ -28,16 +26,18 @@
 
 FASTER is a Windows tool for installing, updating and running Arma 3 dedicated servers. It manages the server files, Workshop mods, multiple server profiles and their config files from one place.
 
-FASTER is an extensive rewrite of FAST2 and FAST. There was no update for a long time and it was written in VB. I translated the whole project to C# using .NET 10.0.  
-Thanks go out to all the guys who helped the development and those who will test it. Also, to BI for giving us an awesome game to play with and break.
+FASTER is an extensive rewrite of FAST2 and FAST. There was no update for a long time and it was written in VB. I translated the whole project to C#, and it targets .NET 10  
+Thanks to everyone who has contributed to FASTER and helped test the project. Also, to BI for giving us an awesome game to play with and break.
 
 *This tool is in no way affiliated with Bohemia Interactive or its developers.*
 
 
 ##### **PREREQUISITES**
 
-- Windows 10 or later or Windows Server 2012 or later, 64-bit. FASTER must be run as administrator.
-- Steam account with valid copy of Arma 3. A separate account just for your server is a good idea: FASTER stores the password (encrypted with Windows DPAPI for your Windows user) and you may be asked for a Steam Guard code on first login.
+- 64-bit Windows 10 or later, or Windows Server 2012 or later. Administrator privileges are required for server management and file system linking operations.
+- Steam account with valid copy of Arma 3. (A separate account just for your server is a good idea.)
+  - FASTER stores your Steam password encrypted using Windows DPAPI for your Windows user.
+  - Steam Guard may be required on first login. 
 - Basic understanding of Arma 3 dedicated servers.
 - No separate .NET install is needed. The release is self-contained.
 
@@ -50,9 +50,9 @@ Thanks go out to all the guys who helped the development and those who will test
   - Built-in self-updater (Settings > Update FASTER)
   - Optional debug log with automatic rotation
 
-- Steam Automation
+- Steam / Workshop Automation
   - Install and update Arma 3 Server (Stable, Profiling, DLCs)
-  - Supported server DLCs: Contact, GM, S.O.G. Prairie Fire, CSLA, Western Sahara, Spearhead 1944, Reaction Forces, Expeditionary Forces
+  - Supported Arma 3 DLC/cDLC includes: Contact, GM, S.O.G. Prairie Fire, CSLA, Western Sahara, Spearhead 1944, Reaction Forces and Expeditionary Forces.
   - Add and update Arma 3 Workshop mods by ID or URL
   - Import mod presets from Arma 3 Launcher
   - Check for Steam mod updates
@@ -64,28 +64,28 @@ Thanks go out to all the guys who helped the development and those who will test
   - Add local mods from any folder (linked, not copied)
   - Purge and reinstall mods, or remove mods that no server profile uses
 
-- Multiple Server Profiles
+- Server Profiles
   - Save and load multiple server presets
   - Supports most server config options, plus a free-text field for any extra command line arguments
   - Custom mission params
   - Custom difficulty
   - Headless Client support and auto launch
-  - Correctly displays mods in Server Browser
+  - Correctly configures deployed mods for Steam server-browser compatibility
   - Load Steam Mod Presets (html presets) to your profiles
   - Manually editable config files
 
-- Server Status
+- Server Monitoring
   - Live CPU and memory gauges
   - Per-server CPU and memory graphs for running arma3server processes
 
 ##### **_ISSUES and FEEDBACK_**
 
-As always, best place to report issues is on the [GitHub Repo](https://github.com/Foxlider/FASTER/issues). As for general discussion I'll keep an eye on the BI forum thread but I'll be more active on [Discord](https://discord.gg/SJxnTNuNJN).
+The best place to report bugs and feature requests is the [GitHub Repo](https://github.com/Foxlider/FASTER/issues). As for general discussion I'll keep an eye on the BI forum thread but I'll be more active on [Discord](https://discord.gg/SJxnTNuNJN).
 
 
 ##### **_DOCUMENTATION_**
 
-A complete Documentation is available on the [GitHub Wiki](https://github.com/Foxlider/FASTER/wiki)
+Full documentation covering installation, server profiles, mod management and configuration is available on the [GitHub Wiki](https://github.com/Foxlider/FASTER/wiki).
 
 
 ##### **_SCREENSHOTS_**
