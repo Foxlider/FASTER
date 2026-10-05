@@ -36,7 +36,7 @@ Thanks go out to all the guys who helped the development and those who will test
 
 ##### **PREREQUISITES**
 
-- Windows 10 or later or Windows Server 2016 or later, 64-bit. FASTER must be run as administrator.
+- Windows 10 or later or Windows Server 2012 or later, 64-bit. FASTER must be run as administrator.
 - Steam account with valid copy of Arma 3. A separate account just for your server is a good idea: FASTER stores the password (encrypted with Windows DPAPI for your Windows user) and you may be asked for a Steam Guard code on first login.
 - Basic understanding of Arma 3 dedicated servers.
 - No separate .NET install is needed. The release is self-contained.
