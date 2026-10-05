@@ -54,32 +54,28 @@ namespace FASTER.ViewModel
 
         public async Task AddSteamMod()
         {
-            var modID = await DialogCoordinator.ShowInputAsync(this, "Add Steam Mod", "Please enter the mod ID or mod URL");
+            var input = await DialogCoordinator.ShowInputAsync(this, "Add Steam Mod", "Please enter the mod ID or mod URL");
 
-            if (string.IsNullOrEmpty(modID))
+            if (string.IsNullOrWhiteSpace(input))
                 return;
+
+            if (!ModUtilities.TryParseModId(input, out var modIDOut))
+            {
+                DisplayMessage("That is not a valid mod ID or Steam Workshop link.");
+                return;
+            }
 
             Analytics.TrackEvent("Mods - Clicked AddSteamMod", new Dictionary<string, string>
             {
                 {"Name", Properties.Settings.Default.steamUserName},
-                {"Mod", modID}
+                {"Mod", modIDOut.ToString()}
             });
-
-            //Cast link to mod ID
-            if (modID.Contains("steamcommunity.com") && modID.Contains("id="))
-            {
-                var uri = new Uri(modID);
-                modID = System.Web.HttpUtility.ParseQueryString(uri.Query).Get("id");
-            }
-
-            if (!uint.TryParse(modID, out uint modIDOut))
-                return;
 
             var mod = new ArmaMod
             {
                 WorkshopId = modIDOut,
-                Path       = Path.Combine(Properties.Settings.Default.modStagingDirectory, modID),
-                IsLocal = false
+                Path       = Path.Combine(Properties.Settings.Default.modStagingDirectory, modIDOut.ToString()),
+                IsLocal    = false
             };
 
             ModsCollection.AddSteamMod(mod);

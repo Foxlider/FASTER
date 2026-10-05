@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows;
@@ -10,6 +11,27 @@ namespace FASTER.Models
 {
     public static class ModUtilities
     {
+        // Accepts a plain Workshop ID or a steamcommunity.com link with ?id=...
+        public static bool TryParseModId(string input, out uint modId)
+        {
+            modId = 0;
+            if (string.IsNullOrWhiteSpace(input))
+                return false;
+
+            input = input.Trim();
+
+            if (uint.TryParse(input, NumberStyles.None, CultureInfo.InvariantCulture, out modId))
+                return modId != 0;
+
+            if (!Uri.TryCreate(input, UriKind.Absolute, out var uri)
+                || !(uri.Host.Equals("steamcommunity.com", StringComparison.OrdinalIgnoreCase)
+                     || uri.Host.EndsWith(".steamcommunity.com", StringComparison.OrdinalIgnoreCase)))
+                return false;
+
+            var id = System.Web.HttpUtility.ParseQueryString(uri.Query).Get("id");
+            return uint.TryParse(id, NumberStyles.None, CultureInfo.InvariantCulture, out modId) && modId != 0;
+        }
+		
         public static string GetCompareString(string input)
         {
             input = input.Replace("@", "");
@@ -67,6 +89,7 @@ namespace FASTER.Models
             return extractedModlist;
         }
     }
+	
     public static class TextBoxUtilities
     {
         public static readonly DependencyProperty AlwaysScrollToEndProperty = DependencyProperty.RegisterAttached("AlwaysScrollToEnd",
