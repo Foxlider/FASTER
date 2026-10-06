@@ -190,9 +190,12 @@ namespace FASTER
 
             if (sender is not ToggleButton nav || !NavEnabled) return;
 
-            //Don't navigate if same menu is clicked
-            if (nav == lastNavButton) return;
-
+            //Don't navigate if same menu is clicked (keep it shown as selected)
+            if (nav == lastNavButton)
+            {
+                nav.IsChecked = true;
+                return;
+            }
 
 
             //Clear selected Buttons
