@@ -257,6 +257,7 @@ namespace FASTER.ViewModel
             }
 
             var result = await RunServerUpdater(Parameters.InstallDirectory, appId, depotsDownload);
+            Parameters.IsUpdating = false;
 
             Parameters.Output += result switch
             {
@@ -311,6 +312,9 @@ namespace FASTER.ViewModel
 
             foreach (var depot in depots)
             {
+                if (tokenSource.IsCancellationRequested)
+                    return UpdateState.Cancelled;
+
                 try
                 {
                     ManifestId manifestId;
@@ -330,6 +334,10 @@ namespace FASTER.ViewModel
                         throw;
                     }
                 }
+                catch (OperationCanceledException)
+                {
+                    return UpdateState.Cancelled;
+                }
                 catch (Exception ex)
                 {
                     Parameters.Output += $"\nError: {ex.Message}{(ex.InnerException != null ? $" Inner Exception: {ex.InnerException.Message}" : "")}";
@@ -339,7 +347,7 @@ namespace FASTER.ViewModel
             sw.Stop();
             Parameters.Output += $"\nDone in {sw.Elapsed.Hours}h {sw.Elapsed.Minutes}m {sw.Elapsed.Seconds}s {sw.Elapsed.Milliseconds}ms";
 
-            return 0;
+            return UpdateState.Success;
         }
 
         public async Task<int> RunModUpdater(ulong modId, string path)

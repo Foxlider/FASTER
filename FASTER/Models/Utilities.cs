@@ -73,23 +73,21 @@ namespace FASTER.Models
                 var modName = modNode?.SelectSingleNode("td[@data-type='DisplayName']")?.InnerText;
                 if (modNode == null || modName == null)
                     continue;
-                var modIdNode = modNode.SelectSingleNode("td/a[@data-type='Link']");
-                Random r = new();
-                var modId = (uint)(uint.MaxValue - r.Next(ushort.MaxValue / 2));
+
+                var modIdNode  = modNode.SelectSingleNode("td/a[@data-type='Link']");
+                var href       = modIdNode?.Attributes?.GetNamedItem("href")?.Value;
+                var isSteamMod = TryParseModId(href, out var modId);
+                if (!isSteamMod)
+                    modId = (uint)(uint.MaxValue - Random.Shared.Next(ushort.MaxValue / 2));
                 var modIdS = modId.ToString();
-                if (modIdNode != null)
-                {
-                    modIdS = modIdNode.Attributes.GetNamedItem("href").Value.Split("?id=")[1].Split('"')[0];
-                    uint.TryParse(modIdS, out modId);
-                }
 
                 ArmaMod mod = new()
                 {
                     WorkshopId = modId,
                     Path = Path.Combine(Properties.Settings.Default.modStagingDirectory, modIdS),
                     Name = modName,
-                    IsLocal = modIdNode == null,
-                    Status = modIdNode == null ? ArmaModStatus.Local : ArmaModStatus.UpToDate,
+                    IsLocal = !isSteamMod,
+                    Status = !isSteamMod ? ArmaModStatus.Local : ArmaModStatus.UpToDate,
                 };
                 extractedModlist.Add(mod);
             }
