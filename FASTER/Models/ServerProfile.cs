@@ -599,13 +599,13 @@ namespace FASTER.Models
             {
                 _ = mods.Append("rf;");
             }
-            if (!string.IsNullOrWhiteSpace(playerMods))
-            {
-                _ = mods.Append($"{playerMods};");
-            }
             if (EFDLCChecked)
             {
                 _ = mods.Append("ef;");
+            }
+            if (!string.IsNullOrWhiteSpace(playerMods))
+            {
+                _ = mods.Append($"{playerMods};");
             }
             return !string.IsNullOrWhiteSpace(mods.ToString()) ? $" \"-mod={mods}\"" : "";
         }
