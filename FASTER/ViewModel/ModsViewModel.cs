@@ -260,8 +260,15 @@ namespace FASTER.ViewModel
 
         public async Task UpdateSelectedMods()
         {
+            var selected = ModsCollection.ArmaMods.Where(m => m.IsSelected && !m.IsLocal).ToList();
+            if (selected.Count == 0)
+            {
+                DisplayMessage("No Steam mods selected.");
+                return;
+            }
+
             MainWindow.Instance.NavigateToConsole();
-            var ans = await MainWindow.Instance.SteamUpdaterViewModel.RunModsUpdater(new ObservableCollection<ArmaMod>(ModsCollection.ArmaMods.Where(m => m.IsSelected)));
+            var ans = await MainWindow.Instance.SteamUpdaterViewModel.RunModsUpdater(new ObservableCollection<ArmaMod>(selected));
             if (ans == UpdateState.LoginFailed)
                 DisplayMessage("Steam Login Failed");
         }
