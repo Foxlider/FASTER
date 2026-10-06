@@ -173,8 +173,7 @@ namespace FASTER.Views
 
         private void ISaveSettings_Click(object sender, RoutedEventArgs e)
         {
-            if (!string.IsNullOrEmpty(IAPIKeyBox.Text)) 
-                Properties.Settings.Default.SteamAPIKey = IAPIKeyBox.Text;
+            Properties.Settings.Default.SteamAPIKey = IAPIKeyBox.Text?.Trim() ?? string.Empty;
             Properties.Settings.Default.checkForAppUpdates = IAppUpdatesOnLaunch.IsChecked ?? true;
             Properties.Settings.Default.checkForModUpdates = IModUpdatesOnLaunch.IsChecked ?? true;
             Properties.Settings.Default.enableDebugLog = IEnableDebugLog.IsChecked ?? false;
