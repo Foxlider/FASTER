@@ -171,7 +171,9 @@ namespace FASTER.Views
             }
         }
 
-        foreach (ProcessSpy element in dgProcess.Items)
+        private async void IKillAll_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (ProcessSpy element in dgProcess.Items)
             {
                 element.IsReading = false;
                 try
@@ -238,8 +240,15 @@ namespace FASTER.Views
             get => _isReading;
             set
             {
+                if (_isReading == value) return;
                 _isReading = value;
                 OnPropertyChanged(nameof(IsReading));
+
+                if (value)
+                {
+                    var generation = ++_generation;
+                    Task.Factory.StartNew(() => ReadCPU(generation), TaskCreationOptions.LongRunning);
+                }
             }
         }
 
@@ -416,15 +425,8 @@ namespace FASTER.Views
             get => _isReading;
             set
             {
-                if (_isReading == value) return;
                 _isReading = value;
                 OnPropertyChanged(nameof(IsReading));
-
-                if (value)
-                {
-                    var generation = ++_generation;
-                    Task.Factory.StartNew(() => ReadCPU(generation), TaskCreationOptions.LongRunning);
-                }
             }
         }
 
