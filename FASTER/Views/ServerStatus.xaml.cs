@@ -333,7 +333,7 @@ namespace FASTER.Views
         public void ReadCPU(int generation)
         {
             var cores     = Environment.ProcessorCount;
-            var lastCpu   = TimeSpan.Zero;
+            TimeSpan lastCpu;
             var lastStamp = DateTime.UtcNow;
 
             try
