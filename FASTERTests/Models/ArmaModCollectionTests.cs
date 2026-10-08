@@ -26,9 +26,11 @@ namespace FASTER.Models.Tests
         [Category("Network")] // AddSteamMod starts a background Steam API lookup
         public void AddSteamModTest()
         {
+            uint workshopId = (uint)System.Random.Shared.Next(2, int.MaxValue);
+            _mod.WorkshopId = workshopId;
             Assert.DoesNotThrow(() => _amc.AddSteamMod(_mod));
 
-            Assert.DoesNotThrow(() => _amc.DeleteSteamMod(_mod.WorkshopId));
+            Assert.DoesNotThrow(() => _amc.DeleteSteamMod(workshopId));
         }
 
         [Test]

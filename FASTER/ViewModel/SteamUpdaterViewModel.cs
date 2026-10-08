@@ -34,6 +34,8 @@ namespace FASTER.ViewModel
         private StreamWriter? _logWriter;
         private string _sessionPassword = string.Empty;
         private string? _lastProgressMessage;
+        private SteamCmdProgressKind? _progressBucketKind;
+        private int _progressBucket = -1;
         private bool _isBusy;
         private bool _updaterOnline;
         private bool _updaterFaulted;
@@ -444,16 +446,29 @@ namespace FASTER.ViewModel
 
                 AppendOutput($"Downloading {workshopIds.Count} Workshop item(s) in one SteamCMD session...");
 
+                int aggregateProgressBucket = -1;
                 IProgress<SteamCmdProgress> progress = new Progress<SteamCmdProgress>(update =>
                 {
                     ReportSteamCmdProgress(update);
                     if (update.WorkshopId is ulong id && update.Percentage is double itemPercentage &&
                         positions.TryGetValue(id, out int index))
                     {
-                        Parameters.Progress = Math.Clamp(
+                        double overallPercentage = Math.Clamp(
                             (index + Math.Clamp(itemPercentage, 0, 100) / 100d) / workshopIds.Count * 100d,
                             0,
                             100);
+                        Parameters.Progress = overallPercentage;
+
+                        // Individual items are often too small/fast to cross a 10%
+                        // threshold on their own; report the overall batch progress
+                        // every 10% so a long mod list still shows visible movement.
+                        int bucket = Math.Min(10, (int)(overallPercentage / 10));
+                        if (bucket > aggregateProgressBucket)
+                        {
+                            aggregateProgressBucket = bucket;
+                            AppendOutput(
+                                $"Mod batch progress: {overallPercentage:0}% ({index + 1}/{workshopIds.Count} item(s))...");
+                        }
                     }
                 });
 
@@ -687,16 +702,43 @@ namespace FASTER.ViewModel
             if (progress.Percentage is double percentage)
                 Parameters.Progress = Math.Clamp(percentage, 0, 100);
 
-            // Raw SteamCMD output and per-chunk percentage lines can generate
-            // thousands of UI updates during a large Workshop collection. The
-            // structured status/error messages retain the useful information;
-            // percentages are represented by the progress bar.
-            if (progress.Kind == SteamCmdProgressKind.Output ||
-                (progress.Percentage is > 0 &&
-                 progress.Kind is SteamCmdProgressKind.DownloadingWorkshopItem or SteamCmdProgressKind.UpdatingServer))
+            if (progress.Kind == SteamCmdProgressKind.Starting)
             {
+                _progressBucketKind = null;
+                _progressBucket = -1;
+            }
+
+            // Each Workshop item's own download is shown live so it is visible
+            // in real time, even across a large multi-item batch.
+            if (progress.Kind == SteamCmdProgressKind.DownloadingWorkshopItem && progress.Percentage is > 0)
+            {
+                AppendOutput(progress.Message);
                 return;
             }
+
+            // The server update is a single, much longer-running download; only
+            // print a line every 10% so the output box isn't flooded with the
+            // rapid per-chunk percentage lines SteamCMD reports for it.
+            if (progress.Kind == SteamCmdProgressKind.UpdatingServer && progress.Percentage is > 0 and double trackedPercentage)
+            {
+                if (progress.Kind != _progressBucketKind)
+                {
+                    _progressBucketKind = progress.Kind;
+                    _progressBucket = -1;
+                }
+
+                int bucket = Math.Min(10, (int)(trackedPercentage / 10));
+                if (bucket > _progressBucket)
+                {
+                    _progressBucket = bucket;
+                    AppendOutput(progress.Message);
+                }
+
+                return;
+            }
+
+            if (progress.Kind == SteamCmdProgressKind.Output)
+                return;
 
             if (!string.IsNullOrWhiteSpace(progress.Message) && progress.Message != _lastProgressMessage)
             {

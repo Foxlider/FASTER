@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Globalization;
 using System.IO;
 
@@ -10,6 +11,8 @@ namespace FASTER.Services.SteamCmd;
 public sealed class WorkshopContentMirror
 {
     private const int CopyBufferSize = 128 * 1024;
+    private static readonly ConcurrentDictionary<string, SemaphoreSlim> TargetGates = new(
+        OperatingSystem.IsWindows() ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal);
 
     public async Task<string> MirrorAsync(
         string sourceDirectory,
@@ -50,65 +53,130 @@ public sealed class WorkshopContentMirror
         string incomingPath = GetDirectChildPath(stagingPath, $"{workshopDirectoryName}.incoming-{operationId}");
         string backupPath = GetDirectChildPath(stagingPath, $"{workshopDirectoryName}.backup-{operationId}");
 
-        Directory.CreateDirectory(stagingPath);
-
-        if (File.Exists(targetPath))
-        {
-            throw new IOException($"The managed mod target is a file, not a directory: {targetPath}");
-        }
-
-        Directory.CreateDirectory(incomingPath);
-
+        SemaphoreSlim targetGate = TargetGates.GetOrAdd(targetPath, static _ => new SemaphoreSlim(1, 1));
+        await targetGate.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
         {
-            await CopyDirectoryAsync(sourcePath, incomingPath, cancellationToken).ConfigureAwait(false);
-            cancellationToken.ThrowIfCancellationRequested();
+            Directory.CreateDirectory(stagingPath);
 
-            bool oldTargetMoved = false;
+            if (File.Exists(targetPath))
+            {
+                throw new IOException($"The managed mod target is a file, not a directory: {targetPath}");
+            }
+
+            RecoverInterruptedOperation(stagingPath, targetPath, workshopDirectoryName);
+            Directory.CreateDirectory(incomingPath);
+
             try
             {
-                if (Directory.Exists(targetPath))
+                await CopyDirectoryAsync(sourcePath, incomingPath, cancellationToken).ConfigureAwait(false);
+                cancellationToken.ThrowIfCancellationRequested();
+
+                bool oldTargetMoved = false;
+                try
                 {
-                    Directory.Move(targetPath, backupPath);
-                    oldTargetMoved = true;
+                    if (Directory.Exists(targetPath))
+                    {
+                        Directory.Move(targetPath, backupPath);
+                        oldTargetMoved = true;
+                    }
+
+                    // Incoming and target are siblings, so this promotion is a same-volume
+                    // directory rename rather than another partial copy.
+                    Directory.Move(incomingPath, targetPath);
+                }
+                catch (Exception swapException)
+                {
+                    if (oldTargetMoved && Directory.Exists(backupPath) &&
+                        !Directory.Exists(targetPath) && !File.Exists(targetPath))
+                    {
+                        try
+                        {
+                            Directory.Move(backupPath, targetPath);
+                        }
+                        catch (Exception rollbackException)
+                        {
+                            throw new IOException(
+                                $"Could not promote Workshop item {workshopId}, and restoring the previous staged copy also failed. " +
+                                $"The previous copy remains at '{backupPath}'.",
+                                new AggregateException(swapException, rollbackException));
+                        }
+                    }
+
+                    throw new IOException($"Could not promote Workshop item {workshopId} into the staging directory.", swapException);
                 }
 
-                // Incoming and target are siblings, so this promotion is a same-volume
-                // directory rename rather than another partial copy.
-                Directory.Move(incomingPath, targetPath);
+                // Promotion succeeded. A failed cleanup is harmless and the uniquely named
+                // backup can be removed on a later maintenance pass.
+                DeleteDirectChildBestEffort(stagingPath, backupPath);
+                return targetPath;
             }
-            catch (Exception swapException)
+            catch
             {
-                if (oldTargetMoved && Directory.Exists(backupPath) &&
-                    !Directory.Exists(targetPath) && !File.Exists(targetPath))
-                {
-                    try
-                    {
-                        Directory.Move(backupPath, targetPath);
-                    }
-                    catch (Exception rollbackException)
-                    {
-                        throw new IOException(
-                            $"Could not promote Workshop item {workshopId}, and restoring the previous staged copy also failed. " +
-                            $"The previous copy remains at '{backupPath}'.",
-                            new AggregateException(swapException, rollbackException));
-                    }
-                }
-
-                throw new IOException($"Could not promote Workshop item {workshopId} into the staging directory.", swapException);
+                DeleteDirectChildBestEffort(stagingPath, incomingPath);
+                throw;
             }
-
-            // Promotion succeeded. A failed cleanup is harmless and the uniquely named
-            // backup can be removed on a later maintenance pass.
-            DeleteDirectChildBestEffort(stagingPath, backupPath);
-            return targetPath;
         }
-        catch
+        finally
         {
-            DeleteDirectChildBestEffort(stagingPath, incomingPath);
-            throw;
+            targetGate.Release();
         }
     }
+
+    private static void RecoverInterruptedOperation(
+        string stagingPath,
+        string targetPath,
+        string workshopDirectoryName)
+    {
+        string incomingPrefix = $"{workshopDirectoryName}.incoming-";
+        string backupPrefix = $"{workshopDirectoryName}.backup-";
+        List<string> staleBackups = [];
+
+        foreach (string candidatePath in Directory.EnumerateDirectories(stagingPath, "*", SearchOption.TopDirectoryOnly))
+        {
+            string candidateName = Path.GetFileName(candidatePath);
+            if (IsOperationDirectory(candidateName, incomingPrefix))
+            {
+                DeleteDirectChildBestEffort(stagingPath, candidatePath);
+            }
+            else if (IsOperationDirectory(candidateName, backupPrefix))
+            {
+                staleBackups.Add(candidatePath);
+            }
+        }
+
+        if (staleBackups.Count == 0)
+            return;
+
+        // An absent target and a leftover backup mean a previous process stopped
+        // between the two atomic renames. Restore the newest known-good copy before
+        // starting a new copy so any later failure still leaves usable content.
+        if (!Directory.Exists(targetPath) && !File.Exists(targetPath))
+        {
+            string backupToRestore = staleBackups
+                .OrderByDescending(Directory.GetLastWriteTimeUtc)
+                .ThenByDescending(Path.GetFileName, StringComparer.Ordinal)
+                .First();
+            try
+            {
+                Directory.Move(backupToRestore, targetPath);
+                staleBackups.Remove(backupToRestore);
+            }
+            catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
+            {
+                throw new IOException(
+                    $"Could not recover the previous staged Workshop copy from '{backupToRestore}'.",
+                    exception);
+            }
+        }
+
+        foreach (string staleBackup in staleBackups)
+            DeleteDirectChildBestEffort(stagingPath, staleBackup);
+    }
+
+    private static bool IsOperationDirectory(string candidateName, string prefix) =>
+        candidateName.StartsWith(prefix, StringComparison.Ordinal) &&
+        Guid.TryParseExact(candidateName[prefix.Length..], "N", out _);
 
     private static async Task CopyDirectoryAsync(
         string sourcePath,

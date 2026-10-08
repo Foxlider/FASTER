@@ -42,13 +42,18 @@ internal sealed class SteamCmdPseudoConsole : IDisposable
 
     public Stream Output => _output;
 
-    public static SteamCmdPseudoConsole Start(string executablePath, string workingDirectory)
+    public static void EnsureSupportedPlatform()
     {
         if (!OperatingSystem.IsWindowsVersionAtLeast(10, 0, 17763))
         {
             throw new PlatformNotSupportedException(
                 "SteamCMD interactive sessions require Windows 10 version 1809, Windows Server 2019, or newer.");
         }
+    }
+
+    public static SteamCmdPseudoConsole Start(string executablePath, string workingDirectory)
+    {
+        EnsureSupportedPlatform();
 
         SafeFileHandle? pseudoConsoleInput = null;
         SafeFileHandle? hostInput = null;

@@ -4,7 +4,8 @@ namespace FASTER.Services.SteamCmd;
 
 public sealed class SteamCmdClient : IDisposable, IAsyncDisposable
 {
-    private const int MaximumWorkshopDownloadAttempts = 3;
+    // One initial request plus three retries with 1, 2, and 4 second backoffs.
+    private const int MaximumWorkshopDownloadAttempts = 4;
     private static readonly TimeSpan PromptTimeout = TimeSpan.FromMinutes(5);
     private static readonly TimeSpan DownloadTimeout = TimeSpan.FromMinutes(45);
 
@@ -498,6 +499,11 @@ public sealed class SteamCmdClient : IDisposable, IAsyncDisposable
 
                 case SteamCmdOutputEventKind.Timeout
                     when outputEvent.WorkshopId is null || outputEvent.WorkshopId == workshopId:
+                    return new SteamCmdWorkshopItemResult(
+                        workshopId,
+                        false,
+                        GetWorkshopContentPath(workshopId),
+                        outputEvent.Text);
                 case SteamCmdOutputEventKind.Error
                     when outputEvent.WorkshopId is null || outputEvent.WorkshopId == workshopId:
                     failure ??= outputEvent.Text;
@@ -668,7 +674,7 @@ public sealed class SteamCmdClient : IDisposable, IAsyncDisposable
                 cancellationToken).ConfigureAwait(false);
             if (outputEvent.Kind == SteamCmdOutputEventKind.Prompt)
                 return;
-            if (outputEvent.Kind == SteamCmdOutputEventKind.Error)
+            if (outputEvent.Kind is SteamCmdOutputEventKind.Error or SteamCmdOutputEventKind.Timeout)
                 throw new SteamCmdException(outputEvent.Text);
         }
     }
@@ -686,9 +692,10 @@ public sealed class SteamCmdClient : IDisposable, IAsyncDisposable
             switch (outputEvent.Kind)
             {
                 case SteamCmdOutputEventKind.Error:
-                case SteamCmdOutputEventKind.Timeout:
                     error ??= outputEvent.Text;
                     break;
+                case SteamCmdOutputEventKind.Timeout:
+                    throw new SteamCmdException(outputEvent.Text);
                 case SteamCmdOutputEventKind.Prompt:
                     if (error != null)
                         throw new SteamCmdException(error);
@@ -722,9 +729,10 @@ public sealed class SteamCmdClient : IDisposable, IAsyncDisposable
                         Math.Clamp(percentage, 0, 100)));
                     break;
                 case SteamCmdOutputEventKind.Error:
-                case SteamCmdOutputEventKind.Timeout:
                     error ??= outputEvent.Text;
                     break;
+                case SteamCmdOutputEventKind.Timeout:
+                    return outputEvent.Text;
                 case SteamCmdOutputEventKind.LoginFailed:
                     throw new SteamCmdAuthenticationException(outputEvent.Text);
                 case SteamCmdOutputEventKind.Prompt:

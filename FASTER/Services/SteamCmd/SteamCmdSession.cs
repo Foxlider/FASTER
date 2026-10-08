@@ -8,6 +8,8 @@ namespace FASTER.Services.SteamCmd;
 internal sealed class SteamCmdSession : IAsyncDisposable
 {
     private static readonly TimeSpan ShutdownGracePeriod = TimeSpan.FromSeconds(7);
+    private static readonly TimeSpan ForcedExitTimeout = TimeSpan.FromSeconds(2);
+    private static readonly TimeSpan OutputPumpShutdownTimeout = TimeSpan.FromSeconds(2);
 
     private readonly SteamCmdPseudoConsole _console;
     private readonly Process _process;
@@ -121,7 +123,9 @@ internal sealed class SteamCmdSession : IAsyncDisposable
         }
         catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested && timeoutSource.IsCancellationRequested)
         {
-            throw new SteamCmdException("SteamCMD did not respond before the operation timed out.");
+            return new SteamCmdOutputEvent(
+                SteamCmdOutputEventKind.Timeout,
+                "SteamCMD did not respond before the operation timed out.");
         }
         catch (ChannelClosedException exception)
         {
@@ -258,7 +262,20 @@ internal sealed class SteamCmdSession : IAsyncDisposable
         }
 
         if (!HasExited)
-            await _process.WaitForExitAsync(CancellationToken.None).ConfigureAwait(false);
+        {
+            try
+            {
+                await _process.WaitForExitAsync(CancellationToken.None)
+                    .WaitAsync(ForcedExitTimeout)
+                    .ConfigureAwait(false);
+            }
+            catch (TimeoutException exception)
+            {
+                throw new SteamCmdException(
+                    "SteamCMD did not exit after its process tree was terminated.",
+                    exception);
+            }
+        }
 
         cancellationToken.ThrowIfCancellationRequested();
     }
@@ -279,10 +296,20 @@ internal sealed class SteamCmdSession : IAsyncDisposable
     {
         try
         {
-            await pump.ConfigureAwait(false);
+            await pump.WaitAsync(OutputPumpShutdownTimeout).ConfigureAwait(false);
         }
         catch (Exception exception) when (exception is IOException or ObjectDisposedException)
         {
+        }
+        catch (TimeoutException)
+        {
+            // A blocked ConPTY read must never prevent the application from closing.
+            // Observe a later fault even though teardown can now continue immediately.
+            _ = pump.ContinueWith(
+                static completed => _ = completed.Exception,
+                CancellationToken.None,
+                TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.ExecuteSynchronously,
+                TaskScheduler.Default);
         }
     }
 }

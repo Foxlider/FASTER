@@ -8,6 +8,8 @@ internal sealed class SteamCmdInstaller
 {
     private const long MaximumArchiveBytes = 64L * 1024 * 1024;
     private const long MaximumExpandedBytes = 512L * 1024 * 1024;
+    private const int MaximumBootstrapAttempts = 3;
+    private static readonly TimeSpan BootstrapRetryDelay = TimeSpan.FromSeconds(3);
     private static readonly Uri DownloadUri = new("https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip");
     private static readonly HttpClient HttpClient = new();
 
@@ -28,6 +30,8 @@ internal sealed class SteamCmdInstaller
         IProgress<SteamCmdProgress>? progress,
         CancellationToken cancellationToken)
     {
+        SteamCmdPseudoConsole.EnsureSupportedPlatform();
+
         if (IsInstalled)
             return;
 
@@ -35,7 +39,7 @@ internal sealed class SteamCmdInstaller
         // call it ready until SteamCMD has successfully completed self-update.
         if (File.Exists(ExecutablePath))
         {
-            await BootstrapAsync(progress, cancellationToken).ConfigureAwait(false);
+            await BootstrapWithRetryAsync(progress, cancellationToken).ConfigureAwait(false);
             await WriteReadinessMarkerAsync(cancellationToken).ConfigureAwait(false);
             return;
         }
@@ -72,7 +76,7 @@ internal sealed class SteamCmdInstaller
             if (!File.Exists(ExecutablePath))
                 throw new SteamCmdException("SteamCMD could not be installed in the selected directory.");
 
-            await BootstrapAsync(progress, cancellationToken).ConfigureAwait(false);
+            await BootstrapWithRetryAsync(progress, cancellationToken).ConfigureAwait(false);
             await WriteReadinessMarkerAsync(cancellationToken).ConfigureAwait(false);
             progress?.Report(new SteamCmdProgress(
                 SteamCmdProgressKind.Completed,
@@ -126,45 +130,64 @@ internal sealed class SteamCmdInstaller
         IProgress<SteamCmdProgress>? progress,
         CancellationToken cancellationToken)
     {
-        using HttpResponseMessage response = await HttpClient.GetAsync(
-            DownloadUri,
-            HttpCompletionOption.ResponseHeadersRead,
-            cancellationToken).ConfigureAwait(false);
-        response.EnsureSuccessStatusCode();
-
-        long? contentLength = response.Content.Headers.ContentLength;
-        if (contentLength > MaximumArchiveBytes)
-            throw new SteamCmdException("The SteamCMD archive is unexpectedly large.");
-
-        await using Stream source = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
-        await using FileStream destination = new(
-            destinationPath,
-            FileMode.CreateNew,
-            FileAccess.Write,
-            FileShare.None,
-            81920,
-            FileOptions.Asynchronous | FileOptions.SequentialScan);
-
-        byte[] buffer = new byte[81920];
-        long downloaded = 0;
-        while (true)
+        HttpResponseMessage response;
+        try
         {
-            int read = await source.ReadAsync(buffer, cancellationToken).ConfigureAwait(false);
-            if (read == 0)
-                break;
+            response = await HttpClient.GetAsync(
+                DownloadUri,
+                HttpCompletionOption.ResponseHeadersRead,
+                cancellationToken).ConfigureAwait(false);
+            response.EnsureSuccessStatusCode();
+        }
+        catch (OperationCanceledException exception) when (!cancellationToken.IsCancellationRequested)
+        {
+            throw new SteamCmdException(
+                "The SteamCMD download timed out. Check the internet connection, proxy, or firewall and try Prepare SteamCMD again.",
+                exception);
+        }
+        catch (HttpRequestException exception)
+        {
+            throw new SteamCmdException(
+                $"Could not download SteamCMD from Valve. Check the internet connection, proxy, or firewall and try Prepare SteamCMD again. {exception.Message}",
+                exception);
+        }
 
-            downloaded += read;
-            if (downloaded > MaximumArchiveBytes)
-                throw new SteamCmdException("The SteamCMD archive exceeded the safe download limit.");
+        using (response)
+        {
+            long? contentLength = response.Content.Headers.ContentLength;
+            if (contentLength > MaximumArchiveBytes)
+                throw new SteamCmdException("The SteamCMD archive is unexpectedly large.");
 
-            await destination.WriteAsync(buffer.AsMemory(0, read), cancellationToken).ConfigureAwait(false);
-            double? percentage = contentLength is > 0
-                ? Math.Min(100, downloaded * 100d / contentLength.Value)
-                : null;
-            progress?.Report(new SteamCmdProgress(
-                SteamCmdProgressKind.Installing,
-                "Downloading SteamCMD from Valve...",
-                percentage));
+            await using Stream source = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
+            await using FileStream destination = new(
+                destinationPath,
+                FileMode.CreateNew,
+                FileAccess.Write,
+                FileShare.None,
+                81920,
+                FileOptions.Asynchronous | FileOptions.SequentialScan);
+
+            byte[] buffer = new byte[81920];
+            long downloaded = 0;
+            while (true)
+            {
+                int read = await source.ReadAsync(buffer, cancellationToken).ConfigureAwait(false);
+                if (read == 0)
+                    break;
+
+                downloaded += read;
+                if (downloaded > MaximumArchiveBytes)
+                    throw new SteamCmdException("The SteamCMD archive exceeded the safe download limit.");
+
+                await destination.WriteAsync(buffer.AsMemory(0, read), cancellationToken).ConfigureAwait(false);
+                double? percentage = contentLength is > 0
+                    ? Math.Min(100, downloaded * 100d / contentLength.Value)
+                    : null;
+                progress?.Report(new SteamCmdProgress(
+                    SteamCmdProgressKind.Installing,
+                    "Downloading SteamCMD from Valve...",
+                    percentage));
+            }
         }
     }
 
@@ -226,6 +249,34 @@ internal sealed class SteamCmdInstaller
             if (parent != null)
                 Directory.CreateDirectory(parent);
             File.Copy(file, destination, true);
+        }
+    }
+
+    /// <summary>
+    /// SteamCMD's very first self-update after being freshly extracted commonly
+    /// exits abnormally or crashes (writing its own .crash dump) while Windows
+    /// or antivirus software is still scanning/locking the newly written
+    /// executable and DLLs. A short retry succeeds once those locks clear,
+    /// matching the behaviour of simply launching SteamCMD again by hand.
+    /// </summary>
+    private async Task BootstrapWithRetryAsync(
+        IProgress<SteamCmdProgress>? progress,
+        CancellationToken cancellationToken)
+    {
+        for (int attempt = 1; attempt <= MaximumBootstrapAttempts; attempt++)
+        {
+            try
+            {
+                await BootstrapAsync(progress, cancellationToken).ConfigureAwait(false);
+                return;
+            }
+            catch (SteamCmdException) when (attempt < MaximumBootstrapAttempts)
+            {
+                progress?.Report(new SteamCmdProgress(
+                    SteamCmdProgressKind.Warning,
+                    $"SteamCMD's self-update did not complete cleanly. Retrying ({attempt + 1}/{MaximumBootstrapAttempts})..."));
+                await Task.Delay(BootstrapRetryDelay, cancellationToken).ConfigureAwait(false);
+            }
         }
     }
 

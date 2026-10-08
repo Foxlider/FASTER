@@ -53,6 +53,68 @@ public sealed class WorkshopContentMirrorTests
     }
 
     [Test]
+    public async Task MirrorAsync_CleansStaleOperationDirectoriesBeforePromotion()
+    {
+        const ulong workshopId = 450814997;
+        string source = CreateDirectory("steamcmd-source");
+        await File.WriteAllTextAsync(Path.Combine(source, "new.pbo"), "new content");
+
+        string staging = CreateDirectory("staging");
+        string target = Directory.CreateDirectory(Path.Combine(staging, workshopId.ToString())).FullName;
+        await File.WriteAllTextAsync(Path.Combine(target, "old.pbo"), "old content");
+        string staleIncoming = Directory.CreateDirectory(
+            Path.Combine(staging, $"{workshopId}.incoming-{Guid.NewGuid():N}")).FullName;
+        string staleBackup = Directory.CreateDirectory(
+            Path.Combine(staging, $"{workshopId}.backup-{Guid.NewGuid():N}")).FullName;
+        await File.WriteAllTextAsync(Path.Combine(staleIncoming, "partial.pbo"), "partial");
+        await File.WriteAllTextAsync(Path.Combine(staleBackup, "older.pbo"), "older");
+
+        WorkshopContentMirror mirror = new();
+        await mirror.MirrorAsync(source, staging, workshopId);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(File.ReadAllText(Path.Combine(target, "new.pbo")), Is.EqualTo("new content"));
+            Assert.That(Directory.EnumerateDirectories(staging, $"{workshopId}.incoming-*"), Is.Empty);
+            Assert.That(Directory.EnumerateDirectories(staging, $"{workshopId}.backup-*"), Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task MirrorAsync_RestoresStaleBackupWhenPreviousPromotionWasInterrupted()
+    {
+        const ulong workshopId = 1234;
+        string source = CreateDirectory("steamcmd-source");
+        string lockedSourceFile = Path.Combine(source, "locked.pbo");
+        await File.WriteAllTextAsync(lockedSourceFile, "new content");
+
+        string staging = CreateDirectory("staging");
+        string target = Path.Combine(staging, workshopId.ToString());
+        string staleBackup = Directory.CreateDirectory(
+            Path.Combine(staging, $"{workshopId}.backup-{Guid.NewGuid():N}")).FullName;
+        string staleIncoming = Directory.CreateDirectory(
+            Path.Combine(staging, $"{workshopId}.incoming-{Guid.NewGuid():N}")).FullName;
+        await File.WriteAllTextAsync(Path.Combine(staleBackup, "keep.pbo"), "old content");
+        await File.WriteAllTextAsync(Path.Combine(staleIncoming, "partial.pbo"), "partial");
+
+        await using FileStream sourceLock = new(
+            lockedSourceFile,
+            FileMode.Open,
+            FileAccess.Read,
+            FileShare.None);
+        WorkshopContentMirror mirror = new();
+
+        await Assert.ThrowsAsync<IOException>(
+            async () => await mirror.MirrorAsync(source, staging, workshopId));
+        Assert.Multiple(() =>
+        {
+            Assert.That(File.ReadAllText(Path.Combine(target, "keep.pbo")), Is.EqualTo("old content"));
+            Assert.That(Directory.EnumerateDirectories(staging, $"{workshopId}.incoming-*"), Is.Empty);
+            Assert.That(Directory.EnumerateDirectories(staging, $"{workshopId}.backup-*"), Is.Empty);
+        });
+    }
+
+    [Test]
     public void MirrorAsync_RejectsEmptySourceAndPreservesExistingTarget()
     {
         string source = CreateDirectory("empty-source");
