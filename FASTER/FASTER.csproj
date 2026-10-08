@@ -75,7 +75,4 @@
     <PackageReference Include="SQLitePCLRaw.lib.e_sqlite3" Version="2.1.13" />
     <PackageReference Include="WindowsAPICodePack-Shell" Version="1.1.1" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\BytexDigital.Steam\BytexDigital.Steam\BytexDigital.Steam.csproj" />
-  </ItemGroup>
 </Project>

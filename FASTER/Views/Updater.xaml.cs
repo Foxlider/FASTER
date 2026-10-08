@@ -38,6 +38,11 @@ namespace FASTER.Views
             ((SteamUpdaterViewModel) DataContext)?.ModStagingDirClick();
         }
 
+        private void SteamCmdDir_Click(object sender, RoutedEventArgs e)
+        {
+            ((SteamUpdaterViewModel)DataContext)?.SteamCmdDirClick();
+        }
+
         private void PasswordBox_OnPasswordChanged(object sender, RoutedEventArgs e)
         {
             if(sender is PasswordBox {IsFocused: true} box)
@@ -51,12 +56,13 @@ namespace FASTER.Views
 
         private void ClientReset_OnClick(object sender, RoutedEventArgs e)
         {
-            ((SteamUpdaterViewModel)DataContext)?.SteamReset();
+            ((SteamUpdaterViewModel)DataContext)?.ResetSteamCmd();
         }
 
-        private void ClientConnect_OnClick(object sender, RoutedEventArgs e)
+        private async void ClientConnect_OnClick(object sender, RoutedEventArgs e)
         {
-            ((SteamUpdaterViewModel)DataContext)?.SteamLogin();
+            if (DataContext is SteamUpdaterViewModel viewModel)
+                await viewModel.PrepareSteamCmdAsync();
         }
     }
 }
