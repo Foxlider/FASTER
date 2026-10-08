@@ -173,7 +173,7 @@
                                     <RowDefinition Height="1*"/>
                                     <RowDefinition Height="1*"/>
                                 </Grid.RowDefinitions>
-                                <ToggleButton Grid.Row="0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" IsChecked="{Binding IsReading}" Margin="5" Padding="2" BorderThickness="0" Click="PlayPause_Click">
+                                <ToggleButton Grid.Row="0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" IsChecked="{Binding IsReading}" Margin="5" Padding="2" BorderThickness="0">
                                     <ToggleButton.Style>
                                         <Style BasedOn="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" TargetType="{x:Type ToggleButton}">
                                             <Setter Property="Content" Value="{iconPacks:Material Kind=Play}" />

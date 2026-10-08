@@ -326,7 +326,7 @@ namespace FASTER.ViewModel
             List<string> notFound = new();
             foreach (var extractedMod in extractedModList)
             {
-                var mod = Profile.ProfileMods.Find(m => m.Id == extractedMod.Id || ModUtilities.GetCompareString(extractedMod.Name) == ModUtilities.GetCompareString(m.Name));
+                var mod = Profile.ProfileMods.Find(m => m.Id == extractedMod.Id || ModUtilities.NamesMatch(extractedMod.Name, m.Name));
                 if (mod != null)
                 {
                     mod.ClientSideChecked = true;
@@ -421,6 +421,14 @@ namespace FASTER.ViewModel
             { MessageBox.Show("Please enter a valid arma3server executable location"); }
         }
 
+        private static readonly string[] VanillaKeys = { "a3.bikey", "a3c.bikey", "gm.bikey", "ws.bikey", "csla.bikey", "vn.bikey", "spe.bikey", "rf.bikey", "ef.bikey" };
+
+        // <arma>\keys, the server's normal keys folder
+        private string DefaultKeysFolder => Path.Combine(Profile.ArmaPath, "keys");
+
+        // Where this profile's server reads keys from: the -keysFolder setting if set, otherwise the default
+        private string KeysTargetFolder => string.IsNullOrWhiteSpace(Profile.KeysFolder) ? DefaultKeysFolder : Profile.KeysFolder;
+
         internal async Task CopyModKeys()
         {
             var mods = new List<string>();
@@ -447,12 +455,30 @@ namespace FASTER.ViewModel
 
             await ClearModKeys();
 
-            Directory.CreateDirectory(Path.Combine(Profile.ArmaPath, "keys"));
+            var targetFolder = KeysTargetFolder;
+            Directory.CreateDirectory(targetFolder);
+
+            // A custom -keysFolder replaces the normal keys folder, so the game and DLC keys
+            // have to be there too or signature checks reject vanilla files
+            if (!string.Equals(Path.GetFullPath(targetFolder), Path.GetFullPath(DefaultKeysFolder), StringComparison.OrdinalIgnoreCase))
+            {
+                foreach (var vanilla in VanillaKeys)
+                {
+                    var source = Path.Combine(DefaultKeysFolder, vanilla);
+                    var dest   = Path.Combine(targetFolder, vanilla);
+                    if (File.Exists(source) && !File.Exists(dest))
+                    {
+                        try { File.Copy(source, dest); }
+                        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+                        { /* not critical, the mod keys below matter more */ }
+                    }
+                }
+            }
 
             foreach (var link in mods)
             {
-                try { File.Copy(link, Path.Combine(Profile.ArmaPath, "keys", Path.GetFileName(link)), true); }
-                catch (IOException)
+                try { File.Copy(link, Path.Combine(targetFolder, Path.GetFileName(link)), true); }
+                catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
                 {
                     MainWindow.Instance.IFlyout.IsOpen         = true;
                     MainWindow.Instance.IFlyoutMessage.Content = $"Some keys could not be copied : {Path.GetFileName(link)}";
@@ -463,12 +489,12 @@ namespace FASTER.ViewModel
 
         internal async Task ClearModKeys()
         {
-            var ignoredKeys = new[] {"a3.bikey", "a3c.bikey", "gm.bikey", "ws.bikey", "csla.bikey", "vn.bikey", "spe.bikey", "rf.bikey", "ef.bikey" };
-            if (Directory.Exists(Path.Combine(Profile.ArmaPath, "keys")))
+            var targetFolder = KeysTargetFolder;
+            if (Directory.Exists(targetFolder))
             {
-                foreach (var keyFile in Directory.GetFiles(Path.Combine(Profile.ArmaPath, "keys")))
+                foreach (var keyFile in Directory.GetFiles(targetFolder, "*.bikey"))
                 {
-                    if (Array.Exists(ignoredKeys, x => keyFile.Contains(x)))
+                    if (Array.Exists(VanillaKeys, x => string.Equals(Path.GetFileName(keyFile), x, StringComparison.OrdinalIgnoreCase)))
                         continue;
                     try
                     {

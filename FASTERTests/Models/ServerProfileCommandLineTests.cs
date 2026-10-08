@@ -48,8 +48,7 @@ namespace FASTER.Models.Tests
             p.EFDLCChecked      = true;
             p.ProfileMods = new List<ProfileMod> { new() { Id = 1, Name = "cba", ClientSideChecked = true } };
 
-            // NOTE: "ef;" currently comes after the player mods while every other DLC comes before.
-            Assert.That(p.CommandLine, Does.Contain("-mod=contact;gm;vn;csla;ws;spe;rf;@cba;ef;"));
+            Assert.That(p.CommandLine, Does.Contain("-mod=contact;gm;vn;csla;ws;spe;rf;ef;@cba;"));
         }
 
         [Test()]

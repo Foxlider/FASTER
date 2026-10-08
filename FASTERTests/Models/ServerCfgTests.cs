@@ -1,5 +1,7 @@
 using System;
 using NUnit.Framework;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 using System.Collections.Generic;
 
@@ -241,6 +243,28 @@ namespace FASTER.Models.Tests
 
             Assert.That(classStart, Is.GreaterThanOrEqualTo(0));
             Assert.That(setting, Is.GreaterThan(classStart).And.LessThan(classEnd));
+        }
+        
+        [Test()]
+        public void MissionsWithSimilarNamesGetUniqueClassNames()
+        {
+            var cfg = new ServerCfg
+            {
+                Missions = new List<ProfileMission>
+                {
+                    new ProfileMission { Name = "A-B", Path = "A-B.pbo", MissionChecked = true },
+                    new ProfileMission { Name = "A_B", Path = "A_B.pbo", MissionChecked = true },
+                    new ProfileMission { Name = "Мод", Path = "Мод.pbo", MissionChecked = true },
+                    new ProfileMission { Name = "Мир", Path = "Мир.pbo", MissionChecked = true }
+                }
+            };
+
+            var classes = Regex.Matches(cfg.ProcessFile(), @"class (Mission_\S+)")
+                               .Select(m => m.Groups[1].Value)
+                               .ToList();
+
+            Assert.That(classes, Has.Count.EqualTo(4));
+            Assert.That(classes, Is.Unique);
         }
     }
 }

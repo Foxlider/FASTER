@@ -32,6 +32,20 @@ namespace FASTER.ViewModel
             MainWindow.Instance.IFlyoutMessage.Content = msg;
         }
 
+        // Yes/No popup
+        private async Task<bool> ConfirmAsync(string title, string message)
+        {
+            var result = await DialogCoordinator.ShowMessageAsync(this, title, message, MessageDialogStyle.AffirmativeAndNegative);
+            return result == MessageDialogResult.Affirmative;
+        }
+
+        // "Type yes" popup, used for the big destructive actions
+        private async Task<bool> ConfirmTypedYesAsync(string title, string message)
+        {
+            var answer = await DialogCoordinator.ShowInputAsync(this, title, message);
+            return string.Equals(answer?.Trim(), "yes", StringComparison.OrdinalIgnoreCase);
+        }
+
         public void UnloadData()
         {
             Properties.Settings.Default.armaMods = ModsCollection;
@@ -40,32 +54,28 @@ namespace FASTER.ViewModel
 
         public async Task AddSteamMod()
         {
-            var modID = await DialogCoordinator.ShowInputAsync(this, "Add Steam Mod", "Please enter the mod ID or mod URL");
+            var input = await DialogCoordinator.ShowInputAsync(this, "Add Steam Mod", "Please enter the mod ID or mod URL");
 
-            if (string.IsNullOrEmpty(modID))
+            if (string.IsNullOrWhiteSpace(input))
                 return;
+
+            if (!ModUtilities.TryParseModId(input, out var modIDOut))
+            {
+                DisplayMessage("That is not a valid mod ID or Steam Workshop link.");
+                return;
+            }
 
             Analytics.TrackEvent("Mods - Clicked AddSteamMod", new Dictionary<string, string>
             {
                 {"Name", Properties.Settings.Default.steamUserName},
-                {"Mod", modID}
+                {"Mod", modIDOut.ToString()}
             });
-
-            //Cast link to mod ID
-            if (modID.Contains("steamcommunity.com") && modID.Contains("id="))
-            {
-                var uri = new Uri(modID);
-                modID = System.Web.HttpUtility.ParseQueryString(uri.Query).Get("id");
-            }
-
-            if (!uint.TryParse(modID, out uint modIDOut))
-                return;
 
             var mod = new ArmaMod
             {
                 WorkshopId = modIDOut,
-                Path       = Path.Combine(Properties.Settings.Default.modStagingDirectory, modID),
-                IsLocal = false
+                Path       = Path.Combine(Properties.Settings.Default.modStagingDirectory, modIDOut.ToString()),
+                IsLocal    = false
             };
 
             ModsCollection.AddSteamMod(mod);
@@ -139,9 +149,19 @@ namespace FASTER.ViewModel
             ModsCollection.DeleteSteamMod(mod.WorkshopId);
         }
 
-        internal void DeleteSelectedMods()
+        internal async Task DeleteSelectedMods()
         {
-            var selectedArmaMods = new List<ArmaMod>(ModsCollection.ArmaMods.Where(m => m.IsSelected));
+            var selectedArmaMods = ModsCollection.ArmaMods.Where(m => m.IsSelected).ToList();
+            if (selectedArmaMods.Count == 0)
+            {
+                DisplayMessage("No mods selected.");
+                return;
+            }
+
+            if (!await ConfirmAsync("Delete selected mods?",
+                    $"This removes {selectedArmaMods.Count} mod(s) from the list and deletes their folders in the Mod Staging Directory. For local mods only the link is removed."))
+                return;
+
             foreach (var mod in selectedArmaMods)
             {
                 DeleteMod(mod);
@@ -150,9 +170,7 @@ namespace FASTER.ViewModel
 
         internal async Task DeleteAllMods()
         {
-            var answer = await DialogCoordinator.ShowInputAsync(this, "Are you sure you want to delete all mods?", "Write \"yes\" and press OK to remove every mod from this list and delete its folder in the Mod Staging Directory. For local mods only the link is removed. Your original folders are not touched.");
-
-            if (string.IsNullOrEmpty(answer) || !answer.Equals("yes"))
+            if (!await ConfirmTypedYesAsync("Are you sure you want to delete all mods?", "Write \"yes\" and press OK to remove every mod from this list and delete its folder in the Mod Staging Directory. For local mods only the link is removed. Your original folders are not touched."))
                 return;
 
             Analytics.TrackEvent("Mods - Clicked DeleteAllMods", new Dictionary<string, string>
@@ -195,7 +213,7 @@ namespace FASTER.ViewModel
 
             foreach (var extractedMod in extractedModList)
             {
-                var mod = ModsCollection.ArmaMods.FirstOrDefault(m => m.WorkshopId == extractedMod.WorkshopId || ModUtilities.GetCompareString(extractedMod.Name) == ModUtilities.GetCompareString(m.Name));
+                var mod = ModsCollection.ArmaMods.FirstOrDefault(m => m.WorkshopId == extractedMod.WorkshopId || ModUtilities.NamesMatch(extractedMod.Name, m.Name));
                 if (mod != null)
                     continue;
 
@@ -242,8 +260,15 @@ namespace FASTER.ViewModel
 
         public async Task UpdateSelectedMods()
         {
+            var selected = ModsCollection.ArmaMods.Where(m => m.IsSelected && !m.IsLocal).ToList();
+            if (selected.Count == 0)
+            {
+                DisplayMessage("No Steam mods selected.");
+                return;
+            }
+
             MainWindow.Instance.NavigateToConsole();
-            var ans = await MainWindow.Instance.SteamUpdaterViewModel.RunModsUpdater(new ObservableCollection<ArmaMod>(ModsCollection.ArmaMods.Where(m => m.IsSelected)));
+            var ans = await MainWindow.Instance.SteamUpdaterViewModel.RunModsUpdater(new ObservableCollection<ArmaMod>(selected));
             if (ans == UpdateState.LoginFailed)
                 DisplayMessage("Steam Login Failed");
         }
@@ -300,9 +325,7 @@ namespace FASTER.ViewModel
 
         public async Task PurgeAndReinstallAll()
         {
-            var answer = await DialogCoordinator.ShowInputAsync(this, "Are you sure you want to purge all mods?", "Write \"yes\" and press OK to delete all folders in the Mod Staging Directory and re-download everything.");
-
-            if (string.IsNullOrEmpty(answer?.Trim()) || !answer.Trim().Equals("yes", StringComparison.OrdinalIgnoreCase))
+            if (!await ConfirmTypedYesAsync("Are you sure you want to purge all mods?", "Write \"yes\" and press OK to delete all folders in the Mod Staging Directory and re-download everything."))
                 return;
 
             Analytics.TrackEvent("Mods - Clicked PurgeAndReinstallAll", new Dictionary<string, string>
@@ -379,10 +402,9 @@ namespace FASTER.ViewModel
                 return;
             }
 
-            var result = await DialogCoordinator.ShowInputAsync(this,
-                "Purge Unused Mods",
-                $"Found {unusedMods.Count} unused mod(s). Type \"yes\" to confirm deletion.");
-            if (result?.ToLower() != "yes") return;
+            if (!await ConfirmTypedYesAsync("Purge Unused Mods",
+                    $"Found {unusedMods.Count} unused mod(s). Type \"yes\" to confirm deletion."))
+                return;
 
             foreach (var mod in unusedMods)
                 DeleteMod(mod);

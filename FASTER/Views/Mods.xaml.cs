@@ -41,9 +41,10 @@ namespace FASTER.Views
                 await vm.UpdateSelectedMods();
         }
 
-        private void DeleteSelectedMods(object sender, RoutedEventArgs e)
+        private async void DeleteSelectedMods(object sender, RoutedEventArgs e)
         {
-            ((ModsViewModel) DataContext)?.DeleteSelectedMods();
+            if (DataContext is ModsViewModel vm)
+                await vm.DeleteSelectedMods();
         }
 
         private void OpenModPage(object sender, RoutedEventArgs e)
