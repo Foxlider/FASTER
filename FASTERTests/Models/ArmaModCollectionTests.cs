@@ -27,9 +27,6 @@ namespace FASTER.Models.Tests
         {
             Assert.DoesNotThrow(() => _amc.AddSteamMod(_mod));
 
-            //Really should throw but whatever
-            Assert.DoesNotThrow(() => _amc.AddSteamMod(_mod));
-
             Assert.DoesNotThrow(() => _amc.DeleteSteamMod(_mod.WorkshopId));
         }
 

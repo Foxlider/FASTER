@@ -377,6 +377,8 @@ namespace FASTER.ViewModel
 
         public void LoadData()
         {
+            Profile.ServerCfg.MigrateLegacyLayout();
+
             var modlist = new List<ProfileMod>();
             var armaMods = AppSettings.Current.ArmaMods;
             if (armaMods != null)
