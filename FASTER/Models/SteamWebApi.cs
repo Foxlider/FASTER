@@ -163,6 +163,29 @@ namespace FASTER.Models
             return response == MessageDialogResult.Affirmative;
         }
 
+        // Writes a DPAPI-protected value. If protection fails, nothing is written
+        // and any older file is removed, so a plain-text copy is never left on disk.
+        private void WriteProtected(string fileSuffix, string value)
+        {
+            if (string.IsNullOrEmpty(_persistenceDirectory)) return;
+
+            Directory.CreateDirectory(_persistenceDirectory);
+            var path           = Path.Combine(_persistenceDirectory, $"{_uniqueStorageName}_{fileSuffix}");
+            var protectedValue = Encryption.Instance.EncryptData(value);
+
+            if (string.IsNullOrEmpty(protectedValue))
+            {
+                Logger.Log($"AuthCodeProvider: could not protect {fileSuffix}, not saving it to disk.");
+                try
+                { if (File.Exists(path)) File.Delete(path); }
+                catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+                { Logger.Log($"AuthCodeProvider: could not remove old {fileSuffix} file: {ex.Message}"); }
+                return;
+            }
+
+            File.WriteAllText(path, protectedValue);
+        }
+
         // Reads a token file. New files are DPAPI-protected; old plain-text files are still accepted
         // and get rewritten in the new format the next time Steam persists them.
         private static string ReadProtected(string path)
@@ -174,12 +197,7 @@ namespace FASTER.Models
         public override Task PersistAccessTokenAsync(string token, CancellationToken cancellationToken = default)
         {
             AccessToken = token;
-
-            if (string.IsNullOrEmpty(_persistenceDirectory)) return Task.CompletedTask;
-
-            Directory.CreateDirectory(_persistenceDirectory);
-            File.WriteAllText(Path.Combine(_persistenceDirectory, $"{_uniqueStorageName}_accesstoken"), Encryption.Instance.EncryptData(AccessToken) ?? AccessToken);
-
+            WriteProtected("accesstoken", AccessToken);
             return Task.CompletedTask;
         }
 
@@ -199,12 +217,7 @@ namespace FASTER.Models
         public override Task PersistGuardDataAsync(string data, CancellationToken cancellationToken = default)
         {
             GuardData = data;
-
-            if (string.IsNullOrEmpty(_persistenceDirectory)) return Task.CompletedTask;
-
-            Directory.CreateDirectory(_persistenceDirectory);
-            File.WriteAllText(Path.Combine(_persistenceDirectory, $"{_uniqueStorageName}_guarddata"), Encryption.Instance.EncryptData(GuardData) ?? GuardData);
-
+            WriteProtected("guarddata", GuardData);
             return Task.CompletedTask;
         }
 

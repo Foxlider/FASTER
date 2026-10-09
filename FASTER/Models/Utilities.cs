@@ -57,7 +57,12 @@ namespace FASTER.Models
             List<ArmaMod> extractedModlist = new();
             XmlDocument doc = new();
             try
-            { doc.LoadXml(lines); }
+            {
+                var settings = new XmlReaderSettings { DtdProcessing = DtdProcessing.Prohibit, XmlResolver = null };
+                using var stringReader = new StringReader(lines);
+                using var xmlReader = XmlReader.Create(stringReader, settings);
+                doc.Load(xmlReader);
+            }
             catch (XmlException e)
             {
                 Logger.Log($"ParseModsFromArmaProfileFile: could not parse {filePath}: {e.Message}");

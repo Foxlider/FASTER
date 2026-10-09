@@ -100,5 +100,15 @@ namespace FASTER.Models.Tests
             finally
             { File.Delete(fullPath); }
         }
+        [Test()]
+        public void FileWithADoctypeIsRejected()
+        {
+            var fullPath = Path.Combine(Path.GetTempPath(), $"FASTER_Testing_{Guid.NewGuid():N}.html");
+            File.WriteAllText(fullPath, "<?xml version=\"1.0\"?><!DOCTYPE html [<!ENTITY a \"aaaa\">]><html><body><table><tr data-type=\"ModContainer\"><td data-type=\"DisplayName\">&a;</td></tr></table></body></html>");
+            try
+            { Assert.That(ModUtilities.ParseModsFromArmaProfileFile(fullPath), Is.Empty); }
+            finally
+            { File.Delete(fullPath); }
+        }
     }
 }

@@ -73,5 +73,15 @@ namespace FASTER.Models.Tests
             Assert.That(Names(p), Is.EqualTo(new[] { "ace" }));
             Assert.That(p.ProfileModsFilterIsInvalid, Is.False);
         }
+        [Test()]
+        public void SlowRegexIsStoppedAndMarkedInvalid()
+        {
+            var p = ProfileWith(new string('a', 40) + "!");
+            p.ProfileModsFilterIsRegex = true;
+            p.ProfileModsFilter        = "(a+)+$";
+
+            Assert.That(Names(p), Is.Empty);
+            Assert.That(p.ProfileModsFilterIsInvalid, Is.True);
+        }
     }
 }

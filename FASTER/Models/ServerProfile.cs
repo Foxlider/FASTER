@@ -30,6 +30,9 @@ namespace FASTER.Models
             Properties.Settings.Default.Profiles = currentProfiles;
             Properties.Settings.Default.Save();
             MainWindow.Instance.LoadServerProfiles();
+
+            if (string.IsNullOrWhiteSpace(Properties.Settings.Default.serverPath))
+                MainWindow.Instance.DisplayMessage("The Arma Install Directory is not set. Set it on the Updater page, then pick the server file in the new profile.");
         }
 
         internal static void AddServerProfile(ServerProfile profile)
@@ -389,14 +392,15 @@ namespace FASTER.Models
 
                 try
                 {
-                    var filteredProfileMods = _profileMods.Where(m => Regex.IsMatch(m.Name, pattern, options)).ToList();
+                    var regex = new Regex(pattern, options, TimeSpan.FromMilliseconds(250));
+                    var filteredProfileMods = _profileMods.Where(m => regex.IsMatch(m.Name)).ToList();
                     if (ProfileModsFilterIsInvalid)
                     {
                         ProfileModsFilterIsInvalid = false;
                     }
                     return filteredProfileMods;
                 }
-                catch (ArgumentException)
+                catch (Exception ex) when (ex is ArgumentException or RegexMatchTimeoutException)
                 {
                     if (!ProfileModsFilterIsInvalid)
                     {
@@ -513,7 +517,9 @@ namespace FASTER.Models
             ArmaProfile.ArmaProfileContent = ArmaProfile.ProcessFile();
             BasicCfg.BasicContent = BasicCfg.ProcessFile();
 
-            if (createFolder)
+            // With no Arma directory set, Path.Combine builds a relative path and the folder
+            // would be created in whatever directory FASTER was started from.
+            if (createFolder && !string.IsNullOrWhiteSpace(Properties.Settings.Default.serverPath))
             { Directory.CreateDirectory(Path.Combine(Properties.Settings.Default.serverPath, "Servers", Id)); }
         }
 
