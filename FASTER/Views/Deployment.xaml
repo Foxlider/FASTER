@@ -75,7 +75,7 @@
 
                 <DataGridTemplateColumn Header="Deploy" CanUserSort="False" CanUserResize="False">
                     <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate DataType="models:ProfileMod">
+                        <DataTemplate DataType="models:DeploymentMod">
                             <StackPanel Orientation="Horizontal">
                                 <CheckBox IsChecked="{Binding Marked, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="False" HorizontalAlignment="Center"/>
                                 <Button Height="25" Width="25" Padding="0" Click="DeployMod" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" ToolTip="Deploy Mod" HorizontalAlignment="Center">

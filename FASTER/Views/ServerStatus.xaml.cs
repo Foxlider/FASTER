@@ -135,20 +135,6 @@ namespace FASTER.Views
         }
         #endregion
 
-        #region Console Viewer
-        private void ReadOutput_Click(object sender, RoutedEventArgs e)
-        {
-            if (!(((FrameworkElement) e.Source).DataContext is ProcessSpy view)) return;
-            var s = view.GetOutput();
-            IConsoleViewer.Title = $"Process {view.ProcessId}";
-            IConsoleViewer.IsOpen = true;
-            IConsoleViewerContent.Text = s ?? ">_ ";
-        }
-
-        private void IConsoleViewer_Closing(object sender, CancelEventArgs e)
-        { IConsoleViewerContent.Text = ""; }
-        #endregion
-
         private void DgProcess_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e)
         { dgProcess.UnselectAll(); }
 
@@ -268,8 +254,6 @@ namespace FASTER.Views
         private volatile bool              _isReading;
         private volatile int               _generation;
 
-        private string Output;
-
         public ProcessSpy(Process p)
         {
             //Process Data
@@ -278,7 +262,6 @@ namespace FASTER.Views
             ProcessCmd  = p.ProcessName;
             proc        = p;
             proc.EnableRaisingEvents = true;
-            proc.OutputDataReceived += DataToString;
 
             var r = new Random();
             var color = ThemeManager.Current.Themes[r.Next(0, ThemeManager.Current.Themes.Count)].PrimaryAccentColor;
@@ -306,9 +289,6 @@ namespace FASTER.Views
             SetAxisLimits(DateTime.Now);
             IsReading = false;
         }
-
-        private void DataToString(object sender, DataReceivedEventArgs e)
-        { Output += e.Data; }
 
         public double AxisMax
         {
@@ -390,9 +370,6 @@ namespace FASTER.Views
                 }
             }
         }
-
-        public string GetOutput()
-        { return Output; }
 
         private void SetAxisLimits(DateTime now)
         {

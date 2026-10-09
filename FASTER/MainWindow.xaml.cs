@@ -126,7 +126,7 @@ namespace FASTER
             FontFamily = Fonts.SystemFontFamilies.FirstOrDefault(f => f.Source == Properties.Settings.Default.font);
 
             _instance = this;
-            Version = GetVersion();
+            Version = Functions.GetVersion();
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
             NavigateToConsole();
         }
@@ -654,7 +654,7 @@ namespace FASTER
                 await Task.Run(() => properties.armaMods.AddSteamMod(newMod));
                 progress += 1;
                 controller.SetMessage($"Converting Local Mods... {progress} / {controller.Maximum}");
-                controller.SetProgress(progress * 100.0 / controller.Maximum );
+                controller.SetProgress(progress);
             }
 
             await controller.CloseAsync();
@@ -713,8 +713,5 @@ namespace FASTER
                 ? dlg.FileName
                 : null;
         }
-        
-        internal string GetVersion()
-        { return Functions.GetVersion(); }
     }
 }

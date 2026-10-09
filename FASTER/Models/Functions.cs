@@ -95,40 +95,41 @@ namespace FASTER.Models
 
         internal static string GetVersion()
         {
-            var assembly = Assembly.GetExecutingAssembly().GetName().Version;
-            
-            if (assembly == null) 
-                return "UNKNOWN";
-            
-            string rev = $"{(char)(assembly.Build + 96)}";
-            
-            if (assembly.Build == 0) 
-                rev = "ALPHA";
-            if (assembly.Revision != 0)
-            {
-                string releaseType = (assembly.Revision / 100) switch
-                                     {
-                                         1 => "H",  // HOTFIX
-                                         2 => "RC", // RELEASE CANDIDATE
-                                         5 => "D",  // DEV
-                                         _ => ""    // EMPTY RELEASE TYPE
-                                     };
-                if(releaseType != "")
-                     rev += $" {releaseType}{int.Parse(assembly.Revision.ToString()[1..])}";
-            }
 #if DEBUG
-            rev += "-DEV";
+            const bool isDev = true;
+#else
+            const bool isDev = false;
 #endif
-            string version = $"{assembly.Major}."
-                             + $"{assembly.Minor}"
-                             + $"{rev}";
-            return version;
+            return FormatVersion(Assembly.GetExecutingAssembly().GetName().Version, isDev);
         }
-        
-        internal static string GetRawVersion()
+
+        // Turns 1.9.8.101 into "1.9h H1".
+        // Build becomes a letter (1 = a, 8 = h) and 0 means ALPHA.
+        // The hundreds of Revision pick the release type and the last two digits are its number.
+        public static string FormatVersion(Version? version, bool isDev = false)
         {
-            var assembly = Assembly.GetExecutingAssembly().GetName().Version;
-            return assembly.ToString();
+            if (version == null)
+                return "UNKNOWN";
+
+            var rev = version.Build == 0 ? "ALPHA" : ((char)(version.Build + 96)).ToString();
+
+            var releaseType = (version.Revision / 100) switch
+                              {
+                                  1 => "H",  // HOTFIX
+                                  2 => "RC", // RELEASE CANDIDATE
+                                  5 => "D",  // DEV
+                                  _ => ""    // EMPTY RELEASE TYPE
+                              };
+            if (releaseType != "")
+                rev += $" {releaseType}{version.Revision % 100}";
+
+            if (isDev)
+                rev += "-DEV";
+
+            return $"{version.Major}.{version.Minor}{rev}";
         }
+
+        internal static string GetRawVersion()
+        { return Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "UNKNOWN"; }
     }
 }

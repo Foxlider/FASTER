@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Reflection;
 using System.Windows;
 
 namespace FASTER.Views
@@ -96,13 +95,6 @@ namespace FASTER.Views
 
             try
             {
-                string rev = $"{(char)(Assembly.GetExecutingAssembly().GetName().Version.Build + 96)}";
-#if DEBUG
-                rev += "-DEV";
-#endif
-                MainWindow.Instance.Version = $"{Assembly.GetExecutingAssembly().GetName().Version.Major}."
-                               + $"{Assembly.GetExecutingAssembly().GetName().Version.Minor}"
-                               + $"{rev}";
                 Analytics.TrackEvent("Setup - Launching", new Dictionary<string, string> {
                     { "Name", Properties.Settings.Default.steamUserName },
                     { "Version", MainWindow.Instance.Version },

@@ -31,7 +31,7 @@ namespace FASTER.ViewModel
         public ObservableCollection<string> VerifySignatures    { get; } = new ObservableCollection<string>(ServerCfgArrays.VerifySignaturesStrings);
         public ObservableCollection<string> TimestampFormats    { get; } = new ObservableCollection<string>(ServerCfgArrays.TimeStampStrings);
         public ObservableCollection<string> EnabledStrings      { get; } = new ObservableCollection<string>(ProfileCfgArrays.EnabledStrings);
-        public ObservableCollection<string> MissionDifficulties { get; } = new ObservableCollection<string> { "Recruit", "Regular", "Veteran", "Custom" };
+        public ObservableCollection<string> MissionDifficulties { get; } = new ObservableCollection<string>(ProfileCfgArrays.ForcedDifficultyStrings);
         public ObservableCollection<string> PerfPresets         { get; } = new ObservableCollection<string>(BasicCfgArrays.PerfPresets);
         public ObservableCollection<double> TerrainGrids        { get; } = new ObservableCollection<double>(BasicCfgArrays.TerrainGrids);
         public ObservableCollection<string> Languages           { get; } = new ObservableCollection<string>(BasicCfgArrays.Languages);
@@ -511,7 +511,7 @@ namespace FASTER.ViewModel
 
         public ObservableCollection<string> LimitedDistanceStrings   { get; } = new ObservableCollection<string>(ProfileCfgArrays.LimitedDistanceStrings);
         public ObservableCollection<string> AiPresetStrings          { get; } = new ObservableCollection<string>(ProfileCfgArrays.AiPresetStrings);
-        public ObservableCollection<string> ForcedDifficultyString   { get; } = new ObservableCollection<string> { "Recruit", "Regular", "Veteran", "Custom" };
+        public ObservableCollection<string> ForcedDifficultyString   { get; } = new ObservableCollection<string>(ProfileCfgArrays.ForcedDifficultyStrings);
         public ObservableCollection<string> ThirdPersonStrings       { get; } = new ObservableCollection<string>(ProfileCfgArrays.ThirdPersonStrings);
         public ObservableCollection<string> TacticalPingStrings      { get; } = new ObservableCollection<string>(ProfileCfgArrays.TacticalPingStrings);
 
