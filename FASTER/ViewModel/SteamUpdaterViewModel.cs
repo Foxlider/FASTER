@@ -325,15 +325,8 @@ namespace FASTER.ViewModel
 
                     await Download(downloadHandler, path);
                 }
-                catch (ArgumentException ex)
-                {
-                    if(ex.Message.Contains("'tasks'"))
-                        Parameters.Output += "\nSkipped...";
-                    else
-                    {
-                        throw;
-                    }
-                }
+                catch (ArgumentException ex) when (ex.Message.Contains("'tasks'"))
+                { Parameters.Output += "\nSkipped..."; }
                 catch (OperationCanceledException)
                 {
                     return UpdateState.Cancelled;
@@ -434,36 +427,36 @@ namespace FASTER.ViewModel
             var  ml = mods.Where(m => !m.IsLocal).ToList();
             uint finished = 0;
             IsDlOverride = true;
-            Logger.Log($"RunModsUpdater: {ml.Count} non-local mods to update");
-
-            foreach (ArmaMod mod in ml)
-            {
-                Logger.Log($"RunModsUpdater: waiting semaphore for mod {mod.WorkshopId} ({mod.Name})");
-                await maxThread.WaitAsync();
-
-                _ = Task.Factory.StartNew(() => DownloadModAsync(mod), TaskCreationOptions.LongRunning)
-                    .Unwrap()
-                    .ContinueWith((t) =>
-                    {
-                        if (t.IsFaulted)
-                            Logger.Log($"  ContinueWith: task for {mod.WorkshopId} faulted: {t.Exception}");
-                        finished += 1;
-                        Parameters.Output += $"\n   Thread {mod.WorkshopId} complete  ({finished} / {ml.Count})";
-                        Parameters.Progress = finished * 100.0 / ml.Count;
-                        Logger.Log($"  ContinueWith: mod {mod.WorkshopId} done ({finished}/{ml.Count}), releasing semaphore.");
-                        maxThread.Release();
-                    });
-            }
-
-            Logger.Log("RunModsUpdater: all tasks queued, waiting for last semaphore...");
-            Parameters.Output += "\nAlmost there...";
             try
             {
-               await maxThread.WaitAsync();
+                Logger.Log($"RunModsUpdater: {ml.Count} non-local mods to update");
+
+                foreach (ArmaMod mod in ml)
+                {
+                    Logger.Log($"RunModsUpdater: waiting semaphore for mod {mod.WorkshopId} ({mod.Name})");
+                    await maxThread.WaitAsync();
+
+                    _ = Task.Factory.StartNew(() => DownloadModAsync(mod), TaskCreationOptions.LongRunning)
+                        .Unwrap()
+                        .ContinueWith((t) =>
+                        {
+                            if (t.IsFaulted)
+                                Logger.Log($"  ContinueWith: task for {mod.WorkshopId} faulted: {t.Exception}");
+                            finished += 1;
+                            Parameters.Output += $"\n   Thread {mod.WorkshopId} complete  ({finished} / {ml.Count})";
+                            Parameters.Progress = finished * 100.0 / ml.Count;
+                            Logger.Log($"  ContinueWith: mod {mod.WorkshopId} done ({finished}/{ml.Count}), releasing semaphore.");
+                            maxThread.Release();
+                        });
+                }
+
+                Logger.Log("RunModsUpdater: all tasks queued, waiting for last semaphore...");
+                Parameters.Output += "\nAlmost there...";
+                await maxThread.WaitAsync();
             }
             finally
             {
-               IsDlOverride = false;
+                IsDlOverride = false;
             }
 
             Logger.Log("RunModsUpdater: all done.");
@@ -535,6 +528,10 @@ namespace FASTER.ViewModel
         private async Task DownloadModContentAsync(ArmaMod mod)
         {
             ManifestId manifestId = default;
+
+            // Ask Steam for the current update time first. Without this, the check below
+            // compares against whatever was saved the last time Check For Updates was pressed.
+            await Task.Run(() => mod.UpdateInfos(false));
 
             if (mod.LocalLastUpdated > mod.SteamLastUpdated && mod.Size > 0)
             {

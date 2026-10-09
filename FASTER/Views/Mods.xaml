@@ -6,7 +6,6 @@
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              xmlns:viewModel="clr-namespace:FASTER.ViewModel"
              xmlns:models="clr-namespace:FASTER.Models"
-             xmlns:fa="http://schemas.fontawesome.io/icons/"
              xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
              mah:DialogParticipation.Register="{Binding}"
              mc:Ignorable="d" 
@@ -48,7 +47,7 @@
             <Button ToolTip="Update All"
                     Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Padding="7,5"
                     Content="{iconPacks:Material Kind=Update}" Click="UpdateAll_Click" RenderTransformOrigin="0.258,42.716" />
-            <Button ToolTip="Delete All"
+            <Button ToolTip="Delete All Steam Mods (local mods are kept)"
                     Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Padding="7,5"
                     Content="{iconPacks:Modern Kind=Delete}" Click="DeleteAll_Click" RenderTransformOrigin="0.258,42.716" />
             <Button ToolTip="Purge &amp; Reinstall All (deletes mod folders and marks all Steam mods for re-download)"
@@ -65,8 +64,7 @@
             <ProgressBar Height="Auto" Width="Auto" Margin="5,10,10,5" />
         </Grid>
         <Label Grid.Row="0" Grid.Column="1" Content="{Binding ModsCollection.ArmaMods.Count}"
-               HorizontalAlignment="Center" VerticalAlignment="Center"
-               Foreground="{DynamicResource MaterialDesignBackground}" Visibility="Visible" />
+               HorizontalAlignment="Center" VerticalAlignment="Center" />
         <!--<DataGrid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="5" CanUserReorderColumns="False" CanUserResizeRows="False" GridLinesVisibility="All" CanUserSortColumns="True" CanUserAddRows="False" AutoGenerateColumns="False"
                   ItemsSource="{Binding Path=ModsCollection.ArmaMods, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">-->
         <DataGrid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="10,5,10,10"

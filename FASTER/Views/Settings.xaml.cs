@@ -1,7 +1,5 @@
 ﻿using AutoUpdaterDotNET;
 
-using BytexDigital.Steam.ContentDelivery;
-
 using ControlzEx.Theming;
 
 using FASTER.Models;
@@ -226,8 +224,6 @@ namespace FASTER.Views
 
             Properties.Settings.Default.CliWorkers = Convert.ToUInt16(e.NewValue);
             NumericUpDown.Value = e.NewValue;
-            if (MainWindow.Instance.SteamUpdaterViewModel.SteamContentClient != null)
-                MainWindow.Instance.SteamUpdaterViewModel.SteamContentClient = new SteamContentClient(MainWindow.Instance.SteamUpdaterViewModel.SteamClient, Properties.Settings.Default.CliWorkers);
         }
     }
 }

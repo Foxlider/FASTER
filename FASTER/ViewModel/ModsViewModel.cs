@@ -119,12 +119,21 @@ namespace FASTER.ViewModel
                     continue;
                 }
 
-                await Task.Factory.StartNew(() => {
-                    Directory.CreateSymbolicLink(newPath, oldPath);
-                    var progressDone = oldPaths.IndexOf(oldPath);
-                    progress.SetMessage($"Copying mod from {oldPath}\n{progressDone} / {progress.Maximum}");
-                    progress.SetProgress(progressDone);
-                });
+                try
+                {
+                    await Task.Factory.StartNew(() => {
+                        Directory.CreateSymbolicLink(newPath, oldPath);
+                        var progressDone = oldPaths.IndexOf(oldPath);
+                        progress.SetMessage($"Copying mod from {oldPath}\n{progressDone} / {progress.Maximum}");
+                        progress.SetProgress(progressDone);
+                    });
+                }
+                catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+                {
+                    Logger.Log($"AddLocalModAsync: could not link {oldPath} -> {newPath}: {ex.Message}");
+                    DisplayMessage($"Could not add \"{Path.GetFileName(oldPath)}\": {ex.Message}");
+                    continue;
+                }
 
                 var newMod = new ArmaMod
                 {
@@ -170,7 +179,7 @@ namespace FASTER.ViewModel
 
         internal async Task DeleteAllMods()
         {
-            if (!await ConfirmTypedYesAsync("Are you sure you want to delete all mods?", "Write \"yes\" and press OK to remove every mod from this list and delete its folder in the Mod Staging Directory. For local mods only the link is removed. Your original folders are not touched."))
+            if (!await ConfirmTypedYesAsync("Are you sure you want to delete all Steam mods?", "Write \"yes\" and press OK to remove every Steam mod from this list and delete its folder in the Mod Staging Directory. Local mods are kept. Your original folders are not touched."))
                 return;
 
             Analytics.TrackEvent("Mods - Clicked DeleteAllMods", new Dictionary<string, string>
