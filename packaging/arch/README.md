@@ -8,6 +8,12 @@ Do not run `makepkg` as root.
 
 ## Prebuilt package: faster-arma-bin
 
+For a release installation, download `faster-arma-bin.tar.gz` from the [fork's releases](https://github.com/milutinke/FASTER/releases).
+Extract the archive and run `makepkg -si` inside its `faster-arma-bin/` directory.
+That recipe downloads the release's AppImage with the matching checksum.
+
+The following procedure uses the local test recipe from this repository.
+
 1. Install the build tools:
 
    ```sh

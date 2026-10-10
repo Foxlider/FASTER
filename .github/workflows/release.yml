@@ -19,6 +19,7 @@ permissions:
 env:
   DOTNET_VERSION: '10.0.x'
   IS_RELEASE: ${{ github.ref_type == 'tag' }}
+  IS_PRERELEASE: ${{ github.ref_type == 'tag' && contains(github.ref_name, '-') }}
   ZIP_NAME: ${{ github.ref_type == 'tag' && 'Release_' || 'Release_Nightly_' }}
   ZIP_PATH: ${{ github.ref_type == 'tag' && 'FASTER_' || 'FASTER_Nightly_' }}
 
@@ -220,7 +221,7 @@ jobs:
           ${{ steps.get-changes.outputs.changes }}
           ---
         draft: false
-        prerelease: false
+        prerelease: ${{ env.IS_PRERELEASE == 'true' }}
         files: |
           ./artifacts/${{ env.ZIP_NAME}}x64.zip
           ./artifacts/avalonia/*
@@ -256,7 +257,7 @@ jobs:
   # PUBLISH TO WINGET (tagged releases only)
   winget:
     needs: release
-    if: github.ref_type == 'tag'
+    if: github.repository == 'Foxlider/FASTER' && github.ref_type == 'tag' && !contains(github.ref_name, '-')
     runs-on: windows-latest
     steps:
       # Requires forked winget-pkgs: https://github.com/microsoft/winget-pkgs to the same account as this project

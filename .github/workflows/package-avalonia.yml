@@ -58,7 +58,7 @@ jobs:
           set -euo pipefail
           version=$(dotnet msbuild FASTER.Core/FASTER.Core.csproj -getProperty:Version | tr -d '\r')
           version=$(cut -d. -f1-3 <<< "$version")
-          if [[ "$REF_TYPE" == tag && "$RELEASE_TAG" =~ ^v?([0-9]+\.[0-9]+\.[0-9]+)$ ]]; then
+          if [[ "$REF_TYPE" == tag && "$RELEASE_TAG" =~ ^v?([0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z]+([.-][0-9A-Za-z]+)*)?)$ ]]; then
             version="${BASH_REMATCH[1]}"
           elif [[ "$REF_TYPE" != tag ]]; then
             version+="-nightly.$RUN_NUMBER"
@@ -78,6 +78,12 @@ jobs:
         if: runner.os == 'Linux'
         working-directory: packages
         run: sha256sum FASTER.AppImage > FASTER.AppImage.sha256
+      - name: Create matching Arch binary recipe
+        if: runner.os == 'Linux' && github.ref_type == 'tag'
+        env:
+          PACKAGE_REPOSITORY: ${{ github.repository }}
+          PACKAGE_TAG: ${{ github.ref_name }}
+        run: bash packaging/linux/package-arch-recipe.sh packages/FASTER.AppImage packages/faster-arma-bin.tar.gz
       # Act does not implement the artifact v7 API; bind-mounted packages remain available locally.
       - if: ${{ !env.ACT }}
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a

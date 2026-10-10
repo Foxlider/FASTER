@@ -1,5 +1,8 @@
 # Fox's Arma Server Tool Extended Rewrite (FASTER)
 
+> [!WARNING]
+> The Linux port is a work in progress and may contain bugs. Test it with your server configuration before you rely on it.
+
 #### Badges 
 ***GitHub***  
 [![GitHub issues](https://img.shields.io/github/issues/Foxlider/FASTER.svg?logo=github&style=flat-square)](https://github.com/Foxlider/FASTER/issues)
@@ -21,7 +24,7 @@
 
 #### **INTRO**
 
-FASTER is an extensive rewrite of FAST2 and FAST. There was no update for a long time and it was written in VB. I translated the whole project to C# using .NET 8.0.  
+FASTER is a C# rewrite of FAST2 and FAST. This branch uses .NET 10 and adds an Avalonia frontend for Windows and Linux.
 Thanks go out to all the guys who helped the developpment and those who will test it. Also, to BI for giving us an awesome game to play with and break.
 
 
@@ -29,6 +32,101 @@ Thanks go out to all the guys who helped the developpment and those who will tes
 
 - Steam account with valid copy of Arma 3.
 - Basic understanding of Arma 3 dedicated servers.
+
+
+## Linux installation
+
+Linux builds use the Avalonia frontend. The AppImage includes .NET 10, so you do not need to install a .NET runtime.
+The current AppImage targets x86-64 desktops with glibc 2.35 or newer.
+
+### AppImage
+
+1. Open the [Linux preview releases in this fork](https://github.com/milutinke/FASTER/releases).
+2. Download `FASTER.AppImage` and `FASTER.AppImage.sha256` from the same release's **Assets** section.
+3. Open the download directory and run:
+
+   ```sh
+   sha256sum -c FASTER.AppImage.sha256
+   chmod +x FASTER.AppImage
+   ./FASTER.AppImage
+   ```
+
+If your system does not have FUSE, use extraction mode:
+
+```sh
+APPIMAGE_EXTRACT_AND_RUN=1 ./FASTER.AppImage
+```
+
+Run FASTER as your normal user. Settings stay in your user's XDG configuration directory when you move or replace the AppImage.
+See the [AppImage guide](packaging/linux/README.md) for build and test instructions.
+
+### Arch Linux
+
+The packages are not in the AUR yet. Both provide `faster-arma`, so install only one at a time.
+
+**Prebuilt package: `faster-arma-bin`**
+
+Download `faster-arma-bin.tar.gz` from the same [preview release](https://github.com/milutinke/FASTER/releases).
+The archive contains a PKGBUILD that downloads that release's AppImage and checks its SHA-256 checksum.
+
+```sh
+sudo pacman -S --needed base-devel squashfs-tools
+tar -xzf faster-arma-bin.tar.gz
+cd faster-arma-bin
+makepkg -si
+faster-arma
+```
+
+This package installs the extracted application under `/opt/faster-arma`. It does not need FUSE or a system .NET runtime.
+Use pacman to update or remove it.
+
+**Source package: `faster-arma-git`**
+
+This package builds the current port branch. It requires the .NET 10 SDK during the build.
+
+```sh
+sudo pacman -S --needed base-devel git dotnet-sdk
+git clone --recurse-submodules --branch feat/avalonia-spike https://github.com/milutinke/FASTER.git
+cd FASTER/packaging/arch/faster-arma-git
+makepkg -si
+faster-arma
+```
+
+See the [Arch guide](packaging/arch/README.md) for package checks and clean-chroot builds.
+
+### NixOS
+
+Download the AppImage from the [preview release](https://github.com/milutinke/FASTER/releases) and check its checksum as shown above.
+Clone the port branch for the Nix recipes:
+
+```sh
+git clone --branch feat/avalonia-spike https://github.com/milutinke/FASTER.git
+```
+
+Copy the repository's `packaging/` directory beside your `configuration.nix` file.
+Copy the checked `FASTER.AppImage` beside that file too.
+Add this configuration:
+
+```nix
+{ ... }: {
+  imports = [ ./packaging/nix/module.nix ];
+  programs.faster-arma = {
+    enable = true;
+    appimage = ./FASTER.AppImage;
+  };
+}
+```
+
+Apply the configuration:
+
+```sh
+sudo nixos-rebuild switch
+faster-arma
+```
+
+The module installs the manager and enables `nix-ld` for downloaded Arma and Steam executables.
+Set `programs.faster-arma.serverCompatibility = false` if you manage those executables separately.
+Use Nix to update the application. See the [NixOS guide](packaging/nix/README.md) for a standalone build and Docker tests.
 
 
 ##### **_FEATURES_**

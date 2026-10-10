@@ -50,7 +50,7 @@ If you manage those executables separately, set `programs.faster-arma.serverComp
 Live Steam downloads and Arma server operation still need tests with credentials.
 The Docker test covers the application's UI and Nix package.
 
-The recipe uses a local AppImage because no approved release artifact exists.
+The recipe accepts a local AppImage from the [fork's releases](https://github.com/milutinke/FASTER/releases).
 After publication, you can use `pkgs.fetchurl` instead of the local file.
 Use the release's actual URL and checksum. The recipe does not accept placeholder hashes.
 
