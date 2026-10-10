@@ -4,16 +4,17 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:viewModel="clr-namespace:FASTER.ViewModel"
+             xmlns:viewModel="clr-namespace:FASTER.ViewModel;assembly=FASTER.Core"
              xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
-             xmlns:models="clr-namespace:FASTER.Models"
+             xmlns:models="clr-namespace:FASTER.Models;assembly=FASTER.Core"
+             xmlns:ui="clr-namespace:FASTER.Models"
              mc:Ignorable="d"
              mah:DialogParticipation.Register="{Binding}"
              d:DesignHeight="650" d:DesignWidth="800">
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
-        <models:NotBooleanToVisibilityConverter x:Key="NotBooleanToVisibilityConverter"/>
+        <ui:NotBooleanToVisibilityConverter x:Key="NotBooleanToVisibilityConverter"/>
     </UserControl.Resources>
     <UserControl.DataContext>
         <viewModel:SteamUpdaterViewModel />
@@ -175,7 +176,7 @@
                     <Ellipse Width="20" Height="20" ToolTip="Updater Online" Fill="#FF00CC6A" Stroke="#FF10893E" Visibility="{Binding UpdaterOnline, Converter={StaticResource BooleanToVisibilityConverter}}" />
                     <Ellipse Width="20" Height="20" ToolTip="Updater Faulted" Fill="#E81123" Stroke="#D13438" Visibility="{Binding UpdaterFaulted, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                 </Grid>
-                <TextBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" IsReadOnly="True" Text="{Binding Parameters.Output}" models:TextBoxUtilities.AlwaysScrollToEnd="True" TextWrapping="Wrap" Background="{StaticResource MahApps.Brushes.Gray10}" Margin="10,10,10,0" VerticalScrollBarVisibility="Visible">
+                <TextBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" IsReadOnly="True" Text="{Binding Parameters.Output}" ui:TextBoxUtilities.AlwaysScrollToEnd="True" TextWrapping="Wrap" Background="{StaticResource MahApps.Brushes.Gray10}" Margin="10,10,10,0" VerticalScrollBarVisibility="Visible">
                     <TextBox.Effect>
                         <DropShadowEffect BlurRadius="5" RenderingBias="Performance" ShadowDepth="1"/>
                     </TextBox.Effect>

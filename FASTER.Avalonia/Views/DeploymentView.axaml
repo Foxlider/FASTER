@@ -1,0 +1,83 @@
+<UserControl x:CompileBindings="False" xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:dg="using:Avalonia.Controls"
+             xmlns:converters="clr-namespace:FASTER.Avalonia.Converters;assembly=FASTER.Avalonia"
+             xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             x:Class="FASTER.Avalonia.Views.DeploymentView">
+  <UserControl.Resources>
+    <converters:FolderSizeConverter x:Key="SizeConverter" />
+    <converters:BoolNegationConverter x:Key="Not" />
+  </UserControl.Resources>
+  <Grid RowDefinitions="Auto,*">
+    <Grid ColumnDefinitions="*,Auto" Margin="10,10,5,5">
+      <Grid Grid.Column="0" ColumnDefinitions="*,Auto">
+        <TextBox Grid.Column="0" x:Name="InstallDirBox" IsReadOnly="True" Text="{Binding Deployment.InstallPath}"
+                 Watermark="Install Directory" />
+        <Button Grid.Column="1" Classes="accent" Margin="5,0" Padding="8,2" Click="InstallFolder_Click"
+                Height="{Binding #InstallDirBox.Bounds.Height}" VerticalAlignment="Center">
+          <materialIcons:MaterialIcon Kind="Folder" Width="18" Height="18" />
+        </Button>
+      </Grid>
+      <StackPanel Grid.Column="1" HorizontalAlignment="Right" Orientation="Horizontal">
+        <Button Classes="accent" Content="Deploy All" Click="DeployAll_Click" Margin="5,0" />
+        <Button Classes="accent" Content="Clean" Click="ClearAll_Click" Margin="5,0" />
+      </StackPanel>
+    </Grid>
+    <dg:DataGrid Grid.Row="1" Margin="10,5,10,10"
+                 ItemsSource="{Binding Deployment.DeployMods}"
+                 CanUserReorderColumns="False" CanUserSortColumns="True" AutoGenerateColumns="False">
+      <dg:DataGrid.Columns>
+        <dg:DataGridTemplateColumn CanUserResize="False" CanUserSort="True" SortMemberPath="IsLocal">
+          <dg:DataGridTemplateColumn.CellTemplate>
+            <DataTemplate>
+              <Panel Margin="3">
+                <materialIcons:MaterialIcon Kind="Folder" Width="16" Height="16" IsVisible="{Binding IsLocal}" />
+                <materialIcons:MaterialIcon Kind="Steam" Width="16" Height="16" IsVisible="{Binding IsLocal, Converter={StaticResource Not}}" />
+              </Panel>
+            </DataTemplate>
+          </dg:DataGridTemplateColumn.CellTemplate>
+        </dg:DataGridTemplateColumn>
+        <dg:DataGridTextColumn Header="ID" Binding="{Binding WorkshopId}" IsReadOnly="True" />
+        <dg:DataGridTextColumn Header="STATUS" Binding="{Binding Status}" IsReadOnly="True" />
+        <dg:DataGridTemplateColumn Header="DEPLOY" CanUserSort="False" CanUserResize="False">
+          <dg:DataGridTemplateColumn.CellTemplate>
+            <DataTemplate>
+              <StackPanel Orientation="Horizontal">
+                <CheckBox IsChecked="{Binding Marked, Mode=OneWay}" IsEnabled="False" VerticalAlignment="Center" />
+                <Button Classes="accent" Height="25" Width="25" Padding="0" Click="DeployMod" ToolTip.Tip="Deploy Mod">
+                  <Panel Margin="3">
+                    <materialIcons:MaterialIcon Kind="Link" Width="16" Height="16" IsVisible="{Binding Marked}" />
+                    <materialIcons:MaterialIcon Kind="LinkOff" Width="16" Height="16" IsVisible="{Binding Marked, Converter={StaticResource Not}}" />
+                  </Panel>
+                </Button>
+              </StackPanel>
+            </DataTemplate>
+          </dg:DataGridTemplateColumn.CellTemplate>
+        </dg:DataGridTemplateColumn>
+        <dg:DataGridTemplateColumn Header="INFO" CanUserSort="False" CanUserResize="False">
+          <dg:DataGridTemplateColumn.CellTemplate>
+            <DataTemplate>
+              <StackPanel Orientation="Horizontal">
+                <Button Classes="accent" Height="25" Width="25" Margin="1" Padding="0" Click="OpenModPage"
+                        IsVisible="{Binding IsLocal, Converter={StaticResource Not}}">
+                  <materialIcons:MaterialIcon Kind="Web" Width="16" Height="16" />
+                </Button>
+                <Button Classes="accent" Height="25" Width="25" Margin="1" Padding="0" Click="OpenModFolder"
+                        IsVisible="{Binding IsLocal, Converter={StaticResource Not}}">
+                  <materialIcons:MaterialIcon Kind="FolderOpen" Width="16" Height="16" />
+                </Button>
+                <Button Classes="accent" Height="25" Width="52" Margin="1" Padding="0" Click="OpenModFolder"
+                        IsVisible="{Binding IsLocal}">
+                  <materialIcons:MaterialIcon Kind="FolderOpen" Width="16" Height="16" />
+                </Button>
+              </StackPanel>
+            </DataTemplate>
+          </dg:DataGridTemplateColumn.CellTemplate>
+        </dg:DataGridTemplateColumn>
+        <dg:DataGridTextColumn Header="NAME" Binding="{Binding Name}" Width="*" IsReadOnly="True" />
+        <dg:DataGridTextColumn Header="AUTHOR" Binding="{Binding Author}" IsReadOnly="True" />
+        <dg:DataGridTextColumn Header="SIZE" Binding="{Binding Size, Converter={StaticResource SizeConverter}}" IsReadOnly="True" />
+      </dg:DataGrid.Columns>
+    </dg:DataGrid>
+  </Grid>
+</UserControl>

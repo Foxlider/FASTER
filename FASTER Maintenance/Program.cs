@@ -74,7 +74,7 @@ namespace FASTER_Maintenance
                 case ConsoleKey.NumPad5:
                     MigrateTo17();
                     return;
-                default: 
+                default:
                     return;
             }
         }
@@ -87,9 +87,16 @@ namespace FASTER_Maintenance
 
         private static void SetEnvVar()
         {
+            if (!OperatingSystem.IsWindowsVersionAtLeast(6, 1))
+            {
+                Console.WriteLine("Folder selection requires Windows.");
+                _exitCode = 103;
+                return;
+            }
+
             using var fbd = new FolderBrowserDialog
             {
-                SelectedPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), 
+                SelectedPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
                 Description = "Select FASTER's new install folder"
             };
 
@@ -107,8 +114,8 @@ namespace FASTER_Maintenance
             }
 
             try
-            { 
-                Environment.SetEnvironmentVariable("DOTNET_BUNDLE_EXTRACT_BASE_DIR", folder, EnvironmentVariableTarget.Machine); 
+            {
+                Environment.SetEnvironmentVariable("DOTNET_BUNDLE_EXTRACT_BASE_DIR", folder, EnvironmentVariableTarget.Machine);
                 Console.WriteLine($"Set Environsment Variable DOTNET_BUNDLE_EXTRACT_BASE_DIR to {folder} successfully.");
                 _exitCode = 0;
             }
@@ -127,7 +134,7 @@ namespace FASTER_Maintenance
             foreach (var path in versions)
             {
                 var version = path.Replace(sourcePath, "").Replace("\\", "");
-                if(version.StartsWith("1.7"))
+                if (version.StartsWith("1.7"))
                     continue;
                 Console.WriteLine($"{versions.IndexOf(path)} : v{version} ({Directory.GetLastWriteTime(path):dd:MM::yyyy}");
             }
@@ -152,7 +159,7 @@ namespace FASTER_Maintenance
                     if (backupKey != ConsoleKey.N)
                     {
                         BackupSettings();
-                        if(_exitCode == 0)
+                        if (_exitCode == 0)
                             _exitCode = -1;
                         else
                             return;
@@ -162,8 +169,8 @@ namespace FASTER_Maintenance
                     Console.ReadKey();
 
                     Console.WriteLine("Migrating...");
-                    XmlSerializer                  serializer16 = new XmlSerializer(typeof(Models._16Models.Configuration));
-                    XmlSerializer                  serializer17 = new XmlSerializer(typeof(Models._17Models.Configuration));
+                    XmlSerializer serializer16 = new XmlSerializer(typeof(Models._16Models.Configuration));
+                    XmlSerializer serializer17 = new XmlSerializer(typeof(Models._17Models.Configuration));
                     XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
                     ns.Add("", "");
                     Models._16Models.Configuration conf16;
@@ -172,7 +179,7 @@ namespace FASTER_Maintenance
                     using (Stream reader = new FileStream($"{selected}\\user.config", FileMode.Open))
                     {
                         // Call the Deserialize method to restore the object's state.
-                        conf16 = (Models._16Models.Configuration) serializer16.Deserialize(reader);
+                        conf16 = (Models._16Models.Configuration)serializer16.Deserialize(reader);
                     }
                     Console.WriteLine($"\tRead config from '{selected}\\user.config'");
 
@@ -182,7 +189,7 @@ namespace FASTER_Maintenance
                     Console.WriteLine("\tConverted standard values to 1.7");
 
                     Debug.Assert(servers != null, nameof(servers) + " != null");
-                    var node = ((XmlNode[]) servers.Value)[0];
+                    var node = ((XmlNode[])servers.Value)[0];
                     var ser = new XmlSerializer(typeof(ServerCollection));
                     MemoryStream stm = new MemoryStream();
 
@@ -201,7 +208,7 @@ namespace FASTER_Maintenance
                         var newProfile = ConvertProfile(profile);
                         newProfiles.Add(newProfile);
                     }
-                    
+
                     conf17.UserSettings.Settings.Setting.Add(new Setting
                     {
                         Name = "Profiles",
@@ -213,23 +220,23 @@ namespace FASTER_Maintenance
                                 ServerProfile = newProfiles
                             }
                         }
-                    }); 
-                    
+                    });
+
                     Console.WriteLine("\tAdded new profiles to settings");
                     Console.WriteLine("Started serialization process...");
-                   
-                    
+
+
                     using (MemoryStream stream = new MemoryStream())
-                    using (XmlTextWriter tw = new XmlTextWriter( stream, Encoding.UTF8))
+                    using (XmlTextWriter tw = new XmlTextWriter(stream, Encoding.UTF8))
                     {
-                        tw.Formatting  = Formatting.Indented;
+                        tw.Formatting = Formatting.Indented;
                         tw.Indentation = 4;
                         serializer17.Serialize(tw, conf17, ns);
                         tw.BaseStream.Position = 0;
                         Console.WriteLine("Serialization process complete.");
 
                         using StreamReader reader = new StreamReader(stream);
-                        string text   = reader.ReadToEnd();
+                        string text = reader.ReadToEnd();
                         string output = Path.Combine(sourcePath, "1.7.1.0");
                         if (!Directory.Exists(output))
                             Directory.CreateDirectory(output);
@@ -238,7 +245,7 @@ namespace FASTER_Maintenance
                     }
                     _exitCode = 0;
                     break;
-                default :
+                default:
                     Console.WriteLine("Invalid selection.");
                     break;
             }
@@ -246,34 +253,34 @@ namespace FASTER_Maintenance
 
         private static ServerProfile ConvertProfile(Models._16Models.ServerProfile profile)
         {
-            int    i;
-            int    y;
+            int i;
+            int y;
             string label;
             Console.WriteLine($"\t ┌─Converting profile {profile.DisplayName}...");
-            i     = 0;
-            y     = 8;
+            i = 0;
+            y = 8;
             label = "Setting base values";
             var newProfile = new ServerProfile();
             ConvertBaseValues(profile, i, y, label, newProfile);
             Console.Write("\r\t │ Setting base values\n");
 
-            i     = 0;
-            y     = 23;
+            i = 0;
+            y = 23;
             label = "Setting Arma3Profile";
             Console.Write("\t └─Setting Arma3Profile");
             ConvertArmaProfile(profile, newProfile, i, y, label);
             Console.Write("\r\t │ Setting Arma3Profile\n");
 
-            i     = 0;
-            y     = 10;
+            i = 0;
+            y = 10;
             label = "Setting Basic.cfg";
             Console.Write("\t └─Setting Basic.cfg");
             ConvertBasic(profile, newProfile, i, y, label);
             Console.Write("\r\t │ Setting Basic.cfg\n");
 
 
-            i     = 0;
-            y     = 25;
+            i = 0;
+            y = 25;
             label = "Setting Server.cfg";
             Console.Write("\t └─Setting Server.cfg");
             ConvertServer(profile, newProfile, i, y, label);
@@ -490,9 +497,16 @@ namespace FASTER_Maintenance
 
         private static void BackupSettings()
         {
+            if (!OperatingSystem.IsWindowsVersionAtLeast(6, 1))
+            {
+                Console.WriteLine("Folder selection requires Windows.");
+                _exitCode = 103;
+                return;
+            }
+
             using var fbd = new FolderBrowserDialog
             {
-                SelectedPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), 
+                SelectedPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
                 Description = "Select a folder to save the backups"
             };
             if (fbd.ShowDialog() != DialogResult.OK)

@@ -1,0 +1,48 @@
+pkgname=faster-arma-git
+pkgver=1.9.8.r0.g8e51e2e
+pkgrel=1
+pkgdesc='Arma 3 server and Workshop mod manager (development version)'
+arch=('x86_64')
+url='https://github.com/Foxlider/FASTER'
+license=('GPL-3.0-or-later')
+depends=('glibc' 'gcc-libs' 'icu' 'openssl' 'zlib' 'fontconfig' 'freetype2'
+         'libx11' 'libice' 'libsm' 'libxrandr' 'libxi' 'libxcursor' 'libglvnd' 'xdg-utils')
+makedepends=('git' 'dotnet-sdk>=10.0')
+optdepends=('ttf-dejavu: fallback UI font')
+provides=('faster-arma')
+conflicts=('faster-arma' 'faster-arma-bin')
+options=('!strip' '!debug')
+# Use the PR branch until the Avalonia frontend reaches upstream master.
+source=('FASTER::git+https://github.com/milutinke/FASTER.git#branch=feat/avalonia-spike'
+        'BytexDigital.Steam::git+https://github.com/liamcannon/BytexDigital.Steam.git'
+        'faster-arma.desktop' 'faster-arma.png')
+sha256sums=('SKIP' 'SKIP' 'e7daddb150c22da0e0321e81af1f9062e76d62f0a40eadfb7b6726989886fc30' '6b15841b7eaaeec9c4af96545fc2e045ad7a058ed612df13ee2e70d08c0a53a2')
+
+pkgver() {
+    cd "$srcdir/FASTER"
+    printf '1.9.8.r%s.g%s' "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+prepare() {
+    cd "$srcdir/FASTER"
+    git submodule init
+    git config submodule.BytexDigital.Steam.url "$srcdir/BytexDigital.Steam"
+    git -c protocol.file.allow=always submodule update --init
+}
+
+build() {
+    cd "$srcdir/FASTER"
+    export DOTNET_CLI_TELEMETRY_OPTOUT=1 DOTNET_NOLOGO=1
+    export DOTNET_CLI_HOME="$srcdir/dotnet-home" NUGET_PACKAGES="$srcdir/nuget"
+    dotnet publish FASTER.Avalonia/FASTER.Avalonia.csproj -c Release -r linux-x64 \
+        --self-contained true -p:UseSharedCompilation=false -o "$srcdir/publish"
+}
+
+package() {
+    install -dm755 "$pkgdir/usr/lib/faster-arma" "$pkgdir/usr/bin"
+    cp -a "$srcdir/publish/." "$pkgdir/usr/lib/faster-arma/"
+    printf '#!/bin/sh\nexec /usr/lib/faster-arma/FASTER.Avalonia "$@"\n' > "$pkgdir/usr/bin/faster-arma"
+    chmod 755 "$pkgdir/usr/bin/faster-arma"
+    install -Dm644 "$srcdir/faster-arma.desktop" "$pkgdir/usr/share/applications/faster-arma.desktop"
+    install -Dm644 "$srcdir/faster-arma.png" "$pkgdir/usr/share/icons/hicolor/256x256/apps/faster-arma.png"
+}

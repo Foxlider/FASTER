@@ -235,7 +235,25 @@
             <mah:Flyout.Effect>
                 <DropShadowEffect BlurRadius="10" RenderingBias="Performance" ShadowDepth="0"/>
             </mah:Flyout.Effect>
-            <Label Name="IFlyoutMessage" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Content="TEXT"/>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0" Margin="0,0,0,4">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Content="Message" Opacity="0.6" FontSize="11" VerticalAlignment="Center"/>
+                    <Button Grid.Column="1" Click="IFlyoutCollapse_Click" ToolTip="Collapse / expand" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" Padding="6,2">
+                        <iconPacks:PackIconModern x:Name="IFlyoutCollapseIcon" Kind="ChevronDown" Width="14" Height="14"/>
+                    </Button>
+                </Grid>
+                <ScrollViewer Grid.Row="1" x:Name="IFlyoutScroller" MaxHeight="300" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <Label Name="IFlyoutMessage" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Content="TEXT"/>
+                </ScrollViewer>
+            </Grid>
         </mah:Flyout>
     </Grid>
 </mah:MetroWindow>

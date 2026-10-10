@@ -1,0 +1,801 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
+using System.Xml.Serialization;
+
+using FASTER.Services;
+
+namespace FASTER.Models
+{
+    [Serializable]
+    public class ServerProfileCollection : List<ServerProfile>
+    {
+        public bool MoveProfile(string id, int offset)
+        {
+            int from = FindIndex(p => p.Id == id);
+            int to = from + offset;
+            if (from < 0 || to < 0 || to >= Count) return false;
+            var profile = this[from];
+            RemoveAt(from);
+            Insert(to, profile);
+            return true;
+        }
+
+        [XmlElement(Order = 1)]
+        public string CollectionName { get; set; }
+
+        public ServerProfileCollection()
+        { CollectionName = "Main"; }
+
+        public static void AddServerProfile(string profileName)
+        {
+            var currentProfiles = AppSettings.Current.Profiles ?? new ServerProfileCollection();
+            var p = new ServerProfile(profileName);
+            p.ServerCfg.ServerCfgContent = p.ServerCfg.ProcessFile();
+            p.BasicCfg.BasicContent = p.BasicCfg.ProcessFile();
+            p.ArmaProfile.ArmaProfileContent = p.ArmaProfile.ProcessFile();
+            currentProfiles.Add(p);
+            AppSettings.Current.Profiles = currentProfiles;
+            AppSettings.Current.Save();
+            Ui.Current.ReloadServerProfiles();
+        }
+
+        public static void AddServerProfile(ServerProfile profile)
+        {
+            var currentProfiles = AppSettings.Current.Profiles ?? new ServerProfileCollection();
+            profile.GenerateNewId();
+            currentProfiles.Add(profile);
+            AppSettings.Current.Profiles = currentProfiles;
+            AppSettings.Current.Save();
+            Ui.Current.ReloadServerProfiles();
+        }
+    }
+
+    [Serializable]
+    public class ServerProfile : INotifyPropertyChanged
+    {
+        [System.Text.Json.Serialization.JsonExtensionData]
+        [System.Xml.Serialization.XmlIgnore]
+        [Newtonsoft.Json.JsonIgnore]
+        public Dictionary<string, System.Text.Json.JsonElement>? AdditionalSettings { get; set; }
+
+        //PRIVATE VARS DECLARATION
+        private string _id;
+        private string _name = string.Empty;
+        private string _executable = string.Empty;
+        private int _port = 2302;
+        private int _headlessNum;
+        private bool _missionOverride;
+        private bool _contactDlcChecked;
+        private bool _gmDlcChecked;
+        private bool _pfDlcChecked;
+        private bool _cslaDlcChecked;
+        private bool _wsDlcChecked;
+        private bool _speDlcChecked;
+        private bool _rfDlcChecked;
+        private bool _efDlcChecked;
+        private bool _enableHT = true;
+        private bool _enableRanking;
+        private bool _hugePages = false;
+        private string _bePath = "";
+        private string _keysFolder = "";
+        private int _exThreads = 0;
+        private bool _loadMissionToMemory = false;
+        private int _limitFPS = 0;
+        private bool _enableSteamLogs = false;
+
+        private List<ProfileMod> _profileMods = new List<ProfileMod>();
+        private string _profileModsFilter = "";
+        private bool _profileModsFilterIsCaseSensitive = false;
+        private bool _profileModsFilterIsWholeWord = false;
+        private bool _profileModsFilterIsRegex = false;
+        private bool _profileModsFilterIsInvalid = false;
+        private ServerCfg _serverCfg = new();
+        private Arma3Profile _armaProfile = new();
+        private BasicCfg _basicCfg = new();
+
+        //PUBLIC VAR DECLARATIONS
+        public string Id
+        {
+            get => _id;
+            set
+            {
+                _id = value;
+                RaisePropertyChanged("Id");
+            }
+        }
+
+        public string Name
+        {
+            get => _name;
+            set
+            {
+                _name = value;
+                if (Ui.Current.IsUiLoaded())
+                    Ui.Current.SyncProfileMenuName(_id, _name);
+                RaisePropertyChanged("Name");
+            }
+        }
+
+        public string Executable
+        {
+            get => _executable;
+            set
+            {
+                _executable = value;
+                RaisePropertyChanged("Executable");
+                RaisePropertyChanged("ArmaPath");
+            }
+        }
+
+        public string ArmaPath => Path.GetDirectoryName(_executable) ?? string.Empty;
+
+        public int Port
+        {
+            get => _port;
+            set
+            {
+                _port = value;
+                RaisePropertyChanged("Port");
+            }
+        }
+
+        public int HeadlessNumber
+        {
+            get => _headlessNum;
+            set
+            {
+                _headlessNum = value;
+                RaisePropertyChanged("HeadlessNumber");
+            }
+        }
+
+        public bool MissionSelectorOverride
+        {
+            get => _missionOverride;
+            set
+            {
+                _missionOverride = value;
+                RaisePropertyChanged("MissionSelectorOverride");
+            }
+        }
+
+        public bool ContactDLCChecked
+        {
+            get => _contactDlcChecked;
+            set
+            {
+                _contactDlcChecked = value;
+                RaisePropertyChanged("ContactDLCChecked");
+            }
+        }
+
+        public bool GMDLCChecked
+        {
+            get => _gmDlcChecked;
+            set
+            {
+                _gmDlcChecked = value;
+                RaisePropertyChanged("GMDLCChecked");
+            }
+        }
+
+        public bool PFDLCChecked
+        {
+            get => _pfDlcChecked;
+            set
+            {
+                _pfDlcChecked = value;
+                RaisePropertyChanged("PFDLCChecked");
+            }
+        }
+
+        public bool CSLADLCChecked
+        {
+            get => _cslaDlcChecked;
+            set
+            {
+                _cslaDlcChecked = value;
+                RaisePropertyChanged("CSLADLCChecked");
+            }
+        }
+
+        public bool WSDLCChecked
+        {
+            get => _wsDlcChecked;
+            set
+            {
+                _wsDlcChecked = value;
+                RaisePropertyChanged(nameof(WSDLCChecked));
+            }
+        }
+
+        public bool SPEDLCChecked
+        {
+            get => _speDlcChecked;
+            set
+            {
+                _speDlcChecked = value;
+                RaisePropertyChanged(nameof(SPEDLCChecked));
+            }
+        }
+
+        public bool RFDLCChecked
+        {
+            get => _rfDlcChecked;
+            set
+            {
+                _rfDlcChecked = value;
+                RaisePropertyChanged(nameof(RFDLCChecked));
+            }
+        }
+
+        public bool EFDLCChecked
+        {
+            get => _efDlcChecked;
+            set
+            {
+                _efDlcChecked = value;
+                RaisePropertyChanged(nameof(EFDLCChecked));
+            }
+        }
+
+        public bool EnableHyperThreading
+        {
+            get => _enableHT;
+            set
+            {
+                _enableHT = value;
+                RaisePropertyChanged("EnableHyperThreading");
+            }
+        }
+
+        public bool RankingChecked
+        {
+            get => _enableRanking;
+            set
+            {
+                _enableRanking = value;
+                RaisePropertyChanged("RankingChecked");
+            }
+        }
+
+        public bool HugePages
+        {
+            get => _hugePages;
+            set
+            {
+                _hugePages = value;
+                RaisePropertyChanged(nameof(HugePages));
+            }
+        }
+
+        public string BePath
+        {
+            get => _bePath;
+            set
+            {
+                _bePath = value;
+                RaisePropertyChanged(nameof(BePath));
+            }
+        }
+
+        public string KeysFolder
+        {
+            get => _keysFolder;
+            set
+            {
+                _keysFolder = value;
+                RaisePropertyChanged(nameof(KeysFolder));
+            }
+        }
+
+        public int ExThreads
+        {
+            get => _exThreads;
+            set
+            {
+                _exThreads = value;
+                RaisePropertyChanged(nameof(ExThreads));
+            }
+        }
+
+        public bool LoadMissionToMemory
+        {
+            get => _loadMissionToMemory;
+            set
+            {
+                _loadMissionToMemory = value;
+                RaisePropertyChanged(nameof(LoadMissionToMemory));
+            }
+        }
+
+        public int LimitFPS
+        {
+            get => _limitFPS;
+            set
+            {
+                _limitFPS = value;
+                RaisePropertyChanged(nameof(LimitFPS));
+            }
+        }
+
+        public bool EnableSteamLogs
+        {
+            get => _enableSteamLogs;
+            set
+            {
+                _enableSteamLogs = value;
+                RaisePropertyChanged(nameof(EnableSteamLogs));
+            }
+        }
+
+        //Current logic to count the checked mods
+        public int ServerModsChecked => ProfileMods.Count(m => m.ServerSideChecked);
+        public int ClientModsChecked => ProfileMods.Count(m => m.ClientSideChecked);
+        public int HeadlessModsChecked => ProfileMods.Count(m => m.HeadlessChecked);
+        public int OptModsChecked => ProfileMods.Count(m => m.OptChecked);
+
+        public string CommandLine => GetCommandLine();
+
+        public List<ProfileMod> ProfileMods
+        {
+            get => _profileMods;
+            set
+            {
+                //Removing previous triggers
+                _profileMods.ForEach(m => m.PropertyChanged -= Item_PropertyChanged);
+
+                _profileMods = value;
+
+                //Adding the trigger to count checked mods
+                _profileMods.ForEach(m => m.PropertyChanged += Item_PropertyChanged);
+
+                RaisePropertyChanged("ProfileMods");
+                RaisePropertyChanged("FilteredProfileMods");
+                _filteredProfileModsStale = true;
+            }
+        }
+
+        private List<ProfileMod> _filteredProfileMods = new();
+        private bool _filteredProfileModsStale = true;
+
+        public List<ProfileMod> FilteredProfileMods
+        {
+            get
+            {
+                // The filtered view is cached and only recomputed when the mod list or one of the filter settings changes. Rebuilding the regex match on every binding read was wasteful and properties should not hand out a fresh copy on each access.
+                if (_filteredProfileModsStale)
+                {
+                    _filteredProfileMods = ComputeFilteredProfileMods();
+                    _filteredProfileModsStale = false;
+                }
+                return _filteredProfileMods;
+            }
+        }
+
+        private List<ProfileMod> ComputeFilteredProfileMods()
+        {
+            if (string.IsNullOrEmpty(ProfileModsFilter))
+            {
+                if (ProfileModsFilterIsInvalid)
+                {
+                    ProfileModsFilterIsInvalid = false;
+                }
+                return new List<ProfileMod>(_profileMods);
+            }
+
+            var pattern = ProfileModsFilter;
+            if (!ProfileModsFilterIsRegex)
+            {
+                pattern = Regex.Replace(pattern, @"[\\\{\}\*\+\?\|\^\$\.\[\]\(\)]", "\\$&");
+            }
+
+            if (ProfileModsFilterIsWholeWord)
+            {
+                if (!Regex.IsMatch(pattern[0].ToString(), @"\B"))
+                {
+                    pattern = $"\\b{pattern}";
+                }
+                if (!Regex.IsMatch(pattern[pattern.Length - 1].ToString(), @"\B"))
+                {
+                    pattern = $"{pattern}\\b";
+                }
+            }
+
+            var options = ProfileModsFilterIsCaseSensitive ? RegexOptions.None : RegexOptions.IgnoreCase;
+
+            try
+            {
+                var filteredProfileMods = _profileMods.Where(m => Regex.IsMatch(m.Name, pattern, options)).ToList();
+                if (ProfileModsFilterIsInvalid)
+                {
+                    ProfileModsFilterIsInvalid = false;
+                }
+                return filteredProfileMods;
+            }
+            catch (ArgumentException)
+            {
+                if (!ProfileModsFilterIsInvalid)
+                {
+                    ProfileModsFilterIsInvalid = true;
+                }
+                return new List<ProfileMod>();
+            }
+        }
+
+        public string ProfileModsFilter
+        {
+            get => _profileModsFilter;
+            set
+            {
+                _profileModsFilter = value;
+                RaisePropertyChanged("ProfileModsFilter");
+                RaisePropertyChanged("FilteredProfileMods");
+                _filteredProfileModsStale = true;
+            }
+        }
+
+        public bool ProfileModsFilterIsCaseSensitive
+        {
+            get => _profileModsFilterIsCaseSensitive;
+            set
+            {
+                _profileModsFilterIsCaseSensitive = value;
+                RaisePropertyChanged("ProfileModsFilterIsCaseSensitive");
+                RaisePropertyChanged("FilteredProfileMods");
+                _filteredProfileModsStale = true;
+            }
+        }
+
+        public bool ProfileModsFilterIsWholeWord
+        {
+            get => _profileModsFilterIsWholeWord;
+            set
+            {
+                _profileModsFilterIsWholeWord = value;
+                RaisePropertyChanged("ProfileModsFilterIsWholeWord");
+                RaisePropertyChanged("FilteredProfileMods");
+                _filteredProfileModsStale = true;
+            }
+        }
+
+        public bool ProfileModsFilterIsRegex
+        {
+            get => _profileModsFilterIsRegex;
+            set
+            {
+                _profileModsFilterIsRegex = value;
+                RaisePropertyChanged("ProfileModsFilterIsRegex");
+                RaisePropertyChanged("FilteredProfileMods");
+                _filteredProfileModsStale = true;
+            }
+        }
+
+        public bool ProfileModsFilterIsInvalid
+        {
+            get => _profileModsFilterIsInvalid;
+            set
+            {
+                _profileModsFilterIsInvalid = value;
+                RaisePropertyChanged("ProfileModsFilterIsInvalid");
+            }
+        }
+
+        public ServerCfg ServerCfg
+        {
+            get => _serverCfg;
+            set
+            {
+                if (_serverCfg != null)
+                    _serverCfg.PropertyChanged -= Class_PropertyChanged;
+                _serverCfg = value;
+                _serverCfg.PropertyChanged += Class_PropertyChanged;
+                RaisePropertyChanged("ServerCfg");
+            }
+        }
+
+        public Arma3Profile ArmaProfile
+        {
+            get => _armaProfile;
+            set
+            {
+                if (_armaProfile != null)
+                    _armaProfile.PropertyChanged -= Class_PropertyChanged;
+                _armaProfile = value;
+                _armaProfile.PropertyChanged += Class_PropertyChanged;
+                RaisePropertyChanged("ArmaProfile");
+            }
+        }
+
+        public BasicCfg BasicCfg
+        {
+            get => _basicCfg;
+            set
+            {
+                if (_basicCfg != null)
+                    _basicCfg.PropertyChanged -= Class_PropertyChanged;
+                _basicCfg = value;
+                _basicCfg.PropertyChanged += Class_PropertyChanged;
+                RaisePropertyChanged("BasicCfg");
+            }
+        }
+
+        //CTORS
+        public ServerProfile(string name, bool createFolder = true)
+        {
+            _id = $"_{Guid.NewGuid():N}";
+            Name = name;
+            Executable = Path.Combine(AppSettings.Current.ServerPath, Platform.Current.ServerBinaryName);
+            ServerCfg = new ServerCfg() { Hostname = name };
+            ArmaProfile = new Arma3Profile();
+            BasicCfg = new BasicCfg();
+            ServerCfg.ServerCfgContent = ServerCfg.ProcessFile();
+            ArmaProfile.ArmaProfileContent = ArmaProfile.ProcessFile();
+            BasicCfg.BasicContent = BasicCfg.ProcessFile();
+
+            if (createFolder && !string.IsNullOrEmpty(AppSettings.Current.ServerPath))
+            { Directory.CreateDirectory(Path.Combine(AppSettings.Current.ServerPath, "Servers", Id)); }
+        }
+
+        [JsonConstructor]
+        public ServerProfile()
+        {
+            _id = $"_{Guid.NewGuid():N}";
+            Name = _id;
+            ServerCfg = new ServerCfg() { Hostname = Name };
+            ArmaProfile = new Arma3Profile();
+            BasicCfg = new BasicCfg();
+            ServerCfg.ServerCfgContent = ServerCfg.ProcessFile();
+            ArmaProfile.ArmaProfileContent = ArmaProfile.ProcessFile();
+            BasicCfg.BasicContent = BasicCfg.ProcessFile();
+        }
+
+        public void GenerateNewId()
+        { _id = $"_{Guid.NewGuid():N}"; }
+
+        public ServerProfile Clone()
+        {
+            string serialized = Newtonsoft.Json.JsonConvert.SerializeObject(this);
+            ServerProfile? p = Newtonsoft.Json.JsonConvert.DeserializeObject<ServerProfile>(serialized);
+
+            if (p != null)
+            {
+                p.AdditionalSettings = AdditionalSettings == null ? null : new(AdditionalSettings);
+                p.ServerCfg.AdditionalSettings = ServerCfg.AdditionalSettings == null ? null : new(ServerCfg.AdditionalSettings);
+                p.BasicCfg.AdditionalSettings = BasicCfg.AdditionalSettings == null ? null : new(BasicCfg.AdditionalSettings);
+                p.GenerateNewId();
+
+                if (p.Name.EndsWith(')') && p.Name.Contains('(') && int.TryParse(p.Name.Substring(p.Name.Length - 2, 1), out _))
+                {
+                    var i = p.Name.IndexOf('(');
+                    var j = p.Name.Length;
+                    var num = p.Name.Substring(i + 1, j - 1 - i - 1);
+                    p.Name = $"{p.Name.Substring(0, i)}({int.Parse(num) + 1})";
+                }
+                else
+                {
+                    p.Name = $"{p.Name} (2)";
+                }
+            }
+            else
+            {
+                p = new ServerProfile();
+                p.GenerateNewId();
+                p.Name = "New Profile";
+            }
+
+            return p;
+        }
+
+        public string GetDlcAndPlayerMods(string playerMods)
+        {
+            StringBuilder mods = new StringBuilder();
+            if (ContactDLCChecked)
+            {
+                _ = mods.Append("contact;");
+            }
+            if (GMDLCChecked)
+            {
+                _ = mods.Append("gm;");
+            }
+            if (PFDLCChecked)
+            {
+                _ = mods.Append("vn;");
+            }
+            if (CSLADLCChecked)
+            {
+                _ = mods.Append("csla;");
+            }
+            if (WSDLCChecked)
+            {
+                _ = mods.Append("ws;");
+            }
+            if (SPEDLCChecked)
+            {
+                _ = mods.Append("spe;");
+            }
+            if (RFDLCChecked)
+            {
+                _ = mods.Append("rf;");
+            }
+            if (!string.IsNullOrWhiteSpace(playerMods))
+            {
+                _ = mods.Append($"{playerMods};");
+            }
+            if (EFDLCChecked)
+            {
+                _ = mods.Append("ef;");
+            }
+            return !string.IsNullOrWhiteSpace(mods.ToString()) ? $" \"-mod={mods}\"" : "";
+        }
+
+        private string GetCommandLine()
+        {
+
+
+            string config = Path.Combine(ArmaPath, "Servers", Id, "server_config.cfg");
+            string basic = Path.Combine(ArmaPath, "Servers", Id, "server_basic.cfg");
+
+            string playerMods = string.Join(";", ProfileMods.Where(m => m.ClientSideChecked).OrderBy(m => m.LoadPriority).Select(m => $"@{Functions.SafeName(m.Name)}"));
+            string serverMods = string.Join(";", ProfileMods.Where(m => m.ServerSideChecked).OrderBy(m => m.LoadPriority).Select(m => $"@{Functions.SafeName(m.Name)}"));
+            List<string> arguments = new List<string>
+            {
+                $"-port={Port}",
+                $" \"-config={config}\"",
+                $" \"-cfg={basic}\"",
+                $" \"-profiles={Path.Combine(ArmaPath, "Servers", Id)}\"",
+                $" -name={Id}",
+                GetDlcAndPlayerMods(playerMods),
+                $"{(!string.IsNullOrWhiteSpace(serverMods) ? $" \"-serverMod={serverMods};\"" : "")}",
+                $"{(EnableHyperThreading ? " -enableHT" : "")}",
+                $"{(ServerCfg.AllowedFilePatching != ServerCfgArrays.AllowFilePatchingStrings[0] ? " -filePatching" : "")}",
+                $"{(ServerCfg.NetLogEnabled ? " -netlog" : "")}",
+                $"{(RankingChecked ? $" \"-ranking={Path.Combine(ArmaPath, "Servers", Id, "ranking.log")}\"" : "")}",
+                $"{(ServerCfg.AutoInit ? " -autoInit" : "")}",
+                $"{(ServerCfg.MaxMemOverride ? $" -maxMem={ServerCfg.MaxMem}" : "")}",
+                $"{(ServerCfg.CpuCountOverride ? $" -cpuCount={ServerCfg.CpuCount}" : "")}",
+                $"{(HugePages ? " -hugePages" : "")}",
+                $"{(!string.IsNullOrWhiteSpace(BePath) ? $" \"-bepath={BePath}\"" : "")}",
+                $"{(!string.IsNullOrWhiteSpace(KeysFolder) ? $" \"-keysFolder={KeysFolder}\"" : "")}",
+                $"{(ExThreads > 0 ? $" -exThreads={ExThreads}" : "")}",
+                $"{(LoadMissionToMemory ? " -loadMissionToMemory" : "")}",
+                $"{(LimitFPS > 0 ? $" -limitFPS={LimitFPS}" : "")}",
+                $"{(EnableSteamLogs ? " -enableSteamLogs" : "")}",
+                $"{(!string.IsNullOrWhiteSpace(ServerCfg.CommandLineParameters) ? $" {ServerCfg.CommandLineParameters}" : "")}"
+            };
+
+            string commandLine = string.Join("", arguments);
+            return commandLine;
+        }
+
+
+        //This is used to trigger PropertyChanged to count each checked mod
+        private void Item_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            RaisePropertyChanged("ServerModsChecked");
+            RaisePropertyChanged("ClientModsChecked");
+            RaisePropertyChanged("HeadlessModsChecked");
+            RaisePropertyChanged("OptModsChecked");
+        }
+
+        private void Class_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        { RaisePropertyChanged("CommandLine"); }
+
+        //INOTIFYPROPERTYCHANGED
+        public event PropertyChangedEventHandler? PropertyChanged;
+        public void RaisePropertyChanged(string property)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
+            if (property != "CommandLine")
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CommandLine)));
+        }
+    }
+
+    [Serializable]
+    public class ProfileMod : INotifyPropertyChanged
+    {
+        private bool serverSideChecked;
+        private bool clientSideChecked;
+        private bool headlessChecked;
+        private bool optChecked;
+        private ushort? loadPriority;
+        private bool isLocal;
+        private uint _id;
+        private string name = string.Empty;
+
+        public bool ServerSideChecked
+        {
+            get => serverSideChecked;
+            set
+            {
+                serverSideChecked = value;
+                RaisePropertyChanged("ServerSideChecked");
+                RaisePropertyChanged("ServerModsChecked");
+            }
+        }
+        public bool ClientSideChecked
+        {
+            get => clientSideChecked;
+            set
+            {
+                clientSideChecked = value;
+                RaisePropertyChanged("ClientSideChecked");
+                RaisePropertyChanged("ClientModsChecked");
+            }
+        }
+        public bool HeadlessChecked
+        {
+            get => headlessChecked;
+            set
+            {
+                headlessChecked = value;
+                RaisePropertyChanged("HeadlessChecked");
+                RaisePropertyChanged("HeadlessModsChecked");
+            }
+        }
+
+        public bool OptChecked
+        {
+            get => optChecked;
+            set
+            {
+                optChecked = value;
+                RaisePropertyChanged("OptChecked");
+                RaisePropertyChanged("OptModsChecked");
+            }
+        }
+
+        public ushort? LoadPriority
+        {
+            get => loadPriority;
+            set
+            {
+                loadPriority = value;
+                RaisePropertyChanged("LoadPriority");
+            }
+        }
+
+        public uint Id
+        {
+            get => _id;
+            set
+            {
+                _id = value;
+                RaisePropertyChanged("Id");
+            }
+        }
+        public string Name
+        {
+            get => name;
+            set
+            {
+                name = value;
+                RaisePropertyChanged("Name");
+            }
+        }
+
+        public bool IsLocal
+        {
+            get => isLocal;
+            set
+            {
+                isLocal = value;
+                RaisePropertyChanged("IsLocal");
+            }
+        }
+
+        public override string ToString()
+        { return $"{_id} {name}"; }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        private void RaisePropertyChanged(string property)
+        { PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property)); }
+    }
+}

@@ -1,0 +1,648 @@
+<UserControl x:CompileBindings="False" xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:dg="using:Avalonia.Controls"
+             xmlns:converters="clr-namespace:FASTER.Avalonia.Converters;assembly=FASTER.Avalonia"
+             xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             x:Class="FASTER.Avalonia.Views.ProfileView">
+  <UserControl.Resources>
+    <converters:BoolNegationConverter x:Key="Not" />
+  </UserControl.Resources>
+  <Grid RowDefinitions="*,Auto">
+    <TabControl Grid.Row="0" Padding="0">
+      <TabItem Header="Profile">
+        <Grid ColumnDefinitions="2*,5*" RowDefinitions="*,Auto">
+          <ScrollViewer Grid.Row="0" Grid.Column="0" Margin="5">
+          <StackPanel Spacing="5">
+      <Border Classes="card">
+              <StackPanel>
+                <TextBlock Text="PROFILE SETTINGS" Classes="card-header" />
+                <StackPanel Margin="8">
+              <StackPanel Spacing="5">
+                <TextBox Text="{Binding Profile.Name}" Watermark="Profile Name" />
+                <Grid ColumnDefinitions="*,Auto">
+                  <TextBox Grid.Column="0" Text="{Binding Profile.Executable}" Watermark="Server File" Margin="0,5" />
+                  <Button Grid.Column="1" Margin="5,5,0,5" Padding="8,2" Click="SelectServerFile"
+                          VerticalAlignment="Stretch" VerticalContentAlignment="Center">
+                    <materialIcons:MaterialIcon Kind="FolderOpen" Width="16" Height="16" />
+                  </Button>
+                </Grid>
+                <NumericUpDown Value="{Binding Profile.Port}" Watermark="Port" ToolTip.Tip="Port for ArmaServer"  />
+              </StackPanel>
+                </StackPanel>
+              </StackPanel>
+            </Border>
+      <Border Classes="card">
+              <StackPanel>
+                <TextBlock Text="DLCS" Classes="card-header" />
+                <StackPanel Margin="8">
+              <StackPanel Spacing="2">
+                <CheckBox IsChecked="{Binding Profile.ContactDLCChecked}" Content="Contact DLC" Margin="10,3" FontSize="12" />
+                <CheckBox IsChecked="{Binding Profile.GMDLCChecked}" Content="GM DLC" Margin="10,3" FontSize="12" />
+                <CheckBox IsChecked="{Binding Profile.PFDLCChecked}" Content="Prairie Fire DLC" Margin="10,3" FontSize="12" />
+                <CheckBox IsChecked="{Binding Profile.CSLADLCChecked}" Content="CSLA DLC" Margin="10,3" FontSize="12" />
+                <CheckBox IsChecked="{Binding Profile.WSDLCChecked}" Content="Western Sahara DLC" Margin="10,3" FontSize="12" />
+                <CheckBox IsChecked="{Binding Profile.SPEDLCChecked}" Content="Spearhead 1944 DLC" Margin="10,3" FontSize="12" />
+                <CheckBox IsChecked="{Binding Profile.RFDLCChecked}" Content="Reaction Forces DLC" Margin="10,3" FontSize="12" />
+                <CheckBox IsChecked="{Binding Profile.EFDLCChecked}" Content="Expeditionary Forces DLC" Margin="10,3" FontSize="12" />
+              </StackPanel>
+                </StackPanel>
+              </StackPanel>
+            </Border>
+          </StackPanel>
+          </ScrollViewer>
+      <Border Grid.Row="0" Grid.Column="1" Margin="5" Classes="card">
+        <Grid RowDefinitions="Auto,*">
+          <TextBlock Text="MODS" Classes="card-header" />
+          <Grid Grid.Row="1" Margin="8" RowDefinitions="Auto,*,Auto,Auto">
+              <StackPanel Orientation="Horizontal" Spacing="5">
+                <Button Classes="accent" Click="LoadFromFile_Click">
+                  <StackPanel Orientation="Horizontal" Spacing="8">
+                    <materialIcons:MaterialIcon Kind="FileDocumentOutline" Width="16" Height="16" />
+                    <TextBlock Text="Load from File" />
+                  </StackPanel>
+                </Button>
+                <Button Classes="accent" Click="CopyModKeys_Click">
+                  <StackPanel Orientation="Horizontal" Spacing="8">
+                    <materialIcons:MaterialIcon Kind="ContentCopy" Width="16" Height="16" />
+                    <TextBlock Text="Copy Mods Keys" />
+                  </StackPanel>
+                </Button>
+                <Button Classes="accent" Click="ClearModKeys_Click">
+                  <StackPanel Orientation="Horizontal" Spacing="8">
+                    <materialIcons:MaterialIcon Kind="Delete" Width="16" Height="16" />
+                    <TextBlock Text="Clear Keys" />
+                  </StackPanel>
+                </Button>
+              </StackPanel>
+              <dg:DataGrid Grid.Row="1" ItemsSource="{Binding Profile.FilteredProfileMods}"
+                           CanUserReorderColumns="False" CanUserSortColumns="True" AutoGenerateColumns="False">
+                <dg:DataGrid.ContextMenu>
+                  <ContextMenu>
+                    <MenuItem Header="Load order">
+                      <MenuItem Header="Clear Load Order" Click="ClearModOrder" />
+                    </MenuItem>
+                    <MenuItem Header="Server Only">
+                      <MenuItem Header="Select All" Click="ModsSelectAllServer" />
+                      <MenuItem Header="Select None" Click="ModsSelectNoneServer" />
+                      <MenuItem Header="Copy From Server + Client" Click="CopyFromClientServer" />
+                      <MenuItem Header="Copy From Headless" Click="CopyFromHeadlessServer" />
+                      <MenuItem Header="Copy From Optional" Click="CopyFromOptServer" />
+                    </MenuItem>
+                    <MenuItem Header="Server + Client">
+                      <MenuItem Header="Select All" Click="ModsSelectAllClient" />
+                      <MenuItem Header="Select None" Click="ModsSelectNoneClient" />
+                      <MenuItem Header="Copy From Server Only" Click="CopyFromServerClient" />
+                      <MenuItem Header="Copy From Headless" Click="CopyFromHeadlessClient" />
+                      <MenuItem Header="Copy From Optional" Click="CopyFromOptClient" />
+                    </MenuItem>
+                    <MenuItem Header="Headless">
+                      <MenuItem Header="Select All" Click="ModsSelectAllHc" />
+                      <MenuItem Header="Select None" Click="ModsSelectNoneHc" />
+                      <MenuItem Header="Copy From Server Only" Click="CopyFromServerHc" />
+                      <MenuItem Header="Copy From Server + Client" Click="CopyFromClientHc" />
+                      <MenuItem Header="Copy From Optional" Click="CopyFromOptHc" />
+                    </MenuItem>
+                    <MenuItem Header="Optional">
+                      <MenuItem Header="Select All" Click="ModsSelectAllOpt" />
+                      <MenuItem Header="Select None" Click="ModsSelectNoneOpt" />
+                      <MenuItem Header="Copy From Server Only" Click="CopyFromServerOpt" />
+                      <MenuItem Header="Copy From Server + Client" Click="CopyFromClientOpt" />
+                      <MenuItem Header="Copy From Headless" Click="CopyFromHeadlessOpt" />
+                    </MenuItem>
+                  </ContextMenu>
+                </dg:DataGrid.ContextMenu>
+                <dg:DataGrid.Columns>
+                  <dg:DataGridTextColumn Header="ID" Width="50" Binding="{Binding Id}" IsReadOnly="True" />
+                  <dg:DataGridTemplateColumn Header="LOAD" Width="50" SortMemberPath="LoadPriority">
+                    <dg:DataGridTemplateColumn.CellTemplate>
+                      <DataTemplate>
+                        <NumericUpDown Value="{Binding LoadPriority}" Minimum="1" Maximum="65535"
+                                       ShowButtonSpinner="False" Width="44" MinWidth="0" Height="26" MinHeight="0"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center" />
+                      </DataTemplate>
+                    </dg:DataGridTemplateColumn.CellTemplate>
+                  </dg:DataGridTemplateColumn>
+                  <dg:DataGridTemplateColumn Header="SERVER ONLY" Width="94" CanUserSort="False">
+                    <dg:DataGridTemplateColumn.CellTemplate>
+                      <DataTemplate>
+                        <CheckBox IsChecked="{Binding ServerSideChecked}" HorizontalAlignment="Center" />
+                      </DataTemplate>
+                    </dg:DataGridTemplateColumn.CellTemplate>
+                  </dg:DataGridTemplateColumn>
+                  <dg:DataGridTemplateColumn Header="SERVER + CLIENT" Width="120" CanUserSort="False">
+                    <dg:DataGridTemplateColumn.CellTemplate>
+                      <DataTemplate>
+                        <CheckBox IsChecked="{Binding ClientSideChecked}" HorizontalAlignment="Center" />
+                      </DataTemplate>
+                    </dg:DataGridTemplateColumn.CellTemplate>
+                  </dg:DataGridTemplateColumn>
+                  <dg:DataGridTemplateColumn Header="HC" Width="40" CanUserSort="False">
+                    <dg:DataGridTemplateColumn.CellTemplate>
+                      <DataTemplate>
+                        <CheckBox IsChecked="{Binding HeadlessChecked}" HorizontalAlignment="Center" />
+                      </DataTemplate>
+                    </dg:DataGridTemplateColumn.CellTemplate>
+                  </dg:DataGridTemplateColumn>
+                  <dg:DataGridTemplateColumn Header="OPT" Width="40" CanUserSort="False">
+                    <dg:DataGridTemplateColumn.CellTemplate>
+                      <DataTemplate>
+                        <CheckBox IsChecked="{Binding OptChecked}" HorizontalAlignment="Center" />
+                      </DataTemplate>
+                    </dg:DataGridTemplateColumn.CellTemplate>
+                  </dg:DataGridTemplateColumn>
+                  <dg:DataGridTextColumn Header="NAME" Binding="{Binding Name}" Width="*" MinWidth="110" IsReadOnly="True" />
+                </dg:DataGrid.Columns>
+              </dg:DataGrid>
+              <Grid Grid.Row="2" Margin="5" ColumnDefinitions="*,*,*,*" ColumnSpacing="8">
+                <TextBlock Text="{Binding Profile.ServerModsChecked, StringFormat='ServerSide : {0} mods'}" TextWrapping="Wrap" Grid.Column="0" FontSize="12" />
+                <TextBlock Text="{Binding Profile.ClientModsChecked, StringFormat='ClientSide : {0} mods'}" TextWrapping="Wrap" Grid.Column="1" FontSize="12" />
+                <TextBlock Text="{Binding Profile.HeadlessModsChecked, StringFormat='Headless Client : {0} mods'}" TextWrapping="Wrap" Grid.Column="2" FontSize="12" />
+                <TextBlock Text="{Binding Profile.OptModsChecked, StringFormat='Optional : {0} mods'}" TextWrapping="Wrap" Grid.Column="3" FontSize="12" />
+              </Grid>
+              <Grid Grid.Row="3" ColumnDefinitions="*,Auto,Auto,Auto">
+                <TextBox Grid.Column="0" Watermark="Filter:" Text="{Binding Profile.ProfileModsFilter}" />
+                <TextBlock Grid.Column="0" Text="Invalid regular expression..." Foreground="Red"
+                           IsVisible="{Binding Profile.ProfileModsFilterIsInvalid}" VerticalAlignment="Bottom" />
+                <ToggleButton Grid.Column="1" Content="Aa" IsChecked="{Binding Profile.ProfileModsFilterIsCaseSensitive}"
+                              ToolTip.Tip="Match Case" Margin="2" />
+                <ToggleButton Grid.Column="2" Content="ab" IsChecked="{Binding Profile.ProfileModsFilterIsWholeWord}"
+                              ToolTip.Tip="Match Whole Word" Margin="2" />
+                <ToggleButton Grid.Column="3" Content=".*" IsChecked="{Binding Profile.ProfileModsFilterIsRegex}"
+                              ToolTip.Tip="Use Regular Expressions" Margin="2" />
+              </Grid>
+            </Grid>
+          </Grid>
+          </Border>
+          <TextBox Grid.Row="1" Grid.ColumnSpan="2" Margin="5,2" IsReadOnly="True"
+                   Watermark="Command Line" Text="{Binding Profile.CommandLine, Mode=OneWay}" />
+        </Grid>
+      </TabItem>
+      <TabItem Header="Missions">
+        <Grid ColumnDefinitions="*,2*" RowDefinitions="*,Auto">
+     <Border Grid.Row="0" Grid.Column="0" Margin="5,0,4,0" Classes="card">
+        <Grid RowDefinitions="Auto,*">
+          <TextBlock Text="MISSIONS" Classes="card-header" />
+          <Grid Grid.Row="1" Margin="8" RowDefinitions="Auto,*,Auto,Auto,Auto,Auto">
+              <ToggleSwitch Content="Mission selector override" IsChecked="{Binding Profile.ServerCfg.MissionChecked}" Margin="5,0" />
+              <TextBox Grid.Row="1" MinHeight="50" Margin="0,5" Text="{Binding Profile.ServerCfg.MissionContentOverride}"
+                       Watermark="Mission Override" AcceptsReturn="True"
+                       IsVisible="{Binding Profile.ServerCfg.MissionChecked}" />
+              <dg:DataGrid Grid.Row="1" ItemsSource="{Binding Profile.ServerCfg.Missions}" Margin="0,5"
+                           CanUserReorderColumns="False" CanUserSortColumns="False" AutoGenerateColumns="False"
+                           IsVisible="{Binding Profile.ServerCfg.MissionChecked, Converter={StaticResource Not}}">
+                <dg:DataGrid.ContextMenu>
+                  <ContextMenu>
+                    <MenuItem Header="Select All" Click="MissionSelectAll" />
+                    <MenuItem Header="Select None" Click="MissionSelectNone" />
+                  </ContextMenu>
+                </dg:DataGrid.ContextMenu>
+                <dg:DataGrid.Columns>
+                  <dg:DataGridTemplateColumn Header="MISSION">
+                    <dg:DataGridTemplateColumn.CellTemplate>
+                      <DataTemplate>
+                        <CheckBox IsChecked="{Binding MissionChecked}" HorizontalAlignment="Center" />
+                      </DataTemplate>
+                    </dg:DataGridTemplateColumn.CellTemplate>
+                  </dg:DataGridTemplateColumn>
+                  <dg:DataGridTextColumn Header="NAME" Binding="{Binding Name}" Width="*" IsReadOnly="True" />
+                </dg:DataGrid.Columns>
+              </dg:DataGrid>
+              <Button Grid.Row="2" Classes="accent" Content="Refresh" Margin="0,5" MinHeight="34" HorizontalAlignment="Left" Click="MissionRefresh" />
+              <StackPanel Grid.Row="2" Margin="5,0" HorizontalAlignment="Right" Spacing="2">
+                  <TextBlock Classes="field-label" Text="Difficulty Preset" />
+                  <ComboBox SelectedItem="{Binding Profile.ServerCfg.Difficulty}"
+                        ItemsSource="{Binding MissionDifficulties}" PlaceholderText="Difficulty Preset"
+                        HorizontalAlignment="Stretch" />
+                </StackPanel>
+              <Grid Grid.Row="3" ColumnDefinitions="*,*">
+                <CheckBox Content="AutoInit" IsChecked="{Binding Profile.ServerCfg.AutoInit}" Margin="5"
+                          HorizontalAlignment="Left" IsEnabled="{Binding Profile.ServerCfg.Persistent}" />
+                <CheckBox Content="Persistant Battlefield" IsChecked="{Binding Profile.ServerCfg.Persistent}"
+                          Grid.Column="1" Margin="5" HorizontalAlignment="Right" />
+              </Grid>
+              <Grid Grid.Row="4" ColumnDefinitions="*,*">
+                <CheckBox Content="AutoSelect Mission" IsChecked="{Binding Profile.ServerCfg.AutoSelectMission}"
+                          Margin="5" HorizontalAlignment="Left" />
+                <CheckBox Content="Random Order" IsChecked="{Binding Profile.ServerCfg.RandomMissionOrder}"
+                          Grid.Column="1" Margin="5" HorizontalAlignment="Right" />
+              </Grid>
+              <TextBox Grid.Row="5" Watermark="Mission download URL" Text="{Binding Profile.ServerCfg.MissionHTTPDownloadBaseURL}" Margin="5,3" />
+            </Grid>
+          </Grid>
+        </Border>
+     <Border Grid.Column="1" Grid.Row="0" Margin="4,0,5,0" Classes="card">
+            <Grid RowDefinitions="Auto,*">
+              <TextBlock Text="DIFFICULTY SETTINGS" Classes="card-header" />
+            <ScrollViewer Grid.Row="1" Margin="8">
+              <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto">
+                <StackPanel Grid.Row="0" Grid.Column="0" Margin="3" Spacing="2">
+                  <TextBlock Classes="field-label" Text="Reduced Damage" />
+                  <ComboBox SelectedItem="{Binding Profile.ArmaProfile.ReducedDamage}" PlaceholderText="Reduced Damage" ItemsSource="{Binding EnabledStrings}" HorizontalAlignment="Stretch" />
+                </StackPanel>
+                <StackPanel Grid.Row="0" Grid.Column="1" Margin="3" Spacing="2">
+                  <TextBlock Classes="field-label" Text="Stamina Bar" />
+                  <ComboBox SelectedItem="{Binding Profile.ArmaProfile.StaminaBar}" PlaceholderText="Stamina Bar" ItemsSource="{Binding EnabledStrings}" HorizontalAlignment="Stretch" />
+                </StackPanel>
+                <StackPanel Grid.Row="0" Grid.Column="2" Margin="3" Spacing="2">
+                  <TextBlock Classes="field-label" Text="VON ID" />
+                  <ComboBox SelectedItem="{Binding Profile.ArmaProfile.VonID}" PlaceholderText="VON ID" ItemsSource="{Binding EnabledStrings}" HorizontalAlignment="Stretch" />
+                </StackPanel>
+                <StackPanel Grid.Row="1" Grid.Column="0" Margin="3" Spacing="2">
+                  <TextBlock Classes="field-label" Text="Multiple Saves" />
+                  <ComboBox SelectedItem="{Binding Profile.ArmaProfile.MultipleSaves}" PlaceholderText="Multiple Saves" ItemsSource="{Binding EnabledStrings}" HorizontalAlignment="Stretch" />
+                </StackPanel>
+                <StackPanel Grid.Row="1" Grid.Column="1" Margin="3" Spacing="2">
+                  <TextBlock Classes="field-label" Text="Camera Shake" />
+                  <ComboBox SelectedItem="{Binding Profile.ArmaProfile.CameraShake}" PlaceholderText="Camera Shake" ItemsSource="{Binding EnabledStrings}" HorizontalAlignment="Stretch" />
+                </StackPanel>
+                <StackPanel Grid.Row="1" Grid.Column="2" Margin="3" Spacing="2">
+                  <TextBlock Classes="field-label" Text="Killed By" />
+                  <ComboBox SelectedItem="{Binding Profile.ArmaProfile.DeathMessages}" PlaceholderText="Killed By" ItemsSource="{Binding EnabledStrings}" HorizontalAlignment="Stretch" />
+                </StackPanel>
+                <StackPanel Grid.Row="2" Grid.Column="0" Margin="3" Spacing="2">
+                  <TextBlock Classes="field-label" Text="Third Person Camera" />
+                  <ComboBox SelectedItem="{Binding Profile.ArmaProfile.ThirdPersonView}" PlaceholderText="Third Person Camera" ItemsSource="{Binding ThirdPersonStrings}" HorizontalAlignment="Stretch" />
+                </StackPanel>
+                <StackPanel Grid.Row="2" Grid.Column="1" Margin="3" Spacing="2">
+                  <TextBlock Classes="field-label" Text="Visual Aids" />
+                  <ComboBox SelectedItem="{Binding Profile.ArmaProfile.VisionAid}" PlaceholderText="Visual Aids" ItemsSource="{Binding EnabledStrings}" HorizontalAlignment="Stretch" />
+                </StackPanel>
+                <StackPanel Grid.Row="2" Grid.Column="2" Margin="3" Spacing="2">
+                  <TextBlock Classes="field-label" Text="Weapon Crosshair" />
+                  <ComboBox SelectedItem="{Binding Profile.ArmaProfile.WeaponCrosshair}" PlaceholderText="Weapon Crosshair" ItemsSource="{Binding EnabledStrings}" HorizontalAlignment="Stretch" />
+                </StackPanel>
+                <StackPanel Grid.Row="3" Grid.Column="0" Margin="3" Spacing="2">
+                  <TextBlock Classes="field-label" Text="Score Table" />
+                  <ComboBox SelectedItem="{Binding Profile.ArmaProfile.ScoreTable}" PlaceholderText="Score Table" ItemsSource="{Binding EnabledStrings}" HorizontalAlignment="Stretch" />
+                </StackPanel>
+                <StackPanel Grid.Row="3" Grid.Column="1" Margin="3" Spacing="2">
+                  <TextBlock Classes="field-label" Text="Tactical Ping" />
+                  <ComboBox SelectedItem="{Binding Profile.ArmaProfile.TacticalPing}" PlaceholderText="Tactical Ping" ItemsSource="{Binding TacticalPingStrings}" HorizontalAlignment="Stretch" />
+                </StackPanel>
+                <StackPanel Grid.Row="3" Grid.Column="2" Margin="3" Spacing="2">
+                  <TextBlock Classes="field-label" Text="Auto Reporting" />
+                  <ComboBox SelectedItem="{Binding Profile.ArmaProfile.AutoReport}" PlaceholderText="Auto Reporting" ItemsSource="{Binding EnabledStrings}" HorizontalAlignment="Stretch" />
+                </StackPanel>
+                <StackPanel Grid.Row="4" Grid.Column="0" Margin="3" Spacing="2">
+                  <TextBlock Classes="field-label" Text="Map Content Friendly" />
+                  <ComboBox SelectedItem="{Binding Profile.ArmaProfile.MapContentFriendly}" PlaceholderText="Map Content Friendly" ItemsSource="{Binding EnabledStrings}" HorizontalAlignment="Stretch" />
+                </StackPanel>
+                <StackPanel Grid.Row="4" Grid.Column="1" Margin="3" Spacing="2">
+                  <TextBlock Classes="field-label" Text="Map Content Enemy" />
+                  <ComboBox SelectedItem="{Binding Profile.ArmaProfile.MapContentEnemy}" PlaceholderText="Map Content Enemy" ItemsSource="{Binding EnabledStrings}" HorizontalAlignment="Stretch" />
+                </StackPanel>
+                <StackPanel Grid.Row="4" Grid.Column="2" Margin="3" Spacing="2">
+                  <TextBlock Classes="field-label" Text="Map Content Mines" />
+                  <ComboBox SelectedItem="{Binding Profile.ArmaProfile.MapContentMines}" PlaceholderText="Map Content Mines" ItemsSource="{Binding EnabledStrings}" HorizontalAlignment="Stretch" />
+                </StackPanel>
+                <StackPanel Grid.Row="5" Grid.Column="0" Margin="3" Spacing="2">
+                  <TextBlock Classes="field-label" Text="Friendly Tags" />
+                  <ComboBox SelectedItem="{Binding Profile.ArmaProfile.FriendlyTags}" PlaceholderText="Friendly Tags" ItemsSource="{Binding LimitedDistanceStrings}" HorizontalAlignment="Stretch" />
+                </StackPanel>
+                <StackPanel Grid.Row="5" Grid.Column="1" Margin="3" Spacing="2">
+                  <TextBlock Classes="field-label" Text="Enemy Tags" />
+                  <ComboBox SelectedItem="{Binding Profile.ArmaProfile.EnemyTags}" PlaceholderText="Enemy Tags" ItemsSource="{Binding LimitedDistanceStrings}" HorizontalAlignment="Stretch" />
+                </StackPanel>
+                <StackPanel Grid.Row="5" Grid.Column="2" Margin="3" Spacing="2">
+                  <TextBlock Classes="field-label" Text="Detected Mines" />
+                  <ComboBox SelectedItem="{Binding Profile.ArmaProfile.DetectedMines}" PlaceholderText="Detected Mines" ItemsSource="{Binding LimitedDistanceStrings}" HorizontalAlignment="Stretch" />
+                </StackPanel>
+                <StackPanel Grid.Row="6" Grid.Column="0" Margin="3" Spacing="2">
+                  <TextBlock Classes="field-label" Text="Group Indicators" />
+                  <ComboBox SelectedItem="{Binding Profile.ArmaProfile.GroupIndicators}" PlaceholderText="Group Indicators" ItemsSource="{Binding LimitedDistanceStrings}" HorizontalAlignment="Stretch" />
+                </StackPanel>
+                <StackPanel Grid.Row="6" Grid.Column="1" Margin="3" Spacing="2">
+                  <TextBlock Classes="field-label" Text="Commands" />
+                  <ComboBox SelectedItem="{Binding Profile.ArmaProfile.Commands}" PlaceholderText="Commands" ItemsSource="{Binding FadeOutStrings}" HorizontalAlignment="Stretch" />
+                </StackPanel>
+                <StackPanel Grid.Row="6" Grid.Column="2" Margin="3" Spacing="2">
+                  <TextBlock Classes="field-label" Text="Waypoints" />
+                  <ComboBox SelectedItem="{Binding Profile.ArmaProfile.Waypoints}" PlaceholderText="Waypoints" ItemsSource="{Binding FadeOutStrings}" HorizontalAlignment="Stretch" />
+                </StackPanel>
+                <StackPanel Grid.Row="7" Grid.Column="0" Margin="3" Spacing="2">
+                  <TextBlock Classes="field-label" Text="Weapon Infos" />
+                  <ComboBox SelectedItem="{Binding Profile.ArmaProfile.WeaponInfo}" PlaceholderText="Weapon Infos" ItemsSource="{Binding FadeOutStrings}" HorizontalAlignment="Stretch" />
+                </StackPanel>
+                <StackPanel Grid.Row="7" Grid.Column="1" Margin="3" Spacing="2">
+                  <TextBlock Classes="field-label" Text="Stance Indicator" />
+                  <ComboBox SelectedItem="{Binding Profile.ArmaProfile.StanceIndicator}" PlaceholderText="Stance Indicator" ItemsSource="{Binding FadeOutStrings}" HorizontalAlignment="Stretch" />
+                </StackPanel>
+                <StackPanel Grid.Row="7" Grid.Column="2" Margin="3" Spacing="2">
+                  <TextBlock Classes="field-label" Text="Forced Difficulty" />
+                  <ComboBox SelectedItem="{Binding Profile.ServerCfg.ForcedDifficulty}" PlaceholderText="Forced Difficulty" ItemsSource="{Binding ForcedDifficultyString}" HorizontalAlignment="Stretch" />
+                </StackPanel>
+                <StackPanel Grid.Column="0" Grid.Row="8" Margin="3,0">
+                  <NumericUpDown Value="{Binding Profile.ArmaProfile.SkillAi}" Watermark="AI Skill" Minimum="0" Maximum="1" Increment="0.01"  />
+                  <Slider x:Name="SkillAiSlider" Maximum="1" Value="{Binding Profile.ArmaProfile.SkillAi}" TickFrequency="0.01" ToolTip.Tip="AI Skill" Margin="0,5" />
+                  <TextBlock Text="{Binding #SkillAiSlider.Value, StringFormat={}{0:0.##} / 1}" HorizontalAlignment="Right" Opacity="0.75" FontSize="11" />
+                </StackPanel>
+                <StackPanel Grid.Column="1" Grid.Row="8" Margin="3,0">
+                  <NumericUpDown Value="{Binding Profile.ArmaProfile.PrecisionAi}" Watermark="AI Precision" Minimum="0" Maximum="1" Increment="0.01"  />
+                  <Slider x:Name="PrecisionAiSlider" Maximum="1" Value="{Binding Profile.ArmaProfile.PrecisionAi}" TickFrequency="0.01" ToolTip.Tip="AI Precision" Margin="0,5" />
+                  <TextBlock Text="{Binding #PrecisionAiSlider.Value, StringFormat={}{0:0.##} / 1}" HorizontalAlignment="Right" Opacity="0.75" FontSize="11" />
+                </StackPanel>
+                <StackPanel Grid.Row="8" Grid.Column="2" Margin="3" Spacing="2">
+                  <TextBlock Classes="field-label" Text="AI Preset" />
+                  <ComboBox SelectedItem="{Binding Profile.ArmaProfile.AiLevelPreset}" PlaceholderText="AI Preset" ItemsSource="{Binding AiPresetStrings}" HorizontalAlignment="Stretch" />
+                </StackPanel>
+              </Grid>
+            </ScrollViewer>
+            </Grid>
+          </Border>
+          <Expander Grid.Row="1" Grid.ColumnSpan="2" Classes="bar" Header="ARMA3PROFILE OUTPUT" MaxHeight="400" Margin="5,5,5,0">
+            <TextBox Text="{Binding Profile.ArmaProfile.ArmaProfileContent}" FontFamily="Courier New"
+                     AcceptsReturn="True" />
+          </Expander>
+        </Grid>
+      </TabItem>
+      <TabItem Header="Server">
+        <Grid RowDefinitions="*,Auto">
+          <ScrollViewer Grid.Row="0">
+            <Grid ColumnDefinitions="*,*,*">
+              <StackPanel Grid.Column="0">
+        <Border Margin="5" Classes="card">
+                  <StackPanel>
+                    <TextBlock Text="SERVER OPTIONS" Classes="card-header" />
+                    <StackPanel Margin="8">
+                  <StackPanel Spacing="5">
+                    <TextBox Text="{Binding Profile.ServerCfg.Hostname}" Watermark="Server Hostname" ToolTip.Tip="Name to display in the server browser" />
+                    <TextBox Text="{Binding Profile.ServerCfg.Password}" Watermark="Password" ToolTip.Tip="Password required to log in" />
+                    <TextBox Text="{Binding Profile.ServerCfg.PasswordAdmin}" Watermark="Admin Password" ToolTip.Tip="Admin password required to log in as admin" />
+                    <Grid ColumnDefinitions="*,*">
+                      <CheckBox IsChecked="{Binding Profile.ServerCfg.BattlEye}" Content="BattlEye" Margin="5" />
+                      <NumericUpDown Value="{Binding Profile.ServerCfg.MaxPlayers}" Watermark="Max Players" ToolTip.Tip="Maximum number of players" Grid.Column="1" Margin="5,3" />
+                    </Grid>
+                    <CheckBox IsChecked="{Binding Profile.RankingChecked}" Content="Server Ranking" Margin="5" />
+                  </StackPanel>
+                    </StackPanel>
+                  </StackPanel>
+                </Border>
+        <Border Margin="5" Classes="card">
+                  <StackPanel>
+                    <TextBlock Text="NETWORK SETTINGS" Classes="card-header" />
+                    <StackPanel Margin="8">
+                  <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto">
+                    <CheckBox Content="Loopback" IsChecked="{Binding Profile.ServerCfg.Loopback}" Margin="5,2" Grid.Column="0" Grid.Row="0" />
+                    <CheckBox Content="UPNP" IsChecked="{Binding Profile.ServerCfg.Upnp}" Margin="5,2" Grid.Column="1" Grid.Row="0" />
+                    <NumericUpDown Value="{Binding Profile.ServerCfg.DisconnectTimeout}" Watermark="Disconnect Timeout" Grid.Row="1" Grid.Column="0" Margin="5,2" />
+                    <NumericUpDown Value="{Binding Profile.ServerCfg.MaxDesync}" Watermark="Max Desync" Grid.Row="1" Grid.Column="1" Margin="5,2" />
+                    <NumericUpDown Value="{Binding Profile.ServerCfg.MaxPing}" Watermark="Max Ping" Grid.Row="2" Grid.Column="0" Margin="5,2" />
+                    <NumericUpDown Value="{Binding Profile.ServerCfg.MaxPacketLoss}" Watermark="Max Packet Loss" Grid.Row="2" Grid.Column="1" Margin="5,2" />
+                  </Grid>
+                    </StackPanel>
+                  </StackPanel>
+                </Border>
+                <Expander Classes="bar" Margin="5" Header="SERVER ADVANCED">
+                  <StackPanel Spacing="5">
+                    <StackPanel  Spacing="2">
+                  <TextBlock Classes="field-label" Text="Allow File Patching" />
+                  <ComboBox SelectedItem="{Binding Profile.ServerCfg.AllowedFilePatching}" ItemsSource="{Binding FilePatching}" PlaceholderText="Allow File Patching" HorizontalAlignment="Stretch" />
+                </StackPanel>
+                    <StackPanel  Spacing="2">
+                  <TextBlock Classes="field-label" Text="Verify Signatures" />
+                  <ComboBox SelectedItem="{Binding Profile.ServerCfg.VerifySignatures}" ItemsSource="{Binding VerifySignatures}" PlaceholderText="Verify Signatures" HorizontalAlignment="Stretch" />
+                </StackPanel>
+                    <CheckBox IsChecked="{Binding Profile.ServerCfg.KickDuplicates}" Content="Kick Duplicates" />
+                    <CheckBox IsChecked="{Binding Profile.ServerCfg.KickClientOnSlowNetwork}" Content="Kick on Slow Network" />
+                    <CheckBox IsChecked="{Binding Profile.ServerCfg.logObjectNotFound}" Content="Log Object Not Found" />
+                    <CheckBox IsChecked="{Binding Profile.ServerCfg.skipDescriptionParsing}" Content="Skip Description Parsing" />
+                    <CheckBox IsChecked="{Binding Profile.ServerCfg.IgnoreMissionLoadErrors}" Content="Ignore Mission Load Errors" />
+                    <NumericUpDown Value="{Binding Profile.ServerCfg.LobbyIdleTimeout}" Watermark="Lobby Idle Timeout"  />
+                    <NumericUpDown Value="{Binding Profile.ServerCfg.RoleTimeOut}" Watermark="Role Idle Timeout"  />
+                    <NumericUpDown Value="{Binding Profile.ServerCfg.DebriefingTimeOut}" Watermark="Debriefing Idle Timeout"  />
+                    <NumericUpDown Value="{Binding Profile.ServerCfg.BriefingTimeOut}" Watermark="Briefing Idle Timeout"  />
+                    <NumericUpDown Value="{Binding Profile.ServerCfg.VotingTimeOut}" Watermark="Voting Timeout"  />
+                    <NumericUpDown Value="{Binding Profile.ServerCfg.ArmaUnitsTimeout}" Watermark="Arma Units Timeout"  />
+                    <NumericUpDown Value="{Binding Profile.ServerCfg.QueueSizeLogG}" Watermark="Queue Size LogG"  />
+                    <NumericUpDown Value="{Binding Profile.ServerCfg.SteamProtocolMaxDataSize}" Watermark="Steam Protocol Max Data Size"  />
+                    <TextBox MinHeight="50" Text="{Binding Profile.ServerCfg.Admins}" Watermark="Admins IDs (one per line)" AcceptsReturn="True" TextWrapping="Wrap" />
+                  </StackPanel>
+                </Expander>
+              </StackPanel>
+              <StackPanel Grid.Column="1">
+        <Border Margin="5" Classes="card">
+                  <StackPanel>
+                    <TextBlock Text="VON SETTINGS" Classes="card-header" />
+                    <StackPanel Margin="8">
+                  <StackPanel Spacing="5">
+                    <ToggleSwitch Content="VoN Activation" IsChecked="{Binding Profile.ServerCfg.VonActivated}" ToolTip.Tip="VoN Activation" Margin="10,2,0,2" />
+                    <StackPanel Margin="10,5" IsVisible="{Binding Profile.ServerCfg.VonActivated}" HorizontalAlignment="Stretch" Spacing="2">
+                  <TextBlock Classes="field-label" Text="VoN Codec" />
+                  <ComboBox
+                              ItemsSource="{Binding VonCodecs}" SelectedItem="{Binding Profile.ServerCfg.VonCodec}" PlaceholderText="VoN Codec" HorizontalAlignment="Stretch" />
+                </StackPanel>
+                    <Slider x:Name="VonCodecSlider" Maximum="30" IsVisible="{Binding Profile.ServerCfg.VonActivated}" Value="{Binding Profile.ServerCfg.VonCodecQuality}" ToolTip.Tip="Codec Quality" Margin="20,3" />
+                    <TextBlock Text="{Binding #VonCodecSlider.Value, StringFormat={}{0:0} / 30}" IsVisible="{Binding Profile.ServerCfg.VonActivated}" HorizontalAlignment="Right" Opacity="0.75" FontSize="11" Margin="0,0,20,0" />
+                  </StackPanel>
+                    </StackPanel>
+                  </StackPanel>
+                </Border>
+        <Border Margin="5" Classes="card">
+                  <StackPanel>
+                    <TextBlock Text="VOTING SETTINGS" Classes="card-header" />
+                    <StackPanel Margin="8">
+                  <StackPanel Spacing="5">
+                    <ToggleSwitch Content="Voting Settings" IsChecked="{Binding Profile.ServerCfg.VotingEnabled}" ToolTip.Tip="Voting Settings" Margin="10,2,0,2" />
+                    <Grid ColumnDefinitions="*,*">
+                      <NumericUpDown Value="{Binding Profile.ServerCfg.VoteMissionPlayers}" Watermark="Min Players" Grid.Column="0" Margin="5" IsVisible="{Binding Profile.ServerCfg.VotingEnabled}" />
+                      <StackPanel Grid.Column="1" Margin="5,5,5,0">
+                        <Slider x:Name="VoteThresholdSlider" Value="{Binding Profile.ServerCfg.VoteThreshold}" IsVisible="{Binding Profile.ServerCfg.VotingEnabled}" Minimum="0" Maximum="1" ToolTip.Tip="Voting threshold" />
+                        <TextBlock Text="{Binding #VoteThresholdSlider.Value, StringFormat={}{0:0.##} / 1}" IsVisible="{Binding Profile.ServerCfg.VotingEnabled}" HorizontalAlignment="Right" Opacity="0.75" FontSize="11" />
+                      </StackPanel>
+                    </Grid>
+                  </StackPanel>
+                    </StackPanel>
+                  </StackPanel>
+                </Border>
+        <Border Margin="5" Classes="card">
+                  <StackPanel>
+                    <TextBlock Text="HEADLESS CLIENTS" Classes="card-header" />
+                    <StackPanel Margin="8">
+                  <StackPanel Spacing="5">
+                    <ToggleSwitch Content="Headless Clients" IsChecked="{Binding Profile.ServerCfg.HeadlessClientEnabled}" ToolTip.Tip="Headless Clients" Margin="10,2,0,2" />
+                    <Button Content="Launch HCs" HorizontalAlignment="Stretch" Margin="10,5" Click="LaunchHCs"
+                            IsVisible="{Binding Profile.ServerCfg.HeadlessClientEnabled}" />
+                    <TextBox MinHeight="50" Margin="10,3" Text="{Binding Profile.ServerCfg.HeadlessClients}"
+                             IsVisible="{Binding Profile.ServerCfg.HeadlessClientEnabled}"
+                             AcceptsReturn="True" TextWrapping="Wrap" Watermark="Headless IPs (one per line)" />
+                    <TextBox MinHeight="50" Margin="10,3" Text="{Binding Profile.ServerCfg.LocalClient}"
+                             IsVisible="{Binding Profile.ServerCfg.HeadlessClientEnabled}"
+                             AcceptsReturn="True" TextWrapping="Wrap" Watermark="Local Clients (one per line)" />
+                    <StackPanel IsVisible="{Binding Profile.ServerCfg.HeadlessClientEnabled}">
+                      <Slider x:Name="HeadlessSlider" Value="{Binding Profile.HeadlessNumber}" Minimum="0" Maximum="5" ToolTip.Tip="Number of Headless Clients" Margin="10,5" />
+                      <TextBlock Text="{Binding #HeadlessSlider.Value, StringFormat={}Number of HCs: {0:0} / 5}" ToolTip.Tip="Number of Headless Clients" HorizontalAlignment="Center" Margin="1" />
+                    </StackPanel>
+                  </StackPanel>
+                    </StackPanel>
+                  </StackPanel>
+                </Border>
+              </StackPanel>
+              <StackPanel Grid.Column="2">
+        <Border Margin="5" Classes="card">
+                  <StackPanel>
+                    <TextBlock Text="PERMISSIONS SETTINGS" Classes="card-header" />
+                    <StackPanel Margin="8">
+                  <StackPanel Spacing="2">
+                    <CheckBox IsChecked="{Binding Profile.ServerCfg.DrawingInMap}" Content="Enable drawing in Map" Margin="5,3" />
+                    <CheckBox IsChecked="{Binding Profile.ServerCfg.SkipLobby}" Content="Skip lobby" Margin="5,2" />
+                    <Grid ColumnDefinitions="Auto,*">
+                      <CheckBox IsChecked="{Binding Profile.ServerCfg.RequiredBuildChecked}" Margin="5,3" />
+                      <TextBlock Grid.Column="1" Text="Arma Required Build" Margin="5,0"
+                                 IsVisible="{Binding Profile.ServerCfg.RequiredBuildChecked, Converter={StaticResource Not}}" VerticalAlignment="Center" />
+                      <NumericUpDown Value="{Binding Profile.ServerCfg.RequiredBuild}"
+                                     IsEnabled="{Binding Profile.ServerCfg.RequiredBuildChecked}"
+
+                                     Watermark="Required Build" Grid.Column="1" Margin="5,2" IsVisible="{Binding Profile.ServerCfg.RequiredBuildChecked}" />
+                    </Grid>
+                  </StackPanel>
+                    </StackPanel>
+                  </StackPanel>
+                </Border>
+        <Border Margin="5" Classes="card">
+                  <StackPanel>
+                    <TextBlock Text="LOGGING SETTINGS" Classes="card-header" />
+                    <StackPanel Margin="8">
+                  <StackPanel Spacing="5">
+                    <ToggleSwitch Content="NetLog Activation" IsChecked="{Binding Profile.ServerCfg.NetLogEnabled}" ToolTip.Tip="NetLog Activation" Margin="10,2,0,2" />
+                    <TextBox Text="{Binding Profile.ServerCfg.LogFile}" Watermark="Logfile Name" Margin="5,3"
+                             IsVisible="{Binding Profile.ServerCfg.NetLogEnabled}" />
+                    <StackPanel Margin="5,2" IsVisible="{Binding Profile.ServerCfg.NetLogEnabled}" Spacing="2">
+                  <TextBlock Classes="field-label" Text="Timestamp Format" />
+                  <ComboBox ItemsSource="{Binding TimestampFormats}" SelectedItem="{Binding Profile.ServerCfg.TimeStampFormat}"
+                              PlaceholderText="Timestamp Format" HorizontalAlignment="Stretch" />
+                </StackPanel>
+                  </StackPanel>
+                    </StackPanel>
+                  </StackPanel>
+                </Border>
+                <Border Classes="card" Margin="5">
+                  <StackPanel>
+                    <TextBlock Classes="card-header" Text="ANTI-FLOOD" />
+                    <StackPanel Margin="8" Spacing="5">
+                      <CheckBox Content="Enable anti-flood" IsChecked="{Binding Profile.ServerCfg.AntiFloodEnabled}" />
+                      <StackPanel IsEnabled="{Binding Profile.ServerCfg.AntiFloodEnabled}" Spacing="5">
+                        <NumericUpDown Watermark="Cycle time" Minimum="0" Value="{Binding Profile.ServerCfg.AntiFloodCycleTime}" />
+                        <NumericUpDown Watermark="Cycle limit" Minimum="0" Value="{Binding Profile.ServerCfg.AntiFloodCycleLimit}" />
+                        <NumericUpDown Watermark="Hard limit" Minimum="0" Value="{Binding Profile.ServerCfg.AntiFloodCycleHardLimit}" />
+                        <CheckBox Content="Kick flooding clients" IsChecked="{Binding Profile.ServerCfg.AntiFloodEnableKick}" />
+                      </StackPanel>
+                    </StackPanel>
+                  </StackPanel>
+                </Border>
+                <Expander Classes="bar" Margin="5" Header="SCRIPTING SETTINGS">
+                  <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto,Auto">
+                    <TextBox Text="{Binding Profile.ServerCfg.ServerCommandPassword}" Watermark="Server Command Password" Grid.ColumnSpan="2" Margin="5" />
+                    <TextBox Text="{Binding Profile.ServerCfg.OnUserConnected}" Grid.Row="1" Grid.Column="0" Watermark="onUserConnected" Margin="5,2" />
+                    <TextBox Text="{Binding Profile.ServerCfg.OnUserDisconnected}" Grid.Row="1" Grid.Column="1" Watermark="onUserDisconnected" Margin="5,2" />
+                    <TextBox Text="{Binding Profile.ServerCfg.OnHackedData}" Grid.Row="2" Grid.Column="0" Watermark="onHackedData" Margin="5,2" />
+                    <TextBox Text="{Binding Profile.ServerCfg.OnDifferentData}" Grid.Row="2" Grid.Column="1" Watermark="onDifferentData" Margin="5,2" />
+                    <TextBox Text="{Binding Profile.ServerCfg.OnUnsignedData}" Grid.Row="3" Grid.Column="0" Watermark="onUnsignedData" Margin="5,2" />
+                    <TextBox Text="{Binding Profile.ServerCfg.OnUserKicked}" Grid.Row="3" Grid.Column="1" Watermark="onUserKicked" Margin="5,2" />
+                  </Grid>
+                </Expander>
+        <Border Margin="5" Classes="card">
+                  <StackPanel>
+                    <TextBlock Text="MOTD" Classes="card-header" />
+                    <StackPanel Margin="8">
+                  <Grid RowDefinitions="Auto,Auto">
+                    <TextBox Grid.Row="0" MinHeight="50" Margin="10" Text="{Binding Profile.ServerCfg.Motd}" Watermark="Message of the Day" AcceptsReturn="True" TextWrapping="Wrap" />
+                    <NumericUpDown Value="{Binding Profile.ServerCfg.MotdInterval}" Watermark="Delay Between Messages" Minimum="0" Grid.Row="1" Margin="10,0,10,5" HorizontalAlignment="Stretch" />
+                  </Grid>
+                    </StackPanel>
+                  </StackPanel>
+                </Border>
+              </StackPanel>
+            </Grid>
+          </ScrollViewer>
+          <Expander Grid.Row="1" Classes="bar" Header="SERVER.CFG OUTPUT" MaxHeight="400" Margin="5,5,5,0">
+            <TextBox Text="{Binding Profile.ServerCfg.ServerCfgContent}" FontFamily="Courier New"
+                     AcceptsReturn="True" />
+          </Expander>
+        </Grid>
+      </TabItem>
+      <TabItem Header="Performance">
+        <Grid RowDefinitions="*,Auto">
+      <ScrollViewer>
+      <Border Classes="card" Margin="5">
+            <StackPanel>
+              <TextBlock Text="PERFORMANCE TWEAKS" Classes="card-header" />
+              <StackPanel Margin="8">
+            <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto">
+              <NumericUpDown Value="{Binding Profile.BasicCfg.MinBandwidth}" Watermark="MinBandwidth" Minimum="0" Grid.Row="0" Grid.Column="0" Margin="3" />
+              <NumericUpDown Value="{Binding Profile.BasicCfg.MaxPacketSize}" Watermark="MaxPacketSize" Minimum="0" Grid.Row="0" Grid.Column="1" Margin="3" />
+              <NumericUpDown Value="{Binding Profile.BasicCfg.MaxBandwidth}" Watermark="MaxBandwidth" Minimum="0" Grid.Row="0" Grid.Column="2" Margin="3" />
+              <NumericUpDown Value="{Binding Profile.BasicCfg.MaxMsgSend}" Watermark="MaxMsgSend" Minimum="0" Grid.Row="1" Grid.Column="0" Margin="3" />
+              <NumericUpDown Value="{Binding Profile.BasicCfg.MaxSizeGuaranteed}" Watermark="MaxSizeGuaranteed" Minimum="0" Grid.Row="1" Grid.Column="1" Margin="3" />
+              <NumericUpDown Value="{Binding Profile.BasicCfg.MaxSizeNonGuaranteed}" Watermark="MaxSizeNonGuaranteed" Minimum="0" Grid.Row="1" Grid.Column="2" Margin="3" />
+              <NumericUpDown Value="{Binding Profile.BasicCfg.MinErrorToSend}" Watermark="MinErrorToSend" Minimum="0" Maximum="1" Increment="0.001" Grid.Row="2" Grid.Column="0" Margin="3" />
+              <NumericUpDown Value="{Binding Profile.BasicCfg.MinErrorToSendNear}" Watermark="MinErrorToSendNear" Minimum="0" Maximum="1" Increment="0.001" Grid.Row="2" Grid.Column="1" Margin="3" />
+              <NumericUpDown Value="{Binding Profile.BasicCfg.MaxCustomFileSize}" Watermark="MaxCustomFileSize" Minimum="0" Grid.Row="2" Grid.Column="2" Margin="3" />
+              <StackPanel Grid.Row="3" Grid.Column="0" Margin="3" Spacing="2">
+                  <TextBlock Classes="field-label" Text="Load performance Preset" />
+                  <ComboBox SelectedItem="{Binding Profile.BasicCfg.PerfPreset}" PlaceholderText="Load performance Preset" ItemsSource="{Binding PerfPresets}" HorizontalAlignment="Stretch" />
+                </StackPanel>
+              <StackPanel Grid.Row="3" Grid.Column="1" Margin="3" Spacing="2">
+                  <TextBlock Classes="field-label" Text="Terrain Grid" />
+                  <ComboBox SelectedItem="{Binding Profile.BasicCfg.TerrainGrid}" PlaceholderText="Terrain Grid" ItemsSource="{Binding TerrainGrids}" HorizontalAlignment="Stretch" />
+                </StackPanel>
+              <NumericUpDown Value="{Binding Profile.BasicCfg.ViewDistance}" Watermark="Server View Distance" Minimum="0" Grid.Row="3" Grid.Column="2" Margin="3" />
+              <CheckBox Grid.Row="4" Grid.Column="0" Margin="3,5" IsChecked="{Binding Profile.ServerCfg.MaxMemOverride}" Content="Force Maximum Memory" />
+              <CheckBox Grid.Row="4" Grid.Column="1" Margin="3,5" IsChecked="{Binding Profile.EnableHyperThreading}" Content="Enable Hyper Threading" />
+              <CheckBox Grid.Row="4" Grid.Column="2" Margin="3,5" IsChecked="{Binding Profile.ServerCfg.CpuCountOverride}" Content="Force CPU Count" />
+              <NumericUpDown Value="{Binding Profile.ServerCfg.MaxMem}" Watermark="Maximum Memory (MB)" Minimum="1024" Grid.Row="5" Grid.Column="0" Margin="3" IsVisible="{Binding Profile.ServerCfg.MaxMemOverride}" />
+              <NumericUpDown Value="{Binding Profile.ServerCfg.CpuCount}" Watermark="CPU Core Count" Minimum="1" Grid.Row="5" Grid.Column="2" Margin="3" IsVisible="{Binding Profile.ServerCfg.CpuCountOverride}" />
+              <TextBox Text="{Binding Profile.ServerCfg.CommandLineParameters}" Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="3" Margin="3,5" Watermark="Command Line Arguments" />
+              <StackPanel Grid.Row="7" Grid.ColumnSpan="3" Spacing="6" Margin="3">
+                <TextBlock Text="Server language" Classes="field-label" />
+                <ComboBox ItemsSource="{Binding Languages}" SelectedItem="{Binding Profile.BasicCfg.Language}" HorizontalAlignment="Stretch" />
+                <WrapPanel>
+                  <CheckBox Content="Huge pages" IsChecked="{Binding Profile.HugePages}" Margin="0,0,12,0" />
+                  <CheckBox Content="Preload missions" IsChecked="{Binding Profile.LoadMissionToMemory}" Margin="0,0,12,0" />
+                  <CheckBox Content="Steam logging" IsChecked="{Binding Profile.EnableSteamLogs}" />
+                </WrapPanel>
+                <Grid ColumnDefinitions="*,*">
+                  <NumericUpDown Watermark="Extra threads (0 = default)" Minimum="0" Maximum="7" Value="{Binding Profile.ExThreads}" Margin="0,0,3,0" />
+                  <NumericUpDown Grid.Column="1" Watermark="FPS limit (0 = default)" Minimum="0" Value="{Binding Profile.LimitFPS}" Margin="3,0,0,0" />
+                </Grid>
+                <Grid ColumnDefinitions="*,Auto">
+                  <TextBox Watermark="BattlEye directory" Text="{Binding Profile.BePath}" />
+                  <Button Grid.Column="1" Content="Browse" Click="SelectBePath" Margin="6,0,0,0" />
+                </Grid>
+                <Grid ColumnDefinitions="*,Auto">
+                  <TextBox Watermark="Keys directory" Text="{Binding Profile.KeysFolder}" />
+                  <Button Grid.Column="1" Content="Browse" Click="SelectKeysFolder" Margin="6,0,0,0" />
+                </Grid>
+              </StackPanel>
+            </Grid>
+              </StackPanel>
+            </StackPanel>
+          </Border>
+      </ScrollViewer>
+          <Expander Grid.Row="1" Classes="bar" Header="BASIC.CFG OUTPUT" MaxHeight="400" Margin="5,5,5,0">
+            <TextBox Text="{Binding Profile.BasicCfg.BasicContent}" FontFamily="Courier New"
+                     AcceptsReturn="True" />
+          </Expander>
+        </Grid>
+      </TabItem>
+    </TabControl>
+    <Grid Grid.Row="1" ColumnDefinitions="*,Auto">
+      <StackPanel Grid.Column="0" HorizontalAlignment="Left" Margin="5,10,8,10" Orientation="Horizontal" Spacing="6">
+        <Button Classes="accent" ToolTip.Tip="Save Profile" Click="SaveProfile">
+          <materialIcons:MaterialIcon Kind="ContentSave" Width="18" Height="18" />
+        </Button>
+        <Button Classes="accent" ToolTip.Tip="Launch Server" Click="LaunchServer">
+          <materialIcons:MaterialIcon Kind="Play" Width="18" Height="18" />
+        </Button>
+      </StackPanel>
+      <TextBlock Grid.Column="1" VerticalAlignment="Center" Text="{Binding Profile.Name}"
+                 ToolTip.Tip="{Binding Profile.Id}" FontWeight="Bold" FontSize="16" Margin="10">
+        <TextBlock.ContextMenu>
+          <ContextMenu>
+            <MenuItem Header="Open File Location" Click="OpenProfileLocation" />
+            <MenuItem Header="Delete Profile" Click="DeleteProfile" />
+          </ContextMenu>
+        </TextBlock.ContextMenu>
+      </TextBlock>
+    </Grid>
+  </Grid>
+</UserControl>
