@@ -1,5 +1,7 @@
 ﻿using NUnit.Framework;
 using System.Linq;
+using System.IO;
+using System.Xml.Serialization;
 
 namespace FASTER.Models.Tests
 {
@@ -73,6 +75,7 @@ namespace FASTER.Models.Tests
             Assert.DoesNotThrow(() => _p.SkillAi = 0.5);
             Assert.DoesNotThrow(() => _p.PrecisionAi = 0.5);
         }
+
 		[Test()]
         public void Arma3ProfileDefaults()
         {
@@ -95,6 +98,30 @@ namespace FASTER.Models.Tests
             _p.TacticalPing = "Both";
             _p.TacticalPing = "nonsense";
             Assert.That(_p.TacticalPing, Is.EqualTo("Both"));
+        }
+
+        [Test()]
+        public void OldProfileWithEnabledTacticalPingLoadsAs3dOnly()
+        {
+            const string oldXml = "<Arma3Profile><TacticalPing>Enabled</TacticalPing></Arma3Profile>";
+
+            var serializer = new XmlSerializer(typeof(Arma3Profile));
+            using var reader = new StringReader(oldXml);
+            var loaded = (Arma3Profile) serializer.Deserialize(reader)!;
+
+            Assert.That(loaded.TacticalPing, Is.EqualTo("3D only"));
+        }
+
+        [Test()]
+        public void OldProfileWithDisabledTacticalPingStaysDisabled()
+        {
+           const string oldXml = "<Arma3Profile><TacticalPing>Disabled</TacticalPing></Arma3Profile>";
+
+           var serializer = new XmlSerializer(typeof(Arma3Profile));
+           using var reader = new StringReader(oldXml);
+           var loaded = (Arma3Profile) serializer.Deserialize(reader)!;
+
+           Assert.That(loaded.TacticalPing, Is.EqualTo("Disabled"));
         }
     }
 }

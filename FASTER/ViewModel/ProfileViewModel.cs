@@ -92,7 +92,7 @@ namespace FASTER.ViewModel
             {
                 "-client",
                 " -connect=127.0.0.1",
-                $" -password={Profile.ServerCfg.Password}",
+                $" \"-password={Profile.ServerCfg.Password}\"",
                 $" \"-profiles={Path.Combine(Profile.ArmaPath, "Servers", $"{Profile.Id}_hc{hc}")}\"",
                 " -nosound",
                 $" -port={Profile.Port}",

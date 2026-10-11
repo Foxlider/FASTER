@@ -284,6 +284,9 @@ namespace FASTER.Models
             get => ProfileCfgArrays.TacticalPingStrings[tacticalPing];
             set
             {
+                // Old versions saved "Enabled" here (it used the on/off list). That value was 1 = "3D only"
+                if (value == "Enabled") value = "3D only";
+
                 tacticalPing = IndexOrKeep(ProfileCfgArrays.TacticalPingStrings, value, tacticalPing);
                 RaisePropertyChanged("TacticalPing");
             }
