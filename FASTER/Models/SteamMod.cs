@@ -9,7 +9,6 @@ using System.Xml.Serialization;
 
 namespace FASTER.Models
 {
-    [Serializable]
     public class SteamModCollection
     {
         [XmlElement(Order = 1)]
@@ -20,7 +19,6 @@ namespace FASTER.Models
         public List<SteamMod> SteamMods = new();
     }
 
-    [Serializable]
     public class SteamMod
     {
         private SteamMod()
@@ -42,18 +40,7 @@ namespace FASTER.Models
             var modFolder = Path.Combine(Properties.Settings.Default.steamCMDPath, "steamapps", "workshop", "content", "107410", workshopId.ToString());
             if (!Directory.Exists(modFolder)) return "Unknown";
 
-            double fullSize = GetDirectorySize(modFolder);
-
-            string[] sizes = { " B", "KB", "MB", "GB", "TB" };
-            var order = 0;
-            while (fullSize >= 1024 && order < sizes.Length - 1)
-            {
-                order++;
-                fullSize /= 1024.0;
-            }
-            // Adjust the format string to your preferences. For example "{0:0.#}{1}" would
-            // show a single decimal place, and no space.
-            return $"{fullSize,7:F} {sizes[order],-2}";
+            return Functions.ParseFileSize(GetDirectorySize(modFolder));
         }
 
         private void InitModSize()
@@ -73,19 +60,6 @@ namespace FASTER.Models
         public bool PrivateMod { get; set; }
         public string Status { get; set; } = "Not Installed";
         public string Size { get; set; } = "Unknown";
-
-
-        public static List<SteamMod> GetSteamMods()
-        {
-            List<SteamMod> currentSteamMods = new();
-
-            if (Properties.Settings.Default.steamMods == null) return currentSteamMods;
-
-            Properties.Settings.Default.Reload();
-            currentSteamMods = Properties.Settings.Default.steamMods?.SteamMods;
-
-            return currentSteamMods;
-        }
 
         public static uint SteamIdFromUrl(string modUrl)
         {

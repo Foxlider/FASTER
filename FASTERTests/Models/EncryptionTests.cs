@@ -11,7 +11,7 @@ namespace FASTER.Models.Tests
         [Test()]
         public void EncryptDataTest()
         {
-            Assert.DoesNotThrow(() => Encryption.Instance.EncryptData("SomeText"));
+            Encryption.Instance.EncryptData("SomeText");
             Assert.That(Encryption.Instance.EncryptData("SomeText"), Is.Not.EqualTo("SomeText"));
         }
 

@@ -1,6 +1,4 @@
-﻿using FASTER.ViewModel;
-
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
@@ -10,7 +8,6 @@ using System.Xml.Serialization;
 
 namespace FASTER.Models
 {
-    [Serializable]
     public class ArmaModCollection : INotifyPropertyChanged
     {
         [XmlElement(Order = 1)]
@@ -81,18 +78,18 @@ namespace FASTER.Models
 
                 Properties.Settings.Default.Save();
             }
-            catch
-            { MainWindow.Instance.DisplayMessage($"Could not delete mod {workshopId}"); }
+            catch (Exception ex)
+            {
+                Logger.Log($"DeleteSteamMod: could not delete mod {workshopId}: {ex.GetType().Name}: {ex.Message}");
+                MainWindow.Instance.DisplayMessage($"Could not delete mod {workshopId}");
+            }
         }
-
 
         public event PropertyChangedEventHandler PropertyChanged;
         private void RaisePropertyChanged(string property)
         { PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property)); }
     }
 
-
-    [Serializable] 
     public class ArmaMod : INotifyPropertyChanged
     {
 
@@ -116,7 +113,6 @@ namespace FASTER.Models
             _apiKeyWarningShown = true;
             return true;
         }
-
 
         public uint   WorkshopId
         {
@@ -261,46 +257,6 @@ namespace FASTER.Models
             }
             finally
             { IsLoading = false; }
-        }
-
-        internal async Task UpdateModAsync()
-        {
-            if (IsLocal)
-            {
-                Status = ArmaModStatus.Local;
-                CheckModSize();
-                IsLoading = false;
-                return;
-            }
-            IsLoading = true;
-
-            UpdateInfos(false);
-
-            Path = System.IO.Path.Combine(Properties.Settings.Default.modStagingDirectory, WorkshopId.ToString());
-            if (!Directory.Exists(Path))
-                Directory.CreateDirectory(Path);
-            MainWindow.Instance.NavigateToConsole();
-            var res = await MainWindow.Instance.SteamUpdaterViewModel.RunModUpdater(WorkshopId, Path);
-
-            CheckModSize();
-
-            switch (res)
-            {
-                case UpdateState.Error:
-                case UpdateState.Cancelled:
-                case UpdateState.LoginFailed:
-                    Status = ArmaModStatus.NotComplete;
-                    break;
-                case UpdateState.Success:
-                    Status = ArmaModStatus.UpToDate;
-                    var nx = DateTime.UnixEpoch;
-                    var ts = DateTime.UtcNow - nx;
-
-                    LocalLastUpdated = (ulong) ts.TotalSeconds;
-                    break;
-            }
-
-            IsLoading = false;
         }
 
         internal void UpdateInfos(bool checkFileSize = true)

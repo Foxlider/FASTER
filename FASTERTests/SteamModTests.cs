@@ -26,7 +26,7 @@ namespace FASTER.Models.Tests
         {
             Tuple<string, string, int> expected = new Tuple<string, string, int>("ace", "acemod", 1577907553);
             Tuple<string, string, int> res = null;
-            Assert.DoesNotThrow(() => { res = SteamMod.GetModInfo(463939057); });
+            res = SteamMod.GetModInfo(463939057);
             Assert.That(res.Item1, Is.EqualTo(expected.Item1), "The expected mod name was wrong");
             Assert.That(res.Item2, Is.EqualTo(expected.Item2), "The expected creator name was wrong");
             Assert.That(res.Item3, Is.GreaterThanOrEqualTo(expected.Item3), "The expected update time was wrong");

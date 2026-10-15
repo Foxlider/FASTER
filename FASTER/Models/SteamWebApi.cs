@@ -30,8 +30,11 @@ namespace FASTER.Models
                 var response = ApiCall("https://api.steampowered.com/IPublishedFileService/GetDetails/v1?key=" + GetApiKey() + V3 + modId);
                 return (JObject)response?.SelectToken("response.publishedfiledetails[0]");
             }
-            catch
-            { return null; }
+            catch (Exception ex)
+            {
+                Logger.Log($"SteamWebApi: GetSingleFileDetails({modId}) failed: {ex.GetType().Name}: {ex.Message}");
+                return null;
+            }
         }
 
 
@@ -43,8 +46,11 @@ namespace FASTER.Models
                 var response = ApiCall("https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v1?key=" + GetApiKey() + V2 + playerId);
                 return (JObject)response?.SelectToken("response.players.player[0]");
             }
-            catch
-            { return null; }
+            catch (Exception ex)
+            {
+                Logger.Log($"SteamWebApi: GetPlayerSummaries({playerId}) failed: {ex.GetType().Name}: {ex.Message}");
+                return null;
+            }
         }
 
 
@@ -60,6 +66,7 @@ namespace FASTER.Models
             { response = client.GetAsync(uri).GetAwaiter().GetResult(); }
             catch (Exception e) when (e is HttpRequestException or TaskCanceledException or SocketException)
             {
+                Logger.Log($"SteamWebApi: could not reach Steam API: {e.GetType().Name}: {e.Message}");
                 try
                 {
                     MainWindow.Instance.Dispatcher?.InvokeAsync(() =>
@@ -80,18 +87,18 @@ namespace FASTER.Models
                         Console.WriteLine("Cannot reach Steam API \n\nCheck https://steamstat.us/");
                 }
             }
-            // Display the status.
-            Console.WriteLine((response)?.StatusCode);
-
             if (response == null)
+            {
+                Logger.Log("SteamWebApi: no response from Steam API.");
                 return null;
+            }
+
+            Logger.Log($"SteamWebApi: HTTP {(int)response.StatusCode} {response.StatusCode}");
 
             if (!response.IsSuccessStatusCode)
                 throw new HttpRequestException($"Steam API returned HTTP {(int)response.StatusCode} {response.StatusCode}. Please check your Steam API Key in Settings.");
 
             return JObject.Parse(response.Content.ReadAsStringAsync().Result);
-
-            // Return the response
         }
 
         private static string GetApiKey()
@@ -109,7 +116,6 @@ namespace FASTER.Models
         private readonly string _uniqueStorageName;
         public string AccessToken { get; protected set; }
         public string GuardData { get; protected set; }
-
 
         public AuthCodeProvider(string uniqueStorageName, string persistenceDirectory)
         {

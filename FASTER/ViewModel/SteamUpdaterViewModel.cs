@@ -139,7 +139,7 @@ namespace FASTER.ViewModel
             Analytics.TrackEvent("Updater - Clicked Update", new Dictionary<string, string>
             {
                 {"Name", Properties.Settings.Default.steamUserName},
-                {"DLCs", $"{(Parameters.UsingGMDlc ? "GM " : "")}{(Parameters.UsingCSLADlc? "CSLA " : "")}{(Parameters.UsingPFDlc ? "SOG " : "")}{(Parameters.UsingWSDlc ? "WS " : "")}{(Parameters.UsingSPEDlc ? "SPE " : "")}{(Parameters.UsingRFDlc ? "RF " : "")}{(Parameters.UsingEFDlc ? "EF " : "")}"},
+                {"DLCs", $"{(Parameters.UsingContactDlc ? "Contact " : "")}{(Parameters.UsingGMDlc ? "GM " : "")}{(Parameters.UsingCSLADlc? "CSLA " : "")}{(Parameters.UsingPFDlc ? "SOG " : "")}{(Parameters.UsingWSDlc ? "WS " : "")}{(Parameters.UsingSPEDlc ? "SPE " : "")}{(Parameters.UsingRFDlc ? "RF " : "")}{(Parameters.UsingEFDlc ? "EF " : "")}"},
                 {"Branch", $"{(Parameters.UsingPerfBinaries? "Profiling" : "Public")}"}
             });
 
@@ -148,8 +148,9 @@ namespace FASTER.ViewModel
             Parameters.Output += "\nPlease don't quit this page or cancel the download\nThis might take a while...";
 
             uint appId = 233780;
+
             Dictionary<uint, string> depotsIDs = new()
-            //Find a way to update automatically with depot changes
+            //Find a way to update automatically with depot changess
             {
                 {233781, "Arma 3 Alpha Dedicated Server Content (internal)"},
                 {233782, "Arma 3 Alpha Dedicated Server binary Windows (internal)"},
@@ -256,9 +257,20 @@ namespace FASTER.ViewModel
                     null));
             }
 
-            var result = await RunServerUpdater(Parameters.InstallDirectory, appId, depotsDownload);
-            Parameters.IsUpdating = false;
+            Logger.Log($"UpdateClick: updating {Parameters.InstallDirectory} ({(Parameters.UsingPerfBinaries ? "profiling" : "public")} binaries), depots: {string.Join(", ", depotsDownload.Select(d => $"{d.id}/{d.branch}"))}");
 
+            int result;
+            try
+            { result = await RunServerUpdater(Parameters.InstallDirectory, appId, depotsDownload); }
+            catch (Exception ex)
+            {
+                Logger.Log($"UpdateClick: RunServerUpdater threw: {ex.GetType().Name}: {ex.Message}\n{ex.StackTrace}");
+                Parameters.Output += $"\nError: {ex.Message}";
+                result = UpdateState.Error;
+            }
+            finally
+            { Parameters.IsUpdating = false; }
+			Logger.Log($"UpdateClick: finished with result {result} (0 success, 1 error, 2 login failed, 3 cancelled)");
             Parameters.Output += result switch
             {
                 UpdateState.Success     => "\n\nAll Done ! ",
@@ -299,24 +311,37 @@ namespace FASTER.ViewModel
         internal async Task<int> RunServerUpdater(string path, uint appId, List<(uint id, string branch, string pass)> depots)
         {
             if (string.IsNullOrWhiteSpace(path))
+            {
+                Logger.Log("RunServerUpdater: no install directory set, nothing to do.");
                 return UpdateState.Cancelled;
+            }
 
             if (!Directory.Exists(path))
+            {
+                Logger.Log($"RunServerUpdater: creating install directory {path}");
                 Directory.CreateDirectory(path);
+            }
             tokenSource = new CancellationTokenSource();
 
             if (!await SteamLogin())
+            {
+                Logger.Log("RunServerUpdater: Steam login failed, nothing was updated.");
                 return UpdateState.LoginFailed;
+            }
 
             Stopwatch sw = Stopwatch.StartNew();
 
             foreach (var depot in depots)
             {
                 if (tokenSource.IsCancellationRequested)
+                {
+                    Logger.Log($"RunServerUpdater: cancelled before depot {depot.id}.");
                     return UpdateState.Cancelled;
+                }
 
                 try
                 {
+                    Logger.Log($"RunServerUpdater: depot {depot.id} ({depots.IndexOf(depot) + 1}/{depots.Count}), branch {depot.branch}");
                     ManifestId manifestId;
                     manifestId = await SteamContentClient.GetDepotManifestIdAsync(appId, depot.id, depot.branch, depot.pass);
 
@@ -326,88 +351,28 @@ namespace FASTER.ViewModel
                     await Download(downloadHandler, path);
                 }
                 catch (ArgumentException ex) when (ex.Message.Contains("'tasks'"))
-                { Parameters.Output += "\nSkipped..."; }
+                {
+                    Logger.Log($"RunServerUpdater: depot {depot.id} has nothing to download, skipped.");
+                    Parameters.Output += "\nSkipped...";
+                }
                 catch (OperationCanceledException)
                 {
+                    Logger.Log($"RunServerUpdater: cancelled during depot {depot.id}.");
                     return UpdateState.Cancelled;
                 }
                 catch (Exception ex)
                 {
+                    Logger.Log($"RunServerUpdater: depot {depot.id} failed: {ex.GetType().Name}: {ex.Message}{(ex.InnerException != null ? $" | Inner: {ex.InnerException.Message}" : "")}\n{ex.StackTrace}");
                     Parameters.Output += $"\nError: {ex.Message}{(ex.InnerException != null ? $" Inner Exception: {ex.InnerException.Message}" : "")}";
                     return UpdateState.Error;
                 }
             }
             sw.Stop();
+            Logger.Log($"RunServerUpdater: all {depots.Count} depots done in {sw.Elapsed}.");
             Parameters.Output += $"\nDone in {sw.Elapsed.Hours}h {sw.Elapsed.Minutes}m {sw.Elapsed.Seconds}s {sw.Elapsed.Milliseconds}ms";
 
             return UpdateState.Success;
         }
-
-        public async Task<int> RunModUpdater(ulong modId, string path)
-        {
-            tokenSource = new CancellationTokenSource();
-
-            try
-            {
-                //if(SteamClient is {IsConnected: true})
-                //{
-                //    SteamClient?.Shutdown();
-                //    SteamClient?.Dispose();
-                //    SteamClient = null;
-                //}
-                if (!await SteamLogin())
-                    return UpdateState.LoginFailed;
-            }
-            catch(Exception)
-            {
-                return UpdateState.LoginFailed;
-            }
-
-            Stopwatch sw = Stopwatch.StartNew();
-
-            try
-            {
-                ManifestId manifestId = default;
-
-                Parameters.Output += $"\nFetching mod {modId} infos... ";
-
-                if (!SteamClient.Credentials.IsAnonymous) //IS SYNC ENABLED
-                {
-                    manifestId = (await SteamContentClient.GetPublishedFileDetailsAsync(modId)).hcontent_file;
-                    Manifest manifest = await SteamContentClient.GetManifestAsync(107410, 107410, manifestId);
-
-                    SyncDeleteRemovedFiles(path, manifest);
-                }
-
-                Parameters.Output += $"\nAttempting to start download of item {modId}... ";
-
-                var downloadHandler = await SteamContentClient.GetPublishedFileDataAsync(modId, manifestId, tokenSource.Token);
-
-                await Download(downloadHandler, path);
-            }
-            catch (TaskCanceledException)
-            {
-                sw.Stop();
-                SteamClient.Shutdown();
-                SteamClient.Dispose();
-                SteamClient = null;
-                return UpdateState.Cancelled;
-            }
-            catch (Exception ex)
-            {
-                sw.Stop();
-                Parameters.Output += $"\nError: {ex.Message}{(ex.InnerException != null ? $" Inner Exception: {ex.InnerException.Message}" : "")}";
-                SteamClient.Shutdown();
-                SteamClient.Dispose();
-                SteamClient = null;
-                return UpdateState.Error;
-            }
-
-            sw.Stop();
-            Parameters.Output += $"\nDownload completed, it took {sw.Elapsed.Minutes + sw.Elapsed.Hours * 60}m {sw.Elapsed.Seconds}s {sw.Elapsed.Milliseconds}ms";
-            return UpdateState.Success;
-        }
-
 
         public async Task<int> RunModsUpdater(ObservableCollection<ArmaMod> mods)
         {
@@ -457,6 +422,21 @@ namespace FASTER.ViewModel
             finally
             {
                 IsDlOverride = false;
+            }
+
+            if (tokenSource.IsCancellationRequested)
+            {
+                Logger.Log("RunModsUpdater: cancelled.");
+                Parameters.Output += "\nMods update cancelled.";
+                return UpdateState.Cancelled;
+            }
+
+            var failed = ml.Count(m => m.Status == ArmaModStatus.NotComplete);
+            if (failed > 0)
+            {
+                Logger.Log($"RunModsUpdater: finished with {failed} of {ml.Count} mods not complete.");
+                Parameters.Output += $"\n{failed} mod(s) did not finish. Check the output above.";
+                return UpdateState.Error;
             }
 
             Logger.Log("RunModsUpdater: all done.");
@@ -629,9 +609,10 @@ namespace FASTER.ViewModel
 
         internal bool SteamReset()
         {
+            Logger.Log($"SteamReset: disconnecting (connected: {SteamClient?.IsConnected}, faulted: {SteamClient?.IsFaulted})");
             Parameters.Output += "\nDisconnecting...";
-            SteamClient.Shutdown();
-            SteamClient.Dispose();
+            SteamClient?.Shutdown();
+            SteamClient?.Dispose();
             SteamClient = null;
             Parameters.Output += "\nDisconnected.";
             return SteamClient == null;
@@ -639,18 +620,25 @@ namespace FASTER.ViewModel
 
         private void SyncDeleteRemovedFiles(string targetDir, Manifest manifest)
         {
-            Console.WriteLine("Checking for unnecessary files in target directory...");
+            Logger.Log($"SyncDeleteRemovedFiles: checking {targetDir} for files Steam no longer lists");
+
+            // A set makes each lookup instant, instead of scanning the whole manifest per file
+            var expected = new HashSet<string>(manifest.Files.Select(x => x.FileName), StringComparer.InvariantCultureIgnoreCase);
+            var deleted  = 0;
 
             foreach (var localFilePath in Directory.GetFiles(targetDir, "*", SearchOption.AllDirectories))
             {
                 var relativeLocalPath = Path.GetRelativePath(targetDir, localFilePath);
 
-                if (manifest.Files.Any(x => string.Equals(x.FileName, relativeLocalPath, StringComparison.InvariantCultureIgnoreCase)))
+                if (expected.Contains(relativeLocalPath))
                     continue;
 
-                Console.WriteLine($"Deleting local file {relativeLocalPath}");
+                Logger.Log($"SyncDeleteRemovedFiles: deleting {relativeLocalPath}");
                 File.Delete(localFilePath);
+                deleted++;
             }
+
+            Logger.Log($"SyncDeleteRemovedFiles: {deleted} file(s) deleted from {targetDir}");
         }
 
 
@@ -689,6 +677,7 @@ namespace FASTER.ViewModel
             DownloadTasks.Add(downloadTask);
 
             Parameters.Progress = 0;
+            Logger.Log($"Download: {downloadHandler.TotalFileCount} files, {Functions.ParseFileSize(downloadHandler.TotalFileSize)}, into {targetDir}");
             Parameters.Output += $"\nDownloading {downloadHandler.TotalFileCount} files with total size of {Functions.ParseFileSize(downloadHandler.TotalFileSize)}...";
             Parameters.Output += $"\nVerifying Install...";
 
@@ -708,8 +697,18 @@ namespace FASTER.ViewModel
             {
                 Parameters.Output += "\nSkipping Download...";
                 Parameters.Progress = 0;
-                await downloadHandler.DisposeAsync();
-                DownloadTasks.Remove(downloadTask);
+
+                // With nothing queued, DownloadAsync throws its "'tasks'" ArgumentException.
+                // Wait for the task and swallow only that one, so it is never left unobserved.
+                try
+                { await downloadTask; }
+                catch (ArgumentException ex) when (ex.Message.Contains("'tasks'"))
+                { Logger.Log("Download: nothing to download (no tasks), skipped."); }
+                finally
+                {
+                    DownloadTasks.Remove(downloadTask);
+                    await downloadHandler.DisposeAsync();
+                }
                 return;
             }
 
