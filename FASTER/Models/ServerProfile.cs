@@ -10,7 +10,6 @@ using System.Xml.Serialization;
 
 namespace FASTER.Models
 {
-    [Serializable]
     public class ServerProfileCollection : List<ServerProfile>
     {
         [XmlElement(Order = 1)]
@@ -46,7 +45,6 @@ namespace FASTER.Models
         }
     }
 
-    [Serializable]
     public class ServerProfile : INotifyPropertyChanged
     {
         //PRIVATE VARS DECLARATION
@@ -392,8 +390,10 @@ namespace FASTER.Models
 
                 try
                 {
+                    // Built once, so a bad pattern is caught even with no mods, and with a time limit
+                    // so a pattern that backtracks badly can't freeze the window.
                     var regex = new Regex(pattern, options, TimeSpan.FromMilliseconds(250));
-                    var filteredProfileMods = _profileMods.Where(m => regex.IsMatch(m.Name)).ToList();
+                    var filteredProfileMods = _profileMods.Where(m => regex.IsMatch(m.Name ?? string.Empty)).ToList();
                     if (ProfileModsFilterIsInvalid)
                     {
                         ProfileModsFilterIsInvalid = false;
@@ -404,6 +404,8 @@ namespace FASTER.Models
                 {
                     if (!ProfileModsFilterIsInvalid)
                     {
+                        // Logged once when it turns invalid, because this getter runs many times per refresh
+                        Logger.Log($"ProfileModsFilter: '{ProfileModsFilter}' rejected: {ex.GetType().Name}: {ex.Message}");
                         ProfileModsFilterIsInvalid = true;
                     }
                     return new List<ProfileMod>();
@@ -678,7 +680,6 @@ namespace FASTER.Models
         }
     }
 
-    [Serializable]
     public class ProfileMod : INotifyPropertyChanged
     {
         private bool    serverSideChecked;

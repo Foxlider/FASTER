@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Globalization;
+using static FASTER.Models.Functions;
 // ReSharper disable RedundantDefaultMemberInitializer
 
 namespace FASTER.Models
@@ -16,7 +17,6 @@ namespace FASTER.Models
         public static string[] ForcedDifficultyStrings { get; } = { "Recruit", "Regular", "Veteran", "Custom" };
     }
 
-    [Serializable]
     public class Arma3Profile : INotifyPropertyChanged
     {
         private ushort reducedDamage      = 0;
@@ -320,12 +320,6 @@ namespace FASTER.Models
                 precisionAi = Math.Round(value, 2);
                 RaisePropertyChanged("PrecisionAi");
             }
-        }
-
-        private static int IndexOrKeep(string[] options, string? value, int current)
-        {
-            var index = Array.IndexOf(options, value);
-            return index < 0 ? current : index;
         }
 
         public Arma3Profile()

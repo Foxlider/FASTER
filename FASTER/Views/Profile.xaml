@@ -3,7 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:viewModel="clr-namespace:FASTER.ViewModel"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:models="clr-namespace:FASTER.Models"
@@ -11,9 +10,6 @@
              Loaded="UserControl_Loaded"
              Unloaded="UserControl_Unloaded"
              d:DesignHeight="650" d:DesignWidth="880">
-    <UserControl.DataContext>
-        <viewModel:ProfileViewModel/>
-    </UserControl.DataContext>
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
         <models:NotBooleanToVisibilityConverter x:Key="BoolToHide"/>
@@ -105,20 +101,6 @@
                                         <TextBlock Text="Clear Keys" Margin="10,0" />
                                     </StackPanel>
                                 </Button>
-                                <!--<Canvas>
-                                    <Expander Header="DLCs" Margin="5" mah:ControlsHelper.ContentCharacterCasing="Normal" Background="{Binding Mode=OneWay, Source={StaticResource MahApps.Brushes.Menu.Background}}">
-                                        <StackPanel Orientation="Vertical">
-                                            <CheckBox IsChecked="{Binding Profile.ContactDLCChecked}" Content="Contact DLC" Margin="10,3" Width="105" HorizontalAlignment="Left"/>
-                                            <CheckBox IsChecked="{Binding Profile.GMDLCChecked}" Content="GM DLC" Margin="10,3" HorizontalAlignment="Left"/>
-                                            <CheckBox IsChecked="{Binding Profile.PFDLCChecked}" Content="Prairie Fire DLC" Margin="10,3" Width="105" HorizontalAlignment="Left"/>
-                                            <CheckBox IsChecked="{Binding Profile.CSLADLCChecked}" Content="CSLA DLC" Margin="10,3" HorizontalAlignment="Left"/>
-                                            <CheckBox IsChecked="{Binding Profile.WSDLCChecked}" Content="Western Sahara DLC" Margin="10,3" HorizontalAlignment="Left"/>
-                                            <CheckBox IsChecked="{Binding Profile.SPEDLCChecked}" Content="Spearhead 1944 DLC" Margin="10,3" HorizontalAlignment="Left"/>
-                                            <CheckBox IsChecked="{Binding Profile.RFDLCChecked}" Content="Reaction Forces DLC" Margin="10,3" HorizontalAlignment="Left"/>
-                                            <CheckBox IsChecked="{Binding Profile.EFDLCChecked}" Content="Expeditionary Forces DLC" Margin="10,3" HorizontalAlignment="Left"/>
-                                        </StackPanel>
-                                    </Expander>
-                                </Canvas>-->
                             </StackPanel>
                             <DataGrid Grid.Row="1" ItemsSource="{Binding Path=Profile.FilteredProfileMods, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" CanUserReorderColumns="False" CanUserSortColumns="True" AutoGenerateColumns="False" CanUserAddRows="False">
                                 <DataGrid.Resources>
@@ -407,12 +389,6 @@
                                               ToolTip="Use Regular Expressions" Style="{StaticResource MahApps.Styles.ToggleButton.Flat}"/>
 
                             </Grid>
-
-                            <!--<Border Grid.Row="4" Margin="5,-5,105,0" Height="20" BorderThickness="1" Visibility="{Binding Path=Profile.ProfileModsFilterIsInvalid, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}" BorderBrush="{Binding Path=Profile.ProfileModsFilterIsInvalid, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ProfileModsFilterIsInvalidBorderColorConverter}}">
-                                <TextBlock Foreground="White" Padding="5,1,0,0"
-                                       Text="{Binding Path=Profile.ProfileModsFilterIsInvalid, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ProfileModsFilterIsInvalidTextConverter}}"
-                                       Background="{Binding Path=Profile.ProfileModsFilterIsInvalid, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ProfileModsFilterIsInvalidBackgroundColorConverter}}"/>
-                            </Border>-->
                         </Grid>
                     </GroupBox>
 

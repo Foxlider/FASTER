@@ -19,9 +19,6 @@ namespace FASTER.ViewModel
 {
     internal class ProfileViewModel
     {
-        public ProfileViewModel()
-        { Profile = new ServerProfile("Server", false); }
-
         public ProfileViewModel(ServerProfile p)
         { Profile = p; }
         public ServerProfile Profile { get; set; }
@@ -50,18 +47,8 @@ namespace FASTER.ViewModel
             });
 
             string folderPath = Path.Combine(Profile.ArmaPath, "Servers", Profile.Id);
-            if (Directory.Exists(folderPath))
-            {
-                ProcessStartInfo startInfo = new()
-                {
-                    Arguments = folderPath,
-                    FileName  = "explorer.exe"
-                };
-
-                Process.Start(startInfo);
-            }
-            else
-            { DisplayMessage("Could not open profile location..."); }
+            if (!Functions.OpenFolder(folderPath))
+                DisplayMessage("Could not open profile location...");
         }
 
         internal void LaunchHCs()
@@ -132,6 +119,7 @@ namespace FASTER.ViewModel
 
             Profile.RaisePropertyChanged("CommandLine");
             var commandLine = Profile.CommandLine;
+            Logger.Log($"LaunchServer: {Profile.Name} ({Profile.Id}): {Profile.Executable} {commandLine}");
             try { Clipboard.SetText(commandLine); }
             catch (COMException e)
             {
@@ -168,17 +156,20 @@ namespace FASTER.ViewModel
         {
             if (!ProfileFilesExist(Profile.Id))
             {
+                Logger.Log($"VerifyBeforeLaunch: {Profile.Name} ({Profile.Id}) refused, config files missing under {Path.Combine(Profile.ArmaPath, "Servers", Profile.Id)}");
                 DisplayMessage("The profile does not exist in the game files.\nYou might need to save it first.");
                 return false;
             }
 
             if (!(Profile.Executable != null && Profile.Executable.Contains("arma3server") && Profile.Executable.EndsWith(".exe")))
             {
+                Logger.Log($"VerifyBeforeLaunch: {Profile.Name} refused, '{Profile.Executable}' is not an arma3server executable.");
                 DisplayMessage("Please select a valid Arma 3 Sever Executable.");
                 return false;
             }
 
             if (File.Exists(Profile.Executable)) return true;
+            Logger.Log($"VerifyBeforeLaunch: {Profile.Name} refused, executable not found: {Profile.Executable}");
             DisplayMessage("Arma 3 Server Executable does not exist. Please reselect correct file.");
             return false;
         }
@@ -246,9 +237,11 @@ namespace FASTER.ViewModel
                 File.WriteAllLines(basic,         Profile.BasicCfg.BasicContent.Replace("\r", "").Split('\n'));
                 File.WriteAllLines(serverProfile, Profile.ArmaProfile.ArmaProfileContent.Replace("\r", "").Split('\n'));
             }
-            catch
-            { DisplayMessage("Could not write the config files. Please ensure the server is not running and retry."); 
-            return;
+            catch (Exception ex)
+            {
+                Logger.Log($"SaveProfile: could not write config files for {Profile.Name} ({Profile.Id}) in {Path.GetDirectoryName(config)}: {ex.GetType().Name}: {ex.Message}");
+                DisplayMessage("Could not write the config files. Please ensure the server is not running and retry.");
+                return;
             }
 
             var links = Directory.EnumerateDirectories(armaPath).Select(d => new DirectoryInfo(d)).Where(d => d.Attributes.HasFlag(FileAttributes.ReparsePoint));
@@ -266,6 +259,7 @@ namespace FASTER.ViewModel
 
             Properties.Settings.Default.Save();
             Profile.RaisePropertyChanged("CommandLine");
+            Logger.Log($"SaveProfile: saved {Profile.Name} ({Profile.Id}), {Profile.ProfileMods.Count(m => m.ServerSideChecked || m.ClientSideChecked || m.HeadlessChecked || m.OptChecked)} mods enabled, {MissingMods} not deployed.");
             DisplayMessage($"Saved Profile {Profile.Name}");
 
             if (MissingMods > 0)

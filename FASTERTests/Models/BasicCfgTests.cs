@@ -35,13 +35,13 @@ namespace FASTER.Models.Tests
         [Test()]
         public void BasicCfgSetTest()
         {
-            Assert.DoesNotThrow(() => _cfg.ViewDistance = 3);
+            _cfg.ViewDistance = 3;
             Assert.That(_cfg.ViewDistance, Is.EqualTo(3));
 
-            Assert.DoesNotThrow(() => _cfg.TerrainGrid = BasicCfgArrays.TerrainGrids[0]);
+            _cfg.TerrainGrid = BasicCfgArrays.TerrainGrids[0];
             Assert.That(_cfg.TerrainGrid, Is.EqualTo(BasicCfgArrays.TerrainGrids[0]));
 
-            Assert.DoesNotThrow(() => _cfg.MaxBandwidth = ulong.MaxValue);
+            _cfg.MaxBandwidth = ulong.MaxValue;
             Assert.That(_cfg.MaxBandwidth, Is.EqualTo(ulong.MaxValue));
         }
 
