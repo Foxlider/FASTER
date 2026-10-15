@@ -341,58 +341,26 @@ namespace FASTER
         private void OpenModStagingLocation_Click(object sender, RoutedEventArgs e)
         {
             IToolsDialog.IsOpen = false;
-            var serverDirBox = SteamUpdaterViewModel.Parameters.ModStagingDirectory;
-
-            if (!string.IsNullOrEmpty(serverDirBox) && Directory.Exists(serverDirBox))
-            {
-                try
-                {
-                    ProcessStartInfo startInfo = new ProcessStartInfo { Arguments = serverDirBox, FileName = "explorer.exe" };
-                    Process.Start(startInfo);
-                }
-                catch
-                { MessageBox.Show($" Could not open {serverDirBox}"); }
-            }
-            else
-            { MessageBox.Show($"{serverDirBox} Directory does not exist!"); }
+            OpenFolderOrWarn(SteamUpdaterViewModel.Parameters.ModStagingDirectory);
         }
 
         private void OpenArmaServerLocation_Click(object sender, RoutedEventArgs e)
         {
             IToolsDialog.IsOpen = false;
-            var serverDirBox = SteamUpdaterViewModel.Parameters.InstallDirectory;
-
-            if (!string.IsNullOrEmpty(serverDirBox) && Directory.Exists(serverDirBox))
-            {
-                try
-                {
-                    ProcessStartInfo startInfo = new ProcessStartInfo { Arguments = serverDirBox, FileName = "explorer.exe" };
-                    Process.Start(startInfo);
-                }
-                catch
-                { MessageBox.Show($" Could not open {serverDirBox}"); }
-            }
-            else
-            { MessageBox.Show($"{serverDirBox} Directory does not exist!"); }
+            OpenFolderOrWarn(SteamUpdaterViewModel.Parameters.InstallDirectory);
         }
 
         private void OpenAppDataLocation_Click(object sender, RoutedEventArgs e)
         {
             IToolsDialog.IsOpen = false;
-            var appdataDirectory= Path.GetDirectoryName(ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal).FilePath);
+            OpenFolderOrWarn(Path.GetDirectoryName(ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal).FilePath));
+        }
 
-            if (!string.IsNullOrEmpty(appdataDirectory) && Directory.Exists(appdataDirectory))
-            {
-                try
-                {
-                    ProcessStartInfo startInfo = new ProcessStartInfo { Arguments = appdataDirectory, FileName = "explorer.exe" };
-                    Process.Start(startInfo);
-                }
-                catch
-                { MessageBox.Show($" Could not open {appdataDirectory}"); }
-            }
-            else
-            { MessageBox.Show($"{appdataDirectory} Directory does not exist!"); }
+        // Opens a folder in Explorer, or tells the user it couldn't
+        private static void OpenFolderOrWarn(string path)
+        {
+            if (!Functions.OpenFolder(path))
+                MessageBox.Show($"Could not open \"{path}\".\nCheck that the folder exists.");
         }
 
 
@@ -446,6 +414,9 @@ namespace FASTER
             }
             var currentProfilesNew = Properties.Settings.Default.Profiles;
 
+            // Remember which profile page is open, so its highlight can be put back after the menu is rebuilt
+            var selectedProfileId = GetProfileToggleButtons(IServerProfilesMenu).FirstOrDefault(b => b == lastNavButton)?.Name;
+
             Dispatcher?.Invoke(() => { IServerProfilesMenu.Items.Clear(); });
 
             ContentProfileViews.Clear();
@@ -463,6 +434,12 @@ namespace FASTER
                     HorizontalContentAlignment = HorizontalAlignment.Left,
                 };
                 newItem.SetValue(TextOptions.TextFormattingModeProperty, TextFormattingMode.Display);
+
+                if (profile.Id == selectedProfileId)
+                {
+                    newItem.IsChecked = true;
+                    lastNavButton     = newItem;
+                }
 
                 var profileId = profile.Id;
 
@@ -577,6 +554,7 @@ namespace FASTER
                 properties.firstRun = true;
                 properties.Save();
 
+                Logger.Log($"ModConversion: not enough free space on {drive.Name}: {Functions.ParseFileSize(drive.AvailableFreeSpace)} free, {Functions.ParseFileSize(fullzize)} needed. FASTER will close.");
                 var closing = 10000;
 
                 while (closing > 0)
@@ -587,7 +565,7 @@ namespace FASTER
                 }
 
                 await controller.CloseAsync();
-                Instance.OnClosing(new CancelEventArgs(true));
+                Close();
                 return;
             }
                 
@@ -627,14 +605,14 @@ namespace FASTER
                 return;
             }
 
-            var r = new Random();
+            var takenIds = properties.armaMods.ArmaMods.Select(m => m.WorkshopId).ToHashSet();
             progress = 0;
             controller.Maximum = properties.localMods.Count;
             controller.SetMessage($"Converting Local Mods... {progress} / {controller.Maximum}");
             controller.SetProgress(progress);
             foreach (var localMod in properties.localMods)
             {
-                var modID   = (uint) (uint.MaxValue - r.Next(ushort.MaxValue/2));
+                var modID   = ModUtilities.NewLocalModId(takenIds);
                 var newPath = Path.Combine(modStagingDir, modID.ToString());
                 var oldPath = localMod.Path;
                 if (!Directory.Exists(newPath))
