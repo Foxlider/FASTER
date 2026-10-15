@@ -49,6 +49,23 @@ jobs:
         submodules: true
         ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
+    # On a tag, the tag, FASTER.csproj and FASTER_Version.xml must all name the same version.
+    # Stops a release whose updater file points users at the wrong version.
+    - name: Check version matches tag
+      if: startsWith(github.ref, 'refs/tags/v')
+      shell: pwsh
+      env:
+        TAG_NAME: ${{ github.ref_name }}
+      run: |
+        $tagVersion = $env:TAG_NAME.TrimStart('v')
+        $csproj     = ([xml](Get-Content FASTER/FASTER.csproj)).Project.PropertyGroup.Version | Where-Object { $_ } | Select-Object -First 1
+        $updaterXml = ([xml](Get-Content FASTER_Version.xml)).item.version
+        Write-Output "tag: $tagVersion | FASTER.csproj: $csproj | FASTER_Version.xml: $updaterXml"
+        if ($tagVersion -ne $csproj -or $tagVersion -ne $updaterXml) {
+          Write-Output "::error title=Version mismatch::Tag $tagVersion, FASTER.csproj $csproj and FASTER_Version.xml $updaterXml must all match."
+          exit 1
+        }
+
     # Install the .NET Core workload
     - name: Install .NET Core
       uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
@@ -83,7 +100,7 @@ jobs:
         Runtime: ${{ matrix.runtime }}
 
     - name: Upload artifact
-      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
       with:
         name: build-${{ matrix.runtime }}
         path: .\${{ env.ZIP_NAME}}${{ matrix.runtime }}.zip
@@ -103,7 +120,7 @@ jobs:
         ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
     - name: Download x64 artifact
-      uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+      uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
       with:
         name: build-x64
         path: ./artifacts
@@ -188,12 +205,15 @@ jobs:
     # Set Version Number to environment
     - name: Set Version
       id: set_version
+      env:
+        TARGET_SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
       run: |
         if ($env:IS_RELEASE -eq "true") {
           echo "VERSION=$env:GITHUB_REF_NAME" >> $env:GITHUB_ENV
         } else {
           echo "VERSION=${{ steps.get-version.outputs.version }}" >> $env:GITHUB_ENV
         }
+        echo "SHORT_SHA=$($env:TARGET_SHA.Substring(0,7))" >> $env:GITHUB_ENV
       shell: pwsh
 
     #Create Release
@@ -228,7 +248,7 @@ jobs:
       uses: softprops/action-gh-release@e598afbe1493e6b1bafb1f389cabb956eab91231 # v3.0.3
       with:
         tag_name: nightly
-        name: 'Nightly Release v${{ env.VERSION }}'
+        name: 'Nightly Release v${{ env.VERSION }} (${{ env.SHORT_SHA }})'
         draft: false
         body: |
           Changelog since release ${{ steps.get-changes.outputs.tag }} :
@@ -246,7 +266,7 @@ jobs:
     steps:
       # Requires forked winget-pkgs: https://github.com/microsoft/winget-pkgs to the same account as this project
       - name: Submit to WinGet
-        uses: vedantmgoyal9/winget-releaser@4ffc7888bffd451b357355dc214d43bb9f23917e #v2
+        uses: vedantmgoyal9/winget-releaser@b7370d4d152efdce803a26cc6ca9eee58cb2ad54 #v2
         with:
           identifier: Foxlider.FASTER
           installers-regex: 'Release_x64.zip'

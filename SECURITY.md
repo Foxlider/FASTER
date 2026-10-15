@@ -29,6 +29,6 @@ Please provide enough information for the maintainers to reproduce and assess th
 
 Versions prior to 1.7 used a weaker cipher than the one introduced in 1.8, which uses AES-based encryption.
 
-FASTER 1.9.8.103 introduced Windows DPAPI for Steam password storage.
+FASTER 1.9.8.105 introduced Windows DPAPI for Steam password storage. Passwords saved by earlier versions are converted to DPAPI automatically when they can be read.
 
-Users running earlier versions should update to a supported release.
+Users running earlier versions, including earlier 1.9x builds, should update to 1.9.8.105 or later.
