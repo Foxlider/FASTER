@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
@@ -14,23 +13,7 @@ namespace FASTER.Models
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is long size)
-            {
-                double   fullSize = size;
-                string[] sizes    = {" B", "KB", "MB", "GB", "TB"};
-                var      order    = 0;
-                while (fullSize >= 1024 && order < sizes.Length - 1)
-                {
-                    order++;
-                    fullSize /= 1024.0;
-                }
-
-                // Adjust the format string to your preferences. For example "{0:0.#}{1}" would
-                // show a single decimal place, and no space.
-                return $"{fullSize,7:F} {sizes[order],-2}";
-            }
-
-            return "0 B";
+            return value is long size ? Functions.ParseFileSize(size) : "0 B";
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -60,8 +43,6 @@ namespace FASTER.Models
 
         #endregion
     }
-
-    public sealed class ValueConverterCollection : Collection<IValueConverter> { }
 
     public class ProfileModsFilterIsInvalidBorderColorConverter : IValueConverter
     {

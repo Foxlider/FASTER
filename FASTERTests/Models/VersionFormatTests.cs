@@ -31,5 +31,13 @@ namespace FASTER.Models.Tests
         {
             Assert.That(Functions.FormatVersion(null), Is.EqualTo("UNKNOWN"));
         }
+
+        [TestCase("1.9.9.0+3d3c42e5aac5ba805825da76410c181273ba90b1", "1.9.9.0+3d3c42e")]
+        [TestCase("1.9.9.0",                                          "1.9.9.0")]
+        [TestCase("1.9.9.0+abc",                                      "1.9.9.0+abc")]
+        public void BuildKeepsSevenCharactersOfTheCommit(string input, string expected)
+        {
+            Assert.That(Functions.ShortBuild(input), Is.EqualTo(expected));
+        }
     }
 }

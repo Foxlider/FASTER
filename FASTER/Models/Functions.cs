@@ -46,6 +46,14 @@ namespace FASTER.Models
             return $"{fullSize,7:F} {sizes[order],-2}";
         }
 
+        // Index of value in options, or current when value isn't one of them,
+        // so a bad value coming from a saved file or the UI never changes a setting.
+        public static int IndexOrKeep(string[] options, string? value, int current)
+        {
+            var index = Array.IndexOf(options, value);
+            return index < 0 ? current : index;
+        }
+
         public static string SelectFile(string filter)
         {
             OpenFileDialog openFileDialog = new() { Filter = filter };
@@ -93,6 +101,27 @@ namespace FASTER.Models
 		    Process.Start(new ProcessStartInfo(url) { UseShellExecute = true }); 
         }
 
+        // Opens a folder in Explorer. Returns false, and logs why, if it can't.
+        public static bool OpenFolder(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path) || !Directory.Exists(path))
+            {
+                Logger.Log($"OpenFolder: folder does not exist: '{path}'");
+                return false;
+            }
+
+            try
+            {
+                Process.Start(new ProcessStartInfo { FileName = "explorer.exe", Arguments = $"\"{path}\"" });
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Logger.Log($"OpenFolder: could not open '{path}': {ex.GetType().Name}: {ex.Message}");
+                return false;
+            }
+        }
+
         internal static string GetVersion()
         {
 #if DEBUG
@@ -129,7 +158,24 @@ namespace FASTER.Models
             return $"{version.Major}.{version.Minor}{rev}";
         }
 
+        // The informational version is "1.9.8.105+<full commit hash>" when built from git.
+        // Keep only the first 7 characters of the hash, like git does.
+        public static string ShortBuild(string informationalVersion)
+        {
+            var plus = informationalVersion.IndexOf('+');
+            return plus < 0 || informationalVersion.Length - plus - 1 <= 7
+                ? informationalVersion
+                : informationalVersion[..(plus + 8)];
+        }
+
         internal static string GetRawVersion()
-        { return Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "UNKNOWN"; }
+        {
+            var assembly      = Assembly.GetExecutingAssembly();
+            var informational = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
+
+            return string.IsNullOrEmpty(informational)
+                ? assembly.GetName().Version?.ToString() ?? "UNKNOWN"
+                : ShortBuild(informational);
+        }
     }
 }

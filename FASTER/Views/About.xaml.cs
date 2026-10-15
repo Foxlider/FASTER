@@ -35,8 +35,6 @@ namespace FASTER.Views
             InitializeComponent();
         }
 
-        public MainWindow MetroWindow => (MainWindow)Window.GetWindow(this);
-
         private void IDiscordButton_Click(object sender, RoutedEventArgs e)
         {
             Analytics.TrackEvent("About - Clicked Discord", new Dictionary<string, string> {
@@ -72,7 +70,9 @@ namespace FASTER.Views
         private void About_Loaded(object sender, RoutedEventArgs e)
         {
             IVersionLabel.Text = Functions.GetVersion();
-            IVersionLabel.ToolTip = Functions.GetRawVersion();
+            var build = Functions.GetRawVersion();
+            IVersionLabel.ToolTip = build;
+            Logger.Log($"About: version label '{IVersionLabel.Text}', tooltip '{build}'");
         }
 
         private void IDonateButton_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
