@@ -101,53 +101,50 @@ namespace FASTER.ViewModel
                 oldPaths.Add(localPath);
             }
 
-            var progress = await DialogCoordinator.ShowProgressAsync(this, "Local Mod", "Copying mod(s)...");
+            var progress = await DialogCoordinator.ShowProgressAsync(this, "Local Mod", "Linking mod(s)...");
             progress.Maximum = oldPaths.Count;
-            foreach (var oldPath in oldPaths.Where((path) => Directory.Exists(path)))
+            try
             {
-                uint modID = 0;
-                var existingIds = ModsCollection.ArmaMods.Select(mod => mod.WorkshopId);
-                while (modID == 0 || existingIds.Contains(modID))
+                var takenIds = ModsCollection.ArmaMods.Select(mod => mod.WorkshopId).ToHashSet();
+                foreach (var oldPath in oldPaths.Where((path) => Directory.Exists(path)))
                 {
-                    Random r = new();
-                    modID = (uint)(uint.MaxValue - r.Next(ushort.MaxValue / 2));
-                }
-                var newPath = Path.Combine(Properties.Settings.Default.modStagingDirectory, modID.ToString());
-                if (Directory.Exists(newPath))
-                {
-                    await DialogCoordinator.ShowMessageAsync(this, "Warning", $"Directory already exists for {oldPath[(oldPath.LastIndexOf("@", StringComparison.Ordinal) + 1)..]}.");
-                    continue;
-                }
+                    var modID = ModUtilities.NewLocalModId(takenIds);
+                    var newPath = Path.Combine(Properties.Settings.Default.modStagingDirectory, modID.ToString());
+                    if (Directory.Exists(newPath))
+                    {
+                        Logger.Log($"AddLocalMod: staging folder already exists, skipped: {newPath}");
+                        await DialogCoordinator.ShowMessageAsync(this, "Warning", $"Directory already exists for {oldPath[(oldPath.LastIndexOf("@", StringComparison.Ordinal) + 1)..]}.");
+                        continue;
+                    }
 
-                try
-                {
+                    Logger.Log($"AddLocalMod: linking {oldPath} -> {newPath}");
                     await Task.Factory.StartNew(() => {
                         Directory.CreateSymbolicLink(newPath, oldPath);
                         var progressDone = oldPaths.IndexOf(oldPath);
-                        progress.SetMessage($"Copying mod from {oldPath}\n{progressDone} / {progress.Maximum}");
+                        progress.SetMessage($"Linking mod from {oldPath}\n{progressDone} / {progress.Maximum}");
                         progress.SetProgress(progressDone);
                     });
-                }
-                catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
-                {
-                    Logger.Log($"AddLocalModAsync: could not link {oldPath} -> {newPath}: {ex.Message}");
-                    DisplayMessage($"Could not add \"{Path.GetFileName(oldPath)}\": {ex.Message}");
-                    continue;
-                }
 
-                var newMod = new ArmaMod
-                {
-                    WorkshopId = modID,
-                    Name = oldPath[(oldPath.LastIndexOf("@", StringComparison.Ordinal) + 1)..],
-                    Path = newPath,
-                    Author = "Unknown",
-                    IsLocal = true,
-                    Status = ArmaModStatus.Local
-                };
+                    var newMod = new ArmaMod
+                    {
+                        WorkshopId = modID,
+                        Name = oldPath[(oldPath.LastIndexOf("@", StringComparison.Ordinal) + 1)..],
+                        Path = newPath,
+                        Author = "Unknown",
+                        IsLocal = true,
+                        Status = ArmaModStatus.Local
+                    };
 
-                ModsCollection.AddSteamMod(newMod);
+                    ModsCollection.AddSteamMod(newMod);
+                }
             }
-            await progress.CloseAsync();
+            catch (Exception ex)
+            {
+                Logger.Log($"AddLocalMod: failed: {ex.GetType().Name}: {ex.Message}");
+                DisplayMessage($"Could not add the local mod:\n{ex.Message}");
+            }
+            finally
+            { await progress.CloseAsync(); }
         }
 
         internal void DeleteMod(ArmaMod mod)
@@ -155,6 +152,7 @@ namespace FASTER.ViewModel
             if (mod == null)
                 return;
 
+            Logger.Log($"DeleteMod: {mod.WorkshopId} ({mod.Name}, {(mod.IsLocal ? "local" : "steam")}) at {mod.Path}");
             ModsCollection.DeleteSteamMod(mod.WorkshopId);
         }
 
@@ -179,7 +177,7 @@ namespace FASTER.ViewModel
 
         internal async Task DeleteAllMods()
         {
-            if (!await ConfirmTypedYesAsync("Are you sure you want to delete all Steam mods?", "Write \"yes\" and press OK to remove every Steam mod from this list and delete its folder in the Mod Staging Directory. Local mods are kept. Your original folders are not touched."))
+            if (!await ConfirmTypedYesAsync("Are you sure you want to delete all Steam mods?", "Write \"yes\" and press OK to remove every Steam mod from this list and delete its folder in the Mod Staging Directory. Local mods are kept."))
                 return;
 
             Analytics.TrackEvent("Mods - Clicked DeleteAllMods", new Dictionary<string, string>
@@ -187,6 +185,7 @@ namespace FASTER.ViewModel
                 {"Name", Properties.Settings.Default.steamUserName}
             });
             var copyArmaMods = new List<ArmaMod>(ModsCollection.ArmaMods.Where(m => !m.IsLocal));
+            Logger.Log($"DeleteAllMods: deleting {copyArmaMods.Count} Steam mods, keeping {ModsCollection.ArmaMods.Count - copyArmaMods.Count} local mods.");
             foreach (var mod in copyArmaMods)
             {
                 DeleteMod(mod);
@@ -241,20 +240,10 @@ namespace FASTER.ViewModel
 
         public void OpenModFolder(ArmaMod mod)
         {
-            if (mod == null || !Directory.Exists(mod.Path))
-            {
+            if (mod == null || !Functions.OpenFolder(mod.Path))
                 DisplayMessage($"Could not open folder \"{mod?.Path}\"");
-                return;
-            }
-
-            ProcessStartInfo startInfo = new()
-            {
-                Arguments = mod.Path,
-                FileName  = "explorer.exe"
-            };
-
-            Process.Start(startInfo);
         }
+
         public async Task CheckForUpdates()
         {
             Logger.Log("CheckForUpdates started.");
@@ -415,6 +404,7 @@ namespace FASTER.ViewModel
                     $"Found {unusedMods.Count} unused mod(s). Type \"yes\" to confirm deletion."))
                 return;
 
+            Logger.Log($"PurgeUnusedMods: deleting {unusedMods.Count} unused Steam mods.");
             foreach (var mod in unusedMods)
                 DeleteMod(mod);
         }

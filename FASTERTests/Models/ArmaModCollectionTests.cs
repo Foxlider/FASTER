@@ -1,4 +1,6 @@
-﻿using NUnit.Framework;
+﻿using System.Windows;
+using NUnit.Framework;
+using System.Threading;
 
 namespace FASTER.Models.Tests
 {
@@ -24,11 +26,18 @@ namespace FASTER.Models.Tests
 
         [Test()]
         [Category("Network")] // AddSteamMod starts a background Steam API lookup
+        [Apartment(ApartmentState.STA)]
         public void AddSteamModTest()
         {
-            Assert.DoesNotThrow(() => _amc.AddSteamMod(_mod));
+            if (Application.Current == null)
+            {
+                var app = new FASTER.App();
+                app.InitializeComponent();
+            }
 
-            Assert.DoesNotThrow(() => _amc.DeleteSteamMod(_mod.WorkshopId));
+            _amc.AddSteamMod(_mod);
+
+            _amc.DeleteSteamMod(_mod.WorkshopId);
         }
 
         [Test]
