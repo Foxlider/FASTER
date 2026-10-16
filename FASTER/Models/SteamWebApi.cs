@@ -30,8 +30,11 @@ namespace FASTER.Models
                 var response = ApiCall("https://api.steampowered.com/IPublishedFileService/GetDetails/v1?key=" + GetApiKey() + V3 + modId);
                 return (JObject)response?.SelectToken("response.publishedfiledetails[0]");
             }
-            catch
-            { return null; }
+            catch (Exception ex)
+            {
+                Logger.Log($"SteamWebApi: GetSingleFileDetails({modId}) failed: {ex.GetType().Name}: {ex.Message}");
+                return null;
+            }
         }
 
 
@@ -43,8 +46,11 @@ namespace FASTER.Models
                 var response = ApiCall("https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v1?key=" + GetApiKey() + V2 + playerId);
                 return (JObject)response?.SelectToken("response.players.player[0]");
             }
-            catch
-            { return null; }
+            catch (Exception ex)
+            {
+                Logger.Log($"SteamWebApi: GetPlayerSummaries({playerId}) failed: {ex.GetType().Name}: {ex.Message}");
+                return null;
+            }
         }
 
 
@@ -60,6 +66,7 @@ namespace FASTER.Models
             { response = client.GetAsync(uri).GetAwaiter().GetResult(); }
             catch (Exception e) when (e is HttpRequestException or TaskCanceledException or SocketException)
             {
+                Logger.Log($"SteamWebApi: could not reach Steam API: {e.GetType().Name}: {e.Message}");
                 try
                 {
                     MainWindow.Instance.Dispatcher?.InvokeAsync(() =>
@@ -80,18 +87,18 @@ namespace FASTER.Models
                         Console.WriteLine("Cannot reach Steam API \n\nCheck https://steamstat.us/");
                 }
             }
-            // Display the status.
-            Console.WriteLine((response)?.StatusCode);
-
             if (response == null)
+            {
+                Logger.Log("SteamWebApi: no response from Steam API.");
                 return null;
+            }
+
+            Logger.Log($"SteamWebApi: HTTP {(int)response.StatusCode} {response.StatusCode}");
 
             if (!response.IsSuccessStatusCode)
                 throw new HttpRequestException($"Steam API returned HTTP {(int)response.StatusCode} {response.StatusCode}. Please check your Steam API Key in Settings.");
 
             return JObject.Parse(response.Content.ReadAsStringAsync().Result);
-
-            // Return the response
         }
 
         private static string GetApiKey()
@@ -109,7 +116,6 @@ namespace FASTER.Models
         private readonly string _uniqueStorageName;
         public string AccessToken { get; protected set; }
         public string GuardData { get; protected set; }
-
 
         public AuthCodeProvider(string uniqueStorageName, string persistenceDirectory)
         {
@@ -163,6 +169,29 @@ namespace FASTER.Models
             return response == MessageDialogResult.Affirmative;
         }
 
+        // Writes a DPAPI-protected value. If protection fails, nothing is written
+        // and any older file is removed, so a plain-text copy is never left on disk.
+        private void WriteProtected(string fileSuffix, string value)
+        {
+            if (string.IsNullOrEmpty(_persistenceDirectory)) return;
+
+            Directory.CreateDirectory(_persistenceDirectory);
+            var path           = Path.Combine(_persistenceDirectory, $"{_uniqueStorageName}_{fileSuffix}");
+            var protectedValue = Encryption.Instance.EncryptData(value);
+
+            if (string.IsNullOrEmpty(protectedValue))
+            {
+                Logger.Log($"AuthCodeProvider: could not protect {fileSuffix}, not saving it to disk.");
+                try
+                { if (File.Exists(path)) File.Delete(path); }
+                catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+                { Logger.Log($"AuthCodeProvider: could not remove old {fileSuffix} file: {ex.Message}"); }
+                return;
+            }
+
+            File.WriteAllText(path, protectedValue);
+        }
+
         // Reads a token file. New files are DPAPI-protected; old plain-text files are still accepted
         // and get rewritten in the new format the next time Steam persists them.
         private static string ReadProtected(string path)
@@ -174,12 +203,7 @@ namespace FASTER.Models
         public override Task PersistAccessTokenAsync(string token, CancellationToken cancellationToken = default)
         {
             AccessToken = token;
-
-            if (string.IsNullOrEmpty(_persistenceDirectory)) return Task.CompletedTask;
-
-            Directory.CreateDirectory(_persistenceDirectory);
-            File.WriteAllText(Path.Combine(_persistenceDirectory, $"{_uniqueStorageName}_accesstoken"), Encryption.Instance.EncryptData(AccessToken) ?? AccessToken);
-
+            WriteProtected("accesstoken", AccessToken);
             return Task.CompletedTask;
         }
 
@@ -199,12 +223,7 @@ namespace FASTER.Models
         public override Task PersistGuardDataAsync(string data, CancellationToken cancellationToken = default)
         {
             GuardData = data;
-
-            if (string.IsNullOrEmpty(_persistenceDirectory)) return Task.CompletedTask;
-
-            Directory.CreateDirectory(_persistenceDirectory);
-            File.WriteAllText(Path.Combine(_persistenceDirectory, $"{_uniqueStorageName}_guarddata"), Encryption.Instance.EncryptData(GuardData) ?? GuardData);
-
+            WriteProtected("guarddata", GuardData);
             return Task.CompletedTask;
         }
 

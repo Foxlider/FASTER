@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
+using static FASTER.Models.Functions;
 
 namespace FASTER.Models
 {
@@ -15,7 +16,6 @@ namespace FASTER.Models
         public static string[] TimeStampStrings { get; } = { "none", "short", "long" };
     }
 
-    [Serializable]
     public class ServerCfg : INotifyPropertyChanged
     {
         //Server Options
@@ -893,12 +893,6 @@ namespace FASTER.Models
             RaisePropertyChanged(nameof(MissionContentOverride));
         }
 
-        private static int IndexOrKeep(string[] options, string? value, int current)
-        {
-            var index = Array.IndexOf(options, value);
-            return index < 0 ? current : index;
-        }
-
         private static string Esc(string? value) => (value ?? string.Empty).Replace("\"", "\"\"");
 
         private static bool HasEntries(List<string> items) => items.Exists(s => !string.IsNullOrWhiteSpace(s));
@@ -1056,7 +1050,6 @@ namespace FASTER.Models
         }
     }
 
-    [Serializable]
     public class ProfileMission : INotifyPropertyChanged
     {
         private bool missionChecked;

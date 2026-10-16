@@ -6,20 +6,19 @@ using System.Xml.Serialization;
 
 namespace FASTER.Models
 {
-    [Serializable]
     public class ArmaDeployment : INotifyPropertyChanged
     {
         private ObservableCollection<DeploymentMod> _mods = new ObservableCollection<DeploymentMod>();
-        private string _name = "Main";
+        private string _installPath = "Main";
 
         [XmlElement(Order = 1)]
         // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public string InstallPath 
         { 
-            get => _name; 
+            get => _installPath;
             set 
             {
-                _name = value;
+                _installPath = value;
                 RaisePropertyChanged(nameof(InstallPath));
             }
         }
@@ -50,7 +49,6 @@ namespace FASTER.Models
         }
     }
 
-    [Serializable]
     public class DeploymentMod : INotifyPropertyChanged
     {
         private bool marked;

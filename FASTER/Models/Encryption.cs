@@ -32,8 +32,11 @@ namespace FASTER.Models
                 var bytes = ProtectedData.Protect(Encoding.UTF8.GetBytes(plaintext), Entropy, DataProtectionScope.CurrentUser);
                 return CurrentPrefix + Convert.ToBase64String(bytes);
             }
-            catch
-            { return null; }
+            catch (Exception ex)
+            {
+                Logger.Log($"Encryption: could not encrypt a value: {ex.GetType().Name}: {ex.Message}");
+                return null;
+            }
         }
 
         public string DecryptData(string encryptedtext)
@@ -50,8 +53,11 @@ namespace FASTER.Models
                 var bytes = ProtectedData.Unprotect(Convert.FromBase64String(encryptedtext[CurrentPrefix.Length..]), Entropy, DataProtectionScope.CurrentUser);
                 return Encoding.UTF8.GetString(bytes);
             }
-            catch
-            { return null; }
+            catch (Exception ex)
+            {
+                Logger.Log($"Encryption: could not decrypt a value: {ex.GetType().Name}: {ex.Message}");
+                return null;
+            }
         }
 
         /// <summary>
@@ -64,7 +70,17 @@ namespace FASTER.Models
                 return stored;
 
             var plain = DecryptLegacy(stored);
-            return plain == null ? stored : EncryptData(plain) ?? stored;
+            if (plain == null)
+            {
+                Logger.Log("Encryption: a stored value is in the old format and could not be read, leaving it unchanged.");
+                return stored;
+            }
+
+            var upgraded = EncryptData(plain);
+            Logger.Log(upgraded == null
+                ? "Encryption: could not convert an old-format value to DPAPI, leaving it unchanged."
+                : "Encryption: converted an old-format value to DPAPI.");
+            return upgraded ?? stored;
         }
 
         #region Legacy (read-only, for migration)
@@ -104,15 +120,18 @@ namespace FASTER.Models
                 }
                 return Encoding.Unicode.GetString(ms.ToArray());
             }
-            catch
-            { return null; }
+            catch (Exception ex)
+            {
+                Logger.Log($"Encryption: could not read an old-format value: {ex.GetType().Name}: {ex.Message}");
+                return null;
+            }
         }
 
         private static string SystemSerialNumber()
         {
             try
             {
-                var powershell = Process.Start(new ProcessStartInfo
+                using var powershell = Process.Start(new ProcessStartInfo
                 {
                     UseShellExecute = false,
                     WindowStyle = ProcessWindowStyle.Hidden,
@@ -122,11 +141,33 @@ namespace FASTER.Models
                     FileName = "powershell",
                     Arguments = "Get-WmiObject Win32_BaseBoard | select SerialNumber"
                 });
-                powershell?.WaitForExit();
-                var output = powershell?.StandardOutput.ReadToEnd();
-                return output?.Replace("\r", "").Split('\n')[3];
+
+                if (powershell == null)
+                    return null;
+
+                // Read both streams while the process runs. Waiting first can deadlock if a pipe fills up.
+                var outputTask = powershell.StandardOutput.ReadToEndAsync();
+                var errorTask  = powershell.StandardError.ReadToEndAsync();
+
+                if (!powershell.WaitForExit(15000))
+                {
+                    try { powershell.Kill(true); } catch (Exception) { /* already gone */ }
+                    Logger.Log("Encryption: the board serial lookup took longer than 15 seconds and was stopped.");
+                    return "EXCEPTION_ON_QUERY";
+                }
+
+                var output = outputTask.GetAwaiter().GetResult();
+                var error  = errorTask.GetAwaiter().GetResult();
+                if (!string.IsNullOrWhiteSpace(error))
+                    Logger.Log($"Encryption: the board serial lookup wrote to stderr: {error.Trim()}");
+
+                return output.Replace("\r", "").Split('\n')[3];
             }
-            catch (Exception) { return "EXCEPTION_ON_QUERY"; }
+            catch (Exception ex)
+            {
+                Logger.Log($"Encryption: could not read the board serial for the old key: {ex.GetType().Name}: {ex.Message}");
+                return "EXCEPTION_ON_QUERY";
+            }
         }
 
         #endregion

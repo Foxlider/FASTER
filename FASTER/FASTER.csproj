@@ -11,7 +11,7 @@
         <SignAssembly>True</SignAssembly>
         <AssemblyOriginatorKeyFile>FASTERKey.snk</AssemblyOriginatorKeyFile>
         <Authors>Keelah Fox, Jupster, Canno.n</Authors>
-        <Version>1.9.8.101</Version>
+        <Version>1.9.8.105</Version>
         <Company>FoxliCorp.</Company>
         <Description>Fox's Arma Server Tool Extended Rewrite</Description>
         <Copyright>Copyright © 2019</Copyright>
@@ -64,15 +64,15 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Autoupdater.NET.Official" Version="1.9.3" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageReference Include="LiveCharts.Wpf" Version="0.9.7" />
     <PackageReference Include="MahApps.Metro" Version="2.4.11" />
     <PackageReference Include="MahApps.Metro.IconPacks.Material" Version="6.2.1" />
-    <PackageReference Include="MahApps.Metro.IconPacks.Modern" Version="5.0.0" />
+    <PackageReference Include="MahApps.Metro.IconPacks.Modern" Version="6.2.1" />
     <PackageReference Include="MahApps.Metro.SimpleChildWindow" Version="2.2.1" />
     <PackageReference Include="Microsoft.AppCenter.Analytics" Version="5.0.7" />
     <PackageReference Include="Microsoft.AppCenter.Crashes" Version="5.0.7" />
-    <PackageReference Include="SQLitePCLRaw.lib.e_sqlite3" Version="2.1.13" />
+    <PackageReference Include="SQLitePCLRaw.lib.e_sqlite3" Version="3.53.3" />
     <PackageReference Include="WindowsAPICodePack-Shell" Version="1.1.1" />
   </ItemGroup>
   <ItemGroup>

@@ -46,6 +46,14 @@ namespace FASTER.Models
             return $"{fullSize,7:F} {sizes[order],-2}";
         }
 
+        // Index of value in options, or current when value isn't one of them,
+        // so a bad value coming from a saved file or the UI never changes a setting.
+        public static int IndexOrKeep(string[] options, string? value, int current)
+        {
+            var index = Array.IndexOf(options, value);
+            return index < 0 ? current : index;
+        }
+
         public static string SelectFile(string filter)
         {
             OpenFileDialog openFileDialog = new() { Filter = filter };
@@ -93,42 +101,86 @@ namespace FASTER.Models
 		    Process.Start(new ProcessStartInfo(url) { UseShellExecute = true }); 
         }
 
+        // Opens a folder in Explorer. Returns false, and logs why, if it can't.
+        public static bool OpenFolder(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path) || !Directory.Exists(path))
+            {
+                Logger.Log($"OpenFolder: folder does not exist: '{path}'");
+                return false;
+            }
+
+            try
+            {
+                // The full path to the system's explorer.exe, so nothing else can stand in for it,
+                // and the folder is passed as a single argument, never built into a command string.
+                var explorer  = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), "explorer.exe");
+                var startInfo = new ProcessStartInfo(explorer);
+                startInfo.ArgumentList.Add(Path.TrimEndingDirectorySeparator(Path.GetFullPath(path)));
+                Process.Start(startInfo);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Logger.Log($"OpenFolder: could not open '{path}': {ex.GetType().Name}: {ex.Message}");
+                return false;
+            }
+        }
+
         internal static string GetVersion()
         {
-            var assembly = Assembly.GetExecutingAssembly().GetName().Version;
-            
-            if (assembly == null) 
-                return "UNKNOWN";
-            
-            string rev = $"{(char)(assembly.Build + 96)}";
-            
-            if (assembly.Build == 0) 
-                rev = "ALPHA";
-            if (assembly.Revision != 0)
-            {
-                string releaseType = (assembly.Revision / 100) switch
-                                     {
-                                         1 => "H",  // HOTFIX
-                                         2 => "RC", // RELEASE CANDIDATE
-                                         5 => "D",  // DEV
-                                         _ => ""    // EMPTY RELEASE TYPE
-                                     };
-                if(releaseType != "")
-                     rev += $" {releaseType}{int.Parse(assembly.Revision.ToString()[1..])}";
-            }
 #if DEBUG
-            rev += "-DEV";
+            const bool isDev = true;
+#else
+            const bool isDev = false;
 #endif
-            string version = $"{assembly.Major}."
-                             + $"{assembly.Minor}"
-                             + $"{rev}";
-            return version;
+            return FormatVersion(Assembly.GetExecutingAssembly().GetName().Version, isDev);
         }
-        
+
+        // Turns 1.9.8.101 into "1.9h H1".
+        // Build becomes a letter (1 = a, 8 = h) and 0 means ALPHA.
+        // The hundreds of Revision pick the release type and the last two digits are its number.
+        public static string FormatVersion(Version? version, bool isDev = false)
+        {
+            if (version == null)
+                return "UNKNOWN";
+
+            var rev = version.Build == 0 ? "ALPHA" : ((char)(version.Build + 96)).ToString();
+
+            var releaseType = (version.Revision / 100) switch
+                              {
+                                  1 => "H",  // HOTFIX
+                                  2 => "RC", // RELEASE CANDIDATE
+                                  5 => "D",  // DEV
+                                  _ => ""    // EMPTY RELEASE TYPE
+                              };
+            if (releaseType != "")
+                rev += $" {releaseType}{version.Revision % 100}";
+
+            if (isDev)
+                rev += "-DEV";
+
+            return $"{version.Major}.{version.Minor}{rev}";
+        }
+
+        // The informational version is "1.9.8.105+<full commit hash>" when built from git.
+        // Keep only the first 7 characters of the hash, like git does.
+        public static string ShortBuild(string informationalVersion)
+        {
+            var plus = informationalVersion.IndexOf('+');
+            return plus < 0 || informationalVersion.Length - plus - 1 <= 7
+                ? informationalVersion
+                : informationalVersion[..(plus + 8)];
+        }
+
         internal static string GetRawVersion()
         {
-            var assembly = Assembly.GetExecutingAssembly().GetName().Version;
-            return assembly.ToString();
+            var assembly      = Assembly.GetExecutingAssembly();
+            var informational = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
+
+            return string.IsNullOrEmpty(informational)
+                ? assembly.GetName().Version?.ToString() ?? "UNKNOWN"
+                : ShortBuild(informational);
         }
     }
 }
