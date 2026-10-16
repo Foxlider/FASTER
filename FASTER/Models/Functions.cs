@@ -112,7 +112,12 @@ namespace FASTER.Models
 
             try
             {
-                Process.Start(new ProcessStartInfo { FileName = "explorer.exe", Arguments = $"\"{path}\"" });
+                // The full path to the system's explorer.exe, so nothing else can stand in for it,
+                // and the folder is passed as a single argument, never built into a command string.
+                var explorer  = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), "explorer.exe");
+                var startInfo = new ProcessStartInfo(explorer);
+                startInfo.ArgumentList.Add(Path.TrimEndingDirectorySeparator(Path.GetFullPath(path)));
+                Process.Start(startInfo);
                 return true;
             }
             catch (Exception ex)
