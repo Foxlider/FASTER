@@ -29,6 +29,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FASTER.Core", "FASTER.Core\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FASTER.Core.Tests", "FASTER.Core.Tests\FASTER.Core.Tests.csproj", "{1C2AB9B8-35E0-4715-8C11-511097D05EAA}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FASTER.Avalonia.Tests", "FASTER.Avalonia.Tests\FASTER.Avalonia.Tests.csproj", "{9053B9CE-6CD8-4E3C-9301-CB4CD34CB7BF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -123,6 +125,18 @@ Global
 		{1C2AB9B8-35E0-4715-8C11-511097D05EAA}.Release|x64.Build.0 = Release|Any CPU
 		{1C2AB9B8-35E0-4715-8C11-511097D05EAA}.Release|x86.ActiveCfg = Release|Any CPU
 		{1C2AB9B8-35E0-4715-8C11-511097D05EAA}.Release|x86.Build.0 = Release|Any CPU
+		{9053B9CE-6CD8-4E3C-9301-CB4CD34CB7BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9053B9CE-6CD8-4E3C-9301-CB4CD34CB7BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9053B9CE-6CD8-4E3C-9301-CB4CD34CB7BF}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{9053B9CE-6CD8-4E3C-9301-CB4CD34CB7BF}.Debug|x64.Build.0 = Debug|Any CPU
+		{9053B9CE-6CD8-4E3C-9301-CB4CD34CB7BF}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{9053B9CE-6CD8-4E3C-9301-CB4CD34CB7BF}.Debug|x86.Build.0 = Debug|Any CPU
+		{9053B9CE-6CD8-4E3C-9301-CB4CD34CB7BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9053B9CE-6CD8-4E3C-9301-CB4CD34CB7BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9053B9CE-6CD8-4E3C-9301-CB4CD34CB7BF}.Release|x64.ActiveCfg = Release|Any CPU
+		{9053B9CE-6CD8-4E3C-9301-CB4CD34CB7BF}.Release|x64.Build.0 = Release|Any CPU
+		{9053B9CE-6CD8-4E3C-9301-CB4CD34CB7BF}.Release|x86.ActiveCfg = Release|Any CPU
+		{9053B9CE-6CD8-4E3C-9301-CB4CD34CB7BF}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -13,23 +13,27 @@ public partial class DeploymentView : UserControl
     public DeploymentView()
     {
         InitializeComponent();
-        Loaded += (_, _) => ViewModel.LoadData();
+        Loaded += async (_, _) => await ViewModel.LoadDataAsync();
         Unloaded += (_, _) => ViewModel.UnloadData();
     }
 
     private async void InstallFolder_Click(object? sender, RoutedEventArgs e)
         => await ViewModel.InstallFolderClick();
 
-    private void DeployAll_Click(object? sender, RoutedEventArgs e)
-        => ViewModel.DeployAll();
+    private async void DeployAll_Click(object? sender, RoutedEventArgs e)
+        => await ViewModel.DeployAllAsync();
 
     private void ClearAll_Click(object? sender, RoutedEventArgs e)
         => ViewModel.ClearAll();
 
-    private void DeployMod(object? sender, RoutedEventArgs e)
+    private async void DeployMod(object? sender, RoutedEventArgs e)
     {
         if ((sender as Control)?.DataContext is DeploymentMod mod)
-            ViewModel.DeployMod(mod);
+        {
+            await ViewModel.DeployModAsync(mod);
+            if (sender is CheckBox checkBox)
+                checkBox.SetCurrentValue(CheckBox.IsCheckedProperty, mod.Marked);
+        }
     }
 
     private void OpenModPage(object? sender, RoutedEventArgs e)

@@ -64,7 +64,7 @@
         <dg:DataGridTextColumn Header="STATUS" Binding="{Binding Status}" IsReadOnly="True" />
         <dg:DataGridTextColumn Header="NAME" Binding="{Binding Name}" Width="*" IsReadOnly="True" />
         <dg:DataGridTextColumn Header="AUTHOR" Binding="{Binding Author}" IsReadOnly="True" />
-        <dg:DataGridTextColumn Header="SIZE" Binding="{Binding Size, Converter={StaticResource SizeConverter}}" IsReadOnly="True" />
+        <dg:DataGridTextColumn Header="SIZE" Binding="{Binding Size, Mode=OneWay, Converter={StaticResource SizeConverter}}" IsReadOnly="True" />
         <dg:DataGridTemplateColumn Header="INFO" CanUserSort="False" CanUserResize="False">
           <dg:DataGridTemplateColumn.CellTemplate>
             <DataTemplate>

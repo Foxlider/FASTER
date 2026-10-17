@@ -38,6 +38,8 @@ jobs:
         run: dotnet tool install vpk --tool-path .tools --version 1.2.158
       - name: Test Core
         run: dotnet test FASTER.Core.Tests/FASTER.Core.Tests.csproj -c Release
+      - name: Test Avalonia controls
+        run: dotnet test FASTER.Avalonia.Tests/FASTER.Avalonia.Tests.csproj -c Release
       - name: Prepare package output
         shell: bash
         run: rm -rf -- publish packages

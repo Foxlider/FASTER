@@ -15,6 +15,7 @@ public partial class ModsView : UserControl
     public ModsView()
     {
         InitializeComponent();
+        Loaded += async (_, _) => await ViewModel.RefreshSizesAsync();
         Unloaded += (_, _) => ViewModel.UnloadData();
     }
 

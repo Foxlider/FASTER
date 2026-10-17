@@ -25,6 +25,35 @@ namespace FASTER.ViewModel
 
         public ArmaDeployment Deployment { get; set; }
 
+        public async Task LoadDataAsync()
+        {
+            if (AppSettings.Current.ArmaMods is { } mods)
+                await mods.RefreshSizesAsync();
+            LoadData();
+        }
+
+        public async Task DeployModAsync(DeploymentMod mod)
+        {
+            var shouldDeploy = !mod.Marked;
+            if (await EnsureInstallPathAsync() && mod.Marked != shouldDeploy)
+                DeployMod(mod);
+        }
+
+        public async Task DeployAllAsync()
+        {
+            if (await EnsureInstallPathAsync())
+                DeployAll();
+        }
+
+        private async Task<bool> EnsureInstallPathAsync()
+        {
+            if (Directory.Exists(Deployment.InstallPath)) return true;
+            if (string.IsNullOrWhiteSpace(Deployment.InstallPath) && Directory.Exists(AppSettings.Current.ServerPath))
+                Deployment.InstallPath = AppSettings.Current.ServerPath;
+            else
+                await InstallFolderClick();
+            return Directory.Exists(Deployment.InstallPath);
+        }
 
         /// <summary>
         /// Unload data
@@ -41,6 +70,8 @@ namespace FASTER.ViewModel
         public void LoadData()
         {
             Deployment = AppSettings.Current.Deployments ?? new ArmaDeployment();
+            if (string.IsNullOrWhiteSpace(Deployment.InstallPath) && Directory.Exists(AppSettings.Current.ServerPath))
+                Deployment.InstallPath = AppSettings.Current.ServerPath;
             var armaMods = AppSettings.Current.ArmaMods;
             if (armaMods == null)
                 return;
@@ -160,8 +191,14 @@ namespace FASTER.ViewModel
         {
             string? path = await AppServices.Files.PickFolderAsync(Deployment.InstallPath);
 
-            if (path == null)
+            if (string.IsNullOrWhiteSpace(path))
                 return;
+
+            if (!Directory.Exists(path))
+            {
+                await AppServices.Dialogs.ShowMessageAsync(this, "Deployment directory", "Choose an existing Arma installation directory.");
+                return;
+            }
 
             Deployment.InstallPath = path;
 
@@ -215,6 +252,11 @@ namespace FASTER.ViewModel
         private bool LinkMod(DeploymentMod mod, string linkPath)
         {
             Logger.Log($"LinkMod: {mod.Name} ({mod.WorkshopId}) -> {linkPath}");
+            if (!Directory.Exists(mod.Path))
+            {
+                DisplayMessage($"Could not deploy \"{mod.Name}\": the mod folder does not exist. Download the mod first.\n{mod.Path}");
+                return false;
+            }
             try
             {
                 if(Directory.Exists(linkPath))

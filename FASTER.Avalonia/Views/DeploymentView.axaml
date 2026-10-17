@@ -43,7 +43,8 @@
           <dg:DataGridTemplateColumn.CellTemplate>
             <DataTemplate>
               <StackPanel Orientation="Horizontal">
-                <CheckBox IsChecked="{Binding Marked, Mode=OneWay}" IsEnabled="False" VerticalAlignment="Center" />
+                <CheckBox IsChecked="{Binding Marked, Mode=OneWay}" Click="DeployMod" VerticalAlignment="Center"
+                          ToolTip.Tip="Deploy or remove this mod" />
                 <Button Classes="accent" Height="25" Width="25" Padding="0" Click="DeployMod" ToolTip.Tip="Deploy Mod">
                   <Panel Margin="3">
                     <materialIcons:MaterialIcon Kind="Link" Width="16" Height="16" IsVisible="{Binding Marked}" />
@@ -76,7 +77,7 @@
         </dg:DataGridTemplateColumn>
         <dg:DataGridTextColumn Header="NAME" Binding="{Binding Name}" Width="*" IsReadOnly="True" />
         <dg:DataGridTextColumn Header="AUTHOR" Binding="{Binding Author}" IsReadOnly="True" />
-        <dg:DataGridTextColumn Header="SIZE" Binding="{Binding Size, Converter={StaticResource SizeConverter}}" IsReadOnly="True" />
+        <dg:DataGridTextColumn Header="SIZE" Binding="{Binding Size, Mode=OneWay, Converter={StaticResource SizeConverter}}" IsReadOnly="True" />
       </dg:DataGrid.Columns>
     </dg:DataGrid>
   </Grid>

@@ -82,6 +82,22 @@ namespace FASTER.Models
             { Ui.Current.DisplayMessage($"Could not delete mod {workshopId}"); }
         }
 
+        public async Task RefreshSizesAsync()
+        {
+            var mods = ArmaMods.ToArray();
+            await Task.Run(() =>
+            {
+                foreach (var mod in mods)
+                {
+                    try { mod.CheckModSize(); }
+                    catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+                    {
+                        Logger.Log($"Could not read size of mod {mod.WorkshopId} at {mod.Path}: {ex.Message}");
+                    }
+                }
+            });
+        }
+
 
         public event PropertyChangedEventHandler? PropertyChanged;
         private void RaisePropertyChanged(string property)
@@ -240,17 +256,14 @@ namespace FASTER.Models
         public void CheckModSize()
         {
             IsLoading = true;
-
-            if (!Directory.Exists(Path))
+            try
             {
-                Size = 0;
-                IsLoading = false;
-                return;
+                Size = Directory.Exists(Path) ? GetDirectorySize(Path) : 0;
             }
-
-            var ChildProcess = Task.Factory.StartNew(() => GetDirectorySize(Path));
-            Size = ChildProcess.Result;
-            IsLoading = false;
+            finally
+            {
+                IsLoading = false;
+            }
         }
 
         public async Task UpdateModAsync()

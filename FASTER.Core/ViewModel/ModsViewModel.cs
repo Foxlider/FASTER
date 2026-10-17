@@ -51,6 +51,8 @@ namespace FASTER.ViewModel
 
         public ArmaModCollection ModsCollection { get; set; }
 
+        public Task RefreshSizesAsync() => ModsCollection.RefreshSizesAsync();
+
         internal void DisplayMessage(string msg)
         {
             Ui.Current.DisplayMessage(msg);
