@@ -6,6 +6,7 @@ using Avalonia.Input;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using FASTER.Avalonia.Views;
+using FASTER.Avalonia.Services;
 using FASTER.Models;
 using FASTER.Services;
 using FASTER.ViewModel;
@@ -34,6 +35,23 @@ public class ModViewsTests
     private string _root = null!;
     private ArmaMod _mod = null!;
     private IFilePickerService _previousFiles = null!;
+    private IDialogService _previousDialogs = null!;
+
+    private sealed class LocalModDialogs(Window owner) : IDialogService
+    {
+        public ProgressDialog? Progress { get; private set; }
+        public List<string> Errors { get; } = new();
+        public Task<IProgressDialog> ShowProgressAsync(object context, string title, string message)
+        {
+            Progress = new ProgressDialog { Title = title };
+            Progress.SetMessage(message);
+            Progress.Show(owner);
+            return Task.FromResult<IProgressDialog>(Progress);
+        }
+        public Task ShowMessageAsync(object context, string title, string message) { Errors.Add(message); return Task.CompletedTask; }
+        public Task<string?> ShowInputAsync(object context, string title, string message) => throw new NotSupportedException();
+        public Task<bool> ShowConfirmationAsync(object context, string title, string message) => throw new NotSupportedException();
+    }
 
     private sealed class Picker(string? path, bool preset = false) : IFilePickerService
     {
@@ -59,12 +77,14 @@ public class ModViewsTests
         settings.Deployments = new ArmaDeployment { InstallPath = string.Empty };
         settings.CheckForModUpdates = false;
         _previousFiles = AppServices.Files;
+        _previousDialogs = AppServices.Dialogs;
     }
 
     [TearDown]
     public void TearDown()
     {
         AppServices.Files = _previousFiles;
+        AppServices.Dialogs = _previousDialogs;
         Directory.Delete(_root, true);
     }
 
@@ -73,6 +93,36 @@ public class ModViewsTests
     {
         AppSettings.PathOverrideForTests = null;
         Directory.Delete(TestAppBuilder.Root, true);
+    }
+
+    [AvaloniaTest]
+    public async Task LocalModImportClosesTheRealProgressWindow()
+    {
+        if (OperatingSystem.IsWindows()) Assert.Ignore("Requires Unix symlink permissions.");
+        AppSettings.Current.ArmaMods!.ArmaMods.Clear();
+        AppSettings.Current.ModStagingDirectory = Path.Combine(_root, "staging");
+        Directory.CreateDirectory(AppSettings.Current.ModStagingDirectory);
+        AppServices.Files = new Picker(_mod.Path);
+        var vm = new ModsViewModel();
+        _window = new Window { Width = 1100, Height = 700, Content = new ModsView { DataContext = vm } };
+        _window.Show();
+        var dialogs = new LocalModDialogs(_window);
+        AppServices.Dialogs = dialogs;
+        try
+        {
+            await Until(() => _window.GetVisualDescendants().OfType<Button>().Any(b => Equals(b.GetValue(ToolTip.TipProperty), "Add Local Mod")));
+            Click(_window.GetVisualDescendants().OfType<Button>().Single(b => Equals(b.GetValue(ToolTip.TipProperty), "Add Local Mod")));
+            await Until(() => dialogs.Progress is { IsVisible: false } && vm.ModsCollection.ArmaMods.Count == 1 &&
+                vm.ModsCollection.ArmaMods.Single().Size == 2048);
+            Assert.That(dialogs.Errors, Is.Empty);
+            Assert.That(vm.IsBusy, Is.False);
+            Assert.That(vm.ModsCollection.ArmaMods.Single().Name, Is.EqualTo("mod"));
+        }
+        finally
+        {
+            dialogs.Progress?.Close();
+            _window.Close();
+        }
     }
 
     [AvaloniaTest]

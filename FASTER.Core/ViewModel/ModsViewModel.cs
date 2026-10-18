@@ -16,7 +16,7 @@ namespace FASTER.ViewModel
 
         public ModsViewModel()
         {
-            ModsCollection = AppSettings.Current.ArmaMods ?? new ArmaModCollection();
+            ModsCollection = AppSettings.Current.ArmaMods ??= new ArmaModCollection();
             SteamUpdaterViewModel.Instance.PropertyChanged += (_, args) =>
             {
                 if (args.PropertyName == nameof(SteamUpdaterViewModel.IsDownloading))
@@ -102,62 +102,92 @@ namespace FASTER.ViewModel
         private async Task AddLocalModCore()
         {
             var localPath = await AppServices.Files.PickFolderAsync(AppSettings.Current.ModStagingDirectory);
+            if (string.IsNullOrWhiteSpace(localPath)) return;
 
-            if (string.IsNullOrEmpty(localPath))
-                return;
-
-            if (!Directory.Exists(localPath))
-                return;
-
-            var oldPaths = new List<string>();
-            if (!Path.GetFileName(localPath).StartsWith('@') && Directory.GetDirectories(localPath).Where((file) => Path.GetFileName(file).StartsWith('@')).ToList().Count > 0)
+            IProgressDialog? progress = null;
+            var errors = new List<string>();
+            try
             {
-                oldPaths = Directory.GetDirectories(localPath).Where((file) => Path.GetFileName(file).StartsWith('@')).ToList();
-            }
-            else
-            {
-                oldPaths.Add(localPath);
-            }
+                localPath = Path.TrimEndingDirectorySeparator(Path.GetFullPath(localPath));
+                if (!Directory.Exists(localPath))
+                    throw new DirectoryNotFoundException($"The selected mod folder no longer exists: {localPath}");
+                var children = Directory.GetDirectories(localPath).Where(path => Path.GetFileName(path).StartsWith('@')).ToList();
+                var oldPaths = !Path.GetFileName(localPath).StartsWith('@') && children.Count > 0 ? children : [localPath];
+                var total = oldPaths.Count;
+                progress = await AppServices.Dialogs.ShowProgressAsync(this, "Local Mod", "Adding local mod(s)...");
+                progress.Maximum = total;
 
-            var progress = await AppServices.Dialogs.ShowProgressAsync(this, "Local Mod", "Copying mod(s)...");
-            progress.Maximum = oldPaths.Count;
-            foreach (var oldPath in oldPaths.Where((path) => Directory.Exists(path)))
-            {
-                uint modID = 0;
-                var existingIds = ModsCollection.ArmaMods.Select(mod => mod.WorkshopId);
-                while (modID == 0 || existingIds.Contains(modID))
+                if (string.IsNullOrWhiteSpace(AppSettings.Current.ModStagingDirectory))
+                    throw new IOException("Set a mod staging directory in Settings before adding local mods.");
+                var staging = ResolveDirectoryPath(AppSettings.Current.ModStagingDirectory);
+                await Task.Run(() => Directory.CreateDirectory(staging));
+                var completed = 0;
+                foreach (var oldPath in oldPaths)
                 {
-                    Random r = new();
-                    modID = (uint)(uint.MaxValue - r.Next(ushort.MaxValue / 2));
+                    var name = Path.GetFileName(oldPath).TrimStart('@');
+                    try
+                    {
+                        var source = ResolveDirectoryPath(oldPath);
+                        var comparison = OperatingSystem.IsWindows() ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
+                        if (staging.Equals(source, comparison) ||
+                            staging.StartsWith(source.TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar, comparison))
+                            throw new IOException("The selected folder contains the mod staging directory. Select an individual mod folder to avoid a directory loop.");
+
+                        uint modId;
+                        string newPath;
+                        do
+                        {
+                            modId = (uint)Random.Shared.NextInt64(uint.MaxValue / 2L, uint.MaxValue);
+                            newPath = Path.Combine(staging, modId.ToString());
+                        } while (ModsCollection.ArmaMods.Any(mod => mod.WorkshopId == modId) ||
+                            File.Exists(newPath) || Directory.Exists(newPath) || new DirectoryInfo(newPath).LinkTarget != null);
+
+                        progress.SetMessage($"Adding {name}: {completed + 1} / {total}");
+                        await Task.Run(() =>
+                        {
+                            if (!Directory.Exists(source))
+                                throw new DirectoryNotFoundException($"The mod folder no longer exists: {source}");
+                            Directory.CreateSymbolicLink(newPath, source);
+                        });
+
+                        ModsCollection.AddSteamMod(new ArmaMod
+                        {
+                            WorkshopId = modId, Name = string.IsNullOrEmpty(name) ? "Local mod" : name,
+                            Path = newPath, Author = "Unknown", IsLocal = true, Status = ArmaModStatus.Local
+                        });
+                    }
+                    catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException or NotSupportedException)
+                    {
+                        errors.Add($"{name}: {ex.Message}");
+                    }
+                    finally { progress.SetProgress(++completed); }
                 }
-                var newPath = Path.Combine(AppSettings.Current.ModStagingDirectory, modID.ToString());
-                if (Directory.Exists(newPath))
-                {
-                    await AppServices.Dialogs.ShowMessageAsync(this, "Warning", $"Directory already exists for {oldPath[(oldPath.LastIndexOf("@", StringComparison.Ordinal) + 1)..]}.");
-                    continue;
-                }
-
-                await Task.Factory.StartNew(() =>
-                {
-                    Directory.CreateSymbolicLink(newPath, oldPath);
-                    var progressDone = oldPaths.IndexOf(oldPath);
-                    progress.SetMessage($"Copying mod from {oldPath}\n{progressDone} / {progress.Maximum}");
-                    progress.SetProgress(progressDone);
-                });
-
-                var newMod = new ArmaMod
-                {
-                    WorkshopId = modID,
-                    Name = oldPath[(oldPath.LastIndexOf("@", StringComparison.Ordinal) + 1)..],
-                    Path = newPath,
-                    Author = "Unknown",
-                    IsLocal = true,
-                    Status = ArmaModStatus.Local
-                };
-
-                ModsCollection.AddSteamMod(newMod);
             }
-            await progress.CloseAsync();
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException or NotSupportedException)
+            {
+                errors.Add(ex.Message);
+            }
+            finally
+            {
+                if (progress != null) await progress.CloseAsync();
+            }
+
+            if (errors.Count > 0)
+                await AppServices.Dialogs.ShowMessageAsync(this, "Could not add local mods", string.Join("\n", errors));
+        }
+
+        private static string ResolveDirectoryPath(string path)
+        {
+            var fullPath = Path.GetFullPath(path);
+            var root = Path.GetPathRoot(fullPath)!;
+            var resolved = root;
+            foreach (var part in fullPath[root.Length..].Split([Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar], StringSplitOptions.RemoveEmptyEntries))
+            {
+                resolved = Path.Combine(resolved, part);
+                if (Directory.Exists(resolved))
+                    resolved = Directory.ResolveLinkTarget(resolved, true)?.FullName ?? resolved;
+            }
+            return Path.TrimEndingDirectorySeparator(resolved);
         }
 
         internal void DeleteMod(ArmaMod mod)

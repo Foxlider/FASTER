@@ -46,8 +46,8 @@ public partial class ModsView : UserControl
     private async void AddSteamMod_Click(object? sender, RoutedEventArgs e)
         => await ViewModel.AddSteamMod();
 
-    private void AddLocalMod_Click(object? sender, RoutedEventArgs e)
-        => _ = ViewModel.AddLocalModAsync();
+    private async void AddLocalMod_Click(object? sender, RoutedEventArgs e)
+        => await ViewModel.AddLocalModAsync();
 
     private async void ImportLauncherFile_Click(object? sender, RoutedEventArgs e)
         => await ViewModel.OpenLauncherFile();
