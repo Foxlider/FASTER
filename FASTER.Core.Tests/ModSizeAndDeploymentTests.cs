@@ -13,7 +13,7 @@ public class ModSizeAndDeploymentTests
     private IFilePickerService _previousFiles = null!;
     private string? _previousSettingsPath;
 
-    private sealed class FolderPicker(string? folder) : IFilePickerService
+    private sealed class FolderPicker(string? folder, string? preset = null) : IFilePickerService
     {
         public int Calls { get; private set; }
         public Task<string?> PickFolderAsync(string current)
@@ -21,7 +21,7 @@ public class ModSizeAndDeploymentTests
             Calls++;
             return Task.FromResult(folder);
         }
-        public Task<string?> PickModPresetFileAsync() => throw new NotSupportedException();
+        public Task<string?> PickModPresetFileAsync() => Task.FromResult(preset);
         public Task<string?> PickServerExecutableAsync() => throw new NotSupportedException();
     }
 
@@ -66,6 +66,80 @@ public class ModSizeAndDeploymentTests
         var server = Path.Combine(_root, "Arma Server");
         Directory.CreateDirectory(server);
         return server;
+    }
+
+    [Test]
+    public void ReplacingProfileModsPublishesTheNewFilteredListToBindings()
+    {
+        var profile = new ServerProfile("CSO Main", createFolder: false);
+        Assert.That(profile.FilteredProfileMods, Is.Empty);
+        List<ProfileMod>? observed = null;
+        profile.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == nameof(ServerProfile.FilteredProfileMods))
+                observed = profile.FilteredProfileMods;
+        };
+        var mod = new ProfileMod { Id = 42, Name = "CBA_A3" };
+        profile.ProfileMods = [mod];
+        Assert.That(observed, Is.EqualTo(new[] { mod }));
+    }
+
+    [Test]
+    public async Task PresetImportRefreshesTheProfileAndPreservesOtherModRoles()
+    {
+        var preset = Path.Combine(AppContext.BaseDirectory, "TestData", "MMM_CSO_20260922.html");
+        var mods = ModUtilities.ParseModsFromArmaProfileFile(preset);
+        Assert.That(mods.Count, Is.EqualTo(16));
+        Assert.That(mods[0].WorkshopId, Is.EqualTo(450814997u));
+        foreach (var mod in mods)
+            _settings.ArmaMods!.ArmaMods.Add(mod);
+        AppServices.Files = new FolderPicker(null, preset);
+        var profile = new ServerProfile("CSO Main", createFolder: false);
+        var existing = new ProfileMod { Id = mods[0].WorkshopId, Name = "old name",
+            ServerSideChecked = true, HeadlessChecked = true, OptChecked = true };
+        profile.ProfileMods = [existing];
+
+        await new ProfileViewModel(profile).LoadModsFromFile();
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(profile.ProfileMods.Count, Is.EqualTo(16));
+            Assert.That(profile.ClientModsChecked, Is.EqualTo(16));
+            Assert.That(profile.ProfileMods.OrderBy(m => m.LoadPriority).Select(m => m.Id),
+                Is.EqualTo(mods.Select(m => m.WorkshopId)));
+            Assert.That(profile.ProfileMods[0], Is.SameAs(existing));
+            Assert.That(existing.ServerSideChecked && existing.HeadlessChecked && existing.OptChecked, Is.True);
+            Assert.That(existing.Name, Is.EqualTo("CBA_A3"));
+        });
+    }
+
+    [Test]
+    public async Task PresetImportStillSelectsAvailableModsWhenOneIsUnregistered()
+    {
+        var preset = Path.Combine(AppContext.BaseDirectory, "TestData", "MMM_CSO_20260922.html");
+        var mods = ModUtilities.ParseModsFromArmaProfileFile(preset);
+        foreach (var mod in mods.Skip(1))
+            _settings.ArmaMods!.ArmaMods.Add(mod);
+        AppServices.Files = new FolderPicker(null, preset);
+        var profile = new ServerProfile("CSO Main", createFolder: false);
+
+        await new ProfileViewModel(profile).LoadModsFromFile();
+
+        Assert.That(profile.ClientModsChecked, Is.EqualTo(15));
+        Assert.That(profile.ProfileMods.Select(m => m.Id), Is.EquivalentTo(mods.Skip(1).Select(m => m.WorkshopId)));
+        Assert.That(profile.ProfileMods.Any(m => m.Id == mods[0].WorkshopId), Is.False);
+    }
+
+    [Test]
+    public async Task CancellingPresetImportKeepsExistingSelections()
+    {
+        AppServices.Files = new FolderPicker(null);
+        var selected = new ProfileMod { Id = 42, Name = "keep", ClientSideChecked = true, LoadPriority = 5 };
+        var profile = new ServerProfile("CSO Main", createFolder: false) { ProfileMods = [selected] };
+        await new ProfileViewModel(profile).LoadModsFromFile();
+        Assert.That(profile.ProfileMods.Single(), Is.SameAs(selected));
+        Assert.That(selected.ClientSideChecked, Is.True);
+        Assert.That(selected.LoadPriority, Is.EqualTo(5));
     }
 
     [TestCase(false)]

@@ -12,6 +12,7 @@ public partial class ProfileView : UserControl
     public ProfileView()
     {
         InitializeComponent();
+        Loaded += (_, _) => ViewModel.LoadData();
         Unloaded += (_, _) => ViewModel.UnloadData();
     }
 

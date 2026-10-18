@@ -356,9 +356,9 @@ namespace FASTER.Models
                 //Adding the trigger to count checked mods
                 _profileMods.ForEach(m => m.PropertyChanged += Item_PropertyChanged);
 
+                _filteredProfileModsStale = true;
                 RaisePropertyChanged("ProfileMods");
                 RaisePropertyChanged("FilteredProfileMods");
-                _filteredProfileModsStale = true;
             }
         }
 

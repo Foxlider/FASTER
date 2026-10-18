@@ -235,15 +235,8 @@ namespace FASTER.ViewModel
         internal async Task LoadModsFromFile()
         {
             string? presetFile = await AppServices.Files.PickModPresetFileAsync();
-            if (presetFile == null)
-            {
-                await AppServices.Dialogs.ShowMessageAsync(this, "Invalid preset", "Please enter a valid arma3server executable location");
+            if (string.IsNullOrWhiteSpace(presetFile))
                 return;
-            }
-
-            //Clear mods
-            foreach (var mod in Profile.ProfileMods)
-            { mod.ClientSideChecked = false; }
 
             ushort? loadPriority = 1;
             List<ProfileMod> extractedModList = ModUtilities.ParseModsFromArmaProfileFile(presetFile).Select(armaMod =>
@@ -255,6 +248,11 @@ namespace FASTER.ViewModel
                     IsLocal = armaMod.IsLocal
                 };
             }).ToList();
+
+            // The profile can be opened before mods are added to the application.
+            LoadData();
+            foreach (var mod in Profile.ProfileMods)
+                mod.ClientSideChecked = false;
 
             //Select new ones
             List<string> notFound = new();
@@ -276,8 +274,10 @@ namespace FASTER.ViewModel
             // Display mods that weren't found in message
             if (notFound.Count > 0)
             {
-                DisplayMessage($"Some mods in the preset were not found: \n{string.Join("\n\t", notFound)}");
+                DisplayMessage($"Some mods in the preset are not in the Mods list: \n{string.Join("\n\t", notFound)}\nImport or download them on the Mods page, then load this preset again.");
             }
+            else
+                DisplayMessage($"Loaded {extractedModList.Count} mods from the preset.");
         }
 
         internal async Task SelectBePath()

@@ -35,12 +35,12 @@ public class ModViewsTests
     private ArmaMod _mod = null!;
     private IFilePickerService _previousFiles = null!;
 
-    private sealed class Picker(string? path) : IFilePickerService
+    private sealed class Picker(string? path, bool preset = false) : IFilePickerService
     {
         public int Calls { get; private set; }
         public Task<string?> PickFolderAsync(string current) { Calls++; return Task.FromResult(path); }
         public Task<string?> PickServerExecutableAsync() => throw new NotSupportedException();
-        public Task<string?> PickModPresetFileAsync() => throw new NotSupportedException();
+        public Task<string?> PickModPresetFileAsync() => preset ? Task.FromResult(path) : throw new NotSupportedException();
     }
 
     [SetUp]
@@ -73,6 +73,35 @@ public class ModViewsTests
     {
         AppSettings.PathOverrideForTests = null;
         Directory.Delete(TestAppBuilder.Root, true);
+    }
+
+    [AvaloniaTest]
+    public async Task ProfileLoadsRegisteredModsAndImportsTheMmmPresetFromTheButton()
+    {
+        var preset = Path.Combine(AppContext.BaseDirectory, "TestData", "MMM_CSO_20260922.html");
+        var mods = ModUtilities.ParseModsFromArmaProfileFile(preset);
+        Assert.That(mods.Count, Is.EqualTo(16));
+        AppSettings.Current.ArmaMods!.ArmaMods.Clear();
+        foreach (var mod in mods)
+            AppSettings.Current.ArmaMods.ArmaMods.Add(mod);
+        AppServices.Files = new Picker(preset, preset: true);
+        var profile = new ServerProfile("CSO Main", createFolder: false);
+        _window = new Window { Width = 1180, Height = 760,
+            Content = new ProfileView { DataContext = new ProfileViewModel(profile) } };
+        _window.Show();
+        try
+        {
+            await Until(() => profile.ProfileMods.Count == 16 &&
+                _window.GetVisualDescendants().OfType<TextBlock>().Any(t => t.Text == "CBA_A3"));
+            var import = _window.GetVisualDescendants().OfType<Button>().Single(b =>
+                b.GetVisualDescendants().OfType<TextBlock>().Any(t => t.Text == "Load from File"));
+            Click(import);
+            await Until(() => profile.ClientModsChecked == 16);
+            Assert.That(profile.ProfileMods.OrderBy(m => m.LoadPriority).Select(m => m.Id),
+                Is.EqualTo(mods.Select(m => m.WorkshopId)));
+            Assert.That(profile.CommandLine, Does.Contain("@CBA_A3").And.Contain("@ace"));
+        }
+        finally { _window.Close(); }
     }
 
     [AvaloniaTest]
