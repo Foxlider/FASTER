@@ -1,4 +1,5 @@
-﻿using System;
+using FASTER.Services;
+using System;
 using System.ComponentModel;
 using System.Globalization;
 using System.Xml.Serialization;
@@ -208,18 +209,18 @@ namespace FASTER.Models
         }
 
         public BasicCfg()
-        { BasicContent = ProcessFile(); }
+        { BasicContent = ProcessFile(); _generatedContent = BasicContent; }
 
         public string ProcessFile()
         {
             string output = "// These options are created by default\r\n"
-                          + $"language=\"{_language}\";\r\n"
+                          + $"language={CfgDocument.Quote(_language)};\r\n"
                           + "adapter=-1;\r\n"
                           + "3D_Performance=1.000000;\r\n"
                           + "Resolution_W=800;\r\n"
                           + "Resolution_H=600;\r\n"
                           + "Resolution_Bpp=32;\r\n"
-                          + $"terrainGrid={terrainGrid:0.###};\r\n"
+                          + $"terrainGrid={terrainGrid.ToString("0.###", CultureInfo.InvariantCulture)};\r\n"
                           + $"viewDistance = {viewDistance};\r\n"
                           + "\r\n"
                           + "\r\n"
@@ -240,13 +241,41 @@ namespace FASTER.Models
             return output;
         }
 
+        [NonSerialized]
+        private bool _updatingContent;
+        [NonSerialized]
+        private string? _generatedContent;
+
+        /// <summary>Validate pasted CFG before applying its supported settings to the form.</summary>
+        public int ApplyContent(string text)
+        {
+            var changes = CfgImporter.Read(this, text);
+            _updatingContent = true;
+            try
+            {
+                foreach (var change in changes) change();
+                _generatedContent = ProcessFile();
+                BasicContent = text;
+            }
+            finally { _updatingContent = false; }
+            return changes.Count;
+        }
+
         public event PropertyChangedEventHandler? PropertyChanged;
 
         private void RaisePropertyChanged(string property)
         {
-            if (PropertyChanged == null) return;
-            PropertyChanged(this, new PropertyChangedEventArgs(property));
-            if (property != "BasicContent") BasicContent = ProcessFile();
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
+            if (property == nameof(BasicContent) || _updatingContent) return;
+            _updatingContent = true;
+            try
+            {
+                string generated = ProcessFile();
+                BasicContent = _generatedContent == null ? generated
+                    : CfgDocument.Merge(BasicContent, _generatedContent, generated);
+                _generatedContent = generated;
+            }
+            finally { _updatingContent = false; }
         }
     }
 }

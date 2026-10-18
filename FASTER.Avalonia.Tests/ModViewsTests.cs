@@ -223,6 +223,59 @@ public class ModViewsTests
         finally { _window.Close(); }
     }
 
+    [AvaloniaTest]
+    public async Task PastedCfgUpdatesTheVisibleServerAndPerformanceControls()
+    {
+        var profile = new ServerProfile("CFG test", createFolder: false);
+        var view = new ProfileView { DataContext = new ProfileViewModel(profile) };
+        _window = new Window { Width = 1180, Height = 900, Content = view };
+        _window.Show();
+        var dialogs = new LocalModDialogs(_window);
+        AppServices.Dialogs = dialogs;
+        try
+        {
+            var tabs = view.GetVisualDescendants().OfType<TabControl>().Single();
+            tabs.SelectedIndex = 2;
+            await Until(() => view.GetVisualDescendants().OfType<Expander>().Any(e => Equals(e.Header, "SERVER.CFG OUTPUT")));
+            view.GetVisualDescendants().OfType<Expander>().Single(e => Equals(e.Header, "SERVER.CFG OUTPUT")).IsExpanded = true;
+            await Until(() => view.FindControl<TextBox>("ServerCfgEditor")?.IsAttachedToVisualTree() == true);
+            var serverEditor = view.FindControl<TextBox>("ServerCfgEditor")!;
+            string? privateCfg = Environment.GetEnvironmentVariable("FASTER_TEST_CFG");
+            serverEditor.Text = privateCfg == null ? "hostname=\"Pasted server\"; maxPlayers=225; disableVoN=1;" : File.ReadAllText(privateCfg);
+            var applyServer = view.FindControl<Button>("ApplyServerCfgButton")!;
+            await Until(() => applyServer.Bounds.Width > 0);
+            Click(applyServer);
+            await Until(() => profile.ServerCfg.MaxPlayers == 225);
+            var maxPlayers = view.GetVisualDescendants().OfType<NumericUpDown>().Single(n => n.Watermark == "Max Players");
+            Assert.That(maxPlayers.Value, Is.EqualTo(225));
+            Assert.That(profile.ServerCfg.VonActivated, Is.False);
+
+            serverEditor.Text = "maxPlayers=oops;";
+            _window.UpdateLayout();
+            Click(applyServer);
+            await Until(() => dialogs.Errors.Count == 1);
+            Assert.That(profile.ServerCfg.MaxPlayers, Is.EqualTo(225));
+            Assert.That(serverEditor.Text, Is.EqualTo("maxPlayers=oops;"));
+
+            tabs.SelectedIndex = 3;
+            await Until(() => view.GetVisualDescendants().OfType<Expander>().Any(e => Equals(e.Header, "BASIC.CFG OUTPUT")));
+            view.GetVisualDescendants().OfType<Expander>().Single(e => Equals(e.Header, "BASIC.CFG OUTPUT")).IsExpanded = true;
+            await Until(() => view.FindControl<TextBox>("BasicCfgEditor")?.IsAttachedToVisualTree() == true);
+            var basicEditor = view.FindControl<TextBox>("BasicCfgEditor")!;
+            basicEditor.Text = "viewDistance=4500; MaxCustomFileSize=160000; class sockets { maxPacketSize=1200; }; custom=42;";
+            var applyBasic = view.FindControl<Button>("ApplyBasicCfgButton")!;
+            await Until(() => applyBasic.Bounds.Width > 0);
+            Click(applyBasic);
+            await Until(() => profile.BasicCfg.ViewDistance == 4500);
+            var distance = view.GetVisualDescendants().OfType<NumericUpDown>().Single(n => n.Watermark == "Server View Distance");
+            Assert.That(distance.Value, Is.EqualTo(4500));
+            distance.Value = 5000;
+            await Until(() => basicEditor.Text?.Contains("viewDistance=5000;") == true);
+            Assert.That(basicEditor.Text, Does.Contain("custom=42;"));
+        }
+        finally { _window.Close(); }
+    }
+
     private bool HasSizeCell() => _window!.GetVisualDescendants().OfType<TextBlock>().Any(t => t.Text?.Contains("KB") == true);
 
     private void Click(Control control)

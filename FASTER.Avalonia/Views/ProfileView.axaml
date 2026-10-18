@@ -555,8 +555,13 @@
             </Grid>
           </ScrollViewer>
           <Expander Grid.Row="1" Classes="bar" Header="SERVER.CFG OUTPUT" MaxHeight="400" Margin="5,5,5,0">
-            <TextBox Text="{Binding Profile.ServerCfg.ServerCfgContent}" FontFamily="Courier New"
-                     AcceptsReturn="True" />
+            <DockPanel LastChildFill="True">
+              <Button DockPanel.Dock="Top" Name="ApplyServerCfgButton" Content="Apply to form"
+                      HorizontalAlignment="Left" Margin="0,0,0,6" Click="ApplyServerCfg"
+                      ToolTip.Tip="Paste a CFG below, then apply its supported settings to the controls above. Custom settings stay in the output." />
+              <TextBox Name="ServerCfgEditor" Text="{Binding Profile.ServerCfg.ServerCfgContent}" FontFamily="Courier New"
+                       AcceptsReturn="True" />
+            </DockPanel>
           </Expander>
         </Grid>
       </TabItem>
@@ -619,8 +624,13 @@
           </Border>
       </ScrollViewer>
           <Expander Grid.Row="1" Classes="bar" Header="BASIC.CFG OUTPUT" MaxHeight="400" Margin="5,5,5,0">
-            <TextBox Text="{Binding Profile.BasicCfg.BasicContent}" FontFamily="Courier New"
-                     AcceptsReturn="True" />
+            <DockPanel LastChildFill="True">
+              <Button DockPanel.Dock="Top" Name="ApplyBasicCfgButton" Content="Apply to form"
+                      HorizontalAlignment="Left" Margin="0,0,0,6" Click="ApplyBasicCfg"
+                      ToolTip.Tip="Paste a CFG below, then apply its supported settings to the controls above. Custom settings stay in the output." />
+              <TextBox Name="BasicCfgEditor" Text="{Binding Profile.BasicCfg.BasicContent}" FontFamily="Courier New"
+                       AcceptsReturn="True" />
+            </DockPanel>
           </Expander>
         </Grid>
       </TabItem>

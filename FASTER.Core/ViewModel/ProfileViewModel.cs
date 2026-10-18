@@ -29,6 +29,20 @@ namespace FASTER.ViewModel
         public ObservableCollection<double> TerrainGrids { get; } = new ObservableCollection<double>(BasicCfgArrays.TerrainGrids);
         public ObservableCollection<string> Languages { get; } = new ObservableCollection<string>(BasicCfgArrays.Languages);
 
+        public async Task ApplyCfgToFormAsync(bool server, string text)
+        {
+            try
+            {
+                int count = server ? Profile.ServerCfg.ApplyContent(text) : Profile.BasicCfg.ApplyContent(text);
+                DisplayMessage(count == 0 ? "No supported CFG settings found. The output text was preserved."
+                    : "CFG settings applied to the form. Custom settings and comments were preserved.");
+            }
+            catch (FormatException ex)
+            {
+                await AppServices.Dialogs.ShowMessageAsync(this, "Could not apply CFG", ex.Message);
+            }
+        }
+
         internal void DisplayMessage(string msg)
         {
             Ui.Current.DisplayMessage(msg);

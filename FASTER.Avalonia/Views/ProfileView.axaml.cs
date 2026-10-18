@@ -16,6 +16,11 @@ public partial class ProfileView : UserControl
         Unloaded += (_, _) => ViewModel.UnloadData();
     }
 
+    private async void ApplyServerCfg(object? sender, RoutedEventArgs e) =>
+        await ViewModel.ApplyCfgToFormAsync(true, ServerCfgEditor.Text ?? "");
+    private async void ApplyBasicCfg(object? sender, RoutedEventArgs e) =>
+        await ViewModel.ApplyCfgToFormAsync(false, BasicCfgEditor.Text ?? "");
+
     private async void SelectBePath(object? sender, RoutedEventArgs e) => await ViewModel.SelectBePath();
     private async void SelectKeysFolder(object? sender, RoutedEventArgs e) => await ViewModel.SelectKeysFolder();
 

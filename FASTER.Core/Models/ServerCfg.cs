@@ -1,4 +1,5 @@
-﻿using System;
+using FASTER.Services;
+using System;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -890,7 +891,7 @@ namespace FASTER.Models
         public ServerCfg()
         {
             if (string.IsNullOrWhiteSpace(serverCfgContent))
-            { ServerCfgContent = ProcessFile(); }
+            { ServerCfgContent = ProcessFile(); _generatedContent = ServerCfgContent; }
         }
 
         private void Item_PropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -942,16 +943,16 @@ namespace FASTER.Models
                           + "\r\n"
                           + "\r\n"
                           + "// GLOBAL SETTINGS\r\n"
-                          + $"hostname = \"{hostname}\";\t\t\t// The name of the server that shall be displayed in the public server list\r\n"
-                          + $"password = \"{password}\";\t\t\t\t// Password for joining, eg connecting to the server\r\n"
-                          + $"passwordAdmin = \"{passwordAdmin}\";\t\t\t// Password to become server admin. When you're in Arma MP and connected to the server, type '#login xyz'\r\n"
-                          + $"serverCommandPassword = \"{serverCommandPassword}\";\t\t// Password required by alternate syntax of [[serverCommand]] server-side scripting.\r\n"
-                          + $"logFile = \"{logFile}\";\t\t// Tells Arma-server where the logfile should go and what it should be called\r\n"
-                          + $"admins[] =  {"{\n\t\"" + string.Join("\",\n\t\"", admins) + "\"\n}"};\r\n"
+                          + $"hostname = {CfgDocument.Quote(hostname)};\t\t\t// The name of the server that shall be displayed in the public server list\r\n"
+                          + $"password = {CfgDocument.Quote(password)};\t\t\t\t// Password for joining, eg connecting to the server\r\n"
+                          + $"passwordAdmin = {CfgDocument.Quote(passwordAdmin)};\t\t\t// Password to become server admin. When you're in Arma MP and connected to the server, type '#login xyz'\r\n"
+                          + $"serverCommandPassword = {CfgDocument.Quote(serverCommandPassword)};\t\t// Password required by alternate syntax of [[serverCommand]] server-side scripting.\r\n"
+                          + $"logFile = {CfgDocument.Quote(logFile)};\t\t// Tells Arma-server where the logfile should go and what it should be called\r\n"
+                          + $"admins[] =  {"{\n\t\"" + string.Join("\",\n\t\"", admins.Select(v => v.Replace("\"", "\"\"", StringComparison.Ordinal))) + "\"\n}"};\r\n"
                           + "\r\n"
                           + "\r\n"
                           + "// WELCOME MESSAGE\r\n"
-                          + $"motd[] = {"{\n\t\"" + string.Join("\",\n\t \"", motd) + "\"\n}"};\r\n"
+                          + $"motd[] = {"{\n\t\"" + string.Join("\",\n\t \"", motd.Select(v => v.Replace("\"", "\"\"", StringComparison.Ordinal))) + "\"\n}"};\r\n"
                           + $"motdInterval = {motdInterval};\t\t\t\t// Time interval (in seconds) between each message\r\n"
                           + "\r\n"
                           + "\r\n"
@@ -979,7 +980,7 @@ namespace FASTER.Models
                           + $"skipLobby = {(skipLobby ? "1" : "0")};\t\t\t\t// Overridden by mission parameters\r\n"
                           + $"vonCodecQuality = {vonCodecQuality};\t\t\t// since 1.62.95417 supports range 1-20 //since 1.63.x will supports range 1-30 //8kHz is 0-10, 16kHz is 11-20, 32kHz(48kHz) is 21-30 \r\n"
                           + $"persistent = {persistent};\t\t\t\t// If 1, missions still run on even after the last player disconnected.\r\n"
-                          + $"timeStampFormat = \"{timeStampFormat}\";\t\t// Set the timestamp format used on each report line in server-side RPT file. Possible values are \"none\" (default),\"short\",\"full\".\r\n"
+                          + $"timeStampFormat = {CfgDocument.Quote(timeStampFormat)};\t\t// Set the timestamp format used on each report line in server-side RPT file. Possible values are \"none\" (default),\"short\",\"full\".\r\n"
                           + $"BattlEye = {battlEye};\t\t\t\t// Server to use BattlEye system\r\n"
                           + $"queueSizeLogG = {queueSizeLogG};\t\t\t// If a specific players message queue is larger than 1MB and #monitor is running, dump his messages to a logfile for analysis \r\n"
                           + $"class AdvancedOptions\r\n{{\r\n"
@@ -987,7 +988,7 @@ namespace FASTER.Models
                           + $"\tSkipDescriptionParsing = {skipDescriptionParsing};\t\t// When true to skip parsing of description.ext/mission.sqm. Will show pbo filename instead of configured missionName. OverviewText and such won't work, but loading the mission list is a lot faster when there are many missions.\r\n"
                           + $"\tignoreMissionLoadErrors = {ignoreMissionLoadErrors};\t\t// When set to true, the mission will load no matter the amount of loading errors. If set to false, the server will abort mission's loading and return to mission selection.\r\n"
                           + "};\r\n"
-                          + $"forcedDifficulty = \"{forcedDifficulty}\";\t\t\t// Forced difficulty (Recruit, Regular, Veteran, Custom)\r\n"
+                          + $"forcedDifficulty = {CfgDocument.Quote(forcedDifficulty)};\t\t\t// Forced difficulty (Recruit, Regular, Veteran, Custom)\r\n"
                           + "\r\n"
                           + "// TIMEOUTS\r\n"
                           + $"disconnectTimeout = {disconnectTimeout};\t\t\t// Time to wait before disconnecting a user which temporarly lost connection. Range is 5 to 90 seconds.\r\n"
@@ -1003,21 +1004,21 @@ namespace FASTER.Models
                           + "\r\n"
                           + "\r\n"
                           + "// SCRIPTING ISSUES\r\n"
-                          + $"onUserConnected = \"{onUserConnected}\";\t\t\t//\r\n"
-                          + $"onUserDisconnected = \"{onUserDisconnected}\";\t\t\t//\r\n"
-                          + $"doubleIdDetected = \"{doubleIdDetected}\";\t\t\t//\r\n"
-						  + $"onUserKicked = \"{onUserKicked}\";\t\t\t\t//\r\n"
+                          + $"onUserConnected = {CfgDocument.Quote(onUserConnected)};\t\t\t//\r\n"
+                          + $"onUserDisconnected = {CfgDocument.Quote(onUserDisconnected)};\t\t\t//\r\n"
+                          + $"doubleIdDetected = {CfgDocument.Quote(doubleIdDetected)};\t\t\t//\r\n"
+						  + $"onUserKicked = {CfgDocument.Quote(onUserKicked)};\t\t\t\t//\r\n"
                           + "\r\n"
                           + "// SIGNATURE VERIFICATION\r\n"
-                          + $"onUnsignedData = \"{onUnsignedData}\";\t// unsigned data detected\r\n"
-                          + $"onHackedData = \"{onHackedData}\";\t// tampering of the signature detected\r\n"
-                          + $"onDifferentData = \"{onDifferentData}\";\t\t\t// data with a valid signature, but different version than the one present on server detected\r\n"
+                          + $"onUnsignedData = {CfgDocument.Quote(onUnsignedData)};\t// unsigned data detected\r\n"
+                          + $"onHackedData = {CfgDocument.Quote(onHackedData)};\t// tampering of the signature detected\r\n"
+                          + $"onDifferentData = {CfgDocument.Quote(onDifferentData)};\t\t\t// data with a valid signature, but different version than the one present on server detected\r\n"
                           + "\r\n"
                           + "\r\n"
                           + "// MISSIONS CYCLE (see below)\r\n"
                           + $"randomMissionOrder = {randomMissionOrder};\t\t// Randomly iterate through Missions list\r\n"
                           + $"autoSelectMission = {autoSelectMission};\t\t\t// Server auto selects next mission in cycle\r\n"
-                          + (!string.IsNullOrWhiteSpace(MissionHTTPDownloadBaseURL) ? $"missionHTTPDownloadBaseURL = \"{MissionHTTPDownloadBaseURL}\";\r\n" : "")
+                          + (!string.IsNullOrWhiteSpace(MissionHTTPDownloadBaseURL) ? $"missionHTTPDownloadBaseURL = {CfgDocument.Quote(MissionHTTPDownloadBaseURL)};\r\n" : "")
                           + "\r\n"
                           + $"{MissionContentOverride}\t\t\t\t\t// An empty Missions class means there will be no mission rotation\r\n"
                           + "\r\n"
@@ -1025,19 +1026,47 @@ namespace FASTER.Models
                           + "\r\n"
                           + "\r\n"
                           + "// HEADLESS CLIENT\r\n"
-                          + $"{(headlessClientEnabled && !headlessClients.Exists(string.IsNullOrWhiteSpace) ? $"headlessClients[] =  { "{\n\t\"" + string.Join("\",\n\t \"", headlessClients) + "\"\n}" };\r\n" : "")}"
-                          + $"{(headlessClientEnabled && !localClient.Exists(string.IsNullOrWhiteSpace)? $"localClient[] =  { "{\n\t\"" + string.Join("\",\n\t \"", localClient) + "\"\n}" };" : "")}"
+                          + $"{(headlessClientEnabled && !headlessClients.Exists(string.IsNullOrWhiteSpace) ? $"headlessClients[] =  { "{\n\t\"" + string.Join("\",\n\t \"", headlessClients.Select(v => v.Replace("\"", "\"\"", StringComparison.Ordinal))) + "\"\n}" };\r\n" : "")}"
+                          + $"{(headlessClientEnabled && !localClient.Exists(string.IsNullOrWhiteSpace)? $"localClient[] =  { "{\n\t\"" + string.Join("\",\n\t \"", localClient.Select(v => v.Replace("\"", "\"\"", StringComparison.Ordinal))) + "\"\n}" };" : "")}"
                           + (AntiFloodEnabled ? $"class AntiFlood\r\n{{\r\n\tcycleTime = {AntiFloodCycleTime};\r\n\tcycleLimit = {AntiFloodCycleLimit};\r\n\tcycleHardLimit = {AntiFloodCycleHardLimit};\r\n\tenableKick = {_antiFloodEnableKick};\r\n}};\r\n" : "");
             return output;
+        }
+
+        [NonSerialized]
+        private bool _updatingContent;
+        [NonSerialized]
+        private string? _generatedContent;
+
+        /// <summary>Validate pasted CFG before applying its supported settings to the form.</summary>
+        public int ApplyContent(string text)
+        {
+            var changes = CfgImporter.Read(this, text);
+            _updatingContent = true;
+            try
+            {
+                foreach (var change in changes) change();
+                _generatedContent = ProcessFile();
+                ServerCfgContent = text;
+            }
+            finally { _updatingContent = false; }
+            return changes.Count;
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
         private void RaisePropertyChanged(string property)
         {
-            if (PropertyChanged == null) return;
-            PropertyChanged(this, new PropertyChangedEventArgs(property));
-            if (property != "ServerCfgContent") ServerCfgContent = ProcessFile();
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
+            if (property == nameof(ServerCfgContent) || _updatingContent) return;
+            _updatingContent = true;
+            try
+            {
+                string generated = ProcessFile();
+                ServerCfgContent = _generatedContent == null ? generated
+                    : CfgDocument.Merge(ServerCfgContent, _generatedContent, generated);
+                _generatedContent = generated;
+            }
+            finally { _updatingContent = false; }
         }
     }
 

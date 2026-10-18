@@ -39,6 +39,8 @@ Thanks go out to all the guys who helped the developpment and those who will tes
 Linux builds use the Avalonia frontend. The AppImage includes .NET 10, so you do not need to install a .NET runtime.
 The current AppImage targets x86-64 desktops with glibc 2.35 or newer.
 
+To reuse an existing server.cfg or basic.cfg, open its output panel in the Server or Performance tab, paste the CFG text, and click **Apply to form**. Supported settings update the controls above. Custom settings and comments stay in the output, including after later form edits. Invalid input reports an error without changing the controls. Save the profile to write the configuration files.
+
 ### AppImage
 
 1. Open the [Linux preview releases in this fork](https://github.com/milutinke/FASTER/releases).
