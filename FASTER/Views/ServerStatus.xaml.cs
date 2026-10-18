@@ -21,6 +21,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
+using FASTER.Models;
+
 namespace FASTER.Views
 {
     /// <summary>
@@ -35,9 +37,9 @@ namespace FASTER.Views
         private  PerformanceCounter _cpuCounter;
         private  PerformanceCounter _ramCounter;
 
-        private ObservableCollection<ProcessSpy> processes = new ObservableCollection<ProcessSpy>();
-        readonly long totalRamBytes;
-        private TempData td;
+        private readonly ObservableCollection<ProcessSpy> processes = new();
+        readonly long totalRamKb;
+        private readonly TempData td;
 
         [DllImport("kernel32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -52,9 +54,10 @@ namespace FASTER.Views
 
             try
             {
-                //Get Total System Ram
-                GetPhysicallyInstalledSystemMemory(out totalRamBytes);
-                gaugeRam.To = Convert.ToInt32(totalRamBytes / 1024);
+                //Get Total System Ram (the API reports kilobytes)
+                if (!GetPhysicallyInstalledSystemMemory(out totalRamKb))
+                    Logger.Log("ServerStatus: could not read the installed memory size.");
+                gaugeRam.To = Convert.ToInt32(totalRamKb / 1024);
             }
             catch
             {
@@ -89,14 +92,31 @@ namespace FASTER.Views
                 });
                 return;
             }
-            Task.Factory.StartNew(Updater, TaskCreationOptions.LongRunning);
+            StartUpdater();
         }
 
         public MainWindow MetroWindow => (MainWindow)Window.GetWindow(this);
 
-        private void Updater()
+        private volatile int _updaterGeneration;
+
+        // Each start gets a new generation number, so an older loop that is still
+        // sleeping sees it no longer matches and exits.
+        private void StartUpdater()
         {
-            while (Updating)
+            if (_cpuCounter == null || _ramCounter == null)
+            {
+                Logger.Log("ServerStatus: gauges not started, the performance counters are not available.");
+                Updating = false;
+                return;
+            }
+
+            var generation = ++_updaterGeneration;
+            Task.Factory.StartNew(() => Updater(generation), TaskCreationOptions.LongRunning);
+        }
+
+        private void Updater(int generation)
+        {
+            while (Updating && generation == _updaterGeneration)
             {
                 lock (locked)
                 {
@@ -104,9 +124,9 @@ namespace FASTER.Views
                     Dispatcher?.BeginInvoke(new Action(() =>
                     {
                         gaugeCpu.Value = _cpuCounter.NextValue();
-                        gaugeRam.Value = totalRamBytes > ram 
-                            ? Convert.ToInt64((totalRamBytes - ram) / 1024)
-                            : Convert.ToInt64(totalRamBytes         / 1024);
+                        gaugeRam.Value = totalRamKb > ram
+                            ? Convert.ToInt64((totalRamKb - ram) / 1024)
+                            : Convert.ToInt64(totalRamKb         / 1024);
                     }));
                 }
                 Thread.Sleep(1000);
@@ -118,7 +138,7 @@ namespace FASTER.Views
         {
             Updating = !Updating;
             if (Updating)
-            { Task.Factory.StartNew(Updater, TaskCreationOptions.LongRunning); }
+            { StartUpdater(); }
         }
         #endregion
 
@@ -127,26 +147,13 @@ namespace FASTER.Views
         {
             if (!(((FrameworkElement) e.Source).DataContext is ProcessSpy view)) return;
             view.IsReading = false;
+            Logger.Log($"ServerStatus: terminating process {view.ProcessId} ({view.ProcessName})");
             try
             { view.proc.Kill(); }
             catch (Exception ex) when (ex is InvalidOperationException or Win32Exception)
             { /* already exited */ }
             RefreshServers();
         }
-        #endregion
-
-        #region Console Viewer
-        private void ReadOutput_Click(object sender, RoutedEventArgs e)
-        {
-            if (!(((FrameworkElement) e.Source).DataContext is ProcessSpy view)) return;
-            var s = view.GetOutput();
-            IConsoleViewer.Title = $"Process {view.ProcessId}";
-            IConsoleViewer.IsOpen = true;
-            IConsoleViewerContent.Text = s ?? ">_ ";
-        }
-
-        private void IConsoleViewer_Closing(object sender, CancelEventArgs e)
-        { IConsoleViewerContent.Text = ""; }
         #endregion
 
         private void DgProcess_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e)
@@ -176,6 +183,7 @@ namespace FASTER.Views
             foreach (ProcessSpy element in dgProcess.Items)
             {
                 element.IsReading = false;
+                Logger.Log($"ServerStatus: terminating process {element.ProcessId} ({element.ProcessName}), kill all");
                 try
                 { element.proc.Kill(); }
                 catch (Exception ex) when (ex is InvalidOperationException or Win32Exception)
@@ -268,8 +276,6 @@ namespace FASTER.Views
         private volatile bool              _isReading;
         private volatile int               _generation;
 
-        private string Output;
-
         public ProcessSpy(Process p)
         {
             //Process Data
@@ -278,7 +284,6 @@ namespace FASTER.Views
             ProcessCmd  = p.ProcessName;
             proc        = p;
             proc.EnableRaisingEvents = true;
-            proc.OutputDataReceived += DataToString;
 
             var r = new Random();
             var color = ThemeManager.Current.Themes[r.Next(0, ThemeManager.Current.Themes.Count)].PrimaryAccentColor;
@@ -306,9 +311,6 @@ namespace FASTER.Views
             SetAxisLimits(DateTime.Now);
             IsReading = false;
         }
-
-        private void DataToString(object sender, DataReceivedEventArgs e)
-        { Output += e.Data; }
 
         public double AxisMax
         {
@@ -391,9 +393,6 @@ namespace FASTER.Views
             }
         }
 
-        public string GetOutput()
-        { return Output; }
-
         private void SetAxisLimits(DateTime now)
         {
             AxisMax = now.Ticks + TimeSpan.FromSeconds(0).Ticks; // lets force the axis to be 1 second ahead
@@ -436,45 +435,40 @@ namespace FASTER.Views
         private double _axisYMin = 150;
         private bool   _isReading;
 
-        public TempData()
-        {
-            var mapper = Mappers.Xy<MeasureModel>()
-                                .X(model => model.DateTime.Ticks) //use DateTime.Ticks as X
-                                .Y(model => model.Value);         //use the value property as Y
-            Charting.For<MeasureModel>(mapper);
+        private volatile int _generation;
 
-            //Fore distance between each step for 1 second
-            AxisStep = TimeSpan.FromSeconds(1).Ticks;
-            AxisUnit = TimeSpan.TicksPerSecond;
-
-            //Set the formatter for the labelling
-            DateTimeFormatter = value => new DateTime((long) value).ToString("mm:ss");
-            TempFormatter = value => $"{value:0.00} °C";
-
-            //storing values for the CPU Data
-            ChartValues = new ChartValues<MeasureModel>();
-            SetAxisLimits(DateTime.Now);
-        }
         public void StartStop(bool? launch = null)
         {
-            if (launch != null) 
-                IsReading = (bool) launch;
-            else
-            { IsReading = !IsReading; }
-            if (IsReading)
-                Task.Factory.StartNew(TempLoop, TaskCreationOptions.LongRunning);
+            IsReading = launch ?? !IsReading;
+            if (!IsReading) return;
+
+            // Each start gets a new generation number, so an older loop that is still
+            // sleeping sees it no longer matches and exits instead of running alongside the new one.
+            var generation = ++_generation;
+            Task.Factory.StartNew(() => TempLoop(generation), TaskCreationOptions.LongRunning);
         }
 
-        private void TempLoop()
+        private void StopLoop(int generation, string reason)
         {
-            while (IsReading)
+            Logger.Log($"TempData: stopping temperature readings: {reason}");
+            if (generation == _generation)
+                IsReading = false;
+        }
+
+        private void TempLoop(int generation)
+        {
+            while (IsReading && generation == _generation)
             {
                 var now = DateTime.Now;
-                using(ManagementObjectSearcher searcher = new ManagementObjectSearcher(@"root\WMI", "SELECT * FROM MSAcpi_ThermalZoneTemperature"))
+                try
                 {
+                    using ManagementObjectSearcher searcher = new(@"root\WMI", "SELECT * FROM MSAcpi_ThermalZoneTemperature");
                     var obj = searcher.Get().OfType<ManagementObject>().FirstOrDefault();
                     if (obj == null)
+                    {
+                        StopLoop(generation, "Windows reported no temperature sensor.");
                         return;
+                    }
                     var temperature = float.Parse(obj["CurrentTemperature"].ToString());
                     // Convert the value to celsius degrees
                     temperature = (temperature - (float)2732.0) / (float)10.0;
@@ -487,12 +481,17 @@ namespace FASTER.Views
                         ChartValues.Add(new MeasureModel { DateTime = now, Value = 0 });
                     }
                 }
+                catch (Exception ex)
+                {
+                    StopLoop(generation, $"{ex.GetType().Name}: {ex.Message}");
+                    return;
+                }
 
                 //recalculate axes
                 SetAxisLimits(now);
 
                 //lets only use the last 20 values
-                if (ChartValues.Count > 20) 
+                if (ChartValues.Count > 20)
                 { ChartValues.RemoveAt(0); }
 
                 //Wait 1sec before next measurement

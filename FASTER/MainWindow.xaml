@@ -31,8 +31,6 @@
     <mah:MetroWindow.RightWindowCommands>
         <mah:WindowCommands>
             <Button Content="{iconPacks:Modern Kind=Tools}" Click="ToolsButton_Click"/>
-            <!--<Button Content="{iconPacks:Material Kind=WindowMinimize}" Click="WindowMinimizeButton_Click"/>
-            <Button Content="{iconPacks:Material Kind=WindowMaximize}" Click="IWindowMaximizeButton_Click"/>-->
         </mah:WindowCommands>
     </mah:MetroWindow.RightWindowCommands>
     <Grid x:Name="MainGrid">
@@ -141,10 +139,6 @@
         </Grid>
 
         <Grid Grid.Column="1" Margin="10">
-            <!--<Grid.Effect>
-                <DropShadowEffect BlurRadius="15" Direction="-90" RenderingBias="Performance" ShadowDepth="2"/>
-            </Grid.Effect>
-            Background="{StaticResource MahApps.Brushes.Badged.DisabledBackground}"-->
             <mah:TransitioningContentControl Name="MainContent" TextOptions.TextFormattingMode="Display" Background="{StaticResource MahApps.Brushes.Badged.Background.Disabled}">
                 <ContentControl.Effect>
                     <DropShadowEffect BlurRadius="15" Direction="-90" RenderingBias="Performance" ShadowDepth="2"/>

@@ -1,5 +1,7 @@
 ﻿using NUnit.Framework;
 using System.Linq;
+using System.IO;
+using System.Xml.Serialization;
 
 namespace FASTER.Models.Tests
 {
@@ -9,7 +11,9 @@ namespace FASTER.Models.Tests
         Arma3Profile _p;
         [SetUp]
         public void Arma3ProfileSetUp()
-        { Assert.DoesNotThrow(() => _p = new Arma3Profile()); }
+        { 
+		    _p = new Arma3Profile(); 
+        }
 
         [Test()]
         public void Arma3ProfileCorrectData()
@@ -46,33 +50,34 @@ namespace FASTER.Models.Tests
         [Test()]
         public void Arma3ProfileSetData()
         {
-            Assert.DoesNotThrow(() => _p.AiLevelPreset = ProfileCfgArrays.AiPresetStrings[0]);
-            Assert.DoesNotThrow(() => _p.ThirdPersonView = ProfileCfgArrays.ThirdPersonStrings[0]);
-            Assert.DoesNotThrow(() => _p.ReducedDamage = ProfileCfgArrays.EnabledStrings[0]);
-            Assert.DoesNotThrow(() => _p.GroupIndicators = ProfileCfgArrays.LimitedDistanceStrings[0]);
-            Assert.DoesNotThrow(() => _p.FriendlyTags = ProfileCfgArrays.LimitedDistanceStrings[0]);
-            Assert.DoesNotThrow(() => _p.EnemyTags = ProfileCfgArrays.LimitedDistanceStrings[0]);
-            Assert.DoesNotThrow(() => _p.DetectedMines = ProfileCfgArrays.LimitedDistanceStrings[0]);
-            Assert.DoesNotThrow(() => _p.Commands = ProfileCfgArrays.FadeOutStrings[0]);
-            Assert.DoesNotThrow(() => _p.Waypoints = ProfileCfgArrays.FadeOutStrings[0]);
-            Assert.DoesNotThrow(() => _p.WeaponInfo = ProfileCfgArrays.FadeOutStrings[0]);
-            Assert.DoesNotThrow(() => _p.StanceIndicator = ProfileCfgArrays.FadeOutStrings[0]);
-            Assert.DoesNotThrow(() => _p.StaminaBar = ProfileCfgArrays.EnabledStrings[0]);
-            Assert.DoesNotThrow(() => _p.WeaponCrosshair = ProfileCfgArrays.EnabledStrings[0]);
-            Assert.DoesNotThrow(() => _p.VisionAid = ProfileCfgArrays.EnabledStrings[0]);
-            Assert.DoesNotThrow(() => _p.CameraShake = ProfileCfgArrays.EnabledStrings[0]);
-            Assert.DoesNotThrow(() => _p.ScoreTable = ProfileCfgArrays.EnabledStrings[0]);
-            Assert.DoesNotThrow(() => _p.DeathMessages = ProfileCfgArrays.EnabledStrings[0]);
-            Assert.DoesNotThrow(() => _p.VonID = ProfileCfgArrays.EnabledStrings[0]);
-            Assert.DoesNotThrow(() => _p.MapContentEnemy = ProfileCfgArrays.EnabledStrings[0]);
-            Assert.DoesNotThrow(() => _p.MapContentFriendly = ProfileCfgArrays.EnabledStrings[0]);
-            Assert.DoesNotThrow(() => _p.MapContentMines = ProfileCfgArrays.EnabledStrings[0]);
-            Assert.DoesNotThrow(() => _p.AutoReport = ProfileCfgArrays.EnabledStrings[0]);
-            Assert.DoesNotThrow(() => _p.MultipleSaves = ProfileCfgArrays.EnabledStrings[0]);
-            Assert.DoesNotThrow(() => _p.TacticalPing = ProfileCfgArrays.TacticalPingStrings[0]);
-            Assert.DoesNotThrow(() => _p.SkillAi = 0.5);
-            Assert.DoesNotThrow(() => _p.PrecisionAi = 0.5);
+            _p.AiLevelPreset = ProfileCfgArrays.AiPresetStrings[0];
+            _p.ThirdPersonView = ProfileCfgArrays.ThirdPersonStrings[0];
+            _p.ReducedDamage = ProfileCfgArrays.EnabledStrings[0];
+            _p.GroupIndicators = ProfileCfgArrays.LimitedDistanceStrings[0];
+            _p.FriendlyTags = ProfileCfgArrays.LimitedDistanceStrings[0];
+            _p.EnemyTags = ProfileCfgArrays.LimitedDistanceStrings[0];
+            _p.DetectedMines = ProfileCfgArrays.LimitedDistanceStrings[0];
+            _p.Commands = ProfileCfgArrays.FadeOutStrings[0];
+            _p.Waypoints = ProfileCfgArrays.FadeOutStrings[0];
+            _p.WeaponInfo = ProfileCfgArrays.FadeOutStrings[0];
+            _p.StanceIndicator = ProfileCfgArrays.FadeOutStrings[0];
+            _p.StaminaBar = ProfileCfgArrays.EnabledStrings[0];
+            _p.WeaponCrosshair = ProfileCfgArrays.EnabledStrings[0];
+            _p.VisionAid = ProfileCfgArrays.EnabledStrings[0];
+            _p.CameraShake = ProfileCfgArrays.EnabledStrings[0];
+            _p.ScoreTable = ProfileCfgArrays.EnabledStrings[0];
+            _p.DeathMessages = ProfileCfgArrays.EnabledStrings[0];
+            _p.VonID = ProfileCfgArrays.EnabledStrings[0];
+            _p.MapContentEnemy = ProfileCfgArrays.EnabledStrings[0];
+            _p.MapContentFriendly = ProfileCfgArrays.EnabledStrings[0];
+            _p.MapContentMines = ProfileCfgArrays.EnabledStrings[0];
+            _p.AutoReport = ProfileCfgArrays.EnabledStrings[0];
+            _p.MultipleSaves = ProfileCfgArrays.EnabledStrings[0];
+            _p.TacticalPing = ProfileCfgArrays.TacticalPingStrings[0];
+            _p.SkillAi = 0.5;
+            _p.PrecisionAi = 0.5;
         }
+
 		[Test()]
         public void Arma3ProfileDefaults()
         {
@@ -95,6 +100,30 @@ namespace FASTER.Models.Tests
             _p.TacticalPing = "Both";
             _p.TacticalPing = "nonsense";
             Assert.That(_p.TacticalPing, Is.EqualTo("Both"));
+        }
+
+        [Test()]
+        public void OldProfileWithEnabledTacticalPingLoadsAs3dOnly()
+        {
+            const string oldXml = "<Arma3Profile><TacticalPing>Enabled</TacticalPing></Arma3Profile>";
+
+            var serializer = new XmlSerializer(typeof(Arma3Profile));
+            using var reader = new StringReader(oldXml);
+            var loaded = (Arma3Profile) serializer.Deserialize(reader)!;
+
+            Assert.That(loaded.TacticalPing, Is.EqualTo("3D only"));
+        }
+
+        [Test()]
+        public void OldProfileWithDisabledTacticalPingStaysDisabled()
+        {
+           const string oldXml = "<Arma3Profile><TacticalPing>Disabled</TacticalPing></Arma3Profile>";
+
+           var serializer = new XmlSerializer(typeof(Arma3Profile));
+           using var reader = new StringReader(oldXml);
+           var loaded = (Arma3Profile) serializer.Deserialize(reader)!;
+
+           Assert.That(loaded.TacticalPing, Is.EqualTo("Disabled"));
         }
     }
 }

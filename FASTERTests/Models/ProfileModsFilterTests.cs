@@ -1,5 +1,6 @@
+using System;
 using NUnit.Framework;
-
+using System.Diagnostics;
 using System.Linq;
 
 namespace FASTER.Models.Tests
@@ -72,6 +73,36 @@ namespace FASTER.Models.Tests
             p.ProfileModsFilter = "ace";
             Assert.That(Names(p), Is.EqualTo(new[] { "ace" }));
             Assert.That(p.ProfileModsFilterIsInvalid, Is.False);
+        }
+
+        [Test()]
+        public void InvalidRegexIsFlaggedEvenWithNoMods()
+        {
+            var p = ProfileWith();
+            p.ProfileModsFilterIsRegex = true;
+            p.ProfileModsFilter        = "(";
+
+            Assert.That(Names(p), Is.Empty);
+            Assert.That(p.ProfileModsFilterIsInvalid, Is.True);
+        }
+
+        [Test()]
+        public void SlowRegexIsStoppedMarkedInvalidAndDoesNotFreezeFilter()
+        {
+            var p = ProfileWith(new string('a', 40) + "b");
+            p.ProfileModsFilterIsRegex = true;
+            p.ProfileModsFilter        = "^(a+)+$";
+
+            var watch = Stopwatch.StartNew();
+            var names = Names(p);
+            watch.Stop();
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(names, Is.Empty);
+                Assert.That(p.ProfileModsFilterIsInvalid, Is.True);
+                Assert.That(watch.Elapsed, Is.LessThan(TimeSpan.FromSeconds(5)));
+            });
         }
     }
 }

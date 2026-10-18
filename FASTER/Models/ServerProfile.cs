@@ -10,7 +10,6 @@ using System.Xml.Serialization;
 
 namespace FASTER.Models
 {
-    [Serializable]
     public class ServerProfileCollection : List<ServerProfile>
     {
         [XmlElement(Order = 1)]
@@ -30,6 +29,9 @@ namespace FASTER.Models
             Properties.Settings.Default.Profiles = currentProfiles;
             Properties.Settings.Default.Save();
             MainWindow.Instance.LoadServerProfiles();
+
+            if (string.IsNullOrWhiteSpace(Properties.Settings.Default.serverPath))
+                MainWindow.Instance.DisplayMessage("The Arma Install Directory is not set. Set it on the Updater page, then pick the server file in the new profile.");
         }
 
         internal static void AddServerProfile(ServerProfile profile)
@@ -43,7 +45,6 @@ namespace FASTER.Models
         }
     }
 
-    [Serializable]
     public class ServerProfile : INotifyPropertyChanged
     {
         //PRIVATE VARS DECLARATION
@@ -389,17 +390,22 @@ namespace FASTER.Models
 
                 try
                 {
-                    var filteredProfileMods = _profileMods.Where(m => Regex.IsMatch(m.Name, pattern, options)).ToList();
+                    // Built once, so a bad pattern is caught even with no mods, and with a time limit
+                    // so a pattern that backtracks badly can't freeze the window.
+                    var regex = new Regex(pattern, options, TimeSpan.FromMilliseconds(250));
+                    var filteredProfileMods = _profileMods.Where(m => regex.IsMatch(m.Name ?? string.Empty)).ToList();
                     if (ProfileModsFilterIsInvalid)
                     {
                         ProfileModsFilterIsInvalid = false;
                     }
                     return filteredProfileMods;
                 }
-                catch (ArgumentException)
+                catch (Exception ex) when (ex is ArgumentException or RegexMatchTimeoutException)
                 {
                     if (!ProfileModsFilterIsInvalid)
                     {
+                        // Logged once when it turns invalid, because this getter runs many times per refresh
+                        Logger.Log($"ProfileModsFilter: '{ProfileModsFilter}' rejected: {ex.GetType().Name}: {ex.Message}");
                         ProfileModsFilterIsInvalid = true;
                     }
                     return new List<ProfileMod>();
@@ -513,7 +519,9 @@ namespace FASTER.Models
             ArmaProfile.ArmaProfileContent = ArmaProfile.ProcessFile();
             BasicCfg.BasicContent = BasicCfg.ProcessFile();
 
-            if (createFolder)
+            // With no Arma directory set, Path.Combine builds a relative path and the folder
+            // would be created in whatever directory FASTER was started from.
+            if (createFolder && !string.IsNullOrWhiteSpace(Properties.Settings.Default.serverPath))
             { Directory.CreateDirectory(Path.Combine(Properties.Settings.Default.serverPath, "Servers", Id)); }
         }
 
@@ -672,7 +680,6 @@ namespace FASTER.Models
         }
     }
 
-    [Serializable]
     public class ProfileMod : INotifyPropertyChanged
     {
         private bool    serverSideChecked;

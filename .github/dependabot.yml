@@ -4,10 +4,11 @@ updates:
   # GitHub Actions
   - package-ecosystem: "github-actions"
     directory: "/"
+    target-branch: "feature/Update-1.9"
     schedule:
-      interval: "weekly"
-      day: "monday"
-    open-pull-requests-limit: 10
+      interval: "monthly"
+      day: "friday"
+    open-pull-requests-limit: 5
     labels:
       - "dependencies"
       - "github-actions"
@@ -16,16 +17,17 @@ updates:
     groups:
       actions-minor-patch:
         update-types:
-          - "minor"
           - "patch"
+          - "minor"
 
   # NuGet packages
   - package-ecosystem: "nuget"
     directory: "/"
+    target-branch: "feature/Update-1.9"
     schedule:
-      interval: "weekly"
-      day: "monday"
-    open-pull-requests-limit: 10
+      interval: "monthly"
+      day: "friday"
+    open-pull-requests-limit: 5
     labels:
       - "dependencies"
       - "nuget"
@@ -34,15 +36,18 @@ updates:
     groups:
       nuget-minor-patch:
         update-types:
-          - "minor"
           - "patch"
+          - "minor"
 
   # BytexDigital.Steam submodule
   - package-ecosystem: "gitsubmodule"
     directory: "/"
+    target-branch: "feature/Update-1.9"
     schedule:
-      interval: "monthly"
+      interval: "quarterly"
+    open-pull-requests-limit: 5
     labels:
       - "dependencies"
+      - "git-submodule"
     commit-message:
       prefix: "chore(submodule)"

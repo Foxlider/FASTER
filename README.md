@@ -78,6 +78,18 @@ Thanks to everyone who has contributed to FASTER and helped test the project. Al
   - Live CPU and memory gauges
   - Per-server CPU and memory graphs for running arma3server processes
 
+
+##### **_VERSION NUMBERS_**
+
+FASTER shows its version as `1.9h H5`:
+
+- `1.9` is the major and minor version.
+- `h` is the build (a = 1, b = 2, ... h = 8).
+- `H5` is hotfix 5. `RC` marks a release candidate and `D` a dev build.
+
+Hover over the version on the About page to see the exact build, for example `1.9.8.105+cec0244`. The part after the `+` is the commit it was built from, which tells nightly builds apart. Please include it when reporting a bug.
+
+
 ##### **_ISSUES and FEEDBACK_**
 
 The best place to report bugs and feature requests is the [GitHub Repo](https://github.com/Foxlider/FASTER/issues). As for general discussion I'll keep an eye on the BI forum thread but I'll be more active on [Discord](https://discord.gg/SJxnTNuNJN).

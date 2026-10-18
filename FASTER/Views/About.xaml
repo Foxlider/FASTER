@@ -27,7 +27,7 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition />
                 </Grid.RowDefinitions>
-                <TextBlock Grid.Row="0"  Name="IVersionLabel" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="16">Version:</TextBlock>
+                <TextBlock Grid.Row="0"  Name="IVersionLabel" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="16" Background="Transparent" ToolTipService.InitialShowDelay="300">Version:</TextBlock>
                 <TextBlock Grid.Row="1" Style="{DynamicResource MahApps.Styles.TextBlock.Watermark}" Margin="16,0" TextWrapping="Wrap" FontSize="13" TextAlignment="Justify">
                     FASTER is an extended rewrite of FAST2, which is itself a rewrite of FAST ; server tool made by Flax to manage Arma 3 servers. This version uses the latest .NET 10.0 in C# which is far more stable and maintainable than the VisualBasic version used by Flax.
                 </TextBlock>
@@ -113,12 +113,6 @@
                             <TextBlock Margin="10" VerticalAlignment="Center" TextWrapping="WrapWithOverflow">Liking the app ? Consider supporting me !</TextBlock>
                         </StackPanel>
                     </Button>
-                    <!--<StackPanel Orientation="Horizontal">
-                        <iconPacks:PackIconModern Kind="Paypal" VerticalAlignment="Center" Margin="5, 10"/>
-                        <TextBlock TextWrapping="Wrap" Style="{DynamicResource MahApps.Styles.TextBlock.Watermark}" VerticalAlignment="Center" Margin="5,10">
-                            I do not support donations for now.
-                        </TextBlock>
-                    </StackPanel>-->
                 </Border>
             </Grid>
         </GroupBox>

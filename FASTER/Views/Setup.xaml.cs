@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Reflection;
 using System.Windows;
 
 namespace FASTER.Views
@@ -87,7 +86,10 @@ namespace FASTER.Views
                 Properties.Settings.Default.steamPassword = upgradedPassword;
                 Properties.Settings.Default.Save();
             }
-            ISteamPassBox.Password = Encryption.Instance.DecryptData(Properties.Settings.Default.steamPassword);
+            var password = Encryption.Instance.DecryptData(Properties.Settings.Default.steamPassword);
+            if (password == null && !string.IsNullOrEmpty(Properties.Settings.Default.steamPassword))
+                Logger.Log("Setup: the stored Steam password could not be read and will need to be entered again.");
+            ISteamPassBox.Password = password ?? string.Empty;
             IModStaging.Text = Properties.Settings.Default.modStagingDirectory;
             IServerDirBox.Text = Properties.Settings.Default.serverPath;
 
@@ -96,13 +98,7 @@ namespace FASTER.Views
 
             try
             {
-                string rev = $"{(char)(Assembly.GetExecutingAssembly().GetName().Version.Build + 96)}";
-#if DEBUG
-                rev += "-DEV";
-#endif
-                MainWindow.Instance.Version = $"{Assembly.GetExecutingAssembly().GetName().Version.Major}."
-                               + $"{Assembly.GetExecutingAssembly().GetName().Version.Minor}"
-                               + $"{rev}";
+                Logger.Log($"Setup: launching FASTER {MainWindow.Instance.Version} ({Functions.GetRawVersion()})");
                 Analytics.TrackEvent("Setup - Launching", new Dictionary<string, string> {
                     { "Name", Properties.Settings.Default.steamUserName },
                     { "Version", MainWindow.Instance.Version },

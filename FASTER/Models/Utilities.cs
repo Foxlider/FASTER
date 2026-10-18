@@ -31,7 +31,20 @@ namespace FASTER.Models
             var id = System.Web.HttpUtility.ParseQueryString(uri.Query).Get("id");
             return uint.TryParse(id, NumberStyles.None, CultureInfo.InvariantCulture, out modId) && modId != 0;
         }
-		
+
+        // Local mods have no Workshop ID, so each one gets a made-up ID near the top of the uint range.
+        // takenIds is every ID already in use. The new ID is added to it, so calling this again can never repeat it.
+        public static uint NewLocalModId(ISet<uint> takenIds)
+        {
+            uint id;
+            do
+            { id = uint.MaxValue - (uint) Random.Shared.Next(ushort.MaxValue / 2); }
+            while (takenIds.Contains(id));
+
+            takenIds.Add(id);
+            return id;
+        }
+
         public static string GetCompareString(string input)
         {
             input = input.Replace("@", "");
@@ -57,7 +70,12 @@ namespace FASTER.Models
             List<ArmaMod> extractedModlist = new();
             XmlDocument doc = new();
             try
-            { doc.LoadXml(lines); }
+            {
+                var settings = new XmlReaderSettings { DtdProcessing = DtdProcessing.Prohibit, XmlResolver = null };
+                using var stringReader = new StringReader(lines);
+                using var xmlReader = XmlReader.Create(stringReader, settings);
+                doc.Load(xmlReader);
+            }
             catch (XmlException e)
             {
                 Logger.Log($"ParseModsFromArmaProfileFile: could not parse {filePath}: {e.Message}");
@@ -66,6 +84,11 @@ namespace FASTER.Models
             var modNodes = doc.SelectNodes("//tr[@data-type=\"ModContainer\"]");
             if (modNodes == null)
                 return extractedModlist;
+
+            // IDs already used by saved mods, so a made-up local ID can't clash with one
+            HashSet<uint> takenIds = new();
+            if (Properties.Settings.Default.armaMods != null)
+                takenIds.UnionWith(Properties.Settings.Default.armaMods.ArmaMods.Select(m => m.WorkshopId));
 
             for (int i = 0; i < modNodes.Count; i++)
             {
@@ -77,8 +100,8 @@ namespace FASTER.Models
                 var modIdNode  = modNode.SelectSingleNode("td/a[@data-type='Link']");
                 var href       = modIdNode?.Attributes?.GetNamedItem("href")?.Value;
                 var isSteamMod = TryParseModId(href, out var modId);
-                if (!isSteamMod)
-                    modId = (uint)(uint.MaxValue - Random.Shared.Next(ushort.MaxValue / 2));
+                 if (!isSteamMod)
+                    modId = NewLocalModId(takenIds);
                 var modIdS = modId.ToString();
 
                 ArmaMod mod = new()

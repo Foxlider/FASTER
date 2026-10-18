@@ -171,7 +171,6 @@
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="1*"/>
                                     <RowDefinition Height="1*"/>
-                                    <RowDefinition Height="1*"/>
                                 </Grid.RowDefinitions>
                                 <ToggleButton Grid.Row="0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" IsChecked="{Binding IsReading}" Margin="5" Padding="2" BorderThickness="0">
                                     <ToggleButton.Style>
@@ -188,7 +187,6 @@
                                     </ToggleButton.Style>
                                 </ToggleButton>
                                 <Button Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="5" Padding="2" BorderThickness="0" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" Content="{iconPacks:Material Kind=Close}" ToolTip="Terminate Process" Click="KillProcess_Click"/>
-                                <Button Grid.Row="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="5" Padding="2" BorderThickness="0" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" Content="{iconPacks:Material Kind=Console}" ToolTip="Read Outputs" Click="ReadOutput_Click"/>
                             </Grid>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
@@ -226,21 +224,5 @@
             </controls:Flyout.Effect>
             <Label Name="IFlyoutMessage" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Content="TEXT"/>
         </controls:Flyout>
-        <mah:ChildWindow x:Name="IConsoleViewer" 
-                         ShowCloseButton="True" 
-                         AllowMove="True" 
-                         CloseOnOverlay="True" 
-                         Grid.Column="0" 
-                         Grid.Row="0" 
-                         Closing="IConsoleViewer_Closing" 
-                         Grid.RowSpan="4"
-                         Title="Process Console">
-            <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch" MinWidth="300" MinHeight="100">
-                <ScrollViewer Name="Scroller" Margin="0" Background="Black">
-                    <TextBlock x:Name="IConsoleViewerContent" Foreground="White" FontSize="12" FontFamily="Consolas" IsEnabled="False" Padding="5">
-                    </TextBlock>
-                </ScrollViewer>
-            </Grid>
-        </mah:ChildWindow>
     </Grid>
 </UserControl>

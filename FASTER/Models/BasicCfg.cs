@@ -13,7 +13,6 @@ namespace FASTER.Models
         public static string[] Languages { get; } = { "English", "Czech", "French", "German", "Italian", "Polish", "Portuguese", "Russian", "Spanish", "Turkish", "Hungarian" };
     }
 
-    [Serializable]
     public class BasicCfg : INotifyPropertyChanged
     {
         private uint   viewDistance = 2000;

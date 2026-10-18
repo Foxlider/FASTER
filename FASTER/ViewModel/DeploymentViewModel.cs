@@ -80,6 +80,7 @@ namespace FASTER.ViewModel
 
             mod.Marked = !mod.Marked;
             var linkPath = Path.Combine(Deployment.InstallPath, $"@{Functions.ModFolderName(mod.Name, mod.WorkshopId)}");
+            Logger.Log($"DeployMod: {(mod.Marked ? "linking" : "unlinking")} {mod.Name} ({mod.WorkshopId}) at {linkPath}");
             if (mod.Marked)
             {
                 //LINK MOD
@@ -139,15 +140,16 @@ namespace FASTER.ViewModel
                 return;
             }
 
+            Logger.Log($"ClearAll: installPath={Deployment.InstallPath}, mods={Deployment.DeployMods.Count}");
             foreach (var mod in Deployment.DeployMods)
             {
                 var linkPath = Path.Combine(Deployment.InstallPath, $"@{Functions.ModFolderName(mod.Name, mod.WorkshopId)}");
                 if (Directory.Exists(linkPath) && new DirectoryInfo(linkPath).Attributes.HasFlag(FileAttributes.ReparsePoint))
-                { DeleteLink(linkPath); }
-
-                mod.Marked = false;
+                {
+                    Logger.Log($"ClearAll: removing link {linkPath}");
+                    DeleteLink(linkPath);
+                }
             }
-
             Settings.Default.Deployments = Deployment;
             Settings.Default.Save();
         }
@@ -179,21 +181,9 @@ namespace FASTER.ViewModel
         /// <param name="mod"></param>
         public void OpenModFolder(DeploymentMod mod)
         {
-            if (mod == null || !Directory.Exists(mod.Path))
-            {
+            if (mod == null || !Functions.OpenFolder(mod.Path))
                 DisplayMessage($"Could not open folder \"{mod?.Path}\"");
-                return;
-            }
-
-            ProcessStartInfo startInfo = new()
-            {
-                Arguments = mod.Path,
-                FileName = "explorer.exe"
-            };
-
-            Process.Start(startInfo);
         }
-
 
         /// <summary>
         /// Open a steam mod's page
@@ -274,9 +264,13 @@ namespace FASTER.ViewModel
                 }
 
                 Directory.Delete(linkPath);
+                Logger.Log($"DeleteLink: removed {linkPath}");
             }
             catch (Exception ex)
-            { DisplayMessage("An exception occurred: \n\n" + ex.Message); }
+            {
+                Logger.Log($"DeleteLink: could not remove {linkPath}: {ex.GetType().Name}: {ex.Message}");
+                DisplayMessage("An exception occurred: \n\n" + ex.Message);
+            }
         }
 
         /// <summary>
