@@ -42,6 +42,18 @@ Moving the AppImage does not reset settings.
 The updater can replace a writable AppImage.
 Do not run the server manager as root.
 
+## Mod deployment on Linux
+
+Mods with non-Latin titles use a stable folder name such as `@mod_3125798174`.
+FASTER uses the same name for deployment, server profiles, and headless clients.
+After upgrading, use **Deploy All** again to replace the previous deployment links.
+
+When a mod contains uppercase filenames, FASTER creates a lowercase view under
+the installation's `.faster-linux-mods` directory and links the mod to that view.
+The view links to the downloaded files; it does not rename or copy their contents.
+Mod updates refresh the view automatically. Paths that differ only by case are
+reported as a deployment error so that neither file is overwritten.
+
 ## Test the pipeline with Act
 
 Act runs GitHub Actions workflows locally.

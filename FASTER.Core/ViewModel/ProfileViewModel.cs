@@ -75,7 +75,7 @@ namespace FASTER.ViewModel
 
         private string SetHCCommandLine(int hc)
         {
-            string headlessMods = string.Join(";", Profile.ProfileMods.Where(m => m.HeadlessChecked).Select(m => $"@{Functions.SafeName(m.Name)}"));
+            string headlessMods = string.Join(";", Profile.ProfileMods.Where(m => m.HeadlessChecked).Select(m => ModDeployment.FolderName(m.Name, m.Id)));
             List<string> arguments = new()
             {
                 "-client",
@@ -212,7 +212,7 @@ namespace FASTER.ViewModel
             uint MissingMods = 0;
             foreach (ProfileMod profileMod in Profile.ProfileMods.Where(m => m.ServerSideChecked || m.ClientSideChecked || m.HeadlessChecked || m.OptChecked))
             {
-                if (!links.Any(l => l.Name == $"@{Functions.SafeName(profileMod.Name)}"))
+                if (!links.Any(l => l.Name == ModDeployment.FolderName(profileMod.Name, profileMod.Id)))
                     MissingMods++;
             }
 

@@ -36,13 +36,13 @@ namespace FASTER.ViewModel
         {
             var shouldDeploy = !mod.Marked;
             if (await EnsureInstallPathAsync() && mod.Marked != shouldDeploy)
-                DeployMod(mod);
+                await Task.Run(() => DeployMod(mod));
         }
 
         public async Task DeployAllAsync()
         {
             if (await EnsureInstallPathAsync())
-                DeployAll();
+                await Task.Run(DeployAll);
         }
 
         private async Task<bool> EnsureInstallPathAsync()
@@ -113,9 +113,8 @@ namespace FASTER.ViewModel
                 return;
             }
 
-            mod.Marked = !mod.Marked;
-            var linkPath = Path.Combine(Deployment.InstallPath, $"@{Functions.SafeName(mod.Name)}");
-            if (mod.Marked)
+            var linkPath = Path.Combine(Deployment.InstallPath, ModDeployment.FolderName(mod.Name, mod.WorkshopId));
+            if (!mod.Marked)
             {
                 //LINK MOD
                 mod.Marked = LinkMod(mod, linkPath);
@@ -124,8 +123,9 @@ namespace FASTER.ViewModel
             {
                 //UNLINK MOD
                 var links = Directory.EnumerateDirectories(Deployment.InstallPath).Select(d => new DirectoryInfo(d)).Where(d => d.Attributes.HasFlag(FileAttributes.ReparsePoint));
-                if (links.Any(l => l.Name == $"@{Functions.SafeName(mod.Name)}"))
+                if (links.Any(l => l.Name == ModDeployment.FolderName(mod.Name, mod.WorkshopId)))
                     DeleteLink(linkPath);
+                mod.Marked = false;
             }
 
             AppSettings.Current.Deployments = Deployment;
@@ -154,7 +154,7 @@ namespace FASTER.ViewModel
 
             foreach (var mod in Deployment.DeployMods)
             {
-                var linkPath = Path.Combine(Deployment.InstallPath, $"@{Functions.SafeName(mod.Name)}");
+                var linkPath = Path.Combine(Deployment.InstallPath, ModDeployment.FolderName(mod.Name, mod.WorkshopId));
                 Logger.Log($"  Linking {mod.Name}: {mod.Path} -> {linkPath}");
                 mod.Marked = LinkMod(mod, linkPath);
             }
@@ -176,7 +176,7 @@ namespace FASTER.ViewModel
 
             foreach (var mod in Deployment.DeployMods)
             {
-                var linkPath = Path.Combine(Deployment.InstallPath, $"@{Functions.SafeName(mod.Name)}");
+                var linkPath = Path.Combine(Deployment.InstallPath, ModDeployment.FolderName(mod.Name, mod.WorkshopId));
                 if (Directory.Exists(linkPath) && new DirectoryInfo(linkPath).Attributes.HasFlag(FileAttributes.ReparsePoint))
                 { DeleteLink(linkPath); }
 
@@ -205,7 +205,7 @@ namespace FASTER.ViewModel
             foreach (var mod in Deployment.DeployMods)
             {
                 var links = Directory.EnumerateDirectories(Deployment.InstallPath).Select(d => new DirectoryInfo(d)).Where(d => d.Attributes.HasFlag(FileAttributes.ReparsePoint));
-                mod.Marked = links.Any(l => l.Name == $"@{Functions.SafeName(mod.Name)}");
+                mod.Marked = links.Any(l => l.Name == ModDeployment.FolderName(mod.Name, mod.WorkshopId));
             }
             AppSettings.Current.Deployments = Deployment;
             AppSettings.Current.Save();
@@ -263,8 +263,7 @@ namespace FASTER.ViewModel
                 {
                     if (new DirectoryInfo(linkPath).Attributes.HasFlag(FileAttributes.ReparsePoint))
                     {
-                        Logger.Log($"  Removing existing symlink: {linkPath}");
-                        Directory.Delete(linkPath);
+                        Logger.Log($"  Replacing existing symlink: {linkPath}");
                     }
                     else
                     {
@@ -274,14 +273,16 @@ namespace FASTER.ViewModel
                     }
                 }
 
-                Directory.CreateSymbolicLink(linkPath ?? throw new ArgumentNullException(nameof(linkPath)), mod.Path);
+                ModDeployment.Link(mod.Path, Deployment.InstallPath, mod.Name, mod.WorkshopId);
                 Logger.Log($"  Symlink created OK.");
                 return true;
             }
             catch (UnauthorizedAccessException)
             {
                 Logger.Log($"  ERROR: UnauthorizedAccessException creating symlink.");
-                DisplayMessage("Could not create symlink: Access denied.\n\nTo deploy mods, enable Windows Developer Mode in Settings → Update & Security → For Developers, or run FASTER as Administrator.");
+                DisplayMessage(OperatingSystem.IsWindows()
+                    ? "Could not create symlink: Access denied.\n\nTo deploy mods, enable Windows Developer Mode in Settings → Update & Security → For Developers, or run FASTER as Administrator."
+                    : "Could not deploy mod: Access denied. Check read access to the mod folder and write access to the Arma installation directory.");
                 return false;
             }
             catch (Exception ex)

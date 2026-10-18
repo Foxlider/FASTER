@@ -54,7 +54,7 @@ public class ModSizeAndDeploymentTests
         var folder = Path.Combine(_root, "mods", "42");
         Directory.CreateDirectory(Path.Combine(folder, "addons"));
         File.WriteAllBytes(Path.Combine(folder, "addons", "test.pbo"), new byte[2048]);
-        File.WriteAllBytes(Path.Combine(folder, "LICENSE"), new byte[64]);
+        File.WriteAllBytes(Path.Combine(folder, "license"), new byte[64]);
         var mod = new ArmaMod { WorkshopId = 42, Name = "Test Mod", Path = folder,
             IsLocal = local, Status = ArmaModStatus.UpToDate, Size = 0 };
         _settings.ArmaMods!.ArmaMods.Add(mod);
@@ -66,6 +66,138 @@ public class ModSizeAndDeploymentTests
         var server = Path.Combine(_root, "Arma Server");
         Directory.CreateDirectory(server);
         return server;
+    }
+
+    [Test]
+    public void NonLatinFolderNamesAreStableAndUseTheModId()
+    {
+        Assert.That(ModDeployment.FolderName("Догечня 0.55", 3125798174), Is.EqualTo("@mod_3125798174"));
+        Assert.That(ModDeployment.FolderName("Новое название", 3125798174), Is.EqualTo("@mod_3125798174"));
+        Assert.That(ModDeployment.FolderName("Другой мод 0.55", 42), Is.EqualTo("@mod_42"));
+        Assert.That(ModDeployment.FolderName("CBA_A3", 450814997), Is.EqualTo("@CBA_A3"));
+        Assert.That(ModDeployment.FolderName("Догечня", 0), Is.Not.EqualTo(ModDeployment.FolderName("Другой мод", 0)));
+    }
+
+    [Test]
+    public void LegacyCleanupPreservesUnrelatedLinksAndRealDirectories()
+    {
+        if (!OperatingSystem.IsLinux()) { Assert.Ignore("Linux symlink cleanup."); return; }
+        var mod = AddMod();
+        mod.Name = "Догечня 0.55";
+        var install = ServerDirectory();
+        var legacy = Path.Combine(install, "@" + Functions.SafeName(mod.Name));
+        var other = Path.Combine(_root, "other-mod");
+        Directory.CreateDirectory(other);
+        Directory.CreateSymbolicLink(legacy, other);
+        ModDeployment.RemoveLegacyLink(install, mod.Path, mod.Name, mod.WorkshopId);
+        Assert.That(Directory.ResolveLinkTarget(legacy, true)?.FullName, Is.EqualTo(other));
+        Directory.Delete(legacy);
+        Directory.CreateDirectory(legacy);
+        File.WriteAllText(Path.Combine(legacy, "keep"), "keep");
+        ModDeployment.RemoveLegacyLink(install, mod.Path, mod.Name, mod.WorkshopId);
+        Assert.That(File.ReadAllText(Path.Combine(legacy, "keep")), Is.EqualTo("keep"));
+    }
+
+    [Test]
+    public async Task CyrillicModDeploysLowercaseFilesWithoutChangingTheDownload()
+    {
+        if (!OperatingSystem.IsLinux()) { Assert.Ignore("Linux lowercase deployment."); return; }
+        var original = AddMod();
+        original.WorkshopId = 3125798174;
+        original.Name = "Догечня 0.55";
+        var addons = Path.Combine(original.Path, "addons");
+        var upperFile = Path.Combine(addons, "Dogechnya_cfg.pbo");
+        File.WriteAllText(upperFile, "config contents");
+        _settings.ServerPath = ServerDirectory();
+        var legacy = Path.Combine(_settings.ServerPath, "@" + Functions.SafeName(original.Name));
+        Directory.CreateSymbolicLink(legacy, original.Path);
+        var vm = new DeploymentViewModel();
+        await vm.LoadDataAsync();
+        await vm.DeployAllAsync();
+
+        var link = Path.Combine(_settings.ServerPath, "@mod_3125798174");
+        Assert.That(File.ReadAllText(Path.Combine(link, "addons", "dogechnya_cfg.pbo")), Is.EqualTo("config contents"));
+        Assert.That(File.Exists(upperFile), Is.True);
+        Assert.That(File.Exists(Path.Combine(addons, "dogechnya_cfg.pbo")), Is.False);
+        Assert.That(Directory.Exists(legacy), Is.False);
+        Assert.That(vm.Deployment.DeployMods.Single().Marked, Is.True);
+
+        var profile = new ServerProfile("Cyrillic mod", createFolder: false)
+        {
+            ProfileMods = [new ProfileMod { Id = original.WorkshopId, Name = original.Name,
+                ClientSideChecked = true, ServerSideChecked = true, HeadlessChecked = true }]
+        };
+        Assert.That(profile.CommandLine, Does.Contain("-mod=@mod_3125798174").And.Contain("-serverMod=@mod_3125798174"));
+        var headless = typeof(ProfileViewModel).GetMethod("SetHCCommandLine",
+            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!
+            .Invoke(new ProfileViewModel(profile), [1]);
+        Assert.That(headless, Does.Contain("-mod=@mod_3125798174"));
+
+        File.Delete(upperFile);
+        File.WriteAllText(Path.Combine(addons, "NewFile.PBO"), "updated contents");
+        ModDeployment.RefreshDeployed(original);
+        Assert.That(File.Exists(Path.Combine(link, "addons", "dogechnya_cfg.pbo")), Is.False);
+        Assert.That(File.ReadAllText(Path.Combine(link, "addons", "newfile.pbo")), Is.EqualTo("updated contents"));
+        await vm.DeployModAsync(vm.Deployment.DeployMods.Single());
+        Assert.That(Directory.Exists(link), Is.False);
+        Assert.That(File.ReadAllText(Path.Combine(addons, "NewFile.PBO")), Is.EqualTo("updated contents"));
+    }
+
+    [Test]
+    public async Task LinuxDeploymentLowercasesDirectoriesAndRefreshesDirectLinksAfterUpdates()
+    {
+        if (!OperatingSystem.IsLinux()) { Assert.Ignore("Linux lowercase deployment."); return; }
+        var mod = AddMod();
+        _settings.ServerPath = ServerDirectory();
+        var vm = new DeploymentViewModel();
+        await vm.LoadDataAsync();
+        await vm.DeployAllAsync();
+        var link = Path.Combine(_settings.ServerPath, "@Test_Mod");
+        Assert.That(Directory.ResolveLinkTarget(link, true)?.FullName, Is.EqualTo(mod.Path));
+        Directory.CreateDirectory(Path.Combine(mod.Path, "Optional", "Addons"));
+        File.WriteAllText(Path.Combine(mod.Path, "Optional", "Addons", "Extra.PBO"), "extra");
+        ModDeployment.RefreshDeployed(mod);
+        Assert.That(File.ReadAllText(Path.Combine(link, "optional", "addons", "extra.pbo")), Is.EqualTo("extra"));
+        Assert.That(File.Exists(Path.Combine(mod.Path, "Optional", "Addons", "Extra.PBO")), Is.True);
+        vm.ClearAll();
+        Assert.That(Directory.Exists(link), Is.False);
+        Assert.That(Directory.Exists(mod.Path), Is.True);
+    }
+
+    [Test]
+    public async Task CaseCollisionsKeepBothSourceFilesAndTheExistingDeployment()
+    {
+        if (!OperatingSystem.IsLinux()) { Assert.Ignore("Case-sensitive Linux paths."); return; }
+        var mod = AddMod();
+        var upper = Path.Combine(mod.Path, "addons", "TEST.pbo");
+        File.WriteAllText(upper, "different file");
+        _settings.ServerPath = ServerDirectory();
+        var link = Path.Combine(_settings.ServerPath, "@Test_Mod");
+        Directory.CreateSymbolicLink(link, mod.Path);
+        var vm = new DeploymentViewModel();
+        await vm.LoadDataAsync();
+        await vm.DeployAllAsync();
+        Assert.That(vm.Deployment.DeployMods.Single().Marked, Is.False);
+        Assert.That(Directory.ResolveLinkTarget(link, true)?.FullName, Is.EqualTo(mod.Path));
+        Assert.That(File.ReadAllText(upper), Is.EqualTo("different file"));
+        Assert.That(new FileInfo(Path.Combine(mod.Path, "addons", "test.pbo")).Length, Is.EqualTo(2048));
+    }
+
+    [Test]
+    public async Task LowercaseDeploymentRefusesToReplaceAnUnmanagedCacheDirectory()
+    {
+        if (!OperatingSystem.IsLinux()) { Assert.Ignore("Linux lowercase deployment."); return; }
+        var mod = AddMod();
+        File.WriteAllText(Path.Combine(mod.Path, "UPPER"), "source");
+        _settings.ServerPath = ServerDirectory();
+        var existing = Path.Combine(_settings.ServerPath, ".faster-linux-mods", "42");
+        Directory.CreateDirectory(existing);
+        File.WriteAllText(Path.Combine(existing, "keep"), "keep");
+        var vm = new DeploymentViewModel();
+        await vm.LoadDataAsync();
+        await vm.DeployAllAsync();
+        Assert.That(vm.Deployment.DeployMods.Single().Marked, Is.False);
+        Assert.That(File.ReadAllText(Path.Combine(existing, "keep")), Is.EqualTo("keep"));
     }
 
     [Test]

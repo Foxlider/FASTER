@@ -461,6 +461,8 @@ namespace FASTER.ViewModel
                 var downloadHandler = await contentClient.GetPublishedFileDataAsync(modId, manifestId, _operationToken);
 
                 await Download(downloadHandler, path);
+                var mod = AppSettings.Current.ArmaMods?.ArmaMods.FirstOrDefault(m => m.WorkshopId == modId);
+                if (mod != null) await Task.Run(() => RefreshDeployment(mod));
             }
             catch (TaskCanceledException)
             {
@@ -595,11 +597,22 @@ namespace FASTER.ViewModel
                 sw.Stop();
 
                 mod.CheckModSize();
+                RefreshDeployment(mod);
                 Parameters.Output += $"\n    Download {mod.WorkshopId} completed, it took {sw.Elapsed.Minutes + sw.Elapsed.Hours*60}m {sw.Elapsed.Seconds}s {sw.Elapsed.Milliseconds}ms";
             }
             catch (Exception ex)
             {
                 Logger.Log($"  UNHANDLED ERROR in task for {mod.WorkshopId}: {ex.GetType().Name}: {ex.Message}\n  StackTrace: {ex.StackTrace}");
+            }
+        }
+
+        private void RefreshDeployment(ArmaMod mod)
+        {
+            try { ModDeployment.RefreshDeployed(mod); }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+            {
+                Logger.Log($"Could not refresh deployed mod {mod.WorkshopId}: {ex.Message}");
+                Parameters.Output += $"\nCould not refresh deployment for {mod.Name}: {ex.Message}. Redeploy the mod after fixing this error.";
             }
         }
 
