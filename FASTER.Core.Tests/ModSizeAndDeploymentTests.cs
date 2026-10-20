@@ -377,6 +377,28 @@ public class ModSizeAndDeploymentTests
     }
 
     [Test]
+    public async Task UndeployAndCleanAlsoRemoveOwnedLegacyMixedCaseLinks()
+    {
+        if (!OperatingSystem.IsLinux()) { Assert.Ignore("Linux legacy migration."); return; }
+        var mod = AddMod();
+        string server = ServerDirectory();
+        _settings.Deployments!.InstallPath = server;
+        string legacy = Path.Combine(server, "@Test_Mod");
+        Directory.CreateSymbolicLink(legacy, mod.Path);
+        var vm = new DeploymentViewModel();
+        await vm.LoadDataAsync();
+        var deployed = vm.Deployment.DeployMods.Single();
+        deployed.Marked = true;
+        await vm.DeployModAsync(deployed);
+        Assert.That(Directory.Exists(legacy), Is.False);
+        Directory.CreateSymbolicLink(legacy, mod.Path);
+        deployed.Marked = true;
+        vm.ClearAll();
+        Assert.That(Directory.Exists(legacy), Is.False);
+        Assert.That(File.Exists(Path.Combine(mod.Path, "addons", "test.pbo")), Is.True);
+    }
+
+    [Test]
     public void PreparingAViewFromItselfCannotCreateDanglingFileLinks()
     {
         if (!OperatingSystem.IsLinux()) { Assert.Ignore("Linux view safety."); return; }

@@ -125,6 +125,7 @@ namespace FASTER.ViewModel
                 var links = Directory.EnumerateDirectories(Deployment.InstallPath).Select(d => new DirectoryInfo(d)).Where(d => d.Attributes.HasFlag(FileAttributes.ReparsePoint));
                 if (links.Any(l => l.Name == ModDeployment.FolderName(mod.Name, mod.WorkshopId)))
                     DeleteLink(linkPath);
+                RemoveLegacyModLink(mod);
                 mod.Marked = false;
             }
 
@@ -182,6 +183,7 @@ namespace FASTER.ViewModel
                 var linkPath = Path.Combine(Deployment.InstallPath, ModDeployment.FolderName(mod.Name, mod.WorkshopId));
                 if (Directory.Exists(linkPath) && new DirectoryInfo(linkPath).Attributes.HasFlag(FileAttributes.ReparsePoint))
                 { DeleteLink(linkPath); }
+                RemoveLegacyModLink(mod);
 
                 mod.Marked = false;
             }
@@ -296,6 +298,13 @@ namespace FASTER.ViewModel
                 DisplayMessage("An exception occurred: \n\n" + ex.Message);
                 return false;
             }
+        }
+
+        private void RemoveLegacyModLink(DeploymentMod mod)
+        {
+            try { ModDeployment.RemoveLegacyLink(Deployment.InstallPath, mod.Path, mod.Name, mod.WorkshopId); }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+            { DisplayMessage("Could not remove the old deployment link: " + ex.Message); }
         }
 
         /// <summary>

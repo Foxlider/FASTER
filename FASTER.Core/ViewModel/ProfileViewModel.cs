@@ -268,7 +268,8 @@ namespace FASTER.ViewModel
             uint MissingMods = 0;
             foreach (ProfileMod profileMod in Profile.ProfileMods.Where(m => m.ServerSideChecked || m.ClientSideChecked || m.HeadlessChecked || m.OptChecked))
             {
-                if (!links.Any(l => l.Name == ModDeployment.FolderName(profileMod.Name, profileMod.Id)))
+                if (!links.Any(l => l.Name == ModDeployment.FolderName(profileMod.Name, profileMod.Id) ||
+                    (OperatingSystem.IsLinux() && l.Name == "@" + Functions.SafeName(profileMod.Name))))
                     MissingMods++;
             }
 
