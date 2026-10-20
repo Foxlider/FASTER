@@ -149,7 +149,7 @@ public class ModViewsTests
             await Until(() => profile.ClientModsChecked == 16);
             Assert.That(profile.ProfileMods.OrderBy(m => m.LoadPriority).Select(m => m.Id),
                 Is.EqualTo(mods.Select(m => m.WorkshopId)));
-            Assert.That(profile.CommandLine, Does.Contain("@CBA_A3").And.Contain("@ace"));
+            Assert.That(profile.CommandLine, Does.Contain(ModDeployment.FolderName("CBA_A3", 450814997)).And.Contain("@ace"));
         }
         finally { _window.Close(); }
     }
@@ -195,7 +195,7 @@ public class ModViewsTests
             var picker = new Picker(server);
             AppServices.Files = picker;
             var mod = deployment.Deployment.DeployMods.Single();
-            var link = Path.Combine(server, "@Test_Mod");
+            var link = Path.Combine(server, ModDeployment.FolderName("Test Mod", 42));
 
             Assert.That(checkbox.IsEnabled, Is.True);
             Click(checkbox);

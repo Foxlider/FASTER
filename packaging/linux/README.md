@@ -46,12 +46,15 @@ Do not run the server manager as root.
 
 Mods with non-Latin titles use a stable folder name such as `@mod_3125798174`.
 FASTER uses the same name for deployment, server profiles, and headless clients.
-After upgrading, use **Deploy All** again to replace the previous deployment links.
+Linux deployment folder names are lowercase (for example, `@mmm_cso`).
+FASTER refreshes selected mods before starting the server or headless clients and
+migrates older mixed-case links automatically. **Deploy All** also refreshes them.
 
 When a mod contains uppercase filenames, FASTER creates a lowercase view under
 the installation's `.faster-linux-mods` directory and links the mod to that view.
 The view links to the downloaded files; it does not rename or copy their contents.
-Mod updates refresh the view automatically. Paths that differ only by case are
+Updates and launches refresh the view, including files changed outside FASTER.
+Paths that differ only by case are
 reported as a deployment error so that neither file is overwritten.
 
 ## Test the pipeline with Act

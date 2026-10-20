@@ -64,12 +64,49 @@ namespace FASTER.ViewModel
             { DisplayMessage("Could not open profile location..."); }
         }
 
-        internal void LaunchHCs()
+        private bool _launching;
+
+        private async Task<bool> PrepareLinuxModsAsync()
+        {
+            if (!OperatingSystem.IsLinux()) return true;
+            var mods = Profile.ProfileMods.Where(m => m.ServerSideChecked || m.ClientSideChecked || m.HeadlessChecked).ToArray();
+            var sources = AppSettings.Current.ArmaMods?.ArmaMods.ToArray() ?? [];
+            string installPath = Profile.ArmaPath;
+            DisplayMessage("Preparing Linux mod paths...");
+            try
+            {
+                await Task.Run(() =>
+                {
+                    ModDeployment.ValidateFolderNames(mods.Select(m => (m.Name, m.Id)));
+                    foreach (var mod in mods)
+                        ModDeployment.PrepareForLaunch(installPath, mod.Name, mod.Id,
+                            sources.FirstOrDefault(s => s.WorkshopId == mod.Id)?.Path);
+                });
+                return true;
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+            {
+                DisplayMessage("Could not prepare Linux mods: " + ex.Message);
+                return false;
+            }
+        }
+
+        internal async Task LaunchHCs()
+        {
+            if (_launching || !Profile.ServerCfg.HeadlessClientEnabled || !VerifyBeforeLaunch()) return;
+            _launching = true;
+            try
+            {
+                if (await PrepareLinuxModsAsync()) LaunchHeadlessClients();
+            }
+            finally { _launching = false; }
+        }
+
+        private void LaunchHeadlessClients()
         {
             if (!Profile.ServerCfg.HeadlessClientEnabled) return;
-            if (!VerifyBeforeLaunch()) return;
 
-            //Launching... 
+            // Launching...
             DisplayMessage($"Launching Headless Clients for {Profile.Name}...");
             string commandLine;
             for (int hc = 1; hc <= Profile.HeadlessNumber; hc++)
@@ -111,34 +148,39 @@ namespace FASTER.ViewModel
             return commandLine;
         }
 
-        internal void LaunchServer()
+        internal async Task LaunchServer()
         {
-            if (!VerifyBeforeLaunch()) return;
-
-            //Launching... 
-            DisplayMessage($"Launching Profile {Profile.Name}...");
-
-            FASTER.Services.Telemetry.TrackEvent("Profile - Clicked LaunchServer", new Dictionary<string, string>
+            if (_launching || !VerifyBeforeLaunch()) return;
+            _launching = true;
+            try
             {
-                {"Name", AppSettings.Current.SteamUserName}
-            });
+                if (!await PrepareLinuxModsAsync()) return;
 
-            Profile.RaisePropertyChanged("CommandLine");
-            var commandLine = Profile.CommandLine;
-            _ = AppServices.Clipboard.SetTextAsync(commandLine);
+                // Launching...
+                DisplayMessage($"Launching Profile {Profile.Name}...");
+
+                FASTER.Services.Telemetry.TrackEvent("Profile - Clicked LaunchServer", new Dictionary<string, string>
+                {
+                    {"Name", AppSettings.Current.SteamUserName}
+                });
+
+                Profile.RaisePropertyChanged("CommandLine");
+                var commandLine = Profile.CommandLine;
+                _ = AppServices.Clipboard.SetTextAsync(commandLine);
 #if DEBUG
-            DisplayMessage($"Launching Arma3Server with commandline : \n{commandLine}");
+                DisplayMessage($"Launching Arma3Server with commandline : \n{commandLine}");
 #else
-            DisplayMessage($"Profile {Profile.Name}'s server launched !\nCommand line copied to clipboard.");
-            ProcessStartInfo sStartInfo = new ProcessStartInfo(Profile.Executable, commandLine);
-            sStartInfo.WorkingDirectory = Profile.ArmaPath;
-            try { AppServices.Processes.Launch(sStartInfo); }
-            catch (Exception ex)
-            { Logger.LogCritical(ex.ToString()); DisplayMessage("Could not launch server: " + ex.Message); return; }
+                DisplayMessage($"Profile {Profile.Name}'s server launched !\nCommand line copied to clipboard.");
+                ProcessStartInfo sStartInfo = new ProcessStartInfo(Profile.Executable, commandLine);
+                sStartInfo.WorkingDirectory = Profile.ArmaPath;
+                try { AppServices.Processes.Launch(sStartInfo); }
+                catch (Exception ex)
+                { Logger.LogCritical(ex.ToString()); DisplayMessage("Could not launch server: " + ex.Message); return; }
 
-            LaunchHCs();
+                LaunchHeadlessClients();
 #endif
-
+            }
+            finally { _launching = false; }
         }
 
         /// <summary>

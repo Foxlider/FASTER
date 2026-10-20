@@ -135,14 +135,14 @@ namespace FASTER.Views
             ((ProfileViewModel)DataContext)?.DeleteProfile();
         }
 
-        private void LaunchServer(object sender, RoutedEventArgs e)
+        private async void LaunchServer(object sender, RoutedEventArgs e)
         {
-            ((ProfileViewModel)DataContext)?.LaunchServer();
+            if (DataContext is ProfileViewModel vm) await vm.LaunchServer();
         }
 
-        private void LaunchHCs(object sender, RoutedEventArgs e)
+        private async void LaunchHCs(object sender, RoutedEventArgs e)
         {
-            ((ProfileViewModel)DataContext)?.LaunchHCs();
+            if (DataContext is ProfileViewModel vm) await vm.LaunchHCs();
         }
     }
 }

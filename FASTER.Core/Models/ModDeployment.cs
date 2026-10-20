@@ -13,7 +13,17 @@ public static class ModDeployment
     {
         if (name.Any(c => c > 127) || !name.Any(char.IsAsciiLetterOrDigit))
             return "@mod_" + Key(name, id);
-        return "@" + Functions.SafeName(name);
+        var folder = "@" + Functions.SafeName(name);
+        return OperatingSystem.IsLinux() ? folder.ToLowerInvariant() : folder;
+    }
+
+    public static void ValidateFolderNames(IEnumerable<(string Name, uint Id)> mods)
+    {
+        if (!OperatingSystem.IsLinux()) return;
+        var collision = mods.GroupBy(m => FolderName(m.Name, m.Id), StringComparer.Ordinal)
+            .FirstOrDefault(group => group.Select(m => m.Id).Distinct().Skip(1).Any());
+        if (collision != null)
+            throw new IOException($"Multiple mods use the Linux folder '{collision.Key}'. Give these mods distinct names before deploying or launching them.");
     }
 
     private static string Key(string name, uint id) => id != 0
@@ -29,10 +39,13 @@ public static class ModDeployment
     {
         source = Path.GetFullPath(source);
         if (!OperatingSystem.IsLinux()) return source;
+        source = Directory.ResolveLinkTarget(source, true)?.FullName ?? source;
         lock (s_sync)
         {
             var view = Path.GetFullPath(ViewPath(installPath, name, id));
-            if (view.StartsWith(source.TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar, StringComparison.Ordinal))
+            if (view == source ||
+                view.StartsWith(source.TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar, StringComparison.Ordinal) ||
+                source.StartsWith(view.TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar, StringComparison.Ordinal))
                 throw new IOException("The deployment directory must be outside the mod's source folder.");
 
             var entries = new List<(string Source, string Relative, bool Directory)>();
@@ -107,7 +120,10 @@ public static class ModDeployment
         if (Path.GetFileName(legacy) == FolderName(name, id)) return;
         var link = new DirectoryInfo(legacy);
         var sourceTarget = Directory.ResolveLinkTarget(source, true)?.FullName ?? Path.GetFullPath(source);
-        if (link.LinkTarget != null && link.ResolveLinkTarget(true)?.FullName == sourceTarget)
+        var legacyTarget = link.LinkTarget == null ? null : link.ResolveLinkTarget(true)?.FullName;
+        var view = Path.GetFullPath(ViewPath(installPath, name, id));
+        if (link.LinkTarget != null && (legacyTarget == sourceTarget ||
+            (legacyTarget == view && File.Exists(view + ".managed") && File.ReadAllText(view + ".managed") == Marker)))
             Directory.Delete(legacy);
     }
 
@@ -128,6 +144,35 @@ public static class ModDeployment
         }
     }
 
+    // Profiles may still point at links created by an older version, or the source
+    // may have been changed by Steam or copied manually since the last deployment.
+    public static void PrepareForLaunch(string installPath, string name, uint id, string? registeredSource)
+    {
+        if (!OperatingSystem.IsLinux()) return;
+        lock (s_sync)
+        {
+            string path = Path.Combine(installPath, FolderName(name, id));
+            string legacy = Path.Combine(installPath, "@" + Functions.SafeName(name));
+            string? source = registeredSource;
+            if (string.IsNullOrWhiteSpace(source))
+            {
+                var existing = Directory.Exists(path) ? path : legacy;
+                if (!Directory.Exists(existing)) throw new IOException($"Mod '{name}' is not deployed. Download and deploy it first.");
+                source = Directory.ResolveLinkTarget(existing, true)?.FullName ?? Path.GetFullPath(existing);
+                if (source == Path.GetFullPath(ViewPath(installPath, name, id)))
+                    throw new IOException($"Cannot refresh '{name}' without its source folder. Add the mod in Mods and deploy it again.");
+            }
+            if (!Directory.Exists(source)) throw new IOException($"The source folder for '{name}' does not exist. Download or add the mod again.");
+            // A manually installed, already-lowercase folder can be used directly.
+            if (Directory.Exists(path) && new DirectoryInfo(path).LinkTarget == null)
+            {
+                if (PrepareSource(path, installPath, name, id) == Path.GetFullPath(path)) return;
+                throw new IOException($"Mod '{name}' contains uppercase paths in a real deployment folder. Move it outside the server directory, add it as a local mod, and deploy it again.");
+            }
+            Link(source, installPath, name, id);
+        }
+    }
+
     public static void RefreshDeployed(ArmaMod mod)
     {
         lock (s_sync)
@@ -135,14 +180,13 @@ public static class ModDeployment
             var deployment = AppSettings.Current.Deployments;
             if (!OperatingSystem.IsLinux() || deployment == null ||
                 !deployment.DeployMods.Any(m => m.WorkshopId == mod.WorkshopId && m.Marked)) return;
-            var linkPath = Path.Combine(deployment.InstallPath, FolderName(mod.Name, mod.WorkshopId));
-            var link = new DirectoryInfo(linkPath);
-            var target = link.LinkTarget == null ? null : link.ResolveLinkTarget(true)?.FullName;
-            if (target != Path.GetFullPath(mod.Path) && target != Path.GetFullPath(ViewPath(deployment.InstallPath, mod.Name, mod.WorkshopId))) return;
-            var source = PrepareSource(mod.Path, deployment.InstallPath, mod.Name, mod.WorkshopId);
-            if (target == source) return;
-            Directory.Delete(linkPath);
-            Directory.CreateSymbolicLink(linkPath, source);
+            string source = Directory.ResolveLinkTarget(mod.Path, true)?.FullName ?? Path.GetFullPath(mod.Path);
+            string view = Path.GetFullPath(ViewPath(deployment.InstallPath, mod.Name, mod.WorkshopId));
+            string[] candidates = [Path.Combine(deployment.InstallPath, FolderName(mod.Name, mod.WorkshopId)),
+                Path.Combine(deployment.InstallPath, "@" + Functions.SafeName(mod.Name))];
+            if (!candidates.Any(path => new DirectoryInfo(path).LinkTarget != null &&
+                (Directory.ResolveLinkTarget(path, true)?.FullName is { } target && (target == source || target == view)))) return;
+            PrepareForLaunch(deployment.InstallPath, mod.Name, mod.WorkshopId, mod.Path);
         }
     }
 }

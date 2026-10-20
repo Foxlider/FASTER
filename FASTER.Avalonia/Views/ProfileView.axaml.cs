@@ -60,6 +60,6 @@ public partial class ProfileView : UserControl
     private void OpenProfileLocation(object? sender, RoutedEventArgs e) => ViewModel.OpenProfileLocation();
     private void SaveProfile(object? sender, RoutedEventArgs e) => ViewModel.SaveProfile();
     private void DeleteProfile(object? sender, RoutedEventArgs e) => ViewModel.DeleteProfile();
-    private void LaunchServer(object? sender, RoutedEventArgs e) => ViewModel.LaunchServer();
-    private void LaunchHCs(object? sender, RoutedEventArgs e) => ViewModel.LaunchHCs();
+    private async void LaunchServer(object? sender, RoutedEventArgs e) => await ViewModel.LaunchServer();
+    private async void LaunchHCs(object? sender, RoutedEventArgs e) => await ViewModel.LaunchHCs();
 }

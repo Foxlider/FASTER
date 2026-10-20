@@ -152,6 +152,9 @@ namespace FASTER.ViewModel
                 return;
             }
 
+            try { ModDeployment.ValidateFolderNames(Deployment.DeployMods.Select(m => (m.Name, m.WorkshopId))); }
+            catch (IOException ex) { DisplayMessage(ex.Message); return; }
+
             foreach (var mod in Deployment.DeployMods)
             {
                 var linkPath = Path.Combine(Deployment.InstallPath, ModDeployment.FolderName(mod.Name, mod.WorkshopId));
@@ -259,6 +262,8 @@ namespace FASTER.ViewModel
             }
             try
             {
+                ModDeployment.ValidateFolderNames(Deployment.DeployMods.Where(m => m.Marked || m == mod)
+                    .Select(m => (m.Name, m.WorkshopId)));
                 if(Directory.Exists(linkPath))
                 {
                     if (new DirectoryInfo(linkPath).Attributes.HasFlag(FileAttributes.ReparsePoint))

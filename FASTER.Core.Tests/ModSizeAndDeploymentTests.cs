@@ -74,7 +74,7 @@ public class ModSizeAndDeploymentTests
         Assert.That(ModDeployment.FolderName("Догечня 0.55", 3125798174), Is.EqualTo("@mod_3125798174"));
         Assert.That(ModDeployment.FolderName("Новое название", 3125798174), Is.EqualTo("@mod_3125798174"));
         Assert.That(ModDeployment.FolderName("Другой мод 0.55", 42), Is.EqualTo("@mod_42"));
-        Assert.That(ModDeployment.FolderName("CBA_A3", 450814997), Is.EqualTo("@CBA_A3"));
+        Assert.That(ModDeployment.FolderName("CBA_A3", 450814997), Is.EqualTo(OperatingSystem.IsLinux() ? "@cba_a3" : "@CBA_A3"));
         Assert.That(ModDeployment.FolderName("Догечня", 0), Is.Not.EqualTo(ModDeployment.FolderName("Другой мод", 0)));
     }
 
@@ -152,7 +152,7 @@ public class ModSizeAndDeploymentTests
         var vm = new DeploymentViewModel();
         await vm.LoadDataAsync();
         await vm.DeployAllAsync();
-        var link = Path.Combine(_settings.ServerPath, "@Test_Mod");
+        var link = Path.Combine(_settings.ServerPath, ModDeployment.FolderName("Test Mod", 42));
         Assert.That(Directory.ResolveLinkTarget(link, true)?.FullName, Is.EqualTo(mod.Path));
         Directory.CreateDirectory(Path.Combine(mod.Path, "Optional", "Addons"));
         File.WriteAllText(Path.Combine(mod.Path, "Optional", "Addons", "Extra.PBO"), "extra");
@@ -172,7 +172,7 @@ public class ModSizeAndDeploymentTests
         var upper = Path.Combine(mod.Path, "addons", "TEST.pbo");
         File.WriteAllText(upper, "different file");
         _settings.ServerPath = ServerDirectory();
-        var link = Path.Combine(_settings.ServerPath, "@Test_Mod");
+        var link = Path.Combine(_settings.ServerPath, ModDeployment.FolderName("Test Mod", 42));
         Directory.CreateSymbolicLink(link, mod.Path);
         var vm = new DeploymentViewModel();
         await vm.LoadDataAsync();
@@ -198,6 +198,194 @@ public class ModSizeAndDeploymentTests
         await vm.DeployAllAsync();
         Assert.That(vm.Deployment.DeployMods.Single().Marked, Is.False);
         Assert.That(File.ReadAllText(Path.Combine(existing, "keep")), Is.EqualTo("keep"));
+    }
+
+    [Test]
+    public void LaunchPreparationMigratesLegacyViewsAndIncludesNewFilesFromTheReportedMod()
+    {
+        if (!OperatingSystem.IsLinux()) { Assert.Ignore("Linux mod paths."); return; }
+        var mod = AddMod();
+        mod.Name = "MMM CSO";
+        string[] paths = File.ReadAllLines(Path.Combine(AppContext.BaseDirectory, "TestData", "LinuxMixedCaseModPaths.txt"));
+        Assert.That(paths, Has.Length.GreaterThan(80));
+        foreach (string relative in paths)
+        {
+            string file = Path.Combine(mod.Path, relative);
+            Directory.CreateDirectory(Path.GetDirectoryName(file)!);
+            File.WriteAllText(file, relative);
+        }
+        var server = ServerDirectory();
+        // Simulate a view/link made by the previous version, then a manual update.
+        string view = ModDeployment.PrepareSource(mod.Path, server, mod.Name, mod.WorkshopId);
+        string legacy = Path.Combine(server, "@MMM_CSO");
+        Directory.CreateSymbolicLink(legacy, view);
+        File.WriteAllText(Path.Combine(mod.Path, "addons", "NewAfterDeployment.PBO"), "updated");
+        ModDeployment.PrepareForLaunch(server, mod.Name, mod.WorkshopId, mod.Path);
+        string deployed = Path.Combine(server, "@mmm_cso");
+        Assert.That(Directory.Exists(legacy), Is.False);
+        foreach (string relative in paths)
+        {
+            Assert.That(File.ReadAllText(Path.Combine(deployed, relative.ToLowerInvariant())), Is.EqualTo(relative));
+            Assert.That(File.Exists(Path.Combine(mod.Path, relative)), Is.True);
+        }
+        Assert.That(File.ReadAllText(Path.Combine(deployed, "addons", "newafterdeployment.pbo")), Is.EqualTo("updated"));
+        Assert.That(Directory.EnumerateFileSystemEntries(deployed, "*", SearchOption.AllDirectories)
+            .Select(path => Path.GetRelativePath(deployed, path)), Is.All.Matches<string>(path => path == path.ToLowerInvariant()));
+        ModDeployment.PrepareForLaunch(server, mod.Name, mod.WorkshopId, mod.Path);
+        Assert.That(File.ReadAllText(Path.Combine(deployed, "addons", "newafterdeployment.pbo")), Is.EqualTo("updated"));
+    }
+
+    [Test]
+    public async Task ServerLaunchRepairsLegacyLinksBeforeStartingARealProcess()
+    {
+        if (!OperatingSystem.IsLinux()) { Assert.Ignore("Linux launch fixture."); return; }
+        var mod = AddMod();
+        mod.Name = "MMM CSO";
+        File.WriteAllText(Path.Combine(mod.Path, "addons", "MMM_CSO_Vegetation.pbo"), "vegetation");
+        string server = ServerDirectory();
+        Directory.CreateSymbolicLink(Path.Combine(server, "@MMM_CSO"), mod.Path);
+        string executable = Path.Combine(server, "arma3server_x64");
+        File.WriteAllText(executable, """
+            #!/bin/sh
+            set -eu
+            export LC_ALL=C
+            for argument in "$@"; do
+              case "$argument" in
+                -mod=*|-serverMod=*)
+                  list=${argument#*=}
+                  oldIFS=$IFS
+                  IFS=';'
+                  for mod in $list; do
+                    [ -z "$mod" ] && continue
+                    case "$mod" in *[A-Z]*) echo "Uppercase mod argument: $mod"; exit 21;; esac
+                    [ -r "$mod/addons/mmm_cso_vegetation.pbo" ] || { echo "Missing lowercase file in $mod"; exit 22; }
+                    if find -L "$mod" -mindepth 1 -printf '%P\n' | LC_ALL=C grep '[A-Z]'; then exit 23; fi
+                  done
+                  IFS=$oldIFS
+                  ;;
+              esac
+            done
+            echo LINUX-MODS-OK
+            sleep 0.2
+            """ + "\n");
+        File.SetUnixFileMode(executable, UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute);
+        var profile = new ServerProfile("Linux fixture", createFolder: false)
+        {
+            Executable = executable,
+            ProfileMods = [new ProfileMod { Id = mod.WorkshopId, Name = mod.Name,
+                ClientSideChecked = true, ServerSideChecked = true, HeadlessChecked = true }]
+        };
+        var vm = new ProfileViewModel(profile);
+        vm.SaveProfile();
+        using var monitor = new ProcessMonitor(outputDirectory: Path.Combine(_root, "output"));
+        var previousProcesses = AppServices.Processes;
+        AppServices.Processes = monitor;
+        try
+        {
+            await vm.LaunchServer();
+            for (int i = 0; i < 100 && !monitor.Sample().Any(p => p.Exited); i++) await Task.Delay(20);
+            var launched = monitor.Sample().Single();
+            Assert.That(monitor.ReadOutput(launched.Identity), Does.Contain("LINUX-MODS-OK"));
+            Assert.That(profile.CommandLine, Does.Contain("-mod=@mmm_cso").And.Contain("-serverMod=@mmm_cso"));
+            string headless = (string)typeof(ProfileViewModel).GetMethod("SetHCCommandLine",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!.Invoke(vm, [1])!;
+            Assert.That(headless, Does.Contain("-mod=@mmm_cso"));
+            Assert.That(File.Exists(Path.Combine(mod.Path, "addons", "MMM_CSO_Vegetation.pbo")), Is.True);
+
+            // An external update after launch must be incorporated on the next launch.
+            File.WriteAllText(Path.Combine(mod.Path, "addons", "Another.PBO"), "another");
+            await vm.LaunchServer();
+            Assert.That(File.ReadAllText(Path.Combine(server, "@mmm_cso", "addons", "another.pbo")), Is.EqualTo("another"));
+        }
+        finally { AppServices.Processes = previousProcesses; }
+    }
+
+    [Test]
+    public async Task LaunchStopsWhenCaseCollisionsPreventSafePreparation()
+    {
+        if (!OperatingSystem.IsLinux()) { Assert.Ignore("Linux case collision."); return; }
+        var mod = AddMod();
+        File.WriteAllText(Path.Combine(mod.Path, "addons", "TEST.pbo"), "collision");
+        string server = ServerDirectory();
+        Directory.CreateSymbolicLink(Path.Combine(server, "@Test_Mod"), mod.Path);
+        string executable = Path.Combine(server, "arma3server_x64");
+        File.WriteAllText(executable, "#!/bin/sh\necho SHOULD-NOT-LAUNCH\n");
+        File.SetUnixFileMode(executable, UnixFileMode.UserRead | UnixFileMode.UserExecute);
+        var profile = new ServerProfile("Collision", createFolder: false)
+        {
+            Executable = executable,
+            ProfileMods = [new ProfileMod { Id = mod.WorkshopId, Name = mod.Name, ClientSideChecked = true }]
+        };
+        var vm = new ProfileViewModel(profile);
+        vm.SaveProfile();
+        using var monitor = new ProcessMonitor(outputDirectory: Path.Combine(_root, "output"));
+        var previousProcesses = AppServices.Processes;
+        AppServices.Processes = monitor;
+        try
+        {
+            await vm.LaunchServer();
+            Assert.That(monitor.Sample(), Is.Empty);
+            Assert.That(Directory.ResolveLinkTarget(Path.Combine(server, "@Test_Mod"), true)?.FullName, Is.EqualTo(mod.Path));
+            Assert.That(File.ReadAllText(Path.Combine(mod.Path, "addons", "TEST.pbo")), Is.EqualTo("collision"));
+        }
+        finally { AppServices.Processes = previousProcesses; }
+    }
+
+    [Test]
+    public void LaunchPreparationCanUseAnUnregisteredLegacyDirectLink()
+    {
+        if (!OperatingSystem.IsLinux()) { Assert.Ignore("Linux legacy link."); return; }
+        var mod = AddMod();
+        File.WriteAllText(Path.Combine(mod.Path, "addons", "Mixed.PBO"), "mixed");
+        string server = ServerDirectory();
+        Directory.CreateSymbolicLink(Path.Combine(server, "@Test_Mod"), mod.Path);
+        ModDeployment.PrepareForLaunch(server, mod.Name, mod.WorkshopId, null);
+        Assert.That(File.ReadAllText(Path.Combine(server, "@test_mod", "addons", "mixed.pbo")), Is.EqualTo("mixed"));
+        Assert.That(Directory.Exists(Path.Combine(server, "@Test_Mod")), Is.False);
+    }
+
+    [Test]
+    public async Task LinuxFolderNameCollisionsStopDeployAllBeforeReplacingAnyLinks()
+    {
+        if (!OperatingSystem.IsLinux()) { Assert.Ignore("Linux folder names."); return; }
+        var mod = AddMod();
+        _settings.ArmaMods!.ArmaMods.Add(new ArmaMod { WorkshopId = 43, Name = "test mod", Path = mod.Path });
+        string server = ServerDirectory();
+        _settings.ServerPath = server;
+        var vm = new DeploymentViewModel();
+        await vm.LoadDataAsync();
+        await vm.DeployAllAsync();
+        Assert.That(vm.Deployment.DeployMods.All(m => !m.Marked), Is.True);
+        Assert.That(Directory.GetFileSystemEntries(server), Is.Empty);
+        Assert.That(File.Exists(Path.Combine(mod.Path, "addons", "test.pbo")), Is.True);
+    }
+
+    [Test]
+    public void LowercaseRealDeploymentFoldersArePreservedAndUnsafeOnesAreReported()
+    {
+        if (!OperatingSystem.IsLinux()) { Assert.Ignore("Linux real mod folders."); return; }
+        string server = ServerDirectory();
+        string folder = Path.Combine(server, "@test_mod");
+        Directory.CreateDirectory(folder);
+        File.WriteAllText(Path.Combine(folder, "lower.pbo"), "lower");
+        Assert.DoesNotThrow(() => ModDeployment.PrepareForLaunch(server, "Test Mod", 42, null));
+        Assert.That(new DirectoryInfo(folder).LinkTarget, Is.Null);
+        File.WriteAllText(Path.Combine(folder, "UPPER.PBO"), "upper");
+        Assert.Throws<IOException>(() => ModDeployment.PrepareForLaunch(server, "Test Mod", 42, null));
+        Assert.That(File.ReadAllText(Path.Combine(folder, "UPPER.PBO")), Is.EqualTo("upper"));
+        Assert.That(new DirectoryInfo(folder).LinkTarget, Is.Null);
+    }
+
+    [Test]
+    public void PreparingAViewFromItselfCannotCreateDanglingFileLinks()
+    {
+        if (!OperatingSystem.IsLinux()) { Assert.Ignore("Linux view safety."); return; }
+        var mod = AddMod();
+        File.WriteAllText(Path.Combine(mod.Path, "Mixed.PBO"), "mixed");
+        string server = ServerDirectory();
+        string view = ModDeployment.PrepareSource(mod.Path, server, mod.Name, mod.WorkshopId);
+        Assert.Throws<IOException>(() => ModDeployment.PrepareSource(view, server, mod.Name, mod.WorkshopId));
+        Assert.That(File.ReadAllText(Path.Combine(view, "mixed.pbo")), Is.EqualTo("mixed"));
     }
 
     [Test]
@@ -365,7 +553,7 @@ public class ModSizeAndDeploymentTests
         var vm = new DeploymentViewModel();
         await vm.LoadDataAsync();
         await vm.DeployAllAsync();
-        var target = Directory.ResolveLinkTarget(Path.Combine(server, "@Test_Mod"), true);
+        var target = Directory.ResolveLinkTarget(Path.Combine(server, ModDeployment.FolderName("Test Mod", 42)), true);
         Assert.That(target?.FullName, Is.EqualTo(mod.Path));
         Assert.That(vm.Deployment.DeployMods.Single().Marked, Is.True);
         Assert.That(picker.Calls, Is.EqualTo(1));
@@ -384,7 +572,7 @@ public class ModSizeAndDeploymentTests
         _settings.ServerPath = ServerDirectory();
         var mod = vm.Deployment.DeployMods.Single();
         await vm.DeployModAsync(mod);
-        var link = Path.Combine(_settings.ServerPath, "@Test_Mod");
+        var link = Path.Combine(_settings.ServerPath, ModDeployment.FolderName("Test Mod", 42));
         Assert.That(Directory.ResolveLinkTarget(link, true)?.FullName, Is.EqualTo(original.Path));
         await vm.DeployModAsync(mod);
         Assert.That(Directory.Exists(link), Is.False);
@@ -411,7 +599,7 @@ public class ModSizeAndDeploymentTests
         if (OperatingSystem.IsWindows()) Assert.Ignore("Requires Unix symlink permissions.");
         var original = AddMod();
         var server = ServerDirectory();
-        var link = Path.Combine(server, "@Test_Mod");
+        var link = Path.Combine(server, ModDeployment.FolderName("Test Mod", 42));
         Directory.CreateSymbolicLink(link, original.Path);
         AppServices.Files = new FolderPicker(server);
         var vm = new DeploymentViewModel();
@@ -426,7 +614,7 @@ public class ModSizeAndDeploymentTests
     {
         AddMod();
         _settings.ServerPath = ServerDirectory();
-        var existing = Path.Combine(_settings.ServerPath, "@Test_Mod");
+        var existing = Path.Combine(_settings.ServerPath, ModDeployment.FolderName("Test Mod", 42));
         Directory.CreateDirectory(existing);
         var keep = Path.Combine(existing, "keep.txt");
         File.WriteAllText(keep, "keep");
