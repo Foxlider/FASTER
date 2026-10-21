@@ -544,7 +544,7 @@
                             </Style>
                         </Grid.Style>
                         <Expander Header="Arma3Profile output" MaxHeight="400">
-                            <TextBox Text="{Binding Path=Profile.ArmaProfile.ArmaProfileContent}" FontFamily="GenericMonospace" AcceptsTab="True" AcceptsReturn="True" IsManipulationEnabled="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"/>
+                            <TextBox Text="{Binding Path=Profile.ArmaProfile.ArmaProfileContent}" FontFamily="Consolas" AcceptsTab="True" AcceptsReturn="True" IsManipulationEnabled="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"/>
                         </Expander>
                     </Grid>
                 </Grid>
@@ -829,7 +829,7 @@
                             </Style>
                         </Grid.Style>
                         <Expander Header="Server.cfg output" MaxHeight="400">
-                            <TextBox Text="{Binding Path=Profile.ServerCfg.ServerCfgContent}" FontFamily="GenericMonospace" AcceptsTab="True" AcceptsReturn="True" IsManipulationEnabled="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"/>
+                            <TextBox Text="{Binding Path=Profile.ServerCfg.ServerCfgContent}" FontFamily="Consolas" AcceptsTab="True" AcceptsReturn="True" IsManipulationEnabled="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"/>
                         </Expander>
                     </Grid>
                 </Grid>
@@ -930,7 +930,7 @@
                             </Style>
                         </Grid.Style>
                         <Expander Header="Basic.cfg output" MaxHeight="400">
-                            <TextBox Text="{Binding Path=Profile.BasicCfg.BasicContent}" FontFamily="GenericMonospace" AcceptsTab="True" AcceptsReturn="True" IsManipulationEnabled="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"/>
+                            <TextBox Text="{Binding Path=Profile.BasicCfg.BasicContent}" FontFamily="Consolas" AcceptsTab="True" AcceptsReturn="True" IsManipulationEnabled="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"/>
                         </Expander>
                     </Grid>
                 </Grid>
