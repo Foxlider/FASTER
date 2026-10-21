@@ -108,12 +108,13 @@ namespace FASTER.ViewModel
                 var takenIds = ModsCollection.ArmaMods.Select(mod => mod.WorkshopId).ToHashSet();
                 foreach (var oldPath in oldPaths.Where((path) => Directory.Exists(path)))
                 {
-                    var modID = ModUtilities.NewLocalModId(takenIds);
+                    var modName = ModUtilities.LocalModName(oldPath);
+                    var modID   = ModUtilities.NewLocalModId(takenIds);
                     var newPath = Path.Combine(Properties.Settings.Default.modStagingDirectory, modID.ToString());
                     if (Directory.Exists(newPath))
                     {
                         Logger.Log($"AddLocalMod: staging folder already exists, skipped: {newPath}");
-                        await DialogCoordinator.ShowMessageAsync(this, "Warning", $"Directory already exists for {oldPath[(oldPath.LastIndexOf("@", StringComparison.Ordinal) + 1)..]}.");
+                        await DialogCoordinator.ShowMessageAsync(this, "Warning", $"Directory already exists for {modName}.");
                         continue;
                     }
 
@@ -128,7 +129,7 @@ namespace FASTER.ViewModel
                     var newMod = new ArmaMod
                     {
                         WorkshopId = modID,
-                        Name = oldPath[(oldPath.LastIndexOf("@", StringComparison.Ordinal) + 1)..],
+                        Name = modName,
                         Path = newPath,
                         Author = "Unknown",
                         IsLocal = true,

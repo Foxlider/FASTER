@@ -68,10 +68,23 @@ namespace FASTER.Models
 
                 if (item != null)
                 {
-                    if(Directory.Exists(item.Path))
-					{
-                        var isLink = new DirectoryInfo(item.Path).Attributes.HasFlag(FileAttributes.ReparsePoint);						
-                        Directory.Delete(item.Path, recursive: !isLink);
+                    if (Directory.Exists(item.Path))
+                    {
+                        var isLink = new DirectoryInfo(item.Path).Attributes.HasFlag(FileAttributes.ReparsePoint);
+                        if (isLink)
+                        {
+                            // Removes only the link, never the folder it points to
+                            Directory.Delete(item.Path, recursive: false);
+                        }
+                        else if (ModUtilities.IsDirectlyInside(item.Path, Properties.Settings.Default.modStagingDirectory))
+                        {
+                            Directory.Delete(item.Path, recursive: true);
+                        }
+                        else
+                        {
+                            Logger.Log($"DeleteSteamMod: left {item.Path} in place, it is not directly inside the staging directory.");
+                            MainWindow.Instance.DisplayMessage($"\"{item.Name}\" was removed from the list, but its folder was left alone because it is not directly inside the Mod Staging Directory:\n{item.Path}");
+                        }
                     }
                     currentProfiles.ArmaMods.Remove(item);
                 }
