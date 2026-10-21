@@ -32,6 +32,16 @@ namespace FASTER.ViewModel
             MainWindow.Instance.IFlyoutMessage.Content = msg;
         }
 
+        // These actions delete mod folders, so never run them while a download is writing to them
+        private bool RefuseIfUpdating()
+        {
+            if (!MainWindow.Instance.SteamUpdaterViewModel.UpdateInProgress)
+                return false;
+
+            DisplayMessage("An update is running. Wait for it to finish, or cancel it, first.");
+            return true;
+        }
+
         // Yes/No popup
         private async Task<bool> ConfirmAsync(string title, string message)
         {
@@ -159,6 +169,7 @@ namespace FASTER.ViewModel
 
         internal async Task DeleteSelectedMods()
         {
+            if (RefuseIfUpdating()) return;
             var selectedArmaMods = ModsCollection.ArmaMods.Where(m => m.IsSelected).ToList();
             if (selectedArmaMods.Count == 0)
             {
@@ -178,6 +189,7 @@ namespace FASTER.ViewModel
 
         internal async Task DeleteAllMods()
         {
+            if (RefuseIfUpdating()) return;
             if (!await ConfirmTypedYesAsync("Are you sure you want to delete all Steam mods?", "Write \"yes\" and press OK to remove every Steam mod from this list and delete its folder in the Mod Staging Directory. Local mods are kept."))
                 return;
 
@@ -321,6 +333,7 @@ namespace FASTER.ViewModel
 
         public async Task PurgeAndReinstallSelectedMods()
         {
+            if (RefuseIfUpdating()) return;
             var selectedMods = new List<ArmaMod>(ModsCollection.ArmaMods.Where(m => m.IsSelected && !m.IsLocal));
             foreach (var mod in selectedMods)
                 PurgeAndReinstallMod(mod);
@@ -331,6 +344,7 @@ namespace FASTER.ViewModel
 
         public async Task PurgeAndReinstallAll()
         {
+            if (RefuseIfUpdating()) return;
             if (!await ConfirmTypedYesAsync("Are you sure you want to purge all mods?", "Write \"yes\" and press OK to delete all folders in the Mod Staging Directory and re-download everything."))
                 return;
 
@@ -392,6 +406,7 @@ namespace FASTER.ViewModel
 
         public async Task PurgeUnusedMods()
         {
+            if (RefuseIfUpdating()) return;
             var usedIds = Properties.Settings.Default.Profiles
                 .SelectMany(p => p.ProfileMods ?? Enumerable.Empty<ProfileMod>())
                 .Where(m => m.ServerSideChecked || m.ClientSideChecked || m.HeadlessChecked || m.OptChecked)

@@ -55,16 +55,27 @@ namespace FASTER.Models
         }
 
         private const int MaxOutputLength = 200_000;
+        private readonly object _outputLock = new();
+
+        // Keep only the newest text so the console stays responsive
+        private static string Trim(string value)
+        { return value is { Length: > MaxOutputLength } ? value[^MaxOutputLength..] : value; }
 
         public string Output
         {
-            get => _output;
+            get { lock (_outputLock) { return _output; } }
             set
             {
-                // Keep only the newest text so the console stays responsive
-                _output = value is { Length: > MaxOutputLength } ? value[^MaxOutputLength..] : value;
+                lock (_outputLock) { _output = Trim(value); }
                 RaisePropertyChanged(nameof(Output));
             }
+        }
+
+        // Safe to call from any thread. Use this instead of Output += ...
+        public void AppendOutput(string text)
+        {
+            lock (_outputLock) { _output = Trim((_output ?? string.Empty) + text); }
+            RaisePropertyChanged(nameof(Output));
         }
 
         public bool IsUpdating

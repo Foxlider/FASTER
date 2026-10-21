@@ -96,6 +96,10 @@ namespace FASTER.Models
 
             Logger.Log($"SteamWebApi: HTTP {(int)response.StatusCode} {response.StatusCode}");
 
+            // Any HTTP response, even an error code, proves Steam is reachable
+            Interlocked.Exchange(ref _unreachableShown, 0);
+            _unreachable = false;
+
             if (!response.IsSuccessStatusCode)
                 throw new HttpRequestException($"Steam API returned HTTP {(int)response.StatusCode} {response.StatusCode}. Please check your Steam API Key in Settings.");
 
@@ -127,14 +131,14 @@ namespace FASTER.Models
         public override async Task<string> GetEmailAuthenticationCodeAsync(string accountEmail, bool previousCodeWasIncorrect, CancellationToken cancellationToken = default)
         {
             if (previousCodeWasIncorrect)
-                MainWindow.Instance.SteamUpdaterViewModel.Parameters.Output += "\nPreviously entered email code was incorrect!";
+                MainWindow.Instance.SteamUpdaterViewModel.Parameters.AppendOutput("\nPreviously entered email code was incorrect!");
 
 
-            MainWindow.Instance.SteamUpdaterViewModel.Parameters.Output += "\nPlease enter your 2FA code: ";
+            MainWindow.Instance.SteamUpdaterViewModel.Parameters.AppendOutput("\nPlease enter your 2FA code: ");
 
             var input = await MainWindow.Instance.SteamUpdaterViewModel.SteamGuardInput();
 
-            MainWindow.Instance.SteamUpdaterViewModel.Parameters.Output += "\nRetrying... ";
+            MainWindow.Instance.SteamUpdaterViewModel.Parameters.AppendOutput("\nRetrying... ");
 
             return input;
         }
@@ -142,21 +146,21 @@ namespace FASTER.Models
         public override async Task<string> GetTwoFactorAuthenticationCodeAsync(bool previousCodeWasIncorrect, CancellationToken cancellationToken = default)
         {
             if (previousCodeWasIncorrect)
-                MainWindow.Instance.SteamUpdaterViewModel.Parameters.Output += "\nPreviously entered 2FA code was incorrect!";
+                MainWindow.Instance.SteamUpdaterViewModel.Parameters.AppendOutput("\nPreviously entered 2FA code was incorrect!");
 
 
-            MainWindow.Instance.SteamUpdaterViewModel.Parameters.Output += "\nPlease enter your 2FA code: ";
+            MainWindow.Instance.SteamUpdaterViewModel.Parameters.AppendOutput("\nPlease enter your 2FA code: ");
 
             var input = await MainWindow.Instance.SteamUpdaterViewModel.SteamGuardInput();
 
-            MainWindow.Instance.SteamUpdaterViewModel.Parameters.Output += "\nRetrying... ";
+            MainWindow.Instance.SteamUpdaterViewModel.Parameters.AppendOutput("\nRetrying... ");
 
             return input;
         }
 
         public override async Task<bool> NotifyMobileNotificationAsync(CancellationToken cancellationToken = default)
         {
-            MainWindow.Instance.SteamUpdaterViewModel.Parameters.Output += "\nMobile notification sent. Answer \"OK\" once you've authorized this login. If no notification was received or you'd like to enter a traditional 2FA code, press \"Cancel\": ";
+            MainWindow.Instance.SteamUpdaterViewModel.Parameters.AppendOutput("\nMobile notification sent. Answer \"OK\" once you've authorized this login. If no notification was received or you'd like to enter a traditional 2FA code, press \"Cancel\": ");
 
             MessageDialogResult response;
 
@@ -165,7 +169,7 @@ namespace FASTER.Models
                 response = await MainWindow.Instance.SteamUpdaterViewModel.SteamGuardInputPhone();
             } while (response != MessageDialogResult.Affirmative && response != MessageDialogResult.Negative);
 
-            MainWindow.Instance.SteamUpdaterViewModel.Parameters.Output += "\n\tAuth : Authorizing...";
+            MainWindow.Instance.SteamUpdaterViewModel.Parameters.AppendOutput("\n\tAuth : Authorizing...");
 
             return response == MessageDialogResult.Affirmative;
         }
