@@ -252,6 +252,13 @@ namespace FASTER.ViewModel
             {
                 Logger.Log($"  Checking mod {mod.WorkshopId} ({mod.Name})...");
                 await Task.Run(() => mod.UpdateInfos());
+
+                // Local mods never call Steam, so only a Steam mod can tell us Steam is down
+                if (!mod.IsLocal && SteamWebApi.SteamUnreachable)
+                {
+                    Logger.Log("CheckForUpdates stopped: Steam API unreachable.");
+                    break;
+                }
                 await Task.Delay(300);
             }
             Logger.Log("CheckForUpdates finished.");

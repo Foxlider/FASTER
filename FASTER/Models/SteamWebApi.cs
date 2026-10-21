@@ -53,8 +53,26 @@ namespace FASTER.Models
             }
         }
 
+        // once the "cannot reach Steam" message has been shown. Reset when a call succeeds,
+        // so a later outage shows it again but a long outage doesn't repeat it for every mod.
+        private static int _unreachableShown;
 
-                private static readonly HttpClient client = new() { Timeout = TimeSpan.FromSeconds(5) };
+        // True while the last Steam call got no answer at all. Lets callers stop retrying
+        // and skip the rest of a batch instead of waiting out a timeout per mod.
+        private static volatile bool _unreachable;
+        internal static bool SteamUnreachable => _unreachable;
+
+        private static void ShowUnreachableOnce()
+        {
+            // Called too early (or from tests) there is no window to show it on
+            if (!MainWindow.HasLoaded() || Interlocked.Exchange(ref _unreachableShown, 1) == 1)
+                return;
+
+            MainWindow.Instance.Dispatcher?.InvokeAsync(() =>
+                MainWindow.Instance.DisplayMessage("Cannot reach Steam API \n\nCheck https://steamstat.us/ \n\nSee the debug log for details"));
+        }
+
+        private static readonly HttpClient client = new() { Timeout = TimeSpan.FromSeconds(5) };
 
         // Calls to Steam API Endpoint and returns the result as JSON Object
         private static JObject ApiCall(string uri)
@@ -67,25 +85,8 @@ namespace FASTER.Models
             catch (Exception e) when (e is HttpRequestException or TaskCanceledException or SocketException)
             {
                 Logger.Log($"SteamWebApi: could not reach Steam API: {e.GetType().Name}: {e.Message}");
-                try
-                {
-                    MainWindow.Instance.Dispatcher?.InvokeAsync(() =>
-                    {
-                        MainWindow.Instance.DisplayMessage("Cannot reach Steam API \n\nCheck https://steamstat.us/ \n\nPlease check the Windows Event Logs for more informations");
-                    });
-
-                    // Create an EventLog instance and assign its source.
-                    using EventLog eventLog = new EventLog("Application")
-                    { Source = "FASTER" };
-                    eventLog.WriteEntry($"Could not reach Steam API : \n[{e.GetType().Name}] {e.Message}\n\n{e.StackTrace}", EventLogEntryType.Error);
-                }
-                catch (Exception) //In case it was called before Initialized in SteamMods_Initialized() and could not connect to SteamAPI
-                {
-                    if (Environment.UserInteractive)
-                        MessageBox.Show("Cannot reach Steam API \n\nCheck https://steamstat.us/", "Steam API Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    else
-                        Console.WriteLine("Cannot reach Steam API \n\nCheck https://steamstat.us/");
-                }
+                _unreachable = true;
+                ShowUnreachableOnce();
             }
             if (response == null)
             {

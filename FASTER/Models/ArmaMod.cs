@@ -294,6 +294,10 @@ namespace FASTER.Models
 
                 if (modInfo == null)
                 {
+                    // No answer from Steam at all, so retrying can only waste timeouts
+                    if (SteamWebApi.SteamUnreachable)
+                        break;
+
                     failNum++;
                     continue;
                 }
@@ -324,7 +328,7 @@ namespace FASTER.Models
                 success = true;
             } while (failNum < 3 && !success);
 
-            if (!success && TryShowApiKeyWarning())
+            if (!success && !SteamWebApi.SteamUnreachable && TryShowApiKeyWarning())
             {
                 MainWindow.Instance?.Dispatcher.Invoke(() =>
                     MainWindow.Instance.DisplayMessage("Could not fetch mod info. Please check your Steam API Key in Settings."));
