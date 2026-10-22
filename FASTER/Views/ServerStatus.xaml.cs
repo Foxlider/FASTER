@@ -396,7 +396,7 @@ namespace FASTER.Views
                     if (CPUChartValues.Count > 20)
                         CPUChartValues.RemoveAt(0);
                 }
-                catch (Exception ex) when (ex is InvalidOperationException or Win32Exception)
+                catch (Exception ex) when (ex is InvalidOperationException or Win32Exception or ObjectDisposedException)
                 {
                     // process exited or access was lost
                     IsReading = false;
