@@ -39,10 +39,16 @@ namespace FASTER.Views
             if (wasFirstRun)
             {
                 Properties.Settings.Default.Upgrade();
+                // Upgrade copies the previous version's settings, including firstRun = false
+                wasFirstRun = Properties.Settings.Default.firstRun;
             }
 
             if (Properties.Settings.Default.clearSettings)
+            {
                 Properties.Settings.Default.Reset();
+                // Reset puts firstRun back to true, so the Setup window should show again
+                wasFirstRun = Properties.Settings.Default.firstRun;
+            }
 
             if (Properties.Settings.Default.steamMods == null)
             {

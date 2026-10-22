@@ -204,17 +204,29 @@ namespace FASTER.Views
 
         private void RefreshServers()
         {
-            processes.Clear();
-            foreach (var proc in Process.GetProcesses().Where(p => p.ProcessName.Contains("arma3server")))
+            // Stop the previous scan's graph loops and release their handles before replacing them
+            foreach (var old in processes)
             {
-                try
+                old.IsReading = false;
+                old.proc.Dispose();
+            }
+            processes.Clear();
+
+            foreach (var proc in Process.GetProcesses())
+            {
+                // Every process on the machine is returned, so release the ones we don't keep
+                if (!proc.ProcessName.Contains("arma3server"))
                 {
-                    var p = new ProcessSpy(proc);
-                    processes.Add(p);
+                    proc.Dispose();
+                    continue;
                 }
-                catch (InvalidOperationException e)
+
+                try
+                { processes.Add(new ProcessSpy(proc)); }
+                catch (Exception e) when (e is InvalidOperationException or Win32Exception)
                 {
-                    /*The process exited. Cannot add it back*/
+                    /*The process exited or access was denied. Cannot add it back*/
+                    proc.Dispose();
                     Crashes.TrackError(e, new Dictionary<string, string> { { "Name", Properties.Settings.Default.steamUserName } });
                 }
             }
@@ -343,7 +355,7 @@ namespace FASTER.Views
                 proc.Refresh();
                 lastCpu = proc.TotalProcessorTime;
             }
-            catch (Exception ex) when (ex is InvalidOperationException or Win32Exception)
+            catch (Exception ex) when (ex is InvalidOperationException or Win32Exception or ObjectDisposedException)
             {
                 IsReading = false;
                 return;
@@ -384,7 +396,7 @@ namespace FASTER.Views
                     if (CPUChartValues.Count > 20)
                         CPUChartValues.RemoveAt(0);
                 }
-                catch (Exception ex) when (ex is InvalidOperationException or Win32Exception)
+                catch (Exception ex) when (ex is InvalidOperationException or Win32Exception or ObjectDisposedException)
                 {
                     // process exited or access was lost
                     IsReading = false;

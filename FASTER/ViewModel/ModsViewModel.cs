@@ -32,6 +32,16 @@ namespace FASTER.ViewModel
             MainWindow.Instance.IFlyoutMessage.Content = msg;
         }
 
+        // These actions delete mod folders, so never run them while a download is writing to them
+        private bool RefuseIfUpdating()
+        {
+            if (!MainWindow.Instance.SteamUpdaterViewModel.UpdateInProgress)
+                return false;
+
+            DisplayMessage("An update is running. Wait for it to finish, or cancel it, first.");
+            return true;
+        }
+
         // Yes/No popup
         private async Task<bool> ConfirmAsync(string title, string message)
         {
@@ -108,12 +118,13 @@ namespace FASTER.ViewModel
                 var takenIds = ModsCollection.ArmaMods.Select(mod => mod.WorkshopId).ToHashSet();
                 foreach (var oldPath in oldPaths.Where((path) => Directory.Exists(path)))
                 {
-                    var modID = ModUtilities.NewLocalModId(takenIds);
+                    var modName = ModUtilities.LocalModName(oldPath);
+                    var modID   = ModUtilities.NewLocalModId(takenIds);
                     var newPath = Path.Combine(Properties.Settings.Default.modStagingDirectory, modID.ToString());
                     if (Directory.Exists(newPath))
                     {
                         Logger.Log($"AddLocalMod: staging folder already exists, skipped: {newPath}");
-                        await DialogCoordinator.ShowMessageAsync(this, "Warning", $"Directory already exists for {oldPath[(oldPath.LastIndexOf("@", StringComparison.Ordinal) + 1)..]}.");
+                        await DialogCoordinator.ShowMessageAsync(this, "Warning", $"Directory already exists for {modName}.");
                         continue;
                     }
 
@@ -128,7 +139,7 @@ namespace FASTER.ViewModel
                     var newMod = new ArmaMod
                     {
                         WorkshopId = modID,
-                        Name = oldPath[(oldPath.LastIndexOf("@", StringComparison.Ordinal) + 1)..],
+                        Name = modName,
                         Path = newPath,
                         Author = "Unknown",
                         IsLocal = true,
@@ -158,6 +169,7 @@ namespace FASTER.ViewModel
 
         internal async Task DeleteSelectedMods()
         {
+            if (RefuseIfUpdating()) return;
             var selectedArmaMods = ModsCollection.ArmaMods.Where(m => m.IsSelected).ToList();
             if (selectedArmaMods.Count == 0)
             {
@@ -177,6 +189,7 @@ namespace FASTER.ViewModel
 
         internal async Task DeleteAllMods()
         {
+            if (RefuseIfUpdating()) return;
             if (!await ConfirmTypedYesAsync("Are you sure you want to delete all Steam mods?", "Write \"yes\" and press OK to remove every Steam mod from this list and delete its folder in the Mod Staging Directory. Local mods are kept."))
                 return;
 
@@ -247,10 +260,23 @@ namespace FASTER.ViewModel
         public async Task CheckForUpdates()
         {
             Logger.Log("CheckForUpdates started.");
+            var unreachableInARow = 0;
             foreach (ArmaMod mod in ModsCollection.ArmaMods)
             {
                 Logger.Log($"  Checking mod {mod.WorkshopId} ({mod.Name})...");
                 await Task.Run(() => mod.UpdateInfos());
+
+                // Local mods never call Steam, so only a Steam mod can tell us Steam is down.
+                // Two in a row means offline; one alone is probably just a slow answer.
+                if (!mod.IsLocal)
+                {
+                    unreachableInARow = SteamWebApi.SteamUnreachable ? unreachableInARow + 1 : 0;
+                    if (unreachableInARow >= 2)
+                    {
+                        Logger.Log("CheckForUpdates stopped: Steam API unreachable.");
+                        break;
+                    }
+                }
                 await Task.Delay(300);
             }
             Logger.Log("CheckForUpdates finished.");
@@ -291,13 +317,15 @@ namespace FASTER.ViewModel
             Logger.Log($"PurgeAndReinstallMod: {mod.WorkshopId} ({mod.Name}) path={mod.Path}");
             try
             {
-                if (Directory.Exists(mod.Path))
+                if (!Directory.Exists(mod.Path))
+                    Logger.Log($"  Folder not found, skipping delete: {mod.Path}");
+                else if (!ModUtilities.IsDirectlyInside(mod.Path, Properties.Settings.Default.modStagingDirectory))
+                    Logger.Log($"  Left in place, not directly inside the staging directory: {mod.Path}");
+                else
                 {
                     Directory.Delete(mod.Path, true);
                     Logger.Log($"  Deleted folder: {mod.Path}");
                 }
-                else
-                    Logger.Log($"  Folder not found, skipping delete: {mod.Path}");
             }
             catch (Exception ex)
             {
@@ -313,6 +341,7 @@ namespace FASTER.ViewModel
 
         public async Task PurgeAndReinstallSelectedMods()
         {
+            if (RefuseIfUpdating()) return;
             var selectedMods = new List<ArmaMod>(ModsCollection.ArmaMods.Where(m => m.IsSelected && !m.IsLocal));
             foreach (var mod in selectedMods)
                 PurgeAndReinstallMod(mod);
@@ -323,6 +352,7 @@ namespace FASTER.ViewModel
 
         public async Task PurgeAndReinstallAll()
         {
+            if (RefuseIfUpdating()) return;
             if (!await ConfirmTypedYesAsync("Are you sure you want to purge all mods?", "Write \"yes\" and press OK to delete all folders in the Mod Staging Directory and re-download everything."))
                 return;
 
@@ -384,6 +414,7 @@ namespace FASTER.ViewModel
 
         public async Task PurgeUnusedMods()
         {
+            if (RefuseIfUpdating()) return;
             var usedIds = Properties.Settings.Default.Profiles
                 .SelectMany(p => p.ProfileMods ?? Enumerable.Empty<ProfileMod>())
                 .Where(m => m.ServerSideChecked || m.ClientSideChecked || m.HeadlessChecked || m.OptChecked)

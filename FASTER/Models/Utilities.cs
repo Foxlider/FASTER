@@ -52,6 +52,26 @@ namespace FASTER.Models
             return input;
         }
 
+        // Display name for a local mod folder: the folder name without any leading "@".
+        // "C:\Mods\@cba" and "C:\Mods\cba" both give "cba".
+        public static string LocalModName(string folderPath)
+        {
+            var name = Path.GetFileName(Path.TrimEndingDirectorySeparator(folderPath ?? string.Empty));
+            return name.TrimStart('@');
+        }
+
+        // True when folder sits directly inside parent: not parent itself, not deeper, not elsewhere.
+        // Used before any recursive delete so a bad saved path can't wipe an unrelated folder.
+        public static bool IsDirectlyInside(string folder, string parent)
+        {
+            if (string.IsNullOrWhiteSpace(folder) || string.IsNullOrWhiteSpace(parent))
+                return false;
+
+            var folderFull = Path.TrimEndingDirectorySeparator(Path.GetFullPath(folder));
+            var parentFull = Path.TrimEndingDirectorySeparator(Path.GetFullPath(parent));
+            return string.Equals(Path.GetDirectoryName(folderFull), parentFull, StringComparison.OrdinalIgnoreCase);
+}
+
         // True when two mod names are the same once punctuation is ignored.
         // A name that strips down to nothing never matches by name.
         public static bool NamesMatch(string a, string b)

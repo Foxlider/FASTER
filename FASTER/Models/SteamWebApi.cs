@@ -53,8 +53,26 @@ namespace FASTER.Models
             }
         }
 
+        // once the "cannot reach Steam" message has been shown. Reset when a call succeeds,
+        // so a later outage shows it again but a long outage doesn't repeat it for every mod.
+        private static int _unreachableShown;
 
-                private static readonly HttpClient client = new() { Timeout = TimeSpan.FromSeconds(5) };
+        // True while the last Steam call got no answer at all. Lets callers stop retrying
+        // and skip the rest of a batch instead of waiting out a timeout per mod.
+        private static volatile bool _unreachable;
+        internal static bool SteamUnreachable => _unreachable;
+
+        private static void ShowUnreachableOnce()
+        {
+            // Called too early (or from tests) there is no window to show it on
+            if (!MainWindow.HasLoaded() || Interlocked.Exchange(ref _unreachableShown, 1) == 1)
+                return;
+
+            MainWindow.Instance.Dispatcher?.InvokeAsync(() =>
+                MainWindow.Instance.DisplayMessage("Cannot reach Steam API \n\nCheck https://steamstat.us/ \n\nSee the debug log for details"));
+        }
+
+        private static readonly HttpClient client = new() { Timeout = TimeSpan.FromSeconds(5) };
 
         // Calls to Steam API Endpoint and returns the result as JSON Object
         private static JObject ApiCall(string uri)
@@ -67,25 +85,8 @@ namespace FASTER.Models
             catch (Exception e) when (e is HttpRequestException or TaskCanceledException or SocketException)
             {
                 Logger.Log($"SteamWebApi: could not reach Steam API: {e.GetType().Name}: {e.Message}");
-                try
-                {
-                    MainWindow.Instance.Dispatcher?.InvokeAsync(() =>
-                    {
-                        MainWindow.Instance.DisplayMessage("Cannot reach Steam API \n\nCheck https://steamstat.us/ \n\nPlease check the Windows Event Logs for more informations");
-                    });
-
-                    // Create an EventLog instance and assign its source.
-                    using EventLog eventLog = new EventLog("Application")
-                    { Source = "FASTER" };
-                    eventLog.WriteEntry($"Could not reach Steam API : \n[{e.GetType().Name}] {e.Message}\n\n{e.StackTrace}", EventLogEntryType.Error);
-                }
-                catch (Exception) //In case it was called before Initialized in SteamMods_Initialized() and could not connect to SteamAPI
-                {
-                    if (Environment.UserInteractive)
-                        MessageBox.Show("Cannot reach Steam API \n\nCheck https://steamstat.us/", "Steam API Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    else
-                        Console.WriteLine("Cannot reach Steam API \n\nCheck https://steamstat.us/");
-                }
+                _unreachable = true;
+                ShowUnreachableOnce();
             }
             if (response == null)
             {
@@ -94,6 +95,10 @@ namespace FASTER.Models
             }
 
             Logger.Log($"SteamWebApi: HTTP {(int)response.StatusCode} {response.StatusCode}");
+
+            // Any HTTP response, even an error code, proves Steam is reachable
+            Interlocked.Exchange(ref _unreachableShown, 0);
+            _unreachable = false;
 
             if (!response.IsSuccessStatusCode)
                 throw new HttpRequestException($"Steam API returned HTTP {(int)response.StatusCode} {response.StatusCode}. Please check your Steam API Key in Settings.");
@@ -126,14 +131,14 @@ namespace FASTER.Models
         public override async Task<string> GetEmailAuthenticationCodeAsync(string accountEmail, bool previousCodeWasIncorrect, CancellationToken cancellationToken = default)
         {
             if (previousCodeWasIncorrect)
-                MainWindow.Instance.SteamUpdaterViewModel.Parameters.Output += "\nPreviously entered email code was incorrect!";
+                MainWindow.Instance.SteamUpdaterViewModel.Parameters.AppendOutput("\nPreviously entered email code was incorrect!");
 
 
-            MainWindow.Instance.SteamUpdaterViewModel.Parameters.Output += "\nPlease enter your 2FA code: ";
+            MainWindow.Instance.SteamUpdaterViewModel.Parameters.AppendOutput("\nPlease enter your 2FA code: ");
 
             var input = await MainWindow.Instance.SteamUpdaterViewModel.SteamGuardInput();
 
-            MainWindow.Instance.SteamUpdaterViewModel.Parameters.Output += "\nRetrying... ";
+            MainWindow.Instance.SteamUpdaterViewModel.Parameters.AppendOutput("\nRetrying... ");
 
             return input;
         }
@@ -141,21 +146,21 @@ namespace FASTER.Models
         public override async Task<string> GetTwoFactorAuthenticationCodeAsync(bool previousCodeWasIncorrect, CancellationToken cancellationToken = default)
         {
             if (previousCodeWasIncorrect)
-                MainWindow.Instance.SteamUpdaterViewModel.Parameters.Output += "\nPreviously entered 2FA code was incorrect!";
+                MainWindow.Instance.SteamUpdaterViewModel.Parameters.AppendOutput("\nPreviously entered 2FA code was incorrect!");
 
 
-            MainWindow.Instance.SteamUpdaterViewModel.Parameters.Output += "\nPlease enter your 2FA code: ";
+            MainWindow.Instance.SteamUpdaterViewModel.Parameters.AppendOutput("\nPlease enter your 2FA code: ");
 
             var input = await MainWindow.Instance.SteamUpdaterViewModel.SteamGuardInput();
 
-            MainWindow.Instance.SteamUpdaterViewModel.Parameters.Output += "\nRetrying... ";
+            MainWindow.Instance.SteamUpdaterViewModel.Parameters.AppendOutput("\nRetrying... ");
 
             return input;
         }
 
         public override async Task<bool> NotifyMobileNotificationAsync(CancellationToken cancellationToken = default)
         {
-            MainWindow.Instance.SteamUpdaterViewModel.Parameters.Output += "\nMobile notification sent. Answer \"OK\" once you've authorized this login. If no notification was received or you'd like to enter a traditional 2FA code, press \"Cancel\": ";
+            MainWindow.Instance.SteamUpdaterViewModel.Parameters.AppendOutput("\nMobile notification sent. Answer \"OK\" once you've authorized this login. If no notification was received or you'd like to enter a traditional 2FA code, press \"Cancel\": ");
 
             MessageDialogResult response;
 
@@ -164,7 +169,7 @@ namespace FASTER.Models
                 response = await MainWindow.Instance.SteamUpdaterViewModel.SteamGuardInputPhone();
             } while (response != MessageDialogResult.Affirmative && response != MessageDialogResult.Negative);
 
-            MainWindow.Instance.SteamUpdaterViewModel.Parameters.Output += "\n\tAuth : Authorizing...";
+            MainWindow.Instance.SteamUpdaterViewModel.Parameters.AppendOutput("\n\tAuth : Authorizing...");
 
             return response == MessageDialogResult.Affirmative;
         }

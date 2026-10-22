@@ -68,10 +68,23 @@ namespace FASTER.Models
 
                 if (item != null)
                 {
-                    if(Directory.Exists(item.Path))
-					{
-                        var isLink = new DirectoryInfo(item.Path).Attributes.HasFlag(FileAttributes.ReparsePoint);						
-                        Directory.Delete(item.Path, recursive: !isLink);
+                    if (Directory.Exists(item.Path))
+                    {
+                        var isLink = new DirectoryInfo(item.Path).Attributes.HasFlag(FileAttributes.ReparsePoint);
+                        if (isLink)
+                        {
+                            // Removes only the link, never the folder it points to
+                            Directory.Delete(item.Path, recursive: false);
+                        }
+                        else if (ModUtilities.IsDirectlyInside(item.Path, Properties.Settings.Default.modStagingDirectory))
+                        {
+                            Directory.Delete(item.Path, recursive: true);
+                        }
+                        else
+                        {
+                            Logger.Log($"DeleteSteamMod: left {item.Path} in place, it is not directly inside the staging directory.");
+                            MainWindow.Instance.DisplayMessage($"\"{item.Name}\" was removed from the list, but its folder was left alone because it is not directly inside the Mod Staging Directory:\n{item.Path}");
+                        }
                     }
                     currentProfiles.ArmaMods.Remove(item);
                 }
@@ -281,6 +294,10 @@ namespace FASTER.Models
 
                 if (modInfo == null)
                 {
+                    // No answer from Steam at all, so retrying can only waste timeouts
+                    if (SteamWebApi.SteamUnreachable)
+                        break;
+
                     failNum++;
                     continue;
                 }
@@ -311,7 +328,7 @@ namespace FASTER.Models
                 success = true;
             } while (failNum < 3 && !success);
 
-            if (!success && TryShowApiKeyWarning())
+            if (!success && !SteamWebApi.SteamUnreachable && TryShowApiKeyWarning())
             {
                 MainWindow.Instance?.Dispatcher.Invoke(() =>
                     MainWindow.Instance.DisplayMessage("Could not fetch mod info. Please check your Steam API Key in Settings."));
