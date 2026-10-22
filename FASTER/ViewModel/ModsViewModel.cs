@@ -260,16 +260,22 @@ namespace FASTER.ViewModel
         public async Task CheckForUpdates()
         {
             Logger.Log("CheckForUpdates started.");
+            var unreachableInARow = 0;
             foreach (ArmaMod mod in ModsCollection.ArmaMods)
             {
                 Logger.Log($"  Checking mod {mod.WorkshopId} ({mod.Name})...");
                 await Task.Run(() => mod.UpdateInfos());
 
-                // Local mods never call Steam, so only a Steam mod can tell us Steam is down
-                if (!mod.IsLocal && SteamWebApi.SteamUnreachable)
+                // Local mods never call Steam, so only a Steam mod can tell us Steam is down.
+                // Two in a row means offline; one alone is probably just a slow answer.
+                if (!mod.IsLocal)
                 {
-                    Logger.Log("CheckForUpdates stopped: Steam API unreachable.");
-                    break;
+                    unreachableInARow = SteamWebApi.SteamUnreachable ? unreachableInARow + 1 : 0;
+                    if (unreachableInARow >= 2)
+                    {
+                        Logger.Log("CheckForUpdates stopped: Steam API unreachable.");
+                        break;
+                    }
                 }
                 await Task.Delay(300);
             }
@@ -311,13 +317,15 @@ namespace FASTER.ViewModel
             Logger.Log($"PurgeAndReinstallMod: {mod.WorkshopId} ({mod.Name}) path={mod.Path}");
             try
             {
-                if (Directory.Exists(mod.Path))
+                if (!Directory.Exists(mod.Path))
+                    Logger.Log($"  Folder not found, skipping delete: {mod.Path}");
+                else if (!ModUtilities.IsDirectlyInside(mod.Path, Properties.Settings.Default.modStagingDirectory))
+                    Logger.Log($"  Left in place, not directly inside the staging directory: {mod.Path}");
+                else
                 {
                     Directory.Delete(mod.Path, true);
                     Logger.Log($"  Deleted folder: {mod.Path}");
                 }
-                else
-                    Logger.Log($"  Folder not found, skipping delete: {mod.Path}");
             }
             catch (Exception ex)
             {

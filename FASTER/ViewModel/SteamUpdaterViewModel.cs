@@ -592,7 +592,7 @@ namespace FASTER.ViewModel
                 return false;
             }
 
-SteamCredentials _steamCredentials = new(Parameters.Username, password);
+            SteamCredentials _steamCredentials = new(Parameters.Username, password);
 
             if (SteamClient == null || SteamClient.Credentials.Username != _steamCredentials.Username || SteamClient.Credentials.Password != _steamCredentials.Password)
             { 

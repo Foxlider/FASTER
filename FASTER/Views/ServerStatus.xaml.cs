@@ -355,7 +355,7 @@ namespace FASTER.Views
                 proc.Refresh();
                 lastCpu = proc.TotalProcessorTime;
             }
-            catch (Exception ex) when (ex is InvalidOperationException or Win32Exception)
+            catch (Exception ex) when (ex is InvalidOperationException or Win32Exception or ObjectDisposedException)
             {
                 IsReading = false;
                 return;
