@@ -1,8 +1,5 @@
 ﻿using FASTER.Models;
 
-using Microsoft.AppCenter;
-using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
 
 using System;
 using System.Globalization;
@@ -17,6 +14,12 @@ namespace FASTER
     /// </summary>
     public partial class App
     {
+        protected override void OnExit(ExitEventArgs e)
+        {
+            FASTER.Services.AppServices.Processes.Dispose();
+            base.OnExit(e);
+        }
+
         protected override async void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
@@ -36,16 +39,10 @@ namespace FASTER
                 args.SetObserved();
             };
 
-            var countryCode = RegionInfo.CurrentRegion.TwoLetterISORegionName;
-            var userID = await AppCenter.GetInstallIdAsync();
-
+            AppSettings.Current.InitializeForStartup();
             ThemeManager.Current.ThemeSyncMode = ThemeSyncMode.SyncAll;
-            ThemeManager.Current.ChangeTheme(Current, FASTER.Properties.Settings.Default.theme);
-
-            AppCenter.SetCountryCode(countryCode);
-            AppCenter.SetUserId($"{Environment.UserName}_{Environment.MachineName}_{Environment.UserDomainName}_{userID}");
-            Analytics.SetEnabledAsync(true);
-            AppCenter.Start("257a7dac-e53c-4bec-b672-b6b939ed5d1e", typeof(Analytics), typeof(Crashes));
+            ThemeManager.Current.ChangeTheme(Current, AppSettings.Current.Theme);
+            await FASTER.Services.Telemetry.SetEnabledAsync(AppSettings.Current.EnableAnalytics);
         }
     }
 }

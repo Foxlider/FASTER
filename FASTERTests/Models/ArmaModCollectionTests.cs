@@ -5,8 +5,8 @@ namespace FASTER.Models.Tests
     [TestFixture()]
     public class ArmaModCollectionTests
     {
-        ArmaModCollection _amc;
-        ArmaMod _mod;
+        ArmaModCollection _amc = null!;
+        ArmaMod _mod = null!;
 
         [OneTimeSetUp]
         public void SetUp()

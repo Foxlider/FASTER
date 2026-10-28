@@ -5,7 +5,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
-             xmlns:models="clr-namespace:FASTER.Models"
+             xmlns:models="clr-namespace:FASTER.Models;assembly=FASTER.Core"
+             xmlns:ui="clr-namespace:FASTER.Models"
              mc:Ignorable="d" 
              Loaded="UserControl_Loaded"
              Unloaded="UserControl_Unloaded"
@@ -15,8 +16,8 @@
     </UserControl.DataContext>-->
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
-        <models:FolderSizeConverter x:Key="SizeConverter" />
-        <models:NotBooleanToVisibilityConverter x:Key="BoolToHide" />
+        <ui:FolderSizeConverter x:Key="SizeConverter" />
+        <ui:NotBooleanToVisibilityConverter x:Key="BoolToHide" />
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -32,8 +33,8 @@
                     <ColumnDefinition />
                     <ColumnDefinition Width="auto"/>
                 </Grid.ColumnDefinitions>
-                <TextBox Grid.Column="0" IsReadOnly="True" Text="{Binding Path=Deployment.InstallPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Install Directory" Margin="0"/>
-                <Button Grid.Column="1" Content="{iconPacks:Modern Kind=Folder}" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" VerticalAlignment="Stretch" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" Margin="5,0" Padding="2" Click="InstallFolder_Click"/>
+                <TextBox Grid.Column="0" x:Name="IInstallDirBox" IsReadOnly="True" Text="{Binding Path=Deployment.InstallPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.UseFloatingWatermark="True" mah:TextBoxHelper.Watermark="Install Directory" Margin="0"/>
+                <Button Grid.Column="1" Content="{iconPacks:Modern Kind=Folder}" Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}" BorderThickness="0" VerticalAlignment="Center" Height="{Binding ActualHeight, ElementName=IInstallDirBox}" Width="{Binding ActualHeight, ElementName=IInstallDirBox}" Margin="5,0" Padding="2" Click="InstallFolder_Click"/>
             </Grid>
             <Separator Style="{StaticResource MahApps.Styles.Separator.StatusBar}"/>
             <StackPanel DockPanel.Dock="Right" HorizontalAlignment="Right" Orientation="Horizontal" >

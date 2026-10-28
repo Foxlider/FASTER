@@ -17,8 +17,9 @@ permissions:
   contents: read
 
 env:
-  DOTNET_VERSION: '8.0.x'
+  DOTNET_VERSION: '10.0.x'
   IS_RELEASE: ${{ github.ref_type == 'tag' }}
+  IS_PRERELEASE: ${{ github.ref_type == 'tag' && contains(github.ref_name, '-') }}
   ZIP_NAME: ${{ github.ref_type == 'tag' && 'Release_' || 'Release_Nightly_' }}
   ZIP_PATH: ${{ github.ref_type == 'tag' && 'FASTER_' || 'FASTER_Nightly_' }}
 
@@ -88,8 +89,12 @@ jobs:
         name: build-${{ matrix.runtime }}
         path: .\${{ env.ZIP_NAME}}${{ matrix.runtime }}.zip
 
-  release:
+  avalonia-packages:
     needs: build
+    uses: ./.github/workflows/package-avalonia.yml
+
+  release:
+    needs: [build, avalonia-packages]
     runs-on: windows-latest
     permissions:
       contents: write
@@ -108,6 +113,13 @@ jobs:
         name: build-x64
         path: ./artifacts
     
+    - name: Download Avalonia packages
+      uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
+      with:
+        pattern: avalonia-*
+        path: ./artifacts/avalonia
+        merge-multiple: true
+
     - name: get-net-sdk-project-versions-action
       uses: kzrnm/get-net-sdk-project-versions-action@7d62715f5720ec339d39ab4a43b365391ad96db9 # v3.1.0
       id: get-version
@@ -209,8 +221,10 @@ jobs:
           ${{ steps.get-changes.outputs.changes }}
           ---
         draft: false
-        prerelease: false
-        files: ./artifacts/${{ env.ZIP_NAME}}x64.zip
+        prerelease: ${{ env.IS_PRERELEASE == 'true' }}
+        files: |
+          ./artifacts/${{ env.ZIP_NAME}}x64.zip
+          ./artifacts/avalonia/*
     
     # Delete existing nightly release and tag so it can be recreated cleanly
     - name: Delete existing nightly release and tag
@@ -236,12 +250,14 @@ jobs:
           ${{ steps.get-changes.outputs.changes }}
           ---
         prerelease: true
-        files: ./artifacts/${{ env.ZIP_NAME}}x64.zip
+        files: |
+          ./artifacts/${{ env.ZIP_NAME}}x64.zip
+          ./artifacts/avalonia/*
 
   # PUBLISH TO WINGET (tagged releases only)
   winget:
     needs: release
-    if: github.ref_type == 'tag'
+    if: github.repository == 'Foxlider/FASTER' && github.ref_type == 'tag' && !contains(github.ref_name, '-')
     runs-on: windows-latest
     steps:
       # Requires forked winget-pkgs: https://github.com/microsoft/winget-pkgs to the same account as this project

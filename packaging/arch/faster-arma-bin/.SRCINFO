@@ -1,0 +1,27 @@
+pkgbase = faster-arma-bin
+	pkgdesc = Arma 3 server and Workshop mod manager (prebuilt Avalonia binary)
+	pkgver = 1.9.8
+	pkgrel = 1
+	url = https://github.com/Foxlider/FASTER
+	arch = x86_64
+	license = GPL-3.0-or-later
+	makedepends = squashfs-tools
+	depends = glibc
+	depends = gcc-libs
+	depends = libglvnd
+	depends = xdg-utils
+	optdepends = ttf-dejavu: fallback UI font
+	provides = faster-arma
+	conflicts = faster-arma
+	conflicts = faster-arma-git
+	noextract = FASTER.AppImage
+	options = !strip
+	options = !debug
+	source = FASTER.AppImage
+	source = faster-arma.desktop
+	source = faster-arma.png
+	sha256sums = f997e6eeef894c605c527a188fe6422e7bf5401464b80be30c500d3bf0e8c050
+	sha256sums = e7daddb150c22da0e0321e81af1f9062e76d62f0a40eadfb7b6726989886fc30
+	sha256sums = 6b15841b7eaaeec9c4af96545fc2e045ad7a058ed612df13ee2e70d08c0a53a2
+
+pkgname = faster-arma-bin

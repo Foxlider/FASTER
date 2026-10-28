@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=FASTER Arma Server Manager
+Comment=Manage Arma 3 servers and Workshop mods
+Exec=faster-arma
+Icon=faster-arma
+Terminal=false
+Categories=Game;Utility;
+StartupWMClass=FASTER.Avalonia

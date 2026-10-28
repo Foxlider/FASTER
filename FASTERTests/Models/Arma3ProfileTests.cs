@@ -6,7 +6,7 @@ namespace FASTER.Models.Tests
     [TestFixture()]
     public class Arma3ProfileTests
     {
-        Arma3Profile _p;
+        Arma3Profile _p = null!;
         [OneTimeSetUp]
         public void Arma3ProfileSetUp()
         { Assert.DoesNotThrow(() => _p = new Arma3Profile()); }

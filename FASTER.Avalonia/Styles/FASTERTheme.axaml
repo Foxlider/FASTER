@@ -1,0 +1,247 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <!-- MahApps Dark.Blue look: accent #119EDA on #252525, square corners everywhere. -->
+
+  <!-- Buttons -->
+  <Style Selector="Button">
+    <Setter Property="Background" Value="{DynamicResource FasterButtonBackground}" />
+    <Setter Property="Foreground" Value="{DynamicResource FasterText}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource FasterButtonBorder}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="0" />
+    <Setter Property="Padding" Value="8,3" />
+  </Style>
+  <Style Selector="Button:pointerover">
+    <Setter Property="Background" Value="{DynamicResource FasterButtonHover}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource FasterTextBoxBorder}" />
+  </Style>
+  <Style Selector="Button:pressed">
+    <Setter Property="Background" Value="{DynamicResource FasterCardBorder}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource FasterAccent}" />
+  </Style>
+  <Style Selector="Button:disabled">
+    <Setter Property="Background" Value="{DynamicResource FasterCardBorder}" />
+    <Setter Property="Foreground" Value="{DynamicResource FasterDisabledText}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource FasterCardBorder}" />
+  </Style>
+  <Style Selector="Button.accent">
+    <Setter Property="Background" Value="{DynamicResource FasterAccent}" />
+    <Setter Property="Foreground" Value="White" />
+    <Setter Property="BorderThickness" Value="0" />
+  </Style>
+  <Style Selector="Button.accent:pointerover">
+    <Setter Property="Background" Value="{DynamicResource FasterAccentHover}" />
+  </Style>
+  <Style Selector="Button.accent:pressed">
+    <Setter Property="Background" Value="{DynamicResource FasterAccentPressed}" />
+  </Style>
+  <Style Selector="Button.accent:disabled">
+    <Setter Property="Background" Value="{DynamicResource FasterCardBorder}" />
+    <Setter Property="Foreground" Value="{DynamicResource FasterDisabledText}" />
+  </Style>
+  <Style Selector="Button.nav">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="CornerRadius" Value="0" />
+    <Setter Property="Padding" Value="10,8" />
+    <Setter Property="HorizontalAlignment" Value="Stretch" />
+    <Setter Property="HorizontalContentAlignment" Value="Left" />
+  </Style>
+  <Style Selector="Button.nav:pointerover">
+    <Setter Property="Background" Value="{DynamicResource FasterButtonHover}" />
+  </Style>
+  <Style Selector="Button.nav.selected">
+    <Setter Property="Background" Value="{DynamicResource FasterCardBorder}" />
+  </Style>
+
+  <Style Selector="TextBlock.field-label">
+    <Setter Property="FontSize" Value="10" />
+    <Setter Property="Foreground" Value="{DynamicResource FasterMutedText}" />
+    <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+  </Style>
+  <Style Selector="Expander.bar">
+    <Setter Property="HorizontalAlignment" Value="Stretch" />
+    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    <Setter Property="CornerRadius" Value="0" />
+  </Style>
+  <Style Selector="Expander.bar /template/ ToggleButton#ExpanderHeader">
+    <Setter Property="CornerRadius" Value="0" />
+  </Style>
+  <!-- Text input -->
+  <Style Selector="TextBox">
+    <Setter Property="UseFloatingWatermark" Value="True" />
+    <Setter Property="Background" Value="{DynamicResource FasterTextBoxBackground}" />
+    <Setter Property="Foreground" Value="{DynamicResource FasterText}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource FasterTextBoxBorder}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="0" />
+    <Setter Property="Padding" Value="5,3" />
+  </Style>
+  <Style Selector="TextBox.console">
+    <Setter Property="Background" Value="{DynamicResource FasterConsoleBackground}" />
+    <Setter Property="Foreground" Value="White" />
+    <Setter Property="FontFamily" Value="Consolas, Menlo, monospace" />
+  </Style>
+  <Style Selector="ComboBox">
+    <Setter Property="Background" Value="{DynamicResource FasterTextBoxBackground}" />
+    <Setter Property="Foreground" Value="{DynamicResource FasterText}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource FasterTextBoxBorder}" />
+    <Setter Property="CornerRadius" Value="0" />
+    <Setter Property="Padding" Value="5,3" />
+  </Style>
+  <Style Selector="NumericUpDown">
+    <Setter Property="Background" Value="{DynamicResource FasterTextBoxBackground}" />
+    <Setter Property="Foreground" Value="{DynamicResource FasterText}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource FasterTextBoxBorder}" />
+    <Setter Property="CornerRadius" Value="0" />
+  </Style>
+
+  <!-- Cards with blue header bars, like the MahApps GroupBox look -->
+  <Style Selector="Border.card">
+    <Setter Property="Background" Value="{DynamicResource FasterWindowBackground}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource FasterCardBorder}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="0" />
+    <Setter Property="Padding" Value="0" />
+  </Style>
+  <Style Selector="TextBlock.card-header">
+    <Setter Property="Background" Value="{DynamicResource FasterAccent}" />
+    <Setter Property="Foreground" Value="White" />
+    <Setter Property="FontWeight" Value="Bold" />
+    <Setter Property="FontSize" Value="13" />
+    <Setter Property="Padding" Value="8,5,8,2" />
+  </Style>
+  <Style Selector="TextBlock.card-title">
+    <Setter Property="FontWeight" Value="Bold" />
+    <Setter Property="FontSize" Value="13" />
+    <Setter Property="Margin" Value="2" />
+  </Style>
+
+  <!-- Tab headers: big gray text, blue when active -->
+  <Style Selector="TabItem">
+    <Setter Property="FontSize" Value="22" />
+    <Setter Property="Foreground" Value="{DynamicResource FasterMutedText}" />
+    <Setter Property="Padding" Value="8,4" />
+  </Style>
+  <Style Selector="TabItem:selected">
+    <Setter Property="Foreground" Value="{DynamicResource FasterAccent}" />
+  </Style>
+
+  <!-- Data grids: near-black headers, dark rows, blue selection -->
+  <Style Selector="DataGridColumnHeader">
+    <Setter Property="Background" Value="{DynamicResource FasterGridHeaderBackground}" />
+    <Setter Property="Foreground" Value="{DynamicResource FasterText}" />
+    <Setter Property="FontWeight" Value="Bold" />
+    <Setter Property="FontSize" Value="12" />
+    <Setter Property="Padding" Value="3,4" />
+    <Setter Property="BorderThickness" Value="0,0,1,1" />
+    <Setter Property="BorderBrush" Value="{DynamicResource FasterGridLines}" />
+  </Style>
+  <Style Selector="DataGridRow:selected">
+    <Setter Property="Background" Value="{DynamicResource FasterSelectedRow}" />
+  </Style>
+  <Style Selector="DataGrid">
+    <Setter Property="FontSize" Value="12" />
+    <Setter Property="Background" Value="{DynamicResource FasterWindowBackground}" />
+    <Setter Property="Foreground" Value="{DynamicResource FasterText}" />
+    <Setter Property="GridLinesVisibility" Value="Vertical" />
+  </Style>
+
+  <!-- Sidebar profile list -->
+  <Style Selector="ListBox.side">
+    <Setter Property="Background" Value="Transparent" />
+  </Style>
+  <Style Selector="ListBox.side ListBoxItem">
+    <Setter Property="Foreground" Value="{DynamicResource FasterMutedText}" />
+    <Setter Property="Padding" Value="8,4" />
+  </Style>
+  <Style Selector="ListBox.side ListBoxItem:selected">
+    <Setter Property="Background" Value="{DynamicResource FasterCardBorder}" />
+    <Setter Property="Foreground" Value="{DynamicResource FasterText}" />
+  </Style>
+
+  <!-- Blue-bar expanders for config outputs and advanced sections -->
+  <Style Selector="Expander.bar /template/ ToggleButton#ExpanderHeader">
+    <Setter Property="Background" Value="{DynamicResource FasterAccent}" />
+    <Setter Property="Foreground" Value="White" />
+    <Setter Property="FontWeight" Value="Bold" />
+    <Setter Property="MinHeight" Value="0" />
+    <Setter Property="Padding" Value="8,5,8,2" />
+  </Style>
+  <Style Selector="Expander.bar /template/ ToggleButton#ExpanderHeader:pointerover">
+    <Setter Property="Background" Value="{DynamicResource FasterAccentHover}" />
+  </Style>
+
+  <Style Selector="Separator">
+    <Setter Property="Background" Value="{DynamicResource FasterCardBorder}" />
+  </Style>
+  <Style Selector="ProgressBar">
+    <Setter Property="Background" Value="{DynamicResource FasterCardBorder}" />
+    <Setter Property="Foreground" Value="{DynamicResource FasterAccent}" />
+    <Setter Property="CornerRadius" Value="0" />
+  </Style>
+  <Style Selector="Slider">
+    <Setter Property="Foreground" Value="{DynamicResource FasterAccent}" />
+  </Style>
+  <!-- Set base typography once; controls inherit it on both platforms. -->
+  <Style Selector="Window">
+    <Setter Property="FontFamily" Value="{DynamicResource FasterFont}" />
+    <Setter Property="FontSize" Value="12" />
+    <Setter Property="Foreground" Value="{DynamicResource FasterText}" />
+    <Setter Property="Background" Value="{DynamicResource FasterWindowBackground}" />
+  </Style>
+  <Style Selector="Border.card">
+    <Setter Property="BoxShadow" Value="0 0 5 0 #30000000" />
+  </Style>
+  <Style Selector="CheckBox">
+    <Setter Property="MinHeight" Value="22" />
+    <Setter Property="Padding" Value="4,0" />
+  </Style>
+  <Style Selector="ToggleSwitch">
+    <Setter Property="MinHeight" Value="24" />
+    <Setter Property="OnContent" Value="" />
+    <Setter Property="OffContent" Value="" />
+  </Style>
+  <Style Selector="TextBox, ComboBox, NumericUpDown">
+    <Setter Property="MinHeight" Value="26" />
+  </Style>
+  <Style Selector="Button:focus-visible, TextBox:focus, ComboBox:focus-visible, NumericUpDown:focus-within">
+    <Setter Property="BorderBrush" Value="{DynamicResource FasterAccent}" />
+  </Style>
+  <!-- Fluent paints these states inside the template. Override the presenter too. -->
+  <Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="{DynamicResource FasterButtonHover}" />
+    <Setter Property="Foreground" Value="{DynamicResource FasterText}" />
+  </Style>
+  <Style Selector="Button:pressed /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="{DynamicResource FasterCardBorder}" />
+  </Style>
+  <Style Selector="Button.accent:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="{DynamicResource FasterAccentHover}" />
+    <Setter Property="Foreground" Value="White" />
+  </Style>
+  <Style Selector="Button.accent:pressed /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="{DynamicResource FasterAccentPressed}" />
+  </Style>
+  <Style Selector="Button:disabled /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="{DynamicResource FasterCardBorder}" />
+    <Setter Property="Foreground" Value="{DynamicResource FasterDisabledText}" />
+  </Style>
+  <Style Selector="DataGrid">
+    <Setter Property="RowHeight" Value="30" />
+    <Setter Property="ColumnHeaderHeight" Value="28" />
+    <Setter Property="HorizontalGridLinesBrush" Value="{DynamicResource FasterGridLines}" />
+    <Setter Property="VerticalGridLinesBrush" Value="{DynamicResource FasterGridLines}" />
+  </Style>
+  <Style Selector="TextBlock.section-title">
+    <Setter Property="Margin" Value="8" />
+    <Setter Property="FontSize" Value="12" />
+  </Style>
+  <!-- Fluent reserves 32 px for a sort icon even on unsortable narrow columns. -->
+  <Style Selector="DataGridColumnHeader /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Grid.ColumnSpan" Value="2" />
+  </Style>
+  <Style Selector="DataGridColumnHeader:sortascending /template/ ContentPresenter#PART_ContentPresenter, DataGridColumnHeader:sortdescending /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Margin" Value="0,0,16,0" />
+  </Style>
+</Styles>

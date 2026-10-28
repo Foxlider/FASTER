@@ -4,8 +4,8 @@ using FASTER.Views;
 
 using MahApps.Metro.Controls.Dialogs;
 
-using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
+using MahApps.Metro.IconPacks;
+
 using Microsoft.WindowsAPICodePack.Dialogs;
 
 using System;
@@ -33,14 +33,14 @@ namespace FASTER
         internal string Version;
         internal bool NavEnabled = true;
 
-        private ToggleButton lastNavButton;
+        private ToggleButton? lastNavButton;
 
         #region INSTANCES
-        private static MainWindow _instance;
+        private static MainWindow? _instance;
         public static MainWindow Instance => _instance ??= new MainWindow();
 
-        private SteamUpdaterViewModel _steamUpdaterVM;
-        Updater                       _steamUpdater;
+        private SteamUpdaterViewModel? _steamUpdaterVM;
+        Updater? _steamUpdater;
         public Updater ContentSteamUpdater
         {
             get => _steamUpdater ??= new Updater();
@@ -53,63 +53,63 @@ namespace FASTER
         }
 
 
-        private Mods  _mods;
+        private Mods? _mods;
         public Mods ContentSteamMods
         {
             get => _mods ??= new Mods();
             set => _mods = value;
         }
 
-        ModsViewModel _modsVM;
+        ModsViewModel? _modsVM;
         public ModsViewModel ModsViewModel
         {
             get => _modsVM ??= new ModsViewModel();
             set => _modsVM = value;
         }
 
-        Deployment _deploy;
+        Deployment? _deploy;
         public Deployment ContentDeploy
         {
             get => _deploy ??= new Deployment();
             set => _deploy = value;
         }
 
-        DeploymentViewModel _deployVM;
+        DeploymentViewModel? _deployVM;
         public DeploymentViewModel DeployViewModel
         {
             get => _deployVM ??= new DeploymentViewModel();
             set => _deployVM = value;
         }
 
-        ServerStatus _serverStatus;
+        ServerStatus? _serverStatus;
         public ServerStatus ContentServerStatus
         {
             get => _serverStatus ??= new ServerStatus();
             set => _serverStatus = value;
         }
-        
-        Settings _settings;
+
+        Settings? _settings;
         public Settings ContentSettings
         {
             get => _settings ??= new Settings(this);
             set => _settings = value;
         }
 
-        About _about;
+        About? _about;
         public About ContentAbout
         {
             get => _about ??= new About();
             set => _about = value;
         }
 
-        Profile _profile;
+        Profile? _profile;
         public Profile ContentProfile
         {
             get => _profile ??= new Profile();
             set => _profile = value;
         }
 
-        private List<ProfileViewModel> _profileViews;
+        private List<ProfileViewModel>? _profileViews;
 
         internal List<ProfileViewModel> ContentProfileViews
         {
@@ -123,9 +123,13 @@ namespace FASTER
             InitializeComponent();
 
             //Set font preferences
-            FontFamily = Fonts.SystemFontFamilies.FirstOrDefault(f => f.Source == Properties.Settings.Default.font);
+            FontFamily = Fonts.SystemFontFamilies.FirstOrDefault(f => f.Source == AppSettings.Current.Font);
 
             _instance = this;
+            Services.Ui.Current = new Services.WpfUiBridge();
+            Services.AppServices.Dialogs = new Services.WpfDialogService();
+            Services.AppServices.Clipboard = new Services.WpfClipboardService();
+            Services.AppServices.Files = new Services.WpfFilePickerService();
             Version = GetVersion();
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
             NavigateToConsole();
@@ -148,18 +152,18 @@ namespace FASTER
 
         private async void MetroWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            var settings = Properties.Settings.Default;
+            var settings = AppSettings.Current;
 
-            if (!Directory.Exists(settings.modStagingDirectory))
-                Directory.CreateDirectory(settings.modStagingDirectory);
-            
+            if (!Directory.Exists(settings.ModStagingDirectory))
+                Directory.CreateDirectory(settings.ModStagingDirectory);
+
             if (ConvertMods)
                 await ModConversion();
         }
 
         private void MetroWindow_Closing(object sender, CancelEventArgs e)
         {
-            Properties.Settings.Default.Save();
+            AppSettings.Current.Save();
             SteamUpdaterViewModel.Instance.SteamClient?.Shutdown();
             SteamUpdaterViewModel.Instance.SteamClient?.Dispose();
             Application.Current.Shutdown();
@@ -204,14 +208,14 @@ namespace FASTER
             lastNavButton = nav;
 
             //Saving just in case
-            Properties.Settings.Default.Save();
+            AppSettings.Current.Save();
 
             //Get loading screen
             switch (nav.Name)
             {
                 case "navSteamUpdater":
                     ContentSteamUpdater.DataContext = SteamUpdaterViewModel;
-                    MainContent.Content  = ContentSteamUpdater;
+                    MainContent.Content = ContentSteamUpdater;
 
                     break;
                 case "navMods":
@@ -259,7 +263,7 @@ namespace FASTER
 
         private void ICreateProfileButton_Click(object sender, RoutedEventArgs e)
         {
-            Analytics.TrackEvent("Main - Creating new profile");
+            FASTER.Services.Telemetry.TrackEvent("Main - Creating new profile");
             INewProfileName.Text = INewProfileName.Text.Trim();
             if (string.IsNullOrEmpty(INewProfileName.Text))
             {
@@ -275,7 +279,7 @@ namespace FASTER
             }
         }
 
-        private ToggleButton GetSelectedProfileToggleButton()
+        private ToggleButton? GetSelectedProfileToggleButton()
         {
             var selected = IServerProfilesMenu.SelectedItem;
             if (selected is System.Windows.Controls.DockPanel dp)
@@ -291,7 +295,7 @@ namespace FASTER
             try
             {
                 var selectedBtn = GetSelectedProfileToggleButton();
-                var temp = Properties.Settings.Default.Profiles.FirstOrDefault(s =>
+                var temp = AppSettings.Current.Profiles?.FirstOrDefault(s =>
                     s.Id == selectedBtn?.Name);
                 if (temp == null)
                 {
@@ -305,7 +309,7 @@ namespace FASTER
             catch (Exception err)
             {
                 DisplayMessage("An error occured while cloning your profile");
-                Crashes.TrackError(err, new Dictionary<string, string> { { "Name", Properties.Settings.Default.steamUserName } });
+                FASTER.Services.Telemetry.TrackError(err, new Dictionary<string, string> { { "Name", AppSettings.Current.SteamUserName } });
             }
         }
 
@@ -317,7 +321,7 @@ namespace FASTER
             try
             {
                 var selectedBtn = GetSelectedProfileToggleButton();
-                var temp = Properties.Settings.Default.Profiles.FirstOrDefault(s =>
+                var temp = AppSettings.Current.Profiles?.FirstOrDefault(s =>
                     s.Id == selectedBtn?.Name);
                 if (temp == null)
                 {
@@ -331,7 +335,7 @@ namespace FASTER
             catch (Exception err)
             {
                 DisplayMessage("An error occured while deleting your profile");
-                Crashes.TrackError(err, new Dictionary<string, string> { { "Name", Properties.Settings.Default.steamUserName } });
+                FASTER.Services.Telemetry.TrackError(err, new Dictionary<string, string> { { "Name", AppSettings.Current.SteamUserName } });
             }
         }
 
@@ -344,8 +348,7 @@ namespace FASTER
             {
                 try
                 {
-                    ProcessStartInfo startInfo = new ProcessStartInfo { Arguments = serverDirBox, FileName = "explorer.exe" };
-                    Process.Start(startInfo);
+                    Services.Platform.Current.OpenFolder(serverDirBox);
                 }
                 catch
                 { MessageBox.Show($" Could not open {serverDirBox}"); }
@@ -363,8 +366,7 @@ namespace FASTER
             {
                 try
                 {
-                    ProcessStartInfo startInfo = new ProcessStartInfo { Arguments = serverDirBox, FileName = "explorer.exe" };
-                    Process.Start(startInfo);
+                    Services.Platform.Current.OpenFolder(serverDirBox);
                 }
                 catch
                 { MessageBox.Show($" Could not open {serverDirBox}"); }
@@ -376,14 +378,13 @@ namespace FASTER
         private void OpenAppDataLocation_Click(object sender, RoutedEventArgs e)
         {
             IToolsDialog.IsOpen = false;
-            var appdataDirectory= Path.GetDirectoryName(ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal).FilePath);
+            var appdataDirectory = Path.GetDirectoryName(FASTER.Models.AppSettings.SettingsPath);
 
             if (!string.IsNullOrEmpty(appdataDirectory) && Directory.Exists(appdataDirectory))
             {
                 try
                 {
-                    ProcessStartInfo startInfo = new ProcessStartInfo { Arguments = appdataDirectory, FileName = "explorer.exe" };
-                    Process.Start(startInfo);
+                    Services.Platform.Current.OpenFolder(appdataDirectory);
                 }
                 catch
                 { MessageBox.Show($" Could not open {appdataDirectory}"); }
@@ -436,12 +437,12 @@ namespace FASTER
 
         public void LoadServerProfiles()
         {
-            if (Properties.Settings.Default.Profiles == null)
+            if (AppSettings.Current.Profiles == null)
             {
-                Properties.Settings.Default.Profiles = new ServerProfileCollection();
-                Properties.Settings.Default.Save();
+                AppSettings.Current.Profiles = new ServerProfileCollection();
+                AppSettings.Current.Save();
             }
-            var currentProfilesNew = Properties.Settings.Default.Profiles;
+            var currentProfilesNew = AppSettings.Current.Profiles;
 
             Dispatcher?.Invoke(() => { IServerProfilesMenu.Items.Clear(); });
 
@@ -518,43 +519,45 @@ namespace FASTER
 
         private void MoveProfileUp(string profileId)
         {
-            var profiles = Properties.Settings.Default.Profiles;
+            var profiles = AppSettings.Current.Profiles;
+            if (profiles == null) return;
             int idx = profiles.FindIndex(p => p.Id == profileId);
             if (idx <= 0) return;
             var item = profiles[idx];
             profiles.RemoveAt(idx);
             profiles.Insert(idx - 1, item);
-            Properties.Settings.Default.Profiles = profiles;
-            Properties.Settings.Default.Save();
+            AppSettings.Current.Profiles = profiles;
+            AppSettings.Current.Save();
             LoadServerProfiles();
         }
 
         private void MoveProfileDown(string profileId)
         {
-            var profiles = Properties.Settings.Default.Profiles;
+            var profiles = AppSettings.Current.Profiles;
+            if (profiles == null) return;
             int idx = profiles.FindIndex(p => p.Id == profileId);
             if (idx < 0 || idx >= profiles.Count - 1) return;
             var item = profiles[idx];
             profiles.RemoveAt(idx);
             profiles.Insert(idx + 1, item);
-            Properties.Settings.Default.Profiles = profiles;
-            Properties.Settings.Default.Save();
+            AppSettings.Current.Profiles = profiles;
+            AppSettings.Current.Save();
             LoadServerProfiles();
         }
 
         private async Task ModConversion()
         {
-            var properties    = Properties.Settings.Default;
-            var modStagingDir = properties.modStagingDirectory;
+            var properties = AppSettings.Current;
+            var modStagingDir = properties.ModStagingDirectory;
 
             var controller = await this.ShowProgressAsync("Please wait...", "Checking Drive Space...");
-            controller.Maximum = properties.steamMods.SteamMods.Count;
+            controller.Maximum = properties.SteamMods?.SteamMods.Count ?? 0;
             var progress = 0;
 
             long fullzize = 0;
-            foreach (var mod in properties.steamMods.SteamMods.Select(m => Path.Combine(Properties.Settings.Default.steamCMDPath, "steamapps", "workshop", "content", "107410", m.WorkshopId.ToString())).Concat(properties.localMods.Select(m => m.Path)))
+            foreach (var mod in (properties.SteamMods?.SteamMods.Select(m => Path.Combine(AppSettings.Current.SteamCMDPath, "steamapps", "workshop", "content", "107410", m.WorkshopId.ToString())) ?? Enumerable.Empty<string>()).Concat(properties.LocalMods?.Select(m => m.Path) ?? Enumerable.Empty<string>()))
             {
-                if(!Directory.Exists(mod))
+                if (!Directory.Exists(mod))
                     continue;
 
                 string[] a = Directory.GetFiles(mod, "*.*", SearchOption.AllDirectories);
@@ -565,17 +568,23 @@ namespace FASTER
 
             var drive = DriveInfo.GetDrives().FirstOrDefault(d => d.Name == Path.GetPathRoot(modStagingDir));
 
+            if (drive == null)
+            {
+                await controller.CloseAsync();
+                return;
+            }
+
             if (drive.AvailableFreeSpace < fullzize)
             {
-                properties.armaMods = null;
-                properties.firstRun = true;
+                properties.ArmaMods = null;
+                properties.FirstRun = true;
                 properties.Save();
 
                 var closing = 10000;
 
                 while (closing > 0)
                 {
-                    controller.SetMessage($"Not enough free space on your drive for your mods. ({Functions.ParseFileSize(drive.AvailableFreeSpace)} / {Functions.ParseFileSize(fullzize)} )\nClear some space and retry.\n\nFASTER will close in {closing/1000} seconds.");
+                    controller.SetMessage($"Not enough free space on your drive for your mods. ({Functions.ParseFileSize(drive.AvailableFreeSpace)} / {Functions.ParseFileSize(fullzize)} )\nClear some space and retry.\n\nFASTER will close in {closing / 1000} seconds.");
                     await Task.Delay(1000);
                     closing -= 1000;
                 }
@@ -584,12 +593,12 @@ namespace FASTER
                 Instance.OnClosing(new CancelEventArgs(true));
                 return;
             }
-                
 
-            foreach (var steamMod in properties.steamMods.SteamMods)
+
+            foreach (var steamMod in properties.SteamMods?.SteamMods ?? Enumerable.Empty<SteamMod>())
             {
-                var newPath = Path.Combine(modStagingDir,                            steamMod.WorkshopId.ToString());
-                var oldPath = Path.Combine(Properties.Settings.Default.steamCMDPath, "steamapps", "workshop", "content", "107410", steamMod.WorkshopId.ToString());
+                var newPath = Path.Combine(modStagingDir, steamMod.WorkshopId.ToString());
+                var oldPath = Path.Combine(AppSettings.Current.SteamCMDPath, "steamapps", "workshop", "content", "107410", steamMod.WorkshopId.ToString());
                 if (!Directory.Exists(newPath))
                     Directory.CreateDirectory(newPath);
 
@@ -597,24 +606,24 @@ namespace FASTER
 
                 var newMod = new ArmaMod
                 {
-                    WorkshopId       = steamMod.WorkshopId,
-                    Name             = steamMod.Name,
-                    Path             = newPath,
-                    Author           = steamMod.Author,
-                    IsLocal          = false,
+                    WorkshopId = steamMod.WorkshopId,
+                    Name = steamMod.Name,
+                    Path = newPath,
+                    Author = steamMod.Author,
+                    IsLocal = false,
                     LocalLastUpdated = ulong.MinValue,
                     SteamLastUpdated = Convert.ToUInt64(steamMod.SteamLastUpdated),
-                    Status           = ArmaModStatus.UpdateRequired
+                    Status = ArmaModStatus.UpdateRequired
                 };
-                await Task.Run(() => properties.armaMods.AddSteamMod(newMod));
+                await Task.Run(() => properties.ArmaMods?.AddSteamMod(newMod));
                 progress += 1;
                 controller.SetMessage($"Converting Steam Mods... {progress} / {controller.Maximum}");
                 controller.SetProgress(progress);
             }
 
-            properties.steamMods = new SteamModCollection();
+            properties.SteamMods = new SteamModCollection();
 
-            if (properties.localMods == null || properties.localMods.Count == 0)
+            if (properties.LocalMods == null || properties.LocalMods.Count == 0)
             {
                 await controller.CloseAsync();
                 properties.Save();
@@ -623,32 +632,32 @@ namespace FASTER
 
             var r = new Random();
             progress = 0;
-            controller.Maximum = properties.localMods.Count;
+            controller.Maximum = properties.LocalMods.Count;
             controller.SetMessage($"Converting Local Mods... {progress} / {controller.Maximum}");
             controller.SetProgress(progress);
-            foreach (var localMod in properties.localMods)
+            foreach (var localMod in properties.LocalMods)
             {
-                var modID   = (uint) (uint.MaxValue - r.Next(ushort.MaxValue/2));
+                var modID = (uint)(uint.MaxValue - r.Next(ushort.MaxValue / 2));
                 var newPath = Path.Combine(modStagingDir, modID.ToString());
                 var oldPath = localMod.Path;
                 if (!Directory.Exists(newPath))
                     Directory.CreateDirectory(newPath);
 
                 await MoveMod(oldPath, newPath);
-                
+
                 var newMod = new ArmaMod
                 {
-                    WorkshopId       = modID,
-                    Name             = localMod.Name,
-                    Path             = newPath,
-                    Author           = localMod.Author,
-                    IsLocal          = true,
-                    Status           = ArmaModStatus.Local
+                    WorkshopId = modID,
+                    Name = localMod.Name,
+                    Path = newPath,
+                    Author = localMod.Author,
+                    IsLocal = true,
+                    Status = ArmaModStatus.Local
                 };
-                await Task.Run(() => properties.armaMods.AddSteamMod(newMod));
+                await Task.Run(() => properties.ArmaMods?.AddSteamMod(newMod));
                 progress += 1;
                 controller.SetMessage($"Converting Local Mods... {progress} / {controller.Maximum}");
-                controller.SetProgress(progress * 100.0 / controller.Maximum );
+                controller.SetProgress(progress * 100.0 / controller.Maximum);
             }
 
             await controller.CloseAsync();
@@ -657,12 +666,13 @@ namespace FASTER
 
         private static async Task MoveMod(string oldPath, string newPath)
         {
-            if(Directory.Exists(oldPath))
+            if (Directory.Exists(oldPath))
             {
                 foreach (var file in Directory.EnumerateFiles(oldPath, "*", SearchOption.AllDirectories))
                 {
                     var newFile = file.Replace(oldPath, newPath);
-                    if(!Directory.Exists(Path.GetDirectoryName(newFile))) Directory.CreateDirectory(Path.GetDirectoryName(newFile));
+                    var dir = Path.GetDirectoryName(newFile);
+                    if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir)) Directory.CreateDirectory(dir);
 
                     await CopyFileAsync(file, newFile);
                 }
@@ -671,7 +681,7 @@ namespace FASTER
 
         private static async Task CopyFileAsync(string sourceFile, string destinationFile)
         {
-            await using var sourceStream      = new FileStream(sourceFile,      FileMode.Open,   FileAccess.Read,  FileShare.Read, 4096, FileOptions.Asynchronous | FileOptions.SequentialScan);
+            await using var sourceStream = new FileStream(sourceFile, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, FileOptions.Asynchronous | FileOptions.SequentialScan);
             await using var destinationStream = new FileStream(destinationFile, FileMode.Create, FileAccess.Write, FileShare.None, 4096, FileOptions.Asynchronous | FileOptions.SequentialScan);
             await sourceStream.CopyToAsync(destinationStream);
             destinationStream.Close();
@@ -681,11 +691,20 @@ namespace FASTER
         public void DisplayMessage(string message)
         {
             IFlyoutMessage.Content = message;
+            IFlyoutScroller.Visibility = Visibility.Visible;
+            IFlyoutCollapseIcon.Kind = PackIconModernKind.ChevronDown;
             IFlyout.IsOpen = true;
         }
 
+        private void IFlyoutCollapse_Click(object sender, RoutedEventArgs e)
+        {
+            var collapsed = IFlyoutScroller.Visibility == Visibility.Visible;
+            IFlyoutScroller.Visibility = collapsed ? Visibility.Collapsed : Visibility.Visible;
+            IFlyoutCollapseIcon.Kind = collapsed ? PackIconModernKind.ChevronUp : PackIconModernKind.ChevronDown;
+        }
+
         // Opens Folder select dialog and returns selected path
-        public string SelectFolder(string defaultFolder = "")
+        public string? SelectFolder(string defaultFolder = "")
         {
             var dlg = new CommonOpenFileDialog
             {
@@ -707,7 +726,7 @@ namespace FASTER
                 ? dlg.FileName
                 : null;
         }
-        
+
         internal string GetVersion()
         { return Functions.GetVersion(); }
     }

@@ -1,0 +1,92 @@
+using FASTER.Services;
+
+using Newtonsoft.Json.Linq;
+
+using System.Net.Http;
+using System.Net.Sockets;
+
+namespace FASTER.Models;
+
+public static class SteamWebApi
+{
+    private const string V2 = "&steamids=";
+    private const string V3 = "&publishedfileids[0]=";
+    private const string FileDetailsEndpoint = "https://api.steampowered.com/IPublishedFileService/GetDetails/v1?key="; // NOSONAR - stable public service endpoint, intentionally compiled in
+    private const string PlayerSummariesEndpoint = "https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v1?key=";
+
+    public static JObject? GetSingleFileDetails(uint modId)
+    {
+        try
+        {
+            var response = ApiCall(FileDetailsEndpoint + GetApiKey() + V3 + modId);
+            return (JObject?)response?.SelectToken("response.publishedfiledetails[0]");
+        }
+        catch
+        { return null; }
+    }
+
+    public static JObject? GetPlayerSummaries(string playerId)
+    {
+        try
+        {
+            var response = ApiCall(PlayerSummariesEndpoint + GetApiKey() + V2 + playerId);
+            return (JObject?)response?.SelectToken("response.players.player[0]");
+        }
+        catch
+        { return null; }
+    }
+
+    private static readonly HttpClient s_client = new() { Timeout = TimeSpan.FromSeconds(5) };
+
+    private static JObject? ApiCall(string uri)
+    {
+        HttpResponseMessage? response = null;
+
+        try
+        { response = s_client.GetAsync(uri).GetAwaiter().GetResult(); }
+        catch (Exception e) when (e is HttpRequestException or TaskCanceledException or SocketException)
+        {
+            Ui.Current.DisplayMessage("Cannot reach Steam API.\nCheck https://steamstat.us/ for status.");
+            Console.WriteLine($"Could not reach Steam API: [{e.GetType().Name}] {e.Message}");
+        }
+
+        Console.WriteLine(response?.StatusCode);
+
+        if (response == null)
+            return null;
+
+        if (!response.IsSuccessStatusCode)
+            throw new HttpRequestException($"Steam API returned HTTP {(int)response.StatusCode} {response.StatusCode}. Please check your Steam API Key in Settings.");
+
+        return JObject.Parse(response.Content.ReadAsStringAsync().Result);
+    }
+
+    private static string GetApiKey()
+    {
+        return !string.IsNullOrEmpty(AppSettings.Current.SteamAPIKey)
+            ? AppSettings.Current.SteamAPIKey
+            : StaticData.SteamApiKey;
+    }
+}
+
+internal class SteamApiFileDetails
+{
+    public uint result { get; set; }
+    public ulong publishedfileid { get; set; }
+    public ulong creator { get; set; }
+    public uint creator_appid { get; set; }
+    public uint consumer_appid { get; set; }
+    public string? filename { get; set; }
+    public ulong file_size { get; set; }
+    public string? title { get; set; }
+    public string? file_description { get; set; }
+    public ulong time_created { get; set; }
+    public ulong time_updated { get; set; }
+}
+
+internal class SteamApiPlayerInfo
+{
+    public ulong steamid { get; set; }
+    public string? personaname { get; set; }
+    public string? profileurl { get; set; }
+}

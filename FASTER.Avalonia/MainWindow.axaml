@@ -1,0 +1,121 @@
+<Window x:CompileBindings="False" xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+        xmlns:converters="clr-namespace:FASTER.Avalonia.Converters;assembly=FASTER.Avalonia"
+        x:Class="FASTER.Avalonia.MainWindow"
+        Title="FASTER" Width="1100" Height="700" MinWidth="1000" MinHeight="700"
+        Icon="/Assets/FASTER.ico"
+        Background="{DynamicResource FasterWindowBackground}">
+  <Window.Resources>
+    <converters:BoolNegationConverter x:Key="Not" />
+  </Window.Resources>
+  <Grid ColumnDefinitions="Auto,*">
+    <Border Grid.Column="0" Width="210" MinWidth="150" MaxWidth="250" BorderBrush="{DynamicResource FasterCardBorder}" BorderThickness="0,0,1,0">
+      <Grid RowDefinitions="Auto,*,Auto">
+        <StackPanel Grid.Row="0" Margin="8" Spacing="2">
+          <TextBlock Text="Main" FontWeight="Bold" FontSize="14" Margin="4,4,0,4" />
+          <Button Name="NavUpdater" Classes="nav selected" Click="NavUpdater_Click">
+            <StackPanel Orientation="Horizontal" Spacing="10">
+              <materialIcons:MaterialIcon Kind="Console" Width="18" Height="18" />
+              <TextBlock Text="Updater" FontSize="13" FontWeight="DemiBold" VerticalAlignment="Center" />
+            </StackPanel>
+          </Button>
+          <Button Name="NavMods" Classes="nav" Click="NavMods_Click">
+            <StackPanel Orientation="Horizontal" Spacing="10">
+              <materialIcons:MaterialIcon Kind="Steam" Width="18" Height="18" />
+              <TextBlock Text="Mods" FontSize="13" FontWeight="DemiBold" VerticalAlignment="Center" />
+            </StackPanel>
+          </Button>
+          <Button Name="NavDeployment" Classes="nav" Click="NavDeployment_Click">
+            <StackPanel Orientation="Horizontal" Spacing="10">
+              <materialIcons:MaterialIcon Kind="Folder" Width="18" Height="18" />
+              <TextBlock Text="Deployment" FontSize="13" FontWeight="DemiBold" VerticalAlignment="Center" />
+            </StackPanel>
+          </Button>
+          <Button Name="NavServerStatus" Classes="nav" Click="NavServerStatus_Click">
+            <StackPanel Orientation="Horizontal" Spacing="10">
+              <materialIcons:MaterialIcon Kind="Gauge" Width="18" Height="18" />
+              <TextBlock Text="Server Status" FontSize="13" FontWeight="DemiBold" VerticalAlignment="Center" />
+            </StackPanel>
+          </Button>
+        </StackPanel>
+        <Grid Grid.Row="1" RowDefinitions="Auto,*">
+          <DockPanel Grid.Row="0" Margin="8,4">
+            <TextBlock Text="Server Profiles" FontWeight="Bold" FontSize="14" VerticalAlignment="Center" />
+            <Button Name="AddProfileButton" Classes="accent"
+                    Width="25" Height="25" Padding="0"
+                    HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                    HorizontalAlignment="Right" VerticalAlignment="Center"
+                    Click="AddProfileButton_Click" ToolTip.Tip="New profile">
+              <materialIcons:MaterialIcon Kind="Plus" Width="18" Height="18" />
+            </Button>
+          </DockPanel>
+          <ListBox Grid.Row="1" Name="ProfilesList" Classes="side" ItemsSource="{Binding Profiles}"
+                   Margin="8,0,8,4" SelectionChanged="ProfilesList_SelectionChanged">
+            <ListBox.ItemTemplate>
+              <DataTemplate>
+                <TextBlock Text="{Binding Profile.Name}" TextTrimming="CharacterEllipsis" ToolTip.Tip="{Binding Profile.Name}" />
+              </DataTemplate>
+            </ListBox.ItemTemplate>
+            <ListBox.ContextMenu>
+              <ContextMenu>
+                <MenuItem Header="Move up" Click="MoveProfileUp_Click" />
+                <MenuItem Header="Move down" Click="MoveProfileDown_Click" />
+                <MenuItem Header="Clone" Click="CloneProfile_Click" />
+                <MenuItem Header="Delete" Click="DeleteProfile_Click" />
+              </ContextMenu>
+            </ListBox.ContextMenu>
+          </ListBox>
+        </Grid>
+        <StackPanel Grid.Row="2" Margin="8" Spacing="2">
+          <Separator />
+          <Menu Margin="0,2">
+            <MenuItem Header="Tools">
+              <MenuItem Header="Server directory" Click="OpenServer_Click" />
+              <MenuItem Header="Mod staging directory" Click="OpenStaging_Click" />
+              <MenuItem Header="Application data directory" Click="OpenData_Click" />
+            </MenuItem>
+          </Menu>
+          <TextBlock Text="Other" FontWeight="Bold" FontSize="14" Margin="4,4,0,4" />
+          <Button Name="NavSettings" Classes="nav" Click="NavSettings_Click">
+            <StackPanel Orientation="Horizontal" Spacing="10">
+              <materialIcons:MaterialIcon Kind="Cog" Width="18" Height="18" />
+              <TextBlock Text="Settings" FontSize="13" FontWeight="DemiBold" VerticalAlignment="Center" />
+            </StackPanel>
+          </Button>
+          <Button Name="NavAbout" Classes="nav" Click="NavAbout_Click">
+            <StackPanel Orientation="Horizontal" Spacing="10">
+              <materialIcons:MaterialIcon Kind="Information" Width="18" Height="18" />
+              <TextBlock Text="About" FontSize="13" FontWeight="DemiBold" VerticalAlignment="Center" />
+            </StackPanel>
+          </Button>
+        </StackPanel>
+      </Grid>
+    </Border>
+    <Grid Grid.Column="1" RowDefinitions="*,Auto" Background="{DynamicResource FasterWindowBackground}">
+      <ContentControl Grid.Row="0" Content="{Binding CurrentView}" Margin="10" />
+      <Grid Grid.Row="1" RowDefinitions="Auto,Auto">
+        <Border Grid.Row="0" BorderBrush="{DynamicResource FasterCardBorder}" BorderThickness="0,1,0,0"
+                MaxHeight="200" Padding="8,4" IsVisible="{Binding IsMessageExpanded}">
+          <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <TextBlock Text="{Binding StatusMessage}" TextWrapping="Wrap" />
+          </ScrollViewer>
+        </Border>
+        <Border Grid.Row="1" BorderBrush="{DynamicResource FasterCardBorder}" BorderThickness="0,1,0,0" Padding="8,4">
+          <Grid ColumnDefinitions="*,Auto">
+            <TextBlock Grid.Column="0" Text="{Binding StatusMessage}" Foreground="{DynamicResource FasterMutedText}"
+                       VerticalAlignment="Center" MaxLines="1" TextTrimming="CharacterEllipsis" />
+            <Button Grid.Column="1" Padding="6,0" ToolTip.Tip="Collapse / expand message" Click="MessageCollapse_Click">
+              <Panel>
+                <materialIcons:MaterialIcon Kind="ChevronUp" Width="14" Height="14"
+                                            IsVisible="{Binding IsMessageExpanded}" />
+                <materialIcons:MaterialIcon Kind="ChevronDown" Width="14" Height="14"
+                                            IsVisible="{Binding IsMessageExpanded, Converter={StaticResource Not}}" />
+              </Panel>
+            </Button>
+          </Grid>
+        </Border>
+      </Grid>
+    </Grid>
+  </Grid>
+</Window>

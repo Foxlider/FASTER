@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <!-- AppCenter's transitive SQLite dependency has no patched version. -->
+    <NoWarn>$(NoWarn);NU1903</NoWarn>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="../FASTER.Core.Tests/TestData/MMM_CSO_20260922.html" Link="TestData/MMM_CSO_20260922.html" CopyToOutputDirectory="PreserveNewest" />
+    <PackageReference Include="Avalonia.Headless.NUnit" Version="11.3.22" />
+    <PackageReference Include="NUnit" Version="4.3.2" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.6.0">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
+    <ProjectReference Include="../FASTER.Avalonia/FASTER.Avalonia.csproj" />
+  </ItemGroup>
+</Project>

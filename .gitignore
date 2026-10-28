@@ -333,3 +333,11 @@ ASALocalRun/
 # VS Code User Files
 .vscode/
 .sonarlint/
+
+# Local agent plans and reports
+.agent-state/
+
+# Local packaging outputs
+.tools/
+*.AppImage
+*.pkg.tar.*

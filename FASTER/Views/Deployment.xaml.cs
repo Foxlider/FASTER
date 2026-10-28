@@ -32,18 +32,21 @@ namespace FASTER.Views
         private void DeployMod(object sender, RoutedEventArgs e)
         {
             var mod = ((FrameworkElement)sender).DataContext as DeploymentMod;
+            if (mod == null) return;
             ((DeploymentViewModel)DataContext)?.DeployMod(mod);
         }
 
         private void OpenModPage(object sender, RoutedEventArgs e)
         {
             var mod = ((FrameworkElement)sender).DataContext as DeploymentMod;
+            if (mod == null) return;
             ((DeploymentViewModel)DataContext)?.OpenModPage(mod);
         }
 
         private void OpenModFolder(object sender, RoutedEventArgs e)
         {
             var mod = ((FrameworkElement)sender).DataContext as DeploymentMod;
+            if (mod == null) return;
             ((DeploymentViewModel)DataContext)?.OpenModFolder(mod);
         }
 

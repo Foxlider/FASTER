@@ -1,0 +1,34 @@
+﻿namespace FASTER.Models
+{
+    public static class StaticData
+    {
+        /// <summary>
+        /// List of FASTER's supporters
+        /// </summary>
+        public static readonly string[] Supporters =
+        {
+            "SirGhosty22",
+            "Mildly_Interested",
+            "WillParker",
+            "headass",
+            "Keefe",
+            "MadSoloSniper",
+            "Ben Miller",
+            "QuickCentralHosting",
+            "Meefs",
+            "Ultradar",
+            "Will Bolton",
+            "Harkness31",
+            "Ace",
+            "bojothebigman",
+            "EmPtY.zip",
+            "OverlordZorn",
+            "Jupster",
+        };
+
+        /// <summary>
+        /// Current Steam API Key
+        /// </summary>
+        public const string SteamApiKey = "89B74BCDEF2493AB2774D8A02D9CED0D";
+    }
+}

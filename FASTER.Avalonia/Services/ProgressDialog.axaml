@@ -1,0 +1,9 @@
+<Window x:CompileBindings="False" xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="FASTER.Avalonia.Services.ProgressDialog"
+        Width="420" SizeToContent="Height" WindowStartupLocation="CenterOwner">
+  <StackPanel Margin="16" Spacing="10">
+    <TextBlock x:Name="MessageText" TextWrapping="Wrap" />
+    <ProgressBar x:Name="Bar" Minimum="0" Maximum="100" />
+  </StackPanel>
+</Window>

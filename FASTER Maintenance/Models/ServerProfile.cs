@@ -67,15 +67,15 @@ namespace FASTER.Models
                 RaisePropertyChanged("Executable");
             }
         }
-        
-        public int Port 
-        { 
-            get => _port; 
-            set 
-            { 
+
+        public int Port
+        {
+            get => _port;
+            set
+            {
                 _port = value;
                 RaisePropertyChanged("Port");
-            } 
+            }
         }
 
         public int HeadlessNumber
@@ -160,8 +160,8 @@ namespace FASTER.Models
             }
         }
 
-        public ServerCfg ServerCfg 
-        { 
+        public ServerCfg ServerCfg
+        {
             get => _serverCfg;
             set
             {
