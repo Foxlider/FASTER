@@ -48,21 +48,7 @@ public static class ModDeployment
                 source.StartsWith(view.TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar, StringComparison.Ordinal))
                 throw new IOException("The deployment directory must be outside the mod's source folder.");
 
-            var entries = new List<(string Source, string Relative, bool Directory)>();
-            var directories = new Stack<string>();
-            directories.Push(source);
-            var hasDirectoryLinks = false;
-            while (directories.TryPop(out var directory))
-            {
-                foreach (var entry in new DirectoryInfo(directory).EnumerateFileSystemInfos())
-                {
-                    var isDirectory = entry.Attributes.HasFlag(FileAttributes.Directory);
-                    entries.Add((entry.FullName, Path.GetRelativePath(source, entry.FullName), isDirectory));
-                    if (!isDirectory) continue;
-                    if (entry.LinkTarget != null) hasDirectoryLinks = true;
-                    else directories.Push(entry.FullName);
-                }
-            }
+            var (entries, hasDirectoryLinks) = ReadSourceEntries(source);
 
             if (!entries.Any(e => e.Relative != e.Relative.ToLowerInvariant()) && !Directory.Exists(view))
                 return source;
@@ -70,9 +56,10 @@ public static class ModDeployment
                 throw new IOException("Cannot create a lowercase mod view containing nested directory symlinks.");
 
             var paths = new HashSet<string>(StringComparer.Ordinal);
-            foreach (var entry in entries)
-                if (!paths.Add(entry.Relative.ToLowerInvariant()))
-                    throw new IOException($"Mod paths differ only by case: {entry.Relative}. They cannot both be deployed on Linux.");
+            var collision = entries.Select(entry => entry.Relative)
+                .FirstOrDefault(relative => !paths.Add(relative.ToLowerInvariant()));
+            if (collision != null)
+                throw new IOException($"Mod paths differ only by case: {collision}. They cannot both be deployed on Linux.");
 
             var marker = view + ".managed";
             if (Directory.Exists(view) && (new DirectoryInfo(view).LinkTarget != null ||
@@ -112,6 +99,26 @@ public static class ModDeployment
             }
             return view;
         }
+    }
+
+    private static (List<(string Source, string Relative, bool Directory)> Entries, bool HasDirectoryLinks) ReadSourceEntries(string source)
+    {
+        var entries = new List<(string Source, string Relative, bool Directory)>();
+        var directories = new Stack<string>();
+        directories.Push(source);
+        var hasDirectoryLinks = false;
+        while (directories.TryPop(out var directory))
+        {
+            foreach (var entry in new DirectoryInfo(directory).EnumerateFileSystemInfos())
+            {
+                var isDirectory = entry.Attributes.HasFlag(FileAttributes.Directory);
+                entries.Add((entry.FullName, Path.GetRelativePath(source, entry.FullName), isDirectory));
+                if (!isDirectory) continue;
+                if (entry.LinkTarget != null) hasDirectoryLinks = true;
+                else directories.Push(entry.FullName);
+            }
+        }
+        return (entries, hasDirectoryLinks);
     }
 
     public static void RemoveLegacyLink(string installPath, string source, string name, uint id)

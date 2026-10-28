@@ -133,14 +133,7 @@ namespace FASTER.ViewModel
                             staging.StartsWith(source.TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar, comparison))
                             throw new IOException("The selected folder contains the mod staging directory. Select an individual mod folder to avoid a directory loop.");
 
-                        uint modId;
-                        string newPath;
-                        do
-                        {
-                            modId = (uint)Random.Shared.NextInt64(uint.MaxValue / 2L, uint.MaxValue);
-                            newPath = Path.Combine(staging, modId.ToString());
-                        } while (ModsCollection.ArmaMods.Any(mod => mod.WorkshopId == modId) ||
-                            File.Exists(newPath) || Directory.Exists(newPath) || new DirectoryInfo(newPath).LinkTarget != null);
+                        var (modId, newPath) = NewLocalModPath(staging);
 
                         progress.SetMessage($"Adding {name}: {completed + 1} / {total}");
                         await Task.Run(() =>
@@ -174,6 +167,19 @@ namespace FASTER.ViewModel
 
             if (errors.Count > 0)
                 await AppServices.Dialogs.ShowMessageAsync(this, "Could not add local mods", string.Join("\n", errors));
+        }
+
+        private (uint Id, string Path) NewLocalModPath(string staging)
+        {
+            uint modId;
+            string newPath;
+            do
+            {
+                modId = (uint)Random.Shared.NextInt64(uint.MaxValue / 2L, uint.MaxValue);
+                newPath = Path.Combine(staging, modId.ToString());
+            } while (ModsCollection.ArmaMods.Any(mod => mod.WorkshopId == modId) ||
+                File.Exists(newPath) || Directory.Exists(newPath) || new DirectoryInfo(newPath).LinkTarget != null);
+            return (modId, newPath);
         }
 
         private static string ResolveDirectoryPath(string path)

@@ -30,43 +30,49 @@ internal sealed class CfgDocument
     {
         for (int i = 0; i < _source.Length;)
         {
-            if (char.IsWhiteSpace(_source[i])) { i++; continue; }
-            if (_source.AsSpan(i).StartsWith("//", StringComparison.Ordinal))
-            {
-                while (i < _source.Length && _source[i] != '\n') i++;
-                continue;
-            }
-            if (_source.AsSpan(i).StartsWith("/*", StringComparison.Ordinal))
-            {
-                int end = _source.IndexOf("*/", i + 2, StringComparison.Ordinal);
-                if (end < 0) throw Error("Unclosed comment", i);
-                i = end + 2;
-                continue;
-            }
+            if (SkipTrivia(ref i)) continue;
             int start = i;
-            if (_source[i] == '"')
-            {
-                i++;
-                bool closed = false;
-                while (i < _source.Length)
-                {
-                    if (_source[i++] != '"') continue;
-                    if (i < _source.Length && _source[i] == '"') { i++; continue; }
-                    closed = true;
-                    break;
-                }
-                if (!closed) throw Error("Unclosed string", start);
-            }
+            if (_source[i] == '"') i = ReadStringEnd(i);
             else if ("{}[]=;,:".Contains(_source[i])) i++;
-            else
-            {
-                while (i < _source.Length && !char.IsWhiteSpace(_source[i]) &&
-                       !"{}[]=;,:\"".Contains(_source[i]) &&
-                       !_source.AsSpan(i).StartsWith("//", StringComparison.Ordinal) &&
-                       !_source.AsSpan(i).StartsWith("/*", StringComparison.Ordinal)) i++;
-            }
+            else i = ReadLiteralEnd(i);
             _tokens.Add(new(_source[start..i], start, i));
         }
+    }
+
+    private bool SkipTrivia(ref int position)
+    {
+        if (char.IsWhiteSpace(_source[position])) { position++; return true; }
+        if (_source.AsSpan(position).StartsWith("//", StringComparison.Ordinal))
+        {
+            while (position < _source.Length && _source[position] != '\n') position++;
+            return true;
+        }
+        if (!_source.AsSpan(position).StartsWith("/*", StringComparison.Ordinal)) return false;
+        int end = _source.IndexOf("*/", position + 2, StringComparison.Ordinal);
+        if (end < 0) throw Error("Unclosed comment", position);
+        position = end + 2;
+        return true;
+    }
+
+    private int ReadStringEnd(int start)
+    {
+        int position = start + 1;
+        while (position < _source.Length)
+        {
+            if (_source[position++] != '"') continue;
+            if (position < _source.Length && _source[position] == '"') { position++; continue; }
+            return position;
+        }
+        throw Error("Unclosed string", start);
+    }
+
+    private int ReadLiteralEnd(int position)
+    {
+        while (position < _source.Length && !char.IsWhiteSpace(_source[position]) &&
+               !"{}[]=;,:\"".Contains(_source[position]) &&
+               !_source.AsSpan(position).StartsWith("//", StringComparison.Ordinal) &&
+               !_source.AsSpan(position).StartsWith("/*", StringComparison.Ordinal)) position++;
+        return position;
     }
 
     private Token Take()
@@ -91,39 +97,49 @@ internal sealed class CfgDocument
             if (first.Text == ";") continue;
             if (first.Text.Equals("class", StringComparison.OrdinalIgnoreCase))
             {
-                var name = Take();
-                var next = Take();
-                if (next.Text == ":") { Take(); next = Take(); }
-                if (next.Text == ";") continue; // Forward declaration, no values to import.
-                if (next.Text != "{") throw Error("Expected class body", next.Start);
-                var children = ReadEntries(true);
-                var close = Expect("}");
-                var end = Expect(";");
-                entries.Add(new(name.Text, first.Start, end.End, next.End, close.Start, [], children));
-                continue;
+                var entry = ReadClass(first);
+                if (entry != null) entries.Add(entry);
             }
-            string key = first.Text;
-            var equals = Take();
-            if (equals.Text == "[") { Expect("]"); equals = Take(); key += "[]"; }
-            if (equals.Text != "=") throw Error($"Expected '=' after {key}", equals.Start);
-            int valueStart = _position < _tokens.Count ? _tokens[_position].Start : equals.End;
-            List<string> values = [];
-            int depth = 0;
-            Token last;
-            do
-            {
-                last = Take();
-                if (last.Text == ";" && depth == 0) break;
-                if (last.Text == "{") depth++;
-                if (last.Text == "}" && depth == 0)
-                    throw Error("Unexpected closing brace", last.Start);
-                if (last.Text == "}") depth--;
-                values.Add(last.Text);
-            } while (true);
-            entries.Add(new(key, first.Start, last.End, valueStart, last.Start, values, null));
+            else entries.Add(ReadAssignment(first));
         }
         if (!nested && _position != _tokens.Count) throw Error("Unexpected closing brace", _tokens[_position].Start);
         return entries;
+    }
+
+    private Entry? ReadClass(Token first)
+    {
+        var name = Take();
+        var next = Take();
+        if (next.Text == ":") { Take(); next = Take(); }
+        if (next.Text == ";") return null; // Forward declaration, no values to import.
+        if (next.Text != "{") throw Error("Expected class body", next.Start);
+        var children = ReadEntries(true);
+        var close = Expect("}");
+        var end = Expect(";");
+        return new(name.Text, first.Start, end.End, next.End, close.Start, [], children);
+    }
+
+    private Entry ReadAssignment(Token first)
+    {
+        string key = first.Text;
+        var equals = Take();
+        if (equals.Text == "[") { Expect("]"); equals = Take(); key += "[]"; }
+        if (equals.Text != "=") throw Error($"Expected '=' after {key}", equals.Start);
+        int valueStart = _position < _tokens.Count ? _tokens[_position].Start : equals.End;
+        List<string> values = [];
+        int depth = 0;
+        Token last;
+        do
+        {
+            last = Take();
+            if (last.Text == ";" && depth == 0) break;
+            if (last.Text == "{") depth++;
+            if (last.Text == "}" && depth == 0)
+                throw Error("Unexpected closing brace", last.Start);
+            if (last.Text == "}") depth--;
+            values.Add(last.Text);
+        } while (true);
+        return new(key, first.Start, last.End, valueStart, last.Start, values, null);
     }
 
     public static string StringValue(string token)
@@ -143,38 +159,9 @@ internal sealed class CfgDocument
             var target = new CfgDocument(source);
             var before = new CfgDocument(previous);
             var after = new CfgDocument(generated);
-            List<(int Start, int End, string Text)> edits = [];
-            MergeEntries(target.Entries, before.Entries, after.Entries, source.Length);
-            var result = new StringBuilder(source);
-            foreach (var edit in edits.OrderByDescending(e => e.Start))
-                result.Remove(edit.Start, edit.End - edit.Start).Insert(edit.Start, edit.Text);
-            return result.ToString();
-
-            void MergeEntries(List<Entry> targets, List<Entry> oldEntries, List<Entry> newEntries, int insertion)
-            {
-                foreach (var name in oldEntries.Concat(newEntries).Select(e => e.Name).Distinct(StringComparer.OrdinalIgnoreCase))
-                {
-                    var old = oldEntries.LastOrDefault(e => e.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
-                    var next = newEntries.LastOrDefault(e => e.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
-                    if (old != null && next != null && before.Raw(old) == after.Raw(next)) continue;
-                    var matches = targets.Where(e => e.Name.Equals(name, StringComparison.OrdinalIgnoreCase)).ToList();
-                    if (matches.Count == 0)
-                    {
-                        if (next != null) edits.Add((insertion, insertion, "\n" + after.Raw(next) + "\n"));
-                        continue;
-                    }
-                    foreach (var match in matches)
-                    {
-                        if (next == null) edits.Add((match.Start, match.End, ""));
-                        else if (match.Children != null && old?.Children != null && next.Children != null &&
-                                 !name.Equals("Missions", StringComparison.OrdinalIgnoreCase))
-                            MergeEntries(match.Children, old.Children, next.Children, match.ValueEnd);
-                        else if (match.Children == null && next.Children == null)
-                            edits.Add((match.ValueStart, match.ValueEnd, generated[next.ValueStart..next.ValueEnd]));
-                        else edits.Add((match.Start, match.End, after.Raw(next)));
-                    }
-                }
-            }
+            var plan = new MergePlan(before, after);
+            var edits = plan.Build(target.Entries, before.Entries, after.Entries, source.Length);
+            return ApplyEdits(source, edits);
         }
         catch (FormatException)
         {
@@ -182,4 +169,54 @@ internal sealed class CfgDocument
             return source;
         }
     }
+
+    private sealed record Edit(int Start, int End, string Text);
+
+    private static string ApplyEdits(string source, List<Edit> edits)
+    {
+        var result = new StringBuilder(source);
+        foreach (var edit in edits.OrderByDescending(e => e.Start))
+            result.Remove(edit.Start, edit.End - edit.Start).Insert(edit.Start, edit.Text);
+        return result.ToString();
+    }
+
+    private sealed class MergePlan(CfgDocument before, CfgDocument after)
+    {
+        private readonly List<Edit> _edits = [];
+
+        public List<Edit> Build(List<Entry> targets, List<Entry> oldEntries, List<Entry> newEntries, int insertion)
+        {
+            MergeEntries(targets, oldEntries, newEntries, insertion);
+            return _edits;
+        }
+
+        private void MergeEntries(List<Entry> targets, List<Entry> oldEntries, List<Entry> newEntries, int insertion)
+        {
+            foreach (var name in oldEntries.Concat(newEntries).Select(e => e.Name).Distinct(StringComparer.OrdinalIgnoreCase))
+            {
+                var old = oldEntries.LastOrDefault(e => e.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+                var next = newEntries.LastOrDefault(e => e.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+                if (old != null && next != null && before.Raw(old) == after.Raw(next)) continue;
+                var matches = targets.Where(e => e.Name.Equals(name, StringComparison.OrdinalIgnoreCase)).ToList();
+                if (matches.Count == 0)
+                {
+                    if (next != null) _edits.Add(new(insertion, insertion, "\n" + after.Raw(next) + "\n"));
+                    continue;
+                }
+                foreach (var match in matches) MergeEntry(match, old, next);
+            }
+        }
+
+        private void MergeEntry(Entry match, Entry? old, Entry? next)
+        {
+            if (next == null) _edits.Add(new(match.Start, match.End, ""));
+            else if (match.Children != null && old?.Children != null && next.Children != null &&
+                     !next.Name.Equals("Missions", StringComparison.OrdinalIgnoreCase))
+                MergeEntries(match.Children, old.Children, next.Children, match.ValueEnd);
+            else if (match.Children == null && next.Children == null)
+                _edits.Add(new(match.ValueStart, match.ValueEnd, after._source[next.ValueStart..next.ValueEnd]));
+            else _edits.Add(new(match.Start, match.End, after.Raw(next)));
+        }
+    }
+
 }

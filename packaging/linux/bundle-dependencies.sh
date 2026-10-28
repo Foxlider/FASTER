@@ -8,7 +8,7 @@ mkdir -p "$publish/licenses/system"
 # These libraries are loaded by name, so ldd cannot discover them from the apphost.
 for name in libX11.so.6 libICE.so.6 libSM.so.6 libfontconfig.so.1 libfreetype.so.6 libicuuc.so.70 libicui18n.so.70 libssl.so.3 libcrypto.so.3 libXrandr.so.2 libXi.so.6 libXcursor.so.1; do
     library=$(ldconfig -p | awk -v name="$name" '$1 == name && /x86-64/ && !found { print $NF; found=1 }')
-    test -n "$library" || { echo "Missing build dependency: $name" >&2; exit 1; }
+    [[ -n "$library" ]] || { echo "Missing build dependency: $name" >&2; exit 1; }
     cp -L "$library" "$publish/"
 done
 
@@ -19,6 +19,7 @@ while :; do
         name=$(basename "$library")
         case "$name" in
             libc.so.*|libm.so.*|libpthread.so.*|libdl.so.*|librt.so.*|libresolv.so.*|ld-linux*|libGL.so.*|libEGL.so.*|libGLX.so.*|libGLdispatch.so.*) continue ;;
+            *) ;;
         esac
         if [[ ! -e "$publish/$name" ]]; then
             cp -L "$library" "$publish/$name"
