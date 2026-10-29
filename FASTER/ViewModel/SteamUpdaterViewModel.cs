@@ -637,8 +637,18 @@ namespace FASTER.ViewModel
                 }
             }
 
+            // A new content client per login is deliberate: it caches app info, and a fresh one is what
+            // makes each update see the current manifests. The old one has to be disposed, or its CDN
+            // server pools keep running in the background.
             Logger.Log($"SteamLogin: creating SteamContentClient with {Properties.Settings.Default.CliWorkers} workers");
-            SteamContentClient = new SteamContentClient(SteamClient, Properties.Settings.Default.CliWorkers);
+            var previousContentClient = SteamContentClient;
+            SteamContentClient = new SteamContentClient(SteamClient, Properties.Settings.Default.CliWorkers)
+            {
+                Logger = new FASTER.Models.FasterLoggerAdapter()
+            };
+
+            if (previousContentClient != null)
+                await previousContentClient.DisposeAsync();
             Parameters.AppendOutput("\nConnected !");
             Logger.Log("SteamLogin: connected OK");
             IsLoggingIn = false;
@@ -649,6 +659,11 @@ namespace FASTER.ViewModel
         {
             Logger.Log($"SteamReset: disconnecting (connected: {SteamClient?.IsConnected}, faulted: {SteamClient?.IsFaulted})");
             Parameters.AppendOutput("\nDisconnecting...");
+            if (SteamContentClient != null)
+            {
+                SteamContentClient.DisposeAsync().AsTask().GetAwaiter().GetResult();
+                SteamContentClient = null;
+            }
             SteamClient?.Shutdown();
             SteamClient?.Dispose();
             SteamClient = null;

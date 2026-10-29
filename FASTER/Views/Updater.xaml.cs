@@ -54,9 +54,11 @@ namespace FASTER.Views
             ((SteamUpdaterViewModel)DataContext)?.SteamReset();
         }
 
-        private void ClientConnect_OnClick(object sender, RoutedEventArgs e)
+        private async void ClientConnect_OnClick(object sender, RoutedEventArgs e)
         {
-            ((SteamUpdaterViewModel)DataContext)?.SteamLogin();
+            // An update logs in by itself, and a second login would replace the client it is using
+            if (DataContext is SteamUpdaterViewModel { UpdateInProgress: false } vm)
+                await vm.SteamLogin();
         }
     }
 }

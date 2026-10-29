@@ -22,10 +22,14 @@ namespace FASTER.Models
     {
         public IDisposable BeginScope<TState>(TState state) => null;
 
-        public bool IsEnabled(LogLevel logLevel) => logLevel >= LogLevel.Warning;
+        // Debug and above, and only while Debug Logging is on. Trace is one line per chunk, far too noisy for the file.
+        public bool IsEnabled(LogLevel logLevel) => Logger.IsEnabled && logLevel >= LogLevel.Debug;
 
         public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
         {
+            if (!IsEnabled(logLevel))
+                return;
+
             var message = formatter(state, exception);
             Logger.Log($"[{logLevel}] {message}{(exception != null ? $" | {exception}" : "")}");
         }
