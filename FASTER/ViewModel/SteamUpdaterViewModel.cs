@@ -531,6 +531,7 @@ namespace FASTER.ViewModel
         private async Task DownloadModContentAsync(ArmaMod mod)
         {
             ManifestId manifestId = default;
+            Manifest? manifest = null;
 
             // Ask Steam for the current update time first. Without this, the check below
             // compares against whatever was saved the last time Check For Updates was pressed.
@@ -549,7 +550,7 @@ namespace FASTER.ViewModel
                 Logger.Log($"  Getting manifest for {mod.WorkshopId}");
                 Parameters.AppendOutput($"\n   Getting manifest for {mod.WorkshopId}");
                 manifestId = (await SteamContentClient.GetPublishedFileDetailsAsync(mod.WorkshopId)).hcontent_file;
-                Manifest manifest = await SteamContentClient.GetManifestAsync(107410, 107410, manifestId);
+                manifest = await SteamContentClient.GetManifestAsync(107410, 107410, manifestId);
                 Parameters.AppendOutput($"\n   Manifest retrieved {mod.WorkshopId}");
                 Logger.Log($"  Manifest retrieved for {mod.WorkshopId}, syncing deleted files...");
                 SyncDeleteRemovedFiles(mod.Path, manifest);
@@ -558,7 +559,7 @@ namespace FASTER.ViewModel
            Logger.Log($"  Requesting download handler for {mod.WorkshopId}");
            Parameters.AppendOutput($"\n    Attempting to start download of item {mod.WorkshopId}... ");
 
-           var downloadHandler = await SteamContentClient.GetPublishedFileDataAsync(mod.WorkshopId, manifestId, tokenSource.Token);
+           var downloadHandler = await SteamContentClient.GetPublishedFileDataAsync(mod.WorkshopId, manifestId, tokenSource.Token, knownManifest: manifest);
            Logger.Log($"  Download handler obtained for {mod.WorkshopId}, starting download...");
            await DownloadForMultiple(downloadHandler, mod.Path);
            Logger.Log($"  Download complete for {mod.WorkshopId}");
