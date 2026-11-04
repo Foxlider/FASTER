@@ -620,18 +620,61 @@ namespace FASTER.ViewModel
                 catch (Exception ex)
                 {
                     Logger.Log($"SteamLogin: ConnectAsync failed: {ex.GetType().Name}: {ex.Message}\nStackTrace: {ex.StackTrace}");
-                    Parameters.AppendOutput($"\nFailed! Error: {ex.Message}");
+
+                    var authenticationException = ex.GetBaseException() as SteamAuthenticationException;
                     var savedUsername = SteamClient.Credentials.Username;
+
                     SteamClient.Shutdown();
                     SteamClient.Dispose();
                     SteamClient = null;
 
-                    if (ex.GetBaseException() is SteamAuthenticationException)
+                    if (authenticationException != null)
                     {
-                        Parameters.AppendOutput("\nWarning: The logon may have failed due to expired sentry-data."
-                                                + $"\nIf you are sure that the provided username and password are correct, consider deleting the token file for the user \"{savedUsername}\" in the sentries directory."
-                                                + $"\n{path}");
+                        Logger.Log($"AuthCodeProvider: Successfully removed saved access token for '{_uniqueStorageName}'.");
+
+                        Parameters.AppendOutput($"\nSteam authentication failed ({authenticationException.Result}).");
+
+                        switch (authenticationException.Result)
+                        {
+                            case SteamKit2.EResult.InvalidSignature:
+                            case SteamKit2.EResult.AccessDenied:
+                            case SteamKit2.EResult.Expired:
+                            case SteamKit2.EResult.Revoked:
+                                Parameters.AppendOutput(
+                                    "\nSteam rejected the authentication attempt."
+                                    + "\nIf a saved access token was used, FASTER has automatically removed it."
+                                    + "\nPlease try the action again. FASTER will attempt to sign in to Steam again.");
+                                break;
+
+                            case SteamKit2.EResult.InvalidPassword:
+                                Parameters.AppendOutput(
+                                    "\nSteam rejected the provided password."
+                                    + "\nPlease check your Steam username and password, then try again."
+                                    + "\nYour saved access token has not been removed.");
+                                break;
+
+                            default:
+                                Parameters.AppendOutput(
+                                    "\nSteam was unable to complete the login."
+                                    + "\nFASTER has not removed your saved authentication data."
+                                    + "\n\nWhat you can try:"
+                                    + "\n- Wait a few minutes, then try again."
+                                    + "\n- Check your internet connection and Steam service availability."
+                                    + "\n- Check for any Steam account restrictions or security issues."
+                                    + "\n\nIf the problem continues, report it to the FASTER developers"
+                                    + "\nand include your FASTER log."
+                                    + $"\n\nSteam result: {authenticationException.Result}"
+                                    + $"\nSteam account: {savedUsername}"
+                                    + "\nSentries directory:"
+                                    + $"\n{path}");
+                                break;
+                        }
                     }
+                    else
+                    {
+                        Parameters.AppendOutput($"\nFailed! Error: {ex.Message}");
+                    }
+
                     IsLoggingIn = false;
                     return false;
                 }

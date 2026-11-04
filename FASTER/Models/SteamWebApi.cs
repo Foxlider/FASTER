@@ -207,11 +207,34 @@ namespace FASTER.Models
 
         public override Task PersistAccessTokenAsync(string token, CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            if (string.IsNullOrEmpty(token))
+            {
+                ClearAccessToken();
+                return Task.CompletedTask;
+            }
+
             AccessToken = token;
             WriteProtected("accesstoken", AccessToken);
             return Task.CompletedTask;
         }
 
+        private void ClearAccessToken()
+        {
+            // Clear the in-memory access token.
+            AccessToken = string.Empty;
+
+            if (string.IsNullOrEmpty(_persistenceDirectory)) return;
+
+            var path = Path.Combine(
+                _persistenceDirectory,
+                $"{_uniqueStorageName}_accesstoken");
+
+            // Delete the persisted access token.
+            File.Delete(path);
+            Logger.Log($"AuthCodeProvider: Successfully removed saved access token for '{_uniqueStorageName}'.");
+        }
 
         public override Task<string> GetAccessTokenAsync(CancellationToken cancellationToken = default)
         {
