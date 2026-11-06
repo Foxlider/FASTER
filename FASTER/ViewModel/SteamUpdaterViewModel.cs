@@ -642,21 +642,30 @@ namespace FASTER.ViewModel
                             case SteamKit2.EResult.Expired:
                             case SteamKit2.EResult.Revoked:
                                 Parameters.AppendOutput(
-                                    "\nSteam rejected the authentication attempt."
-                                    + "\nIf a saved access token was used, FASTER has automatically removed it."
-                                    + "\nPlease try the action again. FASTER will attempt to sign in to Steam again.");
+                                    "\nError: Steam authentication failed."
+                                    + "\nReason: Steam rejected the access token."
+                                    + "\nSolution: Faster will acquire a fresh access token upon your next request.");
                                 break;
 
                             case SteamKit2.EResult.InvalidPassword:
                                 Parameters.AppendOutput(
-                                    "\nSteam rejected the provided password."
+                                    "\nError: Steam authentication failed."
+                                    + "\nReason: Steam rejected the provided password."
                                     + "\nPlease check your Steam username and password, then try again."
                                     + "\nYour saved access token has not been removed.");
                                 break;
 
+                            // Other authentication failures are handled here.
+                            // These may include connection issues, Steam service outages,
+                            // account restrictions or conflicts with other active sessions.
+                            // Examples include NoConnection, Timeout, ServiceUnavailable,
+                            // AccountDisabled, AccountLockedDown and LoggedInElsewhere.
+                            // These results do not necessarily indicate an invalid access token,
+                            // so saved authentication data is preserved.
                             default:
                                 Parameters.AppendOutput(
-                                    "\nSteam was unable to complete the login."
+                                    "\nError: Steam authentication failed."
+                                    + "\nReason: Steam was unable to complete the login."
                                     + "\nFASTER has not removed your saved authentication data."
                                     + "\n\nWhat you can try:"
                                     + "\n- Wait a few minutes, then try again."

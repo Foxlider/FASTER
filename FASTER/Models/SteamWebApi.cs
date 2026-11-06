@@ -220,6 +220,8 @@ namespace FASTER.Models
             return Task.CompletedTask;
         }
 
+        // Only remove the access token. Preserve GuardData so Steam can
+        // reuse the existing trusted-device information during reauthentication.
         private void ClearAccessToken()
         {
             // Clear the in-memory access token.
