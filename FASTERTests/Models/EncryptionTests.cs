@@ -1,13 +1,13 @@
 ﻿using NUnit.Framework;
-
 using System.Runtime.Versioning;
 
 namespace FASTER.Models.Tests
 {
     [TestFixture()]
+    [SupportedOSPlatform("windows")]
     public class EncryptionTests
     {
-        [SupportedOSPlatform("windows7.0")]
+
         [Test()]
         public void EncryptDataTest()
         {
@@ -15,7 +15,6 @@ namespace FASTER.Models.Tests
             Assert.That(Encryption.Instance.EncryptData("SomeText"), Is.Not.EqualTo("SomeText"));
         }
 
-        [SupportedOSPlatform("windows7.0")]
         [Test()]
         public void DecryptDataTest()
         {
@@ -23,14 +22,12 @@ namespace FASTER.Models.Tests
             Assert.That(Encryption.Instance.DecryptData(encrypted), Is.EqualTo("SomeText"));
         }
 
-        [SupportedOSPlatform("windows7.0")]
         [Test()]
         public void EncryptedDataUsesCurrentFormat()
         {
             Assert.That(Encryption.Instance.IsCurrentFormat(Encryption.Instance.EncryptData("SomeText")), Is.True);
         }
 
-        [SupportedOSPlatform("windows7.0")]
         [Test()]
         public void MigrateLeavesCurrentFormatAlone()
         {
@@ -38,7 +35,6 @@ namespace FASTER.Models.Tests
             Assert.That(Encryption.Instance.Migrate(encrypted), Is.EqualTo(encrypted));
         }
 
-        [SupportedOSPlatform("windows7.0")]
         [Test()]
         public void MigrateLeavesUnreadableValueAlone()
         {

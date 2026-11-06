@@ -621,18 +621,70 @@ namespace FASTER.ViewModel
                 catch (Exception ex)
                 {
                     Logger.Log($"SteamLogin: ConnectAsync failed: {ex.GetType().Name}: {ex.Message}\nStackTrace: {ex.StackTrace}");
-                    Parameters.AppendOutput($"\nFailed! Error: {ex.Message}");
+
+                    var authenticationException = ex.GetBaseException() as SteamAuthenticationException;
                     var savedUsername = SteamClient.Credentials.Username;
+
                     SteamClient.Shutdown();
                     SteamClient.Dispose();
                     SteamClient = null;
 
-                    if (ex.GetBaseException() is SteamAuthenticationException)
+                    if (authenticationException != null)
                     {
-                        Parameters.AppendOutput("\nWarning: The logon may have failed due to expired sentry-data."
-                                                + $"\nIf you are sure that the provided username and password are correct, consider deleting the token file for the user \"{savedUsername}\" in the sentries directory."
-                                                + $"\n{path}");
+                        Logger.Log($"AuthCodeProvider: Successfully removed saved access token for '{_uniqueStorageName}'.");
+
+                        Parameters.AppendOutput($"\nSteam authentication failed ({authenticationException.Result}).");
+
+                        switch (authenticationException.Result)
+                        {
+                            case SteamKit2.EResult.InvalidSignature:
+                            case SteamKit2.EResult.AccessDenied:
+                            case SteamKit2.EResult.Expired:
+                            case SteamKit2.EResult.Revoked:
+                                Parameters.AppendOutput(
+                                    "\nError: Steam authentication failed."
+                                    + "\nReason: Steam rejected the access token."
+                                    + "\nSolution: Faster will acquire a fresh access token upon your next request.");
+                                break;
+
+                            case SteamKit2.EResult.InvalidPassword:
+                                Parameters.AppendOutput(
+                                    "\nError: Steam authentication failed."
+                                    + "\nReason: Steam rejected the provided password."
+                                    + "\nPlease check your Steam username and password, then try again."
+                                    + "\nYour saved access token has not been removed.");
+                                break;
+
+                            // Other authentication failures are handled here.
+                            // These may include connection issues, Steam service outages,
+                            // account restrictions or conflicts with other active sessions.
+                            // Examples include NoConnection, Timeout, ServiceUnavailable,
+                            // AccountDisabled, AccountLockedDown and LoggedInElsewhere.
+                            // These results do not necessarily indicate an invalid access token,
+                            // so saved authentication data is preserved.
+                            default:
+                                Parameters.AppendOutput(
+                                    "\nError: Steam authentication failed."
+                                    + "\nReason: Steam was unable to complete the login."
+                                    + "\nFASTER has not removed your saved authentication data."
+                                    + "\n\nWhat you can try:"
+                                    + "\n- Wait a few minutes, then try again."
+                                    + "\n- Check your internet connection and Steam service availability."
+                                    + "\n- Check for any Steam account restrictions or security issues."
+                                    + "\n\nIf the problem continues, report it to the FASTER developers"
+                                    + "\nand include your FASTER log."
+                                    + $"\n\nSteam result: {authenticationException.Result}"
+                                    + $"\nSteam account: {savedUsername}"
+                                    + "\nSentries directory:"
+                                    + $"\n{path}");
+                                break;
+                        }
                     }
+                    else
+                    {
+                        Parameters.AppendOutput($"\nFailed! Error: {ex.Message}");
+                    }
+
                     IsLoggingIn = false;
                     return false;
                 }
