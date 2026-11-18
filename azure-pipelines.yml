@@ -8,6 +8,7 @@ trigger:
 
 pr:
 - master
+- feature/Update-1.9
 
 pool:
   vmImage: 'windows-2022'
@@ -21,11 +22,10 @@ steps:
   displayName: 'Checkout (with submodules)'
 
 - task: UseDotNet@2
-  displayName: 'Use DotNet 10.0'
+  displayName: 'Install .NET SDK from global.json'
   inputs:
     packageType: 'sdk'
-    version: '10.0.x'
-    includePreviewVersions: false
+    useGlobalJson: true
 
 - task: DotNetCoreCLI@2
   displayName: 'Dotnet Restore'
@@ -34,7 +34,7 @@ steps:
     projects: 'FASTER.sln'
     feedsToUse: 'select'
 
-- task: SonarCloudPrepare@4.2.6
+- task: SonarCloudPrepare@4
   inputs:
     SonarCloud: 'SonarCloud'
     organization: 'foxlicorp'
@@ -48,15 +48,15 @@ steps:
 - script: dotnet build --configuration $(buildConfiguration) --no-restore
   displayName: 'Dotnet Build $(buildConfiguration)'
 
-- script: dotnet tool update --global dotnet-coverage
-  displayName: 'Install dotnet-coverage'
+- script: dotnet tool restore
+  displayName: 'Restore local .NET tools'
 
-- script: dotnet-coverage collect "dotnet test FASTERTests/FASTERTests.csproj --configuration $(buildConfiguration) --no-restore --no-build --filter \"TestCategory!=Network\"" -f xml -o "$(Agent.TempDirectory)\coverage.xml"
+- script: dotnet tool run dotnet-coverage collect "dotnet test FASTERTests/FASTERTests.csproj --configuration $(buildConfiguration) --no-restore --no-build --filter \"TestCategory!=Network\"" -f xml -o "$(Agent.TempDirectory)\coverage.xml"
   displayName: 'Dotnet Test (with coverage)'
 
-- task: SonarCloudAnalyze@4.2.6
+- task: SonarCloudAnalyze@4
 
-- task: SonarCloudPublish@4.2.6
+- task: SonarCloudPublish@4
   displayName: 'Publish SonarCloud Quality Gate result'
   inputs:
     pollingTimeoutSec: '300'
@@ -66,6 +66,7 @@ steps:
   inputs:
     command: publish
     publishWebProjects: False
+    projects: 'FASTER/FASTER.csproj'
     arguments: '--configuration $(BuildConfiguration) -r win-x64 --self-contained true --output $(Build.ArtifactStagingDirectory)\Release_x64'
     zipAfterPublish: True
 
@@ -73,5 +74,5 @@ steps:
   displayName: 'Publish artifacts'
   inputs:
     targetPath: '$(Build.ArtifactStagingDirectory)'
-    artifact: 'FASTER_master_build'
+    artifact: 'FASTER_$(Build.SourceBranchName)_build'
     publishLocation: 'pipeline'
