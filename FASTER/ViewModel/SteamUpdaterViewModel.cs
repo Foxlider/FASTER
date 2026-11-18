@@ -631,8 +631,6 @@ namespace FASTER.ViewModel
 
                     if (authenticationException != null)
                     {
-                        Logger.Log($"AuthCodeProvider: Successfully removed saved access token for '{_uniqueStorageName}'.");
-
                         Parameters.AppendOutput($"\nSteam authentication failed ({authenticationException.Result}).");
 
                         switch (authenticationException.Result)
