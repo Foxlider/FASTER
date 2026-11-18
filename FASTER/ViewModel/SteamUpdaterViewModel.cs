@@ -708,6 +708,13 @@ namespace FASTER.ViewModel
 
         internal bool SteamReset()
         {
+            if (UpdateInProgress)
+            {
+                Logger.Log("SteamReset: refused, an update is already running.");
+                Parameters.AppendOutput("\nCannot disconnect while an update is running.");
+                return false;
+            }
+
             Logger.Log($"SteamReset: disconnecting (connected: {SteamClient?.IsConnected}, faulted: {SteamClient?.IsFaulted})");
             Parameters.AppendOutput("\nDisconnecting...");
             if (SteamContentClient != null)
