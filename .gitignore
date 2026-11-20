@@ -177,6 +177,9 @@ _TeamCity*
 *.coverage
 *.coveragexml
 
+# Generated code coverage reports
+coverage.xml
+
 # NCrunch
 _NCrunch_*
 .*crunch*.local.xml

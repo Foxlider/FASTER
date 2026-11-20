@@ -6,7 +6,7 @@ updates:
     directory: "/"
     target-branch: "feature/Update-1.9"
     schedule:
-      interval: "monthly"
+      interval: "weekly"
       day: "friday"
     open-pull-requests-limit: 5
     labels:
@@ -14,18 +14,18 @@ updates:
       - "github-actions"
     commit-message:
       prefix: "chore(actions)"
-    groups:
-      actions-minor-patch:
+    ignore:
+      - dependency-name: "*"
         update-types:
-          - "patch"
-          - "minor"
+          - "version-update:semver-minor"
+          - "version-update:semver-patch"
 
   # NuGet packages
   - package-ecosystem: "nuget"
     directory: "/"
     target-branch: "feature/Update-1.9"
     schedule:
-      interval: "monthly"
+      interval: "weekly"
       day: "friday"
     open-pull-requests-limit: 5
     labels:
@@ -33,11 +33,11 @@ updates:
       - "nuget"
     commit-message:
       prefix: "chore(nuget)"
-    groups:
-      nuget-minor-patch:
+    ignore:
+      - dependency-name: "*"
         update-types:
-          - "patch"
-          - "minor"
+          - "version-update:semver-minor"
+          - "version-update:semver-patch"
 
   # BytexDigital.Steam submodule
   - package-ecosystem: "gitsubmodule"
