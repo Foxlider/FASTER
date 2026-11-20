@@ -142,6 +142,17 @@ namespace FASTER.ViewModel
                 return;
             }
 
+            var running = Process.GetProcesses()
+                .Where(p => p.ProcessName.Contains("arma3server", StringComparison.OrdinalIgnoreCase))
+                .ToList();
+            running.ForEach(p => p.Dispose());
+
+            if (running.Count > 0)
+            {
+                Parameters.AppendOutput($"\n{running.Count} arma3server process(es) are running. Stop them before updating, or files in the install folder may be locked.");
+                return;
+            }
+
             Analytics.TrackEvent("Updater - Clicked Update", new Dictionary<string, string>
             {
                 {"Name", Properties.Settings.Default.steamUserName},
